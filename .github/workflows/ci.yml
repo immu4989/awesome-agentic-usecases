@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  exception-triage-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -e harness[dev] -e logistics-supply-chain/exception-triage-agent[dev]
+      - name: Tests
+        run: pytest harness/tests logistics-supply-chain/exception-triage-agent/tests -q
+      - name: Scenario file is reproducible
+        run: |
+          exception-triage-agent generate --n 30 --seed 7 --out /tmp/scenarios.jsonl
+          diff /tmp/scenarios.jsonl logistics-supply-chain/exception-triage-agent/evals/scenarios.jsonl
+      - name: Mock eval runs green
+        run: exception-triage-agent eval --backend mock --repeats 3 --out /tmp/results
+      - name: Lint
+        run: ruff check harness logistics-supply-chain
