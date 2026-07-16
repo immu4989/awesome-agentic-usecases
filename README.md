@@ -1,27 +1,87 @@
-# 🤖 Awesome Agentic Use Cases
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg">
+  <img alt="Awesome Agentic Use Cases — agentic AI use cases that are verified, not just runnable" src="docs/assets/banner-light.svg" width="100%">
+</picture>
 
-**Agentic AI use cases that are verified, not just runnable — evals, cost numbers, and failure modes included.**
+<p align="center">
+  <a href="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml"><img src="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/python-3.10%2B-2a78d6" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/license-Apache--2.0-008300" alt="Apache-2.0 license">
+  <img src="https://img.shields.io/badge/reproduce%20for-%240%20(free%20tiers)-4a3aa7" alt="Reproduce for $0 on free tiers">
+</p>
 
-![Python](https://img.shields.io/badge/python-3.10%2B-blue)
-![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![Verified](https://img.shields.io/badge/every%20agent-evals%20%2B%20cost%20%2B%20failure%20modes-purple)
+<p align="center">
+  <a href="#the-64-cent-comparison">Results</a> ·
+  <a href="#use-cases">Use cases</a> ·
+  <a href="#industries">Industries</a> ·
+  <a href="#what-verified-means-here">The verification bar</a> ·
+  <a href="#quick-start">Quickstart</a> ·
+  <a href="CONTRIBUTING.md">Contribute</a>
+</p>
 
 Most agent demos prove an agent *can run once*. Almost none prove it *works*: how often
-it gets the right answer, what a run costs in dollars, and where it breaks. This repo
-holds agentic AI use cases for real business problems, each shipped with the harness
-that proves it — an eval set with ground truth, cost-per-run measured from token usage,
-results reported across repeated runs (agents are stochastic; n=1 proves nothing), and
-failure modes that were observed, not hypothesized.
+it gets the right answer, what a run costs in dollars, and where it breaks. Every use
+case here ships with the harness that proves it — an eval set with programmatic ground
+truth, cost measured from token usage, results across repeated runs (agents are
+stochastic; n=1 proves nothing), and failure modes that were **observed, not
+hypothesized**. All of it runs end-to-end on synthetic data with one command, and the
+model backends include free tiers, so reproducing any result costs nothing.
 
-Every use case runs end-to-end on synthetic data with one command. No proprietary data,
-no downloads. See [VERIFICATION.md](VERIFICATION.md) for the exact bar every entry must
-meet.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
+  <img alt="4 models compared, $0.64 total eval spend, 8 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+</picture>
+
+## The 64-cent comparison
+
+Same agent, same 30 scenarios, 3 repeats per model. Total spend for everything below:
+**$0.64**.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/results-dark.svg">
+  <img alt="Action accuracy by model: kimi-k2p6 1.000, gpt-oss-120b 0.778, mistral-small 0.700, Llama-3.3-70B 0.167" src="docs/assets/results-light.svg" width="100%">
+</picture>
+
+The ranking is the least interesting part. **The four models fail in four different
+ways**, and only the failure breakdown tells you what you'd actually be deploying:
+
+- 🥇 `kimi-k2p6` solved it — 90/90 — and the transcripts show *how*: it searched the
+  policy KB twice per ticket, the exact retrieval step every other model fumbled. It
+  buys that reliability at 13× the cost and 3× the latency of `gpt-oss-120b`.
+- 🕳️ `gpt-oss-120b` investigates everything, then occasionally **never commits a
+  decision** — all the evidence, no output, 6 runs out of 90.
+- 📜 `mistral-small` investigates correctly, then misjudges policy — in one scenario it
+  **cites the $2,000 escalation policy in its own reasoning, then violates it**, three
+  repeats out of three.
+- 🧩 `Llama-3.3-70B` fails on mechanics: 66/90 submissions were **missing the required
+  `action` field**, and 17/90 skipped investigation entirely.
+
+Every failure has a reproducing scenario id in
+[FAILURE_MODES.md](logistics-supply-chain/exception-triage-agent/FAILURE_MODES.md).
+
+## Use cases
+
+| Use case | Industry | Capability | The question it answers |
+|---|---|---|---|
+| [🎫 exception-triage-agent](logistics-supply-chain/exception-triage-agent/) | Logistics | `investigate` `decide` | Which resolution queue should each stuck-shipment ticket go to, which tickets can resolve themselves, and which need a human — decided by an agent that investigates with tools before committing? |
+
+Every use case is tagged by what the agent *does*: `predict` · `decide` · `plan` ·
+`act` · `watch` · `investigate`, plus architecture (`single-agent` / `multi-agent` /
+`human-in-loop`).
 
 ## Industries
 
+| Shipping now | Next waves |
+|---|---|
+| 🚛 [Logistics & Supply Chain](logistics-supply-chain/) | 🛒 Retail & Workforce · 🛡️ Security Operations · 💳 Financial Services & Fraud |
+
+<details>
+<summary><b>Full 15-industry roadmap</b></summary>
+<br>
+
 | # | Industry | Status |
 |---|---|---|
-| 1 | [🚛 Logistics & Supply Chain](logistics-supply-chain/) | ✅ Shipping |
+| 1 | 🚛 Logistics & Supply Chain | ✅ Shipping |
 | 2 | 🛒 Retail & Workforce | 🔜 Wave 2 |
 | 3 | 🛡️ Security Operations | 🔜 Wave 2 |
 | 4 | 💳 Financial Services & Fraud | 🔜 Wave 2 |
@@ -37,27 +97,19 @@ meet.
 | 14 | 🏗️ Real Estate & Construction | 📋 Roadmap |
 | 15 | 🎓 Education | 📋 Roadmap |
 
-## Use cases
+</details>
 
-| Use case | Industry | Capability | The question it answers |
-|---|---|---|---|
-| [🎫 exception-triage-agent](logistics-supply-chain/exception-triage-agent/) | Logistics | `investigate` `decide` | Which resolution queue should each stuck-shipment ticket go to, which tickets can resolve themselves, and which need a human — decided by an agent that investigates each ticket with tools before committing? |
+## What "verified" means here
 
-## Capability tags
+Five rules, no exceptions — the full reasoning lives in [VERIFICATION.md](VERIFICATION.md):
 
-Every use case is tagged by what the agent *does*, so you can filter by pattern rather
-than industry:
-
-| Tag | Meaning |
+|  | Rule |
 |---|---|
-| `predict` | Forecasting, anomaly detection, risk scoring |
-| `decide` | Quoting, pricing, triage, routing, prioritization |
-| `plan` | Multi-step task decomposition, scheduling, optimization |
-| `act` | Tool-calling agents that execute — write to systems, send, file |
-| `watch` | Always-on monitoring, alerting, drift detection |
-| `investigate` | Multi-hop research, RAG, root-cause analysis |
-
-Architecture tags: `single-agent` / `multi-agent` / `human-in-loop`.
+| 1️⃣ | **Runs from a clean clone with one command** — no API key needed for the mock backend |
+| 2️⃣ | **≥20 scenarios with programmatic ground truth**, committed and reproducible by seed |
+| 3️⃣ | **Cost per run in dollars**, computed from actual token usage, never estimated |
+| 4️⃣ | **n≥3 repeated runs with bootstrap CIs** — single-run agent numbers are noise |
+| 5️⃣ | **≥3 observed failure modes**, each with a reproducing input |
 
 ## Quick start
 
@@ -69,29 +121,24 @@ pip install -e harness -e logistics-supply-chain/exception-triage-agent
 # Full eval on the built-in deterministic mock model — no API key, no cost
 exception-triage-agent eval --backend mock
 
-# Real-model eval on a free tier — $0 actual spend (also: groq, cerebras, deepseek)
+# Real-model eval on a free tier — $0 actual spend
 export MISTRAL_API_KEY=...
 exception-triage-agent eval --backend mistral --repeats 3
-
-# Or Anthropic (requires ANTHROPIC_API_KEY; prints a cost estimate first)
-exception-triage-agent eval --backend anthropic --repeats 3
 ```
 
-Model access is pluggable: one OpenAI-compatible backend covers Mistral, Groq,
-Gemini, Cerebras (hosts GLM), and DeepSeek, so every use case can be verified on
-free tiers before anyone spends a dollar. Reports price measured token usage at
-list rates either way, so the cost numbers stay meaningful.
+One OpenAI-compatible backend covers **Mistral · Groq · Gemini · Cerebras (GLM) ·
+DeepSeek · Together · Fireworks**, plus a native `anthropic` backend — so every use
+case can be verified on free tiers before anyone spends a dollar, and adding a new
+model to the comparison is one flag.
 
-## What "verified" means here
+## Contributing
 
-1. **Runs from a clean clone with one command.**
-2. **Eval set with ≥20 scenarios** and programmatic ground truth.
-3. **Cost per run in dollars**, computed from actual token usage, not estimated.
-4. **Results from n≥3 repeated runs** with variance — single-run agent numbers are noise.
-5. **≥3 documented failure modes**, each with a reproducing input.
+New use cases are welcome if they clear the [verification bar](VERIFICATION.md) —
+see [CONTRIBUTING.md](CONTRIBUTING.md). Link-list additions aren't a fit; this isn't
+a link list.
 
-Full details and the reasoning behind each rule: [VERIFICATION.md](VERIFICATION.md).
+If this repo saved you an eval harness, a ⭐ helps others find it.
 
-## License
+---
 
-Apache-2.0
+<p align="center">Apache-2.0 · built by <a href="https://github.com/immu4989">@immu4989</a> · classic-ML companions: <a href="https://github.com/immu4989/Logistics_UseCases">Logistics_UseCases</a> · <a href="https://github.com/immu4989/retail-workforce-analytics">retail-workforce-analytics</a></p>
