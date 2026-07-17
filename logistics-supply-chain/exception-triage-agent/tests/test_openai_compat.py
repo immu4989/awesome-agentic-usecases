@@ -3,14 +3,15 @@ import json
 import pytest
 
 from aau_harness import CostTracker
-from exception_triage_agent.agent import run_agent
-from exception_triage_agent.openai_compat import (
+from exception_triage_agent.agent import SUBMIT_TOOL, SYSTEM_PROMPT
+from aau_harness.llm_providers import (
     PROVIDERS,
     OpenAICompatBackend,
     _to_openai_messages,
     _to_openai_tools,
 )
-from exception_triage_agent.tools import TOOL_SCHEMAS
+from aau_harness import run_tool_agent
+from exception_triage_agent.tools import TOOL_SCHEMAS, execute_tool
 from exception_triage_agent.world import generate_scenarios
 
 
@@ -66,9 +67,12 @@ def test_full_agent_loop_over_scripted_transport(monkeypatch):
     ]
     backend, calls = make_backend(monkeypatch, replies)
     cost = CostTracker(model="mistral-small-latest")
-    outcome = run_agent(backend, sc, cost)
+    run = run_tool_agent(
+        backend, SYSTEM_PROMPT, TOOL_SCHEMAS, sc.ticket_text,
+        lambda n, i: execute_tool(n, i, sc), SUBMIT_TOOL, cost,
+    )
 
-    assert outcome.submitted and outcome.queue == sc.gold_queue
+    assert run.submitted and run.submission["queue"] == sc.gold_queue
     assert cost.api_calls == 3
     assert cost.cost_usd == pytest.approx((3 * 500 * 0.10 + 3 * 40 * 0.30) / 1e6)
 

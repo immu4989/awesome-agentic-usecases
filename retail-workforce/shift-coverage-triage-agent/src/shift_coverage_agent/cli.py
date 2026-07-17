@@ -1,8 +1,8 @@
 """CLI: generate scenarios, run evals.
 
-  exception-triage-agent generate --n 30 --seed 7
-  exception-triage-agent eval --backend mock
-  exception-triage-agent eval --backend anthropic --model claude-opus-4-8 --repeats 3
+  shift-coverage-agent generate --n 30 --seed 11
+  shift-coverage-agent eval --backend mock
+  shift-coverage-agent eval --backend mistral --repeats 3
 """
 
 from __future__ import annotations
@@ -18,18 +18,16 @@ PKG_ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DEFAULT_SCENARIOS = os.path.join(PKG_ROOT, "evals", "scenarios.jsonl")
 DEFAULT_RESULTS = os.path.join(PKG_ROOT, "results")
 
-# rough per-scenario cost on claude-opus-4-8, from measured smoke runs; used only
-# for the pre-run estimate printed before a real-model eval
-EST_COST_PER_SCENARIO_USD = 0.15
+EST_COST_PER_SCENARIO_USD = 0.15  # rough opus estimate for the pre-run notice
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(prog="exception-triage-agent")
+    parser = argparse.ArgumentParser(prog="shift-coverage-agent")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     g = sub.add_parser("generate", help="generate the scenario file (with ground truth)")
     g.add_argument("--n", type=int, default=30)
-    g.add_argument("--seed", type=int, default=7)
+    g.add_argument("--seed", type=int, default=11)
     g.add_argument("--out", default=DEFAULT_SCENARIOS)
 
     e = sub.add_parser("eval", help="run the eval")
@@ -39,7 +37,7 @@ def main(argv=None) -> int:
                  "deepseek", "together", "fireworks"],
         default="mock",
         help="mock = deterministic $0 pipeline check; mistral/groq/gemini/cerebras have "
-             "free tiers; together/fireworks bill per token (~$0.55 per full eval on 70B)",
+             "free tiers; together/fireworks bill per token",
     )
     e.add_argument("--model", default=None, help="override the backend's default model")
     e.add_argument("--repeats", type=int, default=3)

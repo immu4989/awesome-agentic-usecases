@@ -63,17 +63,25 @@ Every failure has a reproducing scenario id in
 
 | Use case | Industry | Capability | The question it answers |
 |---|---|---|---|
-| [🎫 exception-triage-agent](logistics-supply-chain/exception-triage-agent/) | Logistics | `investigate` `decide` | Which resolution queue should each stuck-shipment ticket go to, which tickets can resolve themselves, and which need a human — decided by an agent that investigates with tools before committing? |
+| [🎫 exception-triage-agent](logistics-supply-chain/exception-triage-agent/) | Logistics | `investigate` `decide` | Which resolution queue should each stuck-shipment ticket go to, which can resolve themselves, and which need a human? |
+| [🧑‍🍳 shift-coverage-triage-agent](retail-workforce/shift-coverage-triage-agent/) | Retail & Workforce | `investigate` `decide` | When crew call out, what's the compliant fill — overtime, borrow, run short, or escalate — under labor-law caps the ticket never mentions? |
+| [🚨 alert-triage-agent](security-operations/alert-triage-agent/) | Security Ops | `investigate` `decide` | Which queue does each security alert belong in, which can safely auto-close, and which need incident response now? |
 
 Every use case is tagged by what the agent *does*: `predict` · `decide` · `plan` ·
 `act` · `watch` · `investigate`, plus architecture (`single-agent` / `multi-agent` /
 `human-in-loop`).
 
+Each use case is verified across multiple models on free API tiers. Two findings that
+only a per-use-case harness surfaces: **there is no best model** — gpt-oss-120b leads
+the security triage and trails on retail scheduling, where kimi-k2p6 leads — and **the
+compound-policy traps aren't always solvable**: the logistics exemplar has a perfect
+90/90 model, but the best model on retail scheduling tops out at 0.82.
+
 ## Industries
 
 | Shipping now | Next waves |
 |---|---|
-| 🚛 [Logistics & Supply Chain](logistics-supply-chain/) | 🛒 Retail & Workforce · 🛡️ Security Operations · 💳 Financial Services & Fraud |
+| 🚛 [Logistics & Supply Chain](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Operations](security-operations/) | 💳 Financial Services & Fraud · 🎧 Customer Support · 🏥 Healthcare |
 
 <details>
 <summary><b>Full 15-industry roadmap</b></summary>
@@ -82,9 +90,9 @@ Every use case is tagged by what the agent *does*: `predict` · `decide` · `pla
 | # | Industry | Status |
 |---|---|---|
 | 1 | 🚛 Logistics & Supply Chain | ✅ Shipping |
-| 2 | 🛒 Retail & Workforce | 🔜 Wave 2 |
-| 3 | 🛡️ Security Operations | 🔜 Wave 2 |
-| 4 | 💳 Financial Services & Fraud | 🔜 Wave 2 |
+| 2 | 🛒 Retail & Workforce | ✅ Shipping |
+| 3 | 🛡️ Security Operations | ✅ Shipping |
+| 4 | 💳 Financial Services & Fraud | 🔜 Wave 3 |
 | 5 | 🎧 Customer Support & Success | 📋 Roadmap |
 | 6 | 🏥 Healthcare & Life Sciences | 📋 Roadmap |
 | 7 | ⚖️ Legal & Compliance | 📋 Roadmap |

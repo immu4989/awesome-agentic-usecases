@@ -1,0 +1,3834 @@
+{
+  "backend": "mistral",
+  "model": "mistral-small-latest",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "disposition_accuracy": 0.8333,
+    "exact_match": 0.8111,
+    "queue_accuracy": 0.9667,
+    "submitted": 0.9889
+  },
+  "metric_ci95": {
+    "disposition_accuracy": [
+      0.7111,
+      0.9333
+    ],
+    "exact_match": [
+      0.6889,
+      0.9222
+    ],
+    "queue_accuracy": [
+      0.9111,
+      1.0
+    ],
+    "submitted": [
+      0.9667,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.000318,
+  "total_cost_usd": 0.0286,
+  "p50_latency_s": 5.697,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000343,
+      "latency_s": 4.689,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong47 reported a suspicious email with a link and confirmed clicking it. Telemetry shows 5 failed logins in 24h but no success after failures, no new geo login, no EDR detection, and no allowlisted source match. Runbook RB-PHISH-05 requires user-reported phishing with a clicked link to route to the phishing queue for analyst review. Since the entity is standard criticality and standard privilege, escalation to incident is not required per RB-ESC-01.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2853,
+          "output_tokens": 193,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000343
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000339,
+      "latency_s": 5.814,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "EDR detected W97M.Downloader spawning PowerShell on HST-4689. Host is standard criticality with standard privilege; no crown-jewel or admin exposure. Runbook RB-MAL-04 requires confirmed EDR detections to route to the malware queue. Telemetry shows no allowlisted source and MFA was passed, so this is not a benign scanner misread.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2872,
+          "output_tokens": 173,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000339
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000332,
+      "latency_s": 5.629,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-5827 is a crown-jewel asset per entity record. EDR telemetry shows Behavior:Ransom.FileCrypt with attempted shadow-copy deletion and high-entropy file renames; no allowlisted source match and MFA not passed. Runbook RB-ESC-01 mandates escalation to incident response for active threats on crown-jewel assets.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2822,
+          "output_tokens": 167,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000332
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000355,
+      "latency_s": 6.194,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert shows 412 failed logins for u.twong28 in 20 minutes followed by a successful login. Entity lookup confirms this is a crown_jewel asset with standard privilege. Telemetry confirms the failed login burst, a successful login, a new geographic login, and that the source is not allowlisted. The runbook RB-CRED-03 directs failed-login bursts followed by success to the credential-abuse queue. RB-ESC-01 requires escalation for active threats on crown_jewel assets; while this is a credential-abuse pattern, there is no confirmed malicious activity yet, so it routes to the analyst queue for verification.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2884,
+          "output_tokens": 223,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000355
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.00019,
+      "latency_s": 61.411,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": null,
+          "disposition": null
+        },
+        "n_turns": 0,
+        "tool_calls": [],
+        "refused": false,
+        "error": "RemoteDisconnected: Remote end closed connection without response",
+        "reasoning": "",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1749,
+          "output_tokens": 50,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00019
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000354,
+      "latency_s": 4.59,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-8042 is a standard asset and the repeated SSH probes are attributable to the authorized Nessus scanner pool (source_note: CHG-88213). Per runbook RB-FP-02, alerts from known-benign sources may be auto-closed as false positives. No analyst action required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3033,
+          "output_tokens": 170,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000354
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000251,
+      "latency_s": 4.248,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.lnovak67 reported a phishing email claiming to be IT asking to re-validate credentials, with an attachment opened. Entity lookup shows a standard criticality, standard privilege user in engineering. Telemetry indicates 3 failed logins in 24h, no MFA passed, and no known benign source match. Runbook RB-PHISH-05 states user-reported phishing with interaction (opened attachment) must route to the phishing queue for analyst review. Escalation criteria RB-ESC-01 not met as the user is standard privilege and asset is standard criticality.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1898,
+          "output_tokens": 203,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000251
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00033,
+      "latency_s": 5.529,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-9781 is a crown-jewel engineering host. EDR reported W97M.Downloader after opening PO_4471.docm; no allowlisted source matched. Per runbook RB-ESC-01, any active threat on a crown-jewel asset triggers escalation to incident response.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2834,
+          "output_tokens": 156,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00033
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000359,
+      "latency_s": 6.028,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-7080 is a standard-criticality host owned by IT-Ops with standard user privilege. The EDR detected Behavior:Ransom.FileCrypt with attempted shadow-copy deletion and high-entropy file renames. While this is active malicious activity, the asset is not crown-jewel and the user is not privileged, so per runbook RB-ESC-01 it routes to the malware analyst queue for containment and eradication.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2910,
+          "output_tokens": 226,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000359
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000338,
+      "latency_s": 5.942,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.kdiaz72 (standard asset, standard user) triggered a password-spray alert with 1 800 failures in 24 h, culminating in a successful login from an unfamiliar ASN and MFA passed. Known-benign source check returned negative. The runbook does not allow auto-closing for this pattern even on standard assets, so the alert is routed to the credential-abuse queue for analyst review and potential incident declaration.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2852,
+          "output_tokens": 175,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000338
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000337,
+      "latency_s": 5.918,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Geo-velocity alert for standard-privilege HR user u.lnovak90 shows two successful logins ~8,000 km apart within an hour, MFA passed, no failed logins, and no EDR hit. The source is not allowlisted, so the runbook does not authorize auto-close. Route to analyst for credential-abuse queue to verify whether this is account takeover or a false positive.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2863,
+          "output_tokens": 170,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000337
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000357,
+      "latency_s": 7.174,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-8292 is a standard asset and the repeated SSH probes are attributable to the authorized Nessus scanner pool (source_note: change CHG-88213). Per runbook RB-FP-02, alerts from known-benign sources may be auto-closed as false positives; the credential-abuse pattern here is noise from the scanner.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3033,
+          "output_tokens": 178,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000357
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000341,
+      "latency_s": 5.89,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong35 reported a suspicious email with a link, confirmed clicking. Entity record shows standard user, no admin privilege. Telemetry shows no MFA passed, 5 failed logins in 24h but no success after failures. Runbook RB-PHISH-05 mandates phishing queue for user-reported lures with user interaction. RB-ESC-01 does not require escalation as asset/identity are standard. Therefore routing to phishing analyst queue for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2854,
+          "output_tokens": 186,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000341
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000343,
+      "latency_s": 6.56,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-9132 is a crown-jewel host per entity record. EDR reported W97M.Downloader spawning PowerShell with no allowlisted-source match and no MFA confirmation. Runbook RB-ESC-01 requires escalation for active threats on crown-jewel assets, and RB-MAL-04 mandates malware-queue routing for confirmed EDR detections. Therefore routing to malware queue for analyst review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2880,
+          "output_tokens": 182,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000343
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000233,
+      "latency_s": 4.063,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-6887 is a standard asset with no admin privilege. EDR telemetry shows a Behavior:Ransom.FileCrypt detection including attempted shadow-copy deletion, which is a known malicious pattern. Although the asset is not crown-jewel, the confirmed malware activity meets the SOC\u2019s escalation criteria for analyst review to determine scope and containment steps.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1856,
+          "output_tokens": 158,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000233
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000341,
+      "latency_s": 5.696,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "u.mgarcia97 shows 583 failed logins in 24h with a successful login and a new geographic login source. The entity is a standard user on a standard asset in engineering, no crown-jewel or privileged identity. The source is not allowlisted as benign, and MFA passed. Per runbook RB-CRED-03, this pattern goes to the credential-abuse queue for analyst review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2885,
+          "output_tokens": 175,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000341
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000345,
+      "latency_s": 5.735,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Geo-velocity alert for standard user u.apatel53 shows two successful logins 8,000 km apart within an hour, MFA passed, no known-benign source match, and no EDR detection. Per runbook RB-ESC-01, this does not meet escalation criteria (no crown-jewel asset or privileged identity). However, RB-FP-02 does not apply because the source is not known-benign. Therefore, route to analyst queue for credential-abuse for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2882,
+          "output_tokens": 190,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000345
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000352,
+      "latency_s": 5.873,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-5406 is a standard-criticality host in finance. Telemetry shows 2,224 failed logins in 24h, but the source IP is the authorized Nessus scanner pool (CHG-88213). The runbook (RB-CRED-03) directs us to verify benign sources before treating failed-login bursts as attacks. No analyst action is required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2942,
+          "output_tokens": 194,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000352
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000233,
+      "latency_s": 4.097,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.jsmith50 reported a suspicious email with a clicked link, satisfying RB-PHISH-05 as an active threat. Telemetry shows no crown-jewel asset or privileged identity involved, so per RB-ESC-01 escalation is not required. Route to analyst queue for phishing investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1896,
+          "output_tokens": 144,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000233
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000337,
+      "latency_s": 5.724,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "EDR on HST-4395 (standard, non-privileged finance host) fired W97M.Downloader with PowerShell spawn. No crown-jewel contact or admin identity involved, so incident escalation not triggered per runbook RB-ESC-01. Telemetry shows no allowlisted source and no MFA on the successful login, but the active threat remains on a standard asset, so routing to malware queue for containment and root-cause analysis.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2813,
+          "output_tokens": 185,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000337
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000333,
+      "latency_s": 5.711,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-3398 is a crown-jewel asset per entity record. EDR telemetry shows a Behavior:Ransom.FileCrypt detection with attempted shadow-copy deletion and high-entropy file renames, confirming active ransomware activity. Runbook RB-ESC-01 mandates escalation to incident response for any active threat on a crown-jewel asset.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2822,
+          "output_tokens": 168,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000333
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000332,
+      "latency_s": 5.78,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong41 (standard user, standard asset) triggered a password-spray alert with 2,042 failures followed by a successful login from an unfamiliar ASN; MFA passed but no allowlisted source match. Runbook clause RB-FP-02 does not permit auto-close for standard users, so route to analyst for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2850,
+          "output_tokens": 157,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000332
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000243,
+      "latency_s": 4.123,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.apatel21 is a crown-jewel, admin-level identity in Finance. Telemetry shows a new-geo login from Frankfurt 40 min after a Dallas login, with MFA not passed and no allowlisted source match. Runbook RB-CRED-03 directs travel-violation patterns to credential-abuse; RB-FP-02 exempts crown-jewel targets from auto-close, so route_to_analyst is required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1914,
+          "output_tokens": 172,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000243
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000366,
+      "latency_s": 5.789,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "lookup_entity",
+          "search_runbook",
+          "query_events",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-8364 is a standard asset. Telemetry shows 1,896 failed SSH logins from the authorized Nessus scanner pool (CHG-88213) with no success after failures and MFA not applicable for scanner logins. Runbook RB-FP-02 permits auto-closing alerts attributable to known-benign sources; no analyst action required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3108,
+          "output_tokens": 184,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000366
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000242,
+      "latency_s": 4.067,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.kdiaz65 (privileged admin in finance) reported a suspicious email 'Invoice overdue \u2014 action required' and confirmed clicking the link. The runbook clause RB-PHISH-05 requires all user-reported phishing with user interaction to route to the phishing queue. Telemetry shows no anomalous logins or EDR detections for this user, but the active threat (clicked link) justifies analyst review rather than auto-close.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1899,
+          "output_tokens": 173,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000242
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000341,
+      "latency_s": 5.953,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-4576 is a standard asset with no admin privilege. The EDR detected W97M.Downloader after the host opened a macro-enabled document. Per runbook RB-ESC-01, escalation is reserved for crown-jewel or privileged identities; this host is neither, so the alert is routed to the malware queue for analyst review. Telemetry shows 3 failed logins but no successful follow-on, and no MFA bypass, indicating the malware execution is the primary concern.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2830,
+          "output_tokens": 192,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000341
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000337,
+      "latency_s": 5.876,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-3101 is a crown-jewel asset. The EDR detected Behavior:Ransom.FileCrypt with no allowlisted-source match and no MFA on the session. Per runbook RB-ESC-01, any active threat on a crown-jewel asset must escalate to incident response.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2902,
+          "output_tokens": 157,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000337
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000347,
+      "latency_s": 6.012,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "u.jsmith54 is an admin identity on a standard asset. The telemetry shows 1,621 failed logins in 24 h with a successful login after the burst and a new-geo login, all passing MFA. The runbook RB-CRED-03 directs credential-abuse patterns to the credential-abuse queue, and RB-ESC-01 requires escalation only for crown-jewel assets or privileged identities involved in active threats; here the identity is privileged but the asset is standard, so route_to_analyst is appropriate.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2869,
+          "output_tokens": 201,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000347
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000235,
+      "latency_s": 4.055,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.jsmith41 shows a new-geo login from Frankfurt 40 minutes after a prior login from Dallas; telemetry confirms no allowlisted source and MFA was not passed. Runbook RB-CRED-03 directs such travel-violation patterns to the credential-abuse queue for analyst review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1913,
+          "output_tokens": 145,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000235
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00037,
+      "latency_s": 5.901,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-6652 is a crown-jewel asset in engineering. The telemetry shows 492 failed logins in 24 h from the authorized Nessus scanner pool (CHG-88213), but the alert volume (2,100) still exceeds the runbook\u2019s auto-close threshold for known-benign scanners when the target is crown-jewel. Per RB-FP-02 and RB-CRED-03, this must be routed to an analyst for confirmation rather than auto-closed.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3027,
+          "output_tokens": 223,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00037
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000246,
+      "latency_s": 4.103,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong47 reported a suspicious email with a clicked link. Entity lookup shows a standard criticality, standard privilege engineering user. Telemetry shows 5 failed logins in 24h but no success after failures, no new geo login, no EDR detection, and no allowlisted source match. Runbook RB-PHISH-05 states user-reported phishing with a clicked link goes to the phishing queue for analyst review. No escalation criteria met per RB-ESC-01.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1900,
+          "output_tokens": 187,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000246
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000334,
+      "latency_s": 5.607,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "EDR on HST-4689 (standard, engineering) reported W97M.Downloader spawning PowerShell. Telemetry shows no benign-source allowlist match and one failed login without subsequent success. Runbook RB-ESC-01 requires escalation only for crown-jewel or privileged identities; this host is standard and the user is standard privilege, so route_to_analyst is appropriate for malware queue.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2813,
+          "output_tokens": 175,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000334
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000231,
+      "latency_s": 3.931,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-5827 is a crown_jewel asset. The EDR detected Behavior:Ransom.FileCrypt with a shadow-copy deletion attempt and high-entropy file renames. No successful logins were observed after the failures, and the source is not allowlisted. This warrants analyst review for potential ransomware activity.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1850,
+          "output_tokens": 152,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000231
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000338,
+      "latency_s": 5.507,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "u.twong28 is a crown-jewel user account. Telemetry shows 2,147 failed logins in 24 h with a successful login and a new-geo login, MFA did not pass. Per runbook RB-ESC-01 and RB-CRED-03 this active credential-abuse pattern against a crown-jewel asset meets escalation criteria.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2880,
+          "output_tokens": 165,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000338
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00034,
+      "latency_s": 6.037,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong55 is a standard-privilege identity on a standard asset. Telemetry shows a new geo-velocity login (8,000 km in <1 h) with MFA not passed and no match to a known-benign source. Runbook RB-FP-02 permits auto-close only for known-benign sources or crown-jewel/privileged targets; neither applies here, so route to analyst for deeper investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2867,
+          "output_tokens": 178,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00034
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000364,
+      "latency_s": 5.877,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-8042 is a standard asset and the repeated SSH probes are sourced from the authorized Nessus scanner pool (per CHG-88213). The telemetry shows 1,717 failed logins within 24 h with no successful follow-on login and the source is marked as a known-benign scanner. Runbook RB-FP-02 permits auto-closing such alerts unless the target is crown-jewel or privileged; neither condition applies here.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3033,
+          "output_tokens": 203,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000364
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000239,
+      "latency_s": 4.054,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User-reported phishing email with an opened attachment qualifies as an active threat per runbook RB-PHISH-05. The entity record shows u.lnovak67 is a standard user in engineering, not a crown jewel or admin, so escalation is not required. Telemetry confirms no successful logins after failures and no MFA bypass, but the opened attachment still constitutes a verified interaction requiring analyst review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1899,
+          "output_tokens": 164,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000239
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000336,
+      "latency_s": 5.623,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-9781 is a crown-jewel asset in the engineering department. EDR reported W97M.Downloader on the host after opening 'PO_4471.docm'. Per runbook RB-ESC-01, any active threat on a crown-jewel asset must escalate to incident response. The single failed login and lack of allowlisted source do not change the requirement to escalate.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2834,
+          "output_tokens": 176,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000336
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000341,
+      "latency_s": 5.677,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "EDR detected Behavior:Ransom.FileCrypt on HST-7080, including mass high-entropy file rename and shadow-copy deletion. Entity record shows HST-7080 is a standard asset with standard privilege, so per RB-ESC-01 it does not meet escalation criteria. Per RB-MAL-04 confirmed EDR detections route to the malware queue for analyst review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2876,
+          "output_tokens": 177,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000341
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000337,
+      "latency_s": 5.99,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "u.kdiaz72 is a standard user in engineering; the entity record shows no crown-jewel or privileged status. Telemetry confirms a password-spray pattern with 1,800 failures in 24 h, a successful login after failures, and a new ASN. No allowlisted source match and MFA passed. The runbook does not list auto-close criteria for this scenario; therefore route to analyst for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2852,
+          "output_tokens": 172,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000337
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000337,
+      "latency_s": 5.751,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.lnovak90 is a standard-privilege, standard-criticality identity in HR. Telemetry shows a new geo-login (8,000 km in <1 h) with MFA passed and no allowlisted source match. Runbook RB-FP-02 permits auto-close only for known-benign sources or high-value targets; neither applies here, so route to analyst for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2863,
+          "output_tokens": 170,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000337
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000376,
+      "latency_s": 7.84,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-8292 is a standard-asset engineering host. Telemetry shows 1 993 failed SSH logins in 24 h, but the source IP belongs to the authorized Nessus scanner pool (CHG-88213). Runbook RB-FP-02 permits auto-closing when activity is attributable to a known-benign source and the target is not crown-jewel or privileged. No analyst action required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3118,
+          "output_tokens": 215,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000376
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000234,
+      "latency_s": 3.903,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong35 reported a suspicious email with a clicked link, qualifying as an active phishing threat per RB-PHISH-05. The entity record shows a standard user on a standard asset, so escalation is not required per RB-ESC-01. Route to analyst queue for containment and investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1900,
+          "output_tokens": 147,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000234
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00034,
+      "latency_s": 5.528,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-9132 is a crown-jewel host running an EDR-detected W97M.Downloader macro that spawned PowerShell. Per runbook RB-ESC-01, any active threat on a crown-jewel asset triggers escalation to incident response. RB-MAL-04 confirms confirmed EDR detections route to malware queue but escalation overrides queue assignment.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2880,
+          "output_tokens": 173,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00034
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000237,
+      "latency_s": 4.045,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-6887 is a standard asset with no admin privilege. The EDR detected Behavior:Ransom.FileCrypt including a shadow-copy deletion attempt, which is a known malicious pattern. Although the asset is not crown-jewel, the active ransomware behavior meets the SOC\u2019s definition of an active threat and qualifies for analyst review under RB-ESC-01. No auto-close clause applies.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1856,
+          "output_tokens": 172,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000237
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000352,
+      "latency_s": 5.919,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert shows 412 failed logins for u.mgarcia97 in 20 minutes followed by a successful login. Entity lookup confirms a standard criticality and standard privilege user in engineering. Telemetry reveals 583 failed logins in 24h with a successful login after failures, a new geographic login, and MFA passed. The source is not allowlisted as benign. Runbook RB-CRED-03 directs credential-abuse patterns to the credential-abuse queue for investigation. Since the user is standard and not crown-jewel or privileged, escalation to incident is not required per RB-ESC-01.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2874,
+          "output_tokens": 216,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000352
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000342,
+      "latency_s": 5.692,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Geo-velocity alert for standard user u.apatel53 shows two successful logins ~8,000 km apart within an hour, MFA passed, no EDR hit, and no allowlisted source match. Per runbook RB-ESC-01, standard identities route to analyst queue rather than escalate; per RB-FP-02 there is no known-benign source to auto-close. Therefore routing to credential-abuse queue for analyst review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2882,
+          "output_tokens": 178,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000342
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00036,
+      "latency_s": 5.699,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-5406 is a standard asset and the 2,100 failed logins originated from the authorized Nessus scanner pool (CHG-88213). The telemetry confirms the source is a known-benign scanner and the target is not a crown-jewel asset, satisfying runbook clause RB-FP-02 for auto-close as a false positive.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3031,
+          "output_tokens": 188,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00036
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00024,
+      "latency_s": 4.135,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.jsmith50 reported a suspicious email with a clicked link. Entity lookup shows a standard user on a standard asset. Telemetry shows no successful logins after failures, no MFA, and no geo anomalies. Runbook RB-PHISH-05 directs user-reported phishing with a clicked link to the phishing queue for analyst review. RB-ESC-01 does not require escalation as the asset and user are standard.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1894,
+          "output_tokens": 169,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00024
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000334,
+      "latency_s": 5.642,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-4395 is a standard asset with no admin privilege. EDR reported W97M.Downloader spawning PowerShell; no allowlist match and MFA was not used. This is an active threat on a standard host, so it meets the escalate-to-incident clause only if privilege or crown-jewel criteria were met; they are not. Therefore route_to_analyst in the malware queue for deeper investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2813,
+          "output_tokens": 177,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000334
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000237,
+      "latency_s": 4.081,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-3398 is a crown_jewel asset. The EDR telemetry shows a Behavior:Ransom.FileCrypt detection with attempted shadow-copy deletion and high-entropy file renames, which are strong indicators of ransomware activity. Although only two failed logins were seen in the last 24h and MFA passed, the malware pattern is not covered by any known-benign allowlist and warrants analyst review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1850,
+          "output_tokens": 174,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000237
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000335,
+      "latency_s": 5.622,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong41 is a standard-privilege identity on a standard-criticality asset. A password-spray pattern produced 2,042 failures followed by a successful login from an unfamiliar ASN; MFA passed and no allowlisted source match. Runbook clause RB-FP-02 does not permit auto-close for this scenario, so routing to credential-abuse queue for analyst review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2850,
+          "output_tokens": 168,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000335
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000246,
+      "latency_s": 4.139,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.apatel21 is a crown-jewel/admin in Finance. Telemetry shows 5 failed logins in 24h, no MFA on the final login, and a new-geo login from Frankfurt 40 min after a Dallas login\u2014violating travel feasibility. No allowlisted source match. Runbook RB-CRED-03 directs such patterns to credential-abuse; RB-FP-02 exempts crown-jewel targets from auto-close. Therefore routing to analyst for investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1914,
+          "output_tokens": 183,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000246
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000363,
+      "latency_s": 5.887,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-8364 is a standard asset and the repeated SSH probes originate from the authorized Nessus scanner pool (CHG-88213). Telemetry shows 1 896 failed logins in 24 h with no successful follow-on and the source is marked known-benign. Runbook RB-FP-02 permits auto-closing alerts from known-benign sources unless the target is crown-jewel or privileged; neither condition applies here.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3035,
+          "output_tokens": 200,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000363
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000333,
+      "latency_s": 5.551,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.kdiaz65 (admin, standard asset) self-reported a phishing lure with a clicked link. Runbook RB-PHISH-05 requires all user-reported phishing with interaction to route to the phishing queue. Telemetry shows no additional malicious activity, but the clicked link meets the active-threat criterion for escalation criteria RB-ESC-01.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2853,
+          "output_tokens": 160,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000333
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00034,
+      "latency_s": 5.697,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-4576 is a standard asset with standard privilege. EDR reported W97M.Downloader on the host after opening PO_4471.docm. Runbook RB-MAL-04 requires confirmed EDR detections to route to the malware queue; auto-close is prohibited for malware detections. No allowlisted source match was found, so this is not a false positive.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2892,
+          "output_tokens": 171,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00034
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000333,
+      "latency_s": 6.568,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-3101 is a crown-jewel asset. EDR reported Behavior:Ransom.FileCrypt with no allowlisted-source match and MFA not passed, satisfying RB-ESC-01 for escalation to incident response.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2902,
+          "output_tokens": 142,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000333
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000348,
+      "latency_s": 5.796,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "u.jsmith54 is an admin identity in the finance department. The telemetry shows 1,621 failed logins in 24h with a successful login after the burst, a new geographic login, and MFA passed. The runbook RB-CRED-03 directs credential-abuse patterns to the credential-abuse queue, and RB-ESC-01 escalates only crown-jewel assets or privileged identities when there is active malicious activity. Since this is an admin identity with a credential-abuse pattern, it is routed to the credential-abuse queue for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2868,
+          "output_tokens": 205,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000348
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000236,
+      "latency_s": 4.085,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.jsmith41 (standard privilege, standard asset) showed a new-geo login from Frankfurt 40 min after a prior login from Dallas, violating travel feasibility. No allowlisted benign source match and MFA did not pass. This pattern matches credential-abuse rule RB-CRED-03; route to analyst for verification.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1913,
+          "output_tokens": 150,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000236
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000363,
+      "latency_s": 5.811,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-6652 is a crown-jewel asset per RB-FP-02, so the known-benign Nessus scanner pattern (CHG-88213) cannot be auto-closed. Telemetry shows 492 failed logins in 24h with no success afterward and MFA never passed; source is the authorized scanner pool. Route to analyst for confirmation per RB-CRED-03.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3027,
+          "output_tokens": 201,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000363
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000246,
+      "latency_s": 4.546,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong47 reported a suspicious email with a clicked link. Entity lookup shows a standard criticality, standard privilege engineering user. Telemetry shows 5 failed logins in 24h but no success after failures, no new geo login, no EDR detection, and no allowlisted source match. Runbook RB-PHISH-05 states user-reported phishing with a clicked link goes to the phishing queue for analyst review. No escalation criteria met per RB-ESC-01.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1900,
+          "output_tokens": 187,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000246
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000338,
+      "latency_s": 5.765,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "EDR on HST-4689 (standard, non-privileged engineering host) reported W97M.Downloader spawning PowerShell. No crown-jewel exposure or admin privilege involved, so per runbook RB-ESC-01 this does not meet escalation criteria. Telemetry shows one failed login with no subsequent success and no MFA bypass, and the EDR alert is not on a known-benign source. Routing to malware queue for analyst review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2813,
+          "output_tokens": 188,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000338
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000334,
+      "latency_s": 5.584,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-5827 is a crown-jewel asset per entity record. EDR telemetry shows a Behavior:Ransom.FileCrypt detection with attempted shadow-copy deletion and high-entropy file renames. No allowlisted source match and MFA did not pass. Per runbook RB-ESC-01, any active threat on a crown-jewel asset must escalate to incident response.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2822,
+          "output_tokens": 172,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000334
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000343,
+      "latency_s": 5.587,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "u.twong28 is a crown-jewel, standard-privilege user. Telemetry shows 2,147 failed logins in 24h with a successful login and a new-geo login, MFA not passed, and no allowlisted source match. Per RB-ESC-01 and RB-CRED-03, this active credential-abuse pattern on a crown-jewel asset triggers escalation to incident response.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2884,
+          "output_tokens": 181,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000343
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000331,
+      "latency_s": 5.706,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "u.twong55 is a standard identity with no admin privilege. Telemetry shows a new geo-login with no MFA pass and 4 failed logins in 24 h, but no EDR hit or known-benign source. This matches credential-abuse pattern; escalation requires privileged/crown-jewel context per runbook RB-ESC-01, so routing to analyst queue for verification.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2805,
+          "output_tokens": 168,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000331
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000378,
+      "latency_s": 5.803,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-8042 telemetry shows 1,717 failed SSH logins in 24 h sourced from the authorized Nessus scanner pool (CHG-88213). The runbook clause RB-FP-02 permits auto-closing alerts from known-benign sources unless the target is crown-jewel or privileged; HST-8042 is standard criticality with standard privilege, so this alert is safe to auto-close as a false positive.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3118,
+          "output_tokens": 222,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000378
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000249,
+      "latency_s": 4.404,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.lnovak67 reported a phish claiming to be IT asking for credential re-validation, with an attachment opened. Entity lookup shows a standard-criticality, standard-privilege engineering user. Telemetry shows 3 failed logins in 24h but no success after failures, no MFA passed, and no EDR detection. Runbook RB-PHISH-05 directs user-reported phishing with user interaction (opened attachment) to the phishing queue for analyst review. No escalation criteria (RB-ESC-01) are met.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1899,
+          "output_tokens": 198,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000249
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000334,
+      "latency_s": 5.543,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-9781 is a crown-jewel asset in the engineering department. The EDR detected W97M.Downloader on the host after it opened 'PO_4471.docm'. Per runbook RB-ESC-01, any active threat on a crown-jewel asset must be escalated to incident response. Therefore, this alert is escalated to incident.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2834,
+          "output_tokens": 170,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000334
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000332,
+      "latency_s": 5.555,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-7080 is a standard asset with no admin privilege. The EDR detected Behavior:Ransom.FileCrypt with shadow-copy deletion, which is an active threat. Per runbook RB-ESC-01, this does not meet escalation criteria (no crown-jewel or admin involved), so it is routed to the malware analyst queue for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2818,
+          "output_tokens": 166,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000332
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000338,
+      "latency_s": 5.665,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.kdiaz72 is a standard-privilege engineering account. Telemetry shows 1 800 failed logins in 24 h followed by a successful login from an unfamiliar ASN; MFA passed but no allowlist match for the source. Runbook clause RB-FP-02 does not permit auto-close because the target is not crown-jewel and the identity is standard, so route to analyst for password-spray investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2852,
+          "output_tokens": 177,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000338
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00034,
+      "latency_s": 5.709,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Geo-velocity alert for standard user u.lnovak90 shows two successful logins 8,000 km apart within an hour, MFA passed, no failed logins, and no EDR hit. The source is not allowlisted, so this is not a known-benign misread. Per runbook RB-ESC-01, standard identities route to analyst queue rather than escalation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2891,
+          "output_tokens": 169,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00034
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000355,
+      "latency_s": 5.595,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-8292 is a standard asset and the repeated SSH probes originate from the authorized Nessus scanner pool (source_note: change CHG-88213). Per runbook RB-FP-02, alerts attributable to a known-benign source may be auto-closed as false positives. No analyst action required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3033,
+          "output_tokens": 172,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000355
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000242,
+      "latency_s": 4.128,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong35 reported a suspicious email with a clicked link. Telemetry shows 5 failed logins in 24h but no success or MFA pass, and no known-benign source match. Runbook RB-PHISH-05 requires all user-reported phishing with clicks to route to the phishing queue; RB-ESC-01 does not escalate because the asset is standard and the user is standard privilege.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1900,
+          "output_tokens": 172,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000242
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000345,
+      "latency_s": 5.753,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-9132 is a crown-jewel host per entity record. EDR reported W97M.Downloader spawning PowerShell with no allowlisted-source match and no MFA confirmation. Runbook RB-ESC-01 requires escalation for active threats on crown-jewel assets, but RB-MAL-04 directs confirmed EDR detections to the malware queue for analyst triage rather than immediate incident declaration. Therefore routing to malware queue for deeper investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2880,
+          "output_tokens": 189,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000345
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000361,
+      "latency_s": 6.083,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-6887 is a standard-criticality host owned by IT-Ops with standard user privilege. The EDR detected Behavior:Ransom.FileCrypt (mass file-rename with high entropy and attempted shadow-copy deletion). While this is a serious malware-class detection, the asset is not crown-jewel and the user is not privileged, so per runbook RB-ESC-01 it routes to the malware queue for analyst review rather than immediate escalation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2910,
+          "output_tokens": 232,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000361
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000353,
+      "latency_s": 5.919,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Alert shows 412 failed logins for u.mgarcia97 in 20 minutes followed by a successful login. Entity lookup confirms a standard criticality, standard privilege engineering user. Telemetry indicates 583 failed logins in 24h with a successful login after failures, a new geographic login, no allowlisted source match, and MFA passed. Runbook RB-CRED-03 specifies that failed-login bursts followed by a success go to the credential-abuse queue. Since the entity is standard criticality and standard privilege, escalation criteria RB-ESC-01 is not met, so route to analyst queue.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2875,
+          "output_tokens": 217,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000353
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000345,
+      "latency_s": 5.697,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Geo-velocity alert for standard user u.apatel53 shows two successful logins 8,000 km apart within an hour, MFA passed, no known-benign source match, and no EDR detection. Per runbook RB-ESC-01, this does not meet escalation criteria (no crown-jewel asset or privileged identity). However, RB-FP-02 does not apply because the source is not known-benign. Therefore, route to analyst queue for credential-abuse for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2882,
+          "output_tokens": 190,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000345
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000365,
+      "latency_s": 5.76,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-5406 is a standard-criticality host in finance. The 2,224 failed logins align with the authorized Nessus scanner pool (CHG-88213) and are flagged as a known-benign source in telemetry. Runbook RB-FP-02 permits auto-closing when the source is known-benign and the target is not crown-jewel or privileged.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3039,
+          "output_tokens": 204,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000365
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000244,
+      "latency_s": 4.223,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.jsmith50 reported a suspicious email with a clicked link. Entity lookup shows a standard user in IT-Ops with no admin privilege. Telemetry shows no successful logins after failures, no MFA, and no geo anomalies. Runbook RB-PHISH-05 mandates routing user-reported phishing to the phishing queue, and RB-ESC-01 requires escalation only for crown-jewel or privileged identities, which this is not. Therefore, route to analyst queue for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1894,
+          "output_tokens": 183,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000244
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000332,
+      "latency_s": 7.86,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "EDR on HST-4395 (standard, finance) fired W97M.Downloader with macro-enabled doc spawning PowerShell. No crown-jewel or admin privilege involved, so per runbook RB-ESC-01 this is not an incident. Telemetry shows no allowlisted source and no MFA on the successful execution, so it requires analyst review for scope and response.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2812,
+          "output_tokens": 169,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000332
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000356,
+      "latency_s": 6.197,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-3398 is a crown-jewel asset per entity record. EDR telemetry shows a Behavior:Ransom.FileCrypt detection with attempted shadow-copy deletion, indicating active ransomware activity. The runbook (RB-ESC-01) mandates escalation to incident response for any active threat on crown-jewel assets. No benign allowlist match was found in telemetry.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2910,
+          "output_tokens": 218,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000356
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000332,
+      "latency_s": 5.606,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong41 (standard user, standard asset) triggered a password-spray alert with 2,042 failures followed by a successful login from an unfamiliar ASN; MFA passed but no allowlisted source match. Runbook clause RB-FP-02 does not permit auto-close for standard users, so route to analyst for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2850,
+          "output_tokens": 157,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000332
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000239,
+      "latency_s": 4.538,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.apatel21 is a crown-jewel/admin in Finance. Telemetry shows a new-geo login (Frankfurt) 40 min after a prior login (Dallas) with no allowlist match and MFA not passed. Runbook RB-FP-02 exempts crown-jewel/privileged targets from auto-close, so this must route_to_analyst for confirmation rather than auto_close.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1894,
+          "output_tokens": 167,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000239
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000369,
+      "latency_s": 5.718,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "lookup_entity",
+          "search_runbook",
+          "query_events",
+          "query_events",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-8364 is a standard asset and the repeated SSH probes originate from the authorized Nessus scanner pool (CHG-88213), satisfying runbook clause RB-FP-02 for auto-closing known-benign sources. No analyst action required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3152,
+          "output_tokens": 180,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000369
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00025,
+      "latency_s": 4.819,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.kdiaz65 (privileged admin in finance) reported a suspicious email 'Invoice overdue \u2014 action required' and confirmed clicking the link. The entity record shows no known-benign source match and telemetry confirms no allowlisted scanner activity. Runbook RB-PHISH-05 requires all user-reported phishing with user interaction to route to the phishing queue for analyst review. Although the user is privileged, escalation to incident (RB-ESC-01) is reserved for confirmed malicious activity; this is an unconfirmed report requiring triage.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1900,
+          "output_tokens": 199,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00025
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000335,
+      "latency_s": 7.277,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-4576 is a standard asset with no admin privilege. The EDR detected W97M.Downloader triggered by opening 'PO_4471.docm', which matches the escalation criteria for an active threat. Since the asset is not crown_jewel and the user is standard privilege, this does not meet escalation criteria. The activity will be routed to the malware queue for analyst review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2830,
+          "output_tokens": 173,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000335
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000337,
+      "latency_s": 5.426,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-3101 is a crown-jewel HR host. EDR detected Behavior:Ransom.FileCrypt with no allowlisted-source match and MFA not passed. Per runbook RB-ESC-01, any active threat on a crown-jewel asset triggers escalation to incident response.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2902,
+          "output_tokens": 155,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000337
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000348,
+      "latency_s": 5.821,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "u.jsmith54 is an admin identity in the finance department. The telemetry shows 1,621 failed logins in 24h with a successful login after the burst, a new geographic login, and MFA passed. The runbook RB-CRED-03 directs credential-abuse patterns to the credential-abuse queue, and RB-ESC-01 escalates only crown-jewel assets or privileged identities when there is active malicious activity. Since this is an admin identity with a credential-abuse pattern, it is routed to the credential-abuse queue for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 2868,
+          "output_tokens": 205,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000348
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000241,
+      "latency_s": 4.18,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.jsmith41 is a standard-privilege, standard-criticality identity in Finance. Telemetry shows a new geographic login from Frankfurt 40 minutes after a prior login from Dallas, with no MFA confirmation and no allowlisted source match. This is a geo-location anomaly that does not meet auto-close criteria per runbook RB-FP-02 (no benign-source exception) and requires analyst review for potential credential abuse.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1891,
+          "output_tokens": 172,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000241
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000382,
+      "latency_s": 5.974,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_entity",
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-6652 is a crown-jewel asset per entity lookup. The telemetry shows 2,100 failed logins in the alert, but the last 24 h record only 492 failures and explicitly tags the source IP as the authorized Nessus scanner pool (CHG-88213). The runbook clause RB-FP-02 states that known-benign sources may be auto-closed unless the target is a crown jewel; therefore, this alert must be routed to an analyst for confirmation rather than auto-closed.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3095,
+          "output_tokens": 242,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000382
+        }
+      }
+    }
+  ]
+}

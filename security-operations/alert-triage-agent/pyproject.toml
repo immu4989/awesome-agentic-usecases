@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alert-triage-agent"
+version = "0.1.0"
+description = "Tool-using SOC agent that triages security alerts: pulls the asset/identity record and 24h telemetry, checks the response runbook (escalation criteria, auto-close exception clauses), and commits a queue + disposition decision. Ships with a verified eval harness."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Imran Ahamed" }]
+keywords = ["security", "soc", "alert-triage", "agents", "llm", "tool-use", "evaluation"]
+dependencies = ["aau-harness"]
+
+[project.optional-dependencies]
+anthropic = ["anthropic>=0.90"]
+dev = ["pytest>=7.0", "ruff>=0.4"]
+
+[project.scripts]
+alert-triage-agent = "alert_triage_agent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,4 +1,4 @@
-"""Scoring and eval orchestration: wires the triage domain into the shared harness."""
+"""Scoring and eval orchestration: wires the SOC domain into the shared harness."""
 
 from __future__ import annotations
 
@@ -25,11 +25,13 @@ from .world import Scenario
 def score_run(scenario: Scenario, run: AgentRun) -> dict[str, float]:
     submission = run.submission or {}
     queue_ok = float(run.submitted and submission.get("queue") == scenario.gold_queue)
-    action_ok = float(run.submitted and submission.get("action") == scenario.gold_action)
+    disp_ok = float(
+        run.submitted and submission.get("disposition") == scenario.gold_disposition
+    )
     return {
         "queue_accuracy": queue_ok,
-        "action_accuracy": action_ok,
-        "exact_match": queue_ok * action_ok,
+        "disposition_accuracy": disp_ok,
+        "exact_match": queue_ok * disp_ok,
         "submitted": float(run.submitted),
     }
 
@@ -52,12 +54,12 @@ def evaluate(
                 backend,
                 SYSTEM_PROMPT,
                 TOOL_SCHEMAS,
-                scenario.ticket_text,
+                scenario.alert_text,
                 lambda name, tool_input: execute_tool(name, tool_input, scenario),
                 SUBMIT_TOOL,
                 cost,
             )
-        except Exception as e:  # provider outage / hard API error: score it, don't lose the eval
+        except Exception as e:
             run = AgentRun(False, None, 0, [], error=f"{type(e).__name__}: {e}")
         latency = time.monotonic() - t0
         submission = run.submission or {}
@@ -69,8 +71,9 @@ def evaluate(
             latency_s=latency,
             n_api_calls=cost.api_calls,
             detail={
-                "gold": {"queue": scenario.gold_queue, "action": scenario.gold_action},
-                "predicted": {"queue": submission.get("queue"), "action": submission.get("action")},
+                "gold": {"queue": scenario.gold_queue, "disposition": scenario.gold_disposition},
+                "predicted": {"queue": submission.get("queue"),
+                              "disposition": submission.get("disposition")},
                 "n_turns": run.n_turns,
                 "tool_calls": [c["name"] for c in run.tool_calls],
                 "refused": run.refused,

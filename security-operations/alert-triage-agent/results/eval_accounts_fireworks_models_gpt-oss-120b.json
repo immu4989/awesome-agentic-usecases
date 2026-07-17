@@ -1,0 +1,3827 @@
+{
+  "backend": "fireworks",
+  "model": "accounts/fireworks/models/gpt-oss-120b",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "disposition_accuracy": 1.0,
+    "exact_match": 0.9667,
+    "queue_accuracy": 0.9667,
+    "submitted": 1.0
+  },
+  "metric_ci95": {
+    "disposition_accuracy": [
+      1.0,
+      1.0
+    ],
+    "exact_match": [
+      0.9,
+      1.0
+    ],
+    "queue_accuracy": [
+      0.9,
+      1.0
+    ],
+    "submitted": [
+      1.0,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.000999,
+  "total_cost_usd": 0.0899,
+  "p50_latency_s": 8.031,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000972,
+      "latency_s": 9.789,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong47 (standard, non\u2011admin) reported a phishing email and clicked the malicious link. Telemetry shows no allow\u2011list source and no EDR detection, confirming a genuine user interaction with a suspicious payload. Runbook RB-PHISH-05 defines such reports as active threats, and RB-ESC-01 states that active threats on standard identities should be routed to the analyst queue (only crown\u2011jewel or admin assets trigger incident escalation).",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4049,
+          "output_tokens": 607,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000972
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000843,
+      "latency_s": 7.327,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR detection on host HST-4689 flagged a macro-enabled document spawning PowerShell (W97M.Downloader). Telemetry shows no known benign source and the host is a standard\u2011criticality, standard\u2011privilege engineering asset. Runbook RB-MAL-04 states that confirmed EDR detections involving malicious macros must be sent to the malware queue and must not be auto\u2011closed. Therefore the alert is routed to the malware analyst queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3185,
+          "output_tokens": 608,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000843
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001434,
+      "latency_s": 11.989,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows an EDR detection of ransomware behavior (Behavior:Ransom.FileCrypt) on HST-5827, a crown\u2011jewel asset with no benign source. Runbook RB-MAL-04 mandates routing confirmed ransomware detections to the malware queue, and RB-ESC-01 requires escalation to incident response when an active threat contacts a crown\u2011jewel asset. Therefore the alert is placed in the malware queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5147,
+          "output_tokens": 1103,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001434
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001096,
+      "latency_s": 8.051,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows a burst of 412 failed logins within 20 minutes followed by a successful login from a new geographic location, with no known benign source and MFA not passed. RB-CRED-03 classifies such failed\u2011login bursts as credential\u2011abuse and directs them to the credential\u2011abuse queue after confirming the source is not allowlisted. Because the identity u.twong28 is marked as a crown\u2011jewel asset, RB-ESC-01 requires escalation to incident response for any confirmed active threat, including credential abuse. Therefore the alert is placed in the credential\u2011abuse queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3193,
+          "output_tokens": 1028,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001096
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000989,
+      "latency_s": 7.362,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows a new geo login 8,000 km apart within an hour for user u.twong55, with no known benign source and MFA not passed. Runbook RB-CRED-03 states that travel\u2011feasibility violations belong in the credential\u2011abuse queue after confirming the source isn\u2019t an allow\u2011listed scanner. Therefore the alert is routed to the credential\u2011abuse analyst queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3125,
+          "output_tokens": 867,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000989
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001072,
+      "latency_s": 9.55,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows the 1717 failed SSH login attempts originated from an authorized Nessus scanner pool (known-benign source). No successful login followed the failures, the asset HST-8042 is a standard\u2011criticality, non\u2011privileged finance host. Runbook RB-FP-02 permits auto\u2011closing alerts from known\u2011benign sources unless the target is a crown\u2011jewel or privileged identity, which does not apply here. Therefore the alert is a false positive and can be auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3253,
+          "output_tokens": 973,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001072
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000933,
+      "latency_s": 7.139,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.lnovak67 (standard, non-privileged) reported a phishing email and opened the attachment, indicating user interaction with a potential malicious payload. Runbook RB-ESC-01 states that phishing with user interaction is an active threat but only escalates to incident response when a crown\u2011jewel asset or privileged identity is involved. Since the identity is standard, the alert should be routed to the analyst queue for further investigation. No known\u2011benign source was identified, so auto\u2011close is not applicable.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3227,
+          "output_tokens": 749,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000933
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001114,
+      "latency_s": 7.84,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR telemetry for HST-9781 shows a confirmed W97M.Downloader detection, indicating a malicious macro that wrote an executable to startup after opening PO_4471.docm. HST-9781 is classified as a crown_jewel asset (criticality=crown_jewel). Runbook RB-ESC-01 mandates escalation to incident response for any active threat on a crown\u2011jewel asset, and RB-MAL-04 requires that confirmed malware detections be placed in the malware queue and never auto\u2011closed. Therefore the alert is assigned to the malware queue with disposition 'escalate_to_incident'.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3209,
+          "output_tokens": 1055,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001114
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000857,
+      "latency_s": 6.702,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows an EDR detection of Behavior:Ransom.FileCrypt on host HST-7080, with no known benign source. The runbook (RB-MAL-04) mandates that confirmed ransomware EDR detections be sent to the malware queue and must not be auto\u2011closed. Therefore the alert is placed in the malware queue and routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3112,
+          "output_tokens": 651,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000857
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001228,
+      "latency_s": 11.763,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The entity u.kdiaz72 is a standard, non\u2011privileged user in engineering. Telemetry shows a massive 1800 failed logins in the last 24\u202fh, a successful login after those failures, and a new geographic source (unfamiliar ASN). No known\u2011benign source matches and MFA was passed, indicating a possible credential\u2011spray success. Runbook RB\u2011FP\u201102 only permits auto\u2011close for known\u2011benign sources, which does not apply. RB\u2011ESC\u201101 requires escalation only for crown\u2011jewel assets or privileged identities, which also does not apply. Therefore the alert should be placed in the credential\u2011abuse queue and routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4301,
+          "output_tokens": 971,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001228
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001231,
+      "latency_s": 9.748,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.lnovak90 is a standard, non-privileged HR employee. Telemetry shows a new geo login (8,000 km within an hour) with MFA passed but no failed login attempts and no known benign source. Runbook RB-CRED-03 mandates that travel\u2011feasibility violations be sent to the credential\u2011abuse queue after confirming the source is not a known\u2011benign scanner. Therefore the alert should be routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4324,
+          "output_tokens": 970,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001231
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000929,
+      "latency_s": 8.181,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows 1993 failed SSH login attempts from IP 10.20.8.14, but the source is identified as an authorized Nessus scanner (known-benign source). No successful login occurred, the host is a standard\u2011criticality, non\u2011privileged engineering asset. Runbook RB-FP-02 permits auto\u2011closing alerts from known\u2011benign sources unless the target is a crown\u2011jewel or privileged identity, which does not apply here. Therefore the alert is a false positive and can be auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3253,
+          "output_tokens": 735,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000929
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000924,
+      "latency_s": 7.561,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong35 (standard, non\u2011admin identity) reported a phishing email and confirmed clicking the malicious link. Query_events shows no benign source match and no EDR detection, confirming user interaction with a phishing payload. Runbook RB-PHISH-05 mandates that user\u2011reported phishing with link clicks be placed in the phishing queue, and RB-ESC-01 states escalation to incident only for crown\u2011jewel assets or privileged identities. Therefore the alert should be routed to the analyst queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3183,
+          "output_tokens": 744,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000924
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000942,
+      "latency_s": 7.547,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR detection on host HST-9132 is a confirmed malicious macro (W97M.Downloader) spawning PowerShell. Asset HST-9132 is classified as a crown\u2011jewel asset (criticality=crown_jewel) with no benign source match. According to RB-ESC-01, any active threat (including malware) on a crown\u2011jewel asset must be escalated to incident response. RB-MAL-04 also mandates that confirmed EDR detections go to the malware queue and must not be auto\u2011closed. Therefore the alert is routed to the malware queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3197,
+          "output_tokens": 771,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000942
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000921,
+      "latency_s": 6.914,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows an EDR detection of ransomware behavior (Behavior:Ransom.FileCrypt) on host HST-6887 with no known benign source. The runbook (RB-MAL-04) mandates that confirmed ransomware detections be sent to the malware queue and must not be auto\u2011closed. Since the asset is standard\u2011criticality and the identity is not privileged, the appropriate next step is to route the alert to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3198,
+          "output_tokens": 736,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000921
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000988,
+      "latency_s": 8.402,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.mgarcia97 is a standard, non-privileged identity (engineering). Telemetry shows a burst of 412 failed login attempts within 20 minutes followed by a successful login, a new geographic location, and no known benign source. According to runbook RB-CRED-03, such failed\u2011login bursts with a subsequent success constitute a credential\u2011abuse pattern and must be sent to the credential\u2011abuse queue for analyst review, provided the source is not an allowlisted scanner (which it is not). Runbook RB-ESC-01 does not require escalation because the identity is not a crown\u2011jewel asset nor privileged.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3201,
+          "output_tokens": 846,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000988
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000943,
+      "latency_s": 9.607,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert concerns a geo-velocity anomaly for user u.apatel53, a standard\u2011privilege, non\u2011crown\u2011jewel identity. Telemetry confirms a new geographic login (8,000\u202fkm within an hour) with no known\u2011benign source match, and MFA was passed, but there are recent failed login attempts. The runbook does not provide an auto\u2011close exception for this scenario, and the user is not privileged, so the alert should be routed to the credential\u2011abuse analyst queue for further investigation rather than auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3186,
+          "output_tokens": 775,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000943
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00099,
+      "latency_s": 8.554,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The host HST-5406 is a standard\u2011criticality, non\u2011privileged finance workstation. Query of the last 24\u202fh shows 2,224 failed login attempts from the same internal IP, matching the alert, with no subsequent successful login and no geo\u2011anomaly. The source IP is identified as the authorized Nessus scanner pool (known\u2011benign source). Runbook RB\u2011FP\u201102 permits auto\u2011closing alerts from known\u2011benign sources unless the target is a crown\u2011jewel asset or a privileged identity, which is not the case here. Therefore the alert is classified as a false positive and auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3225,
+          "output_tokens": 844,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00099
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000854,
+      "latency_s": 7.123,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.jsmith50 (standard, non-privileged) reported a phishing email and clicked the malicious link. Runbook RB-PHISH-05 states user-reported phishing with link interaction is an active threat and must be placed in the phishing queue. Runbook RB-ESC-01 limits incident escalation to crown\u2011jewel assets or privileged identities, which does not apply here, so the appropriate disposition is to route the alert to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3185,
+          "output_tokens": 627,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000854
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000907,
+      "latency_s": 6.767,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR detection on host HST-4395 identified a malicious macro (W97M.Downloader) spawning PowerShell. Telemetry shows no known\u2011benign source and the host is a standard\u2011criticality, non\u2011privileged finance workstation. Runbook RB-MAL-04 states that confirmed EDR detections of malicious macros must be placed in the malware queue and must not be auto\u2011closed. Because the asset is not a crown\u2011jewel or privileged, the appropriate next step is to route the alert to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3184,
+          "output_tokens": 716,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000907
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001051,
+      "latency_s": 7.381,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows a confirmed EDR detection of ransomware behavior (Behavior:Ransom.FileCrypt) on host HST-3398, a crown\u2011jewel asset. The runbook (RB\u2011ESC\u201101) mandates escalation to incident response when an active threat touches a crown\u2011jewel asset, and RB\u2011MAL\u201104 confirms that ransomware detections belong in the malware queue and must not be auto\u2011closed. Therefore the alert is routed to the malware queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3197,
+          "output_tokens": 953,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001051
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000964,
+      "latency_s": 8.547,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.twong41 is a standard, non-privileged identity. Telemetry shows a massive burst of 2042 failed login attempts in the last 24h followed by a successful login from a new geographic location and an unfamiliar ASN, with no known benign source. According to runbook RB-CRED-03, such failed\u2011login bursts with a subsequent success constitute credential\u2011abuse and must be placed in the credential\u2011abuse queue after confirming the source is not an allow\u2011listed scanner (it is not). Runbook RB-ESC-01 indicates escalation only for crown\u2011jewel assets or admin accounts, which does not apply here, so the alert should be routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3182,
+          "output_tokens": 812,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000964
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001094,
+      "latency_s": 8.237,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The admin, crown\u2011jewel user u.apatel21 logged in from Frankfurt only 40\u202fminutes after a login from Dallas, a travel\u2011infeasible pattern flagged as a new geographic login (new_geo_login=true). No known\u2011benign source was identified and MFA was not passed. Runbook RB\u2011CRED\u201103 classifies travel\u2011infeasible logins as credential\u2011abuse and requires routing to the credential\u2011abuse queue. Because the identity is a privileged admin on a crown\u2011jewel asset, RB\u2011ESC\u201101 mandates escalation to incident response for any active threat, including credential abuse. Therefore the alert is placed in the credential\u2011abuse queue and escalated to incident.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3182,
+          "output_tokens": 1028,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001094
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001033,
+      "latency_s": 8.082,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows 1,896 failed SSH login attempts from IP 10.20.8.14, but the source is identified as an authorized Nessus scanner (known-benign source) and no successful login occurred. The host HST-8364 is a standard\u2011criticality, non\u2011privileged asset. Runbook RB-FP-02 permits auto\u2011closing alerts from known\u2011benign sources unless the target is a crown\u2011jewel or privileged identity, which does not apply here. Therefore the alert is a false positive and can be auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3258,
+          "output_tokens": 907,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001033
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000843,
+      "latency_s": 6.577,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.kdiaz65 (admin privilege, finance department) reported and clicked a phishing link. According to RB-PHISH-05, user\u2011reported phishing with interaction is an active threat and must be placed in the phishing queue. RB-ESC-01 states that any active threat involving a privileged (admin) identity requires escalation to incident response, regardless of asset criticality. No benign source was identified in telemetry, confirming the threat is not a false positive.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3189,
+          "output_tokens": 608,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000843
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001044,
+      "latency_s": 8.175,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows an EDR detection of W97M.Downloader on host HST-4576, a standard\u2011criticality, standard\u2011privilege asset, with no allow\u2011list match. The alert describes a macro\u2011enabled document creating a startup executable, confirming malicious behavior. Runbook RB-MAL-04 states confirmed EDR detections must go to the malware queue and must never be auto\u2011closed. Runbook RB-ESC-01 indicates escalation to incident only for crown\u2011jewel or privileged assets; this is a standard host, so the appropriate next step is to route the case to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3205,
+          "output_tokens": 938,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001044
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000967,
+      "latency_s": 7.332,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The host HST-3101 is classified as a crown\u2011jewel asset (HR) with standard privilege. Telemetry shows a confirmed EDR detection of ransomware behavior (Behavior:Ransom.FileCrypt) and a suspicious service installed minutes earlier, with no allow\u2011list source. Runbook RB\u2011MAL\u201104 mandates that confirmed EDR detections be routed to the malware queue, and RB\u2011ESC\u201101 requires escalation to incident response when an active threat (ransomware) touches a crown\u2011jewel asset. Therefore the alert is placed in the malware queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3201,
+          "output_tokens": 812,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000967
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00106,
+      "latency_s": 7.458,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows a burst of 412 failed logins within 20 minutes followed by a successful login from a new geographic location for user u.jsmith54, an admin-privileged identity. The source is not a known\u2011benign scanner (RB\u2011CRED\u201103) so the pattern is treated as credential abuse. Runbook RB\u2011ESC\u201101 mandates escalation to incident response when a privileged (admin) identity is involved in an active threat such as credential abuse. Therefore the alert is routed to the credential\u2011abuse queue and escalated to incident.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3189,
+          "output_tokens": 969,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00106
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001054,
+      "latency_s": 8.658,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows a successful login from Frankfurt only 40 minutes after a login from Dallas, violating travel feasibility. The user is a standard, non\u2011privileged finance employee and the source is not on any allow\u2011list. Runbook RB-CRED-03 flags such geographic anomalies as credential\u2011abuse and directs them to the credential\u2011abuse queue. Since the identity is not privileged nor a crown\u2011jewel asset, RB-ESC-01 does not require immediate incident escalation, so the alert is routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3171,
+          "output_tokens": 964,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001054
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001059,
+      "latency_s": 7.608,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows the 2,100 failed login attempts originated from an authorized Nessus scanner pool (known-benign source). However, the target host HST-6652 is classified as a crown\u2011jewel asset (runbook RB\u2011FP\u201102). The runbook states that alerts from known\u2011benign sources may be auto\u2011closed only when the target is not crown\u2011jewel; otherwise they must be routed to an analyst for confirmation. The pattern also matches credential\u2011abuse criteria (failed\u2011login burst) per RB\u2011CRED\u201103, so the alert belongs in the credential\u2011abuse queue and should be escalated to an analyst for review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3232,
+          "output_tokens": 957,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001059
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000997,
+      "latency_s": 8.582,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong47 (standard, non\u2011admin) reported a phishing email and clicked the malicious link. Telemetry shows no allow\u2011list source and no EDR detection, confirming a genuine user interaction with a suspicious payload. Runbook RB-PHISH-05 defines such reports as active threats, and RB-ESC-01 states that active threats on standard identities should be routed to the analyst queue (only crown\u2011jewel or admin assets trigger incident escalation).",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4049,
+          "output_tokens": 650,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000997
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000867,
+      "latency_s": 7.366,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR detection on host HST-4689 flagged a macro-enabled document executing PowerShell (W97M.Downloader). Telemetry confirms this is a malicious macro detection with no known benign source. According to runbook RB-MAL-04, confirmed EDR detections involving malicious macros must be sent to the malware queue and cannot be auto\u2011closed. The host is a standard\u2011criticality, non\u2011privileged asset, so escalation to an incident is not required at this stage; the alert should be routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3185,
+          "output_tokens": 649,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000867
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001045,
+      "latency_s": 8.146,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows an EDR detection of ransomware behavior (Behavior:Ransom.FileCrypt) on host HST-5827, a crown\u2011jewel asset. The runbook (RB-ESC-01) mandates incident escalation when an active threat contacts a crown\u2011jewel asset. Therefore the alert is routed to the malware queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4077,
+          "output_tokens": 722,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001045
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000976,
+      "latency_s": 7.732,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.twong28 is a crown\u2011jewel identity (criticality=crown_jewel) with standard privilege. Telemetry shows a burst of 412 failed logins in 20\u202fminutes followed by a successful login, a new geographic location, and no known\u2011benign source. According to RB\u2011CRED\u201103, this pattern qualifies as credential\u2011abuse and must be treated as an active threat. RB\u2011ESC\u201101 mandates escalation to incident response when an active threat touches a crown\u2011jewel asset. Therefore the alert is placed in the credential\u2011abuse queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3193,
+          "output_tokens": 829,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000976
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000995,
+      "latency_s": 9.208,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.twong55 (standard criticality, standard privilege) exhibited a new geo login from locations 8,000 km apart within an hour, a classic travel\u2011feasibility violation. Telemetry shows no known\u2011benign source and MFA was not passed. According to runbook RB-CRED-03, such travel\u2011infeasibility patterns belong in the credential\u2011abuse queue after confirming the source is not an allowlisted scanner. Therefore the alert is routed to the credential\u2011abuse analyst queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3125,
+          "output_tokens": 877,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000995
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000993,
+      "latency_s": 11.669,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows 1,717 failed SSH login attempts from IP 10.20.8.14, but the source is identified as an authorized Nessus scanner (known-benign_source=true). Runbook RB-FP-02 permits auto\u2011closing alerts from known\u2011benign sources unless the target asset is a crown\u2011jewel or the identity is privileged. HST-8042 is a standard\u2011criticality, standard\u2011privilege finance host, so the exception does not apply. Therefore the alert is a false positive and can be auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3253,
+          "output_tokens": 841,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000993
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000882,
+      "latency_s": 8.921,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert is a user-reported phishing email where the user opened the attachment. Entity u.lnovak67 is a standard, non-privileged user (engineering). Runbook RB-ESC-01 states escalation to incident response only for crown\u2011jewel assets or privileged identities, which does not apply. Runbook RB-FP-02 allows auto\u2011close only for known\u2011benign sources, which is not the case. Therefore the appropriate action is to route the alert to the analyst queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3227,
+          "output_tokens": 664,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000882
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001091,
+      "latency_s": 10.452,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "HST-9781 is a crown\u2011jewel asset (criticality=crown_jewel). Telemetry shows a confirmed EDR detection (W97M.Downloader) triggered by opening a macro\u2011enabled document, with no allow\u2011listed source. According to RB\u2011MAL\u201104, confirmed malware detections must be routed to the malware queue, and per RB\u2011ESC\u201101 any active threat on a crown\u2011jewel asset must be escalated to incident response. Therefore the alert is placed in the malware queue and escalated.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3209,
+          "output_tokens": 1016,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001091
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000857,
+      "latency_s": 7.656,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows an EDR detection of Behavior:Ransom.FileCrypt on host HST-7080, with no known benign source. The runbook (RB-MAL-04) mandates that confirmed ransomware EDR detections be sent to the malware queue and must not be auto\u2011closed. Therefore the alert is placed in the malware queue and routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3112,
+          "output_tokens": 651,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000857
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001219,
+      "latency_s": 10.049,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The entity u.kdiaz72 is a standard, non\u2011privileged user in engineering. Telemetry shows a massive 1800 failed logins in the last 24\u202fh, a successful login after those failures, and a new geographic source (unfamiliar ASN). No known\u2011benign source matches and MFA was passed, indicating a possible credential\u2011spray success. Runbook RB\u2011FP\u201102 only permits auto\u2011close for known\u2011benign sources, which does not apply. RB\u2011ESC\u201101 requires escalation only for crown\u2011jewel assets or privileged identities, which also does not apply. Therefore the alert should be placed in the credential\u2011abuse queue and routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4301,
+          "output_tokens": 956,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001219
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000982,
+      "latency_s": 11.522,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.lnovak90 (standard HR account) showed a geo-velocity violation with two successful logins 8,000 km apart within an hour. Telemetry shows no failed login bursts, MFA was passed, but the login locations are new and the source is not on any allowlist. Runbook RB-CRED-03 mandates that travel\u2011feasibility violations be sent to the credential\u2011abuse queue for analyst review when the source is not a known benign scanner. Therefore the alert is routed to the credential\u2011abuse queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3133,
+          "output_tokens": 854,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000982
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000996,
+      "latency_s": 9.057,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows 1993 failed SSH login attempts from IP 10.20.8.14, but the source is identified as an authorized Nessus scanner (known-benign source). No successful login occurred, the host is a standard\u2011criticality, non\u2011privileged engineering asset. Runbook RB-FP-02 permits auto\u2011closing alerts from known\u2011benign sources unless the target is a crown\u2011jewel or privileged identity, which does not apply here. Therefore the alert is a false positive and can be auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3253,
+          "output_tokens": 846,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000996
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000906,
+      "latency_s": 7.479,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert is a user-reported phishing email that the user clicked. Runbook RB-PHISH-05 states that user-reported phishing with link interaction is an active threat and must be placed in the phishing queue. Since the user identity u.twong35 is a standard, non\u2011privileged account (runbook RB-ESC-01) the activity does not meet auto\u2011escalation criteria for a crown\u2011jewel or admin identity, so the appropriate next step is to route the case to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3183,
+          "output_tokens": 715,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000906
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000942,
+      "latency_s": 7.881,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR detection on host HST-9132 is a confirmed malicious macro (W97M.Downloader) spawning PowerShell. Asset HST-9132 is classified as a crown\u2011jewel asset (criticality=crown_jewel) with no benign source match. According to RB-ESC-01, any active threat (including malware) on a crown\u2011jewel asset must be escalated to incident response. RB-MAL-04 also mandates that confirmed EDR detections go to the malware queue and must not be auto\u2011closed. Therefore the alert is routed to the malware queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3197,
+          "output_tokens": 771,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000942
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00096,
+      "latency_s": 6.668,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR telemetry shows a confirmed ransomware behavior detection (mass file rename, high entropy, shadow\u2011copy deletion) on host HST-6887. Runbook RB\u2011MAL\u201104 states that confirmed EDR detections must be sent to the malware queue and must not be auto\u2011closed. Since the host is a standard\u2011criticality asset with a standard\u2011privilege identity, the escalation criteria in RB\u2011ESC\u201101 (crown\u2011jewel or privileged) do not apply, so the alert should be routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3191,
+          "output_tokens": 803,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00096
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00099,
+      "latency_s": 7.285,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.mgarcia97 (standard, non-privileged) experienced a burst of 412 failed login attempts within 20 minutes followed by a successful login, which matches the pattern described in runbook RB-CRED-03 for credential abuse. Telemetry confirms the failed-login burst, a subsequent success, a new geographic location, and no known-benign source. MFA passing does not negate the alert. Therefore, the alert is routed to the credential-abuse queue for analyst review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3206,
+          "output_tokens": 849,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00099
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000944,
+      "latency_s": 6.931,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert concerns a geo-velocity anomaly for user u.apatel53, a standard\u2011privilege, non\u2011crown\u2011jewel identity. Telemetry confirms a new geographic login (8,000\u202fkm within an hour) with no known\u2011benign source match, and MFA was passed, but there are recent failed login attempts. The runbook does not provide an auto\u2011close exception for this scenario, and the user is not privileged, so the alert should be routed to the credential\u2011abuse analyst queue for further investigation rather than auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3186,
+          "output_tokens": 776,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000944
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000991,
+      "latency_s": 7.82,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The host HST-5406 is a standard\u2011criticality, non\u2011privileged finance workstation. Query of the last 24\u202fh shows 2,224 failed login attempts from the same internal IP, matching the alert, with no subsequent successful login and no geo\u2011anomaly. The source IP is identified as the authorized Nessus scanner pool (known\u2011benign source). Runbook RB\u2011FP\u201102 permits auto\u2011closing alerts from known\u2011benign sources unless the target is a crown\u2011jewel asset or a privileged identity, which is not the case here. Therefore the alert is classified as a false positive and auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3225,
+          "output_tokens": 845,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000991
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00083,
+      "latency_s": 6.972,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.jsmith50 (standard, non\u2011privileged) reported a phishing email and clicked the malicious link. Runbook RB-PHISH-05 mandates that user\u2011reported phishing with link interaction be placed in the phishing queue as an active threat. However, RB-ESC-01 states incidents are escalated only when a crown\u2011jewel asset or privileged identity is involved. Since the user is a standard identity, the alert should be routed to the analyst queue for further investigation rather than auto\u2011closed or escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3184,
+          "output_tokens": 588,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00083
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000938,
+      "latency_s": 7.05,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR detection on host HST-4395 identified a malicious macro (W97M.Downloader) spawning PowerShell. Telemetry shows no known\u2011benign source and the host is a standard\u2011criticality, non\u2011privileged finance workstation. Runbook RB-MAL-04 states that confirmed EDR detections of malicious macros must be placed in the malware queue and must not be auto\u2011closed. Because the asset is not a crown\u2011jewel or privileged, the appropriate next step is to route the alert to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3184,
+          "output_tokens": 767,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000938
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001029,
+      "latency_s": 7.698,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows a confirmed EDR detection of ransomware behavior (Behavior:Ransom.FileCrypt) on host HST-3398, a crown\u2011jewel asset. The runbook (RB\u2011ESC\u201101) mandates escalation to incident response when an active threat touches a crown\u2011jewel asset, and RB\u2011MAL\u201104 confirms that ransomware detections belong in the malware queue and must not be auto\u2011closed. Therefore the alert is routed to the malware queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3197,
+          "output_tokens": 915,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001029
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00096,
+      "latency_s": 9.585,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.twong41 is a standard, non-privileged identity. Telemetry shows a massive burst of 2042 failed login attempts in the last 24h followed by a successful login from a new geographic location and an unfamiliar ASN, with no known benign source. According to runbook RB-CRED-03, such failed\u2011login bursts with a subsequent success constitute credential\u2011abuse and must be placed in the credential\u2011abuse queue after confirming the source is not an allow\u2011listed scanner (it is not). Runbook RB-ESC-01 indicates escalation only for crown\u2011jewel assets or admin accounts, which does not apply here, so the alert should be routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3182,
+          "output_tokens": 804,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00096
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00106,
+      "latency_s": 9.009,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The admin, crown\u2011jewel user u.apatel21 logged in from Frankfurt only 40\u202fminutes after a login from Dallas, a travel\u2011infeasible pattern flagged as a new geographic login (new_geo_login=true). No known\u2011benign source was identified and MFA was not passed. Runbook RB\u2011CRED\u201103 classifies travel\u2011infeasible logins as credential\u2011abuse and requires routing to the credential\u2011abuse queue. Because the identity is a privileged admin on a crown\u2011jewel asset, RB\u2011ESC\u201101 mandates escalation to incident response for any active threat, including credential abuse. Therefore the alert is placed in the credential\u2011abuse queue and escalated to incident.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3182,
+          "output_tokens": 971,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00106
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001033,
+      "latency_s": 8.031,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows 1,896 failed SSH login attempts from IP 10.20.8.14, but the source is identified as an authorized Nessus scanner (known-benign source) and no successful login occurred. The host HST-8364 is a standard\u2011criticality, non\u2011privileged asset. Runbook RB-FP-02 permits auto\u2011closing alerts from known\u2011benign sources unless the target is a crown\u2011jewel or privileged identity, which does not apply here. Therefore the alert is a false positive and can be auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3258,
+          "output_tokens": 907,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001033
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000869,
+      "latency_s": 6.511,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.kdiaz65 (admin privilege, finance department) reported a phishing email and confirmed clicking the malicious link. Runbook RB-PHISH-05 classifies user-reported phishing with link interaction as an active threat and directs it to the phishing queue. RB-ESC-01 mandates escalation to incident response when an active threat involves a privileged (admin) identity. Therefore the alert must be escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3192,
+          "output_tokens": 650,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000869
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001049,
+      "latency_s": 7.697,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry for host HST-4576 shows an EDR detection of W97M.Downloader, a known malicious macro downloader, with no known benign source. The alert describes an Office process creating an executable in the startup folder after opening a macro-enabled document, matching confirmed malware behavior. Runbook RB-MAL-04 states that confirmed EDR detections must be placed in the malware queue and never auto\u2011closed. Since the host is a standard\u2011criticality asset (not crown\u2011jewel) and the identity is standard privilege, RB-ESC-01 directs that the case be routed to an analyst rather than escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3205,
+          "output_tokens": 947,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001049
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000958,
+      "latency_s": 8.894,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR telemetry for HST-3101 shows a confirmed ransomware behavior detection (Behavior:Ransom.FileCrypt) with a suspicious service installed and no known benign source. HST-3101 is classified as a crown\u2011jewel asset (criticality=crown_jewel). Runbook RB\u2011MAL\u201104 mandates that confirmed EDR detections be placed in the malware queue and never auto\u2011closed. Runbook RB\u2011ESC\u201101 further requires escalation to incident response when an active threat (malware) contacts a crown\u2011jewel asset. Therefore the alert is routed to the malware queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3201,
+          "output_tokens": 796,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000958
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00106,
+      "latency_s": 7.822,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows a burst of 412 failed logins within 20 minutes followed by a successful login from a new geographic location for user u.jsmith54, an admin-privileged identity. The source is not a known\u2011benign scanner (RB\u2011CRED\u201103) so the pattern is treated as credential abuse. Runbook RB\u2011ESC\u201101 mandates escalation to incident response when a privileged (admin) identity is involved in an active threat such as credential abuse. Therefore the alert is routed to the credential\u2011abuse queue and escalated to incident.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3189,
+          "output_tokens": 969,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00106
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001065,
+      "latency_s": 10.646,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.jsmith41 (standard, non\u2011admin finance account) logged in from Frankfurt only 40\u202fminutes after a login from Dallas, a travel\u2011infeasible scenario flagged as a new geographic login. Telemetry shows no known\u2011benign source and MFA was not passed. Runbook RB\u2011CRED\u201103 mandates that travel\u2011infeasible logins be placed in the credential\u2011abuse queue, and RB\u2011ESC\u201101 states escalation only for crown\u2011jewel or privileged identities. Therefore the alert should be routed to the analyst queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3171,
+          "output_tokens": 982,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001065
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001057,
+      "latency_s": 7.321,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows the 2,100 failed login attempts originated from an authorized Nessus scanner pool (known-benign source). However, the target host HST-6652 is classified as a crown\u2011jewel asset (runbook RB\u2011FP\u201102). The runbook states that alerts from known\u2011benign sources may be auto\u2011closed only when the target is not crown\u2011jewel; otherwise they must be routed to an analyst for confirmation. The pattern also matches credential\u2011abuse criteria (failed\u2011login burst) per RB\u2011CRED\u201103, so the alert belongs in the credential\u2011abuse queue and should be escalated to an analyst for review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3232,
+          "output_tokens": 954,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001057
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00098,
+      "latency_s": 7.488,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.twong47 (standard, non\u2011admin) reported a phishing email and clicked the malicious link. Telemetry shows no allow\u2011list source and no EDR detection, confirming a genuine user interaction with a suspicious payload. Runbook RB-PHISH-05 defines such reports as active threats, and RB-ESC-01 states that active threats on standard identities should be routed to the analyst queue (only crown\u2011jewel or admin assets trigger incident escalation).",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4049,
+          "output_tokens": 621,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00098
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000964,
+      "latency_s": 7.118,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR detection on host HST-4689 flagged a macro-enabled document spawning PowerShell and identified the malware family W97M.Downloader. Query of recent telemetry shows no known\u2011benign source match and the host is a standard\u2011criticality, non\u2011privileged engineering asset. The runbook (RB-FP-02) permits auto\u2011close only for alerts tied to known\u2011benign sources, which does not apply here. Therefore the alert should be routed to the malware analyst queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3207,
+          "output_tokens": 805,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000964
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001086,
+      "latency_s": 8.241,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows a confirmed EDR detection of ransomware behavior (Behavior:Ransom.FileCrypt) on host HST-5827, a crown\u2011jewel asset (criticality=crown_jewel). The runbook RB\u2011ESC\u201101 mandates escalation to incident response when an active threat touches a crown\u2011jewel asset, and RB\u2011MAL\u201104 requires that confirmed malware detections be routed to the malware queue and never auto\u2011closed. Therefore the alert is placed in the malware queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4077,
+          "output_tokens": 790,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001086
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001096,
+      "latency_s": 7.702,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows a burst of 412 failed logins within 20 minutes followed by a successful login from a new geographic location, with no known benign source and MFA not passed. RB-CRED-03 classifies such failed\u2011login bursts as credential\u2011abuse and directs them to the credential\u2011abuse queue after confirming the source is not allowlisted. Because the identity u.twong28 is marked as a crown\u2011jewel asset, RB-ESC-01 requires escalation to incident response for any confirmed active threat, including credential abuse. Therefore the alert is placed in the credential\u2011abuse queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3193,
+          "output_tokens": 1028,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001096
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000985,
+      "latency_s": 7.323,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.twong55 (standard criticality, standard privilege) exhibited a new geo login flagged as a travel feasibility violation (8,000 km within an hour). Telemetry shows no known benign source and MFA did not pass. According to runbook RB-CRED-03, travel-velocity violations belong in the credential-abuse queue after confirming the source is not an allowlisted scanner. Therefore the alert is routed to the credential-abuse analyst queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3125,
+          "output_tokens": 861,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000985
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000961,
+      "latency_s": 6.671,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows the 1717 failed SSH login attempts originated from an authorized Nessus scanner pool (known-benign source). No successful login followed the failures, the asset HST-8042 is a standard\u2011criticality, non\u2011privileged finance host. Runbook RB-FP-02 permits auto\u2011closing alerts from known\u2011benign sources unless the target is a crown\u2011jewel or privileged identity, which does not apply here. Therefore the alert is a false positive and can be auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3253,
+          "output_tokens": 788,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000961
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000883,
+      "latency_s": 6.297,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert is a user-reported phishing email where the user opened the attachment. Entity u.lnovak67 is a standard, non-privileged user (engineering). Runbook RB-ESC-01 states escalation to incident response only for crown\u2011jewel assets or privileged identities, which does not apply. Runbook RB-FP-02 allows auto\u2011close only for known\u2011benign sources, which is not the case. Therefore the appropriate action is to route the alert to the analyst queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3227,
+          "output_tokens": 665,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000883
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001125,
+      "latency_s": 9.123,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR telemetry for HST-9781 shows a confirmed W97M.Downloader detection, indicating a malicious macro that wrote an executable to startup after opening PO_4471.docm. HST-9781 is classified as a crown_jewel asset (criticality=crown_jewel). Runbook RB-ESC-01 mandates escalation to incident response for any active threat on a crown\u2011jewel asset, and RB-MAL-04 requires that confirmed malware detections be placed in the malware queue and never auto\u2011closed. Therefore the alert is assigned to the malware queue with disposition 'escalate_to_incident'.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3209,
+          "output_tokens": 1073,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001125
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000857,
+      "latency_s": 7.617,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows an EDR detection of Behavior:Ransom.FileCrypt on host HST-7080, with no known benign source. The runbook (RB-MAL-04) mandates that confirmed ransomware EDR detections be sent to the malware queue and must not be auto\u2011closed. Therefore the alert is placed in the malware queue and routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3112,
+          "output_tokens": 651,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000857
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001215,
+      "latency_s": 9.06,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.kdiaz72 is a standard, non\u2011privileged identity on a standard asset. Telemetry shows a massive password\u2011spray (1800 failed logins) with a successful login from a new ASN, and no known\u2011benign source. Runbook RB\u2011FP\u201102 does not allow auto\u2011close because the source is not authorized, and RB\u2011ESC\u201101 requires escalation only for crown\u2011jewel assets or privileged accounts. Therefore the alert should be routed to the credential\u2011abuse analyst queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4301,
+          "output_tokens": 950,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001215
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001044,
+      "latency_s": 13.49,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert is a geo-velocity violation, which maps to the credential-abuse queue. The user u.lnovak90 is a standard, non\u2011privileged HR employee (standard criticality). Telemetry shows a successful login from a new geographic location 8,000\u202fkm away within an hour, with MFA passed and no failed attempts. The runbook contains an auto\u2011close clause only for known\u2011benign sources, which does not apply here, and there is no specific auto\u2011close rule for geo\u2011velocity anomalies. Therefore the alert cannot be auto\u2011closed and does not meet escalation thresholds for an incident, so it should be routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3201,
+          "output_tokens": 940,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001044
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000961,
+      "latency_s": 11.157,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows 1993 failed SSH login attempts from IP 10.20.8.14, but the source is identified as an authorized Nessus scanner (known-benign source). No successful login occurred, the host is a standard\u2011criticality, non\u2011privileged engineering asset. Runbook RB-FP-02 permits auto\u2011closing alerts from known\u2011benign sources unless the target is a crown\u2011jewel or privileged identity, which does not apply here. Therefore the alert is a false positive and can be auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3253,
+          "output_tokens": 788,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000961
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000898,
+      "latency_s": 12.628,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.twong35 (standard, non\u2011admin) reported a phishing email and confirmed clicking the malicious link. Runbook RB-PHISH-05 states that user\u2011reported phishing with link interaction is an active threat and must be placed in the phishing queue. RB-ESC-01 requires escalation to incident response only when an active threat involves a crown\u2011jewel asset or a privileged identity. Since the user is a standard identity, the alert should be routed to the analyst queue for further investigation rather than auto\u2011closed or escalated.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3181,
+          "output_tokens": 701,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000898
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000942,
+      "latency_s": 10.013,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR detection on host HST-9132 is a confirmed malicious macro (W97M.Downloader) spawning PowerShell. Asset HST-9132 is classified as a crown\u2011jewel asset (criticality=crown_jewel) with no benign source match. According to RB-ESC-01, any active threat (including malware) on a crown\u2011jewel asset must be escalated to incident response. RB-MAL-04 also mandates that confirmed EDR detections go to the malware queue and must not be auto\u2011closed. Therefore the alert is routed to the malware queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3197,
+          "output_tokens": 771,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000942
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000947,
+      "latency_s": 9.638,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR telemetry shows a confirmed ransomware behavior detection (mass file rename, high entropy, shadow-copy deletion) on host HST-6887. Runbook RB-MAL-04 mandates that confirmed ransomware detections be placed in the malware queue and never auto\u2011closed. Since the host is a standard\u2011criticality asset with a standard\u2011privilege identity, escalation to incident response is not required per RB-ESC-01; the alert should be routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3191,
+          "output_tokens": 781,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000947
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000935,
+      "latency_s": 16.396,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The telemetry shows a burst of 412 failed login attempts within 20 minutes followed by a successful login for user u.mgarcia97, with a new geographic location and no known\u2011benign source. According to runbook RB-CRED-03, such failed\u2011login bursts with a subsequent success constitute a credential\u2011abuse pattern and must be sent to the credential\u2011abuse queue. The user is a standard, non\u2011privileged identity (runbook RB-ESC-01) so escalation to incident response is not required. Therefore the alert is routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3196,
+          "output_tokens": 759,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000935
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001003,
+      "latency_s": 12.226,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.apatel53 is a standard, non\u2011privileged identity (engineer) with no crown\u2011jewel status. Telemetry shows a new geo\u2011login (8,000\u202fkm within an hour) and no allow\u2011listed source, indicating a potential credential\u2011abuse event. Runbook RB\u2011FP\u201102 only permits auto\u2011close for known\u2011benign sources, which does not apply here, and there is no exception for standard users. Therefore the alert should be routed to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3186,
+          "output_tokens": 875,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001003
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000963,
+      "latency_s": 7.864,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows the 2,100 failed login attempts on host HST-5406 originated from an authorized Nessus scanner IP (known-benign source). The host is a standard\u2011criticality, non\u2011privileged finance asset. Runbook RB\u2011FP\u201102 permits auto\u2011closing alerts from known\u2011benign sources unless the target is a crown\u2011jewel or privileged identity, which does not apply here. Therefore the alert is a false positive and can be auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3225,
+          "output_tokens": 799,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000963
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00083,
+      "latency_s": 7.218,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "User u.jsmith50 (standard, non\u2011privileged) reported a phishing email and clicked the malicious link. Runbook RB-PHISH-05 mandates that user\u2011reported phishing with link interaction be placed in the phishing queue as an active threat. However, RB-ESC-01 states incidents are escalated only when a crown\u2011jewel asset or privileged identity is involved. Since the user is a standard identity, the alert should be routed to the analyst queue for further investigation rather than auto\u2011closed or escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3184,
+          "output_tokens": 588,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00083
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000947,
+      "latency_s": 9.666,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR detection on host HST-4395 reports a macro-enabled document spawning PowerShell (W97M.Downloader). Asset lookup shows a standard, non\u2011privileged finance workstation with no known\u2011benign source match. Runbook RB-MAL-04 states that confirmed EDR detections must be sent to the malware queue and must not be auto\u2011closed. Therefore the alert is routed to the analyst queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3188,
+          "output_tokens": 781,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000947
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000996,
+      "latency_s": 6.901,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows a confirmed EDR detection of ransomware behavior (Behavior:Ransom.FileCrypt) on host HST-3398, a crown\u2011jewel asset. The runbook (RB\u2011ESC\u201101) mandates escalation to incident response when an active threat touches a crown\u2011jewel asset, and RB\u2011MAL\u201104 confirms that ransomware detections belong in the malware queue and must not be auto\u2011closed. Therefore the alert is routed to the malware queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3197,
+          "output_tokens": 861,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000996
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000904,
+      "latency_s": 6.838,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert targets a standard\u2011criticality, non\u2011admin user (u.twong41) in Sales. Telemetry shows a massive 2042 failed login attempts in the past 24\u202fh with a successful login from a new geographic location and unfamiliar ASN, and the source is not on any allow\u2011list. The runbook (RB-ESC-01) states that incident escalation is required only for crown\u2011jewel assets or privileged identities; otherwise, events should be routed to an analyst. Therefore this credential\u2011abuse event should be sent to the analyst queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3104,
+          "output_tokens": 730,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000904
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001066,
+      "latency_s": 10.896,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows a new geographic login from Frankfurt only 40 minutes after a Dallas login for user u.apatel21, a crown\u2011jewel admin identity. No known\u2011benign source and MFA was not passed, indicating a travel\u2011infeasibility credential\u2011abuse pattern. Runbook RB\u2011CRED\u201103 mandates routing such travel\u2011infeasible logins to the credential\u2011abuse queue, and RB\u2011ESC\u201101 requires escalation to incident response when an active threat (credential abuse) touches a crown\u2011jewel or privileged identity. Therefore the alert is placed in the credential\u2011abuse queue and escalated to incident.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3182,
+          "output_tokens": 982,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001066
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000977,
+      "latency_s": 8.238,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "auto_close"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows the 1896 failed SSH login attempts originated from a known\u2011benign source (authorized Nessus scanner pool) and no successful login occurred. Runbook RB\u2011FP\u201102 permits auto\u2011closing alerts from known\u2011benign sources unless the target is a crown\u2011jewel asset or a privileged identity. HST\u20118364 is a standard\u2011criticality, standard\u2011privilege host, so the alert meets the auto\u2011close exception. Therefore the alert is classified as a false\u2011positive and auto\u2011closed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3259,
+          "output_tokens": 814,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000977
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000855,
+      "latency_s": 9.07,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "phishing",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "phishing",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.kdiaz65 (admin privilege, finance department) reported and clicked a phishing link. According to RB-PHISH-05, user\u2011reported phishing with interaction is an active threat and must be placed in the phishing queue. RB-ESC-01 states that any active threat involving a privileged (admin) identity requires escalation to incident response, regardless of asset criticality. No benign source was identified in telemetry, confirming the threat is not a false positive.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3189,
+          "output_tokens": 627,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000855
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.0011,
+      "latency_s": 9.131,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The host HST-4576 (standard criticality, standard privilege) generated an EDR detection of W97M.Downloader, a known macro-based malware, after opening a .docm file. Telemetry shows no known\u2011benign source match, and the runbook RB-FP-02 states that auto\u2011close is only allowed for alerts from known\u2011benign sources, which does not apply here. Since the asset is not a crown\u2011jewel or privileged, the appropriate action is to route the alert to an analyst for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3233,
+          "output_tokens": 1025,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.0011
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001367,
+      "latency_s": 11.194,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "malware",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The EDR telemetry shows a confirmed ransomware behavior detection (Behavior:Ransom.FileCrypt) on host HST-3101. Asset lookup identifies HST-3101 as a crown\u2011jewel asset (HR department). Runbook RB\u2011MAL\u201104 mandates that confirmed ransomware detections go to the malware queue and must not be auto\u2011closed. Runbook RB\u2011ESC\u201101 further requires escalation to incident response when an active threat (ransomware) contacts a crown\u2011jewel asset. Therefore the alert is routed to the malware queue and escalated to incident response.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4394,
+          "output_tokens": 1179,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001367
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001065,
+      "latency_s": 7.472,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "escalate_to_incident"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows a burst of 412 failed logins within 20 minutes followed by a successful login from a new geographic location for user u.jsmith54, an admin-privileged identity. The source is not a known\u2011benign scanner (RB\u2011CRED\u201103) so the pattern is treated as credential abuse. Runbook RB\u2011ESC\u201101 mandates escalation to incident response when a privileged (admin) identity is involved in an active threat such as credential abuse. Therefore the alert is routed to the credential\u2011abuse queue and escalated to incident.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3189,
+          "output_tokens": 978,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001065
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000995,
+      "latency_s": 7.297,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The user u.jsmith41 (standard, non-privileged finance account) logged in from Frankfurt only 40 minutes after a login from Dallas, a clear travel feasibility violation flagged as a new geographic login in telemetry. No MFA was passed and the source is not on any allowlist. Runbook RB-CRED-03 mandates that such geographic anomalies be placed in the credential-abuse queue after confirming the source is not benign. Since the identity is not privileged or crown\u2011jewel, RB-ESC-01 directs routing to an analyst rather than incident escalation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3170,
+          "output_tokens": 866,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000995
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001058,
+      "latency_s": 7.383,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "route_to_analyst"
+        },
+        "predicted": {
+          "queue": "credential-abuse",
+          "disposition": "route_to_analyst"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_entity",
+          "query_events",
+          "search_runbook",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Telemetry shows the 2,100 failed login attempts originated from an authorized Nessus scanner pool (known-benign source). However, the target host HST-6652 is classified as a crown\u2011jewel asset (runbook RB\u2011FP\u201102). The runbook states that alerts from known\u2011benign sources may be auto\u2011closed only when the target is not crown\u2011jewel; otherwise they must be routed to an analyst for confirmation. The pattern also matches credential\u2011abuse criteria (failed\u2011login burst) per RB\u2011CRED\u201103, so the alert belongs in the credential\u2011abuse queue and should be escalated to an analyst for review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3232,
+          "output_tokens": 955,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001058
+        }
+      }
+    }
+  ]
+}

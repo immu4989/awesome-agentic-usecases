@@ -6,22 +6,36 @@ on:
   pull_request:
 
 jobs:
-  exception-triage-agent:
+  use-case:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dir: logistics-supply-chain/exception-triage-agent
+            cli: exception-triage-agent
+            seed: 7
+          - dir: retail-workforce/shift-coverage-triage-agent
+            cli: shift-coverage-agent
+            seed: 11
+          - dir: security-operations/alert-triage-agent
+            cli: alert-triage-agent
+            seed: 13
+    name: ${{ matrix.cli }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Install
-        run: pip install -e harness[dev] -e logistics-supply-chain/exception-triage-agent[dev]
+        run: pip install -e harness[dev] -e ${{ matrix.dir }}[dev]
       - name: Tests
-        run: pytest harness/tests logistics-supply-chain/exception-triage-agent/tests -q
+        run: pytest harness/tests ${{ matrix.dir }}/tests -q
       - name: Scenario file is reproducible
         run: |
-          exception-triage-agent generate --n 30 --seed 7 --out /tmp/scenarios.jsonl
-          diff /tmp/scenarios.jsonl logistics-supply-chain/exception-triage-agent/evals/scenarios.jsonl
+          ${{ matrix.cli }} generate --n 30 --seed ${{ matrix.seed }} --out /tmp/scenarios.jsonl
+          diff /tmp/scenarios.jsonl ${{ matrix.dir }}/evals/scenarios.jsonl
       - name: Mock eval runs green
-        run: exception-triage-agent eval --backend mock --repeats 3 --out /tmp/results
+        run: ${{ matrix.cli }} eval --backend mock --repeats 3 --out /tmp/results
       - name: Lint
-        run: ruff check harness logistics-supply-chain
+        run: ruff check harness ${{ matrix.dir }}

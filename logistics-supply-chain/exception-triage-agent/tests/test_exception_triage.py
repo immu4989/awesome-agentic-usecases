@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from aau_harness import CostTracker
-from exception_triage_agent.agent import MockBackend, run_agent
+from aau_harness import CostTracker, run_tool_agent
+from exception_triage_agent.agent import SUBMIT_TOOL, SYSTEM_PROMPT, MockBackend
 from exception_triage_agent.evaluate import evaluate, score_run
 from exception_triage_agent.tools import TOOL_SCHEMAS, execute_tool
 from exception_triage_agent.world import (
@@ -68,11 +68,14 @@ def test_tool_schemas_are_strict():
 def test_mock_agent_end_to_end_submits():
     sc = generate_scenarios(n=6, seed=7)[0]
     cost = CostTracker(model="mock")
-    outcome = run_agent(MockBackend(), sc, cost)
-    assert outcome.submitted
-    assert outcome.queue == sc.gold_queue
-    assert cost.api_calls == outcome.n_turns
-    assert [c["name"] for c in outcome.tool_calls][:3] == [
+    run = run_tool_agent(
+        MockBackend(), SYSTEM_PROMPT, TOOL_SCHEMAS, sc.ticket_text,
+        lambda n, i: execute_tool(n, i, sc), SUBMIT_TOOL, cost,
+    )
+    assert run.submitted
+    assert run.submission["queue"] == sc.gold_queue
+    assert cost.api_calls == run.n_turns
+    assert [c["name"] for c in run.tool_calls][:3] == [
         "lookup_shipment",
         "get_carrier_status",
         "search_policy",
@@ -94,8 +97,7 @@ def test_score_run_unsubmitted_is_zero():
 
     class Dead:
         submitted = False
-        queue = None
-        action = None
+        submission = None
 
     metrics = score_run(sc, Dead())
     assert metrics == {
