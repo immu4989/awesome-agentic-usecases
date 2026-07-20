@@ -1,6 +1,24 @@
-# 🎫 Exception Triage Agent
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/banner-dark.svg">
+  <img alt="Logistics use case banner" src="docs/banner-light.svg" width="100%">
+</picture>
 
-`investigate` `decide` · `single-agent` · Logistics & Supply Chain
+<p align="center">
+  <a href="../../README.md">← all use cases</a> ·
+  <img src="https://img.shields.io/badge/industry-Logistics-2a78d6" alt="industry">
+  <img src="https://img.shields.io/badge/verified-evals%20%C2%B7%20cost%20%C2%B7%20failure%20modes-008300" alt="verified">
+  <img src="https://img.shields.io/badge/reproduce-%240%20free%20tier-4a3aa7" alt="free to reproduce">
+</p>
+
+## 🪤 The trap
+
+Customer complaints are **unreliable narrators**. A shipment sitting in a customs
+hold gets reported as "lost." A tracking page that says *delivery exception* could be a bad
+address or a refused parcel. The ticket text never contains the exception code, the declared
+value, the customer tier, or the SLA clock — and every one of those changes the answer.
+
+An agent that triages from the complaint alone scores at chance. The evidence is one tool call away, and the escalation thresholds live in a policy KB rather than the prompt.
+
 
 ## Problem
 
@@ -45,6 +63,15 @@ Design choices that make the eval mean something:
 30 scenarios × 3 repeats per model. "$/scenario" prices measured token usage at list
 rates — the free-tier rows cost $0 in actual spend to reproduce.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/results-dark.svg">
+  <img alt="Accuracy by model, with 95% bootstrap confidence intervals" src="docs/results-light.svg" width="100%">
+</picture>
+
+<details>
+<summary><b>Exact numbers</b> (all metrics, cost, latency)</summary>
+<br>
+
 | Model | queue acc | action acc [95% CI] | exact match | submitted | $/scenario | p50 latency |
 |---|---|---|---|---|---|---|
 | `kimi-k2p6` (Fireworks) | **1.000** | **1.000** [1.000, 1.000] | **1.000** | 1.000 | $0.0051 | 17.2s |
@@ -52,6 +79,8 @@ rates — the free-tier rows cost $0 in actual spend to reproduce.
 | `mistral-small-latest` (free tier) | 1.000 | 0.700 [0.533, 0.844] | 0.700 | 1.000 | $0.0004 | 5.9s |
 | `Llama-3.3-70B-Instruct-Turbo` (Together) | 0.844 | 0.167 [0.056, 0.289] | 0.156 | 0.967 | $0.0012 | 4.5s |
 | `mock` (pipeline check, CI) | 1.000 | 0.967 | 0.967 | 1.000 | $0 | — |
+
+</details>
 
 Full per-run details: [`results/`](results/). The mock's misses are engineered (it
 ignores the Platinum-SLA escalation clause) so the reporting pipeline always exercises a
@@ -96,3 +125,4 @@ exception-triage-agent eval --backend anthropic --repeats 3
 ```
 
 Regenerate scenarios (seeded, committed): `exception-triage-agent generate --n 30 --seed 7`
+

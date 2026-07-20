@@ -1,6 +1,28 @@
-# 🚩 Fraud Alert Triage Agent
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/banner-dark.svg">
+  <img alt="Financial Services use case banner" src="docs/banner-light.svg" width="100%">
+</picture>
 
-`investigate` `decide` · `single-agent` · Financial Services & Fraud
+<p align="center">
+  <a href="../../README.md">← all use cases</a> ·
+  <img src="https://img.shields.io/badge/industry-Financial%20Services-1baf7a" alt="industry">
+  <img src="https://img.shields.io/badge/verified-evals%20%C2%B7%20cost%20%C2%B7%20failure%20modes-008300" alt="verified">
+  <img src="https://img.shields.io/badge/reproduce-%240%20free%20tier-4a3aa7" alt="free to reproduce">
+</p>
+
+## 🪤 Two deceptions, opposite directions
+
+**Looks like fraud, isn't:** a foreign charge on a new device — with a matching travel
+notice on file. Blocking it strands a real customer on holiday.
+
+**Looks fine, is fraud:** an authorized push-payment scam rides the customer's own trusted device
+and login, so every classic fraud signal is *absent by construction*. The only tell is a freshly
+added mule beneficiary.
+
+Different models fall for different halves. And three of four models over-call fraud on benign
+transactions while **never** making the reverse error — a one-directional bias an accuracy score
+implies away.
+
 
 ## Problem
 
@@ -41,6 +63,15 @@ Two deceptions in opposite directions, plus a compound clause:
 
 30 scenarios × 3 repeats per model. Free-tier rows cost $0 to reproduce.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/results-dark.svg">
+  <img alt="Accuracy by model, with 95% bootstrap confidence intervals" src="docs/results-light.svg" width="100%">
+</picture>
+
+<details>
+<summary><b>Exact numbers</b> (all metrics, cost, latency)</summary>
+<br>
+
 | Model | queue acc | disposition acc | exact match | submitted | $/scenario | p50 latency |
 |---|---|---|---|---|---|---|
 | `Qwen3.7-Plus` (Together) | **1.000** | **0.967** | **0.967** | 1.000 | $0.0032 | 33.1s |
@@ -48,6 +79,8 @@ Two deceptions in opposite directions, plus a compound clause:
 | `gpt-oss-120b` (Fireworks) | 0.789 | 0.700 | 0.600 | 0.911 | $0.0013 | 10.5s |
 | `mistral-small-latest` (free tier) | 0.967 | 0.500 | 0.500 | 1.000 | $0.0004 | 6.0s |
 | `mock` (pipeline check, CI) | 0.800 | 0.800 | 0.800 | 1.000 | $0 | — |
+
+</details>
 
 Four findings, none of which a single accuracy number would show:
 
@@ -84,3 +117,4 @@ fraud-alert-triage-agent eval --backend mistral --repeats 3
 ```
 
 Regenerate scenarios (seeded, committed): `fraud-alert-triage-agent generate --n 30 --seed 17`
+

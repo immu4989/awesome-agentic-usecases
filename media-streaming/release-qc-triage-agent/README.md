@@ -1,6 +1,28 @@
-# 🎞️ Release QC Triage Agent
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/banner-dark.svg">
+  <img alt="Media & Streaming use case banner" src="docs/banner-light.svg" width="100%">
+</picture>
 
-`investigate` `decide` · `single-agent` · Media & Streaming
+<p align="center">
+  <a href="../../README.md">← all use cases</a> ·
+  <img src="https://img.shields.io/badge/industry-Media%20%26%20Streaming-d55181" alt="industry">
+  <img src="https://img.shields.io/badge/verified-evals%20%C2%B7%20cost%20%C2%B7%20failure%20modes-008300" alt="verified">
+  <img src="https://img.shields.io/badge/reproduce-%240%20free%20tier-4a3aa7" alt="free to reproduce">
+</p>
+
+## 🪤 Three traps
+
+**Looks broken, is fine:** 22 seconds of digital silence — covered exactly by a
+director-intent annotation. Not a defect.
+
+**Looks minor, is blocking:** an ~800 ms subtitle drift is cosmetic by severity, but a caption
+defect in a CVAA-covered territory can *never* be waived.
+
+**Don't over-generalize:** that same caption defect outside a covered territory is ordinary again.
+
+Plus distractor annotations covering the *wrong* timecode, punishing any agent that reads
+"annotations exist" as "waive."
+
 
 ## Problem
 
@@ -49,6 +71,15 @@ timecode range, punishing an agent that reads "annotations exist" as "waive."
 
 30 scenarios × 3 repeats per model. Free-tier rows cost $0 to reproduce.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/results-dark.svg">
+  <img alt="Accuracy by model, with 95% bootstrap confidence intervals" src="docs/results-light.svg" width="100%">
+</picture>
+
+<details>
+<summary><b>Exact numbers</b> (all metrics, cost, latency)</summary>
+<br>
+
 | Model | queue acc | action acc [95% CI] | exact match | submitted | $/scenario | p50 latency |
 |---|---|---|---|---|---|---|
 | `gpt-oss-120b` (Fireworks) | **0.978** | **0.800** [0.667, 0.911] | **0.800** | 0.978 | $0.0016 | 13.9s |
@@ -56,6 +87,8 @@ timecode range, punishing an agent that reads "annotations exist" as "waive."
 | `kimi-k2p6` (Fireworks) | 0.967 | 0.711 [0.556, 0.844] | 0.711 | 0.967 | $0.0124 | 28.2s |
 | `mistral-small-latest` (free tier) | 0.856 | 0.433 [0.289, 0.578] | 0.367 | 1.000 | $0.0004 | 5.4s |
 | `mock` (pipeline check, CI) | 1.000 | 0.867 | 0.867 | 1.000 | $0 | — |
+
+</details>
 
 **The headline finding is about how you write policy, not which model you pick.**
 
@@ -100,3 +133,4 @@ release-qc-agent eval --backend mistral --repeats 3
 ```
 
 Regenerate scenarios (seeded, committed): `release-qc-agent generate --n 30 --seed 19`
+
