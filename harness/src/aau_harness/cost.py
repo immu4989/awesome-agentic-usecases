@@ -30,6 +30,13 @@ PRICING_PER_MTOK: dict[str, tuple[float, float]] = {
     "zai-glm-4.7": (2.25, 2.50),  # Cerebras-hosted GLM; approximate list rate
     "gpt-oss-120b": (0.35, 0.75),  # Cerebras-hosted; approximate list rate
     "meta-llama/Llama-3.3-70B-Instruct-Turbo": (0.88, 0.88),  # Together
+    "openai/gpt-oss-20b": (0.05, 0.20),  # Together
+    "Qwen/Qwen3-Next-80B-A3B-Thinking": (0.15, 1.50),  # Together
+    "meta-llama/Llama-4-Scout-17B-16E-Instruct": (0.18, 0.59),  # Together
+    "zai-org/GLM-4.5-Air-FP8": (0.20, 1.10),  # Together
+    "meta-llama/Llama-3.2-3B-Instruct": (0.06, 0.06),  # Together
+    "Qwen/Qwen3.5-9B": (0.17, 0.25),  # Together
+    "accounts/fireworks/models/glm-5p2": (0.60, 2.20),  # Fireworks; approximate
     "Qwen/Qwen3.7-Plus": (0.32, 1.28),  # Together; live list rate 2026-07
     "Qwen/Qwen3.7-Max": (1.25, 3.75),  # Together; live list rate 2026-07
     "accounts/fireworks/models/gpt-oss-120b": (0.15, 0.60),  # Fireworks; approximate list rate
