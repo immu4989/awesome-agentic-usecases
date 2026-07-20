@@ -29,30 +29,22 @@ need a human *now*. Ticket text alone is unreliable: customers say "lost" when t
 shipment is sitting in customs. This agent investigates each ticket with tools before
 committing to a decision.
 
-## Architecture
+## How it decides
 
-One agent, four tools, manual tool-use loop (pluggable backends so CI runs the entire
-pipeline on a deterministic mock at zero cost):
+The agent runs four tools — shipment lookup, carrier status, policy search, and submit — then applies these gates in order. The escalation thresholds live in the policy KB, so the agent has to retrieve them; the trap is the compound Platinum-plus-SLA clause on top of the value threshold.
 
-```mermaid
-flowchart LR
-    T[Ticket text] --> A[Triage agent\npluggable model backend]
-    A -->|lookup_shipment| S[(Shipment record\nvalue · tier · SLA · exception code)]
-    A -->|get_carrier_status| C[(Carrier scan feed)]
-    A -->|search_policy| P[(Policy KB\nescalation thresholds live here)]
-    A -->|submit_triage| D[queue + action + reasoning]
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/decision-dark.svg">
+  <img alt="Decision rules in precedence order" src="docs/decision-light.svg" width="100%">
+</picture>
 
 Backends: `anthropic` (claude-opus-4-8, adaptive thinking), any OpenAI-compatible
 provider (`mistral`, `groq`, `gemini`, `cerebras` — which hosts GLM — `deepseek`),
 and `mock` (deterministic, $0, used by CI). Free tiers mean the full eval below
 costs nothing to reproduce.
 
-Design choices that make the eval mean something:
+Two design choices make the eval mean something beyond the trap above:
 
-- **The ticket underdetermines the answer.** Exception code, value, tier, and SLA are
-  only reachable via `lookup_shipment`; complaints are sometimes wrong about what
-  happened. An agent that skips investigation scores at chance.
 - **Escalation thresholds live in the policy KB, not the prompt.** The agent has to
   retrieve policy to get the action right — which is also where it fails (see below).
 - **Ground truth is programmatic.** The scenario generator's own rules

@@ -67,6 +67,43 @@ USE_CASES = {
     },
 }
 
+# The ordered gold rules, first match wins. This is what actually differs between
+# use cases — the tool topology does not — so it is what the diagram shows.
+# `trap: True` marks a gate where the obvious reading of the input is wrong.
+RULES = {
+    "logistics-supply-chain/exception-triage-agent": [
+        ("Value over $2,000, or Platinum tier inside SLA?", "escalate to a human", True),
+        ("Invalid address with a validated candidate?", "auto-resolve", False),
+        ("Weather delay?", "auto-resolve via notification", False),
+        ("Otherwise", "route to the owning queue", False),
+    ],
+    "retail-workforce/shift-coverage-triage-agent": [
+        ("Home-store adult under the 46h weekly cap?", "offer overtime", True),
+        ("Nearby worker under 40h, within 25 km?", "borrow from nearby store", False),
+        ("Gap ≤20% and not a peak day?", "run reduced coverage", True),
+        ("Otherwise", "escalate to district manager", False),
+    ],
+    "security-operations/alert-triage-agent": [
+        ("Source on the known-benign allowlist?", "false positive — auto-close", True),
+        ("…but the asset is crown-jewel or admin?", "route to analyst, never auto-close", True),
+        ("Active threat on crown-jewel or admin?", "escalate to incident response", False),
+        ("Otherwise", "route to the analyst queue", False),
+    ],
+    "financial-services-fraud/fraud-alert-triage-agent": [
+        ("Travel notice or allowlisted beneficiary?", "false positive — allow", True),
+        ("…but private-banking or over $10k?", "hold for review, never auto-release", True),
+        ("Fraud on a high-value customer?", "escalate to fraud ops", False),
+        ("Otherwise", "block and notify", False),
+    ],
+    "media-streaming/release-qc-triage-agent": [
+        ("Creative annotation covers the flagged range?", "no defect — release", True),
+        ("Caption defect in a CVAA territory?", "fix or delay — never waive", True),
+        ("Minor severity?", "ship inside the window, else vendor", False),
+        ("Fixable in house with time to spare?", "expedite internal fix", False),
+        ("Otherwise", "vendor, delay, or release board", False),
+    ],
+}
+
 PRETTY = {
     "accounts/fireworks/models/gpt-oss-120b": "gpt-oss-120b",
     "accounts/fireworks/models/kimi-k2p6": "kimi-k2p6",
@@ -187,17 +224,66 @@ def chart(cfg: dict, rows: list[dict], mode: str) -> str:
     return "\n".join(parts)
 
 
+def decision(cfg: dict, rules: list, mode: str) -> str:
+    """The ordered rule cascade — first gate that matches wins. Trap gates, where the
+    obvious reading of the input is the wrong answer, carry the accent and a marker."""
+    t = LIGHT if mode == "light" else DARK
+    accent = cfg["accent"][0 if mode == "light" else 1]
+    W, row_h, top = 1200, 78, 104
+    H = top + row_h * len(rules) + 34
+    gx, cond_x, cond_w = 66, 104, 610
+    out_x = 762
+
+    p = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
+        f'role="img" aria-label="Decision rules in precedence order for {esc(cfg["title"])}">',
+        f'<rect x="1" y="1" width="{W-2}" height="{H-2}" rx="14" fill="{t["surface"]}" stroke="{t["border"]}"/>',
+        f'<g font-family="{FONT}">',
+        f'<text x="44" y="46" font-size="19" font-weight="700" fill="{t["ink"]}">How the decision is made</text>',
+        f'<text x="44" y="70" font-size="13" fill="{t["muted"]}">'
+        f'gates are evaluated in order — the first one that matches wins · '
+        f'<tspan fill="{accent}" font-weight="700">accent = a trap</tspan>, where the obvious reading is wrong</text>',
+    ]
+    for i, (cond, out, trap) in enumerate(rules):
+        y = top + i * row_h
+        stroke = accent if trap else t["axis"]
+        fill = f'{accent}1a' if trap else "none"
+        # connector to the next gate
+        if i < len(rules) - 1:
+            p.append(f'<path d="M {gx} {y+18} V {y+row_h-18}" stroke="{t["axis"]}" stroke-width="1.5"/>')
+            p.append(f'<text x="{gx+10}" y="{y+row_h-24}" font-size="11" fill="{t["muted"]}">no</text>')
+        # gate index
+        p.append(f'<circle cx="{gx}" cy="{y}" r="15" fill="{accent if trap else t["surface"]}" stroke="{stroke}" stroke-width="1.5"/>')
+        p.append(f'<text x="{gx}" y="{y+5}" font-size="14" font-weight="700" text-anchor="middle" '
+                 f'fill="{"#ffffff" if trap else t["ink2"]}">{i+1}</text>')
+        # condition
+        p.append(f'<rect x="{cond_x}" y="{y-21}" width="{cond_w}" height="42" rx="8" fill="{fill}" stroke="{stroke}" stroke-width="1.5"/>')
+        marker = "🪤  " if trap else ""
+        p.append(f'<text x="{cond_x+18}" y="{y+5}" font-size="15" fill="{t["ink"]}">{marker}{esc(cond)}</text>')
+        # arrow to outcome
+        p.append(f'<path d="M {cond_x+cond_w+8} {y} H {out_x-14}" stroke="{t["axis"]}" stroke-width="1.5"/>')
+        p.append(f'<path d="M {out_x-14} {y} l -7 -4 v 8 z" fill="{t["axis"]}"/>')
+        # outcome chip
+        p.append(f'<rect x="{out_x}" y="{y-17}" width="{W-out_x-44}" height="34" rx="17" fill="{t["chip"]}"/>')
+        p.append(f'<text x="{out_x+20}" y="{y+5}" font-size="14" font-weight="600" fill="{t["ink"]}">{esc(out)}</text>')
+
+    p += ["</g>", "</svg>", ""]
+    return "\n".join(p)
+
+
 def main() -> None:
     made = 0
     for rel, cfg in USE_CASES.items():
         out = os.path.join(ROOT, rel, "docs")
         os.makedirs(out, exist_ok=True)
         rows = load_rows(rel, cfg["metric"])
+        rules = RULES[rel]
         for mode in ("light", "dark"):
             open(os.path.join(out, f"banner-{mode}.svg"), "w").write(banner(cfg, mode))
             open(os.path.join(out, f"results-{mode}.svg"), "w").write(chart(cfg, rows, mode))
-            made += 2
-        print(f"{rel}: {len(rows)} models charted")
+            open(os.path.join(out, f"decision-{mode}.svg"), "w").write(decision(cfg, rules, mode))
+            made += 3
+        print(f"{rel}: {len(rows)} models charted, {len(rules)} decision gates")
     print(f"wrote {made} SVGs")
 
 

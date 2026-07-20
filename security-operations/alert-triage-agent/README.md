@@ -29,18 +29,14 @@ first guess, not the truth. A brute-force pattern from an authorized scanner is 
 quiet login on an admin account is an incident. This agent verifies against the asset
 record, the 24h telemetry, and the response runbook before committing.
 
-## Architecture
+## How it decides
 
-One agent, four tools, pluggable model backend (CI runs the deterministic mock at $0):
+The agent pulls the entity record, the 24-hour telemetry, and the runbook, then applies these gates in order. The first two are traps working against each other: a benign source auto-closes — *unless* the target is crown-jewel or admin, in which case it must go to an analyst.
 
-```mermaid
-flowchart LR
-    T[Security alert] --> A[Triage agent]
-    A -->|lookup_entity| S[(Asset/identity\ncriticality · privilege)]
-    A -->|query_events| E[(24h telemetry\nauth · geo · EDR · source allowlist)]
-    A -->|search_runbook| P[(Response runbook\nescalation + auto-close clauses)]
-    A -->|submit_triage| D[queue + disposition + reasoning]
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/decision-dark.svg">
+  <img alt="Decision rules in precedence order" src="docs/decision-light.svg" width="100%">
+</picture>
 
 Two traps. **The deception:** one scenario is 2,100 failed logins against a crown-jewel
 host — textbook brute force, except the telemetry notes the source is an *authorized

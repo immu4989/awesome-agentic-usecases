@@ -30,18 +30,14 @@ hours, whether anyone's a minor, whether tomorrow is a peak day), and the compli
 caps live in policy, not intuition. This agent pulls the roster and the labor-policy KB,
 then commits a compliant strategy.
 
-## Architecture
+## How it decides
 
-One agent, four tools, pluggable model backend (CI runs the deterministic mock at $0):
+The agent pulls the shift record, the candidate roster, and the labour policy, then applies these gates in order. Two of them are traps: a worker can look available and be over the weekly-hours cap, and reduced coverage is forbidden on peak days no matter how small the gap.
 
-```mermaid
-flowchart LR
-    T[Call-out ticket] --> A[Coverage agent]
-    A -->|get_shift_status| S[(Shift record\nheadcount · hours · peak-day flag)]
-    A -->|list_available_workers| R[(Roster\nhours · minor status · distance)]
-    A -->|search_labor_policy| P[(Labor policy KB\nOT caps · minor limits · borrowing)]
-    A -->|submit_coverage_plan| D[strategy + reasoning]
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/decision-dark.svg">
+  <img alt="Decision rules in precedence order" src="docs/decision-light.svg" width="100%">
+</picture>
 
 The compliance trap: overtime is the *preferred* fill, but only if a home-store adult
 stays under the weekly-hours cap; a worker one shift away from the cap looks eligible and

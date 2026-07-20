@@ -38,19 +38,14 @@ The agent **triages already-flagged defects — it does not detect them**. Detec
 what the QC pipeline upstream already did, and real detectors do it far better than any
 language model would.
 
-## Architecture
+## How it decides
 
-One agent, five tools, pluggable model backend (CI runs the deterministic mock at $0):
+The agent pulls the release context, the QC flag, the production annotations, and the release policy, then applies these gates in order. The first two are traps: a director annotation turns a flagged defect into a non-defect, and a caption defect in a covered territory can never be waived — the rule that every model obeyed.
 
-```mermaid
-flowchart LR
-    T[QC flag] --> A[Release QC agent]
-    A -->|get_release_context| S[(Title\ntier · days to premiere · territories)]
-    A -->|get_qc_flag| F[(Flag record\ncomponent · severity · timecode)]
-    A -->|check_creative_annotations| N[(Production notes\ndirector intent by range)]
-    A -->|search_release_policy| P[(Release policy KB\naccessibility · window · capability)]
-    A -->|submit_release_decision| D[queue + action + reasoning]
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/decision-dark.svg">
+  <img alt="Decision rules in precedence order" src="docs/decision-light.svg" width="100%">
+</picture>
 
 Modelled on the publicly documented streaming delivery pipeline — package validation,
 spec inspection, then automated QC — and on US accessibility law. Three traps, pointing

@@ -35,18 +35,14 @@ customer's own device and login — every classic fraud signal absent — yet it
 they were tricked into approving. This agent verifies against the customer record, the
 transaction signals, and fraud policy before committing.
 
-## Architecture
+## How it decides
 
-One agent, four tools, pluggable model backend (CI runs the deterministic mock at $0):
+The agent pulls the customer record, the transaction signals, and fraud policy, then applies these gates in order. The benign gate and its high-value exception are both traps, and they point in opposite directions from the two deceptions above.
 
-```mermaid
-flowchart LR
-    T[Fraud alert] --> A[Fraud triage agent]
-    A -->|lookup_customer| S[(Customer\nsegment · tenure · disputes)]
-    A -->|query_transaction| E[(Transaction signals\ndevice · geo · payee · benign source)]
-    A -->|search_fraud_policy| P[(Fraud policy KB\nescalation · auto-release · APP-scam)]
-    A -->|submit_triage| D[queue + disposition + reasoning]
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/decision-dark.svg">
+  <img alt="Decision rules in precedence order" src="docs/decision-light.svg" width="100%">
+</picture>
 
 Two deceptions in opposite directions, plus a compound clause:
 
