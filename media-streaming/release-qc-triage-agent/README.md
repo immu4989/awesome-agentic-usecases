@@ -53,6 +53,7 @@ timecode range, punishing an agent that reads "annotations exist" as "waive."
 |---|---|---|---|---|---|---|
 | `gpt-oss-120b` (Fireworks) | **0.978** | **0.800** [0.667, 0.911] | **0.800** | 0.978 | $0.0016 | 13.9s |
 | `Qwen3.7-Plus` (Together) | 0.956 | 0.800 [0.667, 0.922] | 0.800 | 0.967 | $0.0042 | 40.1s |
+| `kimi-k2p6` (Fireworks) | 0.967 | 0.711 [0.556, 0.844] | 0.711 | 0.967 | $0.0124 | 28.2s |
 | `mistral-small-latest` (free tier) | 0.856 | 0.433 [0.289, 0.578] | 0.367 | 1.000 | $0.0004 | 5.4s |
 | `mock` (pipeline check, CI) | 1.000 | 0.867 | 0.867 | 1.000 | $0 | — |
 
@@ -72,12 +73,17 @@ policy, and it costs nothing.
 Two further results:
 
 - **The failure directions are opposite and model-specific.** Mistral over-escalates to
-  the release board (16 cases); gpt-oss and Qwen over-use the in-house fix (6 and 7
-  cases), sometimes asserting a repair capability the policy explicitly denies. A
-  deployment tuned for one model's bias is mistuned for the other's.
-- **Cheaper won here.** `gpt-oss-120b` matches `Qwen3.7-Plus` on action accuracy with
-  better queue accuracy, at **2.6× lower cost and 3× lower latency** — the second
-  vertical in a row where price and quality are decoupled.
+  the release board (16 cases). The other three pull work the other way, into the
+  in-house queue — mildly for gpt-oss and Qwen (6 and 7 cases), almost totally for
+  `kimi-k2p6`, where **22 of 23 action errors are the same substitution**: whatever the
+  policy prescribed, fix it in house. Sometimes that asserts a repair capability
+  RQ-FIX-04 explicitly denies. A deployment tuned for one model's bias is mistuned for
+  every other's.
+- **The most expensive model finished last.** `kimi-k2p6` costs **7.7× more per scenario
+  than `gpt-oss-120b`** and scores lower on every metric (0.711 vs 0.800 action). One
+  full eval on it costs $1.11 against $0.14 — the clearest price/quality decoupling in
+  the repo, and the opposite of the logistics exemplar where kimi was the only model to
+  score a perfect 90/90.
 
 ## Failure modes
 

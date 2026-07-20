@@ -29,7 +29,7 @@ model backends include free tiers, so reproducing any result costs nothing.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="5 industries shipping, 17 verified model-evals, 27 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="5 industries shipping, 18 verified model-evals, 27 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 ## Four models, one agent

@@ -6,7 +6,7 @@ Observations are from the real-model runs in `results/`.
 
 ### 1. The legal rule held — universally. The thresholds around it did not.
 
-- **Observed on every model tested:** zero caption waivers across all covered-territory
+- **Observed on all four models tested:** zero caption waivers across all covered-territory
   caption scenarios. Not one model ever waived a caption defect in a CVAA-covered
   territory, including the models that were wrong about almost everything else nearby.
 - **Contrast:** the same models missed the ordinary operational thresholds constantly —
@@ -47,22 +47,24 @@ Observations are from the real-model runs in `results/`.
 
 ### 4. Over-fixing: pulling vendor work in-house
 
-- **Reproduce:** `LOUDNESS_SPEC` and `HDR_METADATA` archetypes on **both**
-  `gpt-oss-120b` (6 runs) and `Qwen3.7-Plus` (7 runs) — gold says `vendor_redelivery`,
-  the model says `expedite_internal_fix`.
-- **What happens:** with time on the clock, both models reach for the in-house fix
+- **Reproduce:** `LOUDNESS_SPEC` and `HDR_METADATA` archetypes on `gpt-oss-120b`
+  (6 runs), `Qwen3.7-Plus` (7 runs), and — most starkly — `kimi-k2p6`, where **22 of 23
+  action errors collapse to the single substitution `→ expedite_internal_fix`**
+  (9 from `vendor_redelivery`, 7 from `waive_and_release`, 6 from `delay_release`).
+- **What happens:** with time on the clock, these models reach for the in-house fix
   rather than sending the package back to the originating vendor. For HDR metadata baked
   into the picture essence, in-house repair is not actually available (RQ-FIX-04) — the
   model asserts a capability the policy denies.
 - **Why it matters:** it is the exact mirror of mode 3. Mistral pushes work up to
-  humans; gpt-oss and Qwen pull work in to a team that cannot do it. Two opposite
-  failure directions, and which one you get depends entirely on the model — so a
-  deployment threshold tuned for one is wrong for the other.
+  humans; the other three pull it in to a team that sometimes cannot do it. Kimi's
+  near-total collapse to one action is the sharpest illustration in the repo that a
+  model can hold a *default* that overrides retrieved policy — its queue accuracy is
+  0.967, so it reads the situation correctly and then does the same thing regardless.
 
 ### 5. Commit-stall persists across every industry
 
-- **Reproduce:** 2 of 90 `gpt-oss-120b` runs and 3 of 90 `Qwen3.7-Plus` runs submitted
-  no decision at all.
+- **Reproduce:** 2 of 90 `gpt-oss-120b` runs, 3 of 90 `Qwen3.7-Plus` runs, and 3 of 90
+  `kimi-k2p6` runs submitted no decision at all.
 - **What happens:** the model investigates, then ends its turn without calling
   `submit_release_decision`.
 - **Why it matters:** this same failure now appears in logistics, retail, security,

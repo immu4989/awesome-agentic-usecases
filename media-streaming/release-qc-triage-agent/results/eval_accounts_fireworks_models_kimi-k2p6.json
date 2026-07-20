@@ -1,0 +1,4146 @@
+{
+  "backend": "fireworks",
+  "model": "accounts/fireworks/models/kimi-k2p6",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "action_accuracy": 0.7111,
+    "exact_match": 0.7111,
+    "queue_accuracy": 0.9667,
+    "submitted": 0.9667
+  },
+  "metric_ci95": {
+    "action_accuracy": [
+      0.5556,
+      0.8444
+    ],
+    "exact_match": [
+      0.5556,
+      0.8444
+    ],
+    "queue_accuracy": [
+      0.9222,
+      1.0
+    ],
+    "submitted": [
+      0.9222,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.012352,
+  "total_cost_usd": 1.1117,
+  "p50_latency_s": 28.165,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007265,
+      "latency_s": 15.054,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag at 00:69:12 for 22 seconds of digital silence is covered by a production annotation (00:69:12\u201300:69:59) stating this is a deliberate audio blackout for dramatic effect, approved by the post supervisor. Per release policy RQ-CREATIVE-02, a creative annotation that covers the flagged range establishes the behavior as intentional and the flag is not a defect. The title is a tentpole releasing in 1 day with marketing locked, but because this is verified creative intent rather than an actual audio defect, no remediation is required. Record as no-defect and release as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3989,
+          "output_tokens": 1092,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007265
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007581,
+      "latency_s": 19.585,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a real minor caption sync defect (0.8s drift at 00:37:26) with no production annotation covering it. The title releases in APAC and EU only, so it is not CVAA-covered; therefore the accessibility hard block does not apply. However, the defect still requires remediation. Per policy RQ-FIX-04, timed-text defects can be repaired in-house in about 2 days, which matches the remaining 2-day window to premiere. In-house repair is the preferred path per RQ-PREF-00, and because this is a standard-tier title with a minor defect, escalation to the release board is unnecessary. Expediting an internal fix allows us to meet the marketed premiere without shipping a defective asset.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3657,
+          "output_tokens": 1308,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007581
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009832,
+      "latency_s": 27.747,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major audio lip-sync defect (audio leads picture by ~4 frames at 00:29:56) with no production annotations covering the flagged timecode, so this is not an intentional creative choice. Per policy RQ-FIX-04, audio defects can be repaired in-house in about 2 days. The title has 3 days remaining until premiere (standard tier, marketing locked), so the in-house repair window fits comfortably within the release schedule. Per remediation preference order RQ-PREF-00, an in-house fix is preferred over vendor redelivery or delay. Therefore the flag is owned by audio-eng and the asset should be expedited through internal repair and re-validated before release.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5485,
+          "output_tokens": 1449,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009832
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.030407,
+      "latency_s": 101.844,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major severity colour-metadata mismatch in the package descriptor at 00:06:06, raised during spec-inspection. It is not a caption defect and no creative annotations cover the flagged range. Because the discrepancy is in the package descriptor rather than a picture defect baked into the video essence, it falls outside the scope of RQ-FIX-04\u2019s vendor-redelivery requirement for essence-level picture defects. With 8 days remaining to premiere\u2014well outside the 3-day release window\u2014there is sufficient time for an in-house fix (estimated ~2 days for non-essence defects). The title is standard tier and marketing is not locked, so schedule risk is low. Per RQ-PREF-00 the preferred remediation is an in-house fix; therefore the flag is routed to video-eng for expedited internal correction of the package descriptor metadata before release.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 7,
+          "input_tokens": 13574,
+          "output_tokens": 5611,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.030407
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00644,
+      "latency_s": 57.295,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The automated QC detected a major video-essence defect (compression artefacts at 00:85:26) with no production annotations covering the flagged timecode, so this is a genuine deliverable defect. Per policy RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require vendor redelivery (~5 days). The title is standard tier with 20 days remaining to premiere and marketing is not yet locked, giving sufficient schedule margin for a vendor redelivery without impacting the release window. Because the title is not tentpole, board escalation (RQ-BOARD-05) is not triggered. Assign to video-eng queue and request vendor redelivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3425,
+          "output_tokens": 1005,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00644
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.02096,
+      "latency_s": 62.761,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a minor audio loudness drift (1.4 LU above spec) starting at 00:21:40, with no production annotations covering the flagged range. The title \"Aster & Vale\" (TTL-35102) is a tentpole releasing in UK/EU in 1 day with marketing already locked. Per release policy RQ-MINOR-03, minor defects inside the 3-day release window ship on time and are patched post-release. Because this is a minor non-caption defect and the premiere is only 1 day away, the correct course is to waive the flag for release and schedule an in-house audio repair for a post-release patch (audio-eng queue).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 6,
+          "input_tokens": 9521,
+          "output_tokens": 3813,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.02096
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006896,
+      "latency_s": 22.324,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged 22-second audio silence at 00:70:30 on AST-25702 is covered by a production annotation (range 00:70:30\u201300:70:59) stating this is intentional silence in the director\u2019s cut, with no score or room tone. Per release policy RQ-CREATIVE-02, a creative-team annotation that covers the flagged timecode range establishes the behaviour as intentional and the flag is therefore not a defect. The title is not CVAA-covered, so no accessibility hard block applies. Record no-defect and release as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3572,
+          "output_tokens": 1108,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006896
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009119,
+      "latency_s": 35.636,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a caption defect (timed_text, is_caption_defect=true) on a title releasing in the US with CVAA obligations. Per policy RQ-CVAA-01, caption defects in CVAA-covered territories are a legal hard block and are never waived, regardless of severity or premiere pressure. The title premieres in 3 days and marketing is already locked. Policy RQ-FIX-04 states timed-text defects can be repaired in-house in approximately 2 days, which fits within the remaining 3-day window. Because the schedule allows for in-house remediation, the correct path is to expedite an internal fix on the timed-text queue rather than delay the release or escalate to the board. No creative annotations cover the flagged range, so this is not an intentional creative choice.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3695,
+          "output_tokens": 1808,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009119
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009899,
+      "latency_s": 34.454,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major audio/video sync offset (120 ms) on a tentpole title with 8 days to premiere. There are no production annotations covering the flagged timecode, so this is not an intentional creative choice. Per policy RQ-FIX-04, audio defects can be repaired in-house in about 2 days, and the 8-day window provides sufficient runway. Following the remediation preference order (RQ-PREF-00), an in-house fix is preferred over vendor redelivery or delay. Because a compliant in-house repair fits the schedule, escalation to the release board is unnecessary. I am routing to audio-eng for expedited internal repair.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5297,
+          "output_tokens": 1534,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009899
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.04103,
+      "latency_s": 194.236,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major package-validation defect: the colour metadata in the package descriptor does not match the video essence at 00:91:48. There are no creative annotations covering this range, so it is not an intentional creative choice. Because the mismatch is in the package descriptor rather than a picture defect baked into the video essence, it can be corrected in-house by rewrapping or injecting the correct metadata without re-encoding. The title is a tentpole with 20 days to premiere, giving the video-eng team ample time to apply the fix. Per policy RQ-PREF-00, the preferred remediation order is in-house fix first, then vendor redelivery; since this is a metadata-only packaging issue and the schedule allows it, an internal fix is the appropriate path.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 8,
+          "input_tokens": 18179,
+          "output_tokens": 7617,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.04103
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008568,
+      "latency_s": 42.185,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major video (picture-essence) defect \u2014 dropped-frame judder at 00:87:17 \u2014 with no production annotation covering the timecode, so it is not an intentional creative choice. Per policy RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require vendor redelivery, which takes about 5 days. However, the release context for tentpole title \"Northwind\" (TTL-32960) shows only 1 day remaining to premiere and marketing is already locked. Because there is insufficient time for vendor redelivery, and unilaterally delaying a marketed tentpole premiere is a commercial decision, policy RQ-BOARD-05 mandates escalation to the release board rather than a unilateral delay.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3582,
+          "output_tokens": 1662,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008568
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.01126,
+      "latency_s": 35.057,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a minor audio spec-inspection finding: integrated loudness -21.4 LKFS, outside the -27/-23 delivery spec. The title 'Paper Cities' (TTL-36579) is standard tier with 2 days to premiere and marketing already locked. There are no creative annotations covering the flagged range. The defect is not a caption issue, so the CVAA hard block does not apply. Per policy RQ-FIX-04, audio defects can be repaired in-house in about 2 days, which fits the remaining window. Per policy RQ-PREF-00, the preferred remediation path is an in-house fix before considering vendor redelivery or delay. Because the schedule allows and the title is not tentpole, this does not meet the board-escalation criteria in RQ-BOARD-05. I am routing to audio-eng for an expedited in-house loudness correction ahead of premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5947,
+          "output_tokens": 1771,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.01126
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007772,
+      "latency_s": 40.065,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The automated QC flag at 00:87:18 reports total audio loss, but a production annotation covers the exact flagged range (00:87:18\u201300:87:59) and states this is a deliberate audio blackout for dramatic effect, approved by the post supervisor. Per release policy RQ-CREATIVE-02, a creative annotation that covers the flagged timecode range establishes the behaviour as intentional and the flag is therefore not a defect. Title TTL-60423 ('Paper Cities') is three days from premiere with marketing locked, so clearing the flag avoids an unnecessary delay. Queue: no-defect; action: waive and release.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3413,
+          "output_tokens": 1453,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007772
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007591,
+      "latency_s": 31.368,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a caption defect (subtitle timing drift) on a title releasing in the US, a CVAA-covered territory. Per policy RQ-CVAA-01, caption defects in CVAA-covered territories are a legal hard block and are never waived, regardless of severity or premiere pressure. The title has 8 days until premiere and in-house timed-text remediation capability is approximately 2 days (RQ-FIX-04), so the schedule comfortably allows an internal fix. No production annotations cover the flagged range to suggest this is intentional creative intent. Therefore the defect must be repaired in house before release.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3685,
+          "output_tokens": 1302,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007591
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007839,
+      "latency_s": 25.955,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag indicates a major audio lip-sync defect (audio leads picture by ~4 frames) at 00:63:48 with no production annotations covering the flagged range to establish creative intent. Per policy RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days. With 20 days remaining to premiere for this tentpole title, an in-house fix is well within the release window and is the preferred remediation path per RQ-PREF-00.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3558,
+          "output_tokens": 1427,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007839
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.023644,
+      "latency_s": 88.343,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag indicates a colour metadata inconsistency between the package descriptor and the video essence at 00:91:33 on AST-94014 (The Long Quiet, TTL-50112). This is a major severity video component issue with no applicable creative annotations. The title is standard tier, releasing in 1 day with locked marketing in APAC/EU (non-CVAA). While baked-in picture defects require vendor redelivery (~5 days), a package descriptor metadata mismatch may be resolvable in house without re-encoding the essence. Given the 1-day premiere window, the appropriate first step is an expedited internal fix attempt by video engineering to assess whether a metadata re-wrap or descriptor correction can resolve the mismatch in time. If in-house repair is not feasible, a delay would follow, but escalation to the release board is reserved for tentpole titles per RQ-BOARD-05.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 8098,
+          "output_tokens": 5182,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.023644
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.001688,
+      "latency_s": 115.128,
+      "n_api_calls": 1,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": null,
+          "action": null
+        },
+        "n_turns": 0,
+        "tool_calls": [],
+        "refused": false,
+        "error": "RemoteDisconnected: Remote end closed connection without response",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 1,
+          "input_tokens": 833,
+          "output_tokens": 285,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001688
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.013723,
+      "latency_s": 24.647,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor audio defect (dialogue loudness drifts 1.4 LU above spec after 00:60:55) with no covering production annotations. The title is a standard-tier release with 3 days to premiere in US/LATAM. Per policy RQ-MINOR-03, minor defects inside the 3-day release window ship on time and are patched post-release. Although audio defects can be repaired in-house in about 2 days (RQ-FIX-04), the release-window rule for minor defects governs and directs shipment as-delivered. This is not a caption defect, so the CVAA hard block (RQ-CVAA-01) does not apply.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5965,
+          "output_tokens": 2586,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.013723
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005599,
+      "latency_s": 11.297,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag at 00:50:05 describes 22 seconds of digital silence in the audio track. A production annotation filed against AST-15342 explicitly covers the flagged range (00:50:05\u201300:50:59) and states this is a deliberate audio blackout for dramatic effect, approved by the post supervisor. Per release-policy clause RQ-CREATIVE-02, a creative-team annotation that covers the flagged timecode establishes the behaviour as intentional and the flag is therefore not a defect. Title TTL-90924 is 8 days from premiere with marketing not yet locked, so there is no schedule pressure forcing a different path. The flag should be recorded as no-defect and the title released as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3301,
+          "output_tokens": 766,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005599
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008377,
+      "latency_s": 140.457,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a caption defect (subtitle timing drift ~800ms across 14 events at 00:15:14) on a title releasing in US and LATAM with CVAA obligations. Per policy RQ-CVAA-01, caption defects in CVAA-covered territories are a legal hard block and are never waived, regardless of severity or premiere pressure. The policy directs us to fix in house if the schedule allows. With 20 days remaining to premiere and in-house timed-text repair capability estimated at ~2 days (RQ-FIX-04), the schedule comfortably allows an internal fix. No production annotation covers the flagged timecode range, so creative intent does not explain the drift. The flag should be routed to the timed-text engineering queue for expedited in-house correction before release.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3790,
+          "output_tokens": 1529,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008377
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009464,
+      "latency_s": 23.541,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major audio lip-sync defect (audio leads picture by ~4 frames at 00:09:45) on asset AST-67142. The creative-annotation database contains no note covering the flagged timecode, so this is not an intentional creative choice. Release context for TTL-87012 shows a tentpole title premiering in 1 day across US/CA/UK with marketing already locked. Per policy RQ-FIX-04, audio defects can be repaired in-house in about 2 days, which exceeds the 1-day window. Vendor redelivery takes about 5 days, also impossible. Because this is a major defect on a marketed tentpole with no viable repair path before premiere, policy RQ-BOARD-05 mandates escalation to the release board rather than a unilateral delay.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3686,
+          "output_tokens": 1926,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009464
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.014902,
+      "latency_s": 40.336,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major package-validation defect on the video component at 00:41:07: colour metadata in the package descriptor does not match the video essence. This is a packaging/metadata mismatch rather than a picture defect baked into the video essence, so it can be corrected in-house by re-wrapping or updating the descriptor without re-encoding. The title is standard tier with 2 days to premiere and marketing is locked; an internal fix within the window avoids an unnecessary delay. No creative annotation covers the flagged range, and because this is not a caption defect the CVAA hard block does not apply.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5662,
+          "output_tokens": 3080,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.014902
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004373,
+      "latency_s": 10.626,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies major compression artefacts baked into the picture essence at 00:17:43 on asset AST-56376. There are no production annotations covering this timecode that would indicate an intentional creative choice. Per policy RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require vendor redelivery, which takes approximately 5 days. However, the title \"Glass Harbour\" (TTL-39469) is a tentpole release with only 3 days remaining to premiere and marketing already locked. Policy RQ-BOARD-05 explicitly states that a major in-house-unfixable defect on a tentpole title with insufficient time for vendor redelivery is a commercial decision that must be escalated to the release board rather than unilaterally delaying a marketed premiere. Therefore, this flag is owned by video-eng and requires board escalation.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 2084,
+          "output_tokens": 763,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004373
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007146,
+      "latency_s": 15.804,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a minor audio loudness drift (1.4 LU above spec) starting at 00:11:37 on AST-49850. There are no production annotations covering this timecode that would indicate an intentional creative choice. Per release policy RQ-MINOR-03, with 8 days remaining to premiere we are outside the 3-day release window, so remediation is viable before launch. Policy RQ-FIX-04 confirms audio defects can be repaired in-house in approximately 2 days, and RQ-PREF-00 establishes the preference order of in-house fix first. An internal repair fits comfortably within the schedule, so the flag is routed to audio-eng for expedited correction rather than vendor redelivery or delay.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3537,
+          "output_tokens": 1203,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007146
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006763,
+      "latency_s": 13.161,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag at 00:39:31 reports total audio loss, but a production annotation from the creative team covers the exact flagged range (00:39:31\u201300:39:59) and explicitly states this is \u201cIntentional silence \u2014 director's cut, scene plays without score or room tone.\u201d Per release-policy clause RQ-CREATIVE-02, a production annotation that covers the flagged timecode range establishes the behaviour as intentional, and the flag is therefore not a defect. The title is standard tier with 20 days to premiere and marketing is not locked, so there is no schedule pressure altering this determination. The flag should be recorded as no-defect and the title released as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3730,
+          "output_tokens": 1011,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006763
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.022333,
+      "latency_s": 65.004,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a confirmed caption defect (timed_text component, is_caption_defect: true) on a title releasing in CVAA-covered territories (US, CA, UK). Per policy RQ-CVAA-01, caption defects in CVAA territories are a legal hard block that can never be waived, regardless of severity or premiere pressure. In-house timed-text repair takes approximately 2 days (RQ-FIX-04), but the premiere is in 1 day, so the schedule does not allow an internal fix. Vendor redelivery takes ~5 days and also cannot meet the window. The only remaining path is to delay the release, but \"Sixteen Winters\" is a tentpole title with marketing already locked; unilaterally delaying a marketed tentpole premiere is a major commercial decision that sits above this desk and should be brought to the release board.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 7534,
+          "output_tokens": 4933,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.022333
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.012541,
+      "latency_s": 38.875,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a sustained 120 ms A/V sync offset in the audio component, severity major, with no production annotation covering the flagged timecode (the only annotation covers a later handheld-shake sequence and does not apply). Per release-policy clause RQ-FIX-04, audio defects can be repaired in-house in about two days. With exactly two days remaining to the standard-tier premiere of \"Paper Cities\" (TTL-40154) in APAC/EU (non-CVAA territories), an in-house fix is feasible before the marketed premiere and avoids the need for vendor redelivery or board escalation (RQ-BOARD-05 applies to tentpole titles, not standard tier). The audio-eng queue should be tasked to deliver a corrected package before premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5674,
+          "output_tokens": 2289,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.012541
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00815,
+      "latency_s": 17.328,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major video defect (colour metadata mismatch between package descriptor and video essence at 00:34:53) on tentpole title \"Northwind\" (TTL-98350). There are only 3 days to premiere and marketing is already locked. Per policy RQ-FIX-04, picture-essence defects cannot be repaired in-house and vendor redelivery takes approximately 5 days, which exceeds the release window. No production annotations cover the flagged timecode, so creative intent does not explain the mismatch. Policy RQ-BOARD-05 explicitly directs that a major, in-house-unfixable defect on a marketed tentpole with insufficient time for vendor redelivery must be escalated to the release board as a commercial decision rather than unilaterally delaying the premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3917,
+          "output_tokens": 1411,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00815
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.011272,
+      "latency_s": 23.043,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major video defect (compression artefacts baked into picture essence at 00:21:06) with no covering creative annotation. Per RQ-FIX-04, picture-essence defects cannot be repaired in-house and require vendor redelivery (~5 days). With 8 days remaining to premiere on this standard-tier, non-CVAA title, the schedule comfortably accommodates vendor redelivery. Following the remediation preference order (RQ-PREF-00), vendor redelivery is the appropriate path since an in-house fix is impossible and there is no policy basis for a waiver. No board escalation is required because the title is not tentpole and marketing is not locked.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5407,
+          "output_tokens": 1955,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.011272
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.016877,
+      "latency_s": 33.155,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a real audio defect: integrated loudness of -21.4 LKFS falls outside the -27/-23 delivery specification. No production annotation covers the flagged timecode, so this is not an intentional creative choice. The title is a tentpole releasing in 20 days in US/LATAM (CVAA-covered), but this is not a caption defect, so the accessibility hard block does not apply. Per release policy RQ-PREF-00, remediation preference is in-house fix first, then vendor redelivery, then delay. Audio defects can be repaired in-house in approximately 2 days (RQ-FIX-04). With 20 days remaining\u2014well outside the 3-day release window where minor defects would ship on time (RQ-MINOR-03)\u2014there is ample schedule margin to complete the in-house loudness correction before premiere without impacting marketing lock. Therefore, the flag is owned by audio-eng and should be expedited for internal repair.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 7991,
+          "output_tokens": 2962,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.016877
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005985,
+      "latency_s": 10.971,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag at 00:69:12 for 22 seconds of digital silence is fully covered by a production annotation (range 00:69:12\u201300:69:59) stating \u201cDeliberate audio blackout for dramatic effect, approved by post supervisor.\u201d Per release-policy clause RQ-CREATIVE-02, a creative-team annotation that covers the flagged timecode range establishes the behaviour as intentional and the flag is therefore not a defect. The title is a tentpole premiering in 1 day with marketing locked, so treating this as no-defect and releasing as delivered is the correct path.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3510,
+          "output_tokens": 825,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005985
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007649,
+      "latency_s": 16.161,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a timed-text (closed-caption) drift of ~0.8 s at 00:37:26, classified as minor and confirmed as a caption defect. The title 'The Long Quiet' (TTL-44220) is a standard-tier release with 2 days to premiere in APAC and EU territories. CVAA coverage is false, so the legal hard block in RQ-CVAA-01 does not apply; the defect is treated as an ordinary minor defect. There are no production annotations covering the flagged timecode, so creative intent does not explain the drift. Per RQ-FIX-04, timed-text defects can be repaired in house in about 2 days, and per RQ-PREF-00 the preferred remediation path is an in-house fix. With 2 days remaining, an internal repair is feasible before premiere, making expedite_internal_fix the appropriate action rather than vendor redelivery or delay.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3656,
+          "output_tokens": 1331,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007649
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.01058,
+      "latency_s": 19.629,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major audio lip-sync defect (audio leads picture by ~4 frames at 00:29:56) with no production annotations to indicate an intentional creative choice. Per policy RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days. With 3 days remaining until premiere, an in-house fix fits the schedule. Per policy RQ-PREF-00, in-house remediation is the preferred path when viable. The title is standard tier with marketing locked, but since the fix can be completed before premiere, there is no need to escalate to the release board or delay. The defect is not a caption issue, so the CVAA hard block (RQ-CVAA-01) does not apply. Assign to audio-eng for expedited in-house correction.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5318,
+          "output_tokens": 1754,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.01058
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.019653,
+      "latency_s": 51.107,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Major video-component defect (colour metadata in the package descriptor does not match the video essence at 00:06:06) raised at spec-inspection. No production annotations cover the flagged timecode, so this is not an intentional creative choice. The title is standard tier with 8 days to premiere and marketing is not locked, which accommodates the ~5-day vendor redelivery timeline per policy RQ-FIX-04. In-house repair capability is explicitly limited to timed-text and audio defects (RQ-FIX-04), and the remediation preference order (RQ-PREF-00) directs us to vendor redelivery when an in-house fix is not available and the schedule permits. Since this is a standard-tier title with sufficient time for redelivery, escalation to the release board (RQ-BOARD-05) is not required.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 7938,
+          "output_tokens": 3905,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.019653
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009158,
+      "latency_s": 20.349,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major video defect \u2014 compression artefacts baked into the picture essence at 00:85:26 \u2014 with no production annotations to indicate an intentional creative choice. Per policy RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require vendor redelivery (~5 days). The title \"Glass Harbour\" (TTL-75837) is a standard-tier release with 20 days remaining to premiere, giving ample headroom for vendor redelivery without impacting the release window. Marketing is not yet locked. Since this is not a tentpole title and schedule pressure is low, escalation to the release board is unnecessary. The vendor should supply a corrected package.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4967,
+          "output_tokens": 1397,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009158
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.012552,
+      "latency_s": 40.561,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a real audio defect: dialogue loudness drifts 1.4 LU above spec after 00:21:40. However, per release-policy clause RQ-MINOR-03, minor defects inside the 3-day release window ship on time and are patched post-release. This tentpole title premieres in 1 day (well inside the window), marketing is already locked, and the title releases in UK/EU where no CVAA hard block applies (RQ-CVAA-01). No creative annotations cover the flagged timecode. The defect will be queued to audio-eng for an in-house post-release patch, which policy estimates at about 2 days (RQ-FIX-04).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5361,
+          "output_tokens": 2397,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.012552
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006784,
+      "latency_s": 15.209,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag at 00:70:30 for 22 s of digital silence is covered by a production annotation stating this is intentional silence \u2014 the director\u2019s cut of the scene plays without score or room tone. Per release-policy clause RQ-CREATIVE-02, a creative-team annotation that covers the flagged timecode range establishes the behaviour as intentional and the flag is therefore not a defect. Title TTL-87874 is standard tier, marketing is locked, and the premiere is in 2 days; because the silence is intentional there is no audio defect to remediate, so the title can release as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3547,
+          "output_tokens": 1079,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006784
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007992,
+      "latency_s": 16.399,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a caption defect (subtitle timing drift) on a title releasing in a CVAA-covered territory (US). Per policy RQ-CVAA-01, caption defects in CVAA territories are a legal hard block and are never waived, regardless of severity or premiere pressure. The title is a tentpole with marketing locked and 3 days to premiere. Policy RQ-FIX-04 states timed-text defects can be repaired in-house in about 2 days, which fits within the remaining window. Because a compliant remediation is available in-house before premiere, the preferred path per RQ-PREF-00 is to expedite the internal fix rather than delay the release or escalate to the board.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3873,
+          "output_tokens": 1373,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007992
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007556,
+      "latency_s": 18.393,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major audio/video sync offset (120ms sustained from 00:55:18) with no production annotations covering the flagged range, so it is a real defect and not an intentional creative choice. Per release-policy clause RQ-FIX-04, audio defects can be repaired in-house in about 2 days. With 8 days remaining to premiere on tentpole title TTL-47186 (\"Paper Cities\"), an in-house fix fits comfortably inside the release window. RQ-PREF-00 establishes the remediation preference order as in-house fix first, and since this is not a caption defect (CVAA does not apply in UK/EU territories), there is no legal hard block preventing standard repair. Marketing is not yet locked, so there is no external pressure forcing an immediate ship-or-delay decision. Therefore the appropriate path is to queue the fix to audio-eng and expedite the in-house repair before premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3806,
+          "output_tokens": 1250,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007556
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.029726,
+      "latency_s": 69.602,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "QC flag AST-50799 is a major video-component defect raised at the package-validation stage: the colour metadata in the package descriptor does not match the video essence at 00:91:48. There are no production annotations covering this range, so it is not an intentional creative choice. Per release-policy clause RQ-FIX-04, picture-related defects that cannot be repaired in-house require vendor redelivery (\u22485 days). With 20 days remaining to the premiere of tentpole title TTL-37421 \"Aster & Vale,\" there is sufficient time for the originating vendor to supply a corrected package without impacting the release window. Marketing is not yet locked, preserving schedule flexibility. Because the timeline comfortably accommodates vendor redelivery, the conditions for board escalation under RQ-BOARD-05 (too little time left for redelivery) are not met.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 6,
+          "input_tokens": 11213,
+          "output_tokens": 6171,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.029726
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004531,
+      "latency_s": 12.268,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major video-essence defect (dropped-frame judder at 00:87:17) with no production annotations to indicate creative intent. Per policy RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require vendor redelivery (~5 days). However, the tentpole title \"Northwind\" (TTL-32960) premieres in 1 day and marketing is already locked. Policy RQ-BOARD-05 explicitly states that a major, in-house-unfixable defect on a tentpole title with insufficient time for vendor redelivery is a commercial decision that must be escalated to the release board rather than unilaterally delaying a marketed premiere. Therefore, the flag is routed to video-eng ownership and the release decision is escalated.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 2089,
+          "output_tokens": 814,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004531
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007805,
+      "latency_s": 138.869,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a spec-inspection audio loudness failure (-21.4 LKFS, outside the -27/-23 delivery range) with no production annotations covering the flagged timecode, so it is not an intentional creative choice. The title is standard-tier, CVAA-covered but this is not a caption defect, so the accessibility hard block does not apply. Marketing is locked with only 2 days to premiere. Per policy RQ-FIX-04, audio defects can be repaired in-house in about 2 days, which fits the remaining window. Per policy RQ-PREF-00, the preferred remediation is an in-house fix when schedule allows, which it does here. Vendor redelivery would likely exceed the 2-day window and delay a marketed premiere, so the correct path is to expedite an internal audio-eng fix before release.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3980,
+          "output_tokens": 1275,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007805
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.001403,
+      "latency_s": 19.85,
+      "n_api_calls": 1,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": null,
+          "action": null
+        },
+        "n_turns": 0,
+        "tool_calls": [],
+        "refused": false,
+        "error": "RemoteDisconnected: Remote end closed connection without response",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 1,
+          "input_tokens": 830,
+          "output_tokens": 191,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001403
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007309,
+      "latency_s": 22.259,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a caption defect (timed-text timing drift) on a title releasing in the US, a CVAA-covered territory. Per policy RQ-CVAA-01, caption defects in CVAA-covered territories are a legal hard block and are never waived, regardless of severity or premiere pressure. The title has 8 days remaining to premiere, and per policy RQ-FIX-04 timed-text defects can be repaired in-house in approximately 2 days, so the schedule comfortably allows an internal fix. No production annotations cover the flagged range, so this is not an intentional creative choice. The flag should be assigned to the timed-text engineering queue for expedited in-house remediation before release.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3913,
+          "output_tokens": 1132,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007309
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008318,
+      "latency_s": 29.593,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major audio lip-sync defect (audio leads picture by ~4 frames at 00:63:48) with no production annotations covering the timecode, so it is not an intentional creative choice. Per policy RQ-FIX-04, audio defects can be repaired in-house in about 2 days. With 20 days remaining to premiere on tentpole title TTL-48517, there is sufficient runway for an internal fix without impacting the release schedule or requiring board escalation (RQ-BOARD-05 only applies when the defect cannot be fixed in-house and there is too little time for vendor redelivery). Assigning to audio-eng for expedited correction.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3548,
+          "output_tokens": 1590,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008318
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.034257,
+      "latency_s": 81.092,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": null,
+          "action": null
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy"
+        ],
+        "refused": false,
+        "error": "no submission within 8 turns",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 8,
+          "input_tokens": 18624,
+          "output_tokens": 5211,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.034257
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.024295,
+      "latency_s": 61.235,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major video-essence defect (dropped-frame judder at 00:09:29) on the delivered master. The sole production annotation covers a later handheld-shake sequence and does not apply to the flagged timecode, so the judder is not an intentional creative choice. Per policy RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require vendor redelivery, which takes approximately 5 days. With only 2 days remaining to the marketed premiere, redelivery is infeasible. Because this is a standard-tier title, the tentpole board-escalation criterion in RQ-BOARD-05 does not apply; the appropriate remediation is to delay release until a corrected master can be delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 6,
+          "input_tokens": 11770,
+          "output_tokens": 4175,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.024295
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007417,
+      "latency_s": 36.857,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a genuine audio-essence defect: dialogue loudness drifts 1.4 LU above spec after 00:60:55, with no production annotation covering the flagged range to suggest creative intent. The title is standard-tier, releasing in 3 days in US/LATAM (CVAA-covered), but this is not a caption defect so the CVAA hard block does not apply. Per RQ-PREF-00 the preference order is in-house fix, then vendor redelivery, then delay. RQ-FIX-04 states audio defects can be repaired in-house in about 2 days, which fits comfortably inside the 3-day release window. Therefore the correct path is to expedite an internal audio-eng repair rather than waive, redeliver, or delay.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3817,
+          "output_tokens": 1200,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007417
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007292,
+      "latency_s": 52.806,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged 22-second digital silence at 00:50:05 is covered by a production annotation (00:50:05\u201300:50:59) stating it is a deliberate audio blackout for dramatic effect, approved by the post supervisor. Per release policy RQ-CREATIVE-02, a creative annotation that covers the flagged range establishes the behavior as intentional and the flag is not a defect. The title is not in CVAA-covered territories and the flag is not a caption defect, so no accessibility hard block applies. Record no-defect and release as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3551,
+          "output_tokens": 1247,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007292
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008695,
+      "latency_s": 29.947,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a caption-defect (timed-text timing drift) on a title releasing in CVAA-covered territories (US, LATAM). Per policy RQ-CVAA-01, caption defects in CVAA territories are a legal hard block and are never waived regardless of severity or premiere pressure. The title has 20 days until premiere and in-house timed-text repairs take approximately 2 days (RQ-FIX-04), so the schedule comfortably allows an internal fix. No production annotation covers the flagged range, so this is not an intentional creative choice. Following the remediation preference order (RQ-PREF-00), an in-house fix is preferred over vendor redelivery or delay. Therefore the flag should be assigned to the timed-text engineering queue for expedited internal repair before release.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3979,
+          "output_tokens": 1572,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008695
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.020587,
+      "latency_s": 72.514,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major-severity audio lip-sync error (audio leads picture by ~4 frames at 00:09:45) on asset AST-67142 for tentpole title TTL-87012 \"Paper Cities,\" premiering in 1 day with marketing already locked. No production annotation covers the flagged timecode, so this is not an intentional creative choice. Per policy RQ-FIX-04, in-house audio repair takes about 2 days, and vendor redelivery takes about 5 days\u2014neither fits the 1-day window. Policy RQ-PREF-00 states we waive only where explicitly allowed, and no policy permits waiving a major audio sync defect. Policy RQ-BOARD-05 therefore applies: a major defect that cannot be fixed in-house, on a tentpole title, with too little time for vendor redelivery, is a commercial decision that must be escalated to the release board rather than unilaterally delaying a marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 8170,
+          "output_tokens": 4139,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.020587
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.019945,
+      "latency_s": 73.484,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major video-component defect raised at package-validation: the colour metadata in the package descriptor does not match the video essence at 00:41:07. No creative annotation covers the flagged timecode, so the mismatch is unexplained by director or post-supervisor intent. The title \"Sixteen Winters\" (standard tier) is two days from its US premiere and marketing is already locked. Because the issue is a metadata mismatch in the package descriptor rather than a picture defect baked into the video essence, it falls within video-eng scope and may be repairable in house without re-encoding or vendor redelivery. Policy RQ-FIX-04 notes that picture defects baked into the essence require vendor redelivery (\u22485 days), which would miss the 2-day window; however, a descriptor-level mismatch is not necessarily baked in, so an expedited internal fix is the appropriate first attempt. If video-eng determines the essence itself is at fault, the fallback would be vendor redelivery and a consequent delay, but for a standard-tier title the correct initial action is to task video-eng for an expedited repair before premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 6187,
+          "output_tokens": 4586,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.019945
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004538,
+      "latency_s": 11.583,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies major compression artefacts baked into the picture essence at 00:17:43 on tentpole title Glass Harbour (TTL-39469). There are no production annotations covering this timecode that would explain the issue as intentional creative intent. Per policy clause RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require vendor redelivery, which takes approximately 5 days. However, the title premieres in only 3 days (APAC and EU territories), making vendor redelivery impossible within the release window. Marketing is already locked. Per policy clause RQ-BOARD-05, a major in-house-unrepairable defect on a tentpole title with insufficient time for vendor redelivery is a commercial decision that must be escalated to the release board rather than unilaterally delaying a marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 2084,
+          "output_tokens": 818,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004538
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007989,
+      "latency_s": 23.149,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a genuine audio-essence defect (dialogue loudness drifting 1.4 LU above spec after 00:11:37) with no production annotation covering the flagged range, so it cannot be treated as intentional creative intent. Under RQ-PREF-00 the preferred remediation path is an in-house fix when the schedule permits. RQ-FIX-04 confirms audio defects can be repaired in-house in about 2 days. With 8 days remaining to the tentpole premiere in APAC/EU (non-CVAA) territories, there is sufficient time to complete the repair without delaying release or requiring vendor redelivery. Therefore the flag is routed to audio-eng for expedited internal correction before premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3597,
+          "output_tokens": 1464,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007989
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00628,
+      "latency_s": 14.066,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag at 00:39:31 reports total audio loss, but a production annotation from the creative team covers the exact flagged range (00:39:31\u201300:39:59) and explicitly documents this as intentional silence: the director\u2019s cut plays the scene without score or room tone. Per release-policy clause RQ-CREATIVE-02, a creative annotation that covers the flagged timecode range establishes the behavior as intentional and the flag is therefore not a defect. The title is 20 days from premiere with marketing not yet locked, so there is no schedule pressure forcing a different path. Record no-defect and release as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3478,
+          "output_tokens": 934,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00628
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009591,
+      "latency_s": 31.739,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a confirmed caption defect (timed-text component, 800 ms drift across 14 events) on a title releasing in CVAA-covered territories (US, CA, UK). Per policy RQ-CVAA-01, caption defects in CVAA territories are a legal hard block that can never be waived, regardless of severity or premiere pressure. The title is a tentpole with marketing locked and only 1 day remaining to premiere, while in-house timed-text remediation requires approximately 2 days (RQ-FIX-04). Because the schedule does not allow an in-house fix before premiere, RQ-CVAA-01 mandates delaying the release rather than shipping with an uncorrected caption defect. The defect is not explained by any creative annotation, so it is a genuine timed-text issue requiring repair.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3885,
+          "output_tokens": 1902,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009591
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008192,
+      "latency_s": 21.768,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Major audio/video sync offset of 120ms sustained from 00:62:11 on standard-tier title \"Paper Cities\" (TTL-40154). No production annotation covers the flagged range, so this is not an intentional creative choice. Per policy RQ-FIX-04, audio defects can be repaired in-house in about 2 days, and the title has exactly 2 days until premiere in APAC/EU (non-CVAA) territories. Because the in-house repair fits the release window, we expedite an internal audio-eng fix rather than delay the marketed premiere or escalate to the board (escalation per RQ-BOARD-05 is reserved for tentpole titles where in-house repair is impossible).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3842,
+          "output_tokens": 1450,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008192
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009321,
+      "latency_s": 31.864,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major video defect (colour metadata mismatch in the package descriptor at 00:34:53) on the tentpole title \"Northwind\" with only 3 days to premiere. No production annotation covers the flagged range, so creative intent does not explain the issue. Per policy RQ-FIX-04, picture defects baked into the video essence cannot be fixed in-house and require ~5 days for vendor redelivery. Even if this metadata mismatch might be addressable without re-encoding, the major severity and the locked marketing on a tentpole release create unacceptable commercial risk if we delay unilaterally. With insufficient time for vendor redelivery and no confirmed in-house remediation path that fits the window, this falls squarely under RQ-BOARD-05: a major defect on a tentpole title with too little time for vendor redelivery must be escalated to the release board for a commercial decision rather than delaying a marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3615,
+          "output_tokens": 1902,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009321
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004676,
+      "latency_s": 21.696,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Major picture-essence compression artefacts at 00:21:06 with no covering creative annotation. Per policy RQ-FIX-04, defects baked into the video essence cannot be repaired in-house and require vendor redelivery (~5 days). The title is standard-tier with 8 days to premiere, leaving adequate time for redelivery without unilateral delay. Board escalation per RQ-BOARD-05 is reserved for tentpole titles with insufficient lead time, which does not apply here.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 2120,
+          "output_tokens": 852,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004676
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.011842,
+      "latency_s": 29.673,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a minor audio loudness defect (-21.4 LKFS, outside the -27/-23 spec) detected at package validation. No production annotation covers the flagged timecode, so this is not an intentional creative choice. The title is a tentpole releasing in 20 days in US/LATAM (CVAA-covered), but this is an audio essence issue, not a caption defect, so the accessibility hard block does not apply. Per policy RQ-FIX-04, audio defects can be repaired in-house in about 2 days, and per RQ-PREF-00 the remediation preference is in-house fix first. With 20 days remaining, an internal repair fits comfortably within the release window without requiring vendor redelivery, delay, or board escalation.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5971,
+          "output_tokens": 1957,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.011842
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008804,
+      "latency_s": 23.847,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The automated QC flag at 00:69:12 describes 22 seconds of digital silence, but a production annotation covers the exact flagged range (00:69:12\u201300:69:59) and explicitly identifies this as a deliberate audio blackout for dramatic effect, approved by the post supervisor. Per release policy RQ-CREATIVE-02, a creative annotation that covers the flagged timecode range establishes the behavior as intentional, meaning the flag is not a defect. The flag is not a caption defect, so CVAA accessibility obligations are unaffected. Record no-defect and release as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3755,
+          "output_tokens": 1683,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008804
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00812,
+      "latency_s": 26.714,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a real timed-text defect (0.8 s caption drift at 00:37:26) with no supporting creative annotation. However, the title is releasing only in APAC and EU, so it is not CVAA-covered and the caption hard-block rule (RQ-CVAA-01) does not apply; the flag is treated as an ordinary minor defect. With 2 days remaining to premiere and marketing already locked, vendor redelivery (\u22485 days) is infeasible. Per RQ-FIX-04, timed-text defects can be repaired in-house in about 2 days, which fits the remaining window. Following the remediation preference order (RQ-PREF-00), an expedited internal fix is the appropriate path to preserve the locked premiere while correcting the defect.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3941,
+          "output_tokens": 1393,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00812
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.010823,
+      "latency_s": 28.165,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major audio lip-sync defect (audio leads picture by ~4 frames at 00:29:56) with no production annotation covering the flagged timecode, so it is not an intentional creative choice. Per policy RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days. The title \"Northwind\" (TTL-84611) is a standard-tier release with 3 days remaining to premiere, so an in-house fix fits comfortably within the release window. Per RQ-PREF-00, the preferred remediation order is in-house fix first, then vendor redelivery, then delay; no policy clause explicitly permits waiving a major audio defect. Therefore the flag is routed to audio-eng for expedited internal repair before premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5321,
+          "output_tokens": 1834,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.010823
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.031274,
+      "latency_s": 86.254,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major video component issue detected at spec-inspection: colour metadata in the package descriptor does not match the video essence at 00:06:06. There are no production annotations covering this timecode, so it is not an intentional creative choice. The title \"Sixteen Winters\" (TTL-22909) is standard tier with 8 days to premiere and marketing is not locked. Because the mismatch is in the package descriptor metadata rather than a picture defect baked into the video essence, it is likely repairable in-house via re-wrapping or descriptor correction. Policy RQ-PREF-00 states the remediation preference order is in-house fix first, then vendor redelivery, then delay. With 8 days remaining, an in-house repair (typically ~2 days per RQ-FIX-04) fits comfortably inside the release window. The title is standard tier, so the tentpole escalation criteria in RQ-BOARD-05 do not apply. Assigning to video-eng for expedited internal correction before premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 7,
+          "input_tokens": 13286,
+          "output_tokens": 5996,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.031274
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004536,
+      "latency_s": 12.86,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major video defect (compression artefacts baked into picture essence at 00:85:26) with no production annotations to indicate an intentional creative choice. Per release policy RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require vendor redelivery, which takes approximately 5 days. With 20 days remaining to premiere for the standard-tier title Glass Harbour (TTL-75837), vendor redelivery fits comfortably within the release window, so no schedule escalation is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 2085,
+          "output_tokens": 817,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004536
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.015955,
+      "latency_s": 42.134,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a minor audio defect (dialogue loudness drifts 1.4 LU above spec after 00:21:40) with no production annotations covering the flagged range. Per policy RQ-MINOR-03, minor defects inside the 3-day release window ship on time and are patched post-release. With only 1 day remaining until the marketed premiere of tentpole title \"Aster & Vale\" (TTL-35102), we are well inside that window. The release territories (UK, EU) are not CVAA-covered, so no accessibility hard block applies. Audio-eng owns the flag and will patch the loudness drift post-release, consistent with in-house audio repair capability (RQ-FIX-04).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 7483,
+          "output_tokens": 2824,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.015955
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005159,
+      "latency_s": 12.714,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag at 00:70:30 describes 22 seconds of digital silence that is covered by a production annotation explicitly stating this is 'intentional silence \u2014 director's cut, scene plays without score or room tone.' Because the annotation covers the exact flagged range, the silence is a documented creative choice, not a technical audio dropout. The title is not in CVAA-covered territories, so no accessibility hard block applies. No remediation is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 2198,
+          "output_tokens": 987,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005159
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006508,
+      "latency_s": 19.49,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a caption defect (subtitle timing drift) in a US territory, so CVAA applies. Per policy RQ-CVAA-01, caption defects in CVAA-covered territories are a legal hard block and are never waived, regardless of severity. With only 3 days to premiere on a marketed tentpole title, vendor redelivery is impractical. However, a targeted correction of ~800 ms across 14 caption events is well within in-house timed-text repair capability in the remaining window, so we will expedite an internal fix rather than delay the marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 2149,
+          "output_tokens": 1453,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006508
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008598,
+      "latency_s": 22.337,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major audio/video sync offset (120ms) on a tentpole title with 8 days to premiere. Per policy RQ-FIX-04, audio defects can be repaired in-house in about 2 days, well within the remaining window. RQ-PREF-00 establishes the remediation preference order as in-house fix first, then vendor redelivery, then delay. Since an in-house repair is feasible and fits the schedule, the flag should be routed to audio-eng for expedited internal repair rather than vendor redelivery or escalation. There are no creative annotations covering this timecode, and the title is not CVAA-covered, so no accessibility hard block applies.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3747,
+          "output_tokens": 1617,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008598
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.035478,
+      "latency_s": 100.693,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a package-validation finding that the colour metadata in the package descriptor does not match the video essence at 00:91:48. This is a metadata-level mismatch in the wrapper, not a picture defect baked into the video essence. Per policy RQ-PREF-00, remediation preference is in-house fix first, then vendor redelivery. With 20 days remaining on tentpole title \"Aster & Vale\" (well outside the 3-day window and beyond the ~5-day vendor-redelivery timeline), there is sufficient time for video-eng to correct the package descriptor to accurately reflect the video essence. No creative annotations cover this range, the title is not marketing-locked, and the defect is not caption-related, so no accessibility hard block applies.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 7,
+          "input_tokens": 13200,
+          "output_tokens": 7426,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.035478
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00725,
+      "latency_s": 17.274,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major video-essence defect (dropped-frame judder at 00:87:17) with no production annotation to justify it as creative intent. Per policy RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require vendor redelivery (~5 days). However, this tentpole title (Northwind, TTL-32960) premieres in 1 day and marketing is already locked, making vendor redelivery and unilateral delay commercially unacceptable. Policy RQ-BOARD-05 explicitly directs that a major, in-house-unfixable defect on a marketed tentpole with insufficient time for redelivery must be escalated to the release board for a commercial decision rather than delayed unilaterally.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3533,
+          "output_tokens": 1239,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00725
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.020441,
+      "latency_s": 31.043,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a minor audio loudness deviation (-21.4 LKFS vs. the -27/-23 delivery spec) on a standard-tier title with 2 days to premiere. There are no creative annotations covering the flagged range. Per policy clause RQ-MINOR-03, minor defects inside the 3-day release window ship on time and are patched post-release. This is not a caption defect, so the CVAA hard block (RQ-CVAA-01) does not apply. Marketing is already locked, and the title is not a tentpole, so no board escalation is warranted. The flag describes a real audio spec deviation, so ownership remains audio-eng for the post-release patch.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 6,
+          "input_tokens": 11540,
+          "output_tokens": 2967,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.020441
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006705,
+      "latency_s": 27.838,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The automated QC flag at 00:87:18 reports total audio loss, but a production annotation covers the exact flagged range (00:87:18\u201300:87:59) and explicitly states this is a 'deliberate audio blackout for dramatic effect, approved by post supervisor.' Per release policy RQ-CREATIVE-02, a production annotation that covers the flagged timecode range establishes the behaviour as intentional creative intent, and such a flag is not a defect. The title 'Paper Cities' (TTL-60423) is a standard-tier release with 3 days to premiere in US/CA/UK, but because this is verified creative intent rather than a genuine audio defect, no remediation is required and the title can ship as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3957,
+          "output_tokens": 916,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006705
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00497,
+      "latency_s": 14.131,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a caption defect (subtitle timing drift ~800ms across 14 events) on a title releasing in the US, a CVAA-covered territory. Per policy RQ-CVAA-01, caption defects are a legal hard block and are never waived regardless of severity or premiere pressure. With 8 days remaining to premiere and marketing not yet locked, the schedule allows for an in-house timed-text repair. No creative annotations cover the flagged range, so this is not an intentional creative choice.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 2144,
+          "output_tokens": 942,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00497
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007423,
+      "latency_s": 14.723,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major audio lip-sync defect (audio leads picture by ~4 frames) detected at spec-inspection on asset AST-78645 for tentpole title TTL-48517. There are no production annotations covering the flagged timecode, so this is not an intentional creative choice. Per policy RQ-FIX-04, audio defects can be repaired in-house in about 2 days. With 20 days remaining to premiere, the schedule comfortably accommodates an in-house fix without requiring vendor redelivery or release delay. The defect is not a caption defect, so the CVAA hard block does not apply. Routing to audio-eng for expedited in-house remediation.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3607,
+          "output_tokens": 1272,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007423
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.02401,
+      "latency_s": 76.44,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "QC flag AST-94014 is a major video-component defect: the colour metadata in the package descriptor does not match the video essence at 00:91:33. Title TTL-50112 (\"The Long Quiet\") is standard tier, releasing in APAC/EU (non-CVAA), with marketing locked and only 1 day remaining to premiere. There are no production annotations covering this timecode. Per policy RQ-PREF-00, remediation preference is in-house fix first, then vendor redelivery, then delay. Vendor redelivery would require ~5 days (RQ-FIX-04), which exceeds the 1-day window. Crucially, RQ-FIX-04 states that picture defects *baked into the video essence* cannot be fixed in-house; this flag describes a metadata mismatch in the package descriptor, not an essence-quality issue, suggesting it may be correctable via a rewrap or descriptor correction without full re-delivery. Therefore the appropriate path is to queue to video-eng for an expedited internal fix ahead of premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 7879,
+          "output_tokens": 5377,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.02401
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.022081,
+      "latency_s": 68.121,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major video-essence defect (dropped-frame judder at 00:09:29) detected during package-validation. No production annotation covers the flagged timecode, so this is not an intentional creative choice. Per policy RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require approximately 5 days for vendor redelivery. With only 2 days remaining until premiere and marketing already locked, there is insufficient time for vendor redelivery. Because the title is standard-tier (not tentpole), the policy criteria for mandatory board escalation (RQ-BOARD-05) do not apply; the appropriate remediation is to delay the release until a corrected master can be delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 7447,
+          "output_tokens": 4878,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.022081
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.010657,
+      "latency_s": 27.572,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Minor audio loudness drift (1.4 LU above spec) flagged at 00:60:55 on standard-tier title \"The Long Quiet\" (TTL-58419), premiering in 3 days in US/LATAM with CVAA coverage. No production annotations cover the flagged range, so this is not an intentional creative choice. Per policy RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days, which fits within the 3-day premiere window. Per policy RQ-PREF-00, in-house remediation is the preferred remediation path when schedule allows. The flag is not a caption defect, so the CVAA hard block (RQ-CVAA-01) does not apply. No policy explicitly permits waiver of this audio defect. Therefore, the correct path is to queue to audio-eng for an expedited in-house fix before release.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5308,
+          "output_tokens": 1783,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.010657
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006882,
+      "latency_s": 20.376,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag describes 22 seconds of digital silence at 00:50:05, but a production annotation filed against AST-15342 explicitly covers the flagged range (00:50:05\u201300:50:59) and states this is a deliberate audio blackout for dramatic effect, approved by the post supervisor. Per release-policy clause RQ-CREATIVE-02, a creative-team annotation that covers the flagged timecode range establishes the behaviour as intentional and the flag is therefore not a defect. The title is not in CVAA-covered territories, so the accessibility hard block (RQ-CVAA-01) does not apply. With 8 days to premiere and marketing not yet locked, there is no schedule pressure forcing a different path. The flag should be recorded as no-defect and the asset released as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3558,
+          "output_tokens": 1108,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006882
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005956,
+      "latency_s": 21.04,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a caption defect (subtitle timing drift ~800 ms across 14 events) on a title releasing in CVAA-covered territories (US and LATAM). Per release-policy clause RQ-CVAA-01, caption defects in CVAA territories are a legal hard block and are never waived, regardless of severity or title tier. No production annotation covers the flagged timecode range, so creative intent does not explain the drift. With 20 days remaining to premiere and marketing not yet locked, the schedule allows for an in-house timed-text repair rather than a vendor redelivery or release delay. The timed-text engineering queue should correct the caption timing before the title ships.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 2197,
+          "output_tokens": 1253,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005956
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008591,
+      "latency_s": 18.975,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major audio lip-sync error (audio leads picture by ~4 frames at 00:09:45) on the tentpole title \"Paper Cities\" (TTL-87012). No production annotation covers the flagged timecode, so this is not an intentional creative choice. Per RQ-FIX-04, audio defects can be repaired in-house in about 2 days, but the premiere is in 1 day. Vendor redelivery would take about 5 days. Because the title is a tentpole with marketing already locked and no compliant remediation fits the remaining schedule, RQ-BOARD-05 requires escalation to the release board rather than a unilateral delay of a marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3866,
+          "output_tokens": 1575,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008591
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.031448,
+      "latency_s": 78.619,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major video defect at package-validation stage: the colour metadata in the package descriptor does not match the video essence at 00:41:07. No production annotation covers the flagged range, so this is not an intentional creative choice. The title 'Sixteen Winters' (standard tier) is two days from premiere in a CVAA-covered territory with marketing already locked. Because the issue is a descriptor-to-essence metadata mismatch rather than a picture defect baked into the video essence, it is likely repairable in-house by rewrapping or correcting the package descriptor. Per policy RQ-PREF-00, the preferred remediation order is in-house fix first, then vendor redelivery, then delay. The two-day window aligns with typical in-house repair timelines for non-essence defects, so we will expedite an internal fix. If the repair cannot be completed before premiere, the release will need to be delayed, but expediting the fix is the correct first step for this standard-tier title.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 6,
+          "input_tokens": 11999,
+          "output_tokens": 6483,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.031448
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00433,
+      "latency_s": 10.142,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major video defect \u2014 compression artefacts baked into the picture essence at 00:17:43 \u2014 with no production annotation covering the timecode, so this is not an intentional creative choice. Per policy RQ-FIX-04, picture-essence defects cannot be repaired in-house and require vendor redelivery (~5 days). The title is a tentpole (TTL-39469, \"Glass Harbour\") premiering in 3 days across APAC and EU with marketing already locked. Because the remaining window is shorter than the vendor-redelivery lead time, unilaterally delaying the premiere is not permitted per policy RQ-BOARD-05; the commercial trade-off between shipping a major visual defect and moving a marketed tentpole release must be decided by the release board.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 2083,
+          "output_tokens": 749,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00433
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.016414,
+      "latency_s": 44.275,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a minor audio defect (dialogue loudness drifts 1.4 LU above spec after 00:11:37) with no production annotation covering the flagged timecode, so it is not an intentional creative choice. The title is a tentpole releasing in 8 days in APAC/EU (not CVAA-covered), which places it outside the 3-day release window. Per policy RQ-MINOR-03, minor defects outside the 3-day window have room for the originating vendor to redeliver a corrected package. Although audio defects can be repaired in-house in about 2 days (RQ-FIX-04), the standard remediation preference for minor defects with sufficient schedule buffer is vendor redelivery. Marketing is not locked, so a redelivery cycle is feasible without commercial impact.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 7273,
+          "output_tokens": 3047,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.016414
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007214,
+      "latency_s": 15.803,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag at 00:39:31 reports total audio loss, but a production annotation from the director covers the exact flagged range (00:39:31\u201300:39:59) and explicitly states this is 'Intentional silence \u2014 director's cut, scene plays without score or room tone.' Per release policy RQ-CREATIVE-02, a production annotation that covers the flagged timecode range establishes the behaviour as intentional creative intent and the flag is therefore not a defect. The title has 20 days to premiere and is not marketing-locked, but because the silence is intentional, no remediation is required. Waiving the flag and releasing as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3959,
+          "output_tokens": 1085,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007214
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.049447,
+      "latency_s": 199.737,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "This is a CVAA-covered caption defect (legal hard block, per RQ-CVAA-01) that cannot be waived regardless of severity. The defect is minor and highly contained\u2014only 14 caption events with ~800ms timing drift near 00:88:19\u2014and there are no creative annotations explaining the drift. Timed-text defects are repairable in-house (RQ-FIX-04). With only one day until the marketed tentpole premiere, a standard two-day turnaround does not fit; however, the limited scope makes an emergency expedited fix feasible. We will attempt to repair the 14 events in-house before premiere rather than unilaterally delaying a locked marketing campaign. If the expedited fix cannot be completed in time, the release must be delayed to maintain CVAA compliance.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 7,
+          "input_tokens": 12118,
+          "output_tokens": 12443,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.049447
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.014285,
+      "latency_s": 33.884,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major audio/video sync offset of 120ms sustained from 00:62:11 on AST-30469. No production annotation covers the flagged timecode range, so this is not an intentional creative choice. Per release policy RQ-FIX-04, audio defects can be repaired in-house in about 2 days. With 2 days remaining to premiere for standard-tier title TTL-40154 (\"Paper Cities\"), an in-house fix is feasible and preferred per RQ-PREF-00. The title is not CVAA-covered and this is not a caption defect, so no legal hard block applies. Expediting an internal audio-eng fix avoids both vendor redelivery delay and an unnecessary premiere delay on a marketed title.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 7052,
+          "output_tokens": 2411,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.014285
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.015992,
+      "latency_s": 41.482,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "This is a major video component defect (colour metadata mismatch between package descriptor and video essence at 00:34:53) detected at spec-inspection. No production annotation covers the flagged range, so this is not explained by creative intent. The title 'Northwind' (TTL-98350) is a tentpole with marketing locked and only 3 days to premiere. Per policy RQ-FIX-04, picture defects require vendor redelivery (~5 days), which exceeds our remaining window. Per policy RQ-BOARD-05, a major defect that cannot be fixed in-house on a tentpole title with insufficient time for vendor redelivery is a commercial decision requiring release board escalation rather than unilateral delay of a marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5609,
+          "output_tokens": 3461,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.015992
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008075,
+      "latency_s": 18.741,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major video defect \u2014 compression artefacts baked into the picture essence at 00:21:06 \u2014 with no production annotation covering that timecode, so this is a real defect requiring remediation. Per policy RQ-FIX-04, picture-essence defects cannot be repaired in-house and require vendor redelivery (~5 days). With 8 days remaining to premiere on a standard-tier title, vendor redelivery fits comfortably within the release window, satisfying the RQ-PREF-00 preference order (in-house fix \u2192 vendor redelivery \u2192 delay). Because this is not a tentpole title and sufficient time exists for redelivery, escalation to the release board is unnecessary.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3596,
+          "output_tokens": 1493,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008075
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.01305,
+      "latency_s": 32.903,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The integrated loudness reading of -21.4 LKFS falls outside the -27/-23 delivery spec. No production annotation covers the flagged timecode, so this is not an intentional creative choice. The title is a tentpole releasing in 20 days in US/LATAM (CVAA-covered territories). Per policy RQ-FIX-04, audio defects can be repaired in-house in about 2 days, leaving ample runway before the premiere. Routing to audio-eng for an expedited internal loudness correction is the lowest-risk path that preserves the release date and keeps the asset within spec.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 5631,
+          "output_tokens": 2473,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.01305
+        }
+      }
+    }
+  ]
+}
