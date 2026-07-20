@@ -1,0 +1,3889 @@
+{
+  "backend": "fireworks",
+  "model": "accounts/fireworks/models/gpt-oss-120b",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "disposition_accuracy": 0.7,
+    "exact_match": 0.6,
+    "queue_accuracy": 0.7889,
+    "submitted": 0.9111
+  },
+  "metric_ci95": {
+    "disposition_accuracy": [
+      0.5667,
+      0.8222
+    ],
+    "exact_match": [
+      0.4556,
+      0.7444
+    ],
+    "queue_accuracy": [
+      0.6444,
+      0.9
+    ],
+    "submitted": [
+      0.8333,
+      0.9778
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.001303,
+  "total_cost_usd": 0.1173,
+  "p50_latency_s": 10.534,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001273,
+      "latency_s": 10.534,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a card\u2011not\u2011present charge of $887.73 made overseas from a device that has never been seen before. The customer has no travel notice matching the foreign geography, and the transaction is flagged as not authorized. According to policy FP\u2011CARD\u201103, such charges from a new device in an unexpected geography belong in the card\u2011fraud queue. Because there is no benign explanation and the amount is substantial, the appropriate action is to block the transaction and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4800,
+          "output_tokens": 921,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001273
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002555,
+      "latency_s": 15.61,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction shows classic account takeover signals per policy FP-ATO-04: a credential reset and new-device login were followed by a newly added payee and an outbound transfer of $3,134.43. The customer has not authorized the transfer, there is no travel notice or allowlisted beneficiary, and the device is new. Given the retail segment and the large, unauthorized amount, the appropriate action is to block the transfer and notify the customer while routing the case to the account-takeover queue for further investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 9811,
+          "output_tokens": 1805,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002555
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001069,
+      "latency_s": 8.031,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is an authorized transfer from the customer's usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match = true). According to policy FP-APP-05, such characteristics constitute an authorized push\u2011payment (APP) scam and must be routed to the app\u2011scam queue regardless of device trust. Although the customer is a private\u2011banking client, the amount ($158) is below typical regulatory review thresholds, so the private\u2011banking auto\u2011release exception does not apply. The appropriate action is to hold the transaction for manual review by the app\u2011scam team.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3553,
+          "output_tokens": 893,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001069
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00125,
+      "latency_s": 10.23,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,139.48 card\u2011not\u2011present charge on a new device from a foreign location matches a travel notice, which under policy FP\u2011FP\u201102 would normally be auto\u2011released. However, the customer is in the private\u2011banking segment, and FP\u2011FP\u201102 explicitly states that private\u2011banking customers are an exception: even when a benign source is identified, transactions must be held for manual review (they are never auto\u2011released). The card\u2011fraud policy FP\u2011CARD\u201103 also directs such foreign, new\u2011device CNP charges to the card\u2011fraud queue. Therefore the alert is routed to the card\u2011fraud queue with a hold_for_review disposition.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4869,
+          "output_tokens": 866,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00125
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000963,
+      "latency_s": 12.355,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,254.03 transfer is to a beneficiary on the customer's verified allowlist (32 prior payments) and the transaction signals show no new device, foreign geo, new payee, credential reset, or mule match. Policy FP-FP-02 permits auto\u2011release for benign activity such as an allowlisted beneficiary for retail customers, even for high\u2011value amounts. Therefore the alert is a false positive and the transaction should be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3553,
+          "output_tokens": 716,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000963
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00112,
+      "latency_s": 11.737,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $316.71 card\u2011not\u2011present purchase from a new device and a foreign geography that does not match any travel notice or other benign explanation. The customer has not authorized the charge. According to policy FP\u2011CARD\u201103, CNP charges from a new device in an unexpected geography are routed to the card\u2011fraud queue and should be blocked and the customer notified. No auto\u2011release exception applies.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4810,
+          "output_tokens": 664,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00112
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001015,
+      "latency_s": 11.86,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction shows classic account takeover signals per policy FP-ATO-04: a credential reset and login from a new device followed by a new payee and an outbound transfer. The transfer of $3,295 was not authorized by the customer and no benign explanation exists. Therefore the alert is routed to the account-takeover queue and the transaction is blocked and the customer notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3505,
+          "output_tokens": 815,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001015
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001009,
+      "latency_s": 11.75,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transfer was authorized from the customer's usual device, but the beneficiary was newly added and matches a known mule pattern (beneficiary_mule_match = true). According to policy FP-APP-05, authorized push\u2011payment scams are identified by a new payee that matches a mule profile, regardless of device or login legitimacy. Therefore the alert must be routed to the app\u2011scam queue and placed on hold for manual review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3517,
+          "output_tokens": 803,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001009
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00132,
+      "latency_s": 11.363,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "allow"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $1,549 card\u2011not\u2011present charge on a new device from a foreign location. Policy FP\u2011CARD\u201103 requires checking for a travel notice, which is present and matches the geography (source_note). FP\u2011FP\u201102 permits auto\u2011release for benign sources such as a matching travel notice, and the exception (private\u2011banking or >$10,000) does not apply (retail segment, amount < $10,000). Therefore the transaction can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4862,
+          "output_tokens": 985,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00132
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001043,
+      "latency_s": 10.751,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $2,448.60 transfer is flagged only by the high-value rule. Transaction signals show it originated from a known, allowlisted beneficiary (beneficiary_allowlisted: true) and a known benign source (known_benign_source: true). The customer did not authorize it, but the policy (FP-FP-02) permits auto\u2011release for benign activity unless the customer is private\u2011banking *and* the amount exceeds the regulatory review threshold ($10,000). This private\u2011banking client\u2019s transaction is well below that threshold, so the auto\u2011release exception applies. Therefore the transaction can be allowed and routed to the false\u2011positive queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3539,
+          "output_tokens": 853,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001043
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001417,
+      "latency_s": 12.996,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $918.27 online purchase was made from a new device in a foreign geography, the customer did not authorize the transaction, and there is no travel notice or allowlisted beneficiary. For a private-banking customer (high-value segment) such signals indicate a high likelihood of fraud. Policy FP-FP-02 requires that private-banking alerts are not auto-released and must be manually reviewed, and FP-ESC-01 flags private-banking customers for heightened scrutiny. Therefore the alert is routed to the card-fraud queue and held for manual review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4879,
+          "output_tokens": 1142,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001417
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001276,
+      "latency_s": 11.789,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals show a credential reset and new-device login followed by a new payee addition and a $11,522.93 outbound transfer that was not authorized by the customer. FP-ATO-04 defines this pattern as an account takeover, requiring routing to the account-takeover queue. Additionally, the transfer amount exceeds the $10,000 regulatory review threshold, which per FP-ESC-01 mandates escalation to the fraud\u2011operations team. Therefore the alert is placed in the account\u2011takeover queue and escalated to fraud ops for immediate action.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3517,
+          "output_tokens": 1248,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001276
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002118,
+      "latency_s": 20.477,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail customer authorized a $550.32 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match=true). According to policy FP-APP-05, authorized push\u2011payment (APP) scams are characterized by a trusted device and login yet a newly added, high\u2011risk beneficiary; such alerts must be routed to the app\u2011scam queue and not cleared automatically. Therefore the transaction is placed in the app\u2011scam queue with a hold_for_review disposition for further specialist investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7404,
+          "output_tokens": 1679,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002118
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001177,
+      "latency_s": 11.475,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $3,726.55 card-not-present charge from a foreign merchant on a new device, which initially appears suspicious. However, the transaction signals show a matching travel notice on file (travel_notice_matches: true) and the policy FP-FP-02 permits auto\u2011release for benign activity such as a travel notice when the customer is a retail\u2011segment client and the amount is below the $10,000 regulatory review threshold. No escalation criteria are met (retail segment, amount < $10k). Therefore the alert is a false positive and the transaction can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4859,
+          "output_tokens": 747,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001177
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000922,
+      "latency_s": 8.082,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $1,051 transfer to a beneficiary that is on the customer's verified allowlist (32 prior payments) and is flagged as a known benign source. Policy FP-FP-02 permits auto\u2011release for benign activity for retail customers, and the amount is well below any regulatory review threshold that would require manual hold. Therefore the alert is a false positive and the transaction can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3550,
+          "output_tokens": 649,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000922
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001323,
+      "latency_s": 11.306,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $733.83 card-not-present purchase from a new device and a foreign billing geography, with no travel notice or allowlisted beneficiary. The customer did not authorize the payment. Under the fraud policy, retail customers with confirmed fraudulent signals (new device, foreign geo, unauthorized) are blocked and the customer notified. The amount is below the $10,000 escalation threshold, so escalation to fraud ops is not required. The appropriate queue is card-fraud.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4906,
+          "output_tokens": 979,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001323
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000626,
+      "latency_s": 5.342,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The private banking customer (acct-59385947) shows classic account takeover signals: a credential reset, new-device login, addition of a new payee, and a high-value $1,291 transfer that the customer has not authorized. No travel notice, allowlist, or benign explanation exists. Per fraud policy, credential reset combined with new device and unauthorized transfer triggers a block and customer notification for account takeover cases.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 3,
+          "input_tokens": 2420,
+          "output_tokens": 438,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000626
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002171,
+      "latency_s": 18.174,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a high-value ($9,520) transfer that the customer authorized, but the beneficiary is a newly added account that matches a known mule pattern (beneficiary_mule_match = true). Policy FP-APP-05 states that in authorized push\u2011payment (APP) scams, the key indicator is a new beneficiary matching a mule profile and the alert should be routed to the app\u2011scam queue regardless of trusted device or login. Given the mule match and large amount, the appropriate action is to block the payment and notify the customer to prevent loss.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7636,
+          "output_tokens": 1709,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002171
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001197,
+      "latency_s": 9.929,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "allow"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,954.73 card-not-present charge was made on a new device from a foreign location, which normally routes to the card-fraud queue. However, the transaction signals show a matching travel notice (travel_notice_matches: true) and a known benign source, indicating the activity is explained by a legitimate travel notice. According to policy FP-FP-02, benign activity may be auto\u2011released, and the private\u2011banking exception only applies when the amount exceeds the $10,000 regulatory review threshold, which this transaction does not. Therefore the transaction can be safely allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4869,
+          "output_tokens": 778,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001197
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001018,
+      "latency_s": 10.173,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,145.61 transfer is to a beneficiary that is on the customer's verified allowlist (32 prior payments) and the transaction signals show no new device, foreign geo, new payee, or mule match. According to policy FP-FP-02, alerts explained by a benign source such as an allowlisted beneficiary may be auto\u2011released for retail customers. The exception for private\u2011banking customers does not apply. Therefore the transaction is allowed and classified as a false\u2011positive.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3555,
+          "output_tokens": 808,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001018
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000879,
+      "latency_s": 7.63,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail customer (acct-73312141) has a $1,000 online purchase made via a card-not-present channel from a new device and a foreign geographic location, with no travel notice or allowlisted beneficiary. The transaction signals indicate the customer did not authorize the purchase (customer_authorized = false). According to policy FP-ATO-04, new-device activity combined with unauthorized activity points to an account takeover scenario, which must be routed to the account-takeover queue. For standard (retail) customers with confirmed fraud, the policy mandates an automatic block and customer notification. Therefore the transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3507,
+          "output_tokens": 588,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000879
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001666,
+      "latency_s": 15.165,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction shows a credential reset and new-device login followed by a newly added payee and an outbound transfer of $348.77. Policy FP-ATO-04 defines this pattern as an account takeover and requires routing to the account\u2011takeover queue. The customer is a retail client and the amount is well below the $10,000 escalation threshold (FP-ESC-01), so the appropriate action is to block the transfer and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6269,
+          "output_tokens": 1209,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001666
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001055,
+      "latency_s": 8.769,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transfer was authorized from the customer's usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match = true). According to policy FP-APP-05, authorized push\u2011payment scams are identified by a newly added beneficiary that matches mule characteristics, and such alerts must be routed to the app\u2011scam queue and blocked, regardless of device or login normalcy. Therefore the transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3508,
+          "output_tokens": 881,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001055
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001036,
+      "latency_s": 10.258,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $442.14 card\u2011not\u2011present charge originates from a foreign geography but the customer has a travel notice on file that matches the transaction location and dates. Policy FP\u2011FP\u201102 states that alerts explained by a benign source such as a matching travel notice may be auto\u2011released (allow) for retail customers, with no regulatory review threshold exception. The customer is a retail segment with no prior disputes, so the benign travel notice justification applies. Therefore the transaction is allowed and routed to the false\u2011positive queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3516,
+          "output_tokens": 848,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001036
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001098,
+      "latency_s": 9.4,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,405.08 transfer is flagged only by the amount rule. The customer is a private-banking client, but the beneficiary is on the customer's verified allowlist (32 prior payments) and the transaction matches a known benign source. Policy FP-FP-02 permits auto\u2011release for benign activity, with the sole exception that private\u2011banking customers must have the transaction held only when it exceeds the regulatory review threshold (>$10,000). This transfer is well below that threshold, so it qualifies for auto\u2011release. Therefore the transaction is allowed and routed to the false\u2011positive queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3537,
+          "output_tokens": 946,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001098
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000997,
+      "latency_s": 7.36,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail customer (acct-74803187) has a high-value $3,190.66 online purchase flagged as card-not-present. Transaction signals show a new device, foreign geo, and the customer did not authorize the payment. No travel notice or other benign explanation exists. According to fraud policy, unauthorized high-value CNP transactions from a new device and foreign location are indicative of stolen-card fraud and should be routed to the card-fraud queue. No auto\u2011release exception applies, so the transaction should be blocked and the customer notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3517,
+          "output_tokens": 783,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000997
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.0025,
+      "latency_s": 21.467,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": null,
+          "disposition": null
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy"
+        ],
+        "refused": false,
+        "error": "no submission within 8 turns",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 9803,
+          "output_tokens": 1716,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.0025
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002479,
+      "latency_s": 20.557,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is an authorized push payment (APP) from the customer's usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match = true). Policy FP-APP-05 states that when a newly added beneficiary matches a mule pattern, the alert must be routed to the app-scam queue and not cleared, regardless of trusted device or login. Therefore the appropriate action is to block the transfer and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 9461,
+          "output_tokens": 1766,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002479
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000935,
+      "latency_s": 9.036,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $517 foreign card-not-present charge was made on a new device, but the transaction signals show a matching travel notice on file (travel_notice_matches: true) and a known benign source. According to policy FP-FP-02, benign activity explained by a travel notice may be auto-released for retail customers, with no manual review required. The customer is a retail segment, not private banking, and the amount is below any regulatory review threshold. Therefore the transaction is allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3522,
+          "output_tokens": 677,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000935
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000917,
+      "latency_s": 6.296,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,608.50 transfer is flagged only by the high-value rule. Transaction signals show a known benign source: the beneficiary is on the customer's verified allowlist (32 prior payments) and no other risk flags (new device, foreign geo, new payee, credential reset, mule match) are present. Policy FP-FP-02 permits auto\u2011release for benign activity for retail customers when the amount is below the $10,000 regulatory review threshold. Therefore the transaction is legitimate and can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3538,
+          "output_tokens": 644,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000917
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000915,
+      "latency_s": 9.527,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a card-not-present charge of $887.73 from a foreign geography on a brand\u2011new device. The customer did not authorize it and there is no travel notice or other benign explanation. According to policy FP-CARD-03, such charges from a new device in an unexpected geography belong in the card\u2011fraud queue. For retail customers with confirmed fraud, the policy mandates an automatic block and customer notification. Therefore the transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3505,
+          "output_tokens": 649,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000915
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002384,
+      "latency_s": 16.111,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": null,
+          "disposition": null
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy"
+        ],
+        "refused": false,
+        "error": "no submission within 8 turns",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 9810,
+          "output_tokens": 1520,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002384
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001052,
+      "latency_s": 10.208,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The private-banking customer authorized a $158 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match). According to policy FP-APP-05, authorized push\u2011payment scams are identified by a newly added beneficiary that matches mule characteristics, and such alerts must be routed to the app\u2011scam queue and not cleared simply because the device and login appear normal. Additionally, private\u2011banking customers are not eligible for auto\u2011release even for benign activity (FP-FP-02). Therefore the transaction should be blocked and the customer notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3553,
+          "output_tokens": 865,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001052
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001239,
+      "latency_s": 9.034,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,139.48 card-not-present charge was made on a new device from a foreign geography, matching a travel notice. While the travel notice provides a benign explanation (FP-FP-02), the customer is in the private-banking segment. FP-FP-02 explicitly states that private-banking customers are held for manual review even when a benign source is present, and the transaction is therefore not eligible for auto\u2011release. The alert also matches the card\u2011fraud pattern of a new device in an unexpected geography (FP-CARD-03), so it should be routed to the card\u2011fraud queue and held for review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4871,
+          "output_tokens": 848,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001239
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00096,
+      "latency_s": 13.59,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,254.03 transfer is to a beneficiary that is on the customer's verified allowlist (32 prior payments) and the transaction matches a known benign source per policy FP-FP-02. For retail customers, benign activity may be auto-released; the regulatory review threshold exception applies only to private\u2011banking customers. Therefore the alert is a false positive and the transaction can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3553,
+          "output_tokens": 711,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00096
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001142,
+      "latency_s": 9.752,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $316.71 card-not-present purchase was made from a new device and a foreign geography that does not match the customer's home region, and the customer has not authorized the transaction. No travel notice or allowlist exists. According to policy FP-CARD-03, CNP charges from a new device in an unexpected geography should be routed to the card-fraud queue and blocked. Therefore the transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4810,
+          "output_tokens": 701,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001142
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000936,
+      "latency_s": 8.258,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail customer (acct-17799664) logged in from a new device after a credential reset, then created a new payee and initiated a $3,295 outbound transfer. The transaction signals show new_device=true, credential_reset=true, new_payee=true, and the customer did not authorize the transfer. According to policy FP-ATO-04, this pattern indicates an account takeover and must be routed to the account-takeover queue. For standard (retail) customers with confirmed fraud, the policy (FP-ESC-01) mandates block_and_notify. Therefore the transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3503,
+          "output_tokens": 685,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000936
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002034,
+      "latency_s": 14.156,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail customer (acct-56683819) authorized a $2,023 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match = true). According to policy FP-APP-05, authorized push payment (APP) scams are identified by a newly added beneficiary that fits a mule profile, and such alerts must be routed to the app-scam queue regardless of trusted device or login. The appropriate action is to block the transaction and notify the customer to prevent loss.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7785,
+          "output_tokens": 1444,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002034
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00132,
+      "latency_s": 10.781,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "allow"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $1,549 card\u2011not\u2011present charge on a new device from a foreign location. Policy FP\u2011CARD\u201103 requires checking for a travel notice, which is present and matches the geography (source_note). FP\u2011FP\u201102 permits auto\u2011release for benign sources such as a matching travel notice, and the exception (private\u2011banking or >$10,000) does not apply (retail segment, amount < $10,000). Therefore the transaction can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4862,
+          "output_tokens": 985,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00132
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001343,
+      "latency_s": 8.676,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $2,448.60 transfer is to a beneficiary that is on the customer's verified allowlist (32 prior payments) and is marked as a known benign source. Policy FP-FP-02 permits auto\u2011release for benign activity, and the exception requiring manual review applies only to private\u2011banking customers when the transaction exceeds the $10,000 regulatory review threshold. This transaction is well below that threshold, so it can be released. No fraud indicators (new device, foreign geo, credential reset, mule match, or unauthorized flag) are present.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4888,
+          "output_tokens": 1017,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001343
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001332,
+      "latency_s": 10.905,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $918.27 card-not-present purchase was made from a new device in a foreign geography that does not match any travel notice or allowlisted beneficiary. The transaction is flagged as not authorized by the customer. For private-banking customers, the benign auto\u2011release exception does not apply (FP-FP-02) and card\u2011not\u2011present charges from a new device in an unexpected geography must be routed to the card\u2011fraud queue (FP-CARD-03). Because fraud is not yet confirmed, the appropriate action is to hold the transaction for manual review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4842,
+          "output_tokens": 1009,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001332
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001179,
+      "latency_s": 14.337,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals show a credential reset and new-device login followed by a new payee addition and a large outbound transfer of $11,523, with no customer authorization or benign explanation. FP-ATO-04 defines this pattern as an account takeover, requiring routing to the account-takeover queue. Additionally, FP-ESC-01 mandates escalation to fraud operations for any transaction exceeding the $10,000 regulatory review threshold, even for retail customers. Therefore, the alert is placed in the account-takeover queue and escalated to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3517,
+          "output_tokens": 1085,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001179
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002706,
+      "latency_s": 29.905,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail customer authorized a $550.32 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match=true). According to policy FP-APP-05, authorized push\u2011payment (APP) scams are characterized by a trusted device and login yet a newly added beneficiary that fits mule criteria; such alerts must be routed to the app\u2011scam queue and not cleared. Given the high fraud risk of a mule beneficiary, the transaction should be blocked and the customer notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 8978,
+          "output_tokens": 2265,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002706
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000934,
+      "latency_s": 10.406,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $3,726.55 card\u2011not\u2011present charge from a foreign geo on a new device, which would normally trigger the card\u2011fraud queue. However, the transaction signals show a matching travel notice (travel_notice_matches true) and a known benign source, satisfying the benign activity exception. According to policy FP\u2011FP\u201102, benign activity may be auto\u2011released for retail customers; the private\u2011banking exception does not apply. Therefore the alert is a false positive and the transaction can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3531,
+          "output_tokens": 674,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000934
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000948,
+      "latency_s": 6.856,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,051.49 transfer matches a verified beneficiary on the customer's allowlist (32 prior payments) and is flagged as a known benign source. Policy FP-FP-02 states that alerts explained by a benign source such as an allowlisted beneficiary may be auto\u2011released, with the only exception being private\u2011banking customers or regulatory\u2011threshold amounts, which does not apply to this retail account. Therefore the transaction is legitimate and can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3550,
+          "output_tokens": 692,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000948
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001254,
+      "latency_s": 12.541,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $733.83 card\u2011not\u2011present purchase from a new device in a foreign geography that does not match any travel notice or other benign source. The customer did not authorize it. According to policy FP\u2011CARD\u201103, such activity belongs in the card\u2011fraud queue. For a retail customer below the $10,000 regulatory threshold, the appropriate action is to block the transaction and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4868,
+          "output_tokens": 873,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001254
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000626,
+      "latency_s": 4.372,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The private banking customer (acct-59385947) shows classic account takeover signals: a credential reset, new-device login, addition of a new payee, and a high-value $1,291 transfer that the customer has not authorized. No travel notice, allowlist, or benign explanation exists. Per fraud policy, credential reset combined with new device and unauthorized transfer triggers a block and customer notification for account takeover cases.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 3,
+          "input_tokens": 2420,
+          "output_tokens": 438,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000626
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00114,
+      "latency_s": 11.06,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $9,520 authorized transfer originates from a trusted login/device, but the payee is newly added and matches a known mule pattern (beneficiary_mule_match). According to policy FP-APP-05, authorized push\u2011payment scams are identified by a new beneficiary with mule characteristics, and such alerts must be routed to the app\u2011scam queue regardless of device trust. The amount is below the $10,000 escalation threshold for private\u2011banking customers, so the appropriate action is to hold the transaction for manual review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3538,
+          "output_tokens": 1015,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00114
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001197,
+      "latency_s": 9.547,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "allow"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,954.73 card-not-present charge was made on a new device from a foreign location, which normally routes to the card-fraud queue. However, the transaction signals show a matching travel notice (travel_notice_matches: true) and a known benign source, indicating the activity is explained by a legitimate travel notice. According to policy FP-FP-02, benign activity may be auto\u2011released, and the private\u2011banking exception only applies when the amount exceeds the $10,000 regulatory review threshold, which this transaction does not. Therefore the transaction can be safely allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4869,
+          "output_tokens": 778,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001197
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000911,
+      "latency_s": 10.088,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transfer of $1,145.61 is to a beneficiary on the customer's verified allowlist and is marked as a known benign source. According to policy FP-FP-02, benign activity (allowlisted beneficiary) may be auto\u2011released unless the customer is private\u2011banking or the amount exceeds the regulatory review threshold. The customer is a retail client and the amount is below any heightened threshold, so the transaction can be allowed. The amount rule alert is therefore a false positive.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3555,
+          "output_tokens": 630,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000911
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001005,
+      "latency_s": 7.849,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail customer (acct-73312141) has a $1,000.02 card-not-present purchase from a new device in a foreign geo, flagged as not authorized and with no travel notice or allowlisted beneficiary. These signals (new_device, foreign_geo, unauthorized) indicate a high likelihood of stolen-card fraud. According to the fraud policy, standard (non\u2011private\u2011banking) customers with confirmed fraud are blocked and the customer is notified automatically. No auto\u2011release exception applies because the activity is not benign. Therefore the transaction should be placed in the card-fraud queue and blocked with customer notification.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3550,
+          "output_tokens": 788,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001005
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002576,
+      "latency_s": 23.495,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": null,
+          "disposition": null
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy"
+        ],
+        "refused": false,
+        "error": "no submission within 8 turns",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 9834,
+          "output_tokens": 1834,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002576
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001326,
+      "latency_s": 14.236,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail customer authorized a $789.12 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match = true). According to fraud policy FP-APP-05, such signals constitute an authorized push payment (APP) scam regardless of trusted device or login, and the alert must be routed to the app-scam queue. The appropriate action is to block the transaction and notify the customer to prevent loss.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4637,
+          "output_tokens": 1051,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001326
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000914,
+      "latency_s": 10.236,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $442.14 card-not-present charge originates from a foreign geography on a new device, which would normally trigger the card-fraud queue. However, the transaction signals show a matching travel notice on file (travel_notice_matches true) and the policy FP-FP-02 permits auto\u2011release for benign activity explained by a travel notice for retail customers. No private\u2011banking exception applies. Therefore the alert is a false positive and the transaction should be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3514,
+          "output_tokens": 645,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000914
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001432,
+      "latency_s": 9.893,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,405.08 transfer is to a beneficiary on the customer's verified allowlist, which the transaction signals flag as a known benign source. Policy FP-FP-02 permits auto\u2011release for benign activity, and the private\u2011banking exception only applies to transactions above the regulatory review threshold (>$10,000). This amount is well below that threshold, so the transaction can be allowed and classified as a false\u2011positive alert.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4885,
+          "output_tokens": 1165,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001432
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000997,
+      "latency_s": 6.871,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail customer (acct-74803187) has a high-value $3,190.66 online purchase flagged as card-not-present. Transaction signals show a new device, foreign geo, and the customer did not authorize the payment. No travel notice or other benign explanation exists. According to fraud policy, unauthorized high-value CNP transactions from a new device and foreign location are indicative of stolen-card fraud and should be routed to the card-fraud queue. No auto\u2011release exception applies, so the transaction should be blocked and the customer notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3517,
+          "output_tokens": 783,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000997
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001789,
+      "latency_s": 15.914,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail account shows a credential reset and a new-device login, followed by the addition of a new payee and a high-value $6,644 transfer that was not authorized by the customer. Policy FP-ATO-04 defines this pattern as an account takeover scenario and requires routing to the account-takeover queue. Because the transaction is unauthorized and high risk, the appropriate action is to block the transfer and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6303,
+          "output_tokens": 1406,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001789
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001156,
+      "latency_s": 11.21,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $8,923 transfer was authorized by the customer from a trusted device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match = true). According to policy FP-APP-05, authorized push\u2011payment (APP) scams are not cleared based on device or login normality; they must be routed to the app\u2011scam queue. The customer is a retail client, so the benign\u2011activity auto\u2011release exception does not apply. Therefore the transaction should be blocked and the customer notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3557,
+          "output_tokens": 1037,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001156
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000935,
+      "latency_s": 8.666,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $517 foreign card-not-present charge was made on a new device, but the transaction signals show a matching travel notice on file (travel_notice_matches: true) and a known benign source. According to policy FP-FP-02, benign activity explained by a travel notice may be auto-released for retail customers, with no manual review required. The customer is a retail segment, not private banking, and the amount is below any regulatory review threshold. Therefore the transaction is allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3522,
+          "output_tokens": 677,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000935
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000933,
+      "latency_s": 8.272,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,608.50 transfer is flagged only by the high-value rule. Transaction signals show a known benign source: the beneficiary is on the customer's verified allowlist (32 prior payments) and no other risk flags (new device, foreign geo, new payee, credential reset, mule match) are present. Policy FP-FP-02 permits auto\u2011release for benign activity for retail customers when the amount is below the $10,000 regulatory review threshold. Therefore the transaction is legitimate and can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3538,
+          "output_tokens": 671,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000933
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001233,
+      "latency_s": 13.52,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a card\u2011not\u2011present charge of $887.73 from a foreign location on a device that has never been seen before for this retail account (acct-80059494). The customer has no travel notice matching the foreign geography, and the transaction is not authorized. According to policy FP\u2011CARD\u201103, card\u2011not\u2011present charges from a new device in an unexpected geography must be routed to the card\u2011fraud queue. Because the activity is suspicious and there is no benign explanation, the appropriate disposition is to hold the transaction for manual review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4750,
+          "output_tokens": 867,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001233
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002466,
+      "latency_s": 22.37,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": null,
+          "disposition": null
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy"
+        ],
+        "refused": false,
+        "error": "no submission within 8 turns",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 9811,
+          "output_tokens": 1658,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002466
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001072,
+      "latency_s": 9.269,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is an authorized transfer from the customer's usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match = true). According to policy FP-APP-05, such characteristics constitute an authorized push\u2011payment (APP) scam and must be routed to the app\u2011scam queue regardless of device trust. Although the customer is a private\u2011banking client, the amount ($158) is below typical regulatory review thresholds, so the private\u2011banking auto\u2011release exception does not apply. The appropriate action is to hold the transaction for manual review by the app\u2011scam team.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3553,
+          "output_tokens": 898,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001072
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001239,
+      "latency_s": 11.108,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,139.48 card-not-present charge was made on a new device from a foreign geography, matching a travel notice. While the travel notice provides a benign explanation (FP-FP-02), the customer is in the private-banking segment. FP-FP-02 explicitly states that private-banking customers are held for manual review even when a benign source is present, and the transaction is therefore not eligible for auto\u2011release. The alert also matches the card\u2011fraud pattern of a new device in an unexpected geography (FP-CARD-03), so it should be routed to the card\u2011fraud queue and held for review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4871,
+          "output_tokens": 848,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001239
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000987,
+      "latency_s": 9.373,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,254 transfer matches a verified allowlisted beneficiary (known benign source) and the customer has no new device, foreign geo, or new payee signals. Policy FP-FP-02 permits auto\u2011release for benign activity for retail customers, even above the high\u2011value threshold, as the exception applies only to private\u2011banking accounts. Therefore the transaction is a false positive and can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3555,
+          "output_tokens": 757,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000987
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001141,
+      "latency_s": 7.327,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $316.71 card-not-present purchase was made from a new device and a foreign geography that does not match the customer's home region, and the customer has not authorized the transaction. No travel notice or allowlist exists. According to policy FP-CARD-03, CNP charges from a new device in an unexpected geography should be routed to the card-fraud queue and blocked. Therefore the transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4810,
+          "output_tokens": 699,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001141
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00088,
+      "latency_s": 6.836,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail customer (acct-17799664) logged in from a new device after a credential reset, then created a new payee and initiated a $3,295 outbound transfer. The transaction signals show new_device=true, credential_reset=true, new_payee=true, and the customer did not authorize the transfer. According to policy FP-ATO-04, this pattern is indicative of an account takeover and must be routed to the account-takeover queue. For standard (retail) customers, confirmed fraud triggers an automatic block and customer notification (policy FP-ESC-01). Therefore the transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3503,
+          "output_tokens": 591,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00088
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000953,
+      "latency_s": 9.649,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail customer (4\u2011month tenure) authorized a $2,023 transfer from a known device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match = true). According to policy FP-APP-05, authorized push\u2011payment scams are identified by a newly added beneficiary that matches mule characteristics, and such alerts must be routed to the app\u2011scam queue and blocked, regardless of device trust. Therefore the transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3517,
+          "output_tokens": 709,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000953
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000982,
+      "latency_s": 6.745,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a card-not-present charge on a new device in a foreign location, but the customer has a travel notice that matches the geography and dates, providing a benign explanation. Policy FP-FP-02 permits auto\u2011release for such benign activity for retail customers, and the exception for private\u2011banking customers does not apply. Therefore the transaction can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3530,
+          "output_tokens": 754,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000982
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001032,
+      "latency_s": 8.904,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $2,448.60 transfer for acct-75082962 is flagged as high-value, but transaction signals show it is a known, allowlisted beneficiary (beneficiary_allowlisted: true, known_benign_source: true). Policy FP-FP-02 states that benign activity may be auto-released except for private-banking customers, who must be held for manual review regardless of benign indicators. Therefore, despite the benign source, the private-banking segment triggers a hold_for_review disposition in the false-positive queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3539,
+          "output_tokens": 835,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001032
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00141,
+      "latency_s": 10.917,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $918.27 online purchase was made from a new device in a foreign geography, the customer did not authorize the transaction, and there is no travel notice or allowlisted beneficiary. For a private-banking customer (high-value segment) such signals indicate a high likelihood of fraud. Policy FP-FP-02 requires that private-banking alerts are not auto-released and must be manually reviewed, and FP-ESC-01 flags private-banking customers for heightened scrutiny. Therefore the alert is routed to the card-fraud queue and held for manual review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4879,
+          "output_tokens": 1130,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00141
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00127,
+      "latency_s": 9.293,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals show a credential reset and new-device login followed by a new payee addition and a $11,522.93 outbound transfer that was not authorized by the customer. FP-ATO-04 defines this pattern as an account takeover, requiring routing to the account-takeover queue. Additionally, the transfer amount exceeds the $10,000 regulatory review threshold, which per FP-ESC-01 mandates escalation to the fraud\u2011operations team. Therefore the alert is placed in the account\u2011takeover queue and escalated to fraud ops for immediate action.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3517,
+          "output_tokens": 1238,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00127
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002441,
+      "latency_s": 27.424,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": null,
+          "disposition": null
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy"
+        ],
+        "refused": false,
+        "error": "no submission within 8 turns",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 8979,
+          "output_tokens": 1824,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002441
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000961,
+      "latency_s": 12.087,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $3,726.55 card-not-present charge originates from a foreign geography on a new device, which would normally trigger the card-fraud queue. However, the transaction signals show a matching travel notice and a known benign source (policy FP-FP-02). The customer is a retail client, not subject to the private\u2011banking exception, and the amount is below typical regulatory review thresholds. Therefore, per the auto\u2011release clause for benign activity, the transaction can be allowed and classified as a false\u2011positive.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3530,
+          "output_tokens": 719,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000961
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001041,
+      "latency_s": 13.254,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $1,051.49 transfer to a beneficiary that is on the customer's verified allowlist (32 prior payments) and is flagged as a known benign source. Policy FP-FP-02 states that alerts explained by a benign source such as an allowlisted beneficiary may be auto\u2011released (allow) for retail customers. The customer is a retail segment, so the private\u2011banking exception does not apply. Therefore the alert is a false positive and the transaction can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3550,
+          "output_tokens": 848,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001041
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001254,
+      "latency_s": 14.232,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $733.83 card\u2011not\u2011present purchase from a new device in a foreign geography that does not match any travel notice or other benign source. The customer did not authorize it. According to policy FP\u2011CARD\u201103, such activity belongs in the card\u2011fraud queue. For a retail customer below the $10,000 regulatory threshold, the appropriate action is to block the transaction and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4868,
+          "output_tokens": 873,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001254
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000626,
+      "latency_s": 5.451,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The private banking customer (acct-59385947) shows classic account takeover signals: a credential reset, new-device login, addition of a new payee, and a high-value $1,291 transfer that the customer has not authorized. No travel notice, allowlist, or benign explanation exists. Per fraud policy, credential reset combined with new device and unauthorized transfer triggers a block and customer notification for account takeover cases.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 3,
+          "input_tokens": 2420,
+          "output_tokens": 438,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000626
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001349,
+      "latency_s": 14.46,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a high-value ($9,520) transfer that the customer authorized, but the beneficiary is a newly added payee that matches a known mule pattern (beneficiary_mule_match = true). Policy FP-APP-05 defines an Authorized Push Payment (APP) scam as occurring when the customer authorizes a payment but the beneficiary exhibits mule characteristics. Even though the login and device are trusted, the mule signal overrides and requires routing to the app-scam queue. The appropriate action is to block the payment and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4758,
+          "output_tokens": 1058,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001349
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001306,
+      "latency_s": 11.274,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,954.73 card-not-present charge originates from a new device in a foreign geography, which normally routes to the card-fraud queue. Transaction signals show a matching travel notice and a known benign source, which under policy FP-FP-02 would allow an auto\u2011release. However, the customer is in the private_banking segment, and policy FP-FP-02 explicitly states that private\u2011banking customers are an exception: they must be held for manual review even when a benign explanation exists (and never auto\u2011released). Therefore the alert is placed in the card\u2011fraud queue with a hold_for_review disposition.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4869,
+          "output_tokens": 960,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001306
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000911,
+      "latency_s": 6.883,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transfer of $1,145.61 is to a beneficiary on the customer's verified allowlist and is marked as a known benign source. According to policy FP-FP-02, benign activity (allowlisted beneficiary) may be auto\u2011released unless the customer is private\u2011banking or the amount exceeds the regulatory review threshold. The customer is a retail client and the amount is below any heightened threshold, so the transaction can be allowed. The amount rule alert is therefore a false positive.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3555,
+          "output_tokens": 630,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000911
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000879,
+      "latency_s": 5.964,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The retail customer (acct-73312141) has a $1,000 online purchase made via a card-not-present channel from a new device and a foreign geographic location, with no travel notice or allowlisted beneficiary. The transaction signals indicate the customer did not authorize the purchase (customer_authorized = false). According to policy FP-ATO-04, new-device activity combined with unauthorized activity points to an account takeover scenario, which must be routed to the account-takeover queue. For standard (retail) customers with confirmed fraud, the policy mandates an automatic block and customer notification. Therefore the transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3507,
+          "output_tokens": 588,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000879
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.001205,
+      "latency_s": 100.786,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": null,
+          "disposition": null
+        },
+        "n_turns": 0,
+        "tool_calls": [],
+        "refused": false,
+        "error": "RemoteDisconnected: Remote end closed connection without response",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4806,
+          "output_tokens": 807,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001205
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002451,
+      "latency_s": 17.917,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": null,
+          "disposition": null
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy"
+        ],
+        "refused": false,
+        "error": "no submission within 8 turns",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 9267,
+          "output_tokens": 1768,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002451
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000899,
+      "latency_s": 6.418,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $442.14 card-not-present charge was made from a new device in a foreign geography, which normally triggers the card-fraud queue. However, the transaction signals show a matching travel notice on file (travel_notice_matches: true) and the policy FP-FP-02 permits auto\u2011release of alerts explained by a benign source such as a travel notice for retail customers. The amount is well below the regulatory review threshold, so the private\u2011banking exception does not apply. Therefore the transaction is allowed and classified as a false\u2011positive.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3515,
+          "output_tokens": 619,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000899
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001089,
+      "latency_s": 9.446,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,405 transfer was flagged by the amount rule, but the transaction signals show a known benign source: the beneficiary is on the customer's verified allowlist (32 prior payments) and the customer has not used a new device or foreign geo. Policy FP-FP-02 states that while allowlisted beneficiaries can be auto\u2011released, private\u2011banking customers are an exception and must be held for manual review regardless of amount. Therefore the transaction should be placed in the false\u2011positive queue with a hold_for_review disposition.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3535,
+          "output_tokens": 932,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001089
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002126,
+      "latency_s": 17.323,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a card-not-present purchase of $3,191 from a new device in a foreign geography that does not match any travel notice or other benign source. The customer has not authorized the payment. According to policy FP-CARD-03, such activity should be routed to the card-fraud queue. The customer is a retail client and the amount is below the $10,000 regulatory review threshold, so the appropriate action is to block the transaction and notify the customer (block_and_notify).",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7975,
+          "output_tokens": 1550,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002126
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002451,
+      "latency_s": 16.939,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": null,
+          "disposition": null
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy"
+        ],
+        "refused": false,
+        "error": "no submission within 8 turns",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 9806,
+          "output_tokens": 1633,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002451
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001717,
+      "latency_s": 16.989,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is an authorized push payment from the customer's usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match=true). According to policy FP-APP-05, such signals constitute an APP\u2011scam regardless of trusted device or login, and the alert must be routed to the app\u2011scam queue and blocked. The appropriate action is to block the transfer and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5983,
+          "output_tokens": 1366,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001717
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000933,
+      "latency_s": 9.676,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $517 foreign card-not-present charge was made on a new device, but the transaction signals show a matching travel notice on file (travel_notice_matches: true) and a known benign source. According to policy FP-FP-02, benign activity explained by a travel notice may be auto-released for retail customers, with no manual review required. The customer is a retail segment, not private banking, and the amount is below any regulatory review threshold. Therefore the transaction is allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3522,
+          "output_tokens": 675,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000933
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000933,
+      "latency_s": 9.987,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,608.50 transfer is to a beneficiary that is on the customer's verified allowlist (known benign source) and the transaction shows no new device, foreign geo, or new payee signals. According to policy FP-FP-02, benign activity such as an allowlisted beneficiary may be auto\u2011released for retail customers. The customer is not a private\u2011banking client and the amount does not exceed any regulatory review threshold, so the auto\u2011release exception applies. Therefore the alert is a false positive and the transaction can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3553,
+          "output_tokens": 666,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000933
+        }
+      }
+    }
+  ]
+}

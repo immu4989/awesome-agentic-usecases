@@ -1,0 +1,3807 @@
+{
+  "backend": "mistral",
+  "model": "mistral-small-latest",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "disposition_accuracy": 0.5,
+    "exact_match": 0.5,
+    "queue_accuracy": 0.9667,
+    "submitted": 1.0
+  },
+  "metric_ci95": {
+    "disposition_accuracy": [
+      0.3444,
+      0.6667
+    ],
+    "exact_match": [
+      0.3444,
+      0.6667
+    ],
+    "queue_accuracy": [
+      0.9333,
+      1.0
+    ],
+    "submitted": [
+      1.0,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.00037,
+  "total_cost_usd": 0.0333,
+  "p50_latency_s": 5.96,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000388,
+      "latency_s": 5.21,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Card-not-present charge of $887.73 at a foreign merchant from a device first seen today for retail customer acct-80059494. No travel notice on file, no benign explanation, and customer did not authorize. Policy FP-CARD-03 directs card-fraud queue for unexpected foreign CNP activity on a new device; FP-ESC-01 does not require escalation as amount is below $10000 and customer is retail. Blocking and notifying customer per standard card-fraud procedure.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3241,
+          "output_tokens": 213,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000388
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00038,
+      "latency_s": 5.702,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account acct-43407209 shows a credential reset and new-device login, followed by a new payee and a $3,134 transfer that the customer did not authorize. Policy FP-ATO-04 flags this sequence as account takeover. The transaction is blocked and the customer will be notified to verify their credentials and recent activity.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3276,
+          "output_tokens": 175,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000391,
+      "latency_s": 6.051,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is an authorized push payment of $157.74 to a newly added beneficiary that matches a known mule pattern, which is a primary signal for an APP scam per policy FP-APP-05. Although the customer authorized the transfer and used their usual device (no credential compromise), the beneficiary mule match and new payee status warrant manual review. The customer is private banking, so even if a benign explanation existed, policy FP-FP-02 requires holding for review rather than auto-releasing.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3299,
+          "output_tokens": 205,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000391
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000219,
+      "latency_s": 3.845,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert references acct-95734685, but both the customer record and transaction signals are missing. This indicates a systemic data issue rather than a genuine fraud event. Escalating to fraud ops for investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1836,
+          "output_tokens": 118,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000219
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000388,
+      "latency_s": 5.854,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,254 transfer was flagged as high-value, but the transaction signals show it was sent to a beneficiary already on the customer's verified allowlist with 32 prior payments, and the customer had authorized it. Policy clause FP-FP-02 permits auto-release for benign activity explained by an allowlisted beneficiary, and the $1,254 amount is below the $10,000 regulatory review threshold. The customer record shows a retail segment, so manual review is not required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3289,
+          "output_tokens": 197,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000388
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000381,
+      "latency_s": 5.8,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $316.71 card-not-present charge from a new device in a foreign geography (not matching any travel notice) is a classic card-fraud pattern. Although the customer did not authorize it, the retail segment and lack of a benign explanation mean this must be manually reviewed before blocking. The policy (FP-CARD-03) directs such cases to the card-fraud queue for investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3257,
+          "output_tokens": 183,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000381
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00038,
+      "latency_s": 5.997,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account acct-17799664 shows a credential reset followed by a login from an unrecognized device and a $3,295 outbound transfer to a new payee, with no benign explanation on file. Policy FP-ATO-04 flags this exact sequence as account takeover. The transaction is blocked and the customer will be notified to verify their identity.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3268,
+          "output_tokens": 179,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000388,
+      "latency_s": 6.104,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is an APP scam: customer authorized a \u00a32,023 transfer to a newly added beneficiary that matches a known mule pattern (beneficiary_mule_match=true). Although the device and login were trusted and the customer initiated the payment, the UK retail customer has no benign explanation on file (no travel notice or allowlisted beneficiary). Per policy FP-APP-05, APP-scam signals override normal device/login checks and must be escalated to fraud ops for recovery and customer contact.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3261,
+          "output_tokens": 207,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000388
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000379,
+      "latency_s": 5.793,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The foreign $1,549 charge on acct-72701006 matches a travel notice on file (source_note: travel_notice_matches true). Policy FP-FP-02 allows auto-release for retail customers when a benign source explains the alert; FP-CARD-03 directs us to check for a travel notice before escalating. No further action required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3276,
+          "output_tokens": 172,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000379
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00039,
+      "latency_s": 6.266,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $2,448.60 transfer was flagged as high-value, but the transaction signals show it is a legitimate payment to a beneficiary already on the customer\u2019s verified allowlist (32 prior payments). Policy FP-FP-02 normally allows such benign activity, but the private-banking segment exception (FP-FP-02) mandates manual review regardless of benign source. The customer record (private_banking, tenure 105 months) confirms the need for hold_for_review. No fraud indicators are present.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3287,
+          "output_tokens": 204,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00039
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000384,
+      "latency_s": 5.938,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $918.27 card-not-present transaction from a new device and foreign geo lacks a benign explanation (no travel notice or allowlisted beneficiary). Although the customer is private banking and the amount is below the $10,000 escalation threshold, policy FP-FP-02 requires manual review for private-banking transactions regardless of benign explanations, so this is routed to card-fraud for manual review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3285,
+          "output_tokens": 186,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000384
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000375,
+      "latency_s": 5.54,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account takeover queue per FP-ATO-04: credential reset and new-device login (no benign explanation on file) followed by a new payee and a $11,523 transfer that the customer did not authorize. Transaction blocked and customer will be notified.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3285,
+          "output_tokens": 155,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000375
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000386,
+      "latency_s": 5.769,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer acct-82884753 (retail, UK) authorized a $550 transfer to a newly added beneficiary that matches a known mule pattern. Although the customer\u2019s device and login were familiar, the presence of a mule-matched beneficiary added only 6 minutes before the payment is the key signal for an authorized push-payment scam (policy FP-APP-05). The transaction is therefore blocked and the customer will be notified.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3276,
+          "output_tokens": 196,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000386
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000222,
+      "latency_s": 3.985,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert for a $3,727 overseas charge from an unfamiliar device on acct-75339033 could not be validated due to missing customer and transaction records. This constitutes a critical data gap requiring immediate escalation to fraud operations for further investigation and resolution.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1832,
+          "output_tokens": 131,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000222
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000391,
+      "latency_s": 6.52,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,051.49 transfer from acct-39344194 was flagged as high-value, but the transaction signals show it was authorized by the customer, paid to a beneficiary on their verified allowlist (32 prior payments), and has a known benign source. Policy FP-FP-02 explicitly allows auto-release for benign activity, and the retail segment rules do not require manual review for amounts below the $10,000 regulatory threshold. Therefore, the transaction is allowed and routed to the false-positive queue.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3286,
+          "output_tokens": 207,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000391
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000382,
+      "latency_s": 6.041,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $733.83 card-not-present charge from a new device in a foreign geography (outside APAC home region) lacks a travel notice or other benign explanation. Policy FP-CARD-03 directs such card-fraud indicators to the card-fraud queue. Although the amount is below the regulatory review threshold, the customer is retail and the rule\u2019s first guess was not overridden by a benign source, so manual review is required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3260,
+          "output_tokens": 187,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000382
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000387,
+      "latency_s": 5.956,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer acct-59385947 is private-banking (high-value). Signals show a credential reset, new device login, a newly added payee, and a $1,291 transfer that the customer did not authorize. Policy FP-ATO-04 classifies this as account takeover. Although the amount is below the $10,000 escalation threshold, the customer\u2019s segment meets the high-value criteria for direct blocking and customer notification under FP-ESC-01.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3257,
+          "output_tokens": 203,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000387
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000379,
+      "latency_s": 5.82,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer-approved $9,520 transfer to a brand-new payee that matches a known mule pattern. Although login and device are trusted, the combination of customer authorization, new payee, and beneficiary mule match is consistent with an authorized push-payment scam per policy FP-APP-05. Routing to the app-scam queue for manual review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3261,
+          "output_tokens": 176,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000379
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000225,
+      "latency_s": 4.131,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert references acct-77680295, but no customer record or transaction exists for this account. This indicates a systemic error in the rule that generated the alert (likely a misparsed account identifier or a test record). Escalating to fraud operations for root-cause analysis and correction of the rule logic.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1836,
+          "output_tokens": 137,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000225
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000381,
+      "latency_s": 5.902,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,145.61 transfer was flagged by the amount rule but is explained by a benign source: the beneficiary is on the customer's verified allowlist with 32 prior payments. Per policy FP-FP-02, retail customers may auto-release alerts explained by a benign source; the regulatory review threshold does not apply here. No evidence of account takeover (no credential reset, new device, or new payee).",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3269,
+          "output_tokens": 181,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000381
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000382,
+      "latency_s": 5.945,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,000 card-not-present charge from a new device in a foreign geography (not matching a travel notice) fits the card-fraud pattern. Policy FP-CARD-03 directs such cases to the card-fraud queue. The transaction is not an APP scam because the customer did not authorize it (per transaction signals), so the app-scam queue is not appropriate.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3272,
+          "output_tokens": 183,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000382
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 5.861,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account acct-82019284 shows a credential reset and new-device login followed by a new payee and a $348.77 transfer that the customer did not authorize (customer_authorized=false). Policy FP-ATO-04 explicitly routes this pattern to the account-takeover queue and mandates blocking and customer notification. No travel notice or allowlisted beneficiary explains the activity.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3271,
+          "output_tokens": 187,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000389,
+      "latency_s": 6.098,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer acct-35243655 is retail (EU), authorized a $789 transfer to a newly added beneficiary that matches a known mule pattern. Policy FP-APP-05 directs APP-scam alerts with a mule match to the app-scam queue regardless of trusted device or customer authorization. No benign explanation (travel notice or allowlisted beneficiary) is on file, so the transaction is being held for review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3303,
+          "output_tokens": 195,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000389
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000379,
+      "latency_s": 5.838,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $442.14 card-not-present charge from an overseas merchant on a new device matches a travel notice on file for the UK customer (source_note: travel notice matches geography and dates). Policy FP-FP-02 allows auto-release for retail customers when a benign source explains the alert; the retail segment and absence of prior disputes satisfy the exception clause. No evidence of fraud remains after verification.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3265,
+          "output_tokens": 174,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000379
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000392,
+      "latency_s": 6.02,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The \u00a31,405.08 transfer was flagged by the amount rule, but the transaction signals show it is a legitimate payment to a beneficiary already on the customer\u2019s verified allowlist (32 prior payments). Although the activity is benign, the customer is private-banking (segment: private_banking) and the amount exceeds the auto-release threshold per policy FP-FP-02. Therefore, the transaction is routed to false-positive for manual review rather than auto-released. No evidence of fraud or compromise; the hold is solely for regulatory compliance.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3291,
+          "output_tokens": 209,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000392
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00039,
+      "latency_s": 6.031,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $3,191 card-not-present purchase from a new device in a foreign geography (non-EU region). The customer record shows a retail segment with no prior disputes and home region in the EU. No travel notice is on file, and the policy (FP-CARD-03) directs such foreign, new-device card-not-present charges to the card-fraud queue for manual review. The lack of a benign explanation (travel notice or allowlisted beneficiary) and the high amount warrant a hold_for_review disposition.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3263,
+          "output_tokens": 212,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00039
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000382,
+      "latency_s": 5.994,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account acct-80877046 shows a credential reset and new-device login followed by a new payee and a $6,644 transfer the customer did not authorize. Policy FP-ATO-04 flags this sequence as account takeover. The transaction is blocked and the customer will be notified to verify their credentials and confirm the beneficiary.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3281,
+          "output_tokens": 178,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000382
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000381,
+      "latency_s": 6.995,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is an APP-scam: the customer authorized the $8,923 transfer, but the beneficiary was added only 6 minutes ago and matches a known mule pattern. Policy FP-APP-05 requires routing to the app-scam queue even when device and login are trusted. The customer is retail, so the standard block-and-notify disposition applies.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3286,
+          "output_tokens": 174,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000381
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000382,
+      "latency_s": 5.831,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The foreign $517 charge on acct-92776707 matches a travel notice on file (source_note: travel notice on file matches the charge geography and dates). Policy FP-FP-02 allows auto-release for retail customers when a benign source explains the alert, and the amount is below the regulatory review threshold. No evidence of card compromise; the new-device and foreign-geo flags are explained by the travel notice.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3271,
+          "output_tokens": 182,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000382
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000386,
+      "latency_s": 6.022,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,608 transfer was flagged as high-value, but the transaction signals show it was sent to a beneficiary already on the customer's verified allowlist (32 prior payments) and the customer had authorized it. Policy clause FP-FP-02 permits auto-release for retail customers when a benign source (verified allowlist) explains the activity, even though the amount exceeded the high-value threshold. No evidence of coercion or account compromise; therefore, this is a false-positive and should be allowed.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3266,
+          "output_tokens": 197,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000386
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000385,
+      "latency_s": 5.926,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Card-not-present charge of $887.73 at a foreign merchant from a device first seen today for retail customer acct-80059494. No travel notice on file and no benign explanation. Policy FP-CARD-03 directs card-not-present charges from a new device in an unexpected geography to the card-fraud queue, and the customer is retail with no escalation threshold exceeded per FP-ESC-01, so the transaction is blocked and the customer will be notified.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3241,
+          "output_tokens": 202,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000385
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000396,
+      "latency_s": 6.071,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer is retail (segment=retail, tenure=130 months, prior disputes=2, home_region=EU). Transaction is a $3,134 transfer via new payee, triggered after a password-reset + new-device login. Customer did not authorize the transfer (customer_authorized=false), beneficiary is not allowlisted, and no benign explanation (travel_notice_matches=false) is on file. Per FP-APP-05, this is an authorized push-payment scam pattern; escalate to fraud-ops for beneficiary mule analysis and customer contact.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3295,
+          "output_tokens": 222,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000396
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000385,
+      "latency_s": 5.96,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is an APP-scam: the customer authorized the $157.74 transfer, but the beneficiary was added only 6 minutes ago and matches a known mule pattern. Policy FP-APP-05 requires routing to the app-scam queue even when device and login are trusted. The customer is private-banking, but the amount is below the $10,000 escalation threshold, so block_and_notify is appropriate.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3279,
+          "output_tokens": 191,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000385
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000397,
+      "latency_s": 6.179,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,139 foreign card-not-present charge on acct-95734685 matches a travel notice on file (travel_notice_matches=true, source_note=travel notice on file matches the charge geography and dates). Although the transaction is foreign and on a new device, the customer is private banking (tenure_months=221, segment=private_banking) and the policy FP-FP-02 explicitly removes the auto-release exception for private-banking customers even when a benign explanation is present. Therefore, the transaction must be held for manual review rather than auto-released.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3304,
+          "output_tokens": 223,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000397
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 5.779,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,254 transfer was flagged as high-value, but the transaction signals show it was sent to a beneficiary on the customer's verified allowlist with 32 prior payments and the customer had authorized it. Policy clause FP-FP-02 permits auto-release for benign activity explained by an allowlisted beneficiary, and the retail segment exception does not apply here. No fraud indicators are present, so the transaction is allowed.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3289,
+          "output_tokens": 179,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00038,
+      "latency_s": 6.218,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $316.71 card-not-present charge from a new device in a foreign geography (not matching any travel notice) is consistent with stolen-card activity. The retail customer has only one prior dispute and no benign explanation on file, so the case meets the card-fraud queue criteria. Manual review is required to confirm whether the customer recognizes the charge before deciding on block_and_notify or allow.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3257,
+          "output_tokens": 181,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000381,
+      "latency_s": 5.94,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account acct-17799664 shows a credential reset and first-time login from an unrecognized device, followed by a $3,295 transfer to a new payee with no benign explanation on file. Policy FP-ATO-04 flags this exact sequence as indicative of account takeover, so the case is routed to the account-takeover queue for manual review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3268,
+          "output_tokens": 181,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000381
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000387,
+      "latency_s": 6.04,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer acct-56683819 (UK retail, 4 months tenure, no prior disputes) authorized a $2,023 transfer to a newly added beneficiary. Signals show no device novelty, no foreign geo, and no credential reset, but the beneficiary matches a known mule pattern. Policy FP-APP-05 explicitly states that an APP-scam alert should be routed to the app-scam queue even when device/login are trusted if the beneficiary is a mule match. Therefore, placing this alert on hold_for_review in the app-scam queue for manual review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3203,
+          "output_tokens": 223,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000387
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000378,
+      "latency_s": 5.746,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The foreign $1,549 charge on acct-72701006 matches a travel notice on file (source_note: travel notice on file matches the charge geography and dates). Policy FP-FP-02 allows auto-release for retail customers when a benign source explains the alert, and the regulatory review threshold does not apply here. No further action required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3276,
+          "output_tokens": 168,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000378
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000396,
+      "latency_s": 6.511,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $2,448.60 transfer was flagged as high-value, but the transaction signals show it was sent to a beneficiary already on the customer\u2019s verified allowlist (32 prior payments) and the customer did not authorize it. This is a benign activity misread by the rule. However, the customer is private banking, and the policy (FP-FP-02) explicitly removes the auto-release exception for private-banking customers even when the activity is benign. Therefore, the transaction is routed to false-positive for manual review rather than auto-released. No fraud ops escalation is required as this is not confirmed fraud.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3288,
+          "output_tokens": 223,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000396
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000385,
+      "latency_s": 6.022,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $918 online purchase from a new device and foreign geo lacks a benign explanation (no travel notice or allowlisted beneficiary) and the customer did not authorize it. Although the amount is below the $10000 regulatory review threshold, the customer is private banking, so the auto-release exception applies and manual review is required per FP-FP-02. The case is assigned to the card-fraud queue for stolen-card charges.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3283,
+          "output_tokens": 188,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000385
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000378,
+      "latency_s": 6.031,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account takeover indicators are present: credential reset and new-device login (no benign explanation on file), followed by a new payee and a $11,523 transfer that the customer did not authorize. Policy FP-ATO-04 requires blocking and notifying the customer for this sequence in a retail segment account.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3285,
+          "output_tokens": 165,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000378
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000381,
+      "latency_s": 6.076,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer acct-82884753 (UK retail, 69 months tenure, 1 prior dispute) authorized a $550 transfer to a newly added beneficiary. Signals show the beneficiary matches a known mule pattern and no benign explanation (travel notice or allowlist) is on file. Per policy FP-APP-05, this is an authorized push-payment scam regardless of trusted device/login, so the transaction is blocked and the customer will be notified for verification.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3199,
+          "output_tokens": 204,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000381
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000219,
+      "latency_s": 3.724,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert references account 75339033, but no customer record or transaction exists for this account. This is likely a false-positive rule misfire or a corrupted alert. Escalating to fraud operations for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1832,
+          "output_tokens": 119,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000219
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000388,
+      "latency_s": 5.876,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,051.49 transfer was flagged as high-value for retail customer acct-39344194. Investigation showed the beneficiary is on the customer's verified allowlist with 32 prior payments and marked as a known benign source, matching policy clause FP-FP-02 which allows auto-release for benign activity. The retail segment and absence of any fraud signals (new device, foreign geo, credential reset, or beneficiary mule match) confirm this is a false positive.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3286,
+          "output_tokens": 198,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000388
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00037,
+      "latency_s": 6.014,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $734 online purchase from a new device and foreign geo lacks a travel notice or allowlisted beneficiary, so it does not qualify for auto-release under FP-FP-02. As a retail customer the regulatory review threshold applies, requiring manual review rather than auto-release. Assigning to card-fraud queue for standard stolen-card investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3202,
+          "output_tokens": 166,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00037
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000385,
+      "latency_s": 6.019,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account acct-59385947 is a private-banking customer. Transaction signals show a credential reset and new-device login followed by a new payee and a $1,291 transfer that the customer did not authorize. Policy FP-ATO-04 requires this pattern be treated as account takeover. Although the customer is private banking, the amount is below the $10,000 escalation threshold, so block_and_notify is the correct disposition.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3258,
+          "output_tokens": 198,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000385
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000379,
+      "latency_s": 5.807,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer-approved $9,520 transfer to a brand-new payee that matches a known mule pattern. Although login and device are trusted, the combination of customer authorization, new payee, and beneficiary mule match is consistent with an authorized push-payment scam per policy FP-APP-05. Routing to the app-scam queue for manual review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3261,
+          "output_tokens": 176,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000379
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000222,
+      "latency_s": 5.418,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert references acct-77680295, but no customer record or transaction exists for that account ID. This is likely a data or routing error, so the case cannot be evaluated under current policy. Escalating to fraud operations for investigation and resolution.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1836,
+          "output_tokens": 127,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000222
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000378,
+      "latency_s": 5.795,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,145.61 transfer was flagged by the amount rule, but the transaction signals show it is a legitimate payment to a beneficiary already on the customer's verified allowlist (32 prior payments). Policy clause FP-FP-02 explicitly allows auto-release for retail customers when a benign source (verified allowlist) explains the activity, and the regulatory review threshold exception does not apply to retail segment. Therefore, the alert is a false positive and the transaction is allowed.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3212,
+          "output_tokens": 190,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000378
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 6.038,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,000 card-not-present charge from a new device in a foreign geography (not matching a travel notice) lacks customer authorization and any benign explanation. Per policy FP-CARD-03, this is routed to the card-fraud queue for manual review. The transaction signals (new device, foreign geo, CNP channel, amount) align with potential stolen-card activity rather than an authorized scam.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3272,
+          "output_tokens": 187,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000374,
+      "latency_s": 5.731,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account takeover policy FP-ATO-04 matches: credential reset + new device + new payee + unauthorized $348.77 transfer with no benign explanation on file. Transaction blocked and customer will be notified to verify their credentials and review recent activity.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3274,
+          "output_tokens": 156,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000374
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000386,
+      "latency_s": 6.215,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction was customer-authorized but the beneficiary matches a known mule pattern, which is the primary signal for an APP scam per policy FP-APP-05. The customer is retail, the amount ($789.12) is below the regulatory review threshold, and no benign explanation (travel notice or allowlisted beneficiary) is on file, so blocking and notifying the customer is the correct action.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3301,
+          "output_tokens": 186,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000386
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00038,
+      "latency_s": 6.21,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $442.14 overseas charge on acct-80565528 matches a travel notice on file (source_note: travel notice matches geography and dates), so the rule\u2019s \u201cforeign charge\u201d alert is a false positive. Policy FP-FP-02 allows auto-release for retail customers when a benign source explains the activity, and the regulatory review threshold does not apply here. No further action is required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3262,
+          "output_tokens": 178,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000398,
+      "latency_s": 6.239,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The \u00a31,405 transfer was flagged by the amount rule, but the transaction signals show it is a legitimate payment to a beneficiary already on the customer\u2019s verified allowlist (32 prior payments) and marked as a known benign source. Although this qualifies as a false-positive under policy FP-FP-02, the customer is private-banking (segment=private_banking), so the auto-release exception applies and the case must be manually reviewed rather than auto-released. No evidence of fraud or credential compromise; simply a high-value customer requiring manual review per policy FP-FP-02 and escalation criteria FP-ESC-01.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3291,
+          "output_tokens": 230,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000398
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000389,
+      "latency_s": 6.0,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a CNP purchase for $3,190.66 from a new device and foreign geo with no benign explanation on file (no travel notice or allowlisted beneficiary). The customer record shows a retail segment with no prior disputes, but the amount exceeds the auto-release threshold for retail customers under the fraud policy. Therefore, the case is routed to card-fraud for manual review to verify if the card was stolen or used fraudulently.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3308,
+          "output_tokens": 195,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000389
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000376,
+      "latency_s": 5.678,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account takeover policy FP-ATO-04 matches: credential reset + new-device login + new payee + $6,644 transfer with customer_authorized=false and no benign explanation on file. Transaction is routed to the account-takeover queue for manual review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3281,
+          "output_tokens": 158,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000376
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00039,
+      "latency_s": 5.895,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer acct-32074503 (retail, EU) authorized an $8,923 transfer to a newly added beneficiary that matches a known mule pattern. Although the customer\u2019s device and login were familiar, the combination of a new payee and mule match is the hallmark of an authorized push-payment scam per FP-APP-05. The amount is below the $10,000 regulatory threshold, so the standard retail disposition is to block and notify the customer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3286,
+          "output_tokens": 206,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00039
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000384,
+      "latency_s": 6.144,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $516.95 foreign card-not-present charge on a new device for retail customer acct-92776707 matches a travel notice on file (source_note: travel notice on file matches the charge geography and dates). Policy FP-FP-02 allows auto-release when a benign source explains the alert; FP-CARD-03 directs us to check for a travel notice before treating geography as unexpected. No manual review is required for retail customers even when benign.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3271,
+          "output_tokens": 191,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000384
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000388,
+      "latency_s": 6.088,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,608 transfer for acct-48745487 is a false positive. The customer is retail (not private banking), the transaction is below the $10,000 review threshold, and the payment matches a beneficiary on the customer's verified allowlist with 32 prior payments. Policy FP-FP-02 explicitly allows auto-release for benign activity explained by an allowlisted beneficiary, and the escalation clause FP-ESC-01 does not apply here.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3286,
+          "output_tokens": 198,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000388
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000382,
+      "latency_s": 6.198,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $887.73 card-not-present charge in a foreign geography on a brand-new device for a retail customer with no travel notice on file meets the card-fraud pattern. Although the amount is below the retail customer regulatory threshold, the combination of foreign merchant, new device, and lack of any benign explanation (travel notice or allowlisted payee) warrants manual review in the card-fraud queue rather than an immediate block.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3261,
+          "output_tokens": 188,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000382
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000385,
+      "latency_s": 5.92,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account acct-43407209 shows a credential reset and new-device login followed by a new payee and a $3,134 transfer that the customer did not authorize. Policy FP-ATO-04 flags this sequence as indicative of account takeover. The transaction lacks a travel notice or allowlisted beneficiary, so no auto-release exception applies. Routing to the account-takeover queue for manual review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3279,
+          "output_tokens": 189,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000385
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000394,
+      "latency_s": 6.523,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer acct-83978719 (private_banking, UK) authorized a $157.74 transfer to a newly added beneficiary that matches a known mule pattern. Although the device and login were usual and the customer authorized the payment, policy FP-APP-05 classifies this as an authorized push-payment scam scenario. The transaction is being routed to the app-scam queue for manual review; per FP-FP-02 the private-banking segment requires manual review even when the benign explanation is absent.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3302,
+          "output_tokens": 212,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000394
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000222,
+      "latency_s": 3.993,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert references acct-95734685, but both the customer record and transaction signals are missing. This indicates a system-level error rather than a genuine fraud event. Escalating to fraud operations for root-cause analysis and potential correction of the alert source.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1836,
+          "output_tokens": 127,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000222
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000382,
+      "latency_s": 5.874,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,254.03 transfer was flagged as high-value, but the transaction signals show it was sent to a beneficiary on the customer's verified allowlist (32 prior payments) and the customer authorized it. Policy clause FP-FP-02 permits auto-release for benign activity, and the retail segment exception does not apply here. No evidence of fraud or compromise; the alert was a false positive.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3289,
+          "output_tokens": 176,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000382
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000388,
+      "latency_s": 5.96,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $316.71 card-not-present charge from a new device in a foreign geography (not matching the customer's US-W home region) lacks a travel notice or other benign explanation. Policy FP-CARD-03 directs such cases to the card-fraud queue. Although the customer is retail and the amount is below the regulatory review threshold, the absence of a benign source (per query_transaction) means auto-release is not permitted under FP-FP-02, so the transaction is placed on hold_for_review for manual inspection.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3258,
+          "output_tokens": 207,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000388
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 6.065,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account acct-17799664 shows a credential reset and first-time login from an unrecognized device, followed by a $3,295 transfer to a new payee with no travel notice or allowlist match. Policy FP-ATO-04 flags this exact sequence as account-takeover, so the transaction is blocked and the customer will be notified to verify their credentials and review the transfer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3268,
+          "output_tokens": 187,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000386,
+      "latency_s": 5.717,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer acct-56683819 (retail, UK) authorized a $2,023 transfer to a newly added beneficiary that matches a known mule pattern. Per policy FP-APP-05, this is an authorized push-payment scam regardless of trusted device and customer authorization. The transaction is below the $10,000 escalation threshold, so it is blocked and the customer will be notified.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3282,
+          "output_tokens": 191,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000386
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000382,
+      "latency_s": 8.015,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The foreign $1,549 charge on acct-72701006 matches a travel notice on file (source_note: travel notice on file matches the charge geography and dates). Policy FP-FP-02 allows auto-release for retail customers when a benign source explains the alert, and the regulatory review threshold exception does not apply here. No evidence of card compromise; the new-device flag is explained by travel.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3276,
+          "output_tokens": 180,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000382
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000394,
+      "latency_s": 5.974,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $2,449 transfer from acct-75082962 was flagged as high-value, but the transaction signals show it was sent to a beneficiary on the customer\u2019s verified allowlist with 32 prior payments and the customer did not authorize it. This is a false-positive rule misread. However, the customer is private banking, and the policy FP-FP-02 explicitly states that private-banking customers are held for manual review even for benign activity, never auto-released. Therefore, the transaction is assigned to the false-positive queue with a hold_for_review disposition.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3288,
+          "output_tokens": 218,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000394
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000386,
+      "latency_s": 5.969,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $918 card-not-present purchase from a new device and foreign geo lacks a benign explanation (no travel notice or allowlisted beneficiary) and the customer did not authorize it. Although the amount is below the $10000 regulatory review threshold, the customer is private banking, so the auto-release exception applies and manual review is required per FP-FP-02. No evidence of credential compromise, so account-takeover is not indicated.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3285,
+          "output_tokens": 191,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000386
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000388,
+      "latency_s": 5.929,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account takeover queue selected because the customer record (retail, 105 months tenure, 3 prior disputes) shows a credential reset and new-device login followed by a new payee and a $11,523 transfer that the customer did not authorize (per transaction signals). Policy FP-ATO-04 explicitly routes this pattern to the account-takeover queue. The transaction is blocked and the customer will be notified to verify their credentials and review the new payee.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3285,
+          "output_tokens": 199,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000388
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000395,
+      "latency_s": 6.434,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer acct-82884753 (UK retail, 69 months tenure) authorized a $550 transfer to a newly added beneficiary. Transaction signals show no benign explanation on file (no travel notice or allowlisted payee) and the beneficiary matches a known mule pattern per policy FP-APP-05. Although the customer authorized the payment and the device was usual, the mule-beneficiary match is sufficient to classify this as an authorized push-payment scam. Blocking and notifying the customer per APP-scam guidance.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3299,
+          "output_tokens": 217,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000395
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000219,
+      "latency_s": 3.789,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert references account 75339033, but no customer record or transaction exists for this account. This is likely a false-positive rule misfire or a corrupted alert. Escalating to fraud operations for further investigation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1832,
+          "output_tokens": 119,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000219
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00038,
+      "latency_s": 5.864,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,051.49 transfer for retail customer acct-39344194 is explained by a benign source: the payee is on the customer's verified allowlist with 32 prior payments. Policy clause FP-FP-02 permits auto-release for retail customers when a benign source is confirmed, so the transaction is allowed and routed to the false-positive queue.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3286,
+          "output_tokens": 173,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000378,
+      "latency_s": 5.902,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $733.83 card-not-present charge from a new device in a foreign geography (outside APAC home region) lacks a travel notice or allowlist match. Policy FP-CARD-03 directs foreign CNP transactions from new devices to the card-fraud queue for manual review. No evidence of customer authorization, so this is not an APP scam.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3257,
+          "output_tokens": 173,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000378
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000387,
+      "latency_s": 5.971,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer acct-59385947 is private-banking (high-value). Signals show a credential reset, new-device login, a newly added payee, and a $1,291 transfer that the customer did not authorize. Policy FP-ATO-04 classifies this as account takeover. Although the amount is below the $10,000 escalation threshold (FP-ESC-01), the customer segment warrants immediate blocking and customer notification.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3262,
+          "output_tokens": 203,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000387
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000385,
+      "latency_s": 5.982,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer on retail segment authorized a $9,520 transfer to a brand-new payee. Signals show trusted device/login and no travel notice, but the beneficiary matches a known mule pattern per policy FP-APP-05. Although the customer authorized the payment, the mule match makes this an APP-scam candidate; therefore it is routed to the app-scam queue for manual review rather than auto-release.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3304,
+          "output_tokens": 183,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000385
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000221,
+      "latency_s": 4.16,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert references acct-77680295, but both the customer record and transaction signals are missing for this account ID. This indicates a systemic data issue rather than a genuine fraud event. Escalating to fraud operations for investigation and resolution.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 1836,
+          "output_tokens": 124,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000221
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000375,
+      "latency_s": 5.746,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,145.61 transfer was flagged by the amount rule but is fully explained by benign signals: the payee is on the customer's verified allowlist with 32 prior payments and is marked as a known benign source. Per fraud-policy clause FP-FP-02, retail customers may auto-release alerts explained by a benign source; the regulatory review threshold does not apply here. No evidence of fraud or compromise.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3212,
+          "output_tokens": 180,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000375
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000382,
+      "latency_s": 5.863,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,000 card-not-present charge from a new device in a foreign geography lacks a travel notice and has no benign explanation on file. Policy FP-CARD-03 directs card-not-present, new-device, unexpected-geo transactions to the card-fraud queue. Customer segment is retail with no prior disputes, so manual review is appropriate before deciding to block or allow.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3272,
+          "output_tokens": 181,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000382
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000391,
+      "latency_s": 6.073,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Account acct-82019284 (retail, 33 mo tenure) shows a credential reset and new-device login followed by a new payee and a $348.77 transfer the customer did not authorize. Policy FP-ATO-04 flags this sequence as account takeover; the transaction signals (new_device=true, credential_reset=true, customer_authorized=false, new_payee=true, no benign explanation) confirm compromise. Blocking and notifying the customer per standard ATO procedure.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3274,
+          "output_tokens": 213,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000391
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00038,
+      "latency_s": 5.871,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer acct-35243655 (retail, EU) authorized a $789 transfer to a newly added beneficiary that matches a known mule pattern. Policy FP-APP-05 classifies this as an authorized push-payment scam regardless of the trusted device and customer authorization. The transaction is blocked and the customer will be notified.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3277,
+          "output_tokens": 173,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00038,
+      "latency_s": 6.253,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $442.14 card-not-present charge from an overseas merchant on a new device matches a travel notice on file for the UK customer (source_note: travel notice on file matches the charge geography and dates). Policy FP-FP-02 permits auto-release for retail customers when a benign source explains the alert; the foreign-geo flag is neutralized by the travel notice. No evidence of card compromise or account takeover.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3265,
+          "output_tokens": 179,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000391,
+      "latency_s": 5.848,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The \u00a31,405.08 transfer was flagged by the amount rule, but the transaction signals show it is a legitimate payment to a beneficiary already on the customer\u2019s verified allowlist (32 prior payments). The fraud-policy clause FP-FP-02 states that private-banking customers are held for manual review even when the activity is benign, and this transaction is above the auto-release threshold. No evidence of fraud or compromise; the customer\u2019s segment (private_banking) and the policy exception require manual review before release.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3291,
+          "output_tokens": 206,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000391
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000386,
+      "latency_s": 6.145,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a CNP charge for $3,190.66 from a new device in a foreign geo (outside the customer\u2019s EU home region). The customer record shows no travel notice on file and no allowlist match, so the foreign geography is unexpected. Policy FP-CARD-03 directs card-not-present, new-device, unexpected-geo items to the card-fraud queue for manual review. No evidence of customer authorization, so it is not an APP scam.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3263,
+          "output_tokens": 200,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000386
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000392,
+      "latency_s": 5.891,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer is retail segment with a $6,644 transfer that the customer did not authorize (customer_authorized=false). The transaction matches APP-scam red flags: password reset + new-device login followed by a new payee and a queued transfer to an unallowlisted beneficiary, with no benign explanation on file. Although the amount is below the $10,000 regulatory threshold, the confirmed lack of customer authorization and the APP-scam pattern warrant escalation to fraud operations for immediate take-down and customer recovery actions.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3297,
+          "output_tokens": 208,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000392
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000391,
+      "latency_s": 5.963,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is an $8,923 authorized push payment to a newly added beneficiary that matches a known mule pattern. Although the customer authorized the transfer and used their usual device, the beneficiary_mule_match flag and absence of a travel notice or allowlisted beneficiary mean this fits APP-scam policy (FP-APP-05). The customer is retail, so the regulatory review threshold applies and manual review is required; auto-release does not apply (FP-FP-02).",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3310,
+          "output_tokens": 201,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000391
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00038,
+      "latency_s": 5.895,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $517 foreign charge on acct-92776707 was flagged as possible card fraud, but investigation shows a travel notice is on file matching the charge geography and dates. Policy FP-FP-02 allows auto-release for retail customers when a benign source explains the alert, and the transaction does not exceed the regulatory review threshold. Therefore, the alert is a false-positive and the transaction is allowed.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3271,
+          "output_tokens": 178,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 6.081,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,608 transfer was flagged as high-value, but the transaction signals show it was sent to a beneficiary already on the customer's verified allowlist with 32 prior payments, and the customer had not authorized it. The policy clause FP-FP-02 explicitly allows auto-release for retail customers when a benign source (verified allowlist) explains the activity, so the alert is a false-positive and can be released without manual review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3286,
+          "output_tokens": 183,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    }
+  ]
+}

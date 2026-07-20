@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="#the-64-cent-comparison">Results</a> ·
+  <a href="#four-models-one-agent">Results</a> ·
   <a href="#use-cases">Use cases</a> ·
   <a href="#industries">Industries</a> ·
   <a href="#what-verified-means-here">The verification bar</a> ·
@@ -29,13 +29,13 @@ model backends include free tiers, so reproducing any result costs nothing.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="4 models compared, $0.64 total eval spend, 8 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="4 industries shipping, 13 verified model-evals, 22 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
-## The 64-cent comparison
+## Four models, one agent
 
-Same agent, same 30 scenarios, 3 repeats per model. Total spend for everything below:
-**$0.64**.
+The flagship comparison, from the [logistics exemplar](logistics-supply-chain/exception-triage-agent/):
+same agent, same 30 scenarios, 3 repeats per model — reproducible on free tiers.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/results-dark.svg">
@@ -66,22 +66,29 @@ Every failure has a reproducing scenario id in
 | [🎫 exception-triage-agent](logistics-supply-chain/exception-triage-agent/) | Logistics | `investigate` `decide` | Which resolution queue should each stuck-shipment ticket go to, which can resolve themselves, and which need a human? |
 | [🧑‍🍳 shift-coverage-triage-agent](retail-workforce/shift-coverage-triage-agent/) | Retail & Workforce | `investigate` `decide` | When crew call out, what's the compliant fill — overtime, borrow, run short, or escalate — under labor-law caps the ticket never mentions? |
 | [🚨 alert-triage-agent](security-operations/alert-triage-agent/) | Security Ops | `investigate` `decide` | Which queue does each security alert belong in, which can safely auto-close, and which need incident response now? |
+| [🚩 fraud-alert-triage-agent](financial-services-fraud/fraud-alert-triage-agent/) | Financial Services | `investigate` `decide` | Which fraud queue does each transaction alert belong in, which release, which block, and which need the fraud team now? |
 
 Every use case is tagged by what the agent *does*: `predict` · `decide` · `plan` ·
 `act` · `watch` · `investigate`, plus architecture (`single-agent` / `multi-agent` /
 `human-in-loop`).
 
-Each use case is verified across multiple models on free API tiers. Two findings that
-only a per-use-case harness surfaces: **there is no best model** — gpt-oss-120b leads
-the security triage and trails on retail scheduling, where kimi-k2p6 leads — and **the
-compound-policy traps aren't always solvable**: the logistics exemplar has a perfect
-90/90 model, but the best model on retail scheduling tops out at 0.82.
+Each use case is verified across multiple models on free API tiers. Three findings that
+only a per-use-case harness surfaces:
+
+- **There is no best model.** Every model tested wins on one use case and loses on
+  another — gpt-oss-120b leads security triage and trails on retail scheduling and fraud;
+  mistral-small is the *best router* on fraud and the worst at deciding what to do next.
+- **Not every task is solvable.** The logistics exemplar has a perfect 90/90 model; the
+  best model on retail scheduling tops out at 0.82.
+- **Agents err in one direction, and it's consistent.** On fraud, every model tested
+  over-calls fraud on benign transactions and never the reverse — a systematic
+  false-positive bias that an accuracy score implies away.
 
 ## Industries
 
 | Shipping now | Next waves |
 |---|---|
-| 🚛 [Logistics & Supply Chain](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Operations](security-operations/) | 💳 Financial Services & Fraud · 🎧 Customer Support · 🏥 Healthcare |
+| 🚛 [Logistics & Supply Chain](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Operations](security-operations/) · 💳 [Financial Services & Fraud](financial-services-fraud/) | 🎧 Customer Support · 🏥 Healthcare · ⚖️ Legal & Compliance |
 
 <details>
 <summary><b>Full 15-industry roadmap</b></summary>
@@ -92,8 +99,8 @@ compound-policy traps aren't always solvable**: the logistics exemplar has a per
 | 1 | 🚛 Logistics & Supply Chain | ✅ Shipping |
 | 2 | 🛒 Retail & Workforce | ✅ Shipping |
 | 3 | 🛡️ Security Operations | ✅ Shipping |
-| 4 | 💳 Financial Services & Fraud | 🔜 Wave 3 |
-| 5 | 🎧 Customer Support & Success | 📋 Roadmap |
+| 4 | 💳 Financial Services & Fraud | ✅ Shipping |
+| 5 | 🎧 Customer Support & Success | 🔜 Wave 4 |
 | 6 | 🏥 Healthcare & Life Sciences | 📋 Roadmap |
 | 7 | ⚖️ Legal & Compliance | 📋 Roadmap |
 | 8 | 🏭 Manufacturing & Industrial | 📋 Roadmap |

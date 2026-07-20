@@ -1,0 +1,3945 @@
+{
+  "backend": "fireworks",
+  "model": "accounts/fireworks/models/kimi-k2p6",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "disposition_accuracy": 0.8667,
+    "exact_match": 0.8444,
+    "queue_accuracy": 0.8889,
+    "submitted": 0.9778
+  },
+  "metric_ci95": {
+    "disposition_accuracy": [
+      0.7889,
+      0.9333
+    ],
+    "exact_match": [
+      0.7667,
+      0.9111
+    ],
+    "queue_accuracy": [
+      0.8111,
+      0.9556
+    ],
+    "submitted": [
+      0.9444,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.009022,
+  "total_cost_usd": 0.812,
+  "p50_latency_s": 19.035,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.003663,
+      "latency_s": 55.449,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": null,
+          "disposition": null
+        },
+        "n_turns": 0,
+        "tool_calls": [],
+        "refused": false,
+        "error": "RemoteDisconnected: Remote end closed connection without response",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1800,
+          "output_tokens": 621,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003663
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00732,
+      "latency_s": 150.615,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits the classic account-takeover pattern described in policy FP-ATO-04: a credential reset and new-device login were followed by addition of a new payee and an outbound transfer of $3,134.43. The customer did not authorize the payment, there is no travel notice on file, the beneficiary is not allowlisted, and there is no benign explanation. Because the customer is a retail segment and the amount is below the $10,000 regulatory threshold, per FP-ESC-01 this is blocked and the customer is notified automatically rather than escalated to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3066,
+          "output_tokens": 1418,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00732
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006328,
+      "latency_s": 22.47,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction matches the APP-scam pattern described in policy FP-APP-05: the customer authorized the transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern. There is no benign explanation on file (no travel notice, beneficiary not allowlisted). Because the customer is in the private-banking segment, policy FP-ESC-01 requires escalation to fraud operations rather than automatic block-and-notify.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3082,
+          "output_tokens": 1082,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006328
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003961,
+      "latency_s": 12.251,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Transaction signals show a matching travel notice is on file that covers the charge geography and dates, and the source is flagged as a known benign source. Per policy FP-CARD-03, geography must not be treated as unexpected when a travel notice matches. The $1,139.48 card-not-present charge is legitimate activity that the rule misread; no fraud indicators are present. As this is a false positive, the transaction should be released.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1780,
+          "output_tokens": 727,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003961
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004928,
+      "latency_s": 13.101,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The beneficiary is on the customer\u2019s verified allowlist with 32 prior payments, the source is flagged as known-benign, and there are no fraud indicators (no new device, no geo anomaly, no credential reset, no mule match). The customer_authorized=false flag appears to reflect an automated or recurring transfer rather than unauthorized activity. This is legitimate payment activity that the high-value threshold rule misread. The customer is retail and the amount ($1,254) is below the $10,000 escalation threshold, so no fraud-ops escalation is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1805,
+          "output_tokens": 1041,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004928
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009698,
+      "latency_s": 23.749,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a card-not-present charge from a new device in a foreign geography, and the customer did not authorize it. There is no matching travel notice or other benign explanation on file (travel_notice_matches: false, known_benign_source: false). Per policy FP-CARD-03, card-not-present charges from a new device in unexpected geography route to the card-fraud queue. The customer is a retail segment (not private banking) and the $316.71 amount is well below the $10,000 regulatory review threshold. Per policy FP-ESC-01, standard customers with confirmed fraud are blocked and notified automatically rather than escalated to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4241,
+          "output_tokens": 1819,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009698
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009896,
+      "latency_s": 31.138,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits classic account-takeover indicators per policy FP-ATO-04: a credential reset and new-device login followed by a new payee and an outbound transfer. The customer did not authorize the payment, there is no benign explanation on file, and the beneficiary is not allowlisted. The customer is retail and the amount ($3,294.82) is below the $10,000 regulatory review threshold, so per FP-ESC-01 the standard disposition for confirmed fraud on a standard customer is block and notify.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3551,
+          "output_tokens": 2115,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009896
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007413,
+      "latency_s": 23.659,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits a classic APP-scam pattern per policy FP-APP-05: the customer authorized a $2,023.29 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match: true). There is no benign explanation on file (no travel notice, beneficiary not allowlisted). Because the customer is retail and the amount is below the $10,000 regulatory review threshold, standard confirmed-fraud handling applies: block the transaction and notify the customer rather than escalating to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3174,
+          "output_tokens": 1413,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007413
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006946,
+      "latency_s": 30.361,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals show a matching travel notice on file that covers the charge geography and dates, and the system flags it as a known benign source. Although the alert fired on new-device + foreign-geo card-not-present indicators, policy FP-FP-02 permits auto-release of benign activity explained by a valid travel notice. The customer is retail and the $1,549 amount is below the $10,000 regulatory review threshold, so no hold exception applies. The alert is a rule misread of legitimate travel spending.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1966,
+          "output_tokens": 1660,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006946
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009759,
+      "latency_s": 30.957,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $2,448.60 transfer is to a beneficiary on the customer\u2019s verified allowlist with 32 prior payments and is flagged as a known benign source, indicating legitimate activity that simply tripped the high-value alert. No fraud signals are present: the device and geo are familiar, the payee is not new, there was no credential reset, and the beneficiary does not match a known mule pattern. However, per policy FP-FP-02, private-banking customers must be held for manual review even when the activity is benign and are never auto-released. Because there is no active fraud, escalation to fraud-ops under FP-ESC-01 is not warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3180,
+          "output_tokens": 2193,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009759
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007872,
+      "latency_s": 20.599,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $918.27 card-not-present charge from a new device in an unexpected foreign geography (far from US-NE), with no matching travel notice on file and the customer did not authorize it. Per policy FP-CARD-03 this routes to the card-fraud queue. Because the customer is in the private-banking segment, policy FP-ESC-01 requires escalation to fraud-operations for active fraud touching a high-value customer, rather than standard auto-block.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3117,
+          "output_tokens": 1585,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007872
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.010626,
+      "latency_s": 29.599,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals match policy FP-ATO-04 (account takeover): a credential reset and new-device login were followed by addition of a new payee and an outbound transfer of $11,522.93. The customer did not authorize the payment, and there is no benign explanation on file (no travel notice, no allowlisted beneficiary). Because the amount exceeds the $10,000 regulatory review threshold, policy FP-ESC-01 requires escalation to the fraud-operations team rather than automatic block-and-notify.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4587,
+          "output_tokens": 2013,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.010626
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009293,
+      "latency_s": 33.734,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits the classic APP-scam pattern described in FP-APP-05: the customer authorized the $550.32 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern. There is no benign explanation on file (no travel notice, beneficiary not allowlisted). Because the beneficiary is a confirmed mule match, this is treated as confirmed fraud. Per FP-ESC-01, standard retail customers with confirmed fraud are blocked and notified automatically; the amount ($550.32) is well below the $10,000 regulatory review threshold and the customer is not private-banking, so escalation is not required.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3605,
+          "output_tokens": 1896,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009293
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009175,
+      "latency_s": 105.999,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals show a matching travel notice on file that covers the charge geography and dates, making this a known benign source per policy FP-FP-02. The customer is a retail segment (not private banking) and the $3,726.55 amount is below the $10,000 regulatory review threshold, so the auto-release exception does not apply. The unfamiliar device and foreign geography are explained by the customer's travel. This is legitimate activity that the rule misread.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4294,
+          "output_tokens": 1627,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009175
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.011058,
+      "latency_s": 88.656,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The beneficiary is on the customer\u2019s verified allowlist with 32 prior payments, and the transaction is flagged as a known benign source. Per policy FP-FP-02, benign activity involving an allowlisted beneficiary may be auto-released for retail customers when the amount is below the $10,000 regulatory review threshold. The $1,051.49 transfer shows no fraud signals: no new device, no foreign geo, no credential reset, no mule match, and no new payee.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 5184,
+          "output_tokens": 1958,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.011058
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006573,
+      "latency_s": 49.088,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $733.83 card-not-present charge from a new device in a foreign geography, and the customer did not authorize it. There is no matching travel notice or other benign explanation on file. Per policy FP-CARD-03, this routes to the card-fraud queue. The customer is a retail segment and the amount is well below the $10,000 regulatory review threshold, so per policy FP-ESC-01 confirmed fraud for standard customers is automatically blocked and the customer notified.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3075,
+          "output_tokens": 1166,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006573
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006501,
+      "latency_s": 42.604,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits a classic account-takeover pattern: a credential reset and new-device login were followed by addition of a new payee and an unauthorized $1,290.79 outbound transfer. The customer did not authorize the payment, no travel notice matches, and the beneficiary is neither allowlisted nor a known benign source. Per policy FP-ATO-04, this combination of signals indicates account takeover and must be routed to the account-takeover queue. Because the customer is in the private-banking segment, policy FP-ESC-01 requires escalation to the fraud-operations team rather than automated blocking.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3072,
+          "output_tokens": 1143,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006501
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.016181,
+      "latency_s": 110.47,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert describes a customer-approved $9,520 payment from a trusted device/login to a brand-new payee. This matches the APP-scam pattern in policy FP-APP-05: the customer authorizes the payment themselves, making device and login signals look normal, while the fraud signal is the new beneficiary. The amount ($9,520) is below the $10,000 regulatory review threshold, and with no evidence of private-banking status, the standard-customer disposition applies: block the transaction and notify the customer. Not ATO because there is no credential-reset or new-device signal, and not a false-positive because the payee is new and there is no allowlist or travel-notice explanation on file.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 5831,
+          "output_tokens": 3450,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.016181
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.011228,
+      "latency_s": 131.835,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,954.73 card-not-present charge from a new device in a foreign geography is explained by a matching travel notice on file that covers the charge geography and dates (transaction signals show known_benign_source: true and travel_notice_matches: true). This makes the card-fraud alert a false positive. However, per policy FP-FP-02, private-banking customers must be held for manual review even when benign and are never auto-released. Therefore the alert is queued as a false-positive and held for review.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4061,
+          "output_tokens": 2389,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.011228
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006578,
+      "latency_s": 66.969,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,145.61 transfer is to a beneficiary on the customer\u2019s verified allowlist with 32 prior payments, and the transaction is flagged as a known benign source. The amount rule misread this legitimate recurring payment. The customer is retail and the amount is well below the $10,000 regulatory review threshold, so the auto-release exception in policy FP-FP-02 does not apply. No fraud signals are present (no new device, foreign geo, credential reset, or mule match).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2999,
+          "output_tokens": 1193,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006578
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007838,
+      "latency_s": 47.258,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $1,000.02 card-not-present charge from a new device in a foreign geography (far from the customer\u2019s US-NE home region). The customer did not authorize the transaction, and there is no matching travel notice or other benign explanation on file. Per policy FP-CARD-03, card-not-present charges from a new device in unexpected geography are routed to the card-fraud queue. Because the customer is a retail segment and the amount is below the $10,000 regulatory review threshold, standard customers with confirmed unauthorized fraud are blocked and notified automatically rather than escalated to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3131,
+          "output_tokens": 1569,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007838
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004079,
+      "latency_s": 12.966,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits the classic account-takeover pattern described in policy FP-ATO-04: a credential reset and new-device login were followed by a new payee being added and an outbound transfer of $348.77 being queued. The customer did not authorize the transaction, there is no benign explanation on file, and the beneficiary is neither allowlisted nor a known benign source. Because the customer is a retail segment and the amount is well below the $10,000 regulatory threshold, the case does not meet the fraud-ops escalation criteria in FP-ESC-01. The appropriate action is to block the transfer and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1778,
+          "output_tokens": 767,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004079
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006088,
+      "latency_s": 34.173,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $789.12 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (FP-APP-05). This is a textbook authorized push-payment (APP) scam: the device and login look normal because the customer themselves authorized the payment, but the payee is fraudulent. No benign explanation is on file (no travel notice, not allowlisted). The customer is retail and the amount is below the $10,000 escalation threshold, so standard automatic block-and-notify applies (FP-ESC-01).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3076,
+          "output_tokens": 1004,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006088
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006271,
+      "latency_s": 37.194,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert describes a $442 overseas card-not-present charge from an unfamiliar device for account 80565528, which under policy FP-CARD-03 would normally route to the card-fraud queue. However, both the customer record and the flagged transaction returned \"not found\" errors for this account ID. Without the customer segment, travel-notice status, authorization flag, or device/geo signals, I cannot apply the benign-activity exception (FP-FP-02) or determine whether the transaction meets the regulatory review threshold. Because the required verification could not be completed, the case is escalated to fraud operations for manual lookup and handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1666,
+          "output_tokens": 1535,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006271
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.011679,
+      "latency_s": 37.614,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $1,405 transfer to a beneficiary on the customer\u2019s verified allowlist with 32 prior payments, and the source is flagged as known-benign. There are no fraud indicators: no new device, no credential reset, no foreign geo, no new payee, and no mule match. However, the customer is in the private-banking segment. Per policy FP-FP-02, private-banking customers must be held for manual review even when the activity is benign and explained by an allowlisted beneficiary; auto-release is prohibited. Therefore the alert is a false-positive triggered by the amount rule, but disposition is hold_for_review per the private-banking exception.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4521,
+          "output_tokens": 2386,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.011679
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009028,
+      "latency_s": 18.419,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $3,191 card-not-present charge from a new device in a foreign geography (outside the customer\u2019s EU home region). The customer did not authorize the transaction, and there is no matching travel notice or other benign explanation on file. Per policy FP-CARD-03, card-not-present charges from a new device in an unexpected geography go to the card-fraud queue. The customer is a retail segment and the amount is below the $10,000 regulatory review threshold, so per FP-ESC-01 the transaction should be blocked and the customer notified automatically rather than escalated to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4252,
+          "output_tokens": 1592,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009028
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006681,
+      "latency_s": 13.498,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits the classic account-takeover pattern described in policy FP-ATO-04: a credential reset and new-device login were followed by addition of a new payee and a queued $6,644.26 outbound transfer. The customer did not authorize the payment, there is no travel notice or allowlisted beneficiary on file, and no benign explanation exists. Given the unauthorized nature of the transfer and the clear ATO signals, the transaction should be blocked to prevent loss and the customer notified so they can secure their account.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3090,
+          "output_tokens": 1197,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006681
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006186,
+      "latency_s": 11.339,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits a classic APP-scam pattern: the customer authorized an $8,923.46 transfer from their usual device with no credential reset, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match = true). Per policy FP-APP-05, an authorized payment with a newly added mule-matched beneficiary must be routed to the app-scam queue regardless of trusted device/login signals. The customer is retail and the amount is below the $10,000 regulatory threshold, so per policy FP-ESC-01 escalation is not required; standard customers with confirmed fraud are blocked and notified automatically. No benign explanation is on file (travel_notice_matches = false, beneficiary_allowlisted = false).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3084,
+          "output_tokens": 1034,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006186
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007859,
+      "latency_s": 19.0,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a card-not-present charge of $516.95 from a new device in a foreign geography. While these signals triggered a card-fraud alert, the transaction is explained by a matching travel notice on file that covers the charge geography and dates (known benign source per FP-FP-02). The customer is a retail segment client, and the amount is well below the $10,000 regulatory review threshold, so the auto-release exception for benign sources applies. No credential-reset, mule-match, or other fraud indicators are present. The alert is a false positive and can be allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3116,
+          "output_tokens": 1581,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007859
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.033557,
+      "latency_s": 82.622,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": null,
+          "disposition": null
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy"
+        ],
+        "refused": false,
+        "error": "no submission within 8 turns",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 8,
+          "input_tokens": 11543,
+          "output_tokens": 7338,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.033557
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00684,
+      "latency_s": 13.09,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a card-not-present charge of $887.73 from a new device in an unexpected foreign geography, with no matching travel notice on file and the customer did not authorize it. Per policy FP-CARD-03, card-not-present charges from a new device in unexpected geography route to the card-fraud queue. Since the customer is retail (not private banking) and the amount is well below the $10,000 regulatory threshold, per FP-ESC-01 standard customers with confirmed fraud are blocked and notified automatically rather than escalated to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3063,
+          "output_tokens": 1259,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00684
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006024,
+      "latency_s": 11.678,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits classic account-takeover signals: a password reset (credential_reset=true), new-device login (new_device=true), addition of a new payee (new_payee=true), and an outbound transfer of $3,134.43 that the customer did not authorize (customer_authorized=false) with no benign explanation on file. Per policy FP-ATO-04, this pattern indicates account takeover and routes to the account-takeover queue. The customer is retail and the amount is below the $10,000 escalation threshold, so per FP-ESC-01 the standard disposition for confirmed fraud on a standard customer is block_and_notify rather than escalation to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3066,
+          "output_tokens": 986,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006024
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00646,
+      "latency_s": 14.841,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits the classic authorized push-payment (APP) scam pattern described in policy FP-APP-05: the customer authorized the transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern. There is no benign explanation on file (no travel notice, beneficiary not allowlisted). Although the device and login are trusted, policy explicitly instructs not to clear APP-scam alerts on that basis and to route to the app-scam queue. Additionally, the customer is a private-banking client; per policy FP-FP-02, private-banking transactions are held for manual review and are never auto-released. Therefore the alert is queued to app-scam and held for review.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 2044,
+          "output_tokens": 1472,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00646
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00421,
+      "latency_s": 8.296,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is legitimate: a matching travel notice is on file for the charge geography and dates, and the signal flags it as a known benign source. However, under policy FP-FP-02, private-banking customers and transactions above the regulatory review threshold must be held for manual review even when benign and are never auto-released. The customer is in the private-banking segment, and the $1,139.48 amount exceeds the threshold, so the alert is queued as a false-positive but held for review rather than allowed.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1804,
+          "output_tokens": 802,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00421
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.016091,
+      "latency_s": 30.567,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is to a beneficiary on the customer\u2019s verified allowlist with 32 prior payments, and the transaction signals flag it as a known benign source (FP-FP-02). There are no account-takeover indicators (no credential reset, no new device, no new payee, no mule match). The customer is retail and the amount ($1,254) is below the $10,000 regulatory review threshold, so the auto-release exception for high-value/private-banking customers does not apply. The alert is a false positive and can be auto-released.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 6,
+          "input_tokens": 7280,
+          "output_tokens": 2937,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.016091
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.013336,
+      "latency_s": 46.541,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Both the customer record and transaction signals for account 60308698 returned system errors, so I could not verify the customer segment, home region, travel notices, device authorization, or other benign explanations required by policy FP-CARD-03 and FP-FP-02. The alert itself shows classic card-fraud indicators (card-not-present charge from a new device in an unexpected geography), but without the underlying data I cannot confirm or rule out fraud, authorize the transaction, or apply auto-release exceptions. Escalating to fraud operations allows the team to investigate using alternative methods and protects both the customer and the bank.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4189,
+          "output_tokens": 3049,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.013336
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00458,
+      "latency_s": 12.295,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits classic account-takeover indicators per policy FP-ATO-04: a credential reset occurred, the login was from a new unrecognized device, and the customer initiated an outbound transfer to a new payee. The customer did not authorize the payment, there is no travel notice or allowlisted beneficiary, and no benign explanation is on file. Given the $3,295 amount and the unauthorized nature of the transfer, the transaction should be blocked immediately and the customer notified of the suspected account compromise.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1787,
+          "output_tokens": 931,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00458
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006157,
+      "latency_s": 13.51,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a textbook authorized push-payment (APP) scam. Although the customer authorized the $2,023.29 transfer from their usual device with no credential reset, the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match = true). Per policy FP-APP-05, an APP scam must not be cleared merely because the device and login are trusted; the critical signal is the new payee with a mule match. The customer is retail and the amount is below the $10,000 escalation threshold, so per FP-ESC-01 the correct action for a standard customer with confirmed fraud is to block the transaction and notify the customer automatically.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3091,
+          "output_tokens": 1022,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006157
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006415,
+      "latency_s": 10.952,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals show a matching travel notice on file that corresponds to the charge geography and dates, and the system flags this as a known benign source. The customer is a retail segment client and the $1,549.03 amount is well below the $10,000 regulatory review threshold. Per policy FP-FP-02, alerts explained by a benign source (matching travel notice) may be auto-released for standard retail customers under the threshold. The new-device and foreign-geo signals are therefore expected, not suspicious, and the alert is a false positive.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3124,
+          "output_tokens": 1097,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006415
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.013246,
+      "latency_s": 28.622,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is to a beneficiary on the customer\u2019s verified allowlist with 32 prior payments, and the system marks it as a known benign source. There are no fraud indicators: no new device, no foreign geo, no credential reset, no new payee, and no mule match. This is legitimate activity that the high-value rule misread. Per policy FP-FP-02, benign activity to an allowlisted beneficiary may be auto-released for standard customers, but because this customer is in the private-banking segment, the exception clause requires holding for manual review rather than auto-releasing. The customer_authorized=false flag is consistent with a standing/recurring transfer to a trusted payee and does not alter the benign assessment.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3070,
+          "output_tokens": 3392,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.013246
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.011317,
+      "latency_s": 20.056,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $918.27 card-not-present charge from a new device in a foreign geography, and the customer did not authorize it. There is no matching travel notice or other benign explanation on file. Per policy FP-CARD-03, such charges route to the card-fraud queue. Because the customer is in the private-banking segment and active fraud is present, policy FP-ESC-01 requires escalation to the fraud-operations team rather than automatic block-and-notify.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4648,
+          "output_tokens": 2223,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.011317
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.018299,
+      "latency_s": 35.689,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Transaction signals confirm credential reset, new-device login, new payee addition, and an outbound transfer of $11,522.93 that the customer did not authorize, with no benign explanation on file. Per policy FP-ATO-04 this pattern indicates account takeover and routes to the account-takeover queue. Per policy FP-ESC-01, because the transaction exceeds the $10,000 regulatory review threshold, it must be escalated to the fraud-operations team rather than handled through standard auto-block.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 6263,
+          "output_tokens": 4012,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.018299
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006349,
+      "latency_s": 13.212,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction matches the APP-scam pattern described in policy FP-APP-05: the customer authorized a $550.32 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match: true). No benign explanation is on file (no travel notice, not allowlisted). Because the customer is retail and the amount is well below the $10,000 escalation threshold, FP-ESC-01 directs blocking and notifying standard customers with confirmed fraud rather than escalating to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3091,
+          "output_tokens": 1086,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006349
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008439,
+      "latency_s": 21.008,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert describes a $3,727 overseas charge on an unfamiliar device, which matches the card-fraud pattern for card-not-present transactions in unexpected geographies. I attempted to verify the customer record and transaction signals (travel notice, device/geo novelty, authorization, and customer segment) but both lookups returned system errors, leaving me unable to confirm or rule out benign explanations. Because the alert contains classic card-fraud indicators and I cannot safely auto-release without verifying the underlying signals, I am holding the transaction for manual review in the card-fraud queue. The amount ($3,727) is below the $10,000 regulatory escalation threshold, so escalation to fraud ops is not required per policy FP-ESC-01.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3084,
+          "output_tokens": 1785,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008439
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006396,
+      "latency_s": 16.714,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert for a $1,051 payment on acct-39344194 cannot be triaged because both the customer record and the flagged transaction signals returned errors (no data found). Without knowing the customer segment, tenure, prior disputes, or transaction details (channel, device, authorization status, beneficiary, etc.), no safe disposition can be made per policy. This data-gap itself warrants fraud-ops investigation to determine whether the account is compromised, the record was deleted, or a system issue occurred. Escalating to fraud ops for immediate review.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2865,
+          "output_tokens": 1177,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006396
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008869,
+      "latency_s": 19.642,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $733.83 card-not-present charge that the customer did not authorize, originating from a new device in a foreign geography with no matching travel notice or other benign explanation on file. Per policy FP-CARD-03, card-not-present charges from a new device in an unexpected geography go to the card-fraud queue. Because the customer is retail and the amount is below the $10,000 regulatory review threshold, FP-ESC-01 directs that standard customers with confirmed fraud be blocked and notified rather than escalated to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3076,
+          "output_tokens": 1931,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008869
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00649,
+      "latency_s": 25.441,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits classic account-takeover indicators per policy FP-ATO-04: a credential reset, new-device login, new-payee addition, and an outbound transfer of $1,290.79. The customer did not authorize the payment, no travel notice matches, and the beneficiary is neither allowlisted nor a known benign source. Because the customer is in the private-banking segment, policy FP-ESC-01 requires escalation to the fraud-operations team rather than automatic block-and-notify.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3112,
+          "output_tokens": 1126,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00649
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005921,
+      "latency_s": 10.087,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits the classic APP-scam pattern described in policy FP-APP-05: the customer authorized the payment, and the login/device are trusted, but the payee is brand-new and matches a known mule pattern with no benign explanation on file. Because the customer is retail and the amount ($9,520.50) is below the $10,000 regulatory threshold per FP-ESC-01, the case does not require escalation to fraud ops; the standard disposition is to block the transfer and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3095,
+          "output_tokens": 942,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005921
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.010264,
+      "latency_s": 26.789,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert describes a foreign $1,955 charge on a new device flagged as possible card fraud. However, both the customer record lookup and transaction signal query returned errors (no record found), so I cannot verify the customer segment, tenure, prior disputes, home region, transaction amount, channel, device/geo novelty, travel notices, or authorization status. Without this required data, I cannot apply the auto-release benign-activity rules (FP-FP-02) or determine whether escalation criteria (FP-ESC-01) for private-banking/high-value customers are met. Because critical verification data is missing, the safest disposition is to hold the alert for manual review in the card-fraud queue until the underlying data can be retrieved and assessed.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3187,
+          "output_tokens": 2359,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.010264
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007109,
+      "latency_s": 12.526,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,145.61 transfer triggered the amount rule, but the transaction signals confirm it is benign: the beneficiary is on the customer\u2019s verified allowlist with 32 prior payments, and the system flags it as a known benign source. There are no fraud indicators\u2014no new device, no credential reset, no new payee, no foreign geo, and no mule match. The customer is retail (not private banking) and the amount is well below the $10,000 regulatory review threshold. Per policy FP-FP-02, alerts explained by a verified allowlisted beneficiary may be auto-released for standard retail customers under the threshold. This is legitimate activity that the amount rule misread.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3104,
+          "output_tokens": 1335,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007109
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007714,
+      "latency_s": 17.968,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $1,000.02 card-not-present charge from a new device in an unexpected foreign geography. The customer (retail, 201-month tenure, zero prior disputes) did not authorize it, and there is no matching travel notice, allowlisted beneficiary, or other benign explanation on file. Per policy FP-CARD-03, card-not-present charges from a new device in unexpected geography route to the card-fraud queue. Because the customer is retail and the amount is below the $10,000 regulatory review threshold, per FP-ESC-01 standard customers with confirmed fraud are blocked and the customer is notified automatically.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3085,
+          "output_tokens": 1543,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007714
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007931,
+      "latency_s": 16.507,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals match the account-takeover pattern defined in policy FP-ATO-04: a credential reset and new-device login were followed by addition of a new payee and an outbound transfer of $348.77. The customer did not authorize the payment, no travel notice or allowlisted beneficiary is on file, and there is no benign explanation. Because the customer is a retail segment and the amount is well below the $10,000 escalation threshold per FP-ESC-01, the standard disposition for confirmed ATO fraud applies: block the transfer and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3059,
+          "output_tokens": 1624,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007931
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005208,
+      "latency_s": 15.402,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $789 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern. Per policy FP-APP-05, trusted device and customer authorization do not clear an APP-scam alert when the beneficiary is a new mule match. No benign explanation is on file (no travel notice or allowlisted beneficiary) per FP-FP-02. This is a textbook authorized push-payment scam: block the transfer to prevent loss and notify the customer immediately.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1824,
+          "output_tokens": 1128,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005208
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006269,
+      "latency_s": 11.778,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals show a matching travel notice on file that covers the charge geography and dates, and the system flags the source as known-benign. The customer is a retail segment, and the $442.14 amount is well below the $10,000 regulatory review threshold. Per policy FP-FP-02, alerts explained by a benign source such as a matching travel notice may be auto-released for standard retail customers when not above the threshold. The unfamiliar device and foreign geography are therefore expected, and the alert is a false positive.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3113,
+          "output_tokens": 1052,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006269
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.010617,
+      "latency_s": 22.221,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,405 transfer is to a beneficiary on the customer\u2019s verified allowlist with 32 prior payments, and the transaction shows no fraud indicators (no credential reset, new device, new payee, or mule match). This is benign activity that the amount rule misread. Per policy FP-FP-02, private-banking customers must be held for manual review even when benign and are never auto-released.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3090,
+          "output_tokens": 2509,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.010617
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009191,
+      "latency_s": 19.035,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Card-not-present transaction for $3,190.66 from a new device in a foreign geography far from the customer\u2019s EU home region. No matching travel notice is on file, the customer did not authorize the charge, and there is no benign explanation or allowlisted beneficiary. Per policy FP-CARD-03, card-not-present charges from a new device in unexpected geography go to the card-fraud queue. The customer is a retail segment and the amount is below the $10,000 regulatory review threshold, so per policy FP-ESC-01 the appropriate action for a standard customer with confirmed fraud indicators is to block the transaction and notify the customer automatically.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3083,
+          "output_tokens": 2036,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009191
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006241,
+      "latency_s": 13.948,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals match policy FP-ATO-04 (Account Takeover): a credential reset and new-device login were followed by a new payee and an outbound transfer of $6,644.26. The customer did not authorize the payment, there is no travel notice or allowlisted beneficiary, and no benign explanation is on file. Because the customer is retail and the amount is below the $10,000 escalation threshold (FP-ESC-01), the standard disposition for confirmed ATO fraud is to block the transaction and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3070,
+          "output_tokens": 1057,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006241
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006565,
+      "latency_s": 15.585,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits the classic APP-scam pattern described in policy FP-APP-05: the customer authorized the $8,923.46 transfer from their usual device, but the beneficiary was added only 6 minutes prior and matches a known mule pattern. There is no credential reset or new-device flag, ruling out account takeover, and no travel notice or allowlisted beneficiary to explain the new payee. Because the customer is retail and the amount is below the $10,000 regulatory threshold, escalation to fraud-ops is not required per FP-ESC-01; standard customers with confirmed fraud are blocked and notified automatically.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3091,
+          "output_tokens": 1158,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006565
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005315,
+      "latency_s": 9.888,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The card-not-present charge from a new device in a foreign geography is fully explained by a matching travel notice on file that covers the charge geography and dates (known benign source). The customer is retail (not private-banking) and the $516.95 amount is below the regulatory review threshold. Per policy FP-FP-02, alerts explained by a benign source such as a matching travel notice may be auto-released for retail customers. The card-fraud rule misread the new-device and foreign-geo signals as suspicious, so this is a false positive.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2723,
+          "output_tokens": 864,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005315
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.029682,
+      "latency_s": 68.928,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,608.50 transfer to an allowlisted beneficiary with 32 prior payments is a known benign source per the transaction signals. The customer is retail (not private-banking) and the amount is below the $10,000 regulatory review threshold. Per policy FP-FP-02, alerts explained by a verified allowlist beneficiary may be auto-released. There are no fraud indicators: no new device, no credential reset, no new payee, no foreign geo, and no mule match. The high-value rule simply misread a legitimate recurring/scheduled payment.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 6,
+          "input_tokens": 8574,
+          "output_tokens": 7036,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.029682
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.01146,
+      "latency_s": 25.541,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Card-not-present charge of $887.73 from a new device in an unexpected foreign geography. No matching travel notice is on file, the customer did not authorize the transaction, and there is no benign explanation. Per policy FP-CARD-03 this routes to the card-fraud queue. The customer is retail and the amount is below the $10,000 regulatory review threshold, so per FP-ESC-01 a standard customer with confirmed fraud is blocked and notified automatically.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4539,
+          "output_tokens": 2307,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.01146
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006353,
+      "latency_s": 11.787,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits the classic account-takeover pattern defined in policy FP-ATO-04: a credential reset and new-device login were followed by addition of a new payee and a queued $3,134.43 outbound transfer. The customer did not authorize the payment, and there is no benign explanation on file (no travel notice, allowlisted beneficiary, or other known-good source). Because the customer is in the retail segment and the amount is below the $10,000 regulatory review threshold, FP-ESC-01 directs standard disposition rather than escalation: block the transfer and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3068,
+          "output_tokens": 1095,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006353
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007533,
+      "latency_s": 14.9,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits a classic authorized push-payment (APP) scam pattern: the customer authorized a $157.74 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match = true). There is no benign explanation on file (no travel notice, not allowlisted). Per policy FP-APP-05, APP-scam alerts must be routed to the app-scam queue regardless of trusted device/login signals. Because the customer is in the private-banking segment, policy FP-ESC-01 requires escalation to fraud-ops rather than automatic block-and-notify.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3177,
+          "output_tokens": 1452,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007533
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004534,
+      "latency_s": 9.219,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals show a travel notice on file that matches the charge geography and dates, and the system marks this as a known benign source. Per policy FP-FP-02, alerts explained by a benign source may normally be auto-released, but the exception clause states that private-banking customers are held for manual review even when benign and are never auto-released. Because acct-95734685 is a private-banking customer, the transaction must be held for review despite the matching travel notice.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1804,
+          "output_tokens": 910,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004534
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009585,
+      "latency_s": 22.375,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $1,254.03 transfer to a beneficiary on the customer\u2019s verified allowlist with 32 prior payments, and it is flagged as a known benign source. The customer is retail (not private banking) and the amount is well below the $10,000 regulatory review threshold. Per policy FP-FP-02, alerts explained by a benign source such as an allowlisted beneficiary may be auto-released. Despite the customer_authorized flag reading false, there are zero fraud signals: no new device, no foreign geo, no credential reset, no new payee, and no beneficiary mule match. The lack of authorization is consistent with a recurring or scheduled payment to a trusted payee rather than actual fraud, making this a rule misread.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3165,
+          "output_tokens": 2140,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009585
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008815,
+      "latency_s": 16.744,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is an unauthorized card-not-present charge ($316.71) from a new device in a foreign geography far from the customer\u2019s home region (US-W). There is no matching travel notice, no allowlisted beneficiary, and no other benign explanation on file. Policy FP-CARD-03 routes card-not-present charges from a new device in unexpected geography to the card-fraud queue. Because the customer is retail and the amount is well below the $10,000 regulatory review threshold, escalation is not required per FP-ESC-01; the standard disposition for confirmed fraud on a retail account is block_and_notify.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4330,
+          "output_tokens": 1495,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008815
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008921,
+      "latency_s": 21.639,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits the classic account-takeover pattern described in policy FP-ATO-04: a credential reset and new-device login were followed by a new payee and an outbound transfer of $3,294.82. The customer did not authorize the payment (customer_authorized: false), there is no benign explanation on file, the beneficiary is not allowlisted, and no travel notice matches. Because the customer is retail and the amount is below the $10,000 regulatory review threshold, FP-ESC-01 directs blocking and notifying automatically rather than escalating to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3764,
+          "output_tokens": 1719,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008921
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008719,
+      "latency_s": 27.097,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits classic APP-scam indicators: the customer authorized a $2,023.29 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern. Per policy FP-APP-05, an authorized push-payment scam must not be cleared simply because the device and login appear trusted; the key signal is the new beneficiary with a mule match. The customer is a 4-month-tenure retail account with no prior disputes, increasing the likelihood they are a victim rather than a perpetrator. There is no benign explanation on file (no travel notice, not allowlisted). Given the confirmed mule match and significant amount, immediate escalation to fraud operations is warranted for victim support and mule-network investigation.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1789,
+          "output_tokens": 2310,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008719
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007013,
+      "latency_s": 17.434,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert flagged a $1,549.03 foreign card-not-present charge from a new device as potential card fraud. However, the transaction signals show a matching travel notice on file that corresponds to the charge geography and dates, making this a known benign source per policy FP-FP-02. The customer is retail (not private banking) and the $1,549.03 amount is below the $10,000 regulatory review threshold per FP-ESC-01, so auto-release is permitted. This is legitimate activity that the rule misread due to the new device flag.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3122,
+          "output_tokens": 1297,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007013
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.028622,
+      "latency_s": 77.073,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Both the customer record and transaction signals returned system errors for account 75082962, so I cannot verify the customer segment, payment channel, device/geo novelty, beneficiary details, or whether a benign explanation is on file. The amount ($2,449) is below the $10,000 regulatory review threshold, but without any data I cannot determine if this is an authorized push-payment scam, account takeover, or legitimate activity. Holding for manual review is the only safe course when the underlying records are unavailable.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 8,
+          "input_tokens": 11906,
+          "output_tokens": 5572,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.028622
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008098,
+      "latency_s": 16.091,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $918.27 card-not-present charge from a new device in a foreign geography, and the customer did not authorize it. No travel notice or other benign explanation is on file. Per policy FP-CARD-03, this belongs in the card-fraud queue. Because the customer is in the private-banking segment, policy FP-ESC-01 requires escalating active fraud to the fraud-operations team rather than applying an automatic block-and-notify.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3118,
+          "output_tokens": 1660,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008098
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005995,
+      "latency_s": 11.455,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals show credential reset, new-device login, new payee, and an outbound transfer of $11,522.93 that the customer did not authorize. This pattern matches policy FP-ATO-04 for account takeover. Additionally, because the amount exceeds the $10,000 regulatory review threshold per policy FP-ESC-01, this requires escalation to the fraud-operations team rather than automatic blocking.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3070,
+          "output_tokens": 975,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005995
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004213,
+      "latency_s": 10.043,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $550.32 transfer from their usual device, but the beneficiary was added only 6 minutes prior and matches a known mule pattern (beneficiary_mule_match: true). Per policy FP-APP-05, this is a classic authorized push-payment (APP) scam signal: the device and login look normal because the customer authorized the payment themselves, but the newly added mule-matched beneficiary indicates fraud. No benign explanation is on file. The customer is retail and the amount is below the $10,000 escalation threshold, so per FP-ESC-01 the transaction should be blocked and the customer notified rather than escalated to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1804,
+          "output_tokens": 803,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004213
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007855,
+      "latency_s": 18.225,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert describes a $3,727 overseas charge on an unfamiliar device\u2014classic card-fraud indicators. However, both the customer-record lookup and the transaction-signal query returned \"no record\" for acct-75339033, so I cannot verify the customer segment (private-banking vs. retail), check for a matching travel notice, confirm the amount, or assess device/geo novelty. Because the necessary data to apply the benign-activity auto-release exception (FP-FP-02) or to confirm fraud is unavailable, and the missing records themselves may indicate a system issue or data integrity problem, the safest course is to escalate to fraud operations for manual investigation rather than risk an incorrect auto-disposition.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2860,
+          "output_tokens": 1665,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007855
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.025184,
+      "latency_s": 47.535,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The beneficiary is on the customer's verified allowlist with 32 prior payments, and the transaction is flagged as a known benign source. There are no fraud indicators: no new device, no credential reset, no new payee, no foreign geo, and no mule match. The customer_authorized=false flag is consistent with a standing instruction or recurring automated payment to a trusted payee, not indicative of fraud in the absence of account-takeover or APP-scam signals. Per policy FP-FP-02, alerts explained by a verified allowlist beneficiary may be auto-released for retail customers below the $10,000 regulatory review threshold. This high-value alert is a false positive.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 7,
+          "input_tokens": 12263,
+          "output_tokens": 4307,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.025184
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007705,
+      "latency_s": 16.401,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $733.83 card-not-present charge from a new device in a foreign geography far from the customer\u2019s APAC home region, and the customer did not authorize it. There is no matching travel notice or other benign explanation on file (per FP-FP-02, no auto-release possible). These are classic card-fraud indicators, so the alert belongs in the card-fraud queue. The customer is retail (not private-banking) and the amount is below the $10,000 regulatory review threshold, so per FP-ESC-01 the correct action for a standard customer with confirmed fraud signals is to block the transaction and notify the customer automatically.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3076,
+          "output_tokens": 1543,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007705
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006155,
+      "latency_s": 11.727,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals show credential_reset=true, new_device=true, new_payee=true, and customer_authorized=false with no benign explanation on file, which matches policy FP-ATO-04 defining account takeover. Because the customer is in the private-banking segment, policy FP-ESC-01 requires escalation to the fraud-operations team rather than automatic block-and-notify. The $1,290.79 outbound transfer to a new payee after a password reset and new-device login represents active account takeover on a high-value customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3068,
+          "output_tokens": 1029,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006155
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008198,
+      "latency_s": 15.887,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction shows classic APP-scam indicators per policy FP-APP-05: the customer authorized the $9,520.50 transfer from a trusted device/login, but the payee is brand-new and matches a known mule pattern, with no travel notice or allowlisted beneficiary on file. Because the customer is retail and the amount is below the $10,000 regulatory review threshold (FP-ESC-01), the alert should be routed to the app-scam queue and the transaction blocked and the customer notified, rather than escalated to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3527,
+          "output_tokens": 1557,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008198
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004588,
+      "latency_s": 10.838,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals show a known benign source: a travel notice on file that matches the charge geography and dates, confirming the foreign card-not-present charge is legitimate. However, per policy FP-FP-02, private-banking customers must be held for manual review even when a benign explanation exists and cannot be auto-released. Therefore this alert is a false positive, but the transaction is held for review per the private-banking exception.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1804,
+          "output_tokens": 928,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004588
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007627,
+      "latency_s": 15.584,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,145.61 transfer triggered the amount rule, but the transaction signals show the beneficiary is on the customer\u2019s verified allowlist with 32 prior payments, and the system marks it as a known benign source. There is no new device, credential reset, foreign geo, new payee, or mule match. The customer is retail (not private-banking) and the amount is well below the $10,000 regulatory review threshold. Per policy FP-FP-02, alerts explained by a benign source such as an allowlisted beneficiary may be auto-released. The lack of fraud indicators and the strong benign explanation indicate this is legitimate activity the amount rule misread.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3106,
+          "output_tokens": 1507,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007627
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007855,
+      "latency_s": 17.558,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Card-not-present charge of $1,000.02 from a new device in a foreign geography (far from the customer\u2019s US-NE home region) with no travel notice or other benign explanation on file, and the customer did not authorize it. Per policy FP-CARD-03, such transactions route to the card-fraud queue. The customer is a retail segment with no prior disputes, and the amount is well below the $10,000 regulatory review threshold, so per policy FP-ESC-01 standard customers with confirmed fraud are blocked and notified automatically rather than escalated to fraud ops.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3124,
+          "output_tokens": 1577,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007855
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007096,
+      "latency_s": 12.249,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals match the account-takeover pattern defined in policy FP-ATO-04: a credential reset and new-device login were followed by addition of a new payee and an outbound transfer of $348.77. The customer did not authorize the payment, no travel notice is on file, and the beneficiary is neither allowlisted nor a known benign source. Because the customer is a retail segment client and the amount is below the $10,000 regulatory review threshold, FP-ESC-01 directs standard disposition (block and notify) rather than escalation to fraud operations.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3061,
+          "output_tokens": 1345,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007096
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006916,
+      "latency_s": 14.393,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction matches the APP-scam pattern described in policy FP-APP-05: the customer authorized the $789.12 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match=true, new_payee=true). There is no benign explanation on file (no travel notice, not allowlisted). Because the customer is a retail segment and the amount is below the $10,000 regulatory review threshold, FP-ESC-01 does not require escalation to fraud ops; the standard disposition for confirmed APP fraud on a retail account is block_and_notify.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3160,
+          "output_tokens": 1252,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006916
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006852,
+      "latency_s": 11.077,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Transaction signals show a travel notice on file that matches the charge geography and dates, and the system flags this as a known benign source. Per policy FP-FP-02, alerts explained by a benign source (matching travel notice) may be auto-released for retail customers when the transaction is below the regulatory review threshold. The customer is retail, the amount ($442.14) is well below the $10,000 threshold, and there are no fraud indicators such as credential reset, mule match, or new payee. The foreign geo and unfamiliar device are consistent with the customer traveling, so this is legitimate activity misread by the rule.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3177,
+          "output_tokens": 1225,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006852
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005529,
+      "latency_s": 13.842,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is to a beneficiary on the customer\u2019s verified allowlist with 32 prior payments, and the system marks it as a known benign source. There are no fraud indicators: no new device, no credential reset, no foreign geo, and no beneficiary mule match. This is legitimate activity that the amount rule misread. However, per policy FP-FP-02, because the customer is in the private-banking segment, benign transactions must be held for manual review and cannot be auto-released. Therefore, the appropriate queue is false-positive and the disposition is hold_for_review.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 2,
+          "input_tokens": 1812,
+          "output_tokens": 1239,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005529
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007493,
+      "latency_s": 16.81,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $3,190.66 card-not-present charge from a new device in a foreign geography far from the customer\u2019s EU home region. The customer did not authorize the transaction, and there is no benign explanation on file (no matching travel notice, no allowlisted beneficiary, no known benign source). Per policy FP-CARD-03, card-not-present charges from a new device in unexpected geography belong in the card-fraud queue. Because the customer is retail and the amount is below the $10,000 regulatory review threshold, and the fraud indicators are strong (unauthorized, new device, foreign geo, no travel notice), the standard-customer confirmed-fraud path applies: block the transaction and notify the customer automatically (FP-ESC-01).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3119,
+          "output_tokens": 1458,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007493
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009855,
+      "latency_s": 21.621,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits the classic account-takeover pattern described in policy FP-ATO-04: a credential reset and new-device login were followed by addition of a new payee and an unauthorized outbound transfer of $6,644.26. The customer did not authorize the payment, there is no benign explanation on file, and the beneficiary is not allowlisted. Because the customer is a retail segment and the amount is below the $10,000 regulatory escalation threshold (FP-ESC-01), the standard disposition for confirmed fraud on a standard account applies: block the transaction and notify the customer.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4545,
+          "output_tokens": 1770,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009855
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009601,
+      "latency_s": 20.279,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits classic APP-scam indicators: the customer authorized an $8,923.46 transfer from their usual device to a beneficiary added only 6 minutes ago, and the beneficiary matches a known mule pattern. Per policy FP-APP-05, this must be routed to app-scam despite the trusted device and login. No benign explanation is on file (no travel notice, beneficiary not allowlisted). As a retail customer and the amount is below the $10,000 regulatory review threshold, the standard disposition per FP-ESC-01 is block_and_notify.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4621,
+          "output_tokens": 1660,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009601
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.012497,
+      "latency_s": 25.516,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The alert flags a foreign $517 charge on a new device as possible card fraud for acct-92776707. However, both the customer record and transaction signals returned system errors (\"no customer record\" and \"no transaction\"), so I cannot verify the customer segment, tenure, home region, travel-notice status, device novelty, or authorization. Policy FP-CARD-03 requires checking for a matching travel notice before treating geography as unexpected, and FP-FP-02 requires segment and threshold checks before any auto-release. Because essential data is unavailable, the transaction must be held for manual review so an investigator can retrieve the record through alternate means and complete the triage.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 5867,
+          "output_tokens": 2210,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.012497
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.019278,
+      "latency_s": 37.247,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Both the customer record lookup and transaction signal query returned system errors (\"no customer record\" and \"no transaction\" for acct-48745487). Without access to the customer segment, authorization status, device/geo novelty, beneficiary details, credential-reset flags, mule matches, or any benign explanations on file, I cannot verify whether this $1,608 payment is legitimate, benign, or fraudulent. Because the required verification data is unavailable, the alert cannot be safely auto-released under FP-FP-02 nor blocked as confirmed fraud. The appropriate action is to hold the payment for manual review until the data can be retrieved and assessed.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 6,
+          "input_tokens": 7833,
+          "output_tokens": 3815,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.019278
+        }
+      }
+    }
+  ]
+}
