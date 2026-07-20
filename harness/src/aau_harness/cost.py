@@ -22,6 +22,7 @@ PRICING_PER_MTOK: dict[str, tuple[float, float]] = {
     # actual spend is $0 — the report still prices measured tokens at list rate)
     "mistral-small-latest": (0.10, 0.30),
     "llama-3.3-70b-versatile": (0.59, 0.79),  # Groq
+    "qwen/qwen3.6-27b": (0.29, 0.59),  # Groq free tier; approximate list rate
     "llama-3.3-70b": (0.85, 1.20),  # Cerebras
     "gemini-2.0-flash": (0.10, 0.40),
     "gemini-2.5-flash": (0.30, 2.50),
@@ -29,6 +30,8 @@ PRICING_PER_MTOK: dict[str, tuple[float, float]] = {
     "zai-glm-4.7": (2.25, 2.50),  # Cerebras-hosted GLM; approximate list rate
     "gpt-oss-120b": (0.35, 0.75),  # Cerebras-hosted; approximate list rate
     "meta-llama/Llama-3.3-70B-Instruct-Turbo": (0.88, 0.88),  # Together
+    "Qwen/Qwen3.7-Plus": (0.32, 1.28),  # Together; live list rate 2026-07
+    "Qwen/Qwen3.7-Max": (1.25, 3.75),  # Together; live list rate 2026-07
     "accounts/fireworks/models/gpt-oss-120b": (0.15, 0.60),  # Fireworks; approximate list rate
     "accounts/fireworks/models/kimi-k2p6": (1.00, 3.00),  # Fireworks; approximate list rate
     "accounts/fireworks/models/deepseek-v4-pro": (1.20, 1.20),  # Fireworks; approximate list rate

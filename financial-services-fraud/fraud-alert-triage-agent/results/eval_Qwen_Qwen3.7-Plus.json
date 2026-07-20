@@ -1,0 +1,3874 @@
+{
+  "backend": "together",
+  "model": "Qwen/Qwen3.7-Plus",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "disposition_accuracy": 0.9667,
+    "exact_match": 0.9667,
+    "queue_accuracy": 1.0,
+    "submitted": 1.0
+  },
+  "metric_ci95": {
+    "disposition_accuracy": [
+      0.9333,
+      1.0
+    ],
+    "exact_match": [
+      0.9333,
+      1.0
+    ],
+    "queue_accuracy": [
+      1.0,
+      1.0
+    ],
+    "submitted": [
+      1.0,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.003185,
+  "total_cost_usd": 0.2867,
+  "p50_latency_s": 33.06,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00376,
+      "latency_s": 38.085,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is an unauthorized $887.73 CNP charge on a device first seen today from a foreign merchant. The customer (retail segment, 46-month tenure) has no matching travel notice, no allowlisted beneficiary, and no benign explanation on file. Per FP-CARD-03, CNP charges from a new device in an unexpected geography with no travel notice go to the card-fraud queue. Per FP-ESC-01, escalation to fraud-ops is not required because the customer is retail and the amount is below the $10,000 threshold. Standard disposition for confirmed fraud on a standard customer is block_and_notify.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5582,
+          "output_tokens": 1542,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00376
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002217,
+      "latency_s": 24.921,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "This is a textbook account takeover per policy FP-ATO-04. The transaction signals show a credential reset and new-device login followed by a new payee addition and a $3,134 outbound transfer. The customer did not authorize the transaction (customer_authorized=false), there is no benign explanation on file, the beneficiary is not allowlisted, and there is no matching travel notice. The customer is a retail account holder with 130 months tenure and 2 prior disputes. All ATO indicators are present \u2014 credential compromise, device novelty, new payee, and an unauthorized high-value transfer \u2014 requiring the fraud operations team to secure the account, investigate the scope of compromise, and determine whether additional unauthorized activity occurred.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2547,
+          "output_tokens": 1095,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002217
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003315,
+      "latency_s": 37.235,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $157.74 transfer from their usual device to a beneficiary added only 6 minutes ago. The beneficiary matches a known mule pattern (FP-APP-05), and no benign explanation exists on file (no travel notice, not allowlisted). Per FP-APP-05, trusted-device authorization does not clear an APP-scam alert when the payee is a mule match. Because the customer is in the private-banking segment, FP-ESC-01 requires escalation to fraud-ops rather than a standard block-and-notify.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4334,
+          "output_tokens": 1506,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003315
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00295,
+      "latency_s": 31.313,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,139.48 card-not-present charge on a new device in a foreign geography is explained by a matching travel notice on file (source confirmed as known benign). Per FP-CARD-03, the geography is expected and this is a rule misread, routing to false-positive. However, per FP-FP-02, private-banking customers are an explicit exception to the auto-release provision and must be held for manual review even when the activity is benign. The customer is a private-banking segment member (221-month tenure), so the transaction is held for review rather than auto-released.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3884,
+          "output_tokens": 1334,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00295
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003922,
+      "latency_s": 38.191,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,254 transfer is to a beneficiary on the customer's verified allowlist with 32 prior payments, flagged as a known benign source. No fraud indicators present: no new device, no foreign geo, no new payee, no credential reset, no mule match. Per policy FP-FP-02, allowlisted-beneficiary transactions may be auto-released for retail customers below the $10,000 regulatory threshold. The high-value alert is a rule misread on routine activity.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5691,
+          "output_tokens": 1641,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003922
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002349,
+      "latency_s": 22.76,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $316.71 card-not-present online purchase from a new device in a foreign geography (home region US-W). The customer did not authorize the charge, no travel notice is on file, the beneficiary is not allowlisted, and no benign explanation exists. Per policy FP-CARD-03, CNP charges from a new device in an unexpected geography with no matching travel notice go to the card-fraud queue. The combination of new device, foreign geo, and lack of authorization strongly indicates stolen-card fraud, warranting block_and_notify.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3858,
+          "output_tokens": 871,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002349
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002962,
+      "latency_s": 30.625,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction exhibits all hallmarks of account takeover per policy FP-ATO-04: a credential reset and new-device login were followed by a new-payee outbound transfer of $3,294.82. The customer did not authorize the transaction, no travel notice or allowlisted beneficiary is on file, and no benign explanation exists. The customer is retail-segment and the amount is below the $10,000 regulatory review threshold (FP-ESC-01), so the appropriate disposition is block_and_notify rather than escalation to fraud ops.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4203,
+          "output_tokens": 1263,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002962
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003503,
+      "latency_s": 35.813,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $2,023 transfer from their usual device (no ATO indicators), but the beneficiary was added only 6 minutes ago, matches a known mule pattern, is not allowlisted, and has no benign explanation on file. Per policy FP-APP-05, this is a classic APP scam \u2014 the customer was likely socially engineered into authorizing the payment. The customer is retail segment and the amount is below the $10,000 escalation threshold (FP-ESC-01), so the correct disposition is block_and_notify rather than escalation to fraud ops.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4259,
+          "output_tokens": 1672,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003503
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003703,
+      "latency_s": 35.871,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,549.03 card-not-present charge from a new device in a foreign geography is fully explained by a matching travel notice on file (FP-FP-02, FP-CARD-03). The customer is retail segment and the amount is below the $10,000 regulatory review threshold, so neither auto-release exception applies. The foreign geography is not unexpected given the travel notice, and the source is confirmed known benign. This is a false positive \u2014 the rule flagged on new-device + foreign-geo signals without accounting for the travel notice.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5636,
+          "output_tokens": 1484,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003703
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003033,
+      "latency_s": 32.246,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Transaction of $2,448.60 to an allowlisted beneficiary with 32 prior payments and flagged as a known benign source \u2014 strong false-positive signals. However, per policy FP-FP-02, private-banking customers are never auto-released even when benign activity is indicated; they must be held for manual review. The customer_authorized flag is false, adding minor concern, but all other signals (no new device, no foreign geo, no new payee, no credential reset, no mule match) are clean. Routing to false-positive queue with hold_for_review disposition per the private-banking exception clause.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3911,
+          "output_tokens": 1392,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003033
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002051,
+      "latency_s": 22.449,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $918.27 CNP transaction is unauthorized, originated from a new device in a foreign geo far from the customer's home region (US-NE), with no travel notice, no allowlisted beneficiary, and no benign explanation on file \u2014 classic stolen-card fraud signals. Per policy FP-ESC-01, because the customer is in the private-banking segment, active fraud must be escalated to the fraud-operations team rather than handled via standard block-and-notify.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2557,
+          "output_tokens": 963,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002051
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003214,
+      "latency_s": 33.352,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Credential reset and new-device login followed by a new payee and an $11,522.93 outbound transfer with no customer authorization and no benign explanation on file \u2014 classic account takeover per FP-ATO-04. The transaction amount exceeds the $10,000 regulatory review threshold (FP-ESC-01), requiring escalation to fraud operations rather than a standard block-and-notify. Customer is retail segment with 3 prior disputes, but the dollar amount alone triggers the escalation path.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4224,
+          "output_tokens": 1455,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003214
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003397,
+      "latency_s": 35.736,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $550 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (FP-APP-05). No benign explanation is on file. This is a classic APP scam pattern where the customer is being socially engineered into authorizing a push payment to a fraudster-controlled account. The customer is retail segment and the amount is below the $10,000 escalation threshold (FP-ESC-01), so the transaction should be blocked and the customer notified.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4292,
+          "output_tokens": 1581,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003397
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004414,
+      "latency_s": 46.079,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $3,726.55 card-not-present charge in a foreign geography from a new device, which triggered a card-fraud alert. However, a matching travel notice is on file covering the charge geography and dates, and the source is flagged as a known benign source. Per FP-FP-02, alerts explained by a matching travel notice may be auto-released for retail customers on transactions below the $10,000 regulatory review threshold. This customer is retail and the amount is well below $10,000, so the transaction is released as a false positive.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6227,
+          "output_tokens": 1892,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004414
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003898,
+      "latency_s": 37.276,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Transaction of $1,051.49 is to a beneficiary on the customer's verified allowlist with 32 prior payments. No fraud signals present: no new device, no foreign geo, no new payee, no credential reset, no mule match. Customer is retail segment with 95-month tenure and 0 prior disputes. Per policy FP-FP-02, benign activity explained by an allowlisted beneficiary may be auto-released; neither exception (private-banking segment nor >$10,000 regulatory threshold) applies. The high-value alert is a false positive triggered by the dollar amount alone.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5685,
+          "output_tokens": 1624,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003898
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002421,
+      "latency_s": 23.474,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $733.83 card-not-present charge on acct-17205726 came from a new device in a foreign geography (customer's home region is APAC). The customer did not authorize the transaction, no travel notice is on file, and no benign explanation exists. Per FP-CARD-03, CNP charges from a new device in an unexpected geography with no matching travel notice are routed to the card-fraud queue. The customer is retail-segment and the amount is below the $10,000 regulatory threshold, so per FP-ESC-01 no fraud-ops escalation is required. The transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3843,
+          "output_tokens": 931,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002421
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002976,
+      "latency_s": 73.828,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "All four indicators of account takeover per policy FP-ATO-04 are present: credential reset, new-device login, new payee added, and an outbound transfer of $1,290.79. The customer did not authorize the transaction, there is no benign explanation on file (no travel notice, no allowlisted beneficiary, no known benign source), and the beneficiary is not a mule match (ruling out APP-scam). The account belongs to a private banking customer with 25 months tenure and no prior disputes, but the unauthorized credential reset combined with a new device and new payee transfer is a definitive ATO pattern requiring fraud ops to investigate the full scope of the compromise and secure the account.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 4193,
+          "output_tokens": 1277,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002976
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003029,
+      "latency_s": 29.781,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $9,520.50 transfer from a trusted device with no credential reset, which initially looks benign. However, the payee is brand new, matches a known mule pattern (beneficiary_mule_match = true), is not allowlisted, and has no benign explanation on file. Per FP-APP-05, these are the hallmarks of an APP scam \u2014 the customer was likely socially engineered into authorizing the payment. The customer is retail-segment and the amount is below the $10,000 regulatory threshold (FP-ESC-01), so the correct disposition is block_and_notify rather than escalation to fraud ops.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4245,
+          "output_tokens": 1305,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003029
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002717,
+      "latency_s": 27.637,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,954.73 card-not-present charge from a new device in a foreign geography is explained by a matching travel notice on file (geography and dates align), making this a false positive per FP-CARD-03. However, per FP-FP-02, private-banking customers are excluded from auto-release even when a benign source is confirmed. The customer (acct-77680295) is in the private-banking segment with 77 months tenure, so the transaction is routed to false-positive with hold_for_review for manual confirmation before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3882,
+          "output_tokens": 1152,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002717
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003948,
+      "latency_s": 38.859,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,145.61 transfer was flagged by the amount rule, but transaction signals show no fraud indicators: no new device, no foreign geo, no new payee, no credential reset, and no mule match. The beneficiary is on the customer's verified allowlist with 32 prior payments and is flagged as a known benign source. Per policy FP-FP-02, benign activity explained by an allowlisted beneficiary may be auto-released. The exception for private-banking customers or transactions above the $10,000 regulatory threshold does not apply \u2014 this is a retail customer and the amount is well below $10,000. Auto-release as a false positive.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5707,
+          "output_tokens": 1658,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003948
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003324,
+      "latency_s": 33.628,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $1,000.02 card-not-present charge from a new device in a foreign geography with no matching travel notice, no benign explanation on file, and the customer did not authorize it. Per FP-CARD-03, CNP charges from a new device in an unexpected geography route to the card-fraud queue. The customer is retail segment and the amount is below the $10,000 regulatory threshold, so per FP-ESC-01 no escalation to fraud-ops is required; standard customers with confirmed fraud are blocked and notified.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4314,
+          "output_tokens": 1518,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003324
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002267,
+      "latency_s": 25.018,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Policy FP-ATO-04 matches exactly: credential reset + new-device login + new payee + outbound transfer. Transaction signals confirm the customer did not authorize the $348.77 transfer, no travel notice or allowlisted beneficiary is on file, and no benign explanation exists. All indicators point to a compromised account being used by an unauthorized actor. The transaction must be blocked and the customer notified so they can secure their credentials and dispute any other unauthorized activity.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2540,
+          "output_tokens": 1136,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002267
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00293,
+      "latency_s": 28.208,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "This is a textbook APP scam per policy FP-APP-05. The customer authorized the $789.12 transfer from their usual device (new_device=false), so login and device signals look normal. However, the beneficiary was added only 6 minutes ago (new_payee=true) and matches a known mule pattern (beneficiary_mule_match=true). There is no benign explanation on file \u2014 no travel notice, no allowlisted beneficiary, no known benign source. The customer is retail segment and the amount is below the $10,000 regulatory threshold (FP-ESC-01), so escalation to fraud ops is not required. Per FP-APP-05, the alert must not be cleared just because the device is trusted; the mule-match on a newly added payee is the decisive signal. The transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4331,
+          "output_tokens": 1206,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00293
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004725,
+      "latency_s": 51.552,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $442.14 card-not-present charge from a foreign geo and new device was flagged as possible card fraud, but a travel notice on file matches the transaction's geography and dates, and the source is flagged as known benign (FP-FP-02). The customer is retail segment and the amount is well below the $10,000 regulatory review threshold, so no exception applies. Per FP-CARD-03, the matching travel notice explains the foreign geography, making this a false positive that should be auto-released.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5618,
+          "output_tokens": 2287,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004725
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00334,
+      "latency_s": 35.571,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,405 transfer is to a beneficiary on the customer's verified allowlist with 32 prior payments and is flagged as a known benign source. No fraud signals are present (no new device, no foreign geo, no credential reset, no mule match). The amount rule misread routine activity. However, per policy FP-FP-02, private-banking customers are never auto-released even when the activity is benign \u2014 they must be held for manual review. The customer is in the private banking segment, so the disposition is hold_for_review in the false-positive queue.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3891,
+          "output_tokens": 1637,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00334
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002305,
+      "latency_s": 21.338,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Card-not-present charge of $3,190.66 from a new device in a foreign geography with no matching travel notice and no customer authorization. Customer is retail segment with 77-month tenure and zero prior disputes. Per FP-CARD-03, CNP charges from a new device in an unexpected geography with no travel notice go to the card-fraud queue. Per FP-ESC-01, escalation to fraud-ops is reserved for private-banking customers or transactions above $10,000; neither applies here. Standard disposition is block_and_notify.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3846,
+          "output_tokens": 839,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002305
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00303,
+      "latency_s": 29.595,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "All classic ATO indicators are present: credential reset followed by a new-device login, a newly added payee, and a $6,644 outbound transfer that the customer did not authorize. No benign explanation (travel notice, allowlisted beneficiary) is on file. Per FP-ATO-04, this routes to the account-takeover queue. Per FP-ESC-01, escalation to fraud-ops is reserved for private-banking customers or transactions above $10,000; this is a retail customer at $6,644, so the standard block-and-notify disposition applies.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4212,
+          "output_tokens": 1314,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00303
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003253,
+      "latency_s": 33.16,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized an $8,923 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (FP-APP-05). No benign explanation or allowlist entry exists. This is a classic APP scam where the customer was socially engineered into authorizing the payment themselves. The customer is retail and the amount is below the $10,000 escalation threshold (FP-ESC-01), so the transaction should be blocked and the customer notified.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4246,
+          "output_tokens": 1480,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003253
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00406,
+      "latency_s": 40.428,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $516.95 card-not-present charge from a new device in a foreign geography is fully explained by a matching travel notice on file (FP-FP-02). The customer is retail segment and the amount is well below the $10,000 regulatory review threshold, so the auto-release exception does not apply. Per FP-CARD-03, the matching travel notice means the geography is not unexpected. This is a false positive \u2014 legitimate travel activity misread by the card-fraud rule.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5664,
+          "output_tokens": 1756,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00406
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003317,
+      "latency_s": 33.06,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,608.50 transfer is to a beneficiary on the customer's verified allowlist with 32 prior payments and is flagged as a known benign source. No fraud indicators are present: no new device, no foreign geo, no new payee, no credential reset, and no mule match. Per policy FP-FP-02, alerts explained by a verified allowlisted beneficiary may be auto-released for retail customers below the $10,000 regulatory threshold. This is a routine payment misread by the high-value rule.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4310,
+          "output_tokens": 1514,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003317
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002513,
+      "latency_s": 24.401,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Card-not-present charge of $887.73 from a first-seen device in a foreign geography with no matching travel notice and no benign explanation on file. Customer did not authorize the transaction. Per FP-CARD-03, CNP charges from a new device in an unexpected geography route to the card-fraud queue. Per FP-ESC-01, escalation to fraud-ops is reserved for private-banking customers or transactions above $10,000; this is a retail account below threshold, so standard block-and-notify applies.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3845,
+          "output_tokens": 1002,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002513
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002034,
+      "latency_s": 21.33,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Transaction signals confirm account takeover per policy FP-ATO-04: credential_reset=true, new_device=true, new_payee=true, and an outbound transfer of $3,134.43. The customer did not authorize the transaction (customer_authorized=false), and no benign explanation exists on file (no travel notice, no allowlisted beneficiary, no known benign source). The retail customer (130-month tenure, EU region) has had their credentials compromised and an attacker is attempting to drain funds to a new payee. The transaction must be blocked and the customer notified of the compromise.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2545,
+          "output_tokens": 953,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002034
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002408,
+      "latency_s": 23.106,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $157.74 transfer from their usual device to a beneficiary added only 6 minutes ago. The beneficiary matches a known mule pattern and no benign explanation (travel notice, allowlisted payee) is on file. Per FP-APP-05, trusted-device/authorized signals do not clear an APP-scam alert when the beneficiary is a mule match. Per FP-ESC-01, because the customer is in the private-banking segment, the case is escalated to fraud operations rather than handled via standard block-and-notify.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3877,
+          "output_tokens": 912,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002408
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003361,
+      "latency_s": 31.328,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,139.48 card-not-present charge in a foreign geography with a new device was flagged as possible card fraud, but the transaction signals show a matching travel notice on file and the source is a known benign source \u2014 this is legitimate activity the rule misread (FP-CARD-03). Per policy FP-FP-02, benign activity with a travel notice match would normally be auto-released; however, the customer is in the private banking segment, and FP-FP-02 explicitly states that private-banking customers are held for manual review even when benign, never auto-released. Therefore the disposition is hold_for_review in the false-positive queue.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5284,
+          "output_tokens": 1305,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003361
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003747,
+      "latency_s": 34.754,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,254 transfer is to a beneficiary on the customer's verified allowlist with 32 prior payments and is flagged as a known benign source. No fraud indicators are present: no new device, no foreign geo, no new payee, no credential reset, no mule match. Per policy FP-FP-02, alerts explained by a benign source (allowlisted beneficiary) may be auto-released. The customer is retail (not private-banking) and the amount is below the $10,000 regulatory review threshold, so no exception applies. The high-value alert is a false positive triggered by a routine payment to a trusted payee.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5697,
+          "output_tokens": 1503,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003747
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002681,
+      "latency_s": 27.315,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $316.71 CNP transaction was made from a new device in a foreign geography with no matching travel notice on file. The customer did not authorize the charge, the beneficiary is not allowlisted, and no benign explanation exists. Per policy FP-CARD-03, CNP charges from a new device in an unexpected geography with no travel notice are routed to the card-fraud queue. All signals point to a stolen-card compromise, warranting an immediate block and customer notification.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3858,
+          "output_tokens": 1130,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002681
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002524,
+      "latency_s": 28.358,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "All ATO indicators are present per policy FP-ATO-04: credential reset + new-device login + new payee + outbound transfer of $3,294.82. The customer did not authorize the transaction, the beneficiary is not allowlisted, and no benign explanation (travel notice, known source) is on file. The account has likely been compromised by a third party who reset credentials and initiated an unauthorized transfer. Transaction must be blocked immediately and the customer notified so they can secure their account.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2538,
+          "output_tokens": 1337,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002524
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003335,
+      "latency_s": 34.647,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $2,023 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (FP-APP-05). No benign explanation or allowlist entry exists. Per FP-APP-05, normal device/login signals do not clear an APP-scam alert when the beneficiary is a mule match. The customer is retail and the amount is below the $10,000 escalation threshold (FP-ESC-01), so the transaction is blocked and the customer is notified rather than escalated to fraud ops.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4259,
+          "output_tokens": 1541,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003335
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003922,
+      "latency_s": 37.517,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,549.03 card-not-present charge in a foreign geography on a new device is explained by a matching travel notice on file (source confirmed as known benign). Per policy FP-FP-02, benign activity with a matching travel notice may be auto-released. The customer is retail (not private banking) and the amount is below the $10,000 regulatory review threshold, so no exception applies. Per FP-CARD-03, the geography is not unexpected given the travel notice. This is a false positive \u2014 the customer is traveling and made a legitimate purchase.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5641,
+          "output_tokens": 1654,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003922
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003635,
+      "latency_s": 40.185,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Transaction is to a verified allowlisted beneficiary with 32 prior payments and is flagged as a known benign source. No fraud indicators present (no new device, no foreign geo, no new payee, no credential reset, no mule match). The high-value alert is a rule misread of legitimate recurring activity. However, per policy FP-FP-02, private-banking customers are held for manual review even when benign \u2014 never auto-released \u2014 so disposition is hold_for_review rather than allow.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3912,
+          "output_tokens": 1862,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003635
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003358,
+      "latency_s": 36.821,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $918.27 card-not-present charge was made from a new device in a foreign geography with no matching travel notice, no allowlisted beneficiary, and no benign explanation on file. The customer did not authorize the transaction, and there is no credential-reset or mule-match signal to suggest account takeover or APP scam \u2014 this is consistent with stolen-card fraud per FP-CARD-03. Because the customer is in the private-banking segment, FP-ESC-01 requires escalation to the fraud-operations team rather than a standard block-and-notify.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4055,
+          "output_tokens": 1610,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003358
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002557,
+      "latency_s": 28.412,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Classic ATO pattern per policy FP-ATO-04: credential reset + new-device login + new payee + unauthorized $11,523 outbound transfer. Customer did not authorize the transaction (customer_authorized=false), no benign explanation is on file, no travel notice or allowlisted beneficiary applies. The transaction must be blocked immediately and the customer notified of the account compromise so credentials can be reset and the account secured.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2552,
+          "output_tokens": 1360,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002557
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002849,
+      "latency_s": 27.141,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $550 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match: true). Per policy FP-APP-05, APP-scam alerts should not be cleared just because device and login are trusted \u2014 the mule-matched new payee is the key signal. There is no benign explanation on file (no travel notice, no allowlisted beneficiary, no known benign source). The customer is retail-segment and the amount is well below the $10,000 escalation threshold (FP-ESC-01), so the transaction is blocked and the customer is notified rather than escalated to fraud ops.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4328,
+          "output_tokens": 1144,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002849
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004436,
+      "latency_s": 47.049,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $3,726.55 card-not-present charge from a foreign geography and new device is fully explained by a matching travel notice on file (FP-FP-02). The customer is retail segment and the amount is below the $10,000 regulatory review threshold, so no exception to auto-release applies. Per FP-CARD-03, the foreign geography is not unexpected when a travel notice covers it. The known-benign-source flag and matching travel notice confirm this is legitimate travel spending, not card fraud.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5625,
+          "output_tokens": 2059,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004436
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003957,
+      "latency_s": 39.149,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,051.49 transfer is to a beneficiary on the customer's verified allowlist with 32 prior payments and is flagged as a known benign source. No fraud indicators are present (no new device, no foreign geo, no new payee, no credential reset, no mule match). Per policy FP-FP-02, benign activity explained by an allowlisted beneficiary may be auto-released. The exceptions (private-banking segment or transactions above the $10,000 regulatory threshold) do not apply \u2014 the customer is retail and the amount is well below the threshold. This is a false positive triggered by the high-value rule on a legitimate recurring payment.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5738,
+          "output_tokens": 1657,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003957
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003748,
+      "latency_s": 37.752,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $733.83 card-not-present purchase from a new device in a foreign geography with no matching travel notice, no customer authorization, and no benign explanation on file. Per FP-CARD-03, CNP charges from a new device in an unexpected geography are routed to the card-fraud queue. The customer is retail segment and the amount is below the $10,000 regulatory threshold, so per FP-ESC-01 this is a standard card-fraud case: block the transaction and notify the customer.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5550,
+          "output_tokens": 1541,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003748
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003111,
+      "latency_s": 32.367,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Transaction signals show a credential reset and new-device login followed by a new payee addition and a $1,291 outbound transfer, with customer_authorized=false and no benign explanation on file \u2014 a clear account takeover pattern per FP-ATO-04. The customer is in the private-banking segment, which under FP-ESC-01 requires escalation to the fraud-operations team rather than standard block-and-notify handling.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4217,
+          "output_tokens": 1376,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003111
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003029,
+      "latency_s": 29.382,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $9,520.50 transfer from a trusted device with no credential reset, which initially looks benign. However, the payee is brand new, matches a known mule pattern (beneficiary_mule_match = true), is not allowlisted, and has no benign explanation on file. Per FP-APP-05, these are the hallmarks of an APP scam \u2014 the customer was likely socially engineered into authorizing the payment. The customer is retail-segment and the amount is below the $10,000 regulatory threshold (FP-ESC-01), so the correct disposition is block_and_notify rather than escalation to fraud ops.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4245,
+          "output_tokens": 1305,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003029
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002849,
+      "latency_s": 28.051,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,954.73 card-not-present charge on a new device in a foreign geography is explained by a matching travel notice on file (known benign source). Per FP-CARD-03, the geography is expected, so this is not card fraud. Per FP-FP-02, benign activity with a matching travel notice would normally be auto-released; however, the private-banking exception requires that private-banking customers be held for manual review even when benign, never auto-released. Disposition: hold_for_review in the false-positive queue.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3900,
+          "output_tokens": 1251,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002849
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003711,
+      "latency_s": 35.555,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,145.61 transfer was flagged by the amount rule, but the beneficiary is on the customer's verified allowlist with 32 prior payments and is flagged as a known benign source. No new device, foreign geo, new payee, mule match, or credential reset signals are present. Per policy FP-FP-02, benign activity explained by an allowlisted beneficiary may be auto-released. The customer is retail (not private banking) and the amount is well below the $10,000 regulatory review threshold, so no exceptions apply. This is a false positive.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5690,
+          "output_tokens": 1477,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003711
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002292,
+      "latency_s": 24.226,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,000.02 card-not-present transaction was not authorized by the customer, originated from a new device in a foreign billing geo, and has no matching travel notice, allowlisted beneficiary, or other benign explanation on file. The customer is a retail-segment account with 17 years tenure and no prior disputes, so per FP-ESC-01 the case does not meet the private-banking or $10,000 threshold for fraud-ops escalation. Standard confirmed-fraud handling applies: block the transaction and notify the customer.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2582,
+          "output_tokens": 1145,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002292
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002267,
+      "latency_s": 25.957,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Policy FP-ATO-04 matches exactly: credential reset + new-device login + new payee + outbound transfer. Transaction signals confirm the customer did not authorize the $348.77 transfer, no travel notice or allowlisted beneficiary is on file, and no benign explanation exists. All indicators point to a compromised account being used by an unauthorized actor. The transaction must be blocked and the customer notified so they can secure their credentials and dispute any other unauthorized activity.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2540,
+          "output_tokens": 1136,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002267
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003228,
+      "latency_s": 33.699,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $789 transfer from their usual device, but the beneficiary was added only 6 minutes ago, is not allowlisted, has no benign explanation on file, and matches a known mule pattern (beneficiary_mule_match=true). Per policy FP-APP-05, this is a classic APP-scam pattern \u2014 trusted device and customer authorization do not rule out a push-payment scam. The customer is retail and the amount is below the $10,000 escalation threshold (FP-ESC-01), so the transaction should be blocked and the customer notified.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4292,
+          "output_tokens": 1449,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003228
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004143,
+      "latency_s": 41.989,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $442.14 card-not-present charge from a foreign geo and new device initially triggered a card-fraud alert (FP-CARD-03). However, a travel notice on file matches the transaction's geography and dates, and the source is flagged as known benign. The customer is retail segment (not private-banking) and the amount is well below the $10,000 regulatory threshold, so per FP-FP-02 the benign-activity auto-release clause applies with no exceptions. No mule match, credential reset, or other fraud indicators are present. The alert is a false positive caused by the rule not checking the travel notice.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5606,
+          "output_tokens": 1835,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004143
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003761,
+      "latency_s": 42.003,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,405 transfer is to a beneficiary on the customer's verified allowlist with 32 prior payments and is flagged as a known benign source \u2014 strong indicators the amount rule misread a legitimate recurring transfer (false positive). However, per policy FP-FP-02, private-banking customers are held for manual review even when benign and may never be auto-released. The customer is in the private-banking segment, so despite the benign signals, the transaction is routed to false-positive queue with hold_for_review disposition for manual confirmation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3916,
+          "output_tokens": 1959,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003761
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002233,
+      "latency_s": 24.705,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is an unauthorized card-not-present purchase ($3,191) from a new device in a foreign geo with no travel notice or benign explanation on file. Customer did not authorize the transaction (customer_authorized=false), ruling out APP scam or legitimate travel spending. No credential reset or mule match, so this is classic stolen-card fraud, not ATO or APP scam. Per policy FP-ESC-01, the customer is retail segment and the amount is below the $10,000 regulatory threshold, so escalation to fraud-ops is not required \u2014 standard procedure is to block the transaction and notify the customer.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2583,
+          "output_tokens": 1099,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002233
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003175,
+      "latency_s": 32.53,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "All four ATO indicators are present: credential reset, new-device login, new payee addition, and a $6,644 outbound transfer \u2014 with customer_authorized=false and no benign explanation on file. Per FP-ATO-04 this is a confirmed account takeover pattern routed to the account-takeover queue. Per FP-ESC-01, escalation to fraud-ops is not required because the customer is retail-segment and the transaction is below the $10,000 regulatory threshold. Standard disposition is block_and_notify to stop the fraudulent transfer and alert the customer to the credential compromise.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4214,
+          "output_tokens": 1427,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003175
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003343,
+      "latency_s": 33.401,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized an $8,923 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (FP-APP-05). No benign explanation or allowlisted status is on file. This is a classic APP-scam pattern where the customer is being socially engineered to send money to a fraudster-controlled account. The customer is retail segment and the amount is below the $10,000 escalation threshold (FP-ESC-01), so the standard disposition is to block the transaction and notify the customer.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4244,
+          "output_tokens": 1551,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003343
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003671,
+      "latency_s": 34.496,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $516.95 card-not-present charge from a new device in a foreign geography is explained by a matching travel notice on file (travel_notice_matches: true, known_benign_source: true). Per FP-CARD-03, a matching travel notice means the geography is not unexpected. Per FP-FP-02, benign activity with a travel notice may be auto-released; the exceptions (private-banking segment or >$10,000 regulatory threshold) do not apply \u2014 the customer is retail and the amount is $516.95. The alert is a rule misread and the transaction is released.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5613,
+          "output_tokens": 1465,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003671
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003641,
+      "latency_s": 34.138,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,608.50 transfer triggered the high-value alert, but transaction signals show the beneficiary is on the customer's verified allowlist with 32 prior payments, is flagged as a known benign source, and has no mule match. No new device, no foreign geo, no new payee, and no credential reset. Per policy FP-FP-02, alerts explained by an allowlisted beneficiary may be auto-released. The customer is retail segment (not private banking) and the amount is well below the $10,000 regulatory review threshold, so no exception applies. This is a false positive \u2014 a routine payment to a long-standing trusted payee misread by the high-value rule.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5687,
+          "output_tokens": 1423,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003641
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002156,
+      "latency_s": 23.966,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $887.73 CNP charge originated from a device first seen today in a foreign geography with no matching travel notice on file. The customer did not authorize the transaction, the beneficiary is not allowlisted, and no benign explanation exists. Per policy FP-CARD-03, CNP charges from a new device in an unexpected geography are routed to the card-fraud queue. The customer is retail segment and the amount is below the $10,000 regulatory threshold, so per FP-ESC-01 the case does not require fraud-ops escalation; the transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2524,
+          "output_tokens": 1053,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002156
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002294,
+      "latency_s": 26.122,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Full ATO kill-chain confirmed: credential reset (TRUE) followed by new-device login (TRUE), new payee added (TRUE), and a $3,134 outbound transfer queued. The customer did NOT authorize the transaction (customer_authorized=FALSE), no benign explanation is on file, and the beneficiary is not allowlisted. Per policy FP-ATO-04, this pattern indicates account takeover. The transaction is blocked and the customer must be notified to reset credentials and review account activity.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2545,
+          "output_tokens": 1156,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002294
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002641,
+      "latency_s": 29.466,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Customer authorized a $158 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match=true). No benign explanation, travel notice, or allowlist entry exists. Per FP-APP-05, authorized push payments to newly added mule-matching beneficiaries are classic APP-scam indicators regardless of trusted device/login. Transaction blocked and customer notified to prevent potential loss.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2584,
+          "output_tokens": 1417,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002641
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003156,
+      "latency_s": 32.765,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,139.48 card-not-present charge on a new device in a foreign geography is explained by a matching travel notice on file (known_benign_source: true, travel_notice_matches: true), making this a false positive per FP-CARD-03. However, per policy FP-FP-02, private-banking customers are an explicit exception to the auto-release rule for benign activity \u2014 they must be held for manual review even when a benign source is confirmed. The customer is a private-banking segment member (221 months tenure), so the transaction is routed to false-positive with hold_for_review disposition rather than allow.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3901,
+          "output_tokens": 1490,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003156
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003935,
+      "latency_s": 37.814,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,254 transfer is to a beneficiary on the customer's verified allowlist with 32 prior payments and is flagged as a known benign source. No fraud indicators are present (no new device, no foreign geo, no new payee, no mule match, no credential reset). Per policy FP-FP-02, alerts explained by a benign source may be auto-released. The customer is retail (not private banking) and the amount is well below the $10,000 regulatory review threshold, so no exceptions apply. The high-value alert is a false positive triggered by a legitimate recurring payment.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5702,
+          "output_tokens": 1649,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003935
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002552,
+      "latency_s": 24.991,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $316.71 card-not-present transaction was made from a new device in a foreign geography with no matching travel notice on file. The customer did not authorize the charge, and no benign explanation (allowlisted beneficiary, known source) exists. Per policy FP-CARD-03, CNP charges from a new device in an unexpected geography with no travel notice are routed to the card-fraud queue. The combination of new device, foreign geo, and lack of customer authorization indicates likely stolen-card fraud, warranting block_and_notify.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3858,
+          "output_tokens": 1029,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002552
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002541,
+      "latency_s": 28.363,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Transaction exhibits all classic ATO indicators per policy FP-ATO-04: credential reset + new-device login + new payee + outbound transfer. The customer did not authorize the $3,295 transfer, no benign explanation is on file, the beneficiary is not allowlisted, and there is no matching travel notice. The transaction is blocked and the customer should be notified of the credential compromise so they can secure their account.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2538,
+          "output_tokens": 1351,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002541
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003311,
+      "latency_s": 33.833,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $2,023 transfer from their usual device to a beneficiary added just 6 minutes ago. The beneficiary matches a known mule pattern (beneficiary_mule_match=true), and no benign explanation or allowlist entry exists. Per FP-APP-05, this is a classic APP scam \u2014 customer authorization and trusted device do not negate the mule-match signal. The customer is retail and the amount is below the $10,000 escalation threshold (FP-ESC-01), so the transaction is blocked and the customer is notified rather than escalated to fraud ops.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4335,
+          "output_tokens": 1503,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003311
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003857,
+      "latency_s": 37.032,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,549 card-not-present charge from a new device in a foreign geography is explained by a matching travel notice on file (travel_notice_matches=true, known_benign_source=true). Per FP-FP-02, benign activity with a matching travel notice may be auto-released. The customer is retail (not private banking) and the amount is well below the $10,000 regulatory review threshold, so no exceptions apply. Per FP-CARD-03, the geography is not unexpected given the travel notice. This is a false positive.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5636,
+          "output_tokens": 1604,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003857
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003143,
+      "latency_s": 33.93,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Transaction is a $2,448.60 transfer to a beneficiary on the customer's verified allowlist with 32 prior payments, flagged as a known benign source. No fraud indicators: no new device, no foreign geo, no new payee, no credential reset, no mule match. This is benign activity the high-value rule misread (false positive). However, per policy FP-FP-02, private-banking customers are never auto-released even when the activity is benign \u2014 they must be held for manual review. The customer's private-banking segment and 3 prior disputes further warrant manual oversight rather than auto-release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3911,
+          "output_tokens": 1478,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003143
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002733,
+      "latency_s": 30.41,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $918.27 CNP transaction was made from a new device in a foreign billing geography with no matching travel notice, no allowlisted beneficiary, and no benign explanation on file. The customer did not authorize the charge. Per FP-CARD-03, this is a card-fraud case. Per FP-ESC-01, because the customer is in the private-banking segment, the case must be escalated to fraud-operations rather than handled via standard block-and-notify.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4018,
+          "output_tokens": 1131,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002733
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003303,
+      "latency_s": 34.487,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "All four ATO indicators are confirmed: credential reset, new-device login, new payee added, and an $11,522.93 outbound transfer the customer did not authorize with no benign explanation on file (FP-ATO-04). The transaction amount exceeds the $10,000 regulatory review threshold, so per FP-ESC-01 this must be escalated to fraud operations rather than auto-blocked. Customer is retail segment, so the escalation trigger is the dollar threshold.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4222,
+          "output_tokens": 1525,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003303
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002056,
+      "latency_s": 21.908,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "This is a textbook APP-scam pattern per policy FP-APP-05. The customer authorized the $550.32 transfer from their usual device, so device/login signals look normal \u2014 but the beneficiary was added only 6 minutes ago and matches a known mule pattern (beneficiary_mule_match: true). There is no benign explanation on file (no travel notice, no allowlisted beneficiary, no known benign source). Per FP-APP-05, the trusted device and customer authorization do not clear an APP-scam alert when the beneficiary is a mule match. The transaction is blocked and the customer should be notified and warned of a potential scam.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2580,
+          "output_tokens": 961,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002056
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00466,
+      "latency_s": 48.536,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Transaction is explained by a matching travel notice on file covering the charge geography and dates (known benign source). Customer is retail segment (not private-banking) and amount ($3,726.55) is below the $10,000 regulatory review threshold. Per FP-FP-02, benign activity with matching travel notice may be auto-released when neither exception applies. FP-CARD-03 confirms travel notice should be checked before treating foreign geography as unexpected. New device flag is overridden by the travel notice explanation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5662,
+          "output_tokens": 2225,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00466
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003612,
+      "latency_s": 33.814,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,051.49 transfer is to a beneficiary on the customer's verified allowlist with 32 prior payments and is flagged as a known benign source. No fraud indicators are present: no new device, no foreign geo, no new payee, no credential reset, no mule match. Per policy FP-FP-02, benign activity explained by an allowlisted beneficiary may be auto-released for retail customers below the $10,000 regulatory threshold. The high-value alert is a rule misread on a routine, well-established payment.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5687,
+          "output_tokens": 1400,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003612
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002938,
+      "latency_s": 29.888,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $733.83 card-not-present online purchase from a new device in a foreign geography (billing geo far from the customer's APAC home region). The customer did not authorize the transaction, no travel notice is on file, the beneficiary is not allowlisted, and no benign explanation exists. Per policy FP-CARD-03, CNP charges from a new device in an unexpected geography with no matching travel notice are routed to the card-fraud queue. Given the unauthorized nature and lack of any benign explanation, the transaction should be blocked and the customer notified.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3873,
+          "output_tokens": 1327,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002938
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00281,
+      "latency_s": 27.27,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "escalate_to_fraud_ops"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction signals show a textbook account takeover pattern: a credential reset and new-device login were followed by a new payee addition and a $1,290.79 outbound transfer. The customer did not authorize the transaction, and there is no benign explanation on file (no travel notice, no allowlisted beneficiary, no known benign source). Per policy FP-ATO-04, this routes to the account-takeover queue. Per FP-ESC-01, because the customer is in the private-banking segment, confirmed fraud must be escalated to the fraud-operations team rather than handled via standard block-and-notify.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4265,
+          "output_tokens": 1129,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00281
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003052,
+      "latency_s": 29.987,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $9,520.50 transfer from a trusted device with no credential reset, which initially looks benign. However, the beneficiary is a brand-new payee that matches a known mule pattern (beneficiary_mule_match: true), there is no benign explanation on file, and the payee is not allowlisted. Per policy FP-APP-05, an APP scam is characterized by customer-authorized payments to mule-pattern beneficiaries despite normal device/login signals \u2014 this is a textbook case. The customer is retail-segment and the amount is below the $10,000 regulatory escalation threshold (FP-ESC-01), so the standard disposition is block_and_notify rather than escalation to fraud ops.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4244,
+          "output_tokens": 1323,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003052
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003145,
+      "latency_s": 34.229,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,954.73 card-not-present charge on a new device in a foreign geography appears to be card fraud per the alert, but a travel notice on file matches the transaction's geography and dates, and the source is flagged as known benign (FP-CARD-03). This is a false positive \u2014 the rule misread legitimate travel spending. However, per FP-FP-02, private-banking customers are never auto-released even when benign activity is confirmed; they must be held for manual review. The customer (acct-77680295) is a private-banking segment member with 77 months tenure, so the transaction is routed to false-positive with hold_for_review disposition.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3899,
+          "output_tokens": 1482,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003145
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003997,
+      "latency_s": 38.748,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,145.61 transfer was flagged by the amount rule, but the beneficiary is on the customer's verified allowlist with 32 prior payments and is a known benign source. No fraud indicators are present (no new device, no foreign geo, no new payee, no credential reset, no mule match). Per policy FP-FP-02, benign activity explained by an allowlisted beneficiary may be auto-released. The customer is retail (not private banking) and the amount is well below the $10,000 regulatory review threshold, so no exceptions apply. This is a false positive.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5735,
+          "output_tokens": 1689,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003997
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003838,
+      "latency_s": 38.319,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The transaction is a $1,000.02 card-not-present purchase from a new device with a billing geo far from the customer's home region (US-NE). The customer did not authorize the transaction, no travel notice is on file, and no benign explanation exists. Per FP-CARD-03, CNP charges from a new device in an unexpected geography route to card-fraud. The customer is retail segment and the amount is below the $10,000 escalation threshold (FP-ESC-01), so standard block-and-notify applies.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5585,
+          "output_tokens": 1602,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003838
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002707,
+      "latency_s": 31.004,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Full ATO pattern confirmed per policy FP-ATO-04: credential reset followed by new-device login, new payee addition, and an outbound $348.77 transfer. The customer did not authorize the transaction (customer_authorized=false), no benign explanation is on file (no travel notice, no allowlisted beneficiary), and the beneficiary is not a known mule (ruling out APP scam). The transaction must be blocked immediately and the customer notified of the credential compromise so they can secure their account.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2540,
+          "output_tokens": 1480,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002707
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003088,
+      "latency_s": 30.358,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized a $789 transfer from their usual device, but the beneficiary was added only 6 minutes ago and matches a known mule pattern (FP-APP-05). No benign explanation, travel notice, or allowlist entry exists for this payee. Despite the trusted device and customer authorization, the mule-match on a freshly added beneficiary is the hallmark of an APP scam. The customer is retail-segment and the amount is below the $10,000 escalation threshold (FP-ESC-01), so the transaction is blocked and the customer is notified.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4253,
+          "output_tokens": 1349,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003088
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004014,
+      "latency_s": 40.08,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $442.14 card-not-present charge from a foreign geo and new device was flagged by the card-fraud rule, but a matching travel notice is on file covering the charge's geography and dates, and the source is flagged as known benign. The customer is retail segment and the amount is well below the $10,000 regulatory threshold, so per policy FP-FP-02 the benign-travel-notice exception applies and the transaction may be auto-released. Per FP-CARD-03, the geography is not unexpected given the travel notice. No mule match, credential reset, or other fraud indicators are present.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5619,
+          "output_tokens": 1731,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004014
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002924,
+      "latency_s": 31.661,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "hold_for_review"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,405 transfer is to a beneficiary on the customer's verified allowlist with 32 prior payments and is flagged as a known benign source \u2014 strong indicators the amount rule misread routine activity. However, per policy FP-FP-02, private-banking customers are excluded from auto-release even when benign signals are present, so the transaction is routed to false-positive with hold_for_review for manual confirmation before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3894,
+          "output_tokens": 1311,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002924
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003523,
+      "latency_s": 35.612,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "card-fraud",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $3,191 CNP transaction was unauthorized, originated from a new device in a foreign geography with no matching travel notice and no benign explanation on file. Per FP-CARD-03, CNP charges from a new device in an unexpected geography route to the card-fraud queue. The customer is retail and the amount is below the $10,000 escalation threshold (FP-ESC-01), so standard block-and-notify applies. No APP-scam indicators (customer did not authorize, no mule match). No ATO indicators (no credential reset). This is consistent with a stolen card being used for online purchases.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5589,
+          "output_tokens": 1355,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003523
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003138,
+      "latency_s": 32.856,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "account-takeover",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "All classic ATO indicators are present: credential reset, new-device login, new payee added, and a $6,644 outbound transfer \u2014 with customer_authorized=false and no benign explanation on file. Per FP-ATO-04, this pattern indicates account takeover and routes to the account-takeover queue. Per FP-ESC-01, escalation to fraud-ops is reserved for private-banking customers or transactions above $10,000; this is a retail customer at $6,644, so the standard disposition is block_and_notify.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4215,
+          "output_tokens": 1398,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003138
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002984,
+      "latency_s": 30.419,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "predicted": {
+          "queue": "app-scam",
+          "disposition": "block_and_notify"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The customer authorized an $8,923 transfer from their usual device (no new device, no credential reset), which rules out account takeover. However, the beneficiary was added only 6 minutes ago, matches a known mule pattern (beneficiary_mule_match: true), is not allowlisted, and has no benign explanation on file. Per policy FP-APP-05, this is a textbook APP-scam pattern \u2014 the customer authorized the payment themselves but was likely tricked into sending funds to a mule account. The customer is retail-segment and the amount is below the $10,000 escalation threshold (FP-ESC-01), so the standard disposition is block_and_notify.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4241,
+          "output_tokens": 1271,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002984
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002782,
+      "latency_s": 27.89,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $516.95 card-not-present charge from a new device in a foreign geography is explained by a matching travel notice on file (known_benign_source = true, travel_notice_matches = true). Per policy FP-FP-02, benign activity explained by a travel notice may be auto-released for retail customers below the regulatory review threshold. Per FP-CARD-03, the matching travel notice means the foreign geography is expected, not suspicious. The customer is retail (not private banking) and the amount is well below any regulatory threshold, so no exception applies. This is a false positive \u2014 the customer is traveling as noticed.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3887,
+          "output_tokens": 1202,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002782
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "disposition_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003935,
+      "latency_s": 38.916,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "predicted": {
+          "queue": "false-positive",
+          "disposition": "allow"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "lookup_customer",
+          "query_transaction",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "search_fraud_policy",
+          "submit_triage"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The $1,608.50 transfer was flagged by the high-value alert, but the beneficiary is on the customer's verified allowlist with 32 prior payments and is flagged as a known benign source. No fraud indicators are present (no new device, no foreign geo, no new payee, no credential reset, no mule match). Per policy FP-FP-02, alerts explained by a verified allowlisted beneficiary may be auto-released. The customer is retail (not private banking) and the amount is below the $10,000 regulatory review threshold, so no exception applies. This is a routine payment misread by the high-value rule.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5901,
+          "output_tokens": 1599,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003935
+        }
+      }
+    }
+  ]
+}

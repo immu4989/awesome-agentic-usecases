@@ -53,20 +53,31 @@ from the real-model runs in `results/`.
 - **Why it matters:** an un-actioned fraud alert is a transaction sitting in limbo. The
   `submitted` metric prices it in as a full miss rather than silently dropping it.
 
-### 5. One-directional bias: every model over-calls fraud on benign transactions
+### 5. One-directional bias: models over-call fraud on benign transactions — but it is beatable
 
-- **Reproduce:** all `TRAVEL_BENIGN` and `ALLOWLIST_BENIGN` scenarios, on **every** model
-  tested. kimi-k2p6's queue misses are 5× travel-benign → card-fraud, 2× allowlist-benign
-  → app-scam, 1× allowlist-benign → account-takeover — *all eight are benign-called-fraud*.
-  gpt-oss makes the same error 9 times.
-- **What happens:** models reliably detect real fraud and reliably over-detect it. Across
-  every run in this use case, no model ever mistook an actual fraud case for benign at the
-  queue level; the error is entirely one-directional.
-- **Why it matters:** the asymmetry is the finding. An accuracy number implies balanced
-  errors; the confusion breakdown shows a systematic false-positive bias, which in
-  production means legitimate customers blocked, not fraud missed. Threshold tuning,
-  staffing, and customer-impact estimates all depend on knowing which direction your
-  agent errs — and it's the same direction for every model here.
+- **Reproduce:** all `TRAVEL_BENIGN` and `ALLOWLIST_BENIGN` scenarios, on three of the
+  four models tested. kimi-k2p6's queue misses are 5× travel-benign → card-fraud,
+  2× allowlist-benign → app-scam, 1× allowlist-benign → account-takeover — *all eight are
+  benign-called-fraud*. gpt-oss makes the same error 9 times.
+- **What happens:** those models reliably detect real fraud and reliably over-detect it.
+  Across their runs, none ever mistook an actual fraud case for benign at the queue level;
+  the error is entirely one-directional.
+- **The exception, and why it matters more than the rule:** `Qwen3.7-Plus` scores a
+  perfect 1.000 queue accuracy with **zero** benign-called-fraud errors, defeating both
+  deceptions. Its only misses are disposition-level escalate-vs-block confusion at the
+  high-value boundary — a milder error class that never blocks a legitimate customer or
+  releases a fraud.
+- **Why it matters:** an accuracy number implies balanced errors; the confusion breakdown
+  shows a systematic false-positive bias in most models, which in production means
+  legitimate customers blocked rather than fraud missed. But because one model solves it
+  outright, the bias is a **property of the model, not the task** — so it is fixable by
+  model selection, and the only way to know which side your candidate errs on is to run
+  this breakdown before you deploy.
+
+> **Note on this entry.** An earlier version of this file claimed the fraud-direction bias
+> held for *every* model tested. Adding `Qwen3.7-Plus` falsified that, and the claim was
+> narrowed rather than quietly dropped. That is the intended failure mode of a findings
+> document: new evidence rewrites it.
 
 ### 6. No best model — the ranking flips again
 

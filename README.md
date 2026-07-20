@@ -80,9 +80,10 @@ only a per-use-case harness surfaces:
   mistral-small is the *best router* on fraud and the worst at deciding what to do next.
 - **Not every task is solvable.** The logistics exemplar has a perfect 90/90 model; the
   best model on retail scheduling tops out at 0.82.
-- **Agents err in one direction, and it's consistent.** On fraud, every model tested
-  over-calls fraud on benign transactions and never the reverse — a systematic
-  false-positive bias that an accuracy score implies away.
+- **Agents err in one direction — but the direction is a model property, not a law.** On
+  fraud, three of four models over-call fraud on benign transactions and never the
+  reverse; `Qwen3.7-Plus` breaks the pattern with zero such errors. The bias an accuracy
+  score implies away is real, common, and fixable by model choice.
 
 ## Industries
 

@@ -52,6 +52,15 @@ PROVIDERS = {
 }
 
 
+class StreamingRequiredError(Exception):
+    """The provider rejects non-streaming requests for this model. The backend
+    catches this once, latches `_force_stream`, and replays over SSE."""
+
+    def __init__(self, detail: str):
+        super().__init__(detail)
+        self.detail = detail
+
+
 class ToolUseFailedError(Exception):
     """The provider rejected the model's own malformed tool call (e.g. Groq's
     `tool_use_failed`). This is a model failure, not a harness failure — the
@@ -140,6 +149,9 @@ class OpenAICompatBackend:
         if not self.api_key:
             raise RuntimeError(f"{self.provider.env_key} is not set")
         self._last_call = 0.0
+        # Some models (e.g. Together's Qwen3.7 family) reject non-streaming
+        # requests outright. Detected on first use, then latched on.
+        self._force_stream = False
 
     # -- HTTP -----------------------------------------------------------
     def _post(self, payload: dict, max_retries: int = 6) -> dict:
@@ -176,21 +188,105 @@ class OpenAICompatBackend:
                     continue
                 if e.code == 400 and "tool_use_failed" in detail:
                     raise ToolUseFailedError(detail) from e
+                if e.code == 400 and "streaming" in detail.lower():
+                    raise StreamingRequiredError(detail) from e
                 raise RuntimeError(f"HTTP {e.code} from {self.provider.name}: {detail}") from e
             except (urllib.error.URLError, TimeoutError) as e:
                 time.sleep(min(2**attempt * 2.0, 30))
                 last_err = e
         raise RuntimeError(f"giving up after {max_retries} retries: {last_err}")
 
+    def _post_streaming(self, payload: dict) -> dict:
+        """Drive an SSE completion and reassemble it into the non-streaming
+        response shape, so callers see one uniform object either way."""
+        payload = {**payload, "stream": True, "stream_options": {"include_usage": True}}
+        wait = self.provider.min_interval_s - (time.monotonic() - self._last_call)
+        if wait > 0:
+            time.sleep(wait)
+        req = urllib.request.Request(
+            f"{self.provider.base_url}/chat/completions",
+            data=json.dumps(payload).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.api_key}",
+                "User-Agent": "aau-harness/0.1",
+                "Accept": "text/event-stream",
+            },
+            method="POST",
+        )
+        text_parts: list[str] = []
+        calls: dict[int, dict] = {}
+        usage: dict = {}
+        finish_reason = None
+        try:
+            with urllib.request.urlopen(req, timeout=300) as resp:
+                for raw in resp:
+                    line = raw.decode("utf-8", errors="replace").strip()
+                    if not line.startswith("data:"):
+                        continue
+                    chunk_s = line[5:].strip()
+                    if chunk_s == "[DONE]":
+                        break
+                    try:
+                        chunk = json.loads(chunk_s)
+                    except json.JSONDecodeError:
+                        continue
+                    if chunk.get("usage"):
+                        usage = chunk["usage"]
+                    for choice in chunk.get("choices") or []:
+                        if choice.get("finish_reason"):
+                            finish_reason = choice["finish_reason"]
+                        delta = choice.get("delta") or {}
+                        if delta.get("content"):
+                            text_parts.append(delta["content"])
+                        for tc in delta.get("tool_calls") or []:
+                            slot = calls.setdefault(
+                                tc.get("index", 0), {"id": None, "name": None, "args": ""}
+                            )
+                            if tc.get("id"):
+                                slot["id"] = tc["id"]
+                            fn = tc.get("function") or {}
+                            if fn.get("name"):
+                                slot["name"] = fn["name"]
+                            if fn.get("arguments"):
+                                slot["args"] += fn["arguments"]
+        finally:
+            self._last_call = time.monotonic()
+
+        tool_calls = [
+            {"id": v["id"] or f"call-{i}", "type": "function",
+             "function": {"name": v["name"], "arguments": v["args"]}}
+            for i, (_, v) in enumerate(sorted(calls.items()))
+            if v["name"]
+        ]
+        return {
+            "choices": [{
+                "finish_reason": finish_reason,
+                "message": {
+                    "content": "".join(text_parts) or None,
+                    "tool_calls": tool_calls or None,
+                },
+            }],
+            "usage": usage,
+        }
+
     # -- backend interface ------------------------------------------------
     def create(self, system: str, messages: list, tools: list):
+        payload = {
+            "model": self.model,
+            "temperature": 0,
+            "messages": _to_openai_messages(system, messages),
+            "tools": _to_openai_tools(tools),
+        }
         try:
-            data = self._post({
-                "model": self.model,
-                "temperature": 0,
-                "messages": _to_openai_messages(system, messages),
-                "tools": _to_openai_tools(tools),
-            })
+            if self._force_stream:
+                data = self._post_streaming(payload)
+            else:
+                try:
+                    data = self._post(payload)
+                except StreamingRequiredError:
+                    self._force_stream = True  # latch: this model is streaming-only
+                    data = self._post_streaming(payload)
         except ToolUseFailedError as e:
             return _Block(
                 content=[_Block(type="text", text=f"[model emitted malformed tool call] {e.detail[:300]}")],

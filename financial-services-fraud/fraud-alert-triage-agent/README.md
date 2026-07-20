@@ -43,24 +43,32 @@ Two deceptions in opposite directions, plus a compound clause:
 
 | Model | queue acc | disposition acc | exact match | submitted | $/scenario | p50 latency |
 |---|---|---|---|---|---|---|
-| `kimi-k2p6` (Fireworks) | 0.889 | **0.867** | **0.844** | 0.978 | $0.0090 | 19.0s |
+| `Qwen3.7-Plus` (Together) | **1.000** | **0.967** | **0.967** | 1.000 | $0.0032 | 33.1s |
+| `kimi-k2p6` (Fireworks) | 0.889 | 0.867 | 0.844 | 0.978 | $0.0090 | 19.0s |
 | `gpt-oss-120b` (Fireworks) | 0.789 | 0.700 | 0.600 | 0.911 | $0.0013 | 10.5s |
-| `mistral-small-latest` (free tier) | **0.967** | 0.500 | 0.500 | 1.000 | $0.0004 | 6.0s |
+| `mistral-small-latest` (free tier) | 0.967 | 0.500 | 0.500 | 1.000 | $0.0004 | 6.0s |
 | `mock` (pipeline check, CI) | 0.800 | 0.800 | 0.800 | 1.000 | $0 | — |
 
-Three findings, none of which a single accuracy number would show:
+Four findings, none of which a single accuracy number would show:
 
-- **Every model is biased toward "it's fraud."** All eight of kimi's queue misses are
-  *benign* transactions filed as fraud; gpt-oss makes the same error nine times. No model
-  in this repo ever mistook fraud for benign at the queue level — the error is entirely
-  one-directional, and in production every instance is a legitimate customer blocked.
+- **The fraud-direction bias is common but not inevitable.** Three of the four models
+  over-call fraud on benign transactions and *never* the reverse — all eight of kimi's
+  queue misses are legitimate transactions filed as fraud, and gpt-oss makes the same
+  error nine times. `Qwen3.7-Plus` breaks the pattern with **zero** benign-called-fraud
+  errors and a perfect 1.000 queue accuracy, defeating both deceptions. So the bias is a
+  model property, not a property of the task — which means it's fixable by model choice,
+  and worth measuring before you deploy.
 - **The two weaker models fail on opposite deceptions.** `gpt-oss-120b` trusts the alert
   framing and files travel-notice charges as card fraud; `mistral-small` clears the
   authorized-but-fraudulent APP scams that gpt-oss catches.
-- **Best router ≠ best agent.** Mistral routes almost perfectly (queue **0.967**, better
-  than kimi) but gets the disposition right only half the time — it softens
+- **Best router ≠ best agent.** Mistral routes almost perfectly (queue 0.967, matching the
+  leader) but gets the disposition right only half the time — it softens
   `block_and_notify` on confirmed fraud into the gentler `hold_for_review` 22 times.
   Queue accuracy completely hides it.
+- **Price and quality are decoupled.** The best model here is *cheaper per run than the
+  runner-up* ($0.0032 vs $0.0090) — and the residual errors of the leader are a different
+  and milder class: all three are escalate-vs-block confusion at the high-value boundary,
+  never a missed or invented fraud.
 
 ## Failure modes
 
