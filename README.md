@@ -29,7 +29,7 @@ model backends include free tiers, so reproducing any result costs nothing.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="4 industries shipping, 13 verified model-evals, 22 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="5 industries shipping, 17 verified model-evals, 27 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 ## Four models, one agent
@@ -67,12 +67,13 @@ Every failure has a reproducing scenario id in
 | [🧑‍🍳 shift-coverage-triage-agent](retail-workforce/shift-coverage-triage-agent/) | Retail & Workforce | `investigate` `decide` | When crew call out, what's the compliant fill — overtime, borrow, run short, or escalate — under labor-law caps the ticket never mentions? |
 | [🚨 alert-triage-agent](security-operations/alert-triage-agent/) | Security Ops | `investigate` `decide` | Which queue does each security alert belong in, which can safely auto-close, and which need incident response now? |
 | [🚩 fraud-alert-triage-agent](financial-services-fraud/fraud-alert-triage-agent/) | Financial Services | `investigate` `decide` | Which fraud queue does each transaction alert belong in, which release, which block, and which need the fraud team now? |
+| [🎞️ release-qc-triage-agent](media-streaming/release-qc-triage-agent/) | Media & Streaming | `investigate` `decide` | When QC flags an asset before premiere, who owns the defect and what happens to the release — waive, redeliver, fix in house, delay, or escalate? |
 
 Every use case is tagged by what the agent *does*: `predict` · `decide` · `plan` ·
 `act` · `watch` · `investigate`, plus architecture (`single-agent` / `multi-agent` /
 `human-in-loop`).
 
-Each use case is verified across multiple models on free API tiers. Three findings that
+Each use case is verified across multiple models on free API tiers. Four findings that
 only a per-use-case harness surfaces:
 
 - **There is no best model.** Every model tested wins on one use case and loses on
@@ -84,15 +85,19 @@ only a per-use-case harness surfaces:
   fraud, three of four models over-call fraud on benign transactions and never the
   reverse; `Qwen3.7-Plus` breaks the pattern with zero such errors. The bias an accuracy
   score implies away is real, common, and fixable by model choice.
+- **How you word a rule changes whether it is obeyed.** In media, *every* model honoured
+  the caption rule — zero violations — while missing the ordinary thresholds beside it in
+  the same knowledge base. The obeyed rule was the one written as a legal obligation
+  rather than a number.
 
 ## Industries
 
 | Shipping now | Next waves |
 |---|---|
-| 🚛 [Logistics & Supply Chain](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Operations](security-operations/) · 💳 [Financial Services & Fraud](financial-services-fraud/) | 🎧 Customer Support · 🏥 Healthcare · ⚖️ Legal & Compliance |
+| 🚛 [Logistics](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Ops](security-operations/) · 💳 [Financial Services](financial-services-fraud/) · 🎬 [Media & Streaming](media-streaming/) | 🎧 Customer Support · 🏥 Healthcare · ⚖️ Legal & Compliance |
 
 <details>
-<summary><b>Full 15-industry roadmap</b></summary>
+<summary><b>Full 16-industry roadmap</b></summary>
 <br>
 
 | # | Industry | Status |
@@ -101,17 +106,18 @@ only a per-use-case harness surfaces:
 | 2 | 🛒 Retail & Workforce | ✅ Shipping |
 | 3 | 🛡️ Security Operations | ✅ Shipping |
 | 4 | 💳 Financial Services & Fraud | ✅ Shipping |
-| 5 | 🎧 Customer Support & Success | 🔜 Wave 4 |
-| 6 | 🏥 Healthcare & Life Sciences | 📋 Roadmap |
-| 7 | ⚖️ Legal & Compliance | 📋 Roadmap |
-| 8 | 🏭 Manufacturing & Industrial | 📋 Roadmap |
-| 9 | 🧾 Insurance | 📋 Roadmap |
-| 10 | 👥 HR & Recruiting | 📋 Roadmap |
-| 11 | 📈 Sales & Marketing | 📋 Roadmap |
-| 12 | 🖥️ IT Ops & DevOps | 📋 Roadmap |
-| 13 | ⚡ Energy & Utilities | 📋 Roadmap |
-| 14 | 🏗️ Real Estate & Construction | 📋 Roadmap |
-| 15 | 🎓 Education | 📋 Roadmap |
+| 5 | 🎬 Media & Streaming | ✅ Shipping |
+| 6 | 🎧 Customer Support & Success | 🔜 Next |
+| 7 | 🏥 Healthcare & Life Sciences | 📋 Roadmap |
+| 8 | ⚖️ Legal & Compliance | 📋 Roadmap |
+| 9 | 🏭 Manufacturing & Industrial | 📋 Roadmap |
+| 10 | 🧾 Insurance | 📋 Roadmap |
+| 11 | 👥 HR & Recruiting | 📋 Roadmap |
+| 12 | 📈 Sales & Marketing | 📋 Roadmap |
+| 13 | 🖥️ IT Ops & DevOps | 📋 Roadmap |
+| 14 | ⚡ Energy & Utilities | 📋 Roadmap |
+| 15 | 🏗️ Real Estate & Construction | 📋 Roadmap |
+| 16 | 🎓 Education | 📋 Roadmap |
 
 </details>
 

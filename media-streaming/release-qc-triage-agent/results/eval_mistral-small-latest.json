@@ -1,0 +1,3895 @@
+{
+  "backend": "mistral",
+  "model": "mistral-small-latest",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "action_accuracy": 0.4333,
+    "exact_match": 0.3667,
+    "queue_accuracy": 0.8556,
+    "submitted": 1.0
+  },
+  "metric_ci95": {
+    "action_accuracy": [
+      0.2889,
+      0.5778
+    ],
+    "exact_match": [
+      0.2444,
+      0.4889
+    ],
+    "queue_accuracy": [
+      0.7222,
+      0.9556
+    ],
+    "submitted": [
+      1.0,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.000391,
+  "total_cost_usd": 0.0351,
+  "p50_latency_s": 5.402,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000354,
+      "latency_s": 4.189,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-25818 audio dropout at 00:69:12 is a deliberate creative blackout confirmed by production annotations covering the flagged range. Per RQ-CREATIVE-02, this flag is not a defect; the tentpole release for TTL-78218 proceeds tomorrow with marketing locked and CVAA obligations in the US.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2586,
+          "output_tokens": 319,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000354
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00031,
+      "latency_s": 4.747,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The Long Quiet (TTL-44220) releases in 2 days in APAC and EU, territories that are not CVAA-covered, so the 0.8 s caption drift at 00:37:26 is not a legal hard block. However, the defect is a timed-text issue on a standard-tier title with marketing locked and no in-house caption repair capability available before premiere. Per policy, this requires a delay to allow vendor redelivery or internal fix, so the release is delayed.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2521,
+          "output_tokens": 194,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00031
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000309,
+      "latency_s": 4.825,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Northwind (TTL-84611) premieres in 3 days, marketing is locked, and the territory list includes US where CVAA applies. The lip-sync error (audio leads picture by ~4 frames at 00:29:56) is a major defect, but audio defects are eligible for in-house repair under policy RQ-FIX-04, which can be completed within the remaining schedule. No creative annotations cover the flagged timecode, so the defect is not an intentional creative choice.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2420,
+          "output_tokens": 222,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000309
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000352,
+      "latency_s": 5.402,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-64321 is a video-essence colour-metadata mismatch flagged at 00:06:06. Per RQ-FIX-04, picture defects baked into the essence require vendor redelivery; in-house repair is not possible. TTL-22909 premieres in 8 days, outside the 3-day minor-defect window in RQ-MINOR-03, so a corrected package can be accepted. No creative annotations cover the flagged timecode, and the issue is not an accessibility (CVAA) requirement, so vendor_redelivery is the correct remediation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2488,
+          "output_tokens": 345,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000352
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000462,
+      "latency_s": 6.663,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged compression artefacts at 00:85:26 on AST-30777 are a major video defect. Glass Harbour (TTL-75837) is a standard-tier title with 20 days to premiere in APAC and EU, where CVAA does not apply. In-house repair is not possible for baked-in picture defects (RQ-FIX-04), and vendor redelivery would require ~5 days, exceeding the remaining window. Given the defect\u2019s severity and the lack of creative annotations covering the timecode, this is a commercial escalation per RQ-BOARD-05.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3850,
+          "output_tokens": 258,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000462
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000295,
+      "latency_s": 4.454,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-28159 is a tentpole title with one day to premiere in UK/EU (non-CVAA). The flagged loudness drift (1.4 LU above spec at 00:21:40) is a minor audio defect. In-house repair is not feasible within the release window, and vendor redelivery would miss the marketed premiere. Per policy RQ-BOARD-05, this commercial decision escalates to the release board.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2390,
+          "output_tokens": 188,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000295
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000459,
+      "latency_s": 6.663,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged 22 s digital silence at 00:70:30 is explicitly annotated as an intentional creative choice (director\u2019s cut, no score or room tone) that covers the flagged range. Policy RQ-CREATIVE-02 states that such annotations override detector flags; therefore this is not a defect. Title TTL-87874 is a standard-tier release with 2 days until premiere in UK/EU, marketing is locked, and no CVAA accessibility obligations apply, so waiving and releasing is compliant.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3924,
+          "output_tokens": 223,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000459
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000437,
+      "latency_s": 6.526,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "TTL-21997 is a tentpole title releasing in the US in 3 days with CVAA accessibility obligations. The QC flag is a caption timing drift (~800 ms over 14 events) which constitutes a caption defect under RQ-CVAA-01. No creative annotations cover the flagged timecode. Because the defect is legally blocking and the schedule does not allow in-house repair before premiere, the release must be delayed to ensure compliance.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3760,
+          "output_tokens": 203,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000437
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000309,
+      "latency_s": 4.93,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Paper Cities (TTL-47186) is a tentpole title premiering in 8 days across UK/EU, where CVAA does not impose a hard sync block. The QC flag is an audio-sync offset of 120 ms from 00:55:18, a major defect but not accessibility-critical in these territories. Policy RQ-FIX-04 confirms in-house audio repair is feasible within the window, so expediting an internal fix keeps the release on schedule without vendor delay.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2418,
+          "output_tokens": 224,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000309
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000352,
+      "latency_s": 5.506,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-50799 is a major colour-metadata mismatch between the package descriptor and video essence. The title (TTL-37421, Aster & Vale) is a tentpole release with 20 days until premiere, outside the 3-day patch window. Picture essence defects cannot be repaired in house (policy RQ-FIX-04), so vendor redelivery is required. No creative annotations cover the flagged timecode, and the defect is not an accessibility hard block.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2489,
+          "output_tokens": 344,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000352
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000453,
+      "latency_s": 6.724,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Northwind (TTL-32960) is a tentpole title with a major dropped-frame judder flag at 00:87:17 in AST-67249. The premiere is tomorrow; marketing is locked and the CVAA accessibility rules apply in the US/CA/UK territories. No creative annotations cover the flag. In-house repair is not feasible within the window, and vendor redelivery would miss the premiere. Per RQ-BOARD-05, this is a commercial decision requiring release-board escalation rather than unilateral delay.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3824,
+          "output_tokens": 235,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000453
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000315,
+      "latency_s": 5.182,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Title TTL-36579 (Paper Cities) is a standard-tier release with 2 days until premiere and marketing locked. The audio integrated loudness flag (-21.4 LKFS vs. -27/-23 spec) is a minor spec deviation that can be repaired in house within 2 days per RQ-FIX-04. However, the title is CVAA-covered in the US and CA, and the release board policy RQ-BOARD-05 requires a commercial decision for any defect that could affect accessibility compliance with fewer than 5 days to premiere. Escalating to the release board.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2461,
+          "output_tokens": 230,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000315
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000428,
+      "latency_s": 6.132,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "TTL-60423 (Paper Cities) releases in 3 days to US/CA/UK with CVAA obligations. The QC flag shows total audio loss at 00:87:18, a major defect. Policy RQ-FIX-04 confirms in-house audio repair is possible within 2 days, but given the 3-day window and marketing lock, delaying the release is required to ensure a compliant asset. No creative-annotation override applies to total audio loss.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3723,
+          "output_tokens": 186,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000428
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000435,
+      "latency_s": 6.681,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "TTL-44639 is a US-title with CVAA obligations and the flagged issue is a caption timing drift (~800 ms across 14 events). Policy RQ-CVAA-01 classifies caption defects as a legal hard block; no severity override is permitted. With 8 days to premiere and marketing not yet locked, the only compliant action is to delay the release to allow in-house repair or corrected vendor delivery.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3753,
+          "output_tokens": 199,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000435
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000312,
+      "latency_s": 4.805,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Title TTL-48517 (Sixteen Winters) is a tentpole US release with CVAA obligations, 20 days to premiere, and marketing locked. The lip-sync error (audio leads picture by ~4 frames at 00:63:48) is a major audio defect per policy RQ-FIX-04, but in-house audio repair is permitted and can be completed within the window. No creative annotations cover the flagged timecode, so the defect is not an intentional creative choice. Therefore, expedite_internal_fix is selected.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2420,
+          "output_tokens": 232,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000312
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000347,
+      "latency_s": 5.53,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-94014 is a major video essence defect (colour metadata mismatch) on TTL-50112, \u2018The Long Quiet\u2019. The title premieres tomorrow, marketing is locked, and no territories impose accessibility obligations. Policy RQ-FIX-04 states picture essence defects require vendor redelivery and cannot be repaired in house; policy RQ-MINOR-03 allows delaying the release when remediation exceeds the 3-day window. Therefore the release is delayed and the originating vendor will supply a corrected package.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2487,
+          "output_tokens": 329,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000347
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000454,
+      "latency_s": 6.786,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged judder at 00:09:29 on AST-30240 is not covered by the only creative annotation (handheld camera shake from 00:33:00\u201300:33:40). No policy clause excuses a major video defect this close to premiere in a CVAA-covered territory, so the video-eng queue must remediate. However, the title is tier-standard, marketing is locked, and there are only 2 days until release; vendor turnaround is infeasible. Therefore the asset is expedited for internal repair before premiere.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3821,
+          "output_tokens": 238,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000454
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000618,
+      "latency_s": 8.895,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor audio loudness drift (+1.4 LU) at 00:60:55 on AST-34520 for TTL-58419, \u2018The Long Quiet\u2019. The title is standard tier, premiering in 3 days across US & LATAM with CVAA obligations and locked marketing. Policy RQ-FIX-04 confirms in-house audio repair is possible within 2 days, and RQ-PREF-00 prefers in-house fix over vendor redelivery or delay. Therefore, expedite_internal_fix is selected to repair the audio loudness drift in time for the premiere.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 5402,
+          "output_tokens": 260,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000618
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000587,
+      "latency_s": 8.903,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "check_creative_annotations",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged 22 s digital silence at 00:50:05 is covered by a creative annotation confirming it is an intentional \u2018audio blackout for dramatic effect\u2019. Policy RQ-CREATIVE-02 classifies such intentional creative choices as no-defect, so the asset is cleared for release. The title\u2019s tier is standard, territories are UK/EU (no CVAA obligations), and marketing is not locked, so no further remediation is required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 5246,
+          "output_tokens": 208,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000587
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000317,
+      "latency_s": 4.839,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "TTL-44342 is a tentpole title with a premiere in 20 days and US & LATAM territories, both CVAA-covered. The flagged timing drift (~800 ms across 14 caption events) is a caption defect, which is a legal hard block per RQ-CVAA-01. Creative annotations do not cover the flagged range. In-house repair is feasible within the remaining window, so expedite_internal_fix is the remediation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2536,
+          "output_tokens": 210,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000317
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00036,
+      "latency_s": 5.716,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Major lip-sync error (audio leads by ~4 frames) at 00:09:45 on tentpole title TTL-87012 one day from premiere. Creative annotations do not cover the flagged timecode, so it is not an intentional creative choice. Policy RQ-BOARD-05 requires a commercial decision when a major defect cannot be fixed in house and there is insufficient time for vendor redelivery on a tentpole title with marketed premiere. Escalating to the release board.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2480,
+          "output_tokens": 373,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00036
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000432,
+      "latency_s": 6.471,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged colour-metadata mismatch is a major video defect that cannot be repaired in house (policy RQ-FIX-04). The title premieres in 2 days and marketing is locked, so a waiver is not permissible. Vendor redelivery is required, even though the defect is cosmetic and does not affect playout.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3787,
+          "output_tokens": 179,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000432
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000438,
+      "latency_s": 7.034,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Compression artefacts at 00:17:43 on the picture master of Glass Harbour (tier tentpole, premiere in 3 days) are a major defect detected in spec-inspection. No creative annotations cover the flagged timecode. Vendor redelivery is not feasible within the release window, and in-house repair cannot be guaranteed to restore the file to spec in time. Per RQ-BOARD-05, this is a commercial decision: escalating to the release board for a go / no-go call rather than unilaterally delaying a marketed premiere.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3686,
+          "output_tokens": 230,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000438
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000305,
+      "latency_s": 4.573,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-49850 is an audio loudness drift of 1.4 LU above spec after 00:11:37 on the tentpole title TTL-68649, which premieres in 8 days. The drift is a minor defect per policy, but the title is a tentpole and marketing is not yet locked. In-house repair capability is insufficient for a confident fix within the window, and vendor redelivery would not complete in time. Per RQ-BOARD-05, this is a commercial decision requiring escalation to the release board rather than unilaterally delaying the marketed premiere.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2388,
+          "output_tokens": 221,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000305
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000306,
+      "latency_s": 4.757,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Title TTL-60669 (The Long Quiet) is a US release subject to CVAA accessibility obligations. The QC flag reports total audio loss at 00:39:31, which would render the program undisplayable and legally non-compliant. In-house audio repair is possible within the 20-day window, so per RQ-FIX-04 the release must be delayed to allow expedite_internal_fix. No creative-annotation override applies to total audio loss.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2489,
+          "output_tokens": 191,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000306
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000315,
+      "latency_s": 4.812,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "TTL-85529 (Sixteen Winters) is a tentpole title releasing in 1 day in CVAA-covered US/CA and UK territories. The QC flag is a caption timing drift (~800 ms across 14 events) which is a legally defined caption defect per RQ-CVAA-01. No creative annotations cover the flagged timecode. Policy requires caption defects in CVAA territories to be fixed or result in a delay; waivers are not permitted. Therefore the release must be delayed to allow in-house repair or vendor redelivery.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2481,
+          "output_tokens": 223,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000315
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000326,
+      "latency_s": 4.834,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "TTL-40154 premieres in 2 days with marketing locked; the 120 ms sync offset at 00:62:11 is a major defect not covered by creative annotations. Release policy RQ-FIX-04 permits in-house audio repair within the remaining schedule, so expedite_internal_fix is the appropriate remediation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2462,
+          "output_tokens": 267,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000326
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000411,
+      "latency_s": 6.556,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Flag AST-10263 is a colour metadata mismatch in the package descriptor (not a picture defect) for tentpole title Northwind (TTL-98350) with 3 days to premiere in APAC/EU. Creative annotations do not cover the flagged timecode, so this is not an intentional creative choice. Per RQ-MINOR-03, minor defects inside the 3-day window ship on time and are patched post-release. Per RQ-FIX-04, picture defects baked into the essence require vendor redelivery (~5 days), which is infeasible here. The defect is not accessibility-blocking and does not impact core playback, so waiving and releasing now with a post-release patch is compliant with release policy.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2537,
+          "output_tokens": 524,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000411
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000349,
+      "latency_s": 5.582,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-12849 (TTL-65478, Glass Harbour) has a major video defect at 00:21:06: compression artefacts. No production annotation covers this timecode, and the release-policy knowledge base does not provide a creative-intent override for compression artefacts. The title is a standard-tier release with 8 days until premiere in non-CVAA territories. Expediting an internal fix allows in-house video engineering to repair the artefacts before the premiere window.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2488,
+          "output_tokens": 333,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000349
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000318,
+      "latency_s": 4.783,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The integrated loudness of -21.4 LKFS on audio asset AST-19250 for tentpole title TTL-33631 violates the -27/-23 LKFS delivery spec. The title premieres in 20 days across US and LATAM (CVAA-covered). In-house audio repair is possible within 2 days (policy RQ-FIX-04), but this is a tentpole with marketing not yet locked; per policy RQ-BOARD-05, such a defect on a tentpole with insufficient time for vendor redelivery is a commercial decision requiring escalation to the release board.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2464,
+          "output_tokens": 238,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000318
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000323,
+      "latency_s": 4.845,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The 22 s digital silence at 00:69:12 on AST-25818 is covered by a post-supervisor annotation confirming it is a deliberate audio blackout for dramatic effect. Policy RQ-CREATIVE-02 classifies such intentional creative choices as no-defect. The title is a tentpole premiering tomorrow with marketing locked and CVAA obligations in the US/CA/UK; no remediation is required or permitted under RQ-FIX-04.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2586,
+          "output_tokens": 214,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000323
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000351,
+      "latency_s": 5.567,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-24112 (The Long Quiet) has a closed-caption timing drift of ~0.8 s at 00:37:26. The defect is real and not covered by creative annotations. Territories APAC and EU are not CVAA-covered, so the defect is not a legal hard block. With premiere in 2 days and marketing locked, expediting an internal timed-text fix keeps the release on schedule and avoids a delay or board escalation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2562,
+          "output_tokens": 315,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000351
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000456,
+      "latency_s": 8.2,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Northwind (TTL-84611) is a standard-tier title with 3 days until premiere in CVAA-covered territories. The QC flag is a major lip-sync error (audio leads picture by ~4 frames at 00:29:56) on asset AST-90950. No creative annotations cover the flagged timecode, so the defect is not intentional. In-house repair is possible within 2 days per RQ-FIX-04, but the title is marketed and the window is tight; instead, per RQ-BOARD-05, this is a commercial call best elevated to the release board rather than unilaterally delaying the premiere.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3776,
+          "output_tokens": 262,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000456
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00033,
+      "latency_s": 5.025,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-64321 is a video metadata mismatch that cannot be fixed in house. TTL-22909 premieres in 8 days, so the release window allows vendor redelivery under RQ-MINOR-03. No creative annotations cover the flagged timecode, so the flag is valid and requires a corrected package.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2486,
+          "output_tokens": 271,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00033
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000489,
+      "latency_s": 7.768,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-30777 (Glass Harbour) carries a major, non-creative compression artefact at 00:85:26. Per RQ-FIX-04, picture essence defects cannot be repaired in house and require vendor redelivery (~5 days). With 20 days until premiere and no CVAA obligations, policy permits a unilateral delay rather than escalation. Delaying now keeps the premiere date realistic and avoids last-minute commercial disruption.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3759,
+          "output_tokens": 376,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000489
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000334,
+      "latency_s": 5.202,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-28159 is a minor audio loudness drift (1.4 LU) at 00:21:40 in tentpole title TTL-35102, releasing in UK/EU one day from now with no CVAA obligations. The drift is non-critical and the release window is within policy tolerance for minor audio loudness issues. No accessibility hard block applies. I am waiving the flag and releasing the asset as delivered.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2443,
+          "output_tokens": 299,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000334
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000315,
+      "latency_s": 4.762,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The 22 s digital silence at 00:70:30 is covered by a director\u2019s-cut annotation confirming it is intentional creative silence. Policy RQ-CREATIVE-02 allows us to treat this flag as no-defect. The title is a standard-tier release with marketing locked and only 2 days to premiere; no accessibility obligations apply. Therefore the asset ships as delivered.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2584,
+          "output_tokens": 190,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000315
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00032,
+      "latency_s": 4.793,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "TTL-21997 is a tentpole title releasing in the US in 3 days with CVAA accessibility obligations. The QC flag is a caption timing drift (~800 ms over 14 events) at 00:63:24, which is a legal hard block under RQ-CVAA-01. No creative annotations cover the flagged timecode. Policy requires a delay when in-house repair is infeasible within the release window; here, days_to_premiere=3 and no expedite_internal_fix path is indicated, so the release must be delayed to allow vendor correction or in-house remediation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2478,
+          "output_tokens": 239,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00032
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000444,
+      "latency_s": 6.566,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Paper Cities is a tentpole title with 8 days to premiere in UK/EU (no CVAA obligations). The QC flag is a sustained 120 ms audio sync offset from 00:55:18, a major defect. Production annotations do not cover the flagged timecode. In-house audio repair is possible within 2 days (RQ-FIX-04), but the title\u2019s tentpole status and proximity to premiere make this a commercial decision: escalate to the release board rather than unilaterally delaying or attempting vendor redelivery.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3763,
+          "output_tokens": 227,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000444
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000386,
+      "latency_s": 6.206,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag AST-50799 for TTL-37421 is a package-validation mismatch between colour metadata and video essence, not a defect in the video itself. The issue does not affect playback or compliance. The title is a tentpole release with 20 days until premiere, and marketing is not locked. Per policy RQ-MINOR-03, minor defects outside the 3-day window can ship on time and be patched post-release. Since this is a metadata packaging issue and not a picture essence defect, no vendor redelivery or in-house repair is required. The asset is safe to waive and release.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2489,
+          "output_tokens": 456,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000386
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00032,
+      "latency_s": 4.956,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Northwind (TTL-32960) is a tentpole title with premiere in 1 day across US, CA, UK under CVAA obligations. The dropped-frame judder at 00:87:17 on AST-67249 has no production annotation covering that timecode, so the QC flag stands. However, policy RQ-CREATIVE-02 allows a creative-intent override only when an annotation explicitly covers the flagged range; since none exists here, the flag is valid. Given the proximity to release and the absence of a creative override, the video-eng queue will waive the flag and release the asset as delivered.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2446,
+          "output_tokens": 250,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00032
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000302,
+      "latency_s": 4.375,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Audio integrated loudness of -21.4 LKFS violates the -27/-23 delivery spec for the US/CA/UK territories. Paper Cities is a standard-tier title with only 2 days until premiere, marketing is locked, and CVAA obligations apply. In-house audio repair is possible within 2 days, but the release board must decide whether to accept the deviation or delay the premiere given the proximity to the release window.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2458,
+          "output_tokens": 187,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000302
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00031,
+      "latency_s": 4.782,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Paper Cities (TTL-60423) premieres in 3 days across US, CA, UK; US is CVAA-covered. The QC flag shows total audio loss at 00:87:18 on asset AST-91366. In-house audio repair is possible within 2 days, but the release window is too tight to guarantee a safe re-delivery before premiere. Therefore, per RQ-FIX-04 and the 48-hour remediation SLA, the release must be delayed to allow expedited internal repair.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2493,
+          "output_tokens": 203,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00031
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000306,
+      "latency_s": 4.607,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "TTL-44639 (Northwind) releases in the US in 8 days and is CVAA-covered. The flagged timing drift (~800 ms across 14 caption events) is a caption defect per RQ-CVAA-01, which is a legal hard block. No creative annotations cover the flagged timecode. The schedule does not allow in-house repair before premiere, so the release must be delayed.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2474,
+          "output_tokens": 195,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000306
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000303,
+      "latency_s": 4.761,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Title TTL-48517 (Sixteen Winters) is a tentpole US release with CVAA obligations, premiering in 20 days. The lip-sync error at 00:63:48 is a major audio defect with no creative-annotation cover. Policy RQ-FIX-04 permits in-house audio repair within 2 days, which fits the schedule and avoids a 5-day vendor redelivery delay.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2419,
+          "output_tokens": 205,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000303
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000293,
+      "latency_s": 4.301,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged colour-metadata mismatch is a baked-in picture defect. Policy RQ-FIX-04 states that such defects require vendor redelivery, which takes \u22485 days. With only 1 day to premiere, the release window (RQ-MINOR-03) is too tight for in-house repair, so the vendor must supply a corrected package.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2446,
+          "output_tokens": 162,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000293
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000465,
+      "latency_s": 6.65,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The judder at 00:09:29 on AST-30240 is not covered by the only creative annotation (handheld shake at 00:33:00\u201300:33:40). However, the release context (TTL-39312, standard tier, 2 days to premiere, marketing locked, CVAA-covered territories) and policy RQ-FIX-04 show that in-house picture repair is impossible within the window. No annotation excuses the flag, so the detector\u2019s opinion is treated as a no-defect per RQ-CREATIVE-02 and the asset is released as delivered.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3891,
+          "output_tokens": 252,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000465
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000314,
+      "latency_s": 4.93,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Title TTL-58419 (The Long Quiet) is a standard-tier release with 3 days until premiere in CVAA-covered US and LATAM territories; marketing is locked. The flagged loudness drift (+1.4 LU after 00:60:55) is a minor audio defect with no creative-annotation cover. In-house repair is possible but the release window is too tight for reliable turnaround; given the absence of policy grounds for a waiver and the commercial sensitivity of a marketed premiere, this is a release-board escalation under RQ-BOARD-05.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2428,
+          "output_tokens": 237,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000314
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000349,
+      "latency_s": 5.553,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Annotation on AST-15342 covers the flagged 00:50:05\u201300:50:27 range and confirms the 22 s digital silence is a deliberate creative choice. Policy RQ-CREATIVE-02 treats such creative-intent overrides as no-defect. With 8 days until premiere, no CVAA obligations, and marketing unlocked, the asset can ship as delivered.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2579,
+          "output_tokens": 304,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000349
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000633,
+      "latency_s": 8.551,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-45949 is a timed-text timing-drift flag (~800 ms over 14 events near 00:15:14) on tentpole title TTL-44342, which releases in CVAA-covered US territory in 20 days. Caption defects are a legal hard block per RQ-CVAA-01, so a waiver is impermissible. In-house timed-text repair is available within 2 days per RQ-FIX-04, so expediting an internal fix keeps the premiere date intact while satisfying accessibility obligations.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 5579,
+          "output_tokens": 251,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000633
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000366,
+      "latency_s": 5.55,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Paper Cities (TTL-87012) is a tentpole release tomorrow in CVAA-covered territories with marketing locked. The flagged 4-frame audio-lead lip-sync error at 00:09:45 is a major defect under spec-inspection; production annotations do not cover this timecode, so creative intent does not apply. Policy RQ-FIX-04 permits in-house audio repair within 2 days, which fits the 1-day window. Assigning to audio-eng for expedited internal fix before premiere.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2478,
+          "output_tokens": 394,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000366
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000355,
+      "latency_s": 5.664,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged colour metadata mismatch in AST-42740 (video essence) is a major defect not covered by creative annotations. The title TTL-29453 is in the US (CVAA-covered), marketing is locked, and there are only 2 days until premiere. In-house remediation is not possible for picture defects (policy RQ-FIX-04), and vendor redelivery would take ~5 days, exceeding the release window. Therefore, delaying the release is required to ensure compliance and quality.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2531,
+          "output_tokens": 339,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000355
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000445,
+      "latency_s": 6.531,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-56376 is a tentpole title (TTL-39469) with 3 days to premiere in APAC and EU, where US accessibility rules do not apply. The flagged compression artefact at 00:17:43 is a major video defect with no creative-intent annotation. In-house repair is not possible (RQ-FIX-04), and vendor redelivery would miss the marketed premiere window. Per RQ-BOARD-05, this is a commercial decision requiring escalation to the release board.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3759,
+          "output_tokens": 232,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000445
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000296,
+      "latency_s": 4.669,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-49850 is an audio loudness drift of 1.4 LU above spec at 00:11:37 on tentpole title TTL-68649, 8 days to premiere in APAC and EU where CVAA does not impose a hard block. In-house repair is not available within the window and vendor redelivery would miss marketing. Per RQ-BOARD-05 this is a commercial decision; escalating to the release board.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2388,
+          "output_tokens": 192,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000296
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000315,
+      "latency_s": 4.974,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Title TTL-60669 (The Long Quiet) is a US release subject to CVAA accessibility rules. The QC flag reports total audio loss at 00:39:31, which would render the program unduly difficult for viewers who rely on audio cues. Policy RQ-CVAA-01 treats audio defects as a legal hard block in CVAA-covered territories. With 20 days until premiere and marketing not yet locked, delaying the release to allow audio repair is the only compliant option. Audio-eng can expedite an in-house fix per RQ-FIX-04, but the delay is required to meet accessibility obligations.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2488,
+          "output_tokens": 222,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000315
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000459,
+      "latency_s": 6.517,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-39543 is a timed-text track for TTL-85529 (Sixteen Winters), a tentpole title with a premiere tomorrow in CVAA-covered US/CA/UK territories. The flag is a caption timing drift (~800 ms across 14 events near 00:88:19) and is therefore a legal hard block under RQ-CVAA-01. Marketing is locked and the defect cannot be repaired in house within one day, so per RQ-BOARD-05 this is a commercial decision requiring release-board escalation rather than unilateral delay or waiver.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3846,
+          "output_tokens": 247,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000459
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000339,
+      "latency_s": 5.654,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Paper Cities (TTL-40154) premieres in 2 days in APAC and EU, territories without CVAA-mandated audio-sync hard blocks. The 120 ms offset at 00:62:11 is outside any creative-annotation range. Policy RQ-FIX-04 permits in-house audio repair within the release window, so I am assigning this to audio-eng for expedited internal fix.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2462,
+          "output_tokens": 310,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000339
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000354,
+      "latency_s": 5.79,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-10263 is a video-essence colour-metadata mismatch that cannot be repaired in house and would require vendor redelivery in ~5 days, per RQ-FIX-04. TTL-98350 is a tentpole premiering in 3 days with marketing locked and no CVAA obligations in APAC/EU; delaying the release is the only policy-compliant remediation that protects the premiere window.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2470,
+          "output_tokens": 357,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000354
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000342,
+      "latency_s": 5.152,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-12849 (TTL-65478, Glass Harbour) has a major QC flag for compression artefacts at 00:21:06 with no covering creative annotation. The title is a standard-tier release with 8 days until premiere in UK/EU territories without CVAA obligations. Policy does not provide for waiving compression artefact flags under creative intent; therefore, vendor_redelivery is required to supply a corrected package before the premiere.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2488,
+          "output_tokens": 311,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000342
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000307,
+      "latency_s": 4.708,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The integrated loudness of -21.4 LKFS violates the -27/-23 delivery spec, but this is a tentpole title with 20 days until premiere in CVAA-covered US territory. In-house audio repair is possible within 2 days per RQ-FIX-04, yet the release board must weigh the commercial impact of a marketing-lock delay versus the minor severity of the loudness deviation. Escalating per RQ-BOARD-05 ensures a commercial decision is made.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2461,
+          "output_tokens": 203,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000307
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000323,
+      "latency_s": 4.455,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The 22 s digital silence at 00:69:12 on AST-25818 is covered by a post-supervisor annotation confirming it is a deliberate audio blackout for dramatic effect. Policy RQ-CREATIVE-02 classifies such intentional creative choices as no-defect. The title is a tentpole premiering tomorrow with marketing locked and CVAA obligations in the US/CA/UK; no remediation is required or permitted under RQ-FIX-04.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2586,
+          "output_tokens": 214,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000323
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000317,
+      "latency_s": 4.657,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged caption drift (0.8 s) is a caption defect under RQ-CVAA-01, but CVAA does not cover APAC/EU (TTL-44220 territories). Severity is minor and marketing is locked with only 2 days to premiere. Policy allows waiving non-CVAA caption defects when schedule pressure is high. However, timed-text engineering lacks in-house repair capability for sync repairs, so vendor_redelivery is the only remediation path. Vendor turnaround exceeds the 2-day window, so the release must be delayed to maintain compliance with internal defect-handling policy.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2521,
+          "output_tokens": 215,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000317
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000299,
+      "latency_s": 4.766,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Northwind (TTL-84611) premieres in 3 days and is CVAA-covered in US/CA. The lip-sync error at 00:29:56 is a major audio defect with no creative-annotation cover. Policy RQ-FIX-04 allows in-house repair for audio issues within 2 days, which fits the schedule.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2420,
+          "output_tokens": 191,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000299
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00033,
+      "latency_s": 4.83,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-64321 is a video metadata mismatch that cannot be fixed in house. TTL-22909 premieres in 8 days, so the release window allows vendor redelivery under RQ-MINOR-03. No creative annotations cover the flagged timecode, so the flag is valid and requires a corrected package.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2486,
+          "output_tokens": 271,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00033
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000445,
+      "latency_s": 7.201,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports compression artefacts at 00:85:26 in AST-30777. The title\u2019s release context (TTL-75837, 20 days to premiere, APAC/EU territories, no CVAA obligations) permits creative-intent waivers. No production annotations were filed, so creative intent cannot be invoked. However, the detector stage is automated-qc and the severity is major, but the flag does not correspond to a known defect type that would block release under policy RQ-CREATIVE-02. Therefore, the flag is treated as no-defect and the asset is released as delivered.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3715,
+          "output_tokens": 246,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000445
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000295,
+      "latency_s": 4.496,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-28159 is a tentpole title premiering tomorrow in UK/EU (no CVAA obligations). The flagged loudness drift (1.4 LU above spec after 00:21:40) is a minor audio defect that cannot be internally repaired within the 1-day window. Per policy RQ-BOARD-05, this becomes a commercial decision: escalate to the release board rather than unilaterally delaying a marketed premiere.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2390,
+          "output_tokens": 187,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000295
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000329,
+      "latency_s": 4.895,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged 22 s of digital silence at 00:70:30 is explicitly covered by a director\u2019s-note annotation confirming it as an intentional creative choice (silent scene) in the director\u2019s cut. Policy RQ-CREATIVE-02 states that such creative-intent annotations override detector flags; therefore this is not a defect. The title is in its final marketing window (marketing locked, 2 days to premiere) and carries no US CVAA accessibility obligations, so waiving and releasing is compliant with RQ-CREATIVE-02 and RQ-FIX-04.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2584,
+          "output_tokens": 237,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000329
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00031,
+      "latency_s": 4.502,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "TTL-21997 is a tentpole title releasing in the US in 3 days; US is CVAA-covered. The flagged timing drift (~800 ms across 14 caption events) is a caption defect per RQ-CVAA-01, which is a legal hard block. No creative annotations cover the flagged timecode. The schedule does not allow in-house repair before premiere, so the only compliant action is to delay the release until captions are corrected.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2478,
+          "output_tokens": 206,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00031
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000311,
+      "latency_s": 4.947,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Paper Cities is a tentpole title with 8 days to premiere in UK/EU (no CVAA obligations). The QC flag records a sustained 120 ms audio/video sync offset from 00:55:18, which is a major defect. No creative annotations cover the flagged region, so the offset is unintended. In-house repair capability is insufficient for an audio-sync fix this close to premiere, and vendor redelivery would miss the marketing window. Per policy RQ-BOARD-05, this becomes a commercial decision: escalate to the release board.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2419,
+          "output_tokens": 232,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000311
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000315,
+      "latency_s": 4.982,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-50799 is a major colour-metadata mismatch between the package descriptor and the video essence on tentpole title TTL-37421 (Aster & Vale) at 00:91:48. No creative-annotations cover the flag, so the flag is valid. The title premieres in 20 days across US, CA and UK (all CVAA-covered). In-house repair is not available for this class of defect and vendor redelivery would miss the marketing window. Per policy RQ-BOARD-05, this is a commercial decision requiring release-board escalation rather than unilateral delay.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2425,
+          "output_tokens": 242,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000315
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00032,
+      "latency_s": 5.012,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Northwind (TTL-32960) is a tentpole title with premiere in 1 day; marketing is locked and CVAA obligations apply in US/CA/UK. The dropped-frame judder at 00:87:17 has no production annotation covering that timecode, so the flag stands as a real defect. However, the release-policy knowledge base (RQ-CREATIVE-02) states that creative-intent overrides detector flags only when explicitly annotated; absent such an annotation, the defect must be remediated. Given the one-day window and the absence of in-house repair capability for this specific artefact, the only compliant action is vendor_redelivery.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2446,
+          "output_tokens": 253,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00032
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00031,
+      "latency_s": 5.052,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Audio integrated loudness -21.4 LKFS is 4.4 dB outside the -27/-23 delivery spec on a standard-tier title with only 2 days until premiere in CVAA-covered territories. In-house repair is possible but policy RQ-FIX-04 notes that audio defects can be remediated in ~2 days; however, the release board escalation rule RQ-BOARD-05 applies because this is a tentpole-adjacent title with marketing locked and too little time left for vendor redelivery. Commercial decision required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2458,
+          "output_tokens": 214,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00031
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000342,
+      "latency_s": 5.74,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-91366 (Paper Cities) has a total audio loss at 00:87:18. The title is standard tier, premieres in 3 days, and is releasing in CVAA-covered territories (US, CA). Marketing is locked. Policy RQ-FIX-04 confirms in-house audio repair is possible within 2 days, which fits the schedule. No creative annotations were checked because total audio loss is not a creative intent issue. Therefore, expedite_internal_fix is selected to repair the audio before premiere.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2494,
+          "output_tokens": 309,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000342
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000442,
+      "latency_s": 7.237,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Northwind (TTL-44639) is a US-title with CVAA obligations. The timed-text flag AST-76734 shows ~800 ms drift across 14 caption events at 00:44:03, which is a caption defect per policy RQ-CVAA-01. Although the tier is standard and marketing is not locked, accessibility defects are a legal hard block. With 8 days until premiere, an in-house fix is feasible; therefore the release must be delayed to ensure compliance.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3753,
+          "output_tokens": 221,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000442
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000491,
+      "latency_s": 7.542,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-78645 shows a major lip-sync error (audio leads picture by ~4 frames at 00:63:48) on tentpole title TTL-48517, which is subject to US CVAA accessibility obligations and has 20 days until premiere. Production annotations do not cover the flagged timecode, so the defect is not creative intent. In-house audio repair is feasible within the release window per RQ-FIX-04, and expediting an internal fix avoids the longer vendor redelivery timeline while mitigating commercial risk for a tentpole premiere.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3774,
+          "output_tokens": 378,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000491
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00034,
+      "latency_s": 5.798,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-94014 is a major video essence defect (colour metadata mismatch) on TTL-50112, \u2018The Long Quiet\u2019. The title premieres tomorrow with marketing locked and no CVAA obligations. Policy RQ-FIX-04 states picture defects baked into the essence require vendor redelivery and cannot be repaired in house within the release window. With only one day remaining, the compliant action is to delay_release until a corrected package can be supplied.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2487,
+          "output_tokens": 303,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00034
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00034,
+      "latency_s": 5.171,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Title TTL-39312 (Northwind) premieres in 2 days with marketing locked and CVAA obligations in US/CA/UK. The dropped-frame judder at 00:09:29 on AST-30240 is not covered by any creative annotation and no creative-intent waiver exists in policy. Remediation via vendor redelivery or internal repair is infeasible within the release window, so the premiere must be delayed to ensure compliance and quality.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2499,
+          "output_tokens": 300,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00034
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001317,
+      "latency_s": 15.274,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Title TTL-58419 (The Long Quiet) is a standard-tier release in US & LATAM with CVAA obligations, 3 days to premiere, and marketing locked. The flagged issue is a minor audio loudness drift (+1.4 LU) at 00:60:55, which is an audio defect remediable in-house within 2 days per RQ-FIX-04. Given the short window and accessibility obligations, expediting an internal fix is the only compliant remediation that keeps the premiere date.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 7,
+          "input_tokens": 12268,
+          "output_tokens": 302,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001317
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000323,
+      "latency_s": 4.747,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged 22 s digital silence at 00:50:05 on AST-15342 is covered by a post-supervisor annotation marking it as a deliberate audio blackout for dramatic effect. Policy RQ-CREATIVE-02 states that such creative-intent overrides are not defects; therefore the asset is cleared for release. The title\u2019s tier is standard, premiere is 8 days away, and territories are UK/EU (no CVAA obligations), so no further remediation is required.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2579,
+          "output_tokens": 218,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000323
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000628,
+      "latency_s": 7.831,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-45949 is a timed-text defect (caption timing drift ~800 ms) in a CVAA-covered territory (US) 20 days before premiere. CVAA rules (RQ-CVAA-01) forbid waiving caption defects regardless of severity or schedule. The minor-severity rule (RQ-MINOR-03) does not override accessibility hard-block policy. In-house repair is feasible within the remaining window, so expedite_internal_fix is selected.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 5579,
+          "output_tokens": 235,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000628
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000371,
+      "latency_s": 5.508,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Title TTL-87012 ('Paper Cities') is a tentpole release with a premiere in 1 day, covering US, CA, and UK territories with CVAA obligations and locked marketing. The lip-sync error (audio leads picture by ~4 frames at 00:09:45) on asset AST-67142 is not covered by creative annotations. Policy RQ-FIX-04 permits in-house audio defect repair within ~2 days, making expedited internal fix the optimal remediation given the tight release window.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2478,
+          "output_tokens": 410,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000371
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000366,
+      "latency_s": 5.792,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-42740 is a video-essence packaging defect (colour metadata mismatch) on a CVAA-covered title inside the 3-day window. In-house picture repair is not possible (RQ-FIX-04), so vendor_redelivery is required. The defect is not accessibility-critical, but the video essence cannot be fixed internally, making redelivery the only compliant remediation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2531,
+          "output_tokens": 376,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000366
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000432,
+      "latency_s": 6.36,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-56376 is a tentpole title with 3 days to premiere in APAC and EU (no CVAA obligations). The QC flag records compression artefacts at 00:17:43 as a major video defect, but no creative annotations cover that timecode. In-house repair is not feasible within the window and vendor redelivery would miss marketing commitments. Per RQ-BOARD-05, this is a commercial decision: escalate to the release board.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3686,
+          "output_tokens": 212,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000432
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000295,
+      "latency_s": 4.976,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor audio loudness drift (+1.4 LU) on a tentpole title with 8 days until premiere in APAC and EU (no CVAA obligations). In-house repair is possible but the drift is a commercial call per release-policy clause RQ-BOARD-05: a tentpole defect that cannot be fixed in house with insufficient time for vendor redelivery must be escalated to the release board rather than unilaterally delaying the marketed premiere.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2388,
+          "output_tokens": 187,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000295
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000432,
+      "latency_s": 6.515,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports total audio loss at 00:39:31 on AST-78248 for TTL-60669, The Long Quiet. The title is US-CVAA covered, standard tier, with 20 days to premiere and marketing not yet locked. Policy RQ-BOARD-05 requires escalation to the release board for a major defect that cannot be fixed in house and leaves too little time for vendor redelivery on a marketed title.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3723,
+          "output_tokens": 198,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000432
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000315,
+      "latency_s": 4.771,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "TTL-85529 (Sixteen Winters) is a tentpole title releasing in 1 day in CVAA-covered US and CA territories. The QC flag is a caption timing drift (~800 ms) at 00:88:19, which is a legally hard-blocking defect under RQ-CVAA-01. No creative annotations cover the flagged timecode. Because the premiere is within 1 day and in-house repair would not complete in time, the only policy-compliant action is to delay the release until captions are corrected.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2481,
+          "output_tokens": 224,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000315
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001057,
+      "latency_s": 134.065,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Title TTL-40154 is a standard-tier release in APAC and EU, with premiere in 2 days and marketing locked. The flagged 120 ms audio/video sync offset is an audio defect that can be repaired in-house within 2 days per RQ-FIX-04. Given the tight schedule, expediting internal fix is the remediation path.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 6,
+          "input_tokens": 9844,
+          "output_tokens": 242,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001057
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000477,
+      "latency_s": 7.155,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-10263 is a major colour-metadata mismatch in the video essence on tentpole title Northwind (TTL-98350) with three days to premiere. Policy RQ-FIX-04 states picture defects cannot be fixed in house and require vendor redelivery (~5 days), which would miss the premiere. RQ-BOARD-05 requires escalation to the release board for a commercial decision when a tentpole cannot be fixed in house and time is too short for vendor redelivery.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3876,
+          "output_tokens": 299,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000477
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000568,
+      "latency_s": 9.428,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "search_release_policy",
+          "check_creative_annotations",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged compression artefact at 00:21:06 is a major video defect on a standard-tier title with eight days until premiere in UK/EU territories that have no CVAA obligations. Production annotations do not cover the flagged timecode, so creative intent cannot waive the defect. In-house repair is not available within the release window, and vendor redelivery would breach the marketing lock. Per policy RQ-BOARD-05, this is a commercial decision requiring release-board oversight rather than unilateral delay.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 5015,
+          "output_tokens": 221,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000568
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000317,
+      "latency_s": 4.806,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The integrated loudness of -21.4 LKFS for asset AST-19250 (title TTL-33631, 'The Long Quiet') violates the -27/-23 LKFS delivery spec. The title is a tentpole with 20 days to premiere in CVAA-covered US and LATAM territories. In-house audio remediation is possible within 2 days per RQ-FIX-04, but the release board must decide whether to accept a waiver or mandate vendor redelivery given the tight schedule and commercial impact, as this is a tentpole title with marketing not yet locked.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2464,
+          "output_tokens": 235,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000317
+        }
+      }
+    }
+  ]
+}

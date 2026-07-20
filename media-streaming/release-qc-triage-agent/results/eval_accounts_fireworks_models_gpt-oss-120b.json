@@ -1,0 +1,3944 @@
+{
+  "backend": "fireworks",
+  "model": "accounts/fireworks/models/gpt-oss-120b",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "action_accuracy": 0.8,
+    "exact_match": 0.8,
+    "queue_accuracy": 0.9778,
+    "submitted": 0.9778
+  },
+  "metric_ci95": {
+    "action_accuracy": [
+      0.6667,
+      0.9111
+    ],
+    "exact_match": [
+      0.6667,
+      0.9111
+    ],
+    "queue_accuracy": [
+      0.9444,
+      1.0
+    ],
+    "submitted": [
+      0.9444,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.001643,
+  "total_cost_usd": 0.1479,
+  "p50_latency_s": 13.93,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001902,
+      "latency_s": 12.811,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major audio dropout (22\u202fs of digital silence) at 00:69:12 on a tentpole title with 1\u202fday to premiere. Production annotations include a deliberate audio blackout covering the exact timecode, approved by the post supervisor. Per policy RQ-CREATIVE-02, a creative annotation that covers the flagged range supersedes the detector flag, classifying the behavior as intentional rather than a defect. Consequently the flag is recorded as no-defect and the asset can be shipped as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6789,
+          "output_tokens": 1473,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001902
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00149,
+      "latency_s": 13.149,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "search_release_policy",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged issue is a caption sync drift (0.8\u202fs) classified as a minor timed\u2011text defect (is_caption_defect = true). The title releases in APAC and EU territories, which are not covered by US CVAA accessibility obligations, so the hard\u2011block rule RQ\u2011CVAA\u201101 does not apply. According to policy RQ\u2011MINOR\u201103, minor defects that are within the 3\u2011day release window may ship on schedule and be patched post\u2011release. With 2\u202fdays remaining to premiere and marketing locked, the safest path is to waive the flag and release the asset as delivered, scheduling a post\u2011release caption fix if needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5383,
+          "output_tokens": 1138,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00149
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002235,
+      "latency_s": 15.535,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major audio defect (lip\u2011sync error) on a standard\u2011tier title with 3 days until premiere. Policy RQ\u2011FIX\u201104 confirms audio issues can be repaired in\u2011house within ~2 days, and RQ\u2011PREF\u201100 mandates preferring an in\u2011house fix before any delay or vendor redelivery. The 2\u2011day remediation fits within the 3\u2011day window, and marketing is locked, so we must resolve before release. Therefore we assign the issue to the audio\u2011eng queue and expedite an internal fix.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 8330,
+          "output_tokens": 1642,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002235
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00143,
+      "latency_s": 10.831,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect: colour metadata in the package descriptor mismatches the video essence (00:06:06). No creative annotation covers this range, so it is not an intentional choice. Release\u2011policy RQ-FIX-04 states that picture defects baked into the video essence cannot be repaired in\u2011house and must be corrected by the originating vendor, typically requiring ~5\u202fdays. With 8\u202fdays remaining to premiere, vendor redelivery fits within the release window, so the appropriate remediation is to assign the issue to video\u2011eng for vendor redelivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5028,
+          "output_tokens": 1126,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00143
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001396,
+      "latency_s": 11.59,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major video defect (compression artifacts baked into the picture essence) with no creative annotation covering the timecode. Policy RQ-FIX-04 states that picture defects baked into the video cannot be repaired in\u2011house and require vendor redelivery, which typically takes ~5\u202fdays. With 20\u202fdays remaining to the premiere and the title being a standard\u2011tier release (not a tentpole), there is sufficient time for the vendor to supply a corrected package, so the appropriate remediation is to assign the issue to the video\u2011eng queue for vendor redelivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5077,
+          "output_tokens": 1057,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001396
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002729,
+      "latency_s": 20.713,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag concerns a minor audio loudness drift (1.4 LU) on a tentpole title (TTL-35102) with only 1 day remaining to premiere. The title releases in UK/EU territories, which are not CVAA\u2011covered, and the defect is not a caption issue. According to policy RQ-MINOR-03, minor defects that occur within the 3\u2011day release window are shipped on schedule and patched post\u2011release. In\u2011house audio remediation (RQ\u2011FIX\u201104) would require ~2 days, exceeding the premiere deadline, so the appropriate action is to waive the defect and release the asset as delivered, with a post\u2011release patch.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 10542,
+          "output_tokens": 1913,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002729
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001054,
+      "latency_s": 7.549,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio dropout at 00:70:30 is covered by a production annotation indicating intentional silence for a director's cut scene. Policy on creative intent states that when a flag aligns with a documented creative choice, the issue is not a defect and may be waived. The title \"Sixteen Winters\" is two days from premiere on a standard tier, with no CVAA obligations in its UK/EU territories, so no accessibility hard block applies. Therefore we waive the flag and release the asset as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3892,
+          "output_tokens": 783,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001054
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001414,
+      "latency_s": 12.302,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged subtitle timing drift is a caption defect (is_caption_defect=true) on a tentpole title releasing in the US, which is CVAA-covered. Per policy RQ-CVAA-01, caption defects in CVAA territories are a legal hard block and cannot be waived. The policy mandates fixing the defect in\u2011house if the schedule permits, otherwise delaying the release. With only 3 days to premiere, the defect (minor timing drift across 14 events) can be corrected by the timed\u2011text team within the available window, and marketing is already locked, so a rapid internal fix is the only compliant path. Hence the flag is owned by the timed\u2011text queue and the appropriate action is to expedite an internal fix.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5150,
+          "output_tokens": 1069,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001414
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001338,
+      "latency_s": 11.321,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major audio sync offset (120\u202fms) on asset AST-68883 for the tentpole title \"Paper Cities\" (TTL-47186). The release is 8 days from premiere, with no CVAA obligations and marketing not locked. According to release\u2011policy RQ\u2011FIX\u201104, audio defects are repairable in\u2011house within ~2\u202fdays, and RQ\u2011PREF\u201100 mandates preferring an in\u2011house fix before vendor redelivery or delay. The schedule comfortably allows a 2\u2011day internal repair, so the issue should be owned by the audio\u2011eng queue and resolved via an expedited internal fix.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5081,
+          "output_tokens": 959,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001338
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001777,
+      "latency_s": 14.223,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect (colour metadata mismatch) with no creative annotation covering the timecode. Policy RQ-FIX-04 states picture defects baked into the video essence cannot be fixed in\u2011house and require vendor redelivery (\u22485\u202fdays). The title is a tentpole with 20\u202fdays to premiere, providing sufficient lead time for vendor correction without impacting the scheduled release, and marketing is not locked. Therefore the issue is assigned to the video\u2011eng queue for vendor redelivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6597,
+          "output_tokens": 1313,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001777
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001517,
+      "latency_s": 10.813,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "check_creative_annotations",
+          "get_qc_flag",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged dropped\u2011frame judder is a major video defect on a tentpole title (TTL\u201132960) with only 1\u202fday remaining to the marketed premiere and marketing locked. Production annotations provide no creative justification. Policy RQ\u2011FIX\u201104 states picture defects cannot be repaired in\u2011house and require vendor redelivery, which takes ~5\u202fdays\u2014far longer than the available window. According to RQ\u2011BOARD\u201105, a major defect that cannot be fixed in\u2011house and lacks sufficient time for vendor redelivery on a tentpole must be escalated to the release board for a commercial decision rather than unilaterally delaying the release. Therefore the issue is owned by video\u2011eng and the appropriate action is to escalate to the release board.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5048,
+          "output_tokens": 1267,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001517
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00156,
+      "latency_s": 11.809,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "check_creative_annotations",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio loudness deviation is a minor defect (integrated -21.4 LKFS vs spec -27/-23). The title \"Paper Cities\" is two days from premiere, which falls within the 3\u2011day release\u2011window threshold defined in policy RQ\u2011MINOR\u201103. Minor defects inside this window are permitted to ship on schedule and be patched post\u2011release. No creative annotation justifies the deviation, and the issue is not an accessibility hard block. Therefore the audio\u2011eng queue can waive the flag and release the asset as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5217,
+          "output_tokens": 1296,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00156
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00145,
+      "latency_s": 9.595,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio loss flag is covered by a production annotation that explicitly marks the blackout from 00:87:18 to 00:87:59 as a deliberate creative choice approved by the post supervisor. According to policy RQ-CREATIVE-02, such intentional creative intent overrides detector flags, classifying the flag as no-defect. Therefore the asset can be waived and released as delivered despite the major severity and the upcoming premiere in 3 days.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5190,
+          "output_tokens": 1119,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00145
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001435,
+      "latency_s": 9.761,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The title 'Northwind' (TTL-44639) releases in the US, a CVAA\u2011covered territory. The QC flag is a caption timing drift (is_caption_defect = true) and therefore falls under policy RQ-CVAA-01, which states that caption defects are a legal hard block and cannot be waived. The policy requires the defect be fixed in\u2011house if the schedule permits, otherwise the release must be delayed. With 8 days remaining to premiere, the schedule allows an internal repair, so we assign the timed\u2011text queue and order an expedite_internal_fix before the premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5131,
+          "output_tokens": 1109,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001435
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001433,
+      "latency_s": 9.868,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag reports a major audio sync defect (audio leads picture by ~4 frames) on asset AST-78645. No creative annotation covers the timecode, so the issue is a genuine defect. The release is a tentpole title with 20 days remaining before premiere, and the US territory is CVAA\u2011covered, making the defect a hard accessibility block. Policy RQ\u2011FIX\u201104 confirms that audio defects can be repaired in\u2011house within ~2 days, and RQ\u2011PREF\u201100 mandates preferring an in\u2011house fix before any vendor redelivery or delay. With ample time before the premiere, an expedited internal repair satisfies the accessibility requirement and meets the release schedule, so we assign the flag to the audio\u2011eng queue for an expedited internal fix.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5088,
+          "output_tokens": 1116,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001433
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002682,
+      "latency_s": 20.322,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": null,
+          "action": null
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy"
+        ],
+        "refused": false,
+        "error": "no submission within 8 turns",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 10234,
+          "output_tokens": 1912,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002682
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001487,
+      "latency_s": 11.923,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major video defect (dropped\u2011frame judder) with no creative annotation covering the flagged timecode, thus it is a genuine defect. Policy RQ\u2011FIX\u201104 states picture defects baked into the video essence cannot be repaired in\u2011house and require vendor redelivery, which takes ~5\u202fdays. The release context shows only 2\u202fdays remain to the premiere (standard tier, marketing locked). Vendor redelivery would miss the premiere window, so the preferred remediation (vendor redelivery) is not schedule\u2011compatible. According to the remediation preference order (RQ\u2011PREF\u201100), when no compliant remediation fits the schedule, the next option is to delay the release. Therefore we assign the flag to the video\u2011eng queue and delay the release to allow a vendor redelivery before the new premiere date.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5184,
+          "output_tokens": 1183,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001487
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001394,
+      "latency_s": 21.723,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged audio loudness drift is a minor defect with no creative annotation. Policy RQ-FIX-04 confirms audio issues can be repaired in\u2011house within ~2\u202fdays. With 3\u202fdays remaining to premiere (standard tier, US/LATAM, CVAA covered) the in\u2011house fix meets the schedule, and the remediation preference order (RQ-PREF-00) prioritises an internal fix over vendor redelivery or delay. Therefore the audio\u2011eng queue should expedite an internal fix before release.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5107,
+          "output_tokens": 1046,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001394
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001503,
+      "latency_s": 18.308,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio dropout at 00:50:05 is covered by a production annotation that explicitly marks a deliberate audio blackout for dramatic effect, approved by the post supervisor. According to policy RQ-CREATIVE-02, such creative intent overrides detector flags, classifying the flag as no-defect. With the premiere 8 days away and no accessibility obligations for these territories, no remediation is required; the asset can be waived and released as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5209,
+          "output_tokens": 1202,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001503
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001815,
+      "latency_s": 13.867,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged subtitle timing drift is a caption defect (minor severity) on a tentpole title (TTL-44342) releasing in CVAA\u2011covered territories (US, LATAM). Policy RQ\u2011CVAA\u201101 makes caption defects a legal hard block that cannot be waived; they must be fixed before release. RQ\u2011FIX\u201104 confirms timed\u2011text defects can be repaired in\u2011house within ~2 days. With 20 days remaining to premiere, the schedule comfortably allows an in\u2011house repair, so we assign the issue to the timed\u2011text engineering queue and order an expedited internal fix.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6838,
+          "output_tokens": 1316,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001815
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001462,
+      "latency_s": 11.831,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major audio\u2011sync defect (audio leads picture by ~4 frames) on a tentpole title (Paper Cities) with only 1\u202fday left to premiere and marketing locked. No creative annotation justifies the issue. According to the Release remediation preference order (RQ\u2011PREF\u201100) we must first attempt an in\u2011house fix. Audio\u2011sync adjustments are within our internal repair capability and can be applied quickly, satisfying the accessibility obligations (CVAA) without requiring caption changes. Vendor redelivery is infeasible given the 1\u2011day window, and delaying the release would breach the marketed premiere. Therefore we expedite an internal fix via the audio\u2011eng queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5212,
+          "output_tokens": 1133,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001462
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002617,
+      "latency_s": 39.873,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect (colour metadata mismatch) detected at package\u2011validation. No creative annotation covers the timecode, so it is not intentional. Per policy RQ\u2011FIX\u201104, picture defects baked into the video essence cannot be repaired in\u2011house and require vendor redelivery, which takes ~5\u202fdays. The title \"Sixteen Winters\" premieres in 2\u202fdays, with marketing locked, so vendor redelivery cannot meet the deadline. Policy RQ\u2011BOARD\u201105 mandates that when a major defect cannot be fixed in\u2011house and there is insufficient time for vendor redelivery, the decision must be escalated to the release board rather than unilaterally delaying a marketed premiere. Therefore the issue is owned by video\u2011eng and the appropriate action is to escalate to the release board.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 8389,
+          "output_tokens": 2264,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002617
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001765,
+      "latency_s": 16.171,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major video compression artefact baked into the picture essence (cannot be repaired in\u2011house, per RQ\u2011FIX\u201104) on a tentpole title with only 3 days to premiere. Vendor redelivery requires ~5 days, exceeding the remaining window. Policy RQ\u2011BOARD\u201105 mandates that for a major, non\u2011in\u2011house\u2011fixable defect on a tentpole title with insufficient time for vendor redelivery, the issue must be escalated to the release board rather than unilaterally delaying a marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6628,
+          "output_tokens": 1284,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001765
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001868,
+      "latency_s": 27.237,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged audio loudness drift is a minor defect on a tentpole title (TTL-68649) with 8 days remaining to premiere. Policy RQ-FIX-04 confirms audio issues can be repaired in\u2011house within ~2 days, and RQ-MINOR-03 allows minor defects outside the 3\u2011day window to be corrected before release. With sufficient lead time and no CVAA obligations, we assign the issue to the audio\u2011eng queue and expedite an internal fix to meet the scheduled premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6663,
+          "output_tokens": 1447,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001868
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001263,
+      "latency_s": 9.808,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio loss flag at 00:39:31 is covered by a production annotation that explicitly marks the silence as an intentional creative choice (director's cut). According to policy RQ-CREATIVE-02, such annotated behavior is not considered a defect and should be recorded as no-defect. The title \"The Long Quiet\" is a standard\u2011tier release with 20 days to premiere in the US (CVAA\u2011covered), but the CVAA hard\u2011block rule (RQ-CVAA-01) applies only to caption/subtitle defects, not audio. Therefore the flag can be waived and the asset released as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5238,
+          "output_tokens": 795,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001263
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001623,
+      "latency_s": 13.385,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged subtitle timing drift is a caption defect (is_caption_defect=true) on a title (TTL-85529) releasing in CVAA\u2011covered territories (US, CA, UK) with the premiere tomorrow (days_to_premiere=1). Policy RQ\u2011CVAA\u201101 states that caption defects are a legal hard block and cannot be waived; they must be fixed in\u2011house if the schedule permits, otherwise the release must be delayed. In\u2011house remediation for timed\u2011text issues takes ~2\u202fdays per RQ\u2011FIX\u201104, which exceeds the 1\u2011day window before premiere. Consequently the only compliant remediation is to delay the release. The timed\u2011text engineering queue owns the defect.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5511,
+          "output_tokens": 1327,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001623
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001403,
+      "latency_s": 10.921,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag reports a major audio sync offset (120\u202fms) at 00:62:11 with no creative annotation covering the range, so it is a genuine defect. Policy RQ-PREF-00 mandates preferring an in\u2011house repair for audio issues, and RQ-FIX-04 confirms audio defects can be fixed internally in ~2\u202fdays. The title \"Paper Cities\" premieres in 2\u202fdays, so an expedited internal fix can meet the deadline without delaying release. Waiver is not permitted for a major sync defect, and vendor redelivery would exceed the schedule. Therefore the flag is owned by the audio\u2011eng queue and should be expedited for internal repair.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5166,
+          "output_tokens": 1046,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001403
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001463,
+      "latency_s": 10.899,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect (metadata mismatch) on a tentpole title (Northwind) with only 3 days to premiere and marketing locked. Policy RQ-FIX-04 states picture defects baked into the video essence cannot be fixed in\u2011house and require vendor redelivery (~5\u202fdays). With insufficient time for vendor redelivery, policy RQ-BOARD-05 mandates escalation to the release board for a commercial decision rather than delaying a marketed premiere. No creative annotation covers the flagged range, so the issue is not intentional.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5180,
+          "output_tokens": 1144,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001463
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00147,
+      "latency_s": 15.378,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major video defect (compression artefacts baked into the picture essence) with no creative annotation covering the timecode. Policy RQ-FIX-04 states picture defects baked into the video cannot be repaired in\u2011house and must be resolved via vendor redelivery (\u22485\u202fdays). With 8\u202fdays remaining to premiere and the title being a standard\u2011tier release (not a tentpole), the vendor turnaround fits within the release window, so we can proceed with vendor redelivery rather than delaying or escalating.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5155,
+          "output_tokens": 1161,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00147
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001252,
+      "latency_s": 9.482,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio loudness flag is a minor defect (integrated -21.4 LKFS vs spec -27/-23) on a tentpole title with 20 days until premiere. Policy RQ-MINOR-03 permits remediation for minor defects outside the 3\u2011day window, and RQ-PREF-00 mandates preferring an in\u2011house fix before vendor redelivery or delay. Since we have audio\u2011engineering capability to adjust loudness, we will expedite an internal fix and ship on schedule.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3965,
+          "output_tokens": 1096,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001252
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001902,
+      "latency_s": 13.173,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major audio dropout (22\u202fs of digital silence) at 00:69:12 on a tentpole title with 1\u202fday to premiere. Production annotations include a deliberate audio blackout covering the exact timecode, approved by the post supervisor. Per policy RQ-CREATIVE-02, a creative annotation that covers the flagged range supersedes the detector flag, classifying the behavior as intentional rather than a defect. Consequently the flag is recorded as no-defect and the asset can be shipped as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6789,
+          "output_tokens": 1473,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001902
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001324,
+      "latency_s": 134.213,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The caption drift is a minor defect (0.8\u202fs) on a title releasing in APAC/EU territories, which are not covered by CVAA obligations. Policy RQ-CVAA-01 therefore does not apply. The title is two days from premiere, within the 3\u2011day release window, and policy RQ-MINOR-03 permits shipping minor defects on time and patching them post\u2011release. Consequently the timed\u2011text queue can waive the flag and release the asset as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5174,
+          "output_tokens": 913,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001324
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001379,
+      "latency_s": 12.141,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major audio defect (lip\u2011sync error) on a standard\u2011tier title with 3 days until premiere. Policy RQ\u2011FIX\u201104 confirms that audio defects can be repaired in\u2011house within ~2 days. This fits within the remaining window, even with marketing locked, and does not trigger the accessibility hard block. Therefore the issue should be assigned to the audio\u2011eng queue for an expedited internal fix before the scheduled release.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5103,
+          "output_tokens": 1022,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001379
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002249,
+      "latency_s": 13.93,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect (colour metadata mismatch) with no creative annotation. Policy RQ-FIX-04 states picture defects baked into the video essence cannot be repaired in\u2011house and require vendor redelivery (~5\u202fdays). With 8\u202fdays to premiere, vendor redelivery fits within the schedule, so the video\u2011eng queue should request a corrected package from the vendor.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 8122,
+          "output_tokens": 1717,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002249
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001462,
+      "latency_s": 16.354,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major video defect (compression artifacts baked into the picture essence) with no creative annotation covering the timecode. According to policy RQ-FIX-04, picture defects baked into the video essence cannot be repaired in\u2011house and require vendor redelivery, which typically takes ~5 days. The title \"Glass Harbour\" is 20 days from its premiere, providing sufficient time for vendor correction without impacting the release schedule. Therefore the defect is assigned to the video\u2011eng queue for vendor redelivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5077,
+          "output_tokens": 1167,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001462
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002322,
+      "latency_s": 20.682,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged audio loudness drift is a minor defect on a tentpole title (TTL-35102) with only 1 day remaining to premiere. The release territories (UK, EU) are not CVAA\u2011covered, so no legal hard block applies. Policy RQ\u2011MINOR\u201103 states that minor defects within the 3\u2011day release window ship on time and are patched post\u2011release. In\u2011house remediation (RQ\u2011FIX\u201104) would require ~2 days, which exceeds the remaining schedule, making a fix before premiere infeasible. No creative annotation justifies the drift. Therefore the defect is waived and the title is released as delivered, with a post\u2011release patch planned.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 8450,
+          "output_tokens": 1757,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002322
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001096,
+      "latency_s": 11.212,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio dropout flag aligns with a documented creative annotation covering the flagged timecode (00:70:30\u201100:70:59) indicating intentional silence per the director's cut. Policy states that when a flag is explained by a valid creative intent annotation, it is treated as a non-defect and may be waived, provided no hard accessibility block applies. The title \"Sixteen Winters\" is a standard\u2011tier release with CVAA not covered, so no accessibility constraints exist. Consequently, the flag is classified as no-defect and the release can be waived and shipped as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3892,
+          "output_tokens": 853,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001096
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001414,
+      "latency_s": 13.748,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The asset has a minor caption timing drift defect flagged in the timed\u2011text component. The title (TTL\u201121997) is a tentpole releasing in the US, a CVAA\u2011covered territory, with only 3\u202fdays until premiere and marketing locked. Policy RQ\u2011CVAA\u201101 states that any caption defect in CVAA\u2011covered territories is a legal hard block and cannot be waived; it must be fixed in\u2011house if the schedule permits, otherwise the release must be delayed. With three days remaining, the internal timed\u2011text team can address the 800\u202fms drift across 14 events before the premiere, so the appropriate remediation is to expedite an internal fix. This satisfies the hard\u2011block requirement without needing to delay the launch.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5149,
+          "output_tokens": 1069,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001414
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001295,
+      "latency_s": 13.492,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major audio sync offset (120\u202fms) on asset AST-68883 for the tentpole title \"Paper Cities\" (TTL-47186). The release is 8 days from premiere, with no CVAA obligations and marketing not locked. According to release\u2011policy RQ\u2011FIX\u201104, audio defects are repairable in\u2011house within ~2\u202fdays, and RQ\u2011PREF\u201100 mandates preferring an in\u2011house fix before vendor redelivery or delay. The schedule comfortably allows a 2\u2011day internal repair, so the issue should be owned by the audio\u2011eng queue and resolved via an expedited internal fix.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5081,
+          "output_tokens": 888,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001295
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001721,
+      "latency_s": 16.644,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect (colour metadata mismatch) that is not covered by any creative annotation. Policy RQ-FIX-04 states picture defects baked into the video essence cannot be repaired in\u2011house and must be resolved via vendor redelivery (\u22485\u202fdays). With 20\u202fdays remaining to the tentpole premiere, the vendor turnaround fits the schedule, so we assign the issue to the video\u2011eng queue and request a corrected package from the vendor.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6539,
+          "output_tokens": 1234,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001721
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001178,
+      "latency_s": 10.961,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged dropped\u2011frame judder is a picture\u2011essence defect (video\u2011eng queue). Policy RQ\u2011FIX\u201104 states picture defects cannot be repaired in\u2011house and require vendor redelivery, which takes ~5\u202fdays. The title is a tentpole with only 1\u202fday remaining to premiere (release context) and marketing is locked, so a delay is not viable. According to RQ\u2011BOARD\u201105, a major defect on a tentpole title with insufficient time for vendor redelivery must be escalated to the release board for a commercial decision rather than unilaterally delaying the launch.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3872,
+          "output_tokens": 995,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001178
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001931,
+      "latency_s": 16.098,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged audio loudness deviation is a minor defect (severity=minor) on a standard\u2011tier title with only 2 days to premiere. CVAA hard\u2011block rules apply only to caption defects, so this audio issue is not a legal block. Release\u2011policy RQ-MINOR-03 permits shipping minor defects that fall within the 3\u2011day release window and patching them post\u2011release. Although RQ\u2011FIX\u201104 notes that audio can be repaired in\u2011house in ~2\u202fdays, the schedule (2\u202fdays to premiere, marketing locked) does not allow a delay. Therefore the appropriate action is to waive the defect and release the asset as\u2011delivered, with a post\u2011premiere fix planned.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 7180,
+          "output_tokens": 1424,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001931
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001192,
+      "latency_s": 9.806,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio loss at 00:87:18 is flagged as a major defect, but a production annotation explicitly documents a deliberate audio blackout for dramatic effect, approved by the post supervisor, covering the exact flagged range. According to the release\u2011policy (creative\u2011intent handling clause), documented intentional audio choices are exempt from defect status and may be waived. The flag does not constitute a CVAA hard block, as the loss is artistic rather than a missing required audio track. With the title \"Paper Cities\" only three days from premiere, on a standard tier, and marketing locked, the policy permits a waiver and immediate release. Therefore the flag is treated as no defect and the asset can be waived and released as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3871,
+          "output_tokens": 1019,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001192
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001333,
+      "latency_s": 9.861,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The title 'Northwind' (TTL-44639) releases in the US, a CVAA\u2011covered territory. The QC flag is a caption timing drift (is_caption_defect = true) and therefore falls under policy RQ-CVAA-01, which states that caption defects are a legal hard block and cannot be waived. The policy requires the defect be fixed in\u2011house if the schedule permits, otherwise the release must be delayed. With 8 days remaining to premiere, the schedule allows an internal repair, so we assign the timed\u2011text queue and order an expedite_internal_fix before the premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5131,
+          "output_tokens": 939,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001333
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001458,
+      "latency_s": 11.933,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major audio lip\u2011sync defect on a tentpole title (TTL\u201148517) with 20 days remaining to premiere. Policy RQ\u2011FIX\u201104 states that audio defects can be repaired in\u2011house within ~2 days, and the schedule comfortably allows this. Therefore the appropriate owner is the audio\u2011eng queue and the release should proceed after an expedited internal fix rather than vendor redelivery or delay.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5091,
+          "output_tokens": 1158,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001458
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002799,
+      "latency_s": 21.442,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect (colour metadata mismatch) on a standard\u2011tier title with only 1\u202fday left to premiere and marketing locked. Policy RQ\u2011FIX\u201104 states picture defects cannot be repaired in\u2011house and require vendor redelivery (\u22485\u202fdays). With only one day remaining, vendor redelivery is infeasible. The remediation preference order (RQ\u2011PREF\u201100) would next consider delaying the release, but RQ\u2011BOARD\u201105 mandates that for a major video defect where there is insufficient time for vendor redelivery on a marketed premiere, the issue must be escalated to the release board rather than unilaterally delaying. Therefore the appropriate action is to route the flag to the video\u2011eng queue and escalate to the release board for a commercial decision.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 10189,
+          "output_tokens": 2118,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002799
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002978,
+      "latency_s": 26.208,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged dropped-frame judder is a major video defect baked into the picture essence. Policy RQ-FIX-04 states picture defects cannot be repaired in\u2011house and require vendor redelivery, which takes ~5\u202fdays. The title (TTL\u201139312) is a standard\u2011tier release with only 2\u202fdays remaining to premiere and marketing is already locked, so there is insufficient time for a vendor re\u2011delivery. Escalation to the release board (RQ-BOARD-05) applies only to tentpole titles, which this is not. Therefore the only compliant remediation is to delay the release until a corrected master can be supplied.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 10274,
+          "output_tokens": 2395,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002978
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001408,
+      "latency_s": 11.07,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged audio loudness drift is a minor audio defect with no creative annotation. Policy RQ-FIX-04 confirms audio issues can be repaired in\u2011house within ~2\u202fdays. The title \"The Long Quiet\" is three days from premiere, so an in\u2011house fix meets the schedule. Release remediation preference (RQ-PREF-00) mandates an in\u2011house fix before considering vendor redelivery or delay, and waivers are not permitted for audio compliance issues. CVAA accessibility does not impose a hard block on this audio defect. Therefore the flag is owned by audio\u2011eng and the appropriate action is to expedite an internal fix before the premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5108,
+          "output_tokens": 1069,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001408
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001109,
+      "latency_s": 13.721,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio dropout flagged at 00:50:05 is a deliberate, post\u2011supervisor\u2011approved blackout (annotation covers 00:50:05\u201100:50:59). Policy on creative\u2011intent handling permits waiving QC flags when an approved annotation fully covers the flagged range. The title \"The Long Quiet\" is a standard\u2011tier release with 8\u202fdays to premiere in UK/EU territories, which are not subject to US CVAA accessibility requirements, so there is no hard\u2011block accessibility rule. Therefore the flag does not represent a real defect; we route it to the no\u2011defect queue and waive it for release.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3887,
+          "output_tokens": 877,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001109
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001484,
+      "latency_s": 23.855,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged subtitle timing drift is a caption defect (minor severity) on a title releasing in CVAA\u2011covered territories (US, LATAM). Per policy RQ-CVAA-01, any caption defect in CVAA\u2011covered releases is a legal hard block and cannot be waived, regardless of severity or release pressure. The release is 20 days from premiere, well outside the 3\u2011day window, so the schedule permits an in\u2011house repair. No creative annotation covers the flagged range, confirming it is a genuine defect. Therefore the appropriate remediation is to expedite an internal fix by the timed\u2011text engineering team.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5251,
+          "output_tokens": 1161,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001484
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001938,
+      "latency_s": 18.322,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major audio sync defect (audio leads picture by ~4 frames) on a tentpole title (Paper Cities) with only 1 day remaining to premiere and marketing locked. No creative annotation covers the flagged range, so the defect is real. In\u2011house audio remediation requires ~2 days (policy RQ-FIX-04), exceeding the available window, and vendor redelivery would take even longer. According to policy RQ-BOARD-05, a major defect on a tentpole title that cannot be fixed in time must be escalated to the release board for a commercial decision rather than delaying a marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6613,
+          "output_tokens": 1576,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001938
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002839,
+      "latency_s": 20.783,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": null,
+          "action": null
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy"
+        ],
+        "refused": false,
+        "error": "no submission within 8 turns",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 10340,
+          "output_tokens": 2146,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002839
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001695,
+      "latency_s": 14.646,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect (compression artefacts baked into the picture essence) on the tentpole title \"Glass Harbour\" with only 3 days to premiere and marketing locked. Policy RQ-FIX-04 states picture defects baked into the video essence cannot be repaired in\u2011house and require vendor redelivery, which takes ~5 days. This exceeds the remaining time window, and the defect cannot be waived. Per RQ-BOARD-05, a major defect on a tentpole title that cannot be fixed in\u2011house and lacks sufficient time for vendor redelivery must be escalated to the release board for a commercial decision rather than delaying the marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5085,
+          "output_tokens": 1553,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001695
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001731,
+      "latency_s": 17.905,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged audio loudness drift is a minor defect on a tentpole title (TTL-68649) with 8 days remaining to premiere. Policy RQ-MINOR-03 states that minor defects outside the 3\u2011day window should be corrected before release rather than shipped. RQ-FIX-04 confirms that audio issues can be repaired in\u2011house within ~2 days, well within the remaining schedule. No creative annotation justifies the drift, and CVAA accessibility does not apply. Therefore the appropriate remediation is to expedite an internal audio fix before the premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6663,
+          "output_tokens": 1219,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001731
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00126,
+      "latency_s": 11.616,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag reports total audio loss at 00:39:31 on a standard\u2011tier title with 20 days to premiere in the US (CVAA\u2011covered). However, a production annotation explicitly covers the flagged range, marking the silence as an intentional creative choice (director's cut). According to policy RQ-CREATIVE-02, such annotated intentional behavior is not a defect and should be recorded as no\u2011defect, allowing the asset to be waived and released despite the major severity. No accessibility hard block applies because this is an audio, not a caption, issue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5238,
+          "output_tokens": 791,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00126
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00158,
+      "latency_s": 13.457,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged subtitle timing drift is a caption defect on a tentpole title (Sixteen Winters) releasing in CVAA\u2011covered territories (US, CA, UK) with only 1\u202fday left before premiere. Policy RQ\u2011CVAA\u201101 states that caption defects are a legal hard block and cannot be waived; they must be fixed in\u2011house if the schedule permits, otherwise the release must be delayed. In\u2011house remediation for timed\u2011text requires ~2\u202fdays (RQ\u2011FIX\u201104), which exceeds the 1\u2011day window, so the only compliant remediation is to delay the release.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5517,
+          "output_tokens": 1254,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00158
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001485,
+      "latency_s": 17.308,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major audio sync offset (120\u202fms) on asset AST-30469. No creative annotation covers the timecode, so it is a defect. Policy RQ-PREF-00 mandates preferring an in\u2011house fix when a flag lands before release, and RQ-FIX-04 confirms audio defects can be repaired in\u2011house in about 2\u202fdays. The title \"Paper Cities\" premieres in 2\u202fdays, so an expedited internal repair can meet the deadline. CVAA obligations do not apply, and marketing is locked but does not affect audio remediation. Therefore the audio\u2011eng queue should expedite an internal fix.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5166,
+          "output_tokens": 1183,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001485
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001519,
+      "latency_s": 13.824,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect (colour metadata mismatch) on a tentpole title (Northwind) with only 3 days to premiere and marketing locked. No creative annotation covers the flagged timecode, so the issue is not intentional. Policy RQ-FIX-04 states picture defects baked into the video essence cannot be repaired in\u2011house and require vendor redelivery, which takes ~5 days. This exceeds the remaining window. Per RQ-BOARD-05, a major defect on a tentpole title with insufficient time for vendor redelivery must be escalated to the release board rather than unilaterally delaying the premiere. Therefore the decision is to route to video\u2011eng and escalate to the release board.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5181,
+          "output_tokens": 1237,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001519
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00134,
+      "latency_s": 12.011,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major video defect (compression artefacts baked into the picture essence) with no creative annotation covering the timecode. Policy RQ-FIX-04 states picture defects baked into the video cannot be repaired in\u2011house and must be resolved via vendor redelivery (\u22485\u202fdays). With 8\u202fdays remaining to premiere and the title being a standard\u2011tier release (not a tentpole), the vendor turnaround fits within the release window, so we can proceed with vendor redelivery rather than delaying or escalating.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5155,
+          "output_tokens": 944,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00134
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001654,
+      "latency_s": 14.45,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio loudness flag on AST-19250 is a minor defect (integrated loudness -21.4 LKFS, outside the -27/-23 spec). No creative annotation covers the flagged timecode, so it is not an intentional choice. The title \"The Long Quiet\" is a tentpole with 20 days remaining to premiere, providing ample time for an in\u2011house audio remediation (policy RQ\u2011FIX\u201104 allows audio defects to be fixed internally within ~2 days). The defect is not a CVAA accessibility hard block, and the release window is sufficient, so we can expedite an internal fix rather than delay or vendor redelivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5185,
+          "output_tokens": 1461,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001654
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001515,
+      "latency_s": 11.622,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio dropout flag is covered by a production annotation that marks the 22\u2011second silence at 00:69:12 as a deliberate artistic blackout approved by the post supervisor. According to policy RQ-CREATIVE-02, such intentional creative choices override detector flags and are treated as no\u2011defect. With the premiere only one day away, the tentpole title cannot accommodate a delay, but the annotation removes any need for remediation. Therefore we waive the flag and release the asset as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5233,
+          "output_tokens": 1216,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001515
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001324,
+      "latency_s": 9.854,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The caption drift is a minor defect (0.8\u202fs) on a title releasing in APAC/EU territories, which are not covered by CVAA obligations. Policy RQ-CVAA-01 therefore does not apply. The title is two days from premiere, within the 3\u2011day release window, and policy RQ-MINOR-03 permits shipping minor defects on time and patching them post\u2011release. Consequently the timed\u2011text queue can waive the flag and release the asset as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5174,
+          "output_tokens": 913,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001324
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001448,
+      "latency_s": 15.822,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major audio lip\u2011sync defect with no creative annotation, affecting a standard\u2011tier title that premieres in 3 days. Policy RQ\u2011FIX\u201104 confirms audio defects can be repaired in\u2011house within ~2 days, which fits the remaining window. Marketing is locked but an internal fix does not alter assets released to marketing. Therefore the issue should be assigned to the audio\u2011eng queue for an expedited internal repair before the scheduled premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5103,
+          "output_tokens": 1138,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001448
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001428,
+      "latency_s": 13.706,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect: colour metadata in the package descriptor does not match the video essence at 00:06:06. No creative annotation explains the mismatch. According to release policy RQ-FIX-04, picture defects baked into the video essence cannot be repaired in\u2011house and must be resolved via vendor redelivery (\u22485\u202fdays). The title \"Sixteen Winters\" is 8\u202fdays from premiere, so the vendor turnaround fits within the release window. The title is CVAA\u2011covered but the issue is not an accessibility block. Therefore the flag is owned by video\u2011eng and the appropriate remediation is vendor redelivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5028,
+          "output_tokens": 1123,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001428
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001428,
+      "latency_s": 14.574,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major video defect (compression artefacts baked into the picture essence). Policy RQ-FIX-04 states that picture defects baked into the video cannot be repaired in\u2011house and must be resolved via vendor redelivery, which typically requires ~5\u202fdays. With 20\u202fdays remaining to the premiere and no marketing lock, the vendor turnaround fits comfortably within the release window, and the title is not a tentpole that would trigger board escalation (RQ-BOARD-05). Therefore the appropriate remediation is to assign the issue to the video\u2011eng queue and request vendor redelivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5077,
+          "output_tokens": 1111,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001428
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002282,
+      "latency_s": 14.515,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio loudness drift (minor) on AST-28159 cannot be fixed in\u2011house within the 2\u2011day remediation window (policy RQ\u2011FIX\u201104) and vendor redelivery would exceed the 1\u2011day time\u2011to\u2011premiere for this tentpole title (TTL\u201135102). Marketing is locked, so delaying the premiere is not an option. Per the remediation preference order (RQ\u2011PREF\u201100), when no compliant remediation fits the schedule the issue must be escalated to the release board for a commercial decision.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 8468,
+          "output_tokens": 1687,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002282
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001377,
+      "latency_s": 9.069,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio flag is for a 22\u2011second digital silence at 00:70:30. Production annotations include an intentional silence note covering this exact range, establishing the behavior as a creative choice. Per policy RQ-CREATIVE-02, such annotated flags are not defects and should be recorded as no\u2011defect and released. The title \"Sixteen Winters\" is two days from premiere, standard tier, with marketing locked, but no accessibility obligations apply, so no remediation is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5219,
+          "output_tokens": 991,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001377
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001449,
+      "latency_s": 10.335,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged subtitle timing drift is a caption defect (is_caption_defect=true) on a title releasing in US territories that are CVAA-covered. Per policy RQ-CVAA-01, caption defects in CVAA jurisdictions are a legal hard block and cannot be waived; they must be fixed in\u2011house if the schedule permits, otherwise the release must be delayed. The title is a tentpole with 3 days remaining to premiere, and the defect is minor and limited to 14 caption events, which can be corrected quickly by the internal timed\u2011text team. Therefore the schedule allows an in\u2011house repair, so we will expedite an internal fix before the premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5143,
+          "output_tokens": 1130,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001449
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001342,
+      "latency_s": 11.153,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag reports a major audio sync offset (120\u202fms) on asset AST-68883. Policy RQ\u2011FIX\u201104 confirms audio defects can be repaired in\u2011house within ~2\u202fdays, and the release\u2011remediation preference (RQ\u2011PREF\u201100) mandates an in\u2011house fix before considering vendor redelivery or delay. With 8\u202fdays to the tentpole premiere and no CVAA accessibility obligations, an internal fix meets the schedule and compliance requirements. No creative annotation justifies waiving the defect.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5081,
+          "output_tokens": 966,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001342
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001804,
+      "latency_s": 14.518,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect (colour metadata mismatch) with no creative annotation covering the timecode. Policy RQ-FIX-04 states picture defects baked into the video essence cannot be fixed in\u2011house and require vendor redelivery (\u22485\u202fdays). The title is a tentpole with 20\u202fdays to premiere, providing sufficient lead time for vendor correction without impacting the scheduled release, and marketing is not locked. Therefore the issue is assigned to the video\u2011eng queue for vendor redelivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6597,
+          "output_tokens": 1358,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001804
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00185,
+      "latency_s": 11.87,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major video defect (dropped\u2011frame judder) on a tentpole title (TTL\u201132960) with only 1\u202fday remaining to premiere and marketing locked. Per policy RQ\u2011FIX\u201104, picture defects cannot be repaired in\u2011house and require vendor redelivery (~5\u202fdays). With insufficient time for vendor correction, policy RQ\u2011BOARD\u201105 mandates escalating the issue to the release board rather than unilaterally delaying the marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6648,
+          "output_tokens": 1422,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00185
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001506,
+      "latency_s": 23.178,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "search_release_policy",
+          "check_creative_annotations",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio loudness deviation is a minor defect with no creative annotation. Policy RQ-FIX-04 states audio defects can be repaired in\u2011house in ~2\u202fdays. The title \"Paper Cities\" is 2\u202fdays from premiere (standard tier, marketing locked) and the in\u2011house fix fits this window. Per RQ-PREF-00 the preferred remediation before release is an in\u2011house fix, and it satisfies the schedule, so we assign the flag to the audio\u2011eng queue for an expedited internal repair.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5247,
+          "output_tokens": 1198,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001506
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001268,
+      "latency_s": 23.686,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major audio loss at 00:87:18, but production annotations confirm a deliberate audio blackout approved by the post supervisor covering the flagged range. According to the release\u2011policy (creative\u2011intent handling), intentional creative choices are exempt from defect remediation unless they violate a legal hard block. Audio loss is not a caption or accessibility requirement, and the title\u2019s US territories are CVAA\u2011covered but the blackout is an artistic decision, not a compliance issue. With 3 days to premiere and marketing locked, the policy permits a waiver. Therefore the flag is treated as no defect and the asset can be waived and released as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3871,
+          "output_tokens": 1146,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001268
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001299,
+      "latency_s": 8.778,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged subtitle timing drift is a caption defect (is_caption_defect=true) on a title releasing in the US, which is CVAA-covered. Per policy RQ-CVAA-01, caption defects in CVAA territories are a legal hard block and cannot be waived; they must be fixed before release. The title has 8 days until premiere, exceeding the 3\u2011day window, so the schedule permits an in\u2011house repair. Accordingly, we assign the issue to the timed\u2011text engineering queue and order an expedite_internal_fix to resolve the timing drift before the premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5131,
+          "output_tokens": 882,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001299
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001484,
+      "latency_s": 13.012,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a major audio sync defect (audio leads picture by ~4 frames) on a tentpole title (TTL-48517) with 20 days remaining to premiere. Policy RQ-FIX-04 states that audio defects can be repaired in\u2011house within ~2 days. The release window comfortably allows this remediation, and no creative annotation justifies the sync offset. Therefore the audio\u2011eng queue should expedite an internal fix before the scheduled premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5084,
+          "output_tokens": 1202,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001484
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001948,
+      "latency_s": 24.212,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect (colour metadata mismatch) on a standard\u2011tier title with only 1\u202fday left to premiere and marketing locked. Policy RQ\u2011FIX\u201104 states picture defects baked into the video essence cannot be repaired in\u2011house and require vendor redelivery (\u22485\u202fdays). That timeline exceeds the remaining schedule, and the defect is not a caption issue (no CVAA hard block). Because the defect cannot be fixed before the scheduled launch, the only compliant remediation is to delay the release. The title is not a tentpole, so board escalation (RQ\u2011BOARD\u201105) does not apply.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6649,
+          "output_tokens": 1584,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001948
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00288,
+      "latency_s": 39.745,
+      "n_api_calls": 8,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 8,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major video defect (dropped-frame judder) at 00:09:29. No creative annotation covers this range, so it is not an intentional effect. Per policy RQ-FIX-04, picture defects cannot be repaired in\u2011house and require vendor redelivery, which takes ~5\u202fdays. The title is scheduled to premiere in 2\u202fdays and marketing is locked, leaving insufficient time for vendor redelivery or a release delay. Policy RQ-BOARD-05 mandates that such a major, unfixable\u2011in\u2011house defect on a title with an imminent, marketed premiere be escalated to the release board for a commercial decision.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 10188,
+          "output_tokens": 2253,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00288
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00137,
+      "latency_s": 19.012,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged audio loudness drift is a minor defect with no creative annotation covering the timecode. Policy RQ-PREF-00 mandates preferring an in\u2011house fix when a QC flag occurs before release, and RQ-FIX-04 confirms audio defects can be repaired internally in ~2 days. With 3 days remaining to the premiere, the title \"The Long Quiet\" (standard tier, US & LATAM, CVAA\u2011covered) provides sufficient time for an expedited internal remediation without delaying the launch or violating accessibility obligations. Therefore the flag is owned by the audio\u2011eng queue and the appropriate action is to expedite an internal fix.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5108,
+          "output_tokens": 1007,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00137
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001097,
+      "latency_s": 9.782,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio dropout flagged at 00:50:05 is covered by a production annotation indicating a deliberate audio blackout approved by the post supervisor. Policy on creative intent (search_release_policy: 'creative intent audio waiver') states that intentional, documented creative choices supersede QC flags and are waived for release. The title is a standard\u2011tier release with 8 days to premiere in UK/EU territories, which are not subject to US CVAA accessibility hard blocks, and marketing is not locked. Therefore the flag does not constitute a defect and can be waived, allowing the asset to be released as delivered.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3887,
+          "output_tokens": 857,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001097
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001789,
+      "latency_s": 14.439,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged issue is a caption timing drift, which is a caption defect (is_caption_defect=true). The title releases in CVAA-covered territories (US) and policy RQ-CVAA-01 mandates that caption defects are a legal hard block and cannot be waived. The in\u2011house remediation capability (RQ-FIX-04) allows timed\u2011text fixes within ~2 days, and the title has 20 days until premiere, providing sufficient schedule slack. Therefore the defect must be repaired internally before release rather than waived or delayed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6832,
+          "output_tokens": 1274,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001789
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001535,
+      "latency_s": 14.602,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major audio sync defect on a tentpole title (Paper Cities) with only 1 day remaining to premiere and marketing locked. No creative annotation explains the issue, so it is not an intentional choice. Policy RQ-FIX-04 states audio defects can be repaired in\u2011house in ~2 days, which exceeds the available window. Vendor redelivery would take ~5 days and is also infeasible. According to RQ-BOARD-05, a major defect on a tentpole title that cannot be remedied in time must be escalated to the release board rather than delaying a marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5196,
+          "output_tokens": 1259,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001535
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001925,
+      "latency_s": 20.831,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect (colour metadata mismatch) with no creative annotation covering the timecode. Policy RQ-FIX-04 states picture\u2011essence defects cannot be repaired in\u2011house and need vendor redelivery, which takes ~5\u202fdays. With only 2\u202fdays to the marketed premiere and marketing locked, there is insufficient time for vendor redelivery or a release delay. Per RQ-BOARD-05, such a situation must be escalated to the release board for a commercial decision rather than unilaterally delaying the release.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6644,
+          "output_tokens": 1548,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001925
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001767,
+      "latency_s": 14.145,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The asset has a major video defect (compression artefacts baked into the picture essence) with no creative annotation covering the timecode. Policy RQ-FIX-04 states picture defects baked into the video essence cannot be repaired in\u2011house and require vendor redelivery, which takes ~5\u202fdays. The title is a tentpole with only 3\u202fdays to premiere and marketing is locked, so there is insufficient time for vendor redelivery. According to RQ-BOARD-05, a major defect on a tentpole title that cannot be fixed in\u2011house and lacks time for vendor redelivery must be escalated to the release board rather than unilaterally delaying the marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6630,
+          "output_tokens": 1288,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001767
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001825,
+      "latency_s": 16.217,
+      "n_api_calls": 6,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 6,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor audio loudness drift (1.4 LU) on a tentpole title (TTL-68649) with 8 days remaining to premiere. Policy RQ-MINOR-03 states minor defects outside the 3\u2011day window can be addressed before release, and RQ-FIX-04 confirms audio issues can be repaired in\u2011house in roughly 2 days. Since the title is not subject to CVAA obligations and no creative annotation justifies the drift, we can expedite an internal audio fix to meet the premiere schedule without delaying or involving the vendor.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6663,
+          "output_tokens": 1376,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001825
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00126,
+      "latency_s": 15.786,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag reports total audio loss at 00:39:31 on a standard\u2011tier title with 20 days to premiere in the US (CVAA\u2011covered). However, a production annotation explicitly covers the flagged range, marking the silence as an intentional creative choice (director's cut). According to policy RQ-CREATIVE-02, such annotated intentional behavior is not a defect and should be recorded as no\u2011defect, allowing the asset to be waived and released despite the major severity. No accessibility hard block applies because this is an audio, not a caption, issue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5238,
+          "output_tokens": 791,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00126
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002485,
+      "latency_s": 31.205,
+      "n_api_calls": 7,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 7,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged subtitle timing drift is a caption defect on a title (TTL-85529) releasing in CVAA\u2011covered territories (US, CA, UK). Per policy RQ\u2011CVAA\u201101, any caption defect in such territories is a legal hard block and cannot be waived, regardless of severity or premiere pressure. In\u2011house remediation for timed\u2011text defects requires ~2\u202fdays (RQ\u2011FIX\u201104), but the title premieres in 1\u202fday (days_to_premiere\u202f=\u202f1) and marketing is locked, so the schedule does not allow the fix. Consequently the only compliant remediation is to delay the release until the caption issue can be corrected.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 8692,
+          "output_tokens": 1968,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002485
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001467,
+      "latency_s": 21.455,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major audio sync offset (120\u202fms) on asset AST-30469. No creative annotation covers the timecode, so it is a defect. Policy RQ-PREF-00 mandates preferring an in\u2011house fix when a flag lands before release, and RQ-FIX-04 confirms audio defects can be repaired in\u2011house in about 2\u202fdays. The title \"Paper Cities\" premieres in 2\u202fdays, so an expedited internal repair can meet the deadline. CVAA obligations do not apply, and marketing is locked but does not affect audio remediation. Therefore the audio\u2011eng queue should expedite an internal fix.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5166,
+          "output_tokens": 1153,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001467
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001433,
+      "latency_s": 18.187,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a major video defect (colour metadata mismatch) on a tentpole title (Northwind) with only 3 days to premiere and marketing locked. No creative annotation justifies the issue. Policy RQ-FIX-04 states picture defects baked into the video essence cannot be fixed in\u2011house and require vendor redelivery (\u22485\u202fdays), which exceeds the remaining window. Per RQ-BOARD-05, a major defect on a tentpole title that cannot be fixed in\u2011house and lacks sufficient time for vendor redelivery must be escalated to the release board for a commercial decision rather than delaying the marketed premiere.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5183,
+          "output_tokens": 1092,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001433
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001412,
+      "latency_s": 23.015,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_release_context",
+          "get_qc_flag",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a major video defect (compression artefacts baked into the picture essence) with no creative annotation covering the timecode. Policy RQ-FIX-04 states that baked\u2011in picture defects cannot be repaired in\u2011house and must be resolved via vendor redelivery, which typically requires ~5 days. With 8 days remaining to the premiere and no marketing lock, vendor redelivery fits within the release window, so we assign the flag to the video\u2011eng queue and request vendor redelivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5155,
+          "output_tokens": 1064,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001412
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001596,
+      "latency_s": 14.667,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The audio asset AST-19250 has a minor integrated loudness deviation (-21.4 LKFS) outside the -27/-23 spec. No creative annotation justifies the deviation. The title is a tentpole with 20 days to premiere, well beyond the 3\u2011day release window, allowing time for pre\u2011release remediation. Policy RQ\u2011FIX\u201104 confirms audio defects can be repaired in\u2011house within ~2 days, and RQ\u2011MINOR\u201103 indicates that minor defects outside the 3\u2011day window should be corrected before release rather than shipped and patched. Therefore the flag is owned by the audio\u2011eng queue and the appropriate action is to expedite an internal fix.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5177,
+          "output_tokens": 1365,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001596
+        }
+      }
+    }
+  ]
+}

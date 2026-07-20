@@ -1,0 +1,4002 @@
+{
+  "backend": "together",
+  "model": "Qwen/Qwen3.7-Plus",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "action_accuracy": 0.8,
+    "exact_match": 0.8,
+    "queue_accuracy": 0.9556,
+    "submitted": 0.9667
+  },
+  "metric_ci95": {
+    "action_accuracy": [
+      0.6667,
+      0.9222
+    ],
+    "exact_match": [
+      0.6667,
+      0.9222
+    ],
+    "queue_accuracy": [
+      0.9111,
+      0.9889
+    ],
+    "submitted": [
+      0.9222,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.004176,
+  "total_cost_usd": 0.3758,
+  "p50_latency_s": 40.138,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002824,
+      "latency_s": 25.792,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports 22 seconds of digital silence at 00:69:12 on AST-25818 (TTL-78218, \"Aster & Vale\"). A production annotation from the post supervisor covers the exact flagged range (00:69:12\u201300:69:59) and confirms the silence is a deliberate audio blackout for dramatic effect. Per release-policy clause RQ-CREATIVE-02, a creative-team annotation covering the flagged timecode establishes the behavior as intentional, so the flag is not a defect. The title is a tentpole with 1 day to premiere across US, CA, and UK (CVAA-covered), but since no actual defect exists, no remediation is needed. The asset is cleared to release as delivered.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4672,
+          "output_tokens": 1038,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002824
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005348,
+      "latency_s": 51.262,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The caption sync drift (~0.8s) on AST-24112 is a real minor-severity timed-text defect with no creative annotation to explain it. However, per RQ-CVAA-01, the CVAA hard block applies only to titles releasing in CVAA-covered territories; TTL-44220 releases in APAC and EU with cvaa_covered=false, so the caption defect is treated as an ordinary defect of its severity. Per RQ-MINOR-03, minor defects inside the 3-day release window ship on time and are patched post-release. With 2 days to premiere, we are inside that window, so the title ships as delivered and the timed-text team patches the sync drift post-release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 7310,
+          "output_tokens": 2351,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005348
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004354,
+      "latency_s": 39.41,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-90950 has a major-severity lip-sync defect (audio leads picture ~4 frames at 00:29:56) with no creative annotations to explain it. Per RQ-MINOR-03, only minor defects inside the 3-day release window may ship as-is; this is major and must be remediated before premiere. Per RQ-FIX-04, audio defects can be repaired in house in approximately 2 days, and with 3 days remaining to premiere there is sufficient schedule headroom. RQ-BOARD-05 escalation is not required because the defect is fixable in house. The fix is routed to audio-eng for in-house repair before the TTL-84611 premiere.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6843,
+          "output_tokens": 1691,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004354
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007234,
+      "latency_s": 82.01,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a colour metadata mismatch between the package descriptor and the video essence, raised by spec-inspection at major severity. The video essence itself is not defective \u2014 only the descriptor metadata is incorrect, meaning this is a packaging-level correction, not a picture defect baked into the essence. Per RQ-FIX-04, only essence-level picture defects require vendor redelivery; descriptor corrections can be handled in-house. With 8 days to premiere (well outside the 3-day window per RQ-MINOR-03) and no creative annotations covering the flagged timecode, the remediation preference order (RQ-PREF-00) directs an in-house fix. Routing to video-eng to correct the colour metadata in the package descriptor before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6477,
+          "output_tokens": 4032,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007234
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004185,
+      "latency_s": 38.793,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Compression artefacts at 00:85:26 are a major video-essence defect with no creative annotation covering the timecode. Per RQ-FIX-04, picture defects baked into the essence cannot be repaired in-house and require vendor redelivery (~5 days). The title is standard tier with 20 days to premiere across APAC/EU (no CVAA obligations), so there is ample schedule headroom for redelivery without delaying the release. Board escalation (RQ-BOARD-05) is not triggered because this is not a tentpole title and the timeline is sufficient. The flag is routed to video-eng for vendor redelivery.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6383,
+          "output_tokens": 1674,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004185
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004068,
+      "latency_s": 40.559,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor audio defect (1.4 LU dialogue loudness drift) on a tentpole title 1 day from premiere in UK/EU (non-CVAA) territories. No creative annotations explain the flag, so it is a real defect. However, per RQ-MINOR-03, minor defects inside the 3-day release window ship on time and are patched post-release. In-house audio repair (RQ-FIX-04, ~2 days) is not feasible with only 1 day remaining. CVAA hard-block (RQ-CVAA-01) does not apply as this is not a caption defect and territories are non-CVAA. Board escalation (RQ-BOARD-05) is reserved for major defects. The flag is waived and audio-eng will remediate post-release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 5140,
+          "output_tokens": 1893,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004068
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002726,
+      "latency_s": 24.256,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The production annotation on AST-25702 covers the flagged timecode range (00:70:30\u201300:70:59) and explicitly states the silence is intentional \u2014 a director's cut creative choice with no score or room tone. Per release policy RQ-CREATIVE-02, a creative-team annotation that covers the flagged range establishes the flagged behavior as intentional, so this flag is not a defect. The title is standard tier, 2 days to premiere, in UK/EU territories with no CVAA obligations. The asset should be recorded as no-defect and released as delivered.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4560,
+          "output_tokens": 990,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002726
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00447,
+      "latency_s": 42.877,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a confirmed caption defect (subtitle timing drift ~800ms across 14 events) on a CVAA-covered US release. Per policy RQ-CVAA-01, caption defects in covered territories are a legal hard block that cannot be waived regardless of minor severity or tentpole premiere pressure. No creative annotations explain the drift as intentional. Per RQ-FIX-04, timed-text repairs can be completed in-house in approximately 2 days, and with 3 days remaining to premiere the schedule accommodates this remediation. The timed-text engineering queue will correct the timing offset before the US launch, satisfying CVAA compliance without requiring a delay or board escalation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6524,
+          "output_tokens": 1861,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00447
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004211,
+      "latency_s": 38.739,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a sustained 120ms audio/video sync offset from 00:55:18 onward, classified as major severity on the audio component. No creative annotations exist to explain the offset, so it is a genuine defect. Per RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days. With 8 days remaining to premiere for this tentpole release (TTL-47186, \"Paper Cities\"), there is ample schedule headroom. Per RQ-PREF-00, in-house repair is the preferred remediation path. The title releases in UK/EU (non-CVAA), so no accessibility hard block applies. The flag is routed to audio-eng for expedited internal correction before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6419,
+          "output_tokens": 1685,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004211
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004903,
+      "latency_s": 53.522,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major-severity colour metadata mismatch between the package descriptor and the video essence at 00:91:48 on tentpole title \"Aster & Vale.\" No creative annotations explain the discrepancy, and this is not a caption defect, so the CVAA hard block is not in play. Per RQ-FIX-04, picture-related defects require vendor redelivery (~5 days); in-house repair is limited to timed-text and audio. With 20 days to premiere, we are well outside the 3-day release window (RQ-MINOR-03) and have ample time for the vendor to deliver a corrected package with the descriptor aligned to the actual video essence. Board escalation (RQ-BOARD-05) is not warranted because the schedule comfortably accommodates redelivery without risking the marketed premiere date.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 5039,
+          "output_tokens": 2571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004903
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004076,
+      "latency_s": 37.519,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-67249 has a major video defect (dropped-frame judder at 00:87:17) with no creative annotation covering it. Per RQ-FIX-04, picture-essence defects cannot be repaired in house and require vendor redelivery (~5 days). With only 1 day to premiere on tentpole title \"Northwind\" (marketing locked, territories US/CA/UK), vendor redelivery cannot meet the schedule. Per RQ-BOARD-05, a major defect on a tentpole title that cannot be fixed in house and has too little time for vendor redelivery is a commercial decision requiring release-board escalation rather than a unilateral delay of a marketed premiere.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6564,
+          "output_tokens": 1543,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004076
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003834,
+      "latency_s": 38.371,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor audio loudness defect (-21.4 LKFS vs. -27/-23 spec) on a standard-tier title with 2 days to premiere, placing it inside the 3-day release window. Per RQ-MINOR-03, minor defects inside the 3-day window ship on time and are patched post-release. This is not a caption defect, so the CVAA hard block (RQ-CVAA-01) does not apply. No creative annotations exist. The title is not a tentpole, and the defect is minor, so no board escalation is warranted. The audio-eng team should schedule a post-release loudness normalization patch.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 5014,
+          "output_tokens": 1742,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003834
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002879,
+      "latency_s": 26.224,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The automated QC flagged total audio loss at 00:87:18 on AST-91366 (Paper Cities, TTL-60423). A post-supervisor-approved production annotation covers the exact flagged timecode range (00:87:18\u201300:87:59), documenting a deliberate audio blackout for dramatic effect. Per release policy RQ-CREATIVE-02, a creative-team annotation covering the flagged range establishes the behavior as intentional, so the flag is not a defect. The flag is not a caption defect, so CVAA-01 does not apply. The title releases in 3 days across US/CA/UK with marketing locked; no remediation is needed.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4654,
+          "output_tokens": 1086,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002879
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002357,
+      "latency_s": 24.51,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag confirms a caption defect (subtitle timing drift ~800ms across 14 events) on AST-76734 for title TTL-44639 (\"Northwind\"), releasing in the US, a CVAA-covered territory. Per policy RQ-CVAA-01, caption defects on CVAA-covered titles are a legal hard block and may never be waived regardless of severity or schedule pressure. No creative annotations exist to explain the drift as intentional. Per policy RQ-FIX-04, timed-text defects can be repaired in house in approximately 2 days. With 8 days remaining to premiere, there is sufficient schedule headroom to route this to the timed-text engineering queue for in-house remediation before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2981,
+          "output_tokens": 1096,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002357
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003824,
+      "latency_s": 39.65,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major-severity lip-sync error (audio leads picture by ~4 frames at 00:63:48) on tentpole title \"Sixteen Winters\" releasing in 20 days in the US. No creative annotations explain the offset, and the CVAA caption hard block (RQ-CVAA-01) does not apply as this is an audio essence defect, not a caption defect. Per RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days, and per RQ-PREF-00 the preferred remediation is an in-house fix. With 20 days to premiere, there is ample schedule headroom to repair without delaying release or requiring vendor redelivery.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4902,
+          "output_tokens": 1762,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003824
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005508,
+      "latency_s": 57.76,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The colour metadata mismatch is in the package descriptor, not baked into the video essence. Per RQ-FIX-04, only picture defects in the essence require vendor redelivery (~5 days); a descriptor-level metadata correction is an in-house repair. Per RQ-PREF-00, in-house fix is the preferred remediation path. With 1 day to premiere on a standard-tier title (TTL-50112, \"The Long Quiet\") releasing to APAC/EU with no CVAA obligations and marketing locked, an expedited internal metadata correction is the fastest compliant path to release. No creative annotations cover this flag, so it is a genuine defect requiring remediation before premiere.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6412,
+          "output_tokens": 2700,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005508
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00478,
+      "latency_s": 53.205,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The dropped-frame judder at 00:09:29 is a confirmed major video defect \u2014 the sole creative annotation (handheld camera shake, 00:33:00\u201300:33:40) does not cover the flagged timecode. Per RQ-FIX-04, picture-essence defects cannot be repaired in-house and require vendor redelivery (~5 days). With only 2 days to premiere and marketing locked across US/CA/UK, the premiere must be delayed to accommodate redelivery. RQ-BOARD-05 board escalation applies to tentpole titles; TTL-39312 is standard tier, so this desk can authorize the delay directly.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4610,
+          "output_tokens": 2582,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00478
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005286,
+      "latency_s": 52.957,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor audio loudness defect (1.4 LU drift), not a caption defect, so the CVAA hard block (RQ-CVAA-01) does not apply. No creative annotations explain the drift. Per RQ-MINOR-03, minor defects inside the 3-day release window ship on time and are patched post-release. TTL-58419 (\"The Long Quiet\") is at exactly 3 days to premiere with marketing locked, and the defect is rated minor severity. RQ-PREF-00 permits waiving where policy explicitly allows it, which RQ-MINOR-03 does here. The audio-eng queue will remediate post-release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 7026,
+          "output_tokens": 2373,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005286
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003065,
+      "latency_s": 27.465,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The 22-second digital silence at 00:50:05 is covered by a post-supervisor-approved production annotation (range 00:50:05\u201300:50:59) documenting a deliberate audio blackout for dramatic effect. Per policy RQ-CREATIVE-02, a creative annotation covering the flagged timecode establishes the behavior as intentional, so this flag is not a defect. The title (TTL-90924, \"The Long Quiet\") is standard tier with 8 days to premiere in UK/EU territories and no CVAA obligations. No remediation is required; the asset may ship as delivered.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4897,
+          "output_tokens": 1170,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003065
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004779,
+      "latency_s": 47.472,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a confirmed caption defect (subtitle timing drift ~800ms across 14 events at 00:15:14) on a title releasing in CVAA-covered territory (US). Per RQ-CVAA-01, caption defects in CVAA territories are a legal hard block and may never be waived regardless of severity. No creative annotation covers the flagged timecode, so this is a genuine defect. Per RQ-FIX-04, timed-text repairs can be completed in-house in approximately 2 days; with 20 days remaining to premiere, the schedule allows this. Per RQ-PREF-00, in-house fix is the preferred remediation path. Routing to timed-text queue for expedited internal repair before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6586,
+          "output_tokens": 2087,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004779
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004795,
+      "latency_s": 45.737,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-67142 has a major-severity lip-sync defect (audio leads picture by ~4 frames at 00:09:45) confirmed as a genuine defect \u2014 no creative annotation covers the flagged timecode. The title \"Paper Cities\" (TTL-87012) is a tentpole with marketing locked and only 1 day to premiere. Per RQ-FIX-04, in-house audio repair requires ~2 days and vendor redelivery ~5 days, neither of which fits the remaining schedule. Per RQ-PREF-00, escalation is appropriate when no compliant remediation fits the timeline. Per RQ-BOARD-05, a major defect on a tentpole that cannot be remediated in time is a commercial decision requiring release-board review rather than a unilateral delay of a marketed premiere.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6695,
+          "output_tokens": 2072,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004795
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004188,
+      "latency_s": 44.933,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Major severity colour metadata mismatch flagged at 00:41:07, 2 days before premiere. The issue is in the package descriptor, not the video essence itself, so it's not clearly covered by the vendor redelivery policy for picture defects (RQ-FIX-04). The policy only addresses in-house fixes for timed-text/audio and vendor redelivery for essence defects, with no guidance for metadata issues. Since this is major severity (not minor per RQ-MINOR-03) and close to premiere with an unclear remediation path, this requires a commercial decision on whether to delay release, expedite a metadata fix, or accept the risk.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4559,
+          "output_tokens": 2132,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004188
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002872,
+      "latency_s": 27.037,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Compression artefacts baked into the picture essence at 00:17:43 are a major video defect with no creative annotation to justify them. Per RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require vendor redelivery (~5 days). With only 3 days to premiere on tentpole title \"Glass Harbour\" (marketing locked, APAC/EU territories), vendor redelivery cannot complete before the premiere. Per RQ-BOARD-05, this combination \u2014 major defect, no in-house fix, insufficient time for vendor redelivery, tentpole tier, marketed premiere \u2014 is a commercial decision requiring release board escalation rather than a unilateral delay.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4472,
+          "output_tokens": 1126,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002872
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004552,
+      "latency_s": 44.438,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor audio loudness drift (1.4 LU above spec) on a non-caption component with no creative annotation covering the timecode. Per RQ-PREF-00, in-house repair is the preferred remediation. RQ-FIX-04 confirms audio defects can be repaired in-house in approximately 2 days. With 8 days to premiere (outside the 3-day window per RQ-MINOR-03), there is ample schedule headroom to complete the fix before the APAC/EU premiere. No CVAA obligations apply. The flag is routed to audio-eng for expedited internal repair.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6496,
+          "output_tokens": 1932,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004552
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002693,
+      "latency_s": 24.875,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports total audio loss at 00:39:31, but production annotation AST-78248-001 confirms this is intentional silence for the director's cut scene (00:39:31-00:39:59). Per RQ-CREATIVE-02, a creative team annotation covering the flagged timecode establishes the behavior as intentional and the flag is not a defect. Title TTL-60669 has 20 days to premiere with US CVAA obligations, but since this is a creative choice rather than a defect, no remediation is needed. Release as delivered.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4532,
+          "output_tokens": 971,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002693
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004479,
+      "latency_s": 47.626,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a confirmed caption defect (subtitle timing drift, is_caption_defect=true) on TTL-85529 \"Sixteen Winters,\" which releases in CVAA-covered territory (US). Per RQ-CVAA-01, caption defects on covered territories are a legal hard block that cannot be waived regardless of severity or premiere pressure. No creative annotations exist to explain the drift. Per RQ-FIX-04, in-house timed-text repair requires approximately 2 days, but only 1 day remains to premiere. Since the fix cannot be completed before the scheduled premiere and the defect cannot be waived, the release must be delayed per the CVAA rule's fallback. Board escalation (RQ-BOARD-05) does not apply because the defect is rated minor severity.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 5018,
+          "output_tokens": 2245,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004479
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004639,
+      "latency_s": 44.868,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The 120ms sustained A/V sync offset on AST-30469 is a real major-severity audio defect \u2014 no creative annotation covers the flagged timecode (00:62:11), and it is not a caption defect so CVAA rules do not apply. Per RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days, and with 2 days remaining to premiere on this standard-tier title (TTL-40154, \"Paper Cities\"), an expedited internal fix is feasible and aligns with the remediation preference order (RQ-PREF-00: prefer in-house fix first). Board escalation is not warranted as this is not a tentpole title. The flag is routed to audio-eng for repair before the APAC/EU premiere.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6508,
+          "output_tokens": 1997,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004639
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004771,
+      "latency_s": 52.624,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-10263 is a major-severity colour metadata mismatch on tentpole title \"Northwind\" (TTL-98350) with only 3 days to premiere and marketing locked. Per RQ-FIX-04, picture-related defects cannot be repaired in-house and require vendor redelivery (~5 days), which exceeds the remaining schedule. No creative annotation covers the flagged timecode (00:34:53). Per RQ-BOARD-05, a major defect on a tentpole title that cannot be remediated within the release window is a commercial decision requiring release board escalation rather than a unilateral delay of a marketed premiere. The flag is assigned to video-eng as the owning queue.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4990,
+          "output_tokens": 2480,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004771
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004559,
+      "latency_s": 42.527,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies major-severity compression artefacts baked into the video essence at 00:21:06 on AST-12849 (Glass Harbour, TTL-65478). The sole creative annotation on the asset covers 00:46:00\u201300:46:40, which does not overlap the flagged timecode, so the defect is not an intentional creative choice. Per release policy RQ-FIX-04, picture-essence defects cannot be remediated in-house and require vendor redelivery (~5 days). The title is standard tier with 8 days to premiere in UK/EU (non-CVAA), providing sufficient schedule headroom for vendor redelivery without delaying the release. Marketing is not locked, so no downstream marketing impact. The flag is routed to video-eng as the owning queue for a video essence defect, with vendor redelivery as the remediation action.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6735,
+          "output_tokens": 1878,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004559
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003874,
+      "latency_s": 39.072,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor audio defect (integrated loudness -21.4 LKFS, outside -27/-23 spec) at 00:73:59. It is not a caption defect, so the CVAA hard block (RQ-CVAA-01) does not apply. The creative annotation at 00:85:00-00:85:40 does not cover the flagged timecode, so this is not an intentional creative choice. Per RQ-FIX-04, audio defects can be repaired in-house in about 2 days. With 20 days to premiere on this tentpole title (TTL-33631 \"The Long Quiet\"), there is ample schedule headroom. Per RQ-PREF-00, in-house fix is the preferred remediation path. The defect is real and out of delivery spec, so it cannot be waived. Route to audio-eng for internal loudness normalization before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 5173,
+          "output_tokens": 1733,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003874
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002217,
+      "latency_s": 21.603,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged 22-second digital silence at 00:69:12 is covered by a production annotation (range 00:69:12\u201300:69:59) stating it is a deliberate audio blackout for dramatic effect, approved by the post supervisor. The automated QC detector identified silence but did not account for creative intent. Since the annotation fully covers the flagged timecode, this is not a defect \u2014 no remediation is required. The title (tentpole, 1 day to premiere, CVAA-covered territories) can release as delivered.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2979,
+          "output_tokens": 987,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002217
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00407,
+      "latency_s": 35.612,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor-severity caption sync defect (~0.8s drift) at 00:37:26 with no creative-intent annotation. Per RQ-CVAA-01, caption defects are a legal hard block only in CVAA-covered territories; this title releases in APAC and EU with cvaa_covered=false, so the defect is treated as an ordinary minor defect. Per RQ-MINOR-03, minor defects inside the 3-day release window ship on time and are patched post-release. The premiere is in 2 days, placing us inside that window. The flag is waived and the title ships as delivered; the timed-text team will patch the sync drift post-release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6672,
+          "output_tokens": 1512,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00407
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003804,
+      "latency_s": 38.548,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The lip-sync defect (audio leading picture by ~4 frames at 00:29:56) is a genuine major-severity audio issue with no creative annotations to justify it. Per RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days. With 3 days remaining to premiere on this standard-tier title (TTL-84611, \"Northwind\"), the schedule accommodates an in-house fix. RQ-PREF-00 directs us to prefer in-house remediation over vendor redelivery or delay. The CVAA hard block (RQ-CVAA-01) does not apply as this is not a caption defect. Board escalation (RQ-BOARD-05) is not warranted since the defect is fixable in-house within the available window. Routing to audio-eng for expedited repair before the premiere.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4906,
+          "output_tokens": 1745,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003804
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006008,
+      "latency_s": 57.045,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a colour metadata mismatch between the package descriptor and the video essence \u2014 a sidecar metadata error, not a picture defect baked into the essence. Per RQ-FIX-04, only essence-level picture defects require vendor redelivery; descriptor metadata can be corrected in-house. RQ-PREF-00 directs us to prefer an in-house fix. With 8 days to premiere on a standard-tier title (RQ-BOARD-05 escalation criteria not met), video engineering can rewrite the colour metadata in the package descriptor well before release. No creative annotations cover this timecode, and the defect is not a caption issue, so CVAA-01 does not apply.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 5,
+          "input_tokens": 8576,
+          "output_tokens": 2550,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006008
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003065,
+      "latency_s": 30.691,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Compression artefacts at 00:85:26 are a major video-essence defect with no creative annotation covering the timecode, confirming it is a genuine defect. Per RQ-FIX-04, picture defects baked into the video essence cannot be repaired in house and require vendor redelivery (~5 days). Glass Harbour is a standard-tier title with 20 days to premiere across APAC and EU territories, providing ample time for vendor redelivery before the premiere date. Board escalation (RQ-BOARD-05) is not triggered because the title is not tentpole and the redelivery window is sufficient. The flag is routed to video-eng as the owning queue for picture-essence defects.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4459,
+          "output_tokens": 1280,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003065
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005368,
+      "latency_s": 47.841,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a minor-severity audio loudness drift (1.4 LU above spec) on AST-28159 for tentpole title TTL-35102 (\"Aster & Vale\"), with 1 day to premiere \u2014 inside the 3-day release window. No creative annotations explain the drift, but per policy RQ-MINOR-03, minor defects inside the release window ship on time and are patched post-release. This is not a caption defect (CVAA-01 inapplicable; CVAA territories not covered), and it is not a major defect requiring board escalation (BOARD-05 inapplicable). Audio-eng will remediate the loudness drift post-release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 5,
+          "input_tokens": 8700,
+          "output_tokens": 2019,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005368
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002794,
+      "latency_s": 25.784,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The production annotation from the creative team covers the flagged timecode range (00:70:30-00:70:59) and explicitly states the silence is intentional \u2014 a director's cut choice with no score or room tone. Per RQ-CREATIVE-02, creative intent overrides detector flags, so this is not a defect. The title is standard tier, 2 days to premiere, and not CVAA-covered, so there are no accessibility concerns. The flag should be recorded as no-defect and the title released as delivered.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4560,
+          "output_tokens": 1043,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002794
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003792,
+      "latency_s": 38.295,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a confirmed caption defect (subtitle timing drift ~800ms across 14 events) on TTL-21997 \"Aster & Vale,\" a tentpole title releasing in the US (CVAA-covered territory) in 3 days. Per policy RQ-CVAA-01, caption defects on CVAA-covered territories are a legal hard block that cannot be waived regardless of severity or schedule pressure. No creative annotations explain the drift as intentional. Per policy RQ-FIX-04, timed-text defects can be repaired in-house in approximately 2 days, which fits within the 3-day window to premiere. The flag is routed to the timed-text queue for expedited internal repair before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 5017,
+          "output_tokens": 1708,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003792
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004115,
+      "latency_s": 38.044,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag reports a sustained 120ms audio/video sync offset from 00:55:18 on tentpole title \"Paper Cities\" (TTL-47186), rated major severity. No creative annotation covers the flagged timecode, so this is a genuine defect. Per RQ-FIX-04, audio defects can be repaired in house in approximately 2 days. With 8 days to premiere across UK/EU territories (no CVAA obligations), there is ample schedule headroom for an in-house fix. Per RQ-PREF-00, in-house remediation is the preferred path. The flag is routed to audio-eng for expedited repair before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6458,
+          "output_tokens": 1600,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004115
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007954,
+      "latency_s": 87.748,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major-severity colour metadata mismatch between the package descriptor and the video essence on AST-50799 (TTL-37421, \"Aster & Vale\"). No creative annotations explain the discrepancy, and a descriptor/essence colour metadata mismatch can cause incorrect colour rendering on playback. Per RQ-FIX-04, video/picture defects cannot be repaired in-house and require vendor redelivery (~5 days). The title is tentpole tier with 20 days to premiere across US/CA/UK \u2014 well outside the 3-day release window and with ample time for vendor redelivery, so per RQ-PREF-00 the preferred remediation is vendor redelivery rather than delay or board escalation. CVAA (RQ-CVAA-01) does not apply as this is not a caption defect.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 7368,
+          "output_tokens": 4372,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007954
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.001496,
+      "latency_s": 114.05,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": null,
+          "action": null
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy"
+        ],
+        "refused": false,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 2716,
+          "output_tokens": 490,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001496
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004142,
+      "latency_s": 41.528,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor audio loudness spec deviation (-21.4 LKFS vs. -27/-23 target), not a caption defect, so the CVAA hard block (RQ-CVAA-01) does not apply. No creative annotations explain the deviation, confirming it is a real defect. However, per RQ-MINOR-03, minor defects inside the 3-day release window ship on time and are patched post-release. With 2 days to premiere, we are inside that window. Audio engineering will remediate the loudness post-release per RQ-FIX-04 (in-house audio repair capability, ~2 days).",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 5088,
+          "output_tokens": 1964,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004142
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.0,
+      "latency_s": 4.081,
+      "n_api_calls": 1,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": null,
+          "action": null
+        },
+        "n_turns": 1,
+        "tool_calls": [],
+        "refused": false,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 1,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.0
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003617,
+      "latency_s": 35.672,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag is a confirmed caption defect (subtitle timing drift ~800ms across 14 events) on title TTL-44639 \"Northwind,\" which releases exclusively in the US \u2014 a CVAA-covered territory. Per policy RQ-CVAA-01, caption defects in CVAA-covered territories are a legal hard block that cannot be waived regardless of the \"minor\" severity rating, title tier, or premiere pressure. No creative annotations explain the drift. Per RQ-FIX-04, timed-text defects can be repaired in house in approximately 2 days. With 8 days remaining to premiere, the schedule comfortably allows an in-house fix without delaying the release. The flag is routed to the timed-text engineering queue for expedited remediation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4904,
+          "output_tokens": 1600,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003617
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00334,
+      "latency_s": 31.691,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major lip-sync defect (audio leads picture by ~4 frames at 00:63:48) on tentpole title \"Sixteen Winters\" (TTL-48517). No creative annotations cover the flagged timecode, confirming this is a genuine defect. Per RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days. With 20 days remaining to premiere, there is ample schedule headroom. Per RQ-PREF-00, in-house repair is the preferred remediation path. The flag is routed to audio-eng as the owning queue for an audio sync correction.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4797,
+          "output_tokens": 1410,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00334
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005458,
+      "latency_s": 53.822,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-94014 is a major-severity colour metadata mismatch on the video essence of TTL-50112 (\"The Long Quiet\"), with no creative annotations explaining it. Per RQ-FIX-04, picture defects baked into the essence cannot be repaired in house and require vendor redelivery (~5 days). With only 1 day to premiere, vendor redelivery is infeasible. Waiver is not permitted for major video defects under RQ-PREF-00. No compliant remediation fits the schedule, and marketing is locked for the APAC/EU release, making the choice between shipping with a major colour defect or delaying a marketed premiere a commercial decision for the release board per RQ-BOARD-05 and RQ-PREF-00.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 7163,
+          "output_tokens": 2473,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005458
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002381,
+      "latency_s": 24.892,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-30240 has a major video defect (dropped-frame judder at 00:09:29) that is not covered by any creative annotation. Per RQ-FIX-04, picture essence defects cannot be repaired in house and require vendor redelivery (~5 days). With only 2 days to premiere and marketing locked across US/CA/UK, there is insufficient time for vendor redelivery. Per RQ-BOARD-05, this combination \u2014 major defect, no in-house fix, insufficient time for redelivery, marketed premiere \u2014 is a commercial decision requiring release board escalation rather than a unilateral delay.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2968,
+          "output_tokens": 1118,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002381
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003746,
+      "latency_s": 36.863,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor-severity audio loudness drift (1.4 LU above spec) on AST-34520, not a caption defect, so the CVAA hard block (RQ-CVAA-01) does not apply. No creative annotations cover the flagged timecode. The title is 3 days from premiere, placing it squarely inside the 3-day release window. Per RQ-MINOR-03, minor defects inside the release window ship on time and are patched post-release. Although RQ-FIX-04 confirms audio can be repaired in-house in ~2 days, the minor-defect policy directs us to waive and release now, with audio-eng scheduling a post-release loudness correction.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4962,
+          "output_tokens": 1686,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003746
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00206,
+      "latency_s": 20.493,
+      "n_api_calls": 2,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 2,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged 22-second digital silence at 00:50:05 is covered by a production annotation (range 00:50:05\u201300:50:59) explicitly approved by the post supervisor as a deliberate audio blackout for dramatic effect. The QC flag is a false positive \u2014 the audio essence matches creative intent. No remediation is needed; the title can ship as delivered.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2979,
+          "output_tokens": 865,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00206
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003979,
+      "latency_s": 39.237,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a confirmed caption defect (subtitle timing drift ~800ms across 14 events) on a CVAA-covered title releasing in the US. Per RQ-CVAA-01, caption defects in covered territories are a legal hard block and cannot be waived regardless of the minor severity rating. The sole creative annotation (film grain at 00:42:00) does not cover the flagged timecode at 00:15:14, so this is not an intentional creative choice. Per RQ-FIX-04, timed-text defects can be repaired in-house in approximately 2 days, and with 20 days remaining to premiere there is ample schedule headroom. Per RQ-PREF-00, in-house fix is the preferred remediation path. Routing to the timed-text queue for expedited repair before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 5258,
+          "output_tokens": 1794,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003979
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004472,
+      "latency_s": 46.945,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-67142 has a confirmed major lip-sync defect (audio leads picture by ~4 frames at 00:09:45) on tentpole title \"Paper Cities\" with 1 day to premiere and marketing locked across US/CA/UK. No creative annotation covers the flagged timecode, so this is a genuine defect. Per RQ-FIX-04, audio defects require ~2 days for in-house repair, which exceeds the remaining 1-day window. Vendor redelivery (RQ-FIX-04, ~5 days) is also infeasible. Per RQ-BOARD-05, a major defect on a tentpole that cannot be remediated before a marketed premiere is a commercial decision requiring release board escalation rather than a unilateral delay.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4940,
+          "output_tokens": 2259,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004472
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007137,
+      "latency_s": 72.54,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a colour metadata mismatch between the package descriptor and the video essence at 00:41:07, raised at the package-validation stage. This is a descriptor/sidecar metadata error, not a defect baked into the video essence itself, so RQ-FIX-04's vendor-redelivery path (5 days) does not apply \u2014 the descriptor can be corrected in-house by video engineering without re-encoding the essence. With 2 days to premiere on a standard-tier US release (TTL-29453 \"Sixteen Winters\"), there is sufficient time to expedite the descriptor correction internally before the premiere. No creative annotation covers the flagged timecode, so this is a genuine defect. The fix is assigned to video-eng for expedited internal remediation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 5,
+          "input_tokens": 8511,
+          "output_tokens": 3448,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007137
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003797,
+      "latency_s": 32.955,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Compression artefacts at 00:17:43 are a major video-essence defect with no creative-intent annotation covering the timecode. Per RQ-FIX-04, picture defects baked into the essence require vendor redelivery (~5 days), but the tentpole title \"Glass Harbour\" premieres in 3 days with marketing locked across APAC and EU. No in-house repair is possible and vendor redelivery cannot arrive before premiere. Per RQ-BOARD-05, this combination \u2014 major defect, no in-house fix, insufficient time for redelivery, tentpole tier, marketed premiere \u2014 is a commercial decision that must be escalated to the release board rather than unilaterally delaying or waiving.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6390,
+          "output_tokens": 1369,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003797
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005707,
+      "latency_s": 52.126,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor audio loudness drift (1.4 LU above spec) on tentpole title TTL-68649 with 8 days to premiere. No creative annotations explain the defect, and it is not a caption defect so CVAA rules do not apply. Per RQ-PREF-00, in-house repair is the preferred remediation; per RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days, which fits comfortably within the 8-day window. Per RQ-MINOR-03, the title is outside the 3-day release window so there is ample room to remediate before premiere. Routing to audio-eng for expedited internal loudness correction.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 5,
+          "input_tokens": 8749,
+          "output_tokens": 2271,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005707
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002738,
+      "latency_s": 24.936,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag detected total audio loss at 00:39:31, but a production annotation from the creative team explicitly covers this timecode range (00:39:31-00:39:59) and states this is intentional silence per the director's cut. Per release policy RQ-CREATIVE-02, a production annotation that covers the flagged timecode range establishes the flagged behavior as intentional, making this not a defect. The title has 20 days to premiere in US territory with CVAA coverage, but since this is not a defect, no remediation is needed.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4532,
+          "output_tokens": 1006,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002738
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004394,
+      "latency_s": 45.759,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "This is a confirmed caption defect (subtitle timing drift, 14 events) on a title releasing in CVAA-covered territories (US, CA, UK). Per RQ-CVAA-01, caption defects in covered territories are a legal hard block that cannot be waived regardless of severity or premiere pressure. In-house timed-text repair requires approximately 2 days (RQ-FIX-04), but only 1 day remains to premiere, so the fix cannot be completed in time. RQ-MINOR-03 (patch post-release for minor defects in the 3-day window) is overridden by the CVAA hard block. RQ-BOARD-05 escalation criteria require a major defect, which this is not. The release must be delayed to allow the in-house timed-text team to complete the repair before premiere.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 5179,
+          "output_tokens": 2138,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004394
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004039,
+      "latency_s": 41.16,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-30469 has a major-severity audio/video sync offset of 120ms sustained from 00:62:11. The creative annotation on this asset (handheld camera shake at 00:84:00\u201300:84:40) does not cover the flagged timecode, confirming this is a genuine defect. Per RQ-PREF-00, in-house repair is the preferred remediation path. Per RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days, which matches the 2-day window to premiere for this standard-tier title (TTL-40154, \"Paper Cities\") releasing in APAC and EU. CVAA obligations do not apply (non-caption defect, non-CVAA territories). The flag is routed to audio-eng for expedited internal repair before the premiere.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 5003,
+          "output_tokens": 1905,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004039
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007408,
+      "latency_s": 78.781,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-10263 is a major-severity spec-inspection flag: colour metadata in the package descriptor mismatches the video essence at 00:34:53. No creative annotation covers this timecode, so it is not an intentional choice. TTL-98350 (\"Northwind\") is a tentpole title with marketing locked and only 3 days to premiere across APAC and EU. Per RQ-FIX-04, in-house repair capability is explicitly limited to timed-text and audio; picture-adjacent defects require vendor redelivery at ~5 days, which exceeds the remaining window. Per RQ-BOARD-05, a major defect on a tentpole that cannot be remediated within the schedule is a commercial decision for the release board rather than a unilateral delay of a marketed premiere. Per RQ-PREF-00, escalation is appropriate because no compliant remediation path fits the remaining schedule.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 5,
+          "input_tokens": 8601,
+          "output_tokens": 3637,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007408
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004364,
+      "latency_s": 42.873,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Major-severity compression artefacts at 00:21:06 are baked into the video essence and cannot be repaired in-house per RQ-FIX-04. No creative annotation covers the flagged timecode, confirming this is a genuine defect. The title is standard tier with 8 days to premiere; vendor redelivery takes approximately 5 days, leaving sufficient schedule margin. This is not a tentpole title and the schedule accommodates redelivery, so board escalation (RQ-BOARD-05) is not required. Routing to video-eng for vendor redelivery.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6472,
+          "output_tokens": 1791,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004364
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001503,
+      "latency_s": 180.299,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": null,
+          "action": null
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 2772,
+          "output_tokens": 481,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001503
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002832,
+      "latency_s": 25.577,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged 22-second digital silence at 00:69:12 is covered by a production annotation (range 00:69:12\u201300:69:59) from the post supervisor explicitly approving a deliberate audio blackout for dramatic effect. Per release policy RQ-CREATIVE-02, a creative-team annotation covering the flagged timecode establishes the behavior as intentional, so the flag is not a defect. Title TTL-78218 (\"Aster & Vale\") is a tentpole with 1 day to premiere across US/CA/UK (CVAA-covered), but since no actual defect exists, the release proceeds as delivered.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4603,
+          "output_tokens": 1062,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002832
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003628,
+      "latency_s": 35.209,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The caption sync drift (~0.8s at 00:37:26) is a confirmed minor timed-text defect with no creative-intent annotation. Title TTL-44220 releases in APAC and EU only \u2014 CVAA coverage is false, so the accessibility hard block (RQ-CVAA-01) does not apply and the defect is treated as an ordinary minor defect per that clause. With 2 days to premiere, the title is inside the 3-day release window; per RQ-MINOR-03, minor defects inside this window ship on time and are patched post-release. Although in-house timed-text repair is possible in ~2 days (RQ-FIX-04), the schedule is too tight to guarantee completion before premiere, and policy directs waiver for minor defects in this window. The flag is routed to the timed-text queue for post-release remediation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4878,
+          "output_tokens": 1615,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003628
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004546,
+      "latency_s": 41.514,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The lip-sync error (audio leading picture by ~4 frames at 00:29:56) is a real, major-severity audio defect with no creative-annotation justification. It is not a caption defect, so the CVAA hard block (RQ-CVAA-01) does not apply. Per RQ-FIX-04, audio defects can be repaired in house in approximately 2 days. With 3 days remaining to premiere on this standard-tier title, the in-house fix fits within the release window. Board escalation (RQ-BOARD-05) is not triggered because the title is standard tier and the defect is fixable in house. Routing to audio-eng for expedited internal repair before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6783,
+          "output_tokens": 1856,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004546
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006024,
+      "latency_s": 65.789,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a colour metadata mismatch between the package descriptor and the video essence at 00:06:06 (major severity, spec-inspection). No creative annotations explain the discrepancy. The video essence itself is not defective \u2014 the descriptor is incorrect \u2014 but this is a packaging error originating from the vendor's deliverable. Per RQ-FIX-04, picture-related defects require vendor redelivery (~5 days), and per RQ-MINOR-03, with 8 days to premiere (outside the 3-day release window), there is sufficient time for the vendor to supply a corrected package with the descriptor aligned to the actual video essence before the premiere.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6208,
+          "output_tokens": 3154,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006024
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002946,
+      "latency_s": 27.429,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Compression artefacts at 00:85:26 are a major-severity video defect with no creative-annotation justification. Per RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require vendor redelivery (~5 days). Per RQ-PREF-00, vendor redelivery is the preferred remediation when in-house fix is unavailable. Title TTL-75837 (\"Glass Harbour\") has 20 days to premiere across APAC and EU (standard tier, not CVAA-covered), so the 5-day redelivery window fits comfortably without delaying the release. No waiver basis exists for a major video defect.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4466,
+          "output_tokens": 1185,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002946
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004164,
+      "latency_s": 37.868,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a genuine minor audio loudness drift (1.4 LU above spec) with no creative-intent annotation covering it. However, per RQ-MINOR-03, minor defects inside the 3-day release window ship on time and are patched post-release. Title TTL-35102 (\"Aster & Vale\") is 1 day from premiere, well within that window. The defect is not a caption issue, so the CVAA hard block (RQ-CVAA-01) does not apply. Per RQ-PREF-00, we waive only where policy explicitly allows \u2014 and RQ-MINOR-03 explicitly permits shipping minor defects on schedule. The audio-eng team should schedule a post-release loudness correction.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6495,
+          "output_tokens": 1629,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004164
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002838,
+      "latency_s": 25.16,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The 22-second digital silence at 00:70:30 is covered by a production annotation (range 00:70:30\u201300:70:59) from the creative team stating the silence is intentional \u2014 a director's cut choice with no score or room tone. Per release policy RQ-CREATIVE-02, a creative annotation covering the flagged timecode establishes the behavior as intentional, so the flag is not a defect. The title (Sixteen Winters, standard tier, 2 days to premiere, UK/EU territories, non-CVAA) can ship as delivered.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4701,
+          "output_tokens": 1042,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002838
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004344,
+      "latency_s": 40.138,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a confirmed caption defect (subtitle timing drift ~800ms across 14 events) on a title releasing in the US, a CVAA-covered territory. Per policy RQ-CVAA-01, caption defects in CVAA territories are a legal hard block that cannot be waived regardless of severity or premiere pressure. Per RQ-FIX-04, timed-text defects can be repaired in house in approximately 2 days, and with 3 days remaining to premiere the schedule allows an internal fix. No creative annotations cover the flagged timecode. The timed-text engineering queue should correct the timing drift before the premiere.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6603,
+          "output_tokens": 1743,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004344
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004292,
+      "latency_s": 38.985,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-68883 has a major-severity audio/video sync offset of 120ms sustained from 00:55:18 with no creative annotation covering the flagged timecode, confirming it is a genuine defect. Per RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days. The title \"Paper Cities\" (TTL-47186) is a tentpole release with 8 days to premiere in UK/EU territories (no CVAA obligations), so the in-house repair window fits comfortably within the schedule. Per RQ-PREF-00, in-house fix is the preferred remediation path. The defect is routed to audio-eng as it is an audio-component issue.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6478,
+          "output_tokens": 1734,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004292
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005109,
+      "latency_s": 56.353,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The colour metadata mismatch between the package descriptor and video essence (flagged at 00:91:48, major severity) is a real defect with no creative-intent annotation to explain it. Incorrect colour metadata will cause downstream players to render the image with the wrong colour space, producing visible artefacts on a tentpole release (\"Aster & Vale,\" 20 days to premiere, US/CA/UK). Per RQ-FIX-04, only timed-text and audio defects can be repaired in-house; video-related packaging defects require vendor redelivery (~5 days). Per RQ-MINOR-03, we are well outside the 3-day release window, so vendor redelivery is feasible without delaying the premiere. The flag is routed to video-eng as the owning queue for video essence and its associated metadata.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4807,
+          "output_tokens": 2790,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005109
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003196,
+      "latency_s": 29.541,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-67249 carries a major-severity video defect (dropped-frame judder at 00:87:17) with no creative annotation on file. Per RQ-FIX-04, picture-essence defects cannot be repaired in house and require vendor redelivery (~5 days). The title is a tentpole with marketing locked and only 1 day to premiere across CVAA-covered territories (US, CA, UK). No compliant remediation fits the schedule. Per RQ-BOARD-05, this is a commercial decision above this desk \u2014 escalating to the release board to decide between delaying the marketed premiere or accepting the defect for release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4814,
+          "output_tokens": 1293,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003196
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004882,
+      "latency_s": 47.498,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The integrated loudness of -21.4 LKFS is a genuine but minor audio spec deviation (flag severity: minor, no creative annotations covering it). The title \"Paper Cities\" is 2 days from premiere, placing it inside the 3-day release window defined by RQ-MINOR-03, which explicitly directs that minor defects ship on time and are patched post-release. The CVAA hard block (RQ-CVAA-01) does not apply because this is an audio loudness defect, not a caption/subtitle defect. Per RQ-PREF-00, waiver is appropriate where policy explicitly allows it, and RQ-MINOR-03 provides that authorization. The flag is routed to audio-eng for post-release remediation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6496,
+          "output_tokens": 2190,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004882
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002762,
+      "latency_s": 24.266,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Production annotation AST-91366-001 covers the flagged timecode 00:87:18 and explicitly documents the audio blackout as a deliberate creative choice approved by the post supervisor. Per release policy RQ-CREATIVE-02, when a production annotation from the creative team covers the flagged timecode range, the flagged behavior is established as intentional and the flag is not a defect. The automated QC detector correctly identified audio absence but misclassified it as a defect rather than recognizing the documented creative intent. Title TTL-60423 (Paper Cities) releases in 3 days across US/CA/UK territories with CVAA obligations, but this is not a caption defect requiring accessibility remediation\u2014it is an intentional dramatic silence. Release as delivered.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4527,
+          "output_tokens": 1026,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002762
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003231,
+      "latency_s": 30.167,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a confirmed caption defect (subtitle timing drift ~800ms across 14 events) on a title releasing in the US, a CVAA-covered territory. Per RQ-CVAA-01, caption defects in covered territories are a legal hard block that cannot be waived regardless of the minor severity rating. No creative annotations explain the drift. Per RQ-FIX-04, timed-text defects can be repaired in-house in approximately 2 days, and with 8 days remaining to premiere there is sufficient schedule headroom. Per RQ-PREF-00, in-house fix is the preferred remediation. Routing to timed-text engineering for expedited repair before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4717,
+          "output_tokens": 1345,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003231
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003772,
+      "latency_s": 31.607,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-78645 has a major-severity lip-sync defect (audio leads picture by ~4 frames at 00:63:48) with no creative-intent annotation covering the timecode. Per RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days. Per RQ-PREF-00, in-house fix is the preferred remediation. TTL-48517 (\"Sixteen Winters\") is a tentpole title with 20 days to premiere, providing ample schedule headroom for the 2-day repair. No vendor redelivery, delay, or board escalation is warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6467,
+          "output_tokens": 1330,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003772
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004797,
+      "latency_s": 45.098,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-94014 is a major-severity colour metadata mismatch in the video essence at 00:91:33 on TTL-50112 (\"The Long Quiet\"). No creative annotations cover the flagged timecode, so this is a genuine defect. Per RQ-FIX-04, picture-essence defects cannot be repaired in house and require vendor redelivery (~5 days). The title premieres in 1 day with marketing locked, so vendor redelivery does not fit the schedule. Per RQ-PREF-00 and RQ-BOARD-05, when no compliant remediation fits the window and the premiere is marketed, the decision to delay or ship with a known major defect is a commercial call for the release board rather than this desk.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6678,
+          "output_tokens": 2078,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004797
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007944,
+      "latency_s": 83.279,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a major-severity dropped-frame judder at 00:09:29 in the video essence. The creative annotation (handheld camera shake at 00:33:00-00:33:40) does not cover the flagged timecode, confirming this is a genuine defect. Per RQ-FIX-04, picture defects baked into the video essence cannot be repaired in-house and require vendor redelivery (~5 days). With only 2 days to premiere, vendor redelivery is not feasible. RQ-BOARD-05 limits board escalation to tentpole titles; TTL-39312 is standard tier, so the release must be delayed to allow vendor redelivery of a corrected master before premiere.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 5,
+          "input_tokens": 8641,
+          "output_tokens": 4046,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007944
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.005293,
+      "latency_s": 51.953,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": null,
+          "action": null
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy"
+        ],
+        "refused": false,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6925,
+          "output_tokens": 2404,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005293
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002851,
+      "latency_s": 26.256,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flagged 22-second digital silence at 00:50:05 is covered by a production annotation (range 00:50:05\u201300:50:59) from the post supervisor confirming a deliberate audio blackout for dramatic effect. Per release-policy clause RQ-CREATIVE-02, a creative-team annotation that covers the flagged timecode range establishes the behavior as intentional, so the flag is not a defect. The title is standard tier, 8 days to premiere, in non-CVAA territories (UK, EU), and marketing is not locked. No remediation is required; the asset should ship as delivered.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4541,
+          "output_tokens": 1092,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002851
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.0049,
+      "latency_s": 47.277,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies a caption defect (subtitle timing drift ~800ms across 14 events at 00:15:14) on AST-45949 for title TTL-44342 (\"Aster & Vale\"). The title releases in 20 days in the US and LATAM, with the US being a CVAA-covered territory. Per release policy RQ-CVAA-01, caption defects on CVAA-covered territories are a legal hard block that cannot be waived regardless of severity or title tier. The creative annotation on file (film grain at 00:42:00\u201300:42:40) does not cover the flagged timecode, confirming this is a genuine defect. Per RQ-FIX-04, timed-text defects can be repaired in-house in approximately 2 days, and with 20 days remaining to premiere, the schedule comfortably allows an expedited internal fix. The defect is routed to the timed-text queue for in-house remediation before release.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6767,
+          "output_tokens": 2136,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.0049
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004117,
+      "latency_s": 40.648,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-67142 has a major lip-sync defect (audio leads picture by ~4 frames at 00:09:45) confirmed as a genuine defect \u2014 no creative annotation covers the flagged timecode. Per RQ-FIX-04, audio defects require ~2 days for in-house repair and ~5 days for vendor redelivery, but TTL-87012 (\"Paper Cities\") is a tentpole title with marketing locked and only 1 day to premiere across US, CA, and UK. No compliant remediation fits the schedule. Per RQ-PREF-00 and RQ-BOARD-05, a major defect on a tentpole with no feasible fix and a marketed premiere is a commercial decision requiring release board escalation rather than a unilateral delay or waiver.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 5201,
+          "output_tokens": 1916,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004117
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008296,
+      "latency_s": 90.044,
+      "n_api_calls": 5,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 5,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The colour metadata mismatch at 00:41:07 is a package-descriptor defect, not a picture defect baked into the video essence \u2014 the video essence is intact and only the descriptor metadata needs correction. Per RQ-PREF-00, in-house repair is the preferred remediation path. Since this fix does not require re-encoding the video essence (unlike essence-level picture defects that per RQ-FIX-04 would need 5-day vendor redelivery), it is feasible within the 2-day window before premiere. The creative annotation (00:65:00\u201300:65:40) does not cover the flagged timecode, confirming this is a genuine defect. The title is standard tier, so RQ-BOARD-05 escalation criteria are not met. RQ-CVAA-01 does not apply as this is not a caption defect. Video engineering should correct the descriptor metadata before the premiere.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 5,
+          "input_tokens": 8842,
+          "output_tokens": 4271,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008296
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.0038,
+      "latency_s": 33.414,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-56376 carries a major-severity video defect (compression artefacts baked into the picture essence at 00:17:43) with no creative annotation covering the flagged timecode. Per RQ-FIX-04, picture-essence defects cannot be repaired in-house and require vendor redelivery (~5 days). TTL-39469 (\"Glass Harbour\") is a tentpole title with marketing locked and only 3 days to premiere, so vendor redelivery cannot arrive before the premiere date. RQ-MINOR-03 only permits waive-and-patch for minor defects inside the 3-day window; this flag is major. Per RQ-BOARD-05, a major defect on a tentpole title where no compliant remediation fits the schedule is a commercial decision requiring release-board escalation rather than a unilateral delay.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6459,
+          "output_tokens": 1354,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.0038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003543,
+      "latency_s": 34.238,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a minor audio loudness defect (1.4 LU drift) on a tentpole title 8 days from premiere in APAC/EU with no CVAA obligations. No creative annotation covers the flagged timecode. Per RQ-PREF-00, in-house repair is the first preference; per RQ-FIX-04, audio defects can be repaired in house in approximately 2 days, leaving ample margin before the premiere. RQ-MINOR-03 would allow a post-release patch only inside the 3-day window, but since we are well outside it, the preferred remediation is to expedite the internal fix now.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4867,
+          "output_tokens": 1551,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003543
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003561,
+      "latency_s": 33.196,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "predicted": {
+          "queue": "no-defect",
+          "action": "waive_and_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "Production annotation covers the flagged timecode (00:39:31-00:39:59) and explicitly states the silence is intentional per director's cut. Per RQ-CREATIVE-02, creative intent annotations that cover the flagged range establish the behavior as intentional, making this not a defect. The title releases in 20 days in US territory (CVAA-covered, but this is an audio defect not a caption defect, so accessibility rules don't apply). No remediation needed.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4989,
+          "output_tokens": 1535,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003561
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004777,
+      "latency_s": 51.593,
+      "n_api_calls": 3,
+      "detail": {
+        "gold": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "predicted": {
+          "queue": "timed-text",
+          "action": "delay_release"
+        },
+        "n_turns": 3,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-39543 carries a confirmed caption defect (subtitle timing drift ~800ms across 14 events at 00:88:19) on TTL-85529 \"Sixteen Winters,\" which releases in CVAA-covered territory (US). Per policy RQ-CVAA-01, caption defects on covered territories are a legal hard block that cannot be waived regardless of severity or premiere pressure. No creative annotations explain the defect. In-house timed-text repair requires ~2 days (RQ-FIX-04), but premiere is in 1 day, so the schedule does not permit an in-house fix before launch. Per RQ-CVAA-01, the release must be delayed to allow the timed-text team to complete the repair and remain compliant with CVAA and the NAD v. Netflix consent decree.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 5019,
+          "output_tokens": 2477,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004777
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004507,
+      "latency_s": 43.369,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The 120ms sustained A/V sync offset on AST-30469 is a confirmed major audio defect \u2014 no creative annotation covers the flagged timecode (00:62:11), and the title is not in CVAA-covered territories so no accessibility hard block applies. Per RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days, which matches the 2 days remaining to premiere for this standard-tier title. Following the remediation preference order (RQ-PREF-00), an expedited in-house fix is the correct path: it avoids vendor redelivery delays, avoids a marketed premiere delay, and resolves a perceptible quality issue before release to APAC and EU.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6493,
+          "output_tokens": 1898,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004507
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00419,
+      "latency_s": 39.317,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "escalate_to_release_board"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "AST-10263 is a major-severity colour metadata mismatch in the video essence at 00:34:53 on tentpole title TTL-98350 (Northwind). The creative annotation on file covers 00:60:00\u201300:60:40 and does not explain the flagged timecode, so this is a genuine defect. Per RQ-FIX-04, picture defects baked into the video essence cannot be repaired in house and require vendor redelivery (~5 days). With only 3 days to premiere and marketing already locked, vendor redelivery cannot complete in time. Per RQ-BOARD-05, a major defect on a tentpole title that cannot be remediated within the remaining schedule is a commercial decision requiring release-board escalation rather than a unilateral delay.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6731,
+          "output_tokens": 1591,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00419
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004515,
+      "latency_s": 43.578,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "video-eng",
+          "action": "vendor_redelivery"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The QC flag identifies major-severity compression artefacts baked into the video essence at 00:21:06. The sole creative annotation (handheld camera shake at 00:46:00\u201300:46:40) does not cover the flagged timecode, so this is a genuine defect, not an intentional creative choice. Per RQ-FIX-04, picture-essence defects cannot be repaired in-house and require vendor redelivery (~5 days). The title is standard tier with 8 days to premiere, providing sufficient lead time for redelivery before the UK/EU release. No CVAA accessibility obligations apply. Vendor redelivery is the appropriate remediation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6434,
+          "output_tokens": 1919,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004515
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005051,
+      "latency_s": 52.19,
+      "n_api_calls": 4,
+      "detail": {
+        "gold": {
+          "queue": "audio-eng",
+          "action": "vendor_redelivery"
+        },
+        "predicted": {
+          "queue": "audio-eng",
+          "action": "expedite_internal_fix"
+        },
+        "n_turns": 4,
+        "tool_calls": [
+          "get_qc_flag",
+          "get_release_context",
+          "check_creative_annotations",
+          "search_release_policy",
+          "search_release_policy",
+          "search_release_policy",
+          "submit_release_decision"
+        ],
+        "refused": false,
+        "error": null,
+        "reasoning": "The flag is a real audio defect (integrated loudness -21.4 LKFS vs. -27/-23 spec), severity minor, with no creative annotation covering the flagged timecode. CVAA hard-block rules (RQ-CVAA-01) do not apply because this is not a caption defect. Per RQ-PREF-00, in-house repair is the preferred remediation path. Per RQ-FIX-04, audio defects can be repaired in-house in approximately 2 days. With 20 days to premiere \u2014 well outside the 3-day window described in RQ-MINOR-03 \u2014 there is ample schedule room to fix before release. Routing to audio-eng for expedited internal loudness correction.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 6740,
+          "output_tokens": 2261,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005051
+        }
+      }
+    }
+  ]
+}
