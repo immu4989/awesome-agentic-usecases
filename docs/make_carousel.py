@@ -42,7 +42,7 @@ def slides() -> list[str]:
 
     return [
         # 1 — hook
-        f"""<div class="s">
+        """<div class="s">
           <div class="kicker">AGENT SAFETY · MEASURED</div>
           <h1>I gave an AI agent the power to <em>issue refunds</em>.</h1>
           <p class="lead">Then I checked what it actually did with that power.</p>
