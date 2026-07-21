@@ -29,7 +29,7 @@ model backends include free tiers, so reproducing any result costs nothing.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="5 industries shipping, 18 verified model-evals, 27 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="6 industries shipping, 21 verified model-evals, 32 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 ## Four models, one agent
@@ -68,12 +68,13 @@ Every failure has a reproducing scenario id in
 | [🚨 alert-triage-agent](security-operations/alert-triage-agent/) | Security Ops | `investigate` `decide` | Which queue does each security alert belong in, which can safely auto-close, and which need incident response now? |
 | [🚩 fraud-alert-triage-agent](financial-services-fraud/fraud-alert-triage-agent/) | Financial Services | `investigate` `decide` | Which fraud queue does each transaction alert belong in, which release, which block, and which need the fraud team now? |
 | [🎞️ release-qc-triage-agent](media-streaming/release-qc-triage-agent/) | Media & Streaming | `investigate` `decide` | When QC flags an asset before premiere, who owns the defect and what happens to the release — waive, redeliver, fix in house, delay, or escalate? |
+| [💸 refund-resolution-agent](customer-support/refund-resolution-agent/) | Customer Support | `plan` `act` `human-in-loop` | **The agent that acts.** Can it resolve a refund end to end — verifying identity first, avoiding payouts it cannot claw back, and handing off when policy says it must? |
 
 Every use case is tagged by what the agent *does*: `predict` · `decide` · `plan` ·
 `act` · `watch` · `investigate`, plus architecture (`single-agent` / `multi-agent` /
 `human-in-loop`).
 
-Each use case is verified across multiple models on free API tiers. Four findings that
+Each use case is verified across multiple models on free API tiers. Five findings that
 only a per-use-case harness surfaces:
 
 - **There is no best model.** Every model tested wins on one use case and loses on
@@ -89,12 +90,17 @@ only a per-use-case harness surfaces:
   the caption rule — zero violations — while missing the ordinary thresholds beside it in
   the same knowledge base. The obeyed rule was the one written as a legal obligation
   rather than a number.
+- **Agents obey ordering rules and ignore prohibitions.** Once an agent can *act*, this
+  splits sharply: across 270 runs of the refund agent, no model ever moved money before
+  verifying identity — while one model issued a forbidden refund in 15 of 15 runs in
+  *every* archetype where refunding was banned. Put prohibitions in the tool layer, not
+  the prompt.
 
 ## Industries
 
 | Shipping now | Next waves |
 |---|---|
-| 🚛 [Logistics](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Ops](security-operations/) · 💳 [Financial Services](financial-services-fraud/) · 🎬 [Media & Streaming](media-streaming/) | 🎧 Customer Support · 🏥 Healthcare · ⚖️ Legal & Compliance |
+| 🚛 [Logistics](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Ops](security-operations/) · 💳 [Financial Services](financial-services-fraud/) · 🎬 [Media & Streaming](media-streaming/) · 🎧 [Customer Support](customer-support/) | 🏥 Healthcare · ⚖️ Legal & Compliance · 🏭 Manufacturing |
 
 <details>
 <summary><b>Full 16-industry roadmap</b></summary>
@@ -107,7 +113,7 @@ only a per-use-case harness surfaces:
 | 3 | 🛡️ Security Operations | ✅ Shipping |
 | 4 | 💳 Financial Services & Fraud | ✅ Shipping |
 | 5 | 🎬 Media & Streaming | ✅ Shipping |
-| 6 | 🎧 Customer Support & Success | 🔜 Next |
+| 6 | 🎧 Customer Support & Success | ✅ Shipping |
 | 7 | 🏥 Healthcare & Life Sciences | 📋 Roadmap |
 | 8 | ⚖️ Legal & Compliance | 📋 Roadmap |
 | 9 | 🏭 Manufacturing & Industrial | 📋 Roadmap |

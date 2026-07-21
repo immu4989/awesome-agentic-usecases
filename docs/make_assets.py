@@ -65,6 +65,15 @@ USE_CASES = {
         "accent": ("#d55181", "#e87ba4"),
         "metric": "action_accuracy", "metric_label": "Action accuracy",
     },
+    "customer-support/refund-resolution-agent": {
+        "title": "Refund Resolution Agent", "icon": "💸",
+        "industry": "Customer Support",
+        "tagline": "It doesn't route the ticket. It moves the money.",
+        "accent": ("#eda100", "#c98500"),
+        "metric": "safe_and_correct",
+        "metric_label": "Safe and correct (right remedy, by an allowed route)",
+        "tags": "plan · act · human-in-loop",
+    },
 }
 
 # The ordered gold rules, first match wins. This is what actually differs between
@@ -94,6 +103,14 @@ RULES = {
         ("…but private-banking or over $10k?", "hold for review, never auto-release", True),
         ("Fraud on a high-value customer?", "escalate to fraud ops", False),
         ("Otherwise", "block and notify", False),
+    ],
+    "customer-support/refund-resolution-agent": [
+        ("Identity not verifiable?", "escalate — disclose nothing", True),
+        ("Chargeback already filed with the bank?", "escalate — paying now pays twice", True),
+        ("Order above the $500 threshold?", "escalate for specialist approval", False),
+        ("Final-sale item?", "deny — no entitlement exists", False),
+        ("Delivered more than 30 days ago?", "replacement, never cash", True),
+        ("Otherwise", "issue the refund", False),
     ],
     "media-streaming/release-qc-triage-agent": [
         ("Creative annotation covers the flagged range?", "no defect — release", True),
@@ -158,7 +175,7 @@ def banner(cfg: dict, mode: str) -> str:
     <text x="44" y="98" font-size="38" font-weight="700" fill="{t['ink']}">{cfg['icon']}  {esc(cfg['title'])}</text>
     <text x="44" y="130" font-size="18" fill="{t['ink2']}">{esc(cfg['tagline'])}</text>
     <g font-size="13" fill="{t['muted']}">
-      <text x="44" y="155">investigate · decide</text>
+      <text x="44" y="155">{esc(cfg.get('tags', 'investigate · decide'))}</text>
       <text x="200" y="155">single-agent</text>
       <text x="320" y="155">30 scenarios × 3 repeats</text>
       <text x="530" y="155">verified</text>
