@@ -201,6 +201,63 @@ def main() -> None:
     )
     print(f"wrote {out_png} ({os.path.getsize(out_png)/1024:.0f} KB, 1600x900)")
 
+    # Facebook / Instagram card: 4:5 portrait takes more vertical feed space.
+    out_fb = os.path.expanduser("~/Desktop/agentic-refund-fb-card.png")
+    tmp_fb = "/tmp/aau-fb-card.html"
+    with open(tmp_fb, "w") as f:
+        f.write(fb_card())
+    subprocess.run(
+        [CHROME, "--headless", "--disable-gpu", "--window-size=1080,1350",
+         f"--screenshot={out_fb}", f"file://{tmp_fb}"],
+        check=True, capture_output=True,
+    )
+    print(f"wrote {out_fb} ({os.path.getsize(out_fb)/1024:.0f} KB, 1080x1350)")
+
+
+def fb_card() -> str:
+    """Same contrast as the X card, stacked for a 4:5 portrait feed slot."""
+    return f"""<!doctype html><meta charset="utf-8"><style>
+  * {{ box-sizing: border-box; margin: 0; }}
+  body {{ width: 1080px; height: 1350px; font-family: {FONT}; background: {SURFACE};
+         color: {INK}; padding: 84px 76px; position: relative;
+         display: flex; flex-direction: column; justify-content: center; gap: 30px; }}
+  body::before {{ content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+                  width: 13px; background: {ACCENT}; }}
+  .kicker {{ color: {ACCENT}; font-size: 24px; font-weight: 700; letter-spacing: 2.4px; }}
+  h1 {{ font-size: 58px; font-weight: 700; letter-spacing: -1.2px; line-height: 1.1; }}
+  .sub {{ font-size: 29px; color: {MUTED}; line-height: 1.35; }}
+  .card {{ padding: 34px 38px; border-radius: 18px; background: rgba(255,255,255,.05);
+           border-left: 7px solid {MUTED}; }}
+  .card.g {{ border-left-color: {GOOD}; }}
+  .card.b {{ border-left-color: {BAD}; }}
+  .lbl {{ font-size: 21px; letter-spacing: 1.8px; color: {MUTED}; font-weight: 700; }}
+  .num {{ font-size: 104px; font-weight: 800; letter-spacing: -3px; line-height: 1.06;
+          margin: 8px 0 6px; }}
+  .num.g {{ color: {GOOD}; }}
+  .num.b {{ color: {BAD}; }}
+  .cap {{ font-size: 27px; line-height: 1.36; color: {INK2}; }}
+  .foot {{ position: absolute; left: 76px; right: 76px; bottom: 54px; font-size: 25px;
+           color: {MUTED}; line-height: 1.5; }}
+  .foot b {{ color: {ACCENT}; }}
+</style>
+<div class="kicker">AGENT SAFETY · 270 RUNS · 3 MODELS</div>
+<h1>Same policy document.<br>Same run.</h1>
+<div class="sub">One rule obeyed every single time.<br>One violated every single time.</div>
+<div class="card g">
+  <div class="lbl">CEREMONY &mdash; &ldquo;verify identity first&rdquo;</div>
+  <div class="num g">100%</div>
+  <div class="cap">No model ever moved money before verifying. Zero violations
+    across all 270 runs.</div>
+</div>
+<div class="card b">
+  <div class="lbl">PROHIBITION &mdash; &ldquo;never refund here&rdquo;</div>
+  <div class="num b">15 / 15</div>
+  <div class="cap">Mistral Small searched the policy, quoted it, and refunded anyway.
+    Every banned scenario type.</div>
+</div>
+<div class="foot">Put prohibitions in the tool layer, not the prompt.<br>
+  <b>github.com/immu4989/awesome-agentic-usecases</b></div>"""
+
 
 def x_card() -> str:
     """One landscape frame carrying the whole contrast: the rule they obeyed
