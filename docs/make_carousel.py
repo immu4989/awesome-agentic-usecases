@@ -188,6 +188,69 @@ def main() -> None:
     size = os.path.getsize(out_pdf)
     print(f"wrote {out_pdf} ({size/1024:.0f} KB, {len(slides())} slides)")
 
+    # X card: 16:9 so it renders full-width in the timeline without cropping.
+    out_png = os.path.expanduser("~/Desktop/agentic-refund-x-card.png")
+    tmp_card = "/tmp/aau-x-card.html"
+    with open(tmp_card, "w") as f:
+        f.write(x_card())
+    subprocess.run(
+        [CHROME, "--headless", "--disable-gpu", "--window-size=1600,900",
+         "--default-background-color=00000000", f"--screenshot={out_png}",
+         f"file://{tmp_card}"],
+        check=True, capture_output=True,
+    )
+    print(f"wrote {out_png} ({os.path.getsize(out_png)/1024:.0f} KB, 1600x900)")
+
+
+def x_card() -> str:
+    """One landscape frame carrying the whole contrast: the rule they obeyed
+    against the rule they broke."""
+    return f"""<!doctype html><meta charset="utf-8"><style>
+  * {{ box-sizing: border-box; margin: 0; }}
+  body {{ width: 1600px; height: 900px; font-family: {FONT}; background: {SURFACE};
+         color: {INK}; padding: 74px 80px; position: relative;
+         display: flex; flex-direction: column; justify-content: center; }}
+  body::before {{ content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+                  width: 14px; background: {ACCENT}; }}
+  .kicker {{ color: {ACCENT}; font-size: 25px; font-weight: 700; letter-spacing: 2.6px; }}
+  h1 {{ font-size: 62px; font-weight: 700; letter-spacing: -1.2px; margin: 18px 0 8px; }}
+  .sub {{ font-size: 29px; color: {MUTED}; }}
+  .row {{ display: flex; gap: 40px; margin-top: 46px; }}
+  .card {{ flex: 1; padding: 34px 38px; border-radius: 18px;
+           background: rgba(255,255,255,.05); border-top: 6px solid {MUTED}; }}
+  .card.g {{ border-top-color: {GOOD}; }}
+  .card.b {{ border-top-color: {BAD}; }}
+  .lbl {{ font-size: 21px; letter-spacing: 2px; color: {MUTED}; font-weight: 700; }}
+  .num {{ font-size: 116px; font-weight: 800; letter-spacing: -4px; line-height: 1.05;
+          margin: 10px 0 6px; }}
+  .num.g {{ color: {GOOD}; }}
+  .num.b {{ color: {BAD}; }}
+  .cap {{ font-size: 27px; line-height: 1.34; color: {INK2}; }}
+  .foot {{ position: absolute; left: 80px; right: 80px; bottom: 46px;
+           display: flex; justify-content: space-between; font-size: 24px;
+           color: {MUTED}; }}
+  .foot b {{ color: {ACCENT}; }}
+</style>
+<div class="kicker">AGENT SAFETY · 270 RUNS · 3 MODELS</div>
+<h1>Same policy document. Same run.</h1>
+<div class="sub">One rule obeyed every single time. One violated every single time.</div>
+<div class="row">
+  <div class="card g">
+    <div class="lbl">CEREMONY &mdash; &ldquo;verify identity first&rdquo;</div>
+    <div class="num g">100%</div>
+    <div class="cap">No model ever moved money before verifying. Zero violations
+      across all 270 runs.</div>
+  </div>
+  <div class="card b">
+    <div class="lbl">PROHIBITION &mdash; &ldquo;never refund here&rdquo;</div>
+    <div class="num b">15 / 15</div>
+    <div class="cap">Mistral Small searched the policy, quoted it, and refunded
+      anyway. Every banned scenario type.</div>
+  </div>
+</div>
+<div class="foot"><span>Put prohibitions in the tool layer, not the prompt.</span>
+  <span><b>github.com/immu4989/awesome-agentic-usecases</b></span></div>"""
+
 
 if __name__ == "__main__":
     main()
