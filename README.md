@@ -29,7 +29,7 @@ model backends include free tiers, so reproducing any result costs nothing.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="6 industries shipping, 21 verified model-evals, 32 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="7 industries shipping, 24 verified model-evals, 38 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 ## Four models, one agent
@@ -69,12 +69,13 @@ Every failure has a reproducing scenario id in
 | [🚩 fraud-alert-triage-agent](financial-services-fraud/fraud-alert-triage-agent/) | Financial Services | `investigate` `decide` | Which fraud queue does each transaction alert belong in, which release, which block, and which need the fraud team now? |
 | [🎞️ release-qc-triage-agent](media-streaming/release-qc-triage-agent/) | Media & Streaming | `investigate` `decide` | When QC flags an asset before premiere, who owns the defect and what happens to the release — waive, redeliver, fix in house, delay, or escalate? |
 | [💸 refund-resolution-agent](customer-support/refund-resolution-agent/) | Customer Support | `plan` `act` `human-in-loop` | **The agent that acts.** Can it resolve a refund end to end — verifying identity first, avoiding payouts it cannot claw back, and handing off when policy says it must? |
+| [📟 oncall-watch-agent](it-operations/oncall-watch-agent/) | IT Ops & DevOps | `watch` `decide` | **The agent that waits.** Telemetry arrives a minute at a time and it cannot see ahead. Can it tell a real regression from a blip that heals itself, without crying wolf or sleeping through the outage? |
 
 Every use case is tagged by what the agent *does*: `predict` · `decide` · `plan` ·
 `act` · `watch` · `investigate`, plus architecture (`single-agent` / `multi-agent` /
 `human-in-loop`).
 
-Each use case is verified across multiple models on free API tiers. Five findings that
+Each use case is verified across multiple models on free API tiers. Six findings that
 only a per-use-case harness surfaces:
 
 - **There is no best model.** Every model tested wins on one use case and loses on
@@ -95,12 +96,16 @@ only a per-use-case harness surfaces:
   verifying identity — while one model issued a forbidden refund in 15 of 15 runs in
   *every* archetype where refunding was banned. Put prohibitions in the tool layer, not
   the prompt.
+- **A safety metric can be passed by not looking.** On the watch agent, two models scored
+  a perfect 1.000 on "never paged a quiet window" — by quitting after ~4 of the 20
+  minutes of telemetry and missing a third of real incidents. Restraint and absence are
+  indistinguishable unless you also measure whether the agent looked.
 
 ## Industries
 
 | Shipping now | Next waves |
 |---|---|
-| 🚛 [Logistics](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Ops](security-operations/) · 💳 [Financial Services](financial-services-fraud/) · 🎬 [Media & Streaming](media-streaming/) · 🎧 [Customer Support](customer-support/) | 🏥 Healthcare · ⚖️ Legal & Compliance · 🏭 Manufacturing |
+| 🚛 [Logistics](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Ops](security-operations/) · 💳 [Financial Services](financial-services-fraud/) · 🎬 [Media & Streaming](media-streaming/) · 🎧 [Customer Support](customer-support/) · 🖥️ [IT Ops & DevOps](it-operations/) | 🏥 Healthcare · ⚖️ Legal & Compliance · 🏭 Manufacturing |
 
 <details>
 <summary><b>Full 16-industry roadmap</b></summary>
@@ -114,13 +119,14 @@ only a per-use-case harness surfaces:
 | 4 | 💳 Financial Services & Fraud | ✅ Shipping |
 | 5 | 🎬 Media & Streaming | ✅ Shipping |
 | 6 | 🎧 Customer Support & Success | ✅ Shipping |
-| 7 | 🏥 Healthcare & Life Sciences | 📋 Roadmap |
-| 8 | ⚖️ Legal & Compliance | 📋 Roadmap |
-| 9 | 🏭 Manufacturing & Industrial | 📋 Roadmap |
-| 10 | 🧾 Insurance | 📋 Roadmap |
-| 11 | 👥 HR & Recruiting | 📋 Roadmap |
-| 12 | 📈 Sales & Marketing | 📋 Roadmap |
-| 13 | 🖥️ IT Ops & DevOps | 📋 Roadmap |
+| 7 | 🖥️ IT Ops & DevOps | ✅ Shipping |
+| 8 | 🏥 Healthcare & Life Sciences | 📋 Roadmap |
+| 9 | ⚖️ Legal & Compliance | 📋 Roadmap |
+| 10 | 🏭 Manufacturing & Industrial | 📋 Roadmap |
+| 11 | 🧾 Insurance | 📋 Roadmap |
+| 12 | 👥 HR & Recruiting | 📋 Roadmap |
+| 13 | 📈 Sales & Marketing | 📋 Roadmap |
+
 | 14 | ⚡ Energy & Utilities | 📋 Roadmap |
 | 15 | 🏗️ Real Estate & Construction | 📋 Roadmap |
 | 16 | 🎓 Education | 📋 Roadmap |

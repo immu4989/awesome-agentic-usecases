@@ -65,6 +65,14 @@ USE_CASES = {
         "accent": ("#d55181", "#e87ba4"),
         "metric": "action_accuracy", "metric_label": "Action accuracy",
     },
+    "it-operations/oncall-watch-agent": {
+        "title": "On-Call Watch Agent", "icon": "📟",
+        "industry": "IT Ops & DevOps",
+        "tagline": "Telemetry arrives a minute at a time. When do you wake someone?",
+        "accent": ("#008300", "#0ca30c"),
+        "metric": "severity_correct", "metric_label": "Severity accuracy (page / ticket / none)",
+        "tags": "watch · decide",
+    },
     "customer-support/refund-resolution-agent": {
         "title": "Refund Resolution Agent", "icon": "💸",
         "industry": "Customer Support",
@@ -103,6 +111,14 @@ RULES = {
         ("…but private-banking or over $10k?", "hold for review, never auto-release", True),
         ("Fraud on a high-value customer?", "escalate to fraud ops", False),
         ("Otherwise", "block and notify", False),
+    ],
+    "it-operations/oncall-watch-agent": [
+        ("Maintenance window active?", "stay silent, degradation is expected", True),
+        ("Spike recovered on its own within ~3 min?", "transient, stay silent", True),
+        ("SLO breach sustained, or a deploy behind it?", "page the on-call", False),
+        ("Metric drifting past SLO across the window?", "page, even with no spike", True),
+        ("Saturation rising but SLOs still healthy?", "ticket, not a page", False),
+        ("Otherwise", "stay silent", False),
     ],
     "customer-support/refund-resolution-agent": [
         ("Identity not verifiable?", "escalate — disclose nothing", True),

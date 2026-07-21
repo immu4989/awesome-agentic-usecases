@@ -1,0 +1,3640 @@
+{
+  "backend": "mistral",
+  "model": "mistral-small-latest",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "caught_incident": 1.0,
+    "no_false_page": 0.8667,
+    "patience_ok": 0.9778,
+    "severity_correct": 0.6222,
+    "submitted": 0.9889
+  },
+  "metric_ci95": {
+    "caught_incident": [
+      1.0,
+      1.0
+    ],
+    "no_false_page": [
+      0.7556,
+      0.9667
+    ],
+    "patience_ok": [
+      0.9444,
+      1.0
+    ],
+    "severity_correct": [
+      0.4556,
+      0.7778
+    ],
+    "submitted": [
+      0.9667,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.004812,
+  "total_cost_usd": 0.433,
+  "p50_latency_s": 43.516,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005444,
+      "latency_s": 44.328,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "At 14:05 a rolling deploy for auth-service completed. Immediately after, the error rate began climbing from 0.003 to 0.061 by 14:19, and p99 latency rose from 244 ms to 1161 ms, both well past their SLOs (2% error, 800 ms p99). Saturation remained below the 0.85 warning threshold, so the issue is user-facing rather than capacity-related. The runbook states that a degradation beginning shortly after a deploy should be paged rather than waited out, and this sustained pattern meets that criterion.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 52930,
+          "output_tokens": 502,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005444
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004579,
+      "latency_s": 43.235,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 8,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "At 14:05 the error rate spiked to 6.36% and p99 latency to 1366ms, breaching the SLO (2% errors, 800ms p99). The incident showed partial recovery at 14:06 (3.34% errors, 779ms p99) and full recovery by 14:07 (1.34% errors, 376ms p99). No sustained user harm remained after a single minute of SLO breach, and the service returned to normal without intervention. Per runbook OC-PAGE-00, sustained breaches warrant a page; transient breaches warrant a ticket. Therefore, a ticket is appropriate to document the event and ensure follow-up during working hours.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 44139,
+          "output_tokens": 551,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004579
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004405,
+      "latency_s": 42.958,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "Over the last 20 minutes (14:00\u201314:19), payments-gateway has shown a clear, sustained degradation across all key metrics. Error rate climbed from 0.31% to 2.6% (above the 2% SLO), p99 latency rose from 266ms to 912ms (above the 800ms SLO), and saturation increased from 0.537 to 0.72 (approaching the 0.85 warning threshold). The runbook (OC-PAGE-00) states that sustained user-facing harm\u2014defined as errors or latency past SLO that persist\u2014warrants waking the on-call engineer. This window meets that criterion, as the degradation is both persistent and worsening, with no signs of recovery.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 42302,
+          "output_tokens": 584,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004405
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004318,
+      "latency_s": 42.743,
+      "n_api_calls": 22,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 19,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 22,
+        "error": null,
+        "reasoning": "During the approved maintenance window for a storage migration, cart-service has shown sustained degraded performance starting at 14:06. Over the last 12 minutes, the error rate has remained elevated around 9% (well above the 2% SLO) and p99 latency has been consistently around 1600ms (double the 800ms SLO). Saturation has fluctuated between 0.75 and 0.83, staying below the 0.85 warning threshold. Given the runbook guidance (OC-MAINT-04) that degraded metrics are expected during approved maintenance and do not warrant waking someone up, this sustained degradation is best captured as a ticket for post-maintenance review rather than a page.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 22,
+          "input_tokens": 41710,
+          "output_tokens": 489,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004318
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005322,
+      "latency_s": 48.44,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Over the last 20 minutes (14:00\u201314:19), the payments-gateway has shown a steady rise in saturation from 0.635 to 0.901, peaking above the 0.85 warning threshold. Error rate and p99 latency have remained well within SLO (max error rate 0.00623 vs 0.02 SLO, max p99 335 ms vs 800 ms SLO). There is no sustained user-facing harm yet, so per runbook guidance this is a trend worth tracking rather than an incident requiring an immediate page. Filed as a ticket for investigation during working hours.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 51487,
+          "output_tokens": 579,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005322
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.000804,
+      "latency_s": 117.272,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 0,
+        "error": "RemoteDisconnected: Remote end closed connection without response",
+        "reasoning": "",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 7,
+          "input_tokens": 7719,
+          "output_tokens": 107,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000804
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002957,
+      "latency_s": 31.871,
+      "n_api_calls": 17,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 13,
+        "detectable_tick": 9,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 17,
+        "error": null,
+        "reasoning": "Since the rolling deploy of v667 completed at 14:07, the payments-gateway has shown a sustained and growing degradation: error rate climbed from 0.004 to 0.059, p99 latency from 248 ms to 1153 ms, and saturation from 0.401 to 0.497, all while request rate remained steady. Per runbook OC-DEPLOY-02, a regression immediately following a deploy warrants a page rather than waiting for self-healing. The sustained nature of the issue (now 6 consecutive minutes past SLO thresholds of 2% error and 800 ms p99) confirms user-facing harm, satisfying OC-PAGE-00.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 17,
+          "input_tokens": 28182,
+          "output_tokens": 461,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002957
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006288,
+      "latency_s": 44.622,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 11,
+        "onset_tick": 8,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "The service context shows search-index is a tier-1 service with SLOs of 2% error rate and 800ms p99 latency. Over the 20-minute window from 14:00 to 14:19, the error rate spiked to 6.4% at 14:08 and again to 3.3% at 14:09, both well above the SLO, while p99 latency reached 1.3s at 14:08, also above the SLO. Although the metrics recovered quickly (within 1-2 minutes), the sustained nature of the breach across multiple samples and the clear user-facing impact (error rate and latency both exceeding SLO thresholds) warrant a ticket for further investigation during working hours. The saturation remained below the warning threshold of 0.85 throughout, and request rate fluctuations were not extreme, so no page was necessary.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 60989,
+          "output_tokens": 630,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006288
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00552,
+      "latency_s": 48.431,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Over the last 20 minutes (14:00\u201314:19), the payments-gateway has shown a clear, sustained degradation. Error rate climbed from 0.225% to 2.61%\u2014crossing the 2% SLO at 14:14 and continuing to rise\u2014while p99 latency increased from 285ms to 916ms, breaching the 800ms SLO at 14:18. Saturation also rose from 0.484 to 0.706, approaching the 0.85 warning threshold. No recovery occurred during the observation window, and the runbook (OC-PAGE-00) explicitly states that sustained user-facing harm past SLO thresholds warrants a page. This is not a transient blip, so silence is inappropriate.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 53361,
+          "output_tokens": 613,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00552
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004911,
+      "latency_s": 43.571,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "During an approved maintenance window (storage migration) for checkout-api, sustained elevated error rates (\u22489%) and p99 latencies (\u22481.6s) were observed from 14:06 to 14:19. These values exceed the SLO (2% error, 800ms p99), but the runbook (OC-MAINT-04) explicitly states that degraded metrics are expected and must not page during approved maintenance. A ticket is appropriate to track the incident and ensure post-maintenance review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 47725,
+          "output_tokens": 462,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004911
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005047,
+      "latency_s": 44.743,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Over the 20-minute watch the saturation metric drifted upward from 0.668 to 0.895, crossing the warning threshold of 0.85 at 14:14 and remaining above it for the rest of the window. Error rate and p99 latency stayed well below SLO (2% and 800ms respectively) throughout, so there was no immediate user-facing harm. Per the runbook (OC-PAGE-00 and OC-SLOW-03), a slow burn that approaches but does not breach SLO is a ticket rather than a page, as it does not yet constitute sustained harm.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 48866,
+          "output_tokens": 536,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005047
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00433,
+      "latency_s": 44.85,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "Over the 20-minute window from 14:00 to 14:19, auth-service telemetry showed consistently healthy behavior: error rates ranged from 0.241% to 0.615%, all well below the 2% SLO; p99 latency varied between 217ms and 311ms, far below the 800ms SLO; and saturation stayed between 0.463 and 0.527, well under the 0.85 warning threshold. No sustained breach or concerning trend was observed, and no runbook clause justified waking the on-call engineer. Therefore, no action is warranted.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 41771,
+          "output_tokens": 509,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00433
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004859,
+      "latency_s": 42.114,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "At 14:05 a rolling deploy of v681 completed. From 14:06 onward, error_rate rose from 0.02232 to a sustained ~0.058\u20130.059 (well above the 0.02 SLO), while p99 latency climbed from 515 ms to ~1100\u20131150 ms (above the 800 ms SLO). Saturation remained below the 0.85 warning threshold, but the user-facing metrics have persisted for 15 minutes without recovery. Per runbook OC-DEPLOY-02, a degradation beginning after a deploy is treated as a regression until proven otherwise and warrants a page rather than waiting for a ticket.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 47053,
+          "output_tokens": 513,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004859
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 0.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005078,
+      "latency_s": 43.589,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 9,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "At 14:06 the error rate spiked to 6.5% (well above the 2% SLO) and p99 latency rose to 1362ms (above the 800ms SLO). Although the next two minutes showed rapid recovery toward normal values, the sustained breach at 14:06 and the fact that the service is tier-2 (user-facing) meets the \"sustained user-facing harm\" criterion in runbook OC-PAGE-00. Waiting for further evidence would risk prolonging the outage; paging now ensures the on-call engineer investigates the root cause while the window is still fresh.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 49259,
+          "output_tokens": 506,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005078
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003456,
+      "latency_s": 157.455,
+      "n_api_calls": 19,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 15,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 19,
+        "error": null,
+        "reasoning": "Over the last 15 minutes (14:00\u201314:14), auth-service has shown a clear, sustained trend of degrading performance. The error rate rose from 0.34% to 2.01%, crossing the 2% SLO threshold at 14:13 and remaining above it through 14:14. P99 latency also increased from 272ms to 693ms, still below the 800ms SLO but trending in the wrong direction. Saturation remains below the 0.85 warning threshold, so resource exhaustion is not the primary concern. There have been no deploys or maintenance windows to explain this shift. Given the sustained nature of the breach and the risk of further degradation, this warrants waking the on-call engineer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 19,
+          "input_tokens": 33169,
+          "output_tokens": 465,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003456
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004572,
+      "latency_s": 43.379,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "During the approved maintenance window for a storage migration, payments-gateway has shown sustained degraded performance. From 14:05 to 14:19, the error rate has consistently exceeded the SLO (2%) by a wide margin, ranging from 8.79% to 9.26%, and p99 latency has been severely elevated, ranging from 1578ms to 1636ms (well above the 800ms SLO). Saturation has fluctuated but remained near or above the warning threshold of 0.85 for much of this period, peaking at 0.844. Given the runbook clause OC-MAINT-04, degraded metrics are expected and must not page during an active maintenance window. A ticket is appropriate to track this issue for post-maintenance remediation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 44058,
+          "output_tokens": 554,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004572
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005561,
+      "latency_s": 42.363,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "Over the 20-minute window from 14:00 to 14:19, the search-index service showed a steady rise in saturation, climbing from 0.615 to 0.88. While saturation approached the warning threshold of 0.85 and briefly exceeded it (peaking at 0.888), error rate and p99 latency remained well within SLO (error rate consistently below 0.02, p99 latency consistently below 800ms). The runbook (OC-PAGE-00) specifies that sustained user-facing harm\u2014such as error rate or p99 latency breaching SLO\u2014warrants a page, but rising saturation without degraded performance is a trend that can be tracked via a ticket. No immediate intervention is required, but this trend should be investigated during working hours to prevent potential future degradation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 53915,
+          "output_tokens": 566,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005561
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004052,
+      "latency_s": 39.296,
+      "n_api_calls": 22,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 22,
+        "error": null,
+        "reasoning": "Observed auth-service telemetry from 14:00 to 14:19 (20 samples). Error rates remained well below the SLO of 2% (highest observed: 0.616%), p99 latency stayed far below the 800ms SLO (highest observed: 298ms), and saturation never approached the 0.85 warning threshold (highest observed: 0.561). All metrics showed normal variability without sustained degradation. Per runbook OC-PAGE-00 and OC-BLIP-01, no user-facing harm or sustained signal warrants a page or ticket.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 22,
+          "input_tokens": 39110,
+          "output_tokens": 471,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004052
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005515,
+      "latency_s": 47.06,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "From 14:06 onward, checkout-api metrics began degrading shortly after the v423 deploy completed. Error rate rose from 2% to ~6% and p99 latency climbed from ~500ms to ~1100ms, both well past SLO (2% errors, 800ms p99). The degradation persisted for 14 consecutive minutes without recovery, indicating a sustained regression rather than a transient blip. The runbook clause OC-DEPLOY-02 specifies that post-deploy regressions should be paged immediately, and OC-PAGE-00 defines sustained user-facing harm as past-SLO errors or latency that persist. These conditions are met, warranting a page to wake the on-call engineer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 53476,
+          "output_tokens": 559,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005515
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 0.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005109,
+      "latency_s": 43.972,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 12,
+        "onset_tick": 9,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "At 14:09 the error rate spiked to 6.27% (well above the 2% SLO) and p99 latency rose to 1375ms (above the 800ms SLO). Although the error rate and latency improved in subsequent minutes, the sustained breach at 14:09 and the elevated error rate at 14:10 (3.40%) meet the runbook's criteria for sustained user-facing harm warranting a page. The saturation remained below the 0.85 warning threshold throughout, indicating the issue was not resource saturation but likely a transient upstream dependency or service degradation. Given the tier-1 status of checkout-api, a page is appropriate to investigate the root cause and prevent recurrence.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 49490,
+          "output_tokens": 533,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005109
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003791,
+      "latency_s": 39.026,
+      "n_api_calls": 21,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 19,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 21,
+        "error": null,
+        "reasoning": "Over the last 19 minutes, cart-service has shown a clear and sustained degradation across key metrics. The error rate rose from 0.36% at 14:00 to 2.68% at 14:18, breaching the 2% SLO error rate threshold. P99 latency also climbed from 257ms to 840ms, crossing the 800ms SLO. Saturation increased from 0.487 to 0.719, approaching the 0.85 warning threshold. This sustained trend, rather than a transient blip, indicates genuine user-facing harm. The runbook (OC-PAGE-00) specifies paging for sustained breaches of SLO thresholds, which this window clearly demonstrates.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 21,
+          "input_tokens": 36463,
+          "output_tokens": 481,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003791
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004988,
+      "latency_s": 45.039,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "payments-gateway has been in an approved maintenance window (storage migration) since 14:00. During this window, degraded latency and elevated error rates are expected per runbook OC-MAINT-04. Over the last 20 minutes, the error rate has consistently spiked to ~9% (far above the 2% SLO) and p99 latency has been ~1.6s (above the 800ms SLO), while saturation has remained below the 0.85 warning threshold. Since the degradation is expected during maintenance and saturation is not alarming, this warrants a ticket for post-maintenance follow-up rather than a page.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 48275,
+          "output_tokens": 535,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004988
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005269,
+      "latency_s": 45.571,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Over the 20-minute watch the saturation metric rose from 0.626 to 0.903, crossing the 0.85 warning threshold and indicating resource exhaustion. Although error rate and p99 latency remained well below SLO (2% and 800ms respectively), the sustained and increasing saturation trend\u2014coupled with the runbook guidance that saturation warnings at 0.85 warrant attention\u2014demonstrates a clear risk of future SLO breaches. This sustained drift justifies waking the on-call engineer to investigate resource utilization before user impact occurs.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 51074,
+          "output_tokens": 539,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005269
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005094,
+      "latency_s": 44.878,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Observed payments-gateway telemetry from 14:00 to 14:19 (20 samples). Error rates remained well below the SLO of 2% (highest observed: 0.00633 at 14:00, trending down to 0.00108 by 14:18). P99 latency stayed consistently far below the 800ms SLO (highest observed: 304ms at 14:17, otherwise ranging 209\u2013290ms). Saturation levels were stable and healthy (0.476\u20130.545, well below the 0.85 warning threshold). No sustained degradation or trend toward SLO breach was observed. All samples were transient blips that recovered without intervention. Per runbook OC-PAGE-00 and OC-BLIP-01, no page or ticket is warranted.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 49113,
+          "output_tokens": 608,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005094
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006551,
+      "latency_s": 43.88,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Over the last 20 minutes, error_rate rose from 0.00428 to 0.0612 (well above the 2% SLO) and p99 latency rose from 253ms to 1161ms (above the 800ms SLO). Saturation remained below the 0.85 warning threshold, but the sustained breach of both SLOs for user-facing harm justifies waking the on-call engineer. The runbook states to page for sustained user-facing harm past the SLO thresholds, which is clearly met here.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 63830,
+          "output_tokens": 559,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006551
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 0.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004476,
+      "latency_s": 41.442,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 10,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "At 14:07 the error rate spiked to 6.35% (well above the 2% SLO) and p99 latency rose to 1354ms (above the 800ms SLO). Although the error rate dropped back below SLO by 14:09, the p99 latency remained elevated until 14:10. The runbook (OC-PAGE-00) states to page for sustained user-facing harm, defined as metrics past SLO that persist rather than recovering immediately. Here, the p99 latency breach lasted for 3 minutes, which constitutes a sustained incident. The saturation remained below the warning threshold of 0.85 throughout, so it was not a factor in this decision.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 43166,
+          "output_tokens": 533,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004476
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006186,
+      "latency_s": 43.516,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Over the last 20 minutes, checkout-api has shown a clear and sustained degradation across both user-facing SLO metrics. The error rate rose from 0.3% at 14:00 to 2.76% at 14:19, breaching the 2% SLO and continuing to climb. P99 latency increased from 263ms to 861ms, also breaching the 800ms SLO. Saturation remains below the 0.85 warning threshold, so it is not the primary driver. The runbook states to page for sustained user-facing harm where metrics persist past SLO, which is clearly the case here. No signs of recovery are evident, and the trend is still worsening at the end of the window.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 60117,
+          "output_tokens": 580,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006186
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004968,
+      "latency_s": 44.293,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "During an approved maintenance window (storage migration) for media-transcoder, sustained elevated error rates (consistently ~9% vs. 2% SLO) and p99 latencies (consistently ~1560-1620ms vs. 800ms SLO) are observed. Saturation remains below the 0.85 warning threshold. Per runbook OC-MAINT-04, degraded metrics are expected during maintenance and must not page. The sustained nature of these degradations warrants a ticket for post-maintenance review rather than an immediate page.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 48139,
+          "output_tokens": 512,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004968
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005766,
+      "latency_s": 44.639,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Over the 20-minute window from 14:00 to 14:19, checkout-api\u2019s saturation steadily climbed from 0.623 to 0.906, crossing the 0.85 warning threshold at 14:15 and remaining above it through the end of the window. Error rate and p99 latency stayed well within SLO (max error 0.0057, max p99 345 ms vs. 2% and 800 ms SLOs). The runbook (OC-PAGE-00) states that sustained user-facing harm (errors or latency past SLO) warrants a page, while trends that will breach but have not yet\u2014such as rising saturation with healthy errors and latency\u2014are a ticket rather than a page. Therefore, I am filing a ticket for the saturation trend and will continue to watch for further degradation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 55933,
+          "output_tokens": 575,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005766
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00435,
+      "latency_s": 42.406,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "Observed payments-gateway telemetry from 14:00 to 14:19 across 20 samples. Error rates ranged from 0.23% to 0.59%, all well below the SLO of 2%. P99 latency varied between 216ms and 298ms, consistently under the 800ms SLO. Saturation remained stable between 0.486 and 0.552, far below the 0.85 warning threshold. No sustained trend of degradation was observed; fluctuations were minor and did not indicate user-facing harm. According to the runbook (OC-PAGE-00 and OC-BLIP-01), transient variations without sustained SLO breaches warrant no action.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 41877,
+          "output_tokens": 542,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00435
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005446,
+      "latency_s": 45.915,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "From 14:05 onward, auth-service metrics began degrading shortly after completing a deploy (v463). Error rate rose from 0.003 to a sustained ~0.06 (6%), p99 latency climbed from ~250ms to ~1100ms, and saturation increased from ~0.4 to ~0.5. All values have persisted above SLO thresholds (2% error, 800ms p99) for 15 consecutive minutes without recovery. The runbook states that a degradation beginning after a deploy is a regression until proven otherwise and warrants a page due to sustained user-facing harm. No signs of self-healing are observed.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 52930,
+          "output_tokens": 511,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005446
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005085,
+      "latency_s": 43.192,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 8,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "At 14:05 the error rate spiked to 6.36% and p99 latency to 1366ms, both breaching SLO (2% error, 800ms p99). The runbook states to page only for sustained harm, but this single minute of severe degradation is abnormal and did not recover immediately. It warrants a ticket for further investigation during working hours rather than waking someone at 3am, especially since subsequent minutes returned to normal ranges (error rate ~0.3-0.5%, p99 ~188-296ms). No further action is needed now.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 49240,
+          "output_tokens": 536,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005085
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003271,
+      "latency_s": 35.7,
+      "n_api_calls": 19,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 16,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 19,
+        "error": null,
+        "reasoning": "Over the last 16 minutes, payments-gateway has shown a clear, sustained degradation across all key metrics. The error rate rose from 0.31% at 14:00 to 2.16% at 14:15, breaching the 2% SLO. P99 latency increased from 266ms to 780ms, approaching the 800ms SLO threshold. Saturation climbed from 0.537 to 0.655, indicating growing resource pressure. The runbook (OC-PAGE-00) states to page for sustained user-facing harm, defined as metrics past SLO that persist rather than recovering. This window shows a persistent, multi-metric degradation with no signs of recovery, warranting an immediate page to the on-call engineer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 19,
+          "input_tokens": 31258,
+          "output_tokens": 485,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003271
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 0.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005203,
+      "latency_s": 43.599,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "During an approved maintenance window for a storage migration, degraded latency and elevated error rates were expected. However, starting at 14:06, the error rate spiked to ~9% (far exceeding the 2% SLO) and p99 latency rose to ~1600ms (double the 800ms SLO). This sustained degradation persisted for 14 consecutive minutes without recovery, with error rates remaining between 8.95% and 9.12% and p99 latency between 1572ms and 1623ms. Saturation also climbed to 0.834, approaching the 0.85 warning threshold. The runbook clause OC-PAGE-00 states that sustained user-facing harm past SLO thresholds warrants a page, and this clearly qualifies. Maintenance windows do not absolve sustained SLO breaches.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 50379,
+          "output_tokens": 551,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005203
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005383,
+      "latency_s": 44.81,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Over the last 20 minutes (14:00\u201314:19), payments-gateway has shown healthy error rates (all well below the 2% SLO) and p99 latencies (all well below the 800ms SLO). Saturation has been gradually rising, crossing the 0.85 warning threshold only in the last few minutes (peaking at 0.927), but it has not yet caused any SLO breaches. Given the runbook guidance that rising saturation without SLO impact warrants a ticket rather than a page, and that this is a gradual trend rather than a sudden incident, the appropriate action is to queue a ticket for further investigation during working hours.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 52087,
+          "output_tokens": 580,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004939,
+      "latency_s": 43.346,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Observed cart-service telemetry from 14:00 to 14:19. Error rates fluctuated between 0.20% and 0.64%, all well below the 2% SLO. P99 latency stayed between 212ms and 297ms, also comfortably under the 800ms SLO. Saturation remained between 0.468 and 0.556, far from the 0.85 warning threshold. No sustained breach of SLOs or concerning trends were observed. Per runbook guidance (OC-PAGE-00 and OC-BLIP-01), no action is warranted.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 47901,
+          "output_tokens": 496,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004939
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004993,
+      "latency_s": 43.683,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 9,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "At 14:07 a rolling deploy of v667 completed. From 14:07 onward, the error rate rose from 2.3% to a sustained 5.8\u20136.0%, and p99 latency climbed from 547 ms to 1128\u20131174 ms, both now exceeding the SLO (2% error, 800 ms p99). Saturation remains below the 0.85 warning, but the user-facing metrics have crossed the page threshold and have not recovered. Per runbook OC-DEPLOY-02, a degradation beginning after a deploy is treated as a regression and warrants a page rather than waiting it out.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 48283,
+          "output_tokens": 550,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004993
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 0.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00609,
+      "latency_s": 43.011,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 11,
+        "onset_tick": 8,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "At 14:08 the error rate spiked to 6.4% (well above the 2% SLO) and p99 latency rose to 1319ms (above the 800ms SLO). Although the error rate improved to 3.3% at 14:09 and then 1.3% at 14:10, these values still represent sustained user-facing harm relative to the SLO. The runbook (OC-PAGE-00) states to page for sustained user-facing harm where error rate or p99 latency persist past the SLO. The incident did not recover within a few minutes, and the elevated error rate and latency were not transient blips.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 59222,
+          "output_tokens": 558,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00609
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005519,
+      "latency_s": 45.031,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Over the last 20 minutes (14:00\u201314:19), payments-gateway has shown a clear, sustained degradation in both error rate and p99 latency. The error rate rose from 0.225% to 2.61%, crossing the 2% SLO threshold at 14:14 and continuing to climb. P99 latency increased from 285ms to 916ms, crossing the 800ms SLO threshold at 14:18. Saturation also rose from 0.484 to 0.706, approaching the 0.85 warning threshold. This is sustained user-facing harm meeting the runbook\u2019s criteria for a page (OC-PAGE-00). Transient blips have been ruled out; the trend is persistent and worsening.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 53352,
+          "output_tokens": 611,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005519
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 0.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001513,
+      "latency_s": 19.142,
+      "n_api_calls": 10,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 7,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 10,
+        "error": null,
+        "reasoning": "At 14:06, checkout-api crossed SLO thresholds with error_rate 9.295% (above 2% SLO) and p99 latency 1586ms (above 800ms SLO). Saturation was 0.805, below the 0.85 warning, but the sustained user-facing harm justifies a page. The runbook clause OC-PAGE-00 states to page for sustained errors or latency past SLO, and this sample meets that criterion. The earlier samples during the approved maintenance window were suppressed per OC-MAINT-04, but this breach is not expected under maintenance.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 10,
+          "input_tokens": 13698,
+          "output_tokens": 477,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001513
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005495,
+      "latency_s": 45.441,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Over the 20-minute watch the saturation metric rose from 0.668 to 0.895, crossing the 0.85 warning threshold and remaining elevated. Error rate and p99 latency stayed within SLO (max 0.00568 error rate vs 0.02 SLO, max 344ms p99 vs 800ms SLO), but the sustained increase in saturation indicates growing resource pressure that risks future SLO breaches. The runbook\u2019s slow-burn clause (OC-SLOW-03) advises treating a steady drift toward SLO limits as an incident even when individual samples look benign, and the sustained saturation above 0.85 meets the page criteria for a tier-1 service.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 53182,
+          "output_tokens": 589,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005495
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005325,
+      "latency_s": 50.947,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Observed auth-service telemetry from 14:00 to 14:19 (20 samples). Error rates fluctuated between 0.241% and 0.615%, all well below the 2% SLO. P99 latency ranged from 217ms to 311ms, also consistently below the 800ms SLO. Saturation stayed between 0.463 and 0.527, far from the 0.85 warning threshold. No sustained signal of user-facing harm or SLO breach was detected. All values trended normally for a tier-2 service with no recent deploys or maintenance windows. Therefore, no action is warranted.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 51640,
+          "output_tokens": 535,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005325
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002127,
+      "latency_s": 24.486,
+      "n_api_calls": 13,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 13,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 13,
+        "error": null,
+        "reasoning": "At 14:05, shortly after a rolling deploy of v681 completed, cart-service\u2019s error rate spiked from ~0.3% to 2.2% and p99 latency rose from ~250ms to 515ms. Over the next eight minutes the error rate climbed further to ~5.9% and p99 latency to ~1140ms, both now exceeding their SLOs (2% error, 800ms p99). Saturation has remained well below the 0.85 warning threshold, so the issue is user-visible rather than capacity-related. Per runbook OC-PAGE-00, sustained user-facing harm (metrics past SLO) warrants waking the on-call engineer, so a page is appropriate.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 13,
+          "input_tokens": 20060,
+          "output_tokens": 403,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002127
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.0036,
+      "latency_s": 35.184,
+      "n_api_calls": 19,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 16,
+        "detectable_tick": 9,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 19,
+        "error": null,
+        "reasoning": "At 14:06 the error rate spiked to 6.5% (well above the 2% SLO) and p99 latency rose to 1362ms (above the 800ms SLO). These values represent a clear user-facing degradation. While the metrics recovered quickly (by 14:08 error rate was 3.4% and p99 latency 783ms, and by 14:09 they were within SLO), the incident was sustained for at least two minutes and crossed SLO thresholds. This warrants a ticket for further investigation during working hours rather than a page, as the issue resolved itself and did not require immediate intervention. The runbook clause OC-PAGE-00 states to page for sustained harm past SLO, but the recovery within minutes and lack of ongoing breach justifies a ticket rather than a page.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 19,
+          "input_tokens": 34505,
+          "output_tokens": 498,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.0036
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005464,
+      "latency_s": 45.728,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Over the last 20 minutes, auth-service has shown a clear and sustained degradation across both SLO metrics. Error rate rose from 0.34% at 14:00 to 2.67% at 14:19, breaching the 2% SLO and continuing to climb. P99 latency increased from 272ms to 911ms, breaching the 800ms SLO and showing no signs of recovery. Saturation also drifted upward from 0.52 to 0.70, though still below the 0.85 warning threshold. No deploys or maintenance windows were active during this period. Given the sustained nature of these breaches and the absence of any recovery, this constitutes user-facing harm that justifies waking the on-call engineer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 52941,
+          "output_tokens": 568,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005464
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005432,
+      "latency_s": 46.169,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "payments-gateway has been in an approved maintenance window (storage migration) since 14:00. During this window, degraded latency and elevated error rates are expected and do not constitute user-facing harm. Over the last 20 minutes, the error rate has remained persistently around 9% (well above the 2% SLO) and p99 latency around 1.6s (well above the 800ms SLO), but the runbook (OC-MAINT-04) explicitly states that such degradation is expected and must not trigger a page. Saturation has remained below the 0.85 warning threshold throughout, and there are no signs of user-facing harm outside the planned maintenance context. Therefore, this window warrants a ticket for post-maintenance review rather than an immediate page.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 52576,
+          "output_tokens": 583,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005432
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005909,
+      "latency_s": 44.392,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Over the 20-minute watch the saturation metric rose from 0.615 to 0.88, approaching the 0.85 warning threshold and crossing it in the final samples. Error rate and p99 latency remained well below SLO (2% and 800ms respectively) throughout, and there were no sustained spikes in those metrics. According to the runbook, rising trends that have not yet breached SLO warrant a ticket rather than a page, as they do not indicate immediate user-facing harm. The correct action is to log a ticket for working hours to investigate and address the saturation trend.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 57504,
+          "output_tokens": 528,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005909
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006052,
+      "latency_s": 45.598,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Observed 20 consecutive minutes of telemetry for auth-service. Error rate stayed well below the 2% SLO (highest sample 0.00616 vs 0.02 SLO), p99 latency stayed far below the 800ms SLO (highest sample 298ms vs 800ms SLO), and saturation stayed below the 0.85 warning threshold (highest sample 0.561 vs 0.85). No sustained trend toward SLO breach was detected. Per runbook guidance (OC-PAGE-00, OC-BLIP-01), no action is warranted.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 58894,
+          "output_tokens": 542,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006052
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005033,
+      "latency_s": 45.121,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "At 14:06 a rolling deploy of v423 completed. From 14:06 onward, error rate and p99 latency steadily climbed past SLO thresholds: error rate rose from 2% to ~6% and p99 latency from 501ms to ~1185ms, persisting for 14 minutes without recovery. Per runbook OC-DEPLOY-02, a degradation beginning shortly after a deploy is treated as a regression requiring immediate rollback rather than waiting it out. OC-PAGE-00 confirms that sustained user-facing harm (error rate or p99 past SLO) warrants a page.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 48796,
+          "output_tokens": 510,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005033
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 0.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004392,
+      "latency_s": 40.883,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 12,
+        "onset_tick": 9,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "At 14:09 the error rate spiked to 6.27% (well above the 2% SLO) and p99 latency rose to 1375ms (above the 800ms SLO). Although the error rate improved to 3.4% at 14:10 and continued to trend down, the p99 latency remained elevated at 770ms. Given that this is a tier-1 service and the incident caused sustained user-facing harm (error rate and latency breaches), a page is warranted to investigate the root cause and prevent recurrence. The runbook clause OC-PAGE-00 justifies waking the on-call engineer for sustained user-facing harm that persists rather than recovering immediately.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 42467,
+          "output_tokens": 486,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004392
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006067,
+      "latency_s": 46.954,
+      "n_api_calls": 26,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 26,
+        "error": null,
+        "reasoning": "Over the last 20 minutes, cart-service has shown a sustained and worsening trend in both error rate and p99 latency, breaching SLO thresholds. The error rate rose from 0.00359 to 0.02757, crossing the 2% SLO threshold and continuing to climb. Similarly, p99 latency increased from 257ms to 929ms, approaching and then exceeding the 800ms SLO. Saturation also rose from 0.487 to 0.707, nearing the 0.85 warning threshold. The runbook (OC-PAGE-00) explicitly states to page for sustained user-facing harm, such as error rates or p99 latency past SLO that persist without recovery. This sustained breach qualifies as such harm, warranting an immediate page to wake the on-call engineer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 26,
+          "input_tokens": 58917,
+          "output_tokens": 584,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006067
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004991,
+      "latency_s": 47.547,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "During an approved maintenance window (storage migration) for payments-gateway, sustained elevated error rates and p99 latencies were observed. From 14:06 to 14:19, error rates consistently ranged between 8.7% and 9.2% (far exceeding the 2% SLO), and p99 latencies ranged from 1563ms to 1651ms (also exceeding the 800ms SLO). Saturation remained below the 0.85 warning threshold throughout, peaking at 0.83. Given the maintenance context, this degradation is expected and does not warrant waking the on-call engineer. A ticket is appropriate for post-maintenance review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 48275,
+          "output_tokens": 546,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004991
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005464,
+      "latency_s": 45.876,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Over the last 20 minutes, media-transcoder\u2019s saturation has climbed from 0.626 to a sustained level above the 0.85 warning threshold, peaking at 0.903. Error rate and p99 latency have remained well within SLO (max error 0.00627 vs 0.02 SLO, max p99 346 ms vs 800 ms SLO). The runbook states that rising saturation with healthy errors and latency is a ticket rather than a page, as it indicates a trend that has not yet caused user-facing harm. Therefore, a ticket is the appropriate severity for this slow-burn saturation increase.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 52904,
+          "output_tokens": 577,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005464
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00507,
+      "latency_s": 43.219,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Reviewed 20 consecutive minutes of payments-gateway telemetry from 14:00 to 14:19. All observed error rates (range: 0.00108\u20130.00633) remained well below the SLO of 2%, and p99 latencies (range: 209\u2013304 ms) were consistently far below the 800 ms SLO. Saturation levels (range: 0.476\u20130.545) stayed comfortably below the 0.85 warning threshold. No sustained signal of user-facing harm was detected; transient fluctuations recovered on their own within minutes. Therefore, no alert is warranted.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 49053,
+          "output_tokens": 550,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00507
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00656,
+      "latency_s": 45.361,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "At 14:06 a rolling deploy completed, after which the service was healthy for ~10 minutes. Starting at 14:16 the error rate climbed from 2.165% to a sustained 5.8\u20136.1% and p99 latency rose from 509 ms to 1.1\u20131.2 s, both clearly above the SLO (2% error, 800 ms p99). Saturation remains well below the 0.85 warning line, so the issue is user-visible degradation rather than resource exhaustion. The sustained nature of the breach across 14 samples (minutes) and absence of recovery after the deploy argues for waking someone now rather than waiting.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 63830,
+          "output_tokens": 590,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00656
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 0.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005111,
+      "latency_s": 42.886,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 10,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "At 14:07 the error rate spiked to 6.35% (well above the 2% SLO) and p99 latency rose to 1354ms (above the 800ms SLO). Although the error rate and latency improved in subsequent minutes, the sustained breach at 14:07 and the fact that the service did not immediately recover to normal levels justified waking the on-call engineer. The runbook (OC-PAGE-00) states to page for sustained user-facing harm such as error rates or p99 latency past SLO that persist rather than recovering on their own. The initial spike and elevated levels for two consecutive minutes constitute such sustained harm.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 49459,
+          "output_tokens": 551,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005111
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00321,
+      "latency_s": 34.767,
+      "n_api_calls": 19,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 16,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 19,
+        "error": null,
+        "reasoning": "Over the last 16 minutes, the error rate has steadily climbed from 0.3% to 2.1%, breaching the SLO of 2% at 14:14 and continuing to rise. The p99 latency has also increased from 263ms to 776ms, approaching the SLO of 800ms. Saturation remains below the warning threshold of 0.85, but the sustained degradation in error rate and latency indicates user-facing harm. This sustained trend justifies a page rather than a ticket, as it represents a clear violation of the SLOs and ongoing degradation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 19,
+          "input_tokens": 30877,
+          "output_tokens": 407,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00321
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005017,
+      "latency_s": 42.784,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "During the approved maintenance window (storage migration), media-transcoder has shown sustained degraded performance starting at 14:06. Over the last 14 minutes, the error rate has remained elevated around 8.8\u20139.1% (well above the 2% SLO), and p99 latency has been consistently high at ~1560\u20131620ms (above the 800ms SLO). Saturation has fluctuated between 0.757 and 0.832, staying below the 0.85 warning threshold. Given the maintenance context, this sustained degradation does not warrant waking the on-call engineer but should be tracked via a ticket for post-maintenance review. The runbook clause OC-MAINT-04 explicitly states that degraded metrics during an approved maintenance window must not page, and OC-PAGE-00 clarifies that sustained user-facing harm (errors or latency past SLO) that persists warrants a page only if not during maintenance.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 48354,
+          "output_tokens": 605,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005017
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005946,
+      "latency_s": 46.617,
+      "n_api_calls": 26,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 26,
+        "error": null,
+        "reasoning": "Over the 20-minute window from 14:00 to 14:19, checkout-api\u2019s saturation steadily climbed from 0.623 to 0.906, crossing the 0.85 warning threshold at 14:15 and remaining above it for the final five minutes. Error rate and p99 latency stayed well within SLO (max 0.00545 error rate vs 2% SLO and max 345ms p99 vs 800ms SLO), so there was no immediate user-facing harm. Per the runbook (OC-PAGE-00, OC-SLOW-03), sustained saturation trends that do not yet breach SLO are a ticket rather than a page, queued for working hours.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 26,
+          "input_tokens": 57796,
+          "output_tokens": 555,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005946
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004874,
+      "latency_s": 42.988,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Over the last 20 minutes (14:00\u201314:19), the payments-gateway service has shown a sustained elevation in error rate, fluctuating between 0.24% and 0.59%\u2014well below the 2% SLO error threshold\u2014while p99 latency has remained stable between 216ms and 298ms, also comfortably under the 800ms SLO. Saturation has hovered around 0.5 (50%), far from the 0.85 warning threshold. There is no evidence of user-facing harm or an imminent SLO breach. Given the absence of a clear incident signature and the lack of urgency implied by the metrics, the appropriate action is to file a ticket for further investigation during working hours rather than waking the on-call engineer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 47029,
+          "output_tokens": 571,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004874
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002745,
+      "latency_s": 31.779,
+      "n_api_calls": 16,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 11,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 16,
+        "error": null,
+        "reasoning": "At 14:05 a rolling deploy of v463 completed. From 14:05 onward, error_rate rose from 2.27% to 5.94% and p99 latency from 512ms to 1149ms, both now exceeding SLO (2% error, 800ms p99). Saturation remains below the 0.85 warning threshold, so the issue is user-facing rather than capacity-related. Per runbook OC-DEPLOY-02, a degradation beginning after a deploy is treated as a regression requiring immediate page. The sustained nature of the breach (now 6 consecutive minutes) confirms it will not self-heal.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 16,
+          "input_tokens": 26241,
+          "output_tokens": 403,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002745
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005027,
+      "latency_s": 43.418,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 8,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "At 14:05 the error rate spiked to 6.36% and p99 latency to 1366ms, both well beyond SLO (2% errors, 800ms p99). The incident showed signs of recovery within minutes (error rate dropped to 3.34% at 14:06, then to 1.34% at 14:07, and normalized by 14:08). No sustained user-facing harm persisted beyond a single minute of SLO breach, and the service recovered without intervention. Per runbook OC-PAGE-00, paging is reserved for sustained breaches; this transient issue warrants a ticket for post-mortem and trend analysis rather than a wake-up page.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 48572,
+          "output_tokens": 567,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005027
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004415,
+      "latency_s": 41.621,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "Over the last 20 minutes, payments-gateway has shown a sustained and clear degradation across all key metrics. The error rate climbed from 0.31% at 14:00 to 2.6% by 14:19, breaching the 2% SLO and showing no signs of recovery. P99 latency also rose from 266ms to 912ms, crossing the 800ms SLO threshold. Saturation increased from 0.537 to 0.72, approaching the 0.85 warning level. The runbook (OC-PAGE-00) states that sustained user-facing harm\u2014defined as errors or latency past SLO that persist\u2014warrants a page. This window clearly meets that criterion, with multiple consecutive minutes of breaches and a clear upward trend. A ticket would delay response to active user impact.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 42313,
+          "output_tokens": 612,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004415
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00491,
+      "latency_s": 42.917,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "During the approved maintenance window for cart-service (storage migration), sustained degraded performance is observed. The error rate has been consistently around 9% (far exceeding the 2% SLO) and p99 latency around 1600ms (double the 800ms SLO) for the entire 20-minute window. Saturation has remained below the 0.85 warning threshold, peaking at 0.834. Per runbook OC-MAINT-04, degraded metrics are expected during maintenance and must not page. A ticket is appropriate to track resolution post-maintenance.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 47688,
+          "output_tokens": 472,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00491
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00467,
+      "latency_s": 42.178,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 17,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "Over the 17-minute watch the payments-gateway service showed a slow, steady rise in saturation from ~0.63 to ~0.85, peaking at 0.87, while error rate and p99 remained well within SLO (max error 0.00623 vs 0.02 SLO, max p99 335 ms vs 800 ms SLO). No user-visible degradation occurred, so no page is warranted. However, the saturation trend is a slow burn toward the 0.85 warning threshold and merits a ticket for investigation during working hours.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 45096,
+          "output_tokens": 533,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00467
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004238,
+      "latency_s": 38.806,
+      "n_api_calls": 22,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 19,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 22,
+        "error": null,
+        "reasoning": "Observed cart-service telemetry from 14:00 to 14:17 across 18 samples. Error rates fluctuated between 0.205% and 0.646%, all well below the 2% SLO. P99 latency ranged from 212ms to 290ms, consistently under the 800ms SLO. Saturation levels stayed between 0.468 and 0.556, far below the 0.85 warning threshold. No sustained breach or concerning trend observed. Per runbook guidance (OC-PAGE-00, OC-BLIP-01), no action is warranted.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 22,
+          "input_tokens": 40929,
+          "output_tokens": 485,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004238
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002954,
+      "latency_s": 32.973,
+      "n_api_calls": 17,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 13,
+        "detectable_tick": 9,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 17,
+        "error": null,
+        "reasoning": "payments-gateway crossed SLO thresholds for error rate and p99 latency after a recent deploy (v667 completed at 14:07). Over the last six minutes, error rate has been sustained above 5.7% (peaking at 5.95%), and p99 latency has been above 800ms (peaking at 1.17s). Saturation remains below the 0.85 warning threshold, but the sustained regression in user-facing metrics justifies waking the on-call engineer. The runbook clause OC-PAGE-00 (sustained user-facing harm) and OC-DEPLOY-02 (degradation post-deploy is a regression) apply.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 17,
+          "input_tokens": 28188,
+          "output_tokens": 451,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002954
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 0.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005009,
+      "latency_s": 45.134,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 11,
+        "onset_tick": 8,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "At 14:08 the error rate spiked to 6.4% (well above the 2% SLO) and p99 latency rose to 1319ms (above the 800ms SLO). Although the error rate briefly dipped below SLO at 14:10, it has not consistently recovered. The most recent sample at 14:19 shows error rate at 0.51% and p99 latency at 238ms, but given the sustained breach and the runbook guidance that sustained user-facing harm warrants a page, this warrants waking the on-call engineer to investigate the root cause and prevent further degradation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 48578,
+          "output_tokens": 504,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005009
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005579,
+      "latency_s": 46.73,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Over the last 20 minutes, payments-gateway has shown a sustained and worsening trend across key metrics. The error rate climbed from 0.225% at 14:00 to 2.61% at 14:19, approaching and then exceeding the SLO of 2%. P99 latency also degraded from 285ms to 916ms, crossing the 800ms SLO threshold. Saturation increased from 0.484 to 0.706, nearing the warning threshold of 0.85 but not yet breaching it. This sustained degradation, persisting for over 15 minutes and showing no signs of recovery, constitutes user-facing harm justifying an immediate page. The runbook clause OC-PAGE-00 explicitly states to page for sustained metrics past SLO thresholds, which this window clearly demonstrates.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 53934,
+          "output_tokens": 618,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005579
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004922,
+      "latency_s": 43.368,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "During the approved maintenance window for a storage migration, checkout-api has shown sustained degraded performance. Over the last 20 minutes (14:00\u201314:19), the error rate has remained elevated around 9% (far above the 2% SLO) and p99 latency has been consistently high (~1.6s vs 800ms SLO). Saturation has fluctuated but stayed below the 0.85 warning threshold. Per runbook OC-MAINT-04, degraded metrics are expected during maintenance and must not page. A ticket is appropriate to track this issue for resolution after the maintenance window.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 47769,
+          "output_tokens": 483,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004922
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006323,
+      "latency_s": 51.766,
+      "n_api_calls": 27,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 27,
+        "error": null,
+        "reasoning": "Over the 20-minute window saturation rose from 0.668 to 0.895, crossing the 0.85 warning threshold at 14:14 and remaining above it for the final six minutes. Error rate (0.00259\u20130.00513) and p99 latency (259\u2013344 ms) stayed within SLO the entire time. Per runbook OC-PAGE-00, sustained trends that have not yet produced user-facing harm (errors or latency past SLO) warrant a ticket, not a page.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 27,
+          "input_tokens": 61014,
+          "output_tokens": 739,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006323
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004284,
+      "latency_s": 40.864,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "Observed 20 consecutive minutes of telemetry for auth-service from 14:00 to 14:19. Error rates remained consistently low, ranging from 0.241% to 0.615%, all well below the SLO of 2%. P99 latency varied between 217ms and 311ms, also consistently below the SLO of 800ms. Saturation stayed stable between 0.463 and 0.527, far from the warning threshold of 0.85. No sustained degradation or trend indicating user-facing harm was observed. According to the runbook (OC-PAGE-00 and OC-BLIP-01), no action is warranted for transient or sustained metrics within SLO bounds.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 41328,
+          "output_tokens": 503,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004284
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005164,
+      "latency_s": 43.055,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "At 14:05 a rolling deploy of v681 completed. Starting at 14:05 the error rate rose from 2.2% to a sustained 5.7\u20135.9% and p99 latency climbed from 515 ms to 1.1\u20131.2 s, both well past SLO (2% errors, 800 ms p99). Saturation has crept up to ~0.5 but remains below the 0.85 warning. Per runbook OC-DEPLOY-02, a degradation beginning shortly after a deploy is treated as a regression and warrants a page rather than waiting for self-healing. The sustained nature of the breach across 15 minutes of telemetry confirms it is not a transient.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 50042,
+          "output_tokens": 531,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005164
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 0.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003447,
+      "latency_s": 35.917,
+      "n_api_calls": 19,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 16,
+        "detectable_tick": 9,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 19,
+        "error": null,
+        "reasoning": "At 14:06 the error rate spiked to 6.5% (well above the 2% SLO) and p99 latency rose to 1362ms (above the 800ms SLO). Although the error rate later dropped to ~1% and latency recovered, the initial sustained breach constitutes user-facing harm that warrants waking the on-call engineer. The runbook (OC-PAGE-00) states to page for sustained errors or latency past SLO that do not recover on their own, and this incident meets that criterion.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 19,
+          "input_tokens": 33240,
+          "output_tokens": 410,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003447
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006703,
+      "latency_s": 45.886,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Over the 20-minute watch window starting at 14:00, auth-service showed a clear and sustained degradation across both SLO-critical metrics. Error rate rose from 0.34% to 2.67%, crossing the 2% SLO threshold at 14:15 and continuing to climb. P99 latency increased from 272ms to 911ms, crossing the 800ms SLO threshold at 14:17 and continuing to rise. Saturation also climbed from 0.521 to 0.704, approaching the 0.85 warning threshold. These are not transient blips; the runbook\u2019s \"sustained user-facing harm\" clause (OC-PAGE-00) is met. A page is warranted to wake the on-call engineer and prevent further escalation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 65179,
+          "output_tokens": 618,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006703
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005004,
+      "latency_s": 43.254,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "During the approved maintenance window for a storage migration, payments-gateway has sustained elevated error rates (around 9%) and p99 latencies (around 1600ms), both well beyond their SLOs (2% error rate, 800ms p99). However, the runbook OC-MAINT-04 explicitly states that degraded metrics are expected and must not page during an approved maintenance window. The sustained nature of the degradation suggests the maintenance activity is still ongoing, so the appropriate action is to file a ticket for further investigation during working hours rather than waking the on-call engineer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 48475,
+          "output_tokens": 521,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005004
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005177,
+      "latency_s": 44.595,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Over the last 20 minutes (14:00\u201314:19), search-index has shown a slow, sustained rise in saturation from 0.615 to 0.88, peaking above the 0.85 warning threshold. Error rate and p99 latency have remained well within SLO (max 0.00592 error rate vs 2% SLO, max 350ms p99 vs 800ms SLO). No user-visible harm has occurred, and the runbook specifies that sustained trends without SLO breach warrant a ticket rather than a page. I will queue a ticket for working hours to investigate the root cause of the saturation increase.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 50194,
+          "output_tokens": 526,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005177
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005061,
+      "latency_s": 43.038,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Observed auth-service telemetry from 14:00 to 14:19. Error rates remained well below the SLO of 2% (highest observed: 0.00616 at 14:06), p99 latency stayed far below the 800ms SLO (highest observed: 298ms at 14:00), and saturation never approached the warning threshold of 0.85 (highest observed: 0.561 at 14:05). All values showed normal variability without sustained degradation. No user-facing harm or sustained signal justifying a page or ticket was detected.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 49113,
+          "output_tokens": 499,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005061
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002712,
+      "latency_s": 29.339,
+      "n_api_calls": 16,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 12,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 16,
+        "error": null,
+        "reasoning": "Since the deploy of v423 at 14:06, the error rate and p99 latency have steadily worsened across seven consecutive minutes: error rate climbed from 2% to ~6%, and p99 latency from 501ms to ~1.1s, both now exceeding SLO thresholds (2% error, 800ms p99). Saturation remains below the 0.85 warning threshold, so the issue is not resource saturation. The runbook OC-DEPLOY-02 states that a degradation beginning shortly after a deploy is a regression until proven otherwise and warrants a page due to the availability of a rollback. The sustained nature of the breach (7+ minutes) and the absence of recovery align with OC-PAGE-00\u2019s guidance to page for sustained user-facing harm rather than transient blips.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 16,
+          "input_tokens": 25853,
+          "output_tokens": 423,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002712
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 0.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006089,
+      "latency_s": 44.825,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 12,
+        "onset_tick": 9,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "At 14:09 the error rate spiked to 6.27% (well above the 2% SLO) and p99 latency rose to 1375ms (above the 800ms SLO). Although the metrics improved in subsequent minutes, the sustained breach at 14:09 represents user-facing harm that warrants waking the on-call engineer. The runbook states to page for sustained user-facing harm (error rate or p99 latency past SLO that persists), and a single severe breach meets that criterion.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 59331,
+          "output_tokens": 518,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006089
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006058,
+      "latency_s": 43.304,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Over the last 20 minutes, cart-service has shown a clear and sustained degradation across both user-facing SLO metrics. Error rate climbed from 0.36% to 2.76%, crossing the 2% SLO threshold at 14:13 and continuing to rise. P99 latency increased from 257ms to 929ms, crossing the 800ms SLO threshold at 14:16 and remaining elevated. Saturation also rose from 0.487 to 0.707, approaching the 0.85 warning threshold. No recent deploys or maintenance windows are in progress to explain this trend. This sustained, multi-metric degradation constitutes user-facing harm that justifies waking the on-call engineer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 58891,
+          "output_tokens": 564,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006058
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004566,
+      "latency_s": 41.827,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "During the approved maintenance window for a storage migration, payments-gateway has shown sustained degraded performance. From 14:06 to 14:19, error rates have consistently exceeded the SLO (2%) by a wide margin, ranging from 8.7% to 9.2%, and p99 latency has been severely elevated, ranging from 1563ms to 1651ms (well above the 800ms SLO). Saturation has also trended higher, peaking at 0.83, though it remains below the warning threshold of 0.85. Given the maintenance context, this is expected degraded behavior and does not warrant a page. A ticket is appropriate to investigate post-maintenance.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 44065,
+          "output_tokens": 532,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004566
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003274,
+      "latency_s": 34.74,
+      "n_api_calls": 19,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 16,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 19,
+        "error": null,
+        "reasoning": "Over the 16-minute window, media-transcoder\u2019s saturation rose from 0.626 to 0.87 while error rate and p99 remained well below SLO (max 0.00627 error vs 0.02 SLO, max 346ms p99 vs 800ms SLO). The runbook (OC-PAGE-00) reserves pages for sustained user-facing harm (errors or latency past SLO), not for saturation alone unless it is causing those. Saturation is trending toward the 0.85 warning line, but it has not crossed it long enough to trigger a page, nor is there evidence it is yet degrading the other metrics. This is a slow-burn condition best tracked via a ticket for further observation and potential action during working hours.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 19,
+          "input_tokens": 31268,
+          "output_tokens": 490,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003274
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005142,
+      "latency_s": 45.426,
+      "n_api_calls": 24,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 24,
+        "error": null,
+        "reasoning": "Observed payments-gateway telemetry from 14:00 to 14:19 (20 samples). Error rates remained well below the SLO of 2% (highest observed: 0.00633 at 14:00, trending down to 0.00108 by 14:18). P99 latency stayed far below the SLO of 800ms (highest observed: 304ms at 14:17, with most samples between 209ms and 290ms). Saturation levels were consistently below the warning threshold of 0.85 (range: 0.476 to 0.545). No sustained degradation or breach of SLOs was observed. The runbook clauses for transients (OC-BLIP-01) and user-facing harm thresholds (OC-PAGE-00) indicate that this window does not warrant a page or ticket.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 24,
+          "input_tokens": 49603,
+          "output_tokens": 606,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005142
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002373,
+      "latency_s": 25.836,
+      "n_api_calls": 14,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 11,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 14,
+        "error": null,
+        "reasoning": "At 14:06 a rolling deploy to v552 completed. Immediately after, the error rate and p99 latency began climbing: error_rate went from 0.00363 at 14:04 to 0.02165 at 14:06, then to 0.05889 by 14:10, far exceeding the SLO of 0.02. P99 latency rose from 260ms at 14:04 to 1123ms by 14:10, also breaching the 800ms SLO. Saturation remains below the 0.85 warning threshold, so the issue is not resource exhaustion. The runbook clause OC-DEPLOY-02 states that a degradation beginning shortly after a deploy is a regression until proven otherwise and warrants a page due to the availability of a rollback. The sustained nature of the breach and the clear upward trend in user-facing metrics justify waking the on-call engineer now.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 14,
+          "input_tokens": 22382,
+          "output_tokens": 448,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002373
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 0.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004496,
+      "latency_s": 41.329,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 10,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "At 14:07 the error rate spiked to 6.35% (well above the 2% SLO) and p99 latency rose to 1354ms (above the 800ms SLO). Although the error rate improved to 3.36% at 14:08 and then recovered further, the sustained breach of SLOs for at least one minute (14:07) and the fact that the error rate remained elevated above SLO for two consecutive minutes (14:07 and 14:08) justifies waking the on-call engineer. The runbook (OC-PAGE-00) states to page for sustained user-facing harm, defined as error rate or p99 latency past the SLO that persists rather than recovering immediately. The incident did not fully resolve until after 14:08, and the initial spike at 14:07 represents clear user-facing harm.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 43218,
+          "output_tokens": 580,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004496
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005378,
+      "latency_s": 44.195,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Over the last 20 minutes, checkout-api has shown a clear and sustained degradation in both error rate and p99 latency. The error rate started at 0.3% at 14:00 and has steadily increased to 2.76% by 14:19, crossing the SLO threshold of 2% at 14:15. Similarly, p99 latency began at 263ms and rose to 861ms by 14:19, also breaching the SLO of 800ms at 14:15. Saturation has remained elevated but below the warning threshold of 0.85. According to the runbook (OC-PAGE-00 and OC-SLOW-03), sustained breaches of SLO thresholds for user-facing metrics warrant a page, not a ticket, as they indicate active user harm. The degradation has been consistent and shows no signs of recovery, justifying an immediate page to the on-call engineer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 52005,
+          "output_tokens": 590,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005378
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004555,
+      "latency_s": 40.622,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "During an approved maintenance window (storage migration) for media-transcoder, sustained elevated error rates (8.7\u20139.1%) and p99 latencies (1559\u20131616ms) are observed. These values exceed the SLOs (2% error rate, 800ms p99), but the runbook (OC-MAINT-04) explicitly states that degraded metrics are expected and must not page during planned maintenance. The saturation remains below the warning threshold (0.85) throughout. Therefore, this is a ticket for post-maintenance review rather than an immediate page.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 44032,
+          "output_tokens": 506,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004555
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006218,
+      "latency_s": 43.87,
+      "n_api_calls": 25,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 25,
+        "error": null,
+        "reasoning": "Over the 20-minute window from 14:00 to 14:19, checkout-api\u2019s saturation steadily climbed from 0.623 to 0.906, crossing the 0.85 warning threshold at 14:17 and remaining above it through the end of the window. Error rate and p99 latency remained well within SLO (max 0.00545 error rate vs 2% SLO, max 345ms p99 vs 800ms SLO) and showed no sustained degradation. Per the runbook (OC-PAGE-00), sustained user-facing harm requires SLO breaches; rising saturation without error or latency impact is a ticket rather than a page.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 25,
+          "input_tokens": 60504,
+          "output_tokens": 559,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006218
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004407,
+      "latency_s": 41.891,
+      "n_api_calls": 23,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 23,
+        "error": null,
+        "reasoning": "Over the 20-minute window from 14:00 to 14:19, the payments-gateway service showed error rates ranging from 0.233% to 0.589%, all well below the SLO of 2%. The p99 latency varied between 216ms and 298ms, also consistently below the SLO of 800ms. Saturation remained stable between 0.486 and 0.552, far from the warning threshold of 0.85. No sustained trend of degradation was observed; fluctuations were minor and did not indicate user-facing harm. According to the runbook (OC-PAGE-00 and OC-BLIP-01), transient variations without sustained breaches or clear harm warrant no action.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 23,
+          "input_tokens": 42324,
+          "output_tokens": 583,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004407
+        }
+      }
+    }
+  ]
+}

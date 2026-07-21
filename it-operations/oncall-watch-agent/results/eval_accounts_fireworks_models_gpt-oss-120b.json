@@ -1,0 +1,3640 @@
+{
+  "backend": "fireworks",
+  "model": "accounts/fireworks/models/gpt-oss-120b",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "caught_incident": 0.6667,
+    "no_false_page": 1.0,
+    "patience_ok": 0.4333,
+    "severity_correct": 0.4444,
+    "submitted": 0.8111
+  },
+  "metric_ci95": {
+    "caught_incident": [
+      0.5,
+      0.8333
+    ],
+    "no_false_page": [
+      1.0,
+      1.0
+    ],
+    "patience_ok": [
+      0.2667,
+      0.6
+    ],
+    "severity_correct": [
+      0.2778,
+      0.6111
+    ],
+    "submitted": [
+      0.7111,
+      0.9111
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.001673,
+  "total_cost_usd": 0.1505,
+  "p50_latency_s": 12.386,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001597,
+      "latency_s": 12.386,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The first three minutes (14:00\u201114:02) show error rates around 0.3% (well below the 2% SLO), p99 latency ~250\u202fms (well under the 800\u202fms SLO), and saturation ~0.4 (far below the 0.85 warning threshold). According to runbook OC-PAGE-00, a page is only warranted for sustained user\u2011facing harm that exceeds SLOs, and OC-BLIP-01 advises against alerting on isolated or absent anomalies. No metric breaches or trends indicate an incident, so no action is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6265,
+          "output_tokens": 1096,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001597
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002017,
+      "latency_s": 15.156,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 8,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": null,
+        "reasoning": "Across the first five minutes (14:00\u201114:04) the media-transcoder showed error rates between 0.33%\u20110.46% (well under the 2% SLO), p99 latency between 206\u2011280\u202fms (well under the 800\u202fms SLO), and saturation around 0.44\u20110.45 (far below the 0.85 warning threshold). No upward trend or breach is evident, and the runbook (OC-PAGE-00) specifies paging only for sustained SLO violations. Therefore no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 8925,
+          "output_tokens": 1130,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002017
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002913,
+      "latency_s": 22.413,
+      "n_api_calls": 9,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 6,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 9,
+        "error": null,
+        "reasoning": "Over the first six minutes (14:00\u201114:05) the payments-gateway error rate rose from 0.31% to 1.03% and p99 latency from 266\u202fms to 448\u202fms. Both remain under the SLO limits (2% error rate, 800\u202fms p99) but show a clear upward trend while saturation stays well below the warning threshold. According to runbook OC\u2011PAGE\u201100, a page is warranted only when error rate or latency exceeds the SLO and persists. Runbook OC\u2011BLIP\u201101 advises treating single spikes as transients. Since the metrics are still within SLOs but trending toward a breach, the appropriate action is to create a ticket for investigation during working hours.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 9,
+          "input_tokens": 10041,
+          "output_tokens": 2345,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002913
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00096,
+      "latency_s": 12.536,
+      "n_api_calls": 4,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 1,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The service is currently in an approved maintenance window (storage migration) where degraded metrics are expected and alerts must be suppressed per runbook OC-MAINT-04. The first telemetry sample at 14:00 shows error rate 0.43% (well below the 2% SLO), p99 latency 211\u202fms (well below the 800\u202fms SLO), and saturation 0.43 (below the 0.85 warning threshold). Since metrics are within limits and maintenance suppresses alerts, no page or ticket is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3465,
+          "output_tokens": 733,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00096
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001566,
+      "latency_s": 16.651,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across the three minutes observed (14:00\u201114:02) the payments-gateway error rate stayed well below the 2% SLO (0.44\u20110.55%), p99 latency remained far under the 800\u202fms limit (277\u2011320\u202fms), and saturation was comfortably below the 0.85 warning threshold (0.60\u20110.67). The runbook (OC\u2011PAGE\u201100) requires sustained user\u2011facing harm\u2014metrics crossing SLOs\u2014for a page, and (OC\u2011BLIP\u201101) treats isolated blips as non\u2011incidents. No trend indicates an imminent breach, so no alert is warranted for this window.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6015,
+          "output_tokens": 1106,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001566
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002507,
+      "latency_s": 15.405,
+      "n_api_calls": 9,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 9,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 9,
+          "input_tokens": 10711,
+          "output_tokens": 1501,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002507
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.0018,
+      "latency_s": 12.273,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 9,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across the first four minutes (14:00\u201114:03) the payments-gateway showed error rates between 0.25%\u20110.51% (well below the 2% SLO), p99 latency between 219\u2011250\u202fms (well below the 800\u202fms SLO), and saturation around 0.4\u20110.46 (far under the 0.85 warning threshold). No upward trend or breach is evident. According to the runbook (OC-PAGE-00) a page is only warranted for sustained user\u2011facing harm where error rate or latency exceeds the SLO, and (OC-BLIP-01) a single or short\u2011lived blip does not merit escalation. Therefore no alert is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7117,
+          "output_tokens": 1220,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.0018
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001141,
+      "latency_s": 7.644,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 11,
+        "onset_tick": 8,
+        "saw_context": true,
+        "searched_runbook": false,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "Across the first three minutes (14:00\u201114:02) the search-index service shows error rates between 0.25%\u20110.5% (well under the 2% SLO), p99 latencies around 250\u202fms (far below the 800\u202fms SLO), and saturation ~0.44 (well under the 0.85 warning threshold). No recent deploys or maintenance windows are active, and the runbook indicates no action is required when all metrics are comfortably within limits. Therefore no page or ticket is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4403,
+          "output_tokens": 801,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001141
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00211,
+      "latency_s": 143.567,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across four minutes (14:00\u201114:03) the payments-gateway error rate stayed well below the 2% SLO (0.22\u20110.74%), p99 latency remained far under the 800\u202fms threshold (285\u2011358\u202fms), and saturation was around 0.5, well below the 0.85 warning level. No single sample breached any SLO, and there is no clear upward trend that would imminently cause a breach. According to the runbook, sustained SLO violations trigger a page, while isolated or non\u2011breaching trends merit a ticket or silence. Here, the metrics are healthy, so no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7423,
+          "output_tokens": 1661,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00211
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.001308,
+      "latency_s": 9.648,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 5,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4747,
+          "output_tokens": 994,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001308
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.000728,
+      "latency_s": 62.447,
+      "n_api_calls": 4,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 0,
+        "error": "RemoteDisconnected: Remote end closed connection without response",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3499,
+          "output_tokens": 338,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000728
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002174,
+      "latency_s": 13.228,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": null,
+        "reasoning": "Across the first five minutes (14:00\u201114:04) the auth-service error rate stayed between 0.0038\u20110.0059 (well under the 2% SLO), p99 latency was 241\u2011311\u202fms (far below the 800\u202fms SLO), and saturation hovered around 0.48\u20110.49 (below the 0.85 warning threshold). The runbook (OC-PAGE-00) requires sustained user\u2011facing harm beyond SLO to page, and (OC-BLIP-01) treats isolated blips as non\u2011incidents. No degrading trend is evident, so no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 8885,
+          "output_tokens": 1402,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002174
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001757,
+      "latency_s": 18.447,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "All four observed minutes (14:00\u201114:03) show error rates well below the 2% SLO (0.1\u20110.6%), p99 latency far under the 800\u202fms limit (227\u2011264\u202fms), and saturation comfortably below the 0.85 warning threshold (~0.42\u20110.44). The runbook (OC\u2011PAGE\u201100) requires sustained user\u2011facing harm before paging, and (OC\u2011BLIP\u201101) treats isolated blips as non\u2011incidents. No degradation or trend is present, so no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7081,
+          "output_tokens": 1158,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001757
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001437,
+      "latency_s": 12.648,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 9,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The first two minutes (14:00\u201114:01) show error rates of 0.46% and 0.59%, p99 latencies of 266\u202fms and 240\u202fms, and saturation well below the 0.85 warning threshold. All values are comfortably within the SLO limits (2% error, 800\u202fms p99) and show no upward trend. According to the runbook (OC-PAGE-00), a page is only warranted for sustained user\u2011facing harm that exceeds SLOs, and a ticket is for emerging trends that may soon breach. Neither condition is met, so no action is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6067,
+          "output_tokens": 878,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001437
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.001817,
+      "latency_s": 18.035,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7407,
+          "output_tokens": 1177,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001817
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000924,
+      "latency_s": 9.104,
+      "n_api_calls": 4,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 1,
+        "detectable_tick": 0,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The service context indicates an active approved maintenance window (storage migration) during which degraded metrics are expected and must not trigger alerts (OC-MAINT-04). The first telemetry sample at 14:00 shows error rate 0.5%, p99 latency 261\u202fms, and saturation 0.44, all well within the SLO thresholds (2% error, 800\u202fms p99, 0.85 saturation). Therefore no page or ticket is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3452,
+          "output_tokens": 677,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000924
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002808,
+      "latency_s": 22.267,
+      "n_api_calls": 9,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 9,
+        "error": null,
+        "reasoning": "Over the first five minutes (14:00\u201114:04) the search-index service showed error rates (0.3\u20110.5%) and p99 latency (281\u2011318\u202fms) well within SLO limits (2% errors, 800\u202fms p99). Saturation rose from ~0.62 to ~0.69, still below the warning threshold of 0.85. According to the runbook (OC\u2011PAGE\u201100) a page is only warranted for sustained SLO breaches, while rising saturation without current breaches should be logged as a ticket (OC\u2011PAGE\u201100, OC\u2011BLIP\u201101). Therefore we create a ticket to investigate the upward saturation trend.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 9,
+          "input_tokens": 10837,
+          "output_tokens": 1970,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002808
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00141,
+      "latency_s": 9.25,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across three consecutive minutes (14:00\u201114:02) the auth-service error rate stayed well under the 2% SLO (0.48%, 0.25%, 0.47%), p99 latency remained far below the 800\u202fms threshold (298\u202fms, 297\u202fms, 221\u202fms), and saturation was under the 0.85 warning level (\u22480.48\u20110.51). No upward trend or breach is evident, and the runbook states that a page is only warranted for sustained user\u2011facing harm beyond SLOs, while a ticket is for emerging trends. Therefore no alert is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5992,
+          "output_tokens": 852,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00141
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001557,
+      "latency_s": 17.374,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": false,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "In the first four minutes (14:00\u201114:03) checkout\u2011api showed error rates between 0.33%\u20110.59% (well under the 2% SLO), p99 latency between 236\u2011284\u202fms (well under the 800\u202fms SLO), and saturation around 0.4 (far below the 0.85 warning). No deploy or maintenance window was active. The runbook specifies paging only when error rate exceeds the 2% SLO or p99 exceeds 800\u202fms for a sustained period, and ticketing only for intermediate breaches (e.g., error\u202f>\u202f1% or p99\u202f>\u202f600\u202fms). None of those conditions are met, so no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5668,
+          "output_tokens": 1178,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001557
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001576,
+      "latency_s": 15.019,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 12,
+        "onset_tick": 9,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The three minutes of telemetry (14:00\u201114:02) show error rates of 0.26\u20110.48% (well under the 2% SLO), p99 latencies of 216\u2011252\u202fms (well under the 800\u202fms SLO), and saturation around 0.41\u20110.44 (far below the 0.85 warning threshold). According to runbook OC\u2011PAGE\u201100, a page is only warranted for sustained user\u2011facing harm that exceeds SLO limits, and OC\u2011BLIP\u201101 advises that a single or short\u2011lived deviation is treated as a transient. No trend toward breach is evident, so no alert is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6154,
+          "output_tokens": 1088,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001576
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00152,
+      "latency_s": 11.866,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The three minutes of telemetry (14:00\u201114:02) show error rates of 0.36\u20110.57% and p99 latencies of 257\u2011311\u202fms, both well within the SLO limits (2% error, 800\u202fms p99). Saturation stays below the warning threshold (max 0.55\u202f<\u202f0.85). According to runbook OC\u2011PAGE\u201100, a page is only warranted for sustained user\u2011facing harm past the SLO, and OC\u2011BLIP\u201101 advises ignoring single\u2011minute blips. No trend indicates an imminent breach, so no ticket is needed either. Therefore, no alert is raised.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5704,
+          "output_tokens": 1107,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00152
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001209,
+      "latency_s": 133.551,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "The service is currently in an approved maintenance window (storage migration) where degraded latency is expected and alerts must be suppressed per runbook OC-MAINT-04. The observed metrics for the first two minutes (error rate ~0.37%, p99 latency 250\u202fms \u2192 209\u202fms, saturation ~0.46) are well within the SLO thresholds (2% error, 800\u202fms p99, 0.85 saturation). No violation or concerning trend is evident, so no page or ticket is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4528,
+          "output_tokens": 883,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001209
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000885,
+      "latency_s": 8.803,
+      "n_api_calls": 4,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": false,
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Observed two consecutive minutes (14:00\u201114:01) show error rates of 0.25% and 0.35% (well under the 2% SLO), p99 latencies of 346\u202fms and 297\u202fms (well under the 800\u202fms SLO), and saturation at ~0.62 (below the 0.85 warning threshold). No recent deploys or maintenance are active. According to the runbook, when metrics remain comfortably within SLO limits there is no need for a ticket or page.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3351,
+          "output_tokens": 638,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000885
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001664,
+      "latency_s": 13.766,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across three minutes (14:00\u201114:02) the payments-gateway showed error rates of 0.63%, 0.26%, and 0.32% (all well under the 2% SLO), p99 latencies of 244\u2011259\u202fms (well under the 800\u202fms SLO), and saturation between 0.48\u20110.55 (below the 0.85 warning threshold). No recent deploys or maintenance window are active. According to runbook OC\u2011PAGE\u201100, a page is only warranted for sustained user\u2011facing harm where error rate or latency exceeds the SLO, which is not observed. The metrics are stable, so no ticket is needed either (OC\u2011BLIP\u201101). Therefore no alert is raised.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5879,
+          "output_tokens": 1303,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001664
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001492,
+      "latency_s": 10.026,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "All three minutes (14:00\u201114:02) show error rates ~0.2\u20110.4% (well below the 2% SLO), p99 latency ~216\u2011253\u202fms (far under the 800\u202fms SLO), and saturation ~0.41\u20110.43 (well under the 0.85 warning threshold). No upward trend is evident and no recent deploy has occurred yet. According to the runbook, paging requires sustained user\u2011facing harm beyond SLO, and a ticket is for trends that may soon breach. Neither condition is met, so no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6122,
+          "output_tokens": 957,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001492
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001262,
+      "latency_s": 9.604,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 10,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": false,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "Across the first three minutes (14:00\u201114:02) the media-transcoder showed error rates of 0.39\u20110.49% (well under the 2% SLO), p99 latencies of 210\u2011248\u202fms (far below the 800\u202fms target), and saturation around 0.44\u20110.47 (below the 0.85 warning threshold). No recent deploys or maintenance windows are active, and the runbook specifies paging only when metrics exceed SLO limits or when a sustained degradation is observed. No transient spikes or slow drifts are present, so no action is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4420,
+          "output_tokens": 998,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001262
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001531,
+      "latency_s": 13.197,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The three minutes observed (14:00\u201114:02) show error rates of 0.30\u20110.52% and p99 latencies of 263\u2011344\u202fms, both well under the SLO limits of 2% errors and 800\u202fms p99. Saturation stays around 0.5\u20110.52, far below the 0.85 warning threshold. According to runbook OC\u2011PAGE\u201100, a page is only warranted for sustained user\u2011facing harm where error rate or latency exceeds the SLO, which is not the case. The metrics are stable and not trending toward a breach, so per OC\u2011PAGE\u201100 this situation merits no alert.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5700,
+          "output_tokens": 1126,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001531
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00129,
+      "latency_s": 10.518,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 1,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "The service is currently in an approved maintenance window (storage migration) where degraded metrics are expected and must not trigger a page (OC-MAINT-04). The first telemetry sample at 14:00 shows error rate 0.63% (well below the 2% SLO), p99 latency 252\u202fms (well below the 800\u202fms SLO), and saturation 0.45 (below the 0.85 warning threshold). No SLO breach or concerning trend is observed, so no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4714,
+          "output_tokens": 972,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00129
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001185,
+      "latency_s": 9.854,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "During the first two minutes (14:00\u201114:01) the checkout\u2011api showed error rates of 0.57% and 0.46% (well under the 2% SLO), p99 latencies of 292\u202fms and 300\u202fms (well under the 800\u202fms SLO), and saturation of 0.62\u20110.63 (below the 0.85 warning threshold). No recent deploys or maintenance windows are active, and the runbook (OC\u2011BLIP\u201101) states that a single bad sample is not an incident and that we should wait for a sustained signal before paging. Since the observed metrics are comfortably within limits and there is no indication of a regression, no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4800,
+          "output_tokens": 775,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001185
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.00236,
+      "latency_s": 22.145,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 8913,
+          "output_tokens": 1705,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00236
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.001642,
+      "latency_s": 14.162,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6285,
+          "output_tokens": 1165,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001642
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001509,
+      "latency_s": 11.578,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 8,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The first three minutes (14:00\u201114:02) show error rates around 0.45% (well below the 2% SLO), p99 latency ~200\u2011260\u202fms (far under the 800\u202fms SLO), and saturation ~0.42\u20110.45 (well under the 0.85 warning threshold). According to runbook OC-PAGE-00, a page is only warranted for sustained user\u2011facing harm where error rate or latency exceeds SLO, and OC-BLIP-01 advises ignoring single\u2011minute blips. No breach or trend toward a breach is observed, so no alert is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6183,
+          "output_tokens": 970,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001509
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001526,
+      "latency_s": 11.799,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across three consecutive minutes (14:00\u201114:02) the payments-gateway showed error rates of 0.31\u20110.46% and p99 latencies of 256\u2011304\u202fms, both comfortably under the SLO limits of 2% errors and 800\u202fms latency. Saturation stayed around 0.5, well below the 0.85 warning threshold. The runbook (OC-PAGE-00) requires sustained user\u2011facing harm\u2014metrics exceeding SLOs\u2014to page, and (OC-BLIP-01) advises against reacting to isolated blips. No breach or upward trend is evident, so no action is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6024,
+          "output_tokens": 1038,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001526
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000988,
+      "latency_s": 8.792,
+      "n_api_calls": 4,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": false,
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "During the approved storage migration maintenance window, the cart-service metrics for the first two minutes (14:00-14:01) show error rates well below the 2% SLO (0.4% and 0.38%), p99 latency far under the 800\u202fms threshold (211\u202fms and 259\u202fms), and saturation well below the 0.85 warning level (0.43 and 0.45). The runbook indicates that expected degraded latency during maintenance does not trigger alerts, and no SLO breaches are observed. Therefore no page or ticket is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3359,
+          "output_tokens": 807,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000988
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001994,
+      "latency_s": 137.753,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across the first four minutes (14:00\u201114:03) the payments-gateway showed error rates between 0.35%\u20110.55% (well under the 2% SLO), p99 latencies between 277\u2011320\u202fms (well under the 800\u202fms SLO), and saturation between 0.60\u20110.67 (below the 0.85 warning threshold). The runbook (OC\u2011PAGE\u201100) requires sustained user\u2011facing harm\u2014error rate or latency past the SLO\u2014to page, and (OC\u2011BLIP\u201101) notes a single bad sample is not an incident. No trend toward the saturation warning is evident, so a ticket is also unwarranted. Therefore no alert is raised.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7436,
+          "output_tokens": 1465,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001994
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002561,
+      "latency_s": 19.254,
+      "n_api_calls": 9,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 6,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 9,
+        "error": null,
+        "reasoning": "Across the first six minutes (14:00\u201114:05) the cart-service showed error rates between 0.003% and 0.006%, p99 latency between 242\u202fms and 280\u202fms, and saturation well below the 0.85 warning threshold. All values are comfortably within the SLO limits (2% error, 800\u202fms p99) and no upward trend suggests an imminent breach. According to runbook OC-PAGE-00, a page is warranted only for sustained user\u2011facing harm beyond the SLO, and OC-BLIP-01 advises against paging on isolated blips. Therefore no alert is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 9,
+          "input_tokens": 10465,
+          "output_tokens": 1652,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002561
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.001479,
+      "latency_s": 9.419,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 9,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5840,
+          "output_tokens": 1005,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001479
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001812,
+      "latency_s": 11.418,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 11,
+        "onset_tick": 8,
+        "saw_context": true,
+        "searched_runbook": false,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across the first five minutes (14:00\u201114:04) the search-index service showed error rates between 0.25% and 0.52% (well under the 2% SLO), p99 latency between 227\u202fms and 274\u202fms (well under the 800\u202fms SLO), and saturation around 0.43\u20110.45 (far below the 0.85 warning threshold). No recent deploys or maintenance windows are active. According to the runbook, no page or ticket is warranted when metrics remain comfortably within SLOs and no other incident signals are present.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 6802,
+          "output_tokens": 1319,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001812
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001234,
+      "latency_s": 7.438,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "Across the first two minutes (14:00\u201114:01) the payments-gateway shows error rates of 0.22% and 0.61% and p99 latencies of 285\u202fms and 278\u202fms, both well below the SLO thresholds (2% error, 800\u202fms p99). Saturation remains under 0.55, far from the 0.85 warning level. According to runbook OC-PAGE-00, a page is only warranted for sustained user\u2011facing harm that exceeds SLOs, and OC-BLIP-01 advises against paging on isolated low\u2011impact blips. No breach or concerning trend is observed, so no alert is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4716,
+          "output_tokens": 877,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001234
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000919,
+      "latency_s": 6.131,
+      "n_api_calls": 4,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 1,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "During the approved storage migration maintenance window (active per service context), degraded metrics are expected and must not trigger alerts (OC-MAINT-04). The first minute's telemetry shows healthy values: error rate 0.5% (well under the 2% SLO), p99 latency 242\u202fms (well under the 800\u202fms SLO), and saturation 0.39 (below the 0.85 warning threshold). No concerning trend is evident, so no page or ticket is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3440,
+          "output_tokens": 671,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000919
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001481,
+      "latency_s": 10.101,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The first three minutes (14:00\u201114:02) show error rates around 0.4% (well below the 2% SLO), p99 latency between 315\u2011344\u202fms (well under the 800\u202fms SLO), and saturation around 0.66 (below the 0.85 warning threshold). According to runbook OC\u2011PAGE\u201100, a page is only warranted for sustained user\u2011facing harm that exceeds SLOs, and OC\u2011BLIP\u201101 notes that a single bad sample is not an incident. No metric breaches are observed, so no action is required for this window.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6181,
+          "output_tokens": 923,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001481
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.0016,
+      "latency_s": 10.788,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The first three minutes (14:00\u201114:02) show error rate ~0.4\u20110.6% (well below the 2% SLO), p99 latency ~240\u2011255\u202fms (well below the 800\u202fms SLO), and saturation ~0.47\u20110.49 (below the 0.85 warning threshold). No single sample exceeds any threshold, and there is no upward trend indicating an imminent breach. According to the runbook (OC-PAGE-00, OC-BLIP-01), a page is only warranted for sustained user\u2011facing harm past the SLO, and a transient single\u2011sample spike is ignored. Therefore no alert is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6007,
+          "output_tokens": 1165,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.0016
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001607,
+      "latency_s": 11.901,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The first three minutes (14:00\u201114:02) show error rates of 0.30\u20110.58% (well under the 2% SLO), p99 latencies of 236\u2011264\u202fms (well under the 800\u202fms SLO), and saturation around 0.42 (far below the 0.85 warning threshold). According to runbook OC\u2011PAGE\u201100, a page is warranted only for sustained user\u2011facing harm that exceeds SLOs, and OC\u2011BLIP\u201101 advises ignoring isolated blips. No metric breaches or concerning trends are present, so no action is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6269,
+          "output_tokens": 1111,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001607
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002085,
+      "latency_s": 15.003,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 9,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": null,
+        "reasoning": "All observed samples (14:00\u201114:04) show error rate ~0.3\u20110.6%, p99 latency ~240\u2011300\u202fms, and saturation ~0.42\u20110.46, all comfortably within the service SLOs (2\u202f% error, 800\u202fms p99, 0.85 saturation). No recent deploys or maintenance window are active. According to runbook OC\u2011BLIP\u201101, a transient or single bad sample would be ignored, and we have no breach to sustain. Therefore no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 8245,
+          "output_tokens": 1413,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002085
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001794,
+      "latency_s": 14.391,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across the first four minutes (14:00\u201114:03) the auth-service error rate stayed between 0.34% and 0.63%, well under the 2% SLO; p99 latency ranged from 272\u202fms to 381\u202fms, far below the 800\u202fms threshold; and saturation remained around 0.5\u20110.55, under the 0.85 warning level. No sustained breach or upward trend was observed, so per runbook OC\u2011PAGE\u201100 this does not warrant a page, and OC\u2011BLIP\u201101 confirms a transient single\u2011sample spike would be ignored. No ticket is needed either.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7407,
+          "output_tokens": 1138,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001794
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000912,
+      "latency_s": 6.928,
+      "n_api_calls": 4,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 1,
+        "detectable_tick": 0,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The first minute (14:00) shows error_rate 0.00529 (<2% SLO), p99 latency 261\u202fms (<800\u202fms SLO), and saturation 0.444 (<0.85). The service context indicates an approved maintenance window is active, and the runbook (OC-MAINT-04) states that degraded metrics during such windows must not trigger a page. Since metrics are within limits and maintenance suppresses alerts, no action is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3477,
+          "output_tokens": 651,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000912
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002116,
+      "latency_s": 13.215,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": null,
+        "reasoning": "Across the first five minutes (14:00\u201114:04) the search-index service shows error rates between 0.0037\u20110.0048 (well under the 2% SLO), p99 latency between 281\u2011318\u202fms (well under the 800\u202fms SLO), and saturation between 0.615\u20110.691 (below the 0.85 warning threshold). No metric is trending toward a breach, and the runbook (OC\u2011PAGE\u201100) states that only sustained user\u2011facing harm beyond the SLO warrants a page, while transient blips are ignored (OC\u2011BLIP\u201101). Therefore no alert is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 8890,
+          "output_tokens": 1304,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002116
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002314,
+      "latency_s": 14.224,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 9036,
+          "output_tokens": 1598,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002314
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002625,
+      "latency_s": 20.069,
+      "n_api_calls": 9,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 6,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 9,
+        "error": null,
+        "reasoning": "All six minutes (14:00\u201114:05) show error rates between 0.0031\u20110.006, well below the 2% SLO, and p99 latencies between 236\u2011284\u202fms, far under the 800\u202fms SLO. Saturation stays around 0.4, well under the 0.85 warning threshold. The runbook (OC-PAGE-00) requires sustained error\u2011rate or latency breaches to page, and (OC-BLIP-01) treats isolated spikes as transients. No trend toward a breach is evident, and no deploy or maintenance is in effect. Therefore no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 9,
+          "input_tokens": 10174,
+          "output_tokens": 1832,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002625
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001442,
+      "latency_s": 12.472,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 12,
+        "onset_tick": 9,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The three minutes of telemetry (14:00\u201114:02) show error rates of 0.26\u20110.48% (well under the 2% SLO), p99 latencies of 216\u2011252\u202fms (well under the 800\u202fms SLO), and saturation around 0.4\u20110.44 (below the 0.85 warning threshold). According to runbook OC-PAGE-00, a page is only warranted for sustained user\u2011facing harm that exceeds SLOs, and OC-BLIP-01 advises against paging on isolated blips. No metric is trending toward a breach, so no ticket is needed either. Therefore, no alert is raised.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6007,
+          "output_tokens": 902,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001442
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002359,
+      "latency_s": 14.273,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 9051,
+          "output_tokens": 1669,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002359
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001209,
+      "latency_s": 8.348,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "The service is currently in an approved maintenance window (storage migration) where degraded latency is expected and alerts must be suppressed per runbook OC-MAINT-04. The observed metrics for the first two minutes (error rate ~0.37%, p99 latency 250\u202fms \u2192 209\u202fms, saturation ~0.46) are well within the SLO thresholds (2% error, 800\u202fms p99, 0.85 saturation). No violation or concerning trend is evident, so no page or ticket is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4528,
+          "output_tokens": 883,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001209
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.001857,
+      "latency_s": 11.853,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7581,
+          "output_tokens": 1199,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001857
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001132,
+      "latency_s": 8.509,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": false,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "Across the first three minutes (14:00\u201114:02) the payments-gateway showed error rates of 0.6\u20110.3%, p99 latency around 250\u202fms, and saturation ~0.5, all comfortably within the SLO limits (2% error, 800\u202fms p99, 0.85 saturation). No recent deploys or maintenance windows are active, and the runbook specifies paging only when metrics breach SLO thresholds or when a sustained degradation is observed. No such breach or trend is present, so no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4422,
+          "output_tokens": 781,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001132
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001441,
+      "latency_s": 10.397,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The first three minutes (14:00\u201114:02) show error rates around 0.2\u20110.4% (well below the 2% SLO), p99 latency ~216\u2011253\u202fms (well under the 800\u202fms SLO), and saturation ~0.42 (below the 0.85 warning threshold). Metrics are stable and not trending toward breach. According to the runbook (OC-PAGE-00, OC-BLIP-01), no sustained violation or concerning trend is present, so no page or ticket is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5826,
+          "output_tokens": 945,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001441
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001748,
+      "latency_s": 10.755,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 10,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across the first four minutes (14:00\u201114:03) the media-transcoder showed error rates of 0.34\u20110.49% (well under the 2% SLO), p99 latency of 210\u2011250\u202fms (well under the 800\u202fms SLO), and saturation around 0.44\u20110.47 (far below the 0.85 warning threshold). According to runbook OC-PAGE-00, a page is warranted only for sustained user\u2011facing harm that exceeds SLOs, and OC-BLIP-01 advises against paging on isolated blips. No metric breaches or concerning trends are present, so no alert is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7581,
+          "output_tokens": 1018,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001748
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001885,
+      "latency_s": 17.422,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across the first four minutes (14:00\u201114:03) the checkout\u2011api showed error rates of 0.3\u20110.6% and p99 latencies of 263\u2011344\u202fms, both comfortably below the SLO thresholds (2% errors, 800\u202fms p99). Saturation rose modestly from 0.50 to 0.53, far under the warning level of 0.85. According to the runbook (OC\u2011PAGE\u201100), a page is only warranted for sustained user\u2011facing harm that exceeds SLOs, and (OC\u2011BLIP\u201101) a single or short\u2011lived blip does not merit action. No trend indicates an imminent breach, so no alert is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7244,
+          "output_tokens": 1330,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001885
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001268,
+      "latency_s": 14.004,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "The service is currently under an approved maintenance window (storage migration) which, per runbook OC-MAINT-04, suppresses alerts for degraded metrics. The observed telemetry for the first two minutes (error rate 0.63% \u2192 0.27%, p99 latency 252\u202fms \u2192 236\u202fms, saturation ~0.45) is well within SLO limits (2% error, 800\u202fms p99) and shows no concerning trend, so no page or ticket is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4611,
+          "output_tokens": 960,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001268
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001185,
+      "latency_s": 8.696,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "During the first two minutes (14:00\u201114:01) the checkout\u2011api showed error rates of 0.57% and 0.46% (well under the 2% SLO), p99 latencies of 292\u202fms and 300\u202fms (well under the 800\u202fms SLO), and saturation of 0.62\u20110.63 (below the 0.85 warning threshold). No recent deploys or maintenance windows are active, and the runbook (OC\u2011BLIP\u201101) states that a single bad sample is not an incident and that we should wait for a sustained signal before paging. Since the observed metrics are comfortably within limits and there is no indication of a regression, no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4800,
+          "output_tokens": 775,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001185
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.00236,
+      "latency_s": 16.693,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 8913,
+          "output_tokens": 1705,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00236
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.00206,
+      "latency_s": 14.787,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7706,
+          "output_tokens": 1507,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00206
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001571,
+      "latency_s": 10.79,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 8,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across three minutes (14:00\u201114:02) the media-transcoder showed error rates around 0.45% (well below the 2% SLO), p99 latency between 206\u2011257\u202fms (well under the 800\u202fms SLO), and saturation around 0.42\u20110.45 (far below the 0.85 warning threshold). No single sample breached any threshold, and there is no sustained trend toward a breach. According to runbook OC-PAGE-00, a page is only warranted for sustained user\u2011facing harm, and OC-BLIP-01 advises against paging on isolated blips. Therefore no action is required for this window.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6183,
+          "output_tokens": 1073,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001571
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002553,
+      "latency_s": 17.62,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": null,
+        "reasoning": "Over the first five minutes (14:00\u201114:04) the payments-gateway showed a gradual rise in error rate (0.31% \u2192 0.75%) and p99 latency (266\u202fms \u2192 436\u202fms) while still staying well within the SLO limits (2% error, 800\u202fms p99) and below the saturation warning (0.85). The runbook (OC\u2011PAGE\u201100) states that paging is reserved for sustained metrics past the SLO, which we have not reached. However, OC\u2011PAGE\u201100 also notes that trends that appear to be moving toward a breach, such as rising latency or error rate, should be logged as a ticket for later investigation. Therefore we raise a ticket to examine the upward trend before it potentially breaches the SLO.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 8765,
+          "output_tokens": 2063,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002553
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000974,
+      "latency_s": 7.695,
+      "n_api_calls": 4,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": false,
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "During the approved storage migration maintenance window, the cart-service metrics for the first two minutes (14:00-14:01) show error rates well below the 2% SLO (0.4% and 0.38%), p99 latency far under the 800\u202fms threshold (211\u202fms and 259\u202fms), and saturation well below the 0.85 warning level (0.43 and 0.45). The runbook indicates that expected degraded latency during maintenance does not trigger alerts, and no SLO breaches are observed. Therefore no page or ticket is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3359,
+          "output_tokens": 783,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000974
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001597,
+      "latency_s": 12.8,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across the first three minutes (14:00\u201114:02) the payments-gateway showed error rates of 0.4\u20110.6% (well under the 2% SLO), p99 latencies of 277\u2011320\u202fms (well under the 800\u202fms SLO), and saturation between 0.60\u20110.67 (below the 0.85 warning threshold). No recent deploys or maintenance are active. According to the runbook (OC-PAGE-00, OC-BLIP-01), there is no sustained user\u2011facing harm nor a concerning trend that would merit a ticket. Therefore no alert is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6033,
+          "output_tokens": 1154,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001597
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002557,
+      "latency_s": 17.207,
+      "n_api_calls": 9,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 6,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 9,
+        "error": null,
+        "reasoning": "Across the first six minutes (14:00\u201114:05) the cart-service showed error rates between 0.3% and 0.65% (well under the 2% SLO), p99 latency between 242\u202fms and 280\u202fms (well under the 800\u202fms SLO), and saturation around 0.5\u202f\u2013\u202f0.54 (below the 0.85 warning threshold). The runbook (OC-PAGE-00) states that a page is warranted only for sustained user\u2011facing harm exceeding SLOs, and OC\u2011BLIP\u201101 advises against paging for isolated blips. No metric breaches or concerning upward trends are present, so no alert is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 9,
+          "input_tokens": 10465,
+          "output_tokens": 1645,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002557
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00151,
+      "latency_s": 9.855,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 9,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across the first three minutes (14:00\u201114:02) the payments-gateway showed error rates of 0.5%, 0.25% and 0.4% (all well under the 2% SLO), p99 latencies of 219\u2011250\u202fms (well under the 800\u202fms SLO), and saturation between 0.41\u20110.46 (well under the 0.85 warning threshold). No upward trend or sustained breach is evident. According to the runbook (OC-PAGE-00) a page is only warranted for sustained user\u2011facing harm past the SLO, and (OC-BLIP-01) a single or brief deviation is treated as a transient. Therefore no alert is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5840,
+          "output_tokens": 1056,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00151
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001814,
+      "latency_s": 12.568,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 11,
+        "onset_tick": 8,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across four consecutive minutes (14:00\u201114:03) the error rate stayed well under the 2% SLO (max 0.52%), p99 latency remained far below the 800\u202fms threshold (max 274\u202fms), and saturation was comfortably under the 0.85 warning level (\u22480.43\u20110.45). The runbook (OC-PAGE-00) requires a sustained breach of error\u2011rate or latency SLO to page, and no such breach occurred. A single minor uptick does not merit a ticket per OC\u2011BLIP\u201101. Therefore no alert is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7540,
+          "output_tokens": 1139,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001814
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001565,
+      "latency_s": 10.144,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The first three minutes (14:00\u201114:02) show error rates of 0.225%, 0.606%, and 0.456%\u2014all well under the 2% SLO threshold. p99 latencies are 285\u202fms, 278\u202fms, and 313\u202fms, far below the 800\u202fms limit. Saturation stays between 0.48\u20110.52, under the 0.85 warning level. The runbook (OC-PAGE-00) states a page is required only for sustained error\u2011rate or latency breaches, and (OC-BLIP-01) advises against paging on single\u2011minute blips. No trend indicates an upcoming breach, so no action is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6024,
+          "output_tokens": 1103,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001565
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001192,
+      "latency_s": 7.872,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "The service context indicates an approved maintenance window (storage migration) is active, and the runbook (OC-MAINT-04) mandates that degraded metrics during such windows must not trigger alerts. The observed error rates (0.5% and 0.65%) are well below the 2% SLO, and latency, while higher than normal, is expected under the maintenance. Therefore no page or ticket is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4591,
+          "output_tokens": 839,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001192
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002167,
+      "latency_s": 15.702,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": null,
+        "reasoning": "Across the first five minutes (14:00\u201114:04) the media-transcoder showed error rates between 0.34%\u20110.57% (well under the 2% SLO), p99 latency between 272\u2011344\u202fms (well under the 800\u202fms SLO), and saturation around 0.65\u20110.67 (below the 0.85 warning threshold). No upward trend in saturation or latency is evident, and the metrics remain comfortably within limits. According to runbook OC-PAGE-00, a page is only warranted for sustained SLO breaches, and OC-BLIP-01 advises against paging on isolated blips. Therefore no alert is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 8916,
+          "output_tokens": 1383,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002167
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001806,
+      "latency_s": 14.515,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across the first four minutes (14:00\u201114:03) the auth-service showed error rates between 0.0038\u20110.0059 (well under the 2% SLO), p99 latencies between 241\u2011311\u202fms (well under the 800\u202fms SLO), and saturation around 0.47\u20110.49 (far below the 0.85 warning threshold). The runbook (OC\u2011PAGE\u201100) states that a page is warranted only for sustained user\u2011facing harm that exceeds SLO limits, and (OC\u2011BLIP\u201101) notes that a single or short\u2011lived blip is not an incident. No metric breaches or concerning trends are present, so no action is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7397,
+          "output_tokens": 1160,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001806
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001615,
+      "latency_s": 11.697,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The first three minutes (14:00\u201114:02) show error rates of 0.30\u20110.58% (well under the 2% SLO), p99 latencies of 236\u2011264\u202fms (well under the 800\u202fms SLO), and saturation around 0.42 (far below the 0.85 warning threshold). According to runbook OC\u2011PAGE\u201100, a page is warranted only for sustained user\u2011facing harm that exceeds SLOs, and OC\u2011BLIP\u201101 advises ignoring isolated blips. No metric breaches or concerning trends are present, so no action is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6269,
+          "output_tokens": 1125,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001615
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002457,
+      "latency_s": 18.594,
+      "n_api_calls": 9,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 6,
+        "detectable_tick": 9,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 9,
+        "error": null,
+        "reasoning": "All six observed minutes (14:00\u201114:05) show error rates between 0.0034\u20110.0059 (well below the 2% SLO), p99 latency between 225\u2011296\u202fms (well under the 800\u202fms SLO), and saturation around 0.42\u20110.46 (below the 0.85 warning threshold). No recent deploys or maintenance windows are active. According to the runbook (OC\u2011BLIP\u201101), a transient or single bad sample would require waiting, but here there is no breach at all, so no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 9,
+          "input_tokens": 9777,
+          "output_tokens": 1650,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002457
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.001818,
+      "latency_s": 10.386,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7407,
+          "output_tokens": 1178,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001818
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00091,
+      "latency_s": 6.327,
+      "n_api_calls": 4,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 1,
+        "detectable_tick": 0,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The first minute (14:00) shows error_rate 0.00529 (<2% SLO), p99 latency 261\u202fms (<800\u202fms SLO), and saturation 0.444 (<0.85). The service context indicates an approved maintenance window is active, and the runbook (OC-MAINT-04) states that degraded metrics during such windows must not trigger a page. Since metrics are within limits and maintenance suppresses alerts, no action is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3477,
+          "output_tokens": 648,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00091
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001622,
+      "latency_s": 10.637,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over the first three minutes (14:00\u201114:02) the error rate (0.48% \u2192 0.28% \u2192 0.37%) and p99 latency (281\u202fms \u2192 299\u202fms \u2192 285\u202fms) remain well within the SLO limits (2% errors, 800\u202fms p99). However, saturation has risen steadily from 0.615 to 0.691, approaching the warning threshold of 0.85. According to runbook OC\u2011PAGE\u201100, a page is reserved for sustained user\u2011facing harm beyond the SLO, which is not present. Runbook OC\u2011BLIP\u201101 advises against paging for transient spikes. The upward trend in saturation, while not yet breaching, fits the \u201ctrend that will breach\u201d guidance in OC\u2011PAGE\u201100, warranting a ticket for further investigation during working hours.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5700,
+          "output_tokens": 1279,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001622
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002316,
+      "latency_s": 13.304,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 9036,
+          "output_tokens": 1601,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002316
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001971,
+      "latency_s": 14.035,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across the first four minutes (14:00\u201114:03) the checkout\u2011api showed error rates between 0.34% and 0.59% (well below the 2% SLO), p99 latencies between 236\u202fms and 284\u202fms (far under the 800\u202fms SLO), and saturation around 0.4 (well under the 0.85 warning threshold). The runbook (OC\u2011PAGE\u201100) requires sustained user\u2011facing harm\u2014metrics past the SLO that persist\u2014to page, and (OC\u2011BLIP\u201101) clarifies that a single bad sample is not an incident. No metric breaches are observed, so no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7674,
+          "output_tokens": 1367,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001971
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001862,
+      "latency_s": 11.366,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 12,
+        "onset_tick": 9,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across the first four minutes (14:00\u201114:03) the checkout\u2011api showed error rates between 0.26%\u20110.53% (well under the 2% SLO), p99 latency between 216\u2011274\u202fms (well under the 800\u202fms SLO), and saturation around 0.4 (far below the 0.85 warning threshold). No recent deploys or maintenance windows are active. According to the runbook (OC\u2011PAGE\u201100) a page is only warranted for sustained user\u2011facing harm exceeding SLOs, and a ticket is for trends that may soon breach. The observed metrics are stable and comfortably within limits, so no action is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7089,
+          "output_tokens": 1331,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001862
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.002308,
+      "latency_s": 13.94,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 9051,
+          "output_tokens": 1584,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002308
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001708,
+      "latency_s": 13.264,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "All three observed minutes (14:00\u201114:02) show error rates ~0.37\u20110.40% (well under the 2% SLO), p99 latencies 209\u2011261\u202fms (far below the 800\u202fms SLO), and saturation ~0.45\u20110.47 (well under the 0.85 warning threshold). The service context indicates an approved maintenance window is active, and the runbook (OC-MAINT-04) explicitly states that degraded metrics during such windows must not trigger a page. Since metrics are healthy and any potential degradation is covered by the maintenance suppression rule, no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5775,
+          "output_tokens": 1403,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001708
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001495,
+      "latency_s": 9.61,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The three minutes of telemetry (14:00\u201114:02) show error rates of 0.25\u20110.35\u202f% (well under the 2\u202f% SLO), p99 latencies of 291\u2011346\u202fms (well under the 800\u202fms SLO), and saturation between 0.62\u20110.70 (below the 0.85 warning threshold). No recent deploys or maintenance windows are active (service context). According to the runbook (OC\u2011BLIP\u201101) a single bad sample would be treated as a transient, but we have no bad samples at all, so no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 5713,
+          "output_tokens": 1063,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001495
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001133,
+      "latency_s": 7.629,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": false,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "Across the first three minutes (14:00\u201114:02) the payments-gateway showed error rates of 0.6\u20110.3%, p99 latency around 250\u202fms, and saturation ~0.5, all comfortably within the SLO limits (2% error, 800\u202fms p99, 0.85 saturation). No recent deploys or maintenance windows are active, and the runbook specifies paging only when metrics breach SLO thresholds or when a sustained degradation is observed. No such breach or trend is present, so no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4422,
+          "output_tokens": 782,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001133
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.001518,
+      "latency_s": 10.136,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 3,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 6,
+          "input_tokens": 6122,
+          "output_tokens": 1000,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001518
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001203,
+      "latency_s": 7.313,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 10,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "The first two minutes (14:00\u201114:01) show error rates of 0.39% and 0.36% (well under the 2% SLO), p99 latencies of 210\u202fms and 224\u202fms (well under the 800\u202fms SLO), and saturation around 0.44\u20110.45 (far below the 0.85 warning threshold). According to runbook OC-PAGE-00, a page is only warranted for sustained user\u2011facing harm that exceeds SLOs, and OC-BLIP-01 advises against paging on isolated blips. No upward trend is evident, so no ticket or page is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4870,
+          "output_tokens": 787,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001203
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001854,
+      "latency_s": 11.73,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across the first four minutes (14:00\u201114:03) the checkout\u2011api showed error rates of 0.3\u20110.6% and p99 latencies of 263\u2011344\u202fms, both comfortably below the SLO thresholds (2% errors, 800\u202fms p99). Saturation rose modestly from 0.50 to 0.53, far under the warning level of 0.85. According to the runbook (OC\u2011PAGE\u201100), a page is only warranted for sustained user\u2011facing harm that exceeds SLOs, and (OC\u2011BLIP\u201101) a single or short\u2011lived blip does not merit action. No trend indicates an imminent breach, so no alert is needed.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 7,
+          "input_tokens": 7244,
+          "output_tokens": 1279,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001854
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001252,
+      "latency_s": 8.398,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "During the approved storage migration maintenance window (OC-MAINT-04), degraded metrics are expected and should not trigger alerts. The two minutes observed (14:00 and 14:01) show error rates of 0.63% and 0.27% (both well under the 2% SLO), p99 latencies of 252\u202fms and 236\u202fms (well under the 800\u202fms SLO), and saturation around 0.45 (below the 0.85 warning threshold). No SLO violations or concerning trends are present, so no page or ticket is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4554,
+          "output_tokens": 948,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001252
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001176,
+      "latency_s": 8.314,
+      "n_api_calls": 5,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 2,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "During the first two minutes (14:00\u201114:01) the checkout\u2011api showed error rates of 0.57% and 0.46% (well under the 2% SLO), p99 latencies of 292\u202fms and 300\u202fms (well under the 800\u202fms SLO), and saturation of 0.62\u20110.63 (below the 0.85 warning threshold). No recent deploys or maintenance windows are active, and the runbook (OC\u2011BLIP\u201101) states that a single bad sample is not an incident and that we should wait for a sustained signal before paging. Since the observed metrics are comfortably within limits and there is no indication of a regression, no alert is warranted.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 4800,
+          "output_tokens": 760,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001176
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.00236,
+      "latency_s": 17.229,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": null
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": "ended turn without submitting a decision",
+        "reasoning": "",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 8,
+          "input_tokens": 8913,
+          "output_tokens": 1705,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00236
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,3640 @@
+{
+  "backend": "together",
+  "model": "Qwen/Qwen3.7-Plus",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "caught_incident": 0.7222,
+    "no_false_page": 1.0,
+    "patience_ok": 0.5556,
+    "severity_correct": 0.5667,
+    "submitted": 1.0
+  },
+  "metric_ci95": {
+    "caught_incident": [
+      0.5667,
+      0.8667
+    ],
+    "no_false_page": [
+      1.0,
+      1.0
+    ],
+    "patience_ok": [
+      0.3889,
+      0.7222
+    ],
+    "severity_correct": [
+      0.4,
+      0.7333
+    ],
+    "submitted": [
+      1.0,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.006973,
+  "total_cost_usd": 0.6275,
+  "p50_latency_s": 51.145,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005375,
+      "latency_s": 47.724,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Service is healthy with all metrics well within SLO thresholds: error rate ~0.3% (vs 2% SLO), p99 latency ~250-275ms (vs 800ms SLO), saturation ~0.4 (vs 0.85 warning). No degradation observed in the 14:00-14:03 window. The deploy v463 at 14:05 has not yet occurred, and per runbook OC-BLIP-01, the correct action when metrics are healthy is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9725,
+          "output_tokens": 1768,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005375
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004723,
+      "latency_s": 38.221,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 8,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Observed 4 minutes of telemetry (14:00-14:03) showing consistently healthy metrics: error rates ranged 0.41-0.46% (well below 2% SLO), p99 latencies ranged 206-257ms (well below 800ms SLO), and saturation ranged 0.42-0.45 (well below 0.85 warning threshold). No recent deploys or maintenance windows active. Per runbook OC-BLIP-01, no sustained degradation signal exists, so no action is warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9516,
+          "output_tokens": 1311,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004723
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005571,
+      "latency_s": 49.109,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 5 minutes (14:00\u201314:04), error rate drifted from 0.31% to 0.75% and p99 latency from 266ms to 436ms, but both remain well within SLO thresholds (2% error, 800ms p99). Saturation held steady at ~0.53, far below the 0.85 warning level. No recent deploys are present, so per OC-DEPLOY-02 this pattern is more consistent with an upstream transient than a regression. Per OC-BLIP-01, the metrics have not sustained a breach and all values remain healthy; no page or ticket is warranted at this time.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9817,
+          "output_tokens": 1898,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005571
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007282,
+      "latency_s": 59.258,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": null,
+        "reasoning": "Over 5 minutes of observation (14:00\u201314:04), all metrics remained well within SLO thresholds: error rates ranged from 0.16% to 0.61% (SLO: 2%), p99 latency from 211ms to 272ms (SLO: 800ms), and saturation from 0.43 to 0.48 (warning: 0.85). An approved maintenance window for storage migration is active (per service context), and per runbook OC-MAINT-04, degraded metrics during maintenance must not page. In this case, no degradation was observed at all \u2014 the service is healthy. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 8,
+          "input_tokens": 13985,
+          "output_tokens": 2193,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007282
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004935,
+      "latency_s": 39.021,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Five consecutive minutes of telemetry (14:00-14:04) show all metrics well within SLO thresholds: error rates 0.35-0.55% vs 2% SLO, p99 latencies 277-335ms vs 800ms SLO, saturation 0.60-0.67 vs 0.85 warning threshold. No recent deploys (OC-DEPLOY-02 not applicable), no maintenance window active. No degradation, no blips, no concerning trends observed. Per OC-BLIP-01, there is no sustained signal to act on\u2014only stable operation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9815,
+          "output_tokens": 1402,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004935
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006943,
+      "latency_s": 61.922,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across 5 minutes of telemetry (14:00\u201314:04), cart-service metrics are all healthy and well within SLOs: error rate peaked at 0.65% (SLO: 2%), p99 latency peaked at 280ms (SLO: 800ms), and saturation peaked at 0.537 (warning: 0.85). No recent deploys and no maintenance window are active. There is no transient blip, no slow burn, and no sustained degradation pattern. Per OC-BLIP-01 and OC-SLOW-03, no alerting action is warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12313,
+          "output_tokens": 2346,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006943
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006515,
+      "latency_s": 58.028,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 9,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Observed 5 minutes of telemetry from 14:00-14:04, all well within SLOs: error rates 0.25-0.5% (SLO 2%), p99 latency 219-250ms (SLO 800ms), saturation 0.41-0.46 (warning 0.85). While a deploy occurred at 14:07 (OC-DEPLOY-02), I have not observed any degradation in the available telemetry window. Per OC-BLIP-01, no sustained signal of problems exists, and the metrics are healthy. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12060,
+          "output_tokens": 2075,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006515
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005755,
+      "latency_s": 53.33,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 11,
+        "onset_tick": 8,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over four minutes of observation (14:00-14:03), all metrics remained well within SLO thresholds: error rate peaked at 0.52% (SLO: 2%), p99 latency peaked at 274ms (SLO: 800ms), and saturation peaked at 0.45 (warning: 0.85). No recent deploys and no active maintenance window. Per runbook OC-BLIP-01, there is no sustained degradation signal\u2014metrics are healthy and stable. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9267,
+          "output_tokens": 2179,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005755
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.019981,
+      "latency_s": 149.873,
+      "n_api_calls": 16,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 14,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 16,
+        "error": null,
+        "reasoning": "Slow burn detected per runbook OC-SLOW-03: error rate drifted from 0.23% at 14:00 to 1.96% at 14:13 (essentially at the 2% SLO), and p99 latency climbed from 285ms to 648ms (approaching 800ms SLO). No single sample breached SLO, but the sustained upward trend across 14 minutes is an incident per the slow-burn clause. No recent deploys (OC-DEPLOY-02 N/A), and the pattern is too sustained to be a transient (OC-BLIP-01). Error rate is at but not clearly above SLO, and p99 hasn't breached 800ms, so this warrants a ticket for working-hours investigation rather than an immediate page.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 16,
+          "input_tokens": 37761,
+          "output_tokens": 6170,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.019981
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006919,
+      "latency_s": 58.073,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across 5 samples (14:00\u201314:04), all metrics are well within SLO thresholds: error rates ranged 0.36%\u20130.66% (SLO: 2%), p99 latencies ranged 227\u2013275ms (SLO: 800ms), and saturation ranged 0.39\u20130.48 (warning: 0.85). An approved maintenance window for a storage migration is active, and per runbook clause OC-MAINT-04, degraded metrics during an approved window are expected and must not page. No recent deploys (OC-DEPLOY-02 not applicable). No slow burn or drift pattern detected (OC-SLOW-03 not applicable). No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12371,
+          "output_tokens": 2313,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006919
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005084,
+      "latency_s": 41.218,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Four consecutive samples from 14:00-14:03 show all metrics well within SLOs: error rates 0.35-0.57% (SLO: 2%), p99 latencies 272-344ms (SLO: 800ms), saturation 0.62-0.67 (warning: 0.85). No recent deploys or maintenance window. No degradation pattern detected. Per runbook OC-BLIP-01, there is no sustained signal requiring action.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9676,
+          "output_tokens": 1553,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005084
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005827,
+      "latency_s": 44.268,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 6,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Over 6 minutes of observation (14:00\u201314:05), all metrics remained well within SLO thresholds: error rate peaked at 0.59% (SLO: 2%), p99 latency peaked at 311ms (SLO: 800ms), and saturation peaked at 0.493 (warning: 0.85). No recent deploys and no active maintenance window. Per runbook OC-BLIP-01, there is no sustained signal of degradation \u2014 in fact, there is no degradation at all. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 11806,
+          "output_tokens": 1601,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005827
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009305,
+      "latency_s": 79.059,
+      "n_api_calls": 9,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 7,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 9,
+        "error": null,
+        "reasoning": "Post-deploy regression confirmed. Pre-deploy baseline (14:00-14:04) showed healthy metrics: error rates 0.15-0.58%, p99 latency 227-274ms. Immediately after the v681 rolling deploy at 14:05, error rate jumped to 2.23% (above 2% SLO) and p99 to 515ms. By 14:06, degradation worsened: error rate 3.98% (nearly double SLO), p99 858ms (above 800ms SLO). Two consecutive post-deploy samples showing sustained degradation that is escalating, not recovering. Per OC-DEPLOY-02, post-deploy degradation is a regression until proven otherwise and warrants paging rather than waiting it out, as rollback is available. Per OC-BLIP-01, while a single bad sample is not an incident, two consecutive samples showing worsening metrics confirm this is not a transient blip. Both error rate and latency SLOs are being violated on a tier-1 service.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 9,
+          "input_tokens": 16522,
+          "output_tokens": 3139,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009305
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004463,
+      "latency_s": 33.946,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 9,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 5 minutes of observation (14:00-14:04), all metrics remain well within SLO thresholds: error rates ranged from 0.0034 to 0.0059 (SLO: 0.02), p99 latencies from 240-296ms (SLO: 800ms), and saturation from 0.42-0.46 (warning: 0.85). No recent deploys and no active maintenance window. There is no sustained degradation or even a transient blip to evaluate. Per runbook OC-BLIP-01, there is no signal warranting action.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9572,
+          "output_tokens": 1094,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004463
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005052,
+      "latency_s": 42.495,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 5 minutes of observation (14:00-14:04), auth-service metrics remained well within all SLO thresholds: error rate peaked at 0.63% (vs 2% SLO), p99 latency peaked at 381ms (vs 800ms SLO), and saturation peaked at 0.55 (vs 0.85 warning). No recent deploys or maintenance windows. Per runbook OC-BLIP-01, there is no sustained signal of degradation \u2014 the service is operating normally. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9620,
+          "output_tokens": 1542,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005052
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009908,
+      "latency_s": 87.592,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 7,
+        "detectable_tick": 0,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": null,
+        "reasoning": "An approved maintenance window for storage migration is active (per service context), and runbook OC-MAINT-04 states that degraded metrics during such a window are expected and must not page. Telemetry from 14:00-14:04 was healthy (error rate <0.6%, p99 <280ms, saturation ~0.43). At 14:05-14:06, metrics degraded severely (error rate ~9%, p99 ~1600ms, saturation ~0.83), consistent with the expected impact of the storage migration. No recent deploys (OC-DEPLOY-02 not applicable). While the breach is large, it is within the scope of the approved maintenance window, and paging or ticketing expected degradation would be alert fatigue. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 8,
+          "input_tokens": 15780,
+          "output_tokens": 3796,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009908
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005977,
+      "latency_s": 44.646,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Over 5 minutes of observation (14:00-14:04), all metrics remained healthy and stable. Error rates ranged from 0.28% to 0.48% (well below 2% SLO), p99 latency from 281ms to 318ms (well below 800ms SLO), and saturation from 0.615 to 0.691 (below 0.85 warning threshold). No recent deploys, no maintenance window. No slow burn drift or transient blips detected. Per OC-BLIP-01, metrics are stable and healthy, so the correct action is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12342,
+          "output_tokens": 1584,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005977
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005038,
+      "latency_s": 41.056,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 5 minutes of observation (14:00-14:04), all metrics remained well within SLO thresholds: error rates ranged from 0.25% to 0.53% (SLO: 2%), p99 latency ranged from 221ms to 298ms (SLO: 800ms), and saturation ranged from 0.477 to 0.539 (warning threshold: 0.85). No recent deploys and no active maintenance window. Per runbook OC-BLIP-01, there are no transients or degradation patterns to evaluate\u2014the service is operating normally with no action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9588,
+          "output_tokens": 1539,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005598,
+      "latency_s": 48.113,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across 4 samples (14:00\u201314:03), all metrics are well within SLO thresholds: error rate 0.33\u20130.59% (SLO 2%), p99 latency 236\u2013284ms (SLO 800ms), saturation 0.395\u20130.435 (warning 0.85). The rolling deploy v423 at 14:06 has not yet occurred in this window, so OC-DEPLOY-02 does not apply. No degradation, transient or sustained, was observed. Per OC-BLIP-01, there are no bad samples to act on. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9747,
+          "output_tokens": 1937,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005598
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004597,
+      "latency_s": 36.342,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 12,
+        "onset_tick": 9,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Observed 4 minutes of telemetry (14:00-14:03) for checkout-api, a tier-1 service with no recent deploys and no active maintenance window. All metrics remained well within SLO thresholds: error rates ranged from 0.26% to 0.53% (SLO: 2%), p99 latencies from 216ms to 274ms (SLO: 800ms), and saturation from 40.7% to 43.8% (warning: 85%). No sustained degradation or concerning trends were observed. Per runbook clause OC-BLIP-01, the correct action when metrics are healthy and stable is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9163,
+          "output_tokens": 1301,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004597
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.013274,
+      "latency_s": 100.611,
+      "n_api_calls": 12,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 8,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 12,
+        "error": null,
+        "reasoning": "Over 8 minutes (14:00\u201314:07), cart-service shows a clear slow-burn pattern: error rate drifted from 0.36% to 1.24%, p99 latency from 257ms to 513ms, and saturation from 0.49 to 0.56. No single sample breached the SLO (2% errors, 800ms p99, 0.85 saturation), so this does not meet the page threshold per OC-PAGE-00. However, the sustained upward drift across all three metrics matches the slow-burn pattern described in OC-SLOW-03. With no recent deploys (OC-DEPLOY-02) and no maintenance window, this is not an expected condition. Per OC-PAGE-00, trends that will breach but have not yet are a ticket, not a page. Queueing a ticket allows investigation before the SLOs are breached.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 12,
+          "input_tokens": 25542,
+          "output_tokens": 3985,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.013274
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006988,
+      "latency_s": 57.402,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Five consecutive samples (14:00\u201314:04) show all metrics well within SLO thresholds: error rate 0.37\u20130.56% (SLO: 2%), p99 latency 209\u2013261ms (SLO: 800ms), saturation 0.44\u20130.47 (warn: 0.85). An approved maintenance window for storage migration is active (OC-MAINT-04 suppresses paging for expected degradation during this window), and there are no recent deploys (OC-DEPLOY-02 not applicable). No sustained or even transient degradation was observed. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12290,
+          "output_tokens": 2387,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006988
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005583,
+      "latency_s": 51.424,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across 4 samples (14:00-14:03), all metrics are well within SLO thresholds: error rate peaked at 0.62% (SLO: 2%), p99 latency peaked at 346ms (SLO: 800ms), and saturation peaked at 0.695 (warning: 0.85). No recent deploys and no active maintenance window. Per runbook OC-BLIP-01, there is no sustained degraded signal to act on. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9274,
+          "output_tokens": 2043,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005583
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005063,
+      "latency_s": 43.645,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Observed 4 minutes of telemetry (14:00-14:03) showing all metrics well within SLO thresholds: error rates ranged 0.26-0.63% (SLO: 2%), p99 latency 209-259ms (SLO: 800ms), saturation 0.48-0.55 (warning: 0.85). No recent deploys, no maintenance window. Per runbook OC-BLIP-01, there is no sustained degradation or bad signal to act on. The service is operating normally with healthy metrics and no indicators of incident.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9273,
+          "output_tokens": 1637,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005063
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006733,
+      "latency_s": 59.683,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Observed 5 minutes of pre-deploy telemetry (14:00-14:04) for search-index. All metrics remained healthy: error rates 0.23-0.46% (SLO: 2%), p99 latency 191-260ms (SLO: 800ms), saturation 0.40-0.43 (warning: 0.85). No SLO violations or degradation detected. The rolling deploy v552 completed at 14:06, after my observation window ended, so no post-deploy impact was observed. Per runbook OC-BLIP-01, no sustained signal of an incident exists. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 11542,
+          "output_tokens": 2375,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006733
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005149,
+      "latency_s": 44.512,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 10,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 4 minutes of observation (14:00-14:03), all metrics remained healthy: error rates 0.36-0.49% (well below 2% SLO), p99 latencies 210-249ms (well below 800ms SLO), saturation 0.44-0.47 (well below 0.85 warning). No recent deploys and no maintenance window. Service is operating normally with no degradation or trend toward threshold violation. Per runbook OC-BLIP-01, no action warranted for healthy service.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9443,
+          "output_tokens": 1662,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005149
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009898,
+      "latency_s": 88.61,
+      "n_api_calls": 9,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 6,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 9,
+        "error": null,
+        "reasoning": "Over 6 minutes (14:00\u201314:05), error rate has drifted steadily upward from 0.30% to 1.01%, and p99 latency from 263ms to 421ms. No SLO threshold has been breached yet (error rate SLO is 2%, p99 SLO is 800ms), so this is not yet a pageable incident. However, per OC-SLOW-03, this is a clear slow-burn pattern \u2014 not a transient blip (OC-BLIP-01) \u2014 and if the trend continues it will cross the error rate SLO within the remaining window. No recent deploys (OC-DEPLOY-02) and no maintenance window (OC-MAINT-04) to explain the degradation. A ticket is warranted to investigate the root cause before it escalates.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 9,
+          "input_tokens": 16186,
+          "output_tokens": 3686,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009898
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006466,
+      "latency_s": 54.834,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across 4 samples (14:00\u201314:03), all metrics are well within SLO thresholds: error rate peaked at 0.63% (SLO: 2%), p99 latency peaked at 280ms (SLO: 800ms), and saturation peaked at 0.464 (warning: 0.85). No slow burn or drift is developing. Additionally, an approved maintenance window for storage migration is active (per service context), and runbook clause OC-MAINT-04 states that degraded metrics during approved maintenance must not page. With no deploy history (OC-DEPLOY-02 not applicable) and all metrics nominal, no action is warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 11927,
+          "output_tokens": 2070,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006466
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004911,
+      "latency_s": 40.167,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Four consecutive minutes of telemetry (14:00\u201314:03) show all metrics well within SLO thresholds: error rate 0.46\u20130.57% vs 2% SLO, p99 latency 291\u2013345ms vs 800ms SLO, saturation 0.62\u20130.68 vs 0.85 warning threshold. No recent deploys (OC-DEPLOY-02 not applicable) and no maintenance window active. There is no degraded signal to escalate \u2014 not even a transient blip. Per OC-BLIP-01, the correct action when metrics are nominal is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9299,
+          "output_tokens": 1512,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004911
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.011177,
+      "latency_s": 87.394,
+      "n_api_calls": 10,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 9,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 10,
+        "error": null,
+        "reasoning": "Observed a transient error rate blip from 0.245% to 0.552% (peak at 14:03) that recovered to 0.233% by 14:06, then stabilized around 0.3-0.4%. All metrics remain well within SLO thresholds (error rate <2%, p99 <800ms, saturation <0.85). Per OC-BLIP-01, the transient recovered on its own within 2-3 minutes without intervention, warranting silence. No recent deploys (OC-DEPLOY-02) and no slow burn crossing SLO (OC-SLOW-03). Service is healthy.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 10,
+          "input_tokens": 20992,
+          "output_tokens": 3484,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.011177
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006854,
+      "latency_s": 58.051,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Observed 5 minutes of telemetry (14:00-14:04) with all metrics well within SLOs: error rates 0.27-0.33% (SLO 2%), p99 latency 244-275ms (SLO 800ms), saturation 0.38-0.43 (warning 0.85). The v463 deploy completed at 14:05, but no degradation was observed in the pre-deploy window. Per runbook OC-DEPLOY-02, post-deploy degradation would be a regression requiring a page, but no such degradation exists. Per OC-BLIP-01, there is no sustained signal of any issue. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12247,
+          "output_tokens": 2293,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006854
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006057,
+      "latency_s": 51.166,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 8,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "All metrics are well within SLO thresholds across 5 minutes of observation (14:00-14:04). Error rates ranged from 0.33% to 0.46% (SLO: 2%), p99 latencies from 206ms to 280ms (SLO: 800ms), and saturation from 0.42 to 0.45 (warning: 0.85). No recent deploys and no maintenance window active. Per runbook OC-BLIP-01, the metrics are healthy and stable, requiring no action.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 11237,
+          "output_tokens": 1923,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006057
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005788,
+      "latency_s": 53.878,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 5 minutes of observation (14:00\u201314:04), all metrics remained well within SLO thresholds: error rate peaked at 0.75% (SLO: 2%), p99 latency peaked at 436ms (SLO: 800ms), and saturation stayed around 0.53 (warning: 0.85). While there is a mild upward trend in error rate and latency, no threshold has been breached. No recent deploys (OC-DEPLOY-02 not applicable) and no active maintenance window. Per OC-BLIP-01, a transient upward drift that remains within SLO and has not sustained a breach does not warrant paging or ticketing. The correct action is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9819,
+          "output_tokens": 2067,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005788
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006316,
+      "latency_s": 49.736,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across five samples (14:00\u201314:04), all metrics are healthy and well within SLOs: error rate peaked at 0.61% (SLO 2%), p99 latency peaked at 272ms (SLO 800ms), and saturation peaked at 0.48 (warn threshold 0.85). No trend of degradation or slow burn is visible. An approved maintenance window for storage migration is active (OC-MAINT-04), which would suppress paging for expected degradation, but no degradation was observed. No recent deploys (OC-DEPLOY-02). No sustained bad signal to alert on (OC-BLIP-01). No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12336,
+          "output_tokens": 1850,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006316
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004841,
+      "latency_s": 39.607,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Observed 4 consecutive minutes (14:00-14:03) of healthy telemetry. Error rates ranged from 0.35-0.55% (well below 2% SLO), p99 latency from 277-320ms (well below 800ms SLO), and saturation from 0.597-0.665 (well below 0.85 warning threshold). No recent deploys or maintenance windows. Per runbook OC-BLIP-01, metrics are stable and healthy with no sustained degradation or trend toward SLO breach. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9441,
+          "output_tokens": 1422,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004841
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00674,
+      "latency_s": 54.156,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across 5 samples (14:00\u201314:04), all metrics are healthy and well within SLO thresholds: error rate ranged 0.30%\u20130.65% (SLO: 2%), p99 latency ranged 242\u2013280ms (SLO: 800ms), and saturation ranged 0.51\u20130.54 (warning: 0.85). No recent deploys (OC-DEPLOY-02) and no maintenance window. No slow burn detected (OC-SLOW-03) \u2014 metrics are stable, not drifting. No transient blip requiring observation (OC-BLIP-01). No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12981,
+          "output_tokens": 2020,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00674
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005687,
+      "latency_s": 50.95,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 9,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Observed 4 minutes of telemetry (14:00-14:03) showing all metrics well within SLO thresholds: error rates 0.25-0.5% (vs 2% SLO), p99 latency 219-250ms (vs 800ms SLO), saturation 0.41-0.46 (vs 0.85 warning). The rolling deploy v667 is scheduled for 14:07 but has not yet occurred in the observed window. No degradation or incident signal detected. Per runbook OC-BLIP-01, no sustained anomaly exists to warrant paging or ticketing.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9837,
+          "output_tokens": 1984,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005687
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006612,
+      "latency_s": 54.037,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 11,
+        "onset_tick": 8,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Over 5 minutes (14:00-14:04), all metrics remain well within SLO thresholds: error rate peaked at 0.00518 (vs 0.02 SLO, ~4x headroom), p99 latency peaked at 274ms (vs 800ms SLO, ~3x headroom), and saturation peaked at 0.446 (vs 0.85 warning, ~2x headroom). While error rate showed a slight uptick from ~0.003 to ~0.005, this represents normal variation at extremely low absolute levels. No recent deploys (OC-DEPLOY-02 not applicable), no maintenance window. Per OC-BLIP-01, a single bad sample is not an incident and most blips self-heal; per OC-SLOW-03, slow burns require sustained drift crossing SLO by window end. With only 5 minutes of data and all metrics 3-4x below thresholds, there is no sustained degradation pattern warranting action.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12423,
+          "output_tokens": 2060,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006612
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005841,
+      "latency_s": 52.904,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 5 minutes of observation (14:00-14:04), all metrics remained well within SLO thresholds: error rates ranged from 0.23% to 0.84% (SLO: 2%), p99 latency from 278ms to 381ms (SLO: 800ms), and saturation from 0.484 to 0.539 (warning: 0.85). No recent deploys and no active maintenance window. Per runbook OC-BLIP-01, there is no sustained signal warranting a page, and per OC-DEPLOY-02, without a deploy this pattern is more likely a transient. The service is operating normally with healthy margins.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9818,
+          "output_tokens": 2109,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005841
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.014515,
+      "latency_s": 116.476,
+      "n_api_calls": 12,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 11,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 12,
+        "error": null,
+        "reasoning": "Sustained degradation observed from 14:06-14:10 (error rate ~9%, p99 ~1600ms, saturation ~0.80), significantly exceeding SLO thresholds. However, an approved maintenance window is active for storage migration with \"degraded latency expected\" per service context. Runbook OC-MAINT-04 explicitly states: \"During an approved maintenance window, degraded metrics on the affected service are expected and must not page.\" The degradation is consistent with expected maintenance impact. No paging or ticketing warranted during the approved maintenance window.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 12,
+          "input_tokens": 25856,
+          "output_tokens": 4876,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.014515
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005632,
+      "latency_s": 50.608,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over four minutes of observation (14:00\u201314:03), all metrics remained well within SLO thresholds: error rates ranged from 0.35% to 0.57% (SLO: 2%), p99 latency from 272ms to 344ms (SLO: 800ms), and saturation from 0.62 to 0.67 (warning: 0.85). No recent deploys and no active maintenance window. Per runbook OC-BLIP-01, there is no sustained degradation signal\u2014only normal, healthy operation. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9529,
+          "output_tokens": 2018,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005632
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005031,
+      "latency_s": 39.305,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across 5 consecutive samples (14:00\u201314:04), auth-service metrics are all well within SLO bounds: error rate ranged 0.38%\u20130.59% (SLO: 2%), p99 latency ranged 241\u2013311ms (SLO: 800ms), and saturation ranged 0.47\u20130.49 (warn: 0.85). No recent deploys and no active maintenance window. Per runbook OC-BLIP-01, there is no sustained degradation signal \u2014 in fact there is no degradation at all. The correct action is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 10019,
+          "output_tokens": 1426,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005031
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008048,
+      "latency_s": 73.824,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Observed 5 minutes of telemetry (14:00-14:04) showing healthy metrics: error rates 0.15-0.58% (SLO 2%), p99 latency 227-274ms (SLO 800ms), saturation 0.42-0.44 (warning 0.85). Deploy v681 scheduled for 14:05 has not yet occurred in the observation window. No degradation observed, no SLO violations. Per OC-BLIP-01, no sustained signal to act on. Per OC-DEPLOY-02, post-deploy degradation would warrant paging, but no degradation has been observed. Service is operating normally.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12378,
+          "output_tokens": 3193,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008048
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00501,
+      "latency_s": 42.034,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 9,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Four consecutive samples (14:00-14:03) show all metrics well within SLO thresholds: error rates 0.34-0.59% (SLO: 2%), p99 latency 240-296ms (SLO: 800ms), saturation 0.42-0.46 (warning: 0.85). No recent deploys, no maintenance window. Per runbook OC-BLIP-01, there is no sustained degradation signal\u2014metrics are stable and healthy. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9643,
+          "output_tokens": 1503,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00501
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005385,
+      "latency_s": 45.037,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 4 minutes of observation (14:00-14:03), all metrics remained well within SLO thresholds: error rates ranged from 0.34% to 0.63% (SLO: 2%), p99 latencies from 272ms to 381ms (SLO: 800ms), and saturation from 0.50 to 0.55 (warning: 0.85). No recent deploys or maintenance windows are active. Per runbook OC-BLIP-01, there is no sustained degradation signal\u2014metrics are healthy and stable. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9541,
+          "output_tokens": 1822,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005385
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006495,
+      "latency_s": 51.145,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 0,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Five samples from 14:00\u201314:04 show all metrics well within SLOs: error rate peaked at 0.53% (SLO: 2%), p99 latency peaked at 276ms (SLO: 800ms), saturation peaked at 0.44 (warning: 0.85). No slow burn or drift detected. An approved maintenance window for storage migration is active (OC-MAINT-04), but metrics are not degraded at all. No recent deploys (OC-DEPLOY-02 not applicable). No sustained anomaly, no transient blip, no incident signal. Correct action is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12454,
+          "output_tokens": 1961,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006495
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005904,
+      "latency_s": 44.171,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across 4 minutes of telemetry (14:00-14:03), all metrics remain well within SLO thresholds: error rates 0.28-0.48% (SLO: 2%), p99 latency 281-299ms (SLO: 800ms), saturation 0.615-0.691 (warning: 0.85). No recent deploys or maintenance windows. Per OC-PAGE-00, paging requires sustained user-facing harm past SLO thresholds, which is not present. Per OC-BLIP-01, there are no transients to evaluate. The service is operating normally with no indicators of degradation or emerging issues.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12186,
+          "output_tokens": 1566,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005904
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005084,
+      "latency_s": 43.078,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 4 minutes of observation (14:00-14:03), auth-service metrics remained healthy: error rates ranged 0.25-0.48% (well below 2% SLO), p99 latency ranged 221-298ms (well below 800ms SLO), and saturation ranged 0.477-0.539 (below 0.85 warning threshold). No recent deploys or maintenance window active. No sustained degradation or concerning pattern observed. Per runbook OC-BLIP-01, no action warranted when metrics are healthy.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9640,
+          "output_tokens": 1562,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005084
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006816,
+      "latency_s": 51.956,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 12,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "A rolling deploy of v423 completed at 14:06. Pre-deploy metrics (14:00\u201314:05) were healthy: error rate 0.003\u20130.006, p99 236\u2013284ms. Starting at 14:06, error rate jumped to 0.02 (at SLO threshold) and p99 to 501ms. Over the next five minutes the degradation worsened and then plateaued: error rate climbed to 0.043 at 14:07 and stabilized around 0.06 (3\u00d7 the 2% SLO), while p99 latency rose to 1110\u20131133ms (1.4\u00d7 the 800ms SLO). This is not a transient \u2014 it has been sustained for 5+ minutes with no sign of self-healing. Per OC-DEPLOY-02, degradation beginning shortly after a deploy is a regression until proven otherwise, and there is a rollback available, so this warrants a page rather than waiting it out.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 13681,
+          "output_tokens": 1905,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006816
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005482,
+      "latency_s": 48.88,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 12,
+        "onset_tick": 9,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Observed 4 minutes of telemetry (14:00-14:03) showing all metrics well within SLO thresholds: error rates ranged 0.26-0.53% (SLO: 2%), p99 latencies ranged 216-274ms (SLO: 800ms), saturation ranged 0.41-0.44 (warning: 0.85). No recent deploys, no maintenance window active. Per runbook OC-BLIP-01, there is no sustained signal or transient blip to act on. This is normal operation requiring no action.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9660,
+          "output_tokens": 1868,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005482
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.014839,
+      "latency_s": 110.258,
+      "n_api_calls": 14,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 11,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 14,
+        "error": null,
+        "reasoning": "Cart-service (tier-1) shows a sustained slow-burn error rate drift: 0.36% at 14:00 \u2192 0.57% \u2192 0.82% \u2192 0.58% \u2192 0.96% \u2192 1.03% \u2192 1.24% \u2192 1.32% \u2192 1.29% \u2192 1.85% at 14:10. The error rate has climbed ~5x over 11 minutes and is approaching the 2% SLO with 9 ticks remaining. No recent deploys (OC-DEPLOY-02) and no maintenance window, so this is not expected. Per OC-SLOW-03, a metric drifting steadily worse across the window and crossing the SLO by the end is an incident even though no single sample looks alarming. The sustained upward trend with no sign of self-healing warrants paging the on-call engineer.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 14,
+          "input_tokens": 29835,
+          "output_tokens": 4134,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.014839
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005554,
+      "latency_s": 47.786,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across 5 minutes of observation (14:00-14:04), all metrics remain well within SLO thresholds: error rates 0.37-0.56% (SLO: 2%), p99 latency 209-261ms (SLO: 800ms), saturation 0.44-0.47 (warning: 0.85). An approved maintenance window is active for storage migration with degraded latency expected, but no degradation has materialized. No recent deploys. Per runbook OC-BLIP-01, there is no sustained signal of an incident. Per the maintenance context, any future degradation would be expected and within the approved window. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 10061,
+          "output_tokens": 1824,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005554
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006317,
+      "latency_s": 53.139,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Over 5 minutes of observation (14:00-14:04), all metrics remained well within SLO thresholds: error rates ranged 0.25-0.62% (SLO: 2%), p99 latency 287-346ms (SLO: 800ms), saturation 0.62-0.70 (warning: 0.85). The brief error rate bump to 0.62% at 14:03 recovered immediately, consistent with normal variance per runbook OC-BLIP-01. No recent deploys to suggest regression. No sustained degradation pattern observed.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 11498,
+          "output_tokens": 2061,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006317
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004719,
+      "latency_s": 36.018,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across 5 samples (14:00\u201314:04), all metrics are well within SLO thresholds: error rate ranged 0.26%\u20130.63% (SLO 2%), p99 latency 209\u2013259ms (SLO 800ms), saturation 0.48\u20130.55 (warning 0.85). No recent deploys and no active maintenance window. There is no degradation, no trend toward violation, and no deploy-related regression. Per runbook OC-BLIP-41, there is no sustained signal warranting action.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9847,
+          "output_tokens": 1225,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004719
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007571,
+      "latency_s": 58.186,
+      "n_api_calls": 9,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 8,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 9,
+        "error": null,
+        "reasoning": "Rolling deploy v552 completed at 14:06. Immediately after, error rate jumped from a ~0.4% baseline to 2.17% at 14:06 and 4.0% at 14:07 (SLO: 2%), while p99 latency rose from ~250ms to 509ms then 857ms (SLO: 800ms). Both error rate and latency SLOs are breached and worsening. Per OC-DEPLOY-02, degradation following a deploy is a regression until proven otherwise and warrants a page rather than waiting it out, since a rollback is available. This is a tier-1 service with sustained, escalating post-deploy failures.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 9,
+          "input_tokens": 16594,
+          "output_tokens": 1766,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007571
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.010526,
+      "latency_s": 81.49,
+      "n_api_calls": 10,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 10,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 10,
+        "error": null,
+        "reasoning": "A transient blip at 14:07-14:08 saw error rate spike to 6.35% and p99 to 1354ms, both breaching SLO thresholds (2% error, 800ms p99). However, the metrics recovered to normal by 14:09 and remained healthy for the remaining 11 minutes of the window. No recent deploys were present (OC-DEPLOY-02), making this consistent with an upstream transient. Per OC-BLIP-01, the blip self-healed within 2-3 minutes without intervention, so the correct action is silence \u2014 paging on a transient trains the team to ignore the pager.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 10,
+          "input_tokens": 21527,
+          "output_tokens": 2842,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.010526
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005184,
+      "latency_s": 44.95,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 4 minutes of observation (14:00-14:03), all metrics remained well within SLO thresholds: error rate ranged from 0.30% to 0.61% (SLO: 2%), p99 latency from 263ms to 344ms (SLO: 800ms), and saturation from 0.48 to 0.53 (warning: 0.85). No recent deploys and no maintenance window active. The service is operating normally with no sustained degradation or incident indicators. Per runbook OC-BLIP-01, there is no signal warranting action.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9653,
+          "output_tokens": 1637,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005184
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007469,
+      "latency_s": 60.372,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": null,
+        "reasoning": "Across 5 samples (14:00-14:04), all metrics are healthy and well within SLO thresholds: error rates 0.27-0.63% (SLO: 2%), p99 latency 232-280ms (SLO: 800ms), saturation 0.44-0.47 (warning: 0.85). An approved maintenance window is active for storage migration with degraded latency expected. Per OC-MAINT-04, degraded metrics during maintenance must not page. No recent deploys (OC-DEPLOY-02 not applicable). No slow burn pattern detected (OC-SLOW-03). No sustained signal of an incident per OC-BLIP-01. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 8,
+          "input_tokens": 14236,
+          "output_tokens": 2276,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007469
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004702,
+      "latency_s": 36.773,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 5 minutes of observation (14:00\u201314:04), all metrics remained well within SLOs: error rates ranged from 0.42% to 0.57% (SLO: 2%), p99 latencies from 291ms to 345ms (SLO: 800ms), and saturation from 0.623 to 0.684 (warning: 0.85). No recent deploys or maintenance windows were active. Per runbook OC-BLIP-01, there is no sustained signal of degradation, and the service is operating normally. No action is warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9799,
+          "output_tokens": 1224,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004702
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.010872,
+      "latency_s": 85.701,
+      "n_api_calls": 11,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 8,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 11,
+        "error": null,
+        "reasoning": "Error rate drifted from 0.245% to a peak of 0.552% over 4 minutes (ticks 0-3), then recovered to 0.23-0.28% for the last 3 minutes. Peak was well below the 2% SLO threshold. Latency (p99 216-281ms) and saturation (0.486-0.531) remained healthy throughout. Per OC-BLIP-01, this was a transient blip that self-healed within 3-4 minutes without intervention. Per OC-SLOW-03, a slow burn is only an incident if it crosses the SLO by end of window - this never approached the threshold. No recent deploys (OC-DEPLOY-02 not applicable). Correct action per runbook is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 11,
+          "input_tokens": 20851,
+          "output_tokens": 3281,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.010872
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005307,
+      "latency_s": 46.513,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Observed 4 samples from 14:00-14:03, all showing healthy metrics: error rates 0.27-0.33% (SLO: 2%), p99 latency 245-275ms (SLO: 800ms), saturation 0.38-0.43 (warning: 0.85). No degradation detected in pre-deploy window. Deploy v463 scheduled for 14:05 has not yet occurred. Per runbook OC-BLIP-01, no sustained signal of issues exists. Per runbook OC-DEPLOY-02, would need to observe post-deploy behavior to detect regression, but current window shows no action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9731,
+          "output_tokens": 1713,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005307
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005211,
+      "latency_s": 42.981,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 8,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Four consecutive samples from 14:00-14:03 show all metrics well within SLO thresholds: error rate 0.41-0.46% (vs 2% SLO), p99 latency 206-257ms (vs 800ms SLO), saturation 0.42-0.45 (vs 0.85 warning). No recent deploys and no maintenance window. Per runbook OC-BLIP-01, the correct action when metrics are healthy is silence. No sustained degradation observed.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9695,
+          "output_tokens": 1647,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005211
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008274,
+      "latency_s": 71.761,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 7,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": null,
+        "reasoning": "Over 7 minutes (14:00\u201314:06), error rate drifted from 0.31% to ~1% (3x increase) and p99 latency from 266ms to 469ms (nearly doubled). Both metrics remain within SLO bounds (2% error rate, 800ms p99) and saturation is stable at ~0.55. No recent deploys or maintenance window are active, so this is not a deploy regression or expected degradation. Per runbook OC-BLIP-01, no SLO has been breached and the signal is a slow drift rather than a spike, so paging is not warranted. The upward trend in errors and latency merits investigation during working hours via a ticket.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 8,
+          "input_tokens": 14193,
+          "output_tokens": 2916,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008274
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006449,
+      "latency_s": 54.708,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across 5 minutes of telemetry (14:00\u201314:04), all metrics are well within SLO thresholds: error rate peaked at 0.61% (SLO 2%), p99 latency peaked at 272ms (SLO 800ms), and saturation peaked at 0.475 (warn 0.85). An approved maintenance window for a storage migration is active (per service context), and per runbook clause OC-MAINT-04, degraded metrics during this window are expected and must not page. No recent deploys (OC-DEPLOY-02 N/A), no slow burn detected (OC-SLOW-03 N/A), and no sustained transients (OC-BLIP-01 N/A). No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 11994,
+          "output_tokens": 2040,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006449
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005371,
+      "latency_s": 45.701,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Five consecutive samples from 14:00-14:04 show all metrics well within SLO: error rates 0.35-0.55% (vs 2% SLO), p99 latency 277-335ms (vs 800ms SLO), saturation 0.60-0.67 (vs 0.85 warning). No recent deploys or maintenance window. Per runbook OC-BLIP-01, there is no sustained signal requiring action. The service is operating normally.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9797,
+          "output_tokens": 1747,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005371
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005194,
+      "latency_s": 46.336,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 4 minutes of observation (14:00\u201314:03), all metrics remained well within SLO thresholds: error rate ranged 0.3\u20130.65% (SLO: 2%), p99 latency ranged 242\u2013275ms (SLO: 800ms), and saturation ranged 0.51\u20130.53 (warning: 0.85). No recent deploys and no active maintenance window. Per runbook OC-BLIP-01, there is no degradation to act on \u2014 the service is operating normally. No page, ticket, or further action is warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9291,
+          "output_tokens": 1735,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005194
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005671,
+      "latency_s": 48.884,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 9,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Observed 4 minutes of pre-deploy telemetry (14:00-14:03) showing healthy metrics: error rates 0.25-0.51% (SLO 2%), p99 latency 219-250ms (SLO 800ms), saturation 0.41-0.46 (warning 0.85). All metrics well within SLO thresholds with no degradation observed. While a deploy (v667) completed at 14:07, no post-deploy issues have manifested. Per runbook OC-BLIP-01, without a sustained signal or observed degradation, no action is warranted. Per OC-DEPLOY-02, would page if post-deploy degradation appeared, but none observed in this window.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9791,
+          "output_tokens": 1983,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005671
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006304,
+      "latency_s": 52.055,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 11,
+        "onset_tick": 8,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Five consecutive samples from 14:00-14:04 show all metrics well within SLO thresholds: error rates ranged from 0.26% to 0.52% (SLO: 2%), p99 latency from 227ms to 274ms (SLO: 800ms), and saturation from 0.427 to 0.446 (warning: 0.85). No recent deploys or maintenance windows. No slow burn pattern detected. Per runbook OC-BLIP-01, with healthy metrics and no sustained degradation, no action is warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12372,
+          "output_tokens": 1832,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006304
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007702,
+      "latency_s": 72.797,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Over five minutes (14:00\u201314:04), error rate drifted from 0.23% to 0.84% and p99 latency from 285ms to 381ms. Both remain well within SLO thresholds (2% error, 800ms p99). Saturation is stable at ~0.52, far below the 0.85 warning level. No recent deploys (OC-DEPLOY-02 not applicable) and no maintenance window. Per OC-BLIP-01, this modest drift without a deploy or SLO breach is a transient pattern that does not warrant paging or ticketing. The correct action is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 11769,
+          "output_tokens": 3075,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007702
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006131,
+      "latency_s": 54.768,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Four samples from 14:00-14:03 show all metrics well within SLO thresholds: error rates 0.36-0.66% (SLO 2%), p99 latency 227-275ms (SLO 800ms), saturation 0.39-0.48 (warning 0.85). No sustained degradation or slow burn pattern observed. Additionally, an approved maintenance window is active for storage migration (OC-MAINT-04), which would suppress paging for expected degraded metrics even if they occurred. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12091,
+          "output_tokens": 1767,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006131
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.012099,
+      "latency_s": 85.83,
+      "n_api_calls": 11,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 20,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 11,
+        "error": null,
+        "reasoning": "Over the 20-minute window (14:00\u201314:19), saturation climbed steadily from 0.668 to 0.895, crossing the 0.85 warning threshold at 14:14 and remaining above it for the final 6 minutes (0.863, 0.852, 0.887, 0.883, 0.895, 0.895). However, error rate (0.26%\u20130.57%) and p99 latency (259ms\u2013344ms) remained well within SLOs (2% and 800ms respectively) throughout the entire window. Per OC-PAGE-00, rising saturation with healthy errors and latency is explicitly a ticket, not a page. No recent deploys (OC-DEPLOY-02) and no maintenance window. The saturation trend warrants investigation during working hours before it causes user-facing impact.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 11,
+          "input_tokens": 25389,
+          "output_tokens": 3105,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.012099
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004552,
+      "latency_s": 38.66,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over four minutes of observation (14:00-14:03), auth-service metrics remained healthy: error rates ranged from 0.38% to 0.59% (SLO: 2%), p99 latency ranged from 241ms to 311ms (SLO: 800ms), and saturation stayed between 0.47-0.49 (warning threshold: 0.85). No recent deploys or maintenance windows are active. All metrics are well within SLO thresholds with no signs of degradation. Per runbook OC-BLIP-01, there is no sustained signal requiring action, and in this case no degraded signal at all.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9264,
+          "output_tokens": 1240,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004552
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007173,
+      "latency_s": 64.918,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 7,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Observed 5 minutes of telemetry (14:00-14:04) showing all metrics well within SLO thresholds: error rates 0.15-0.58% (SLO: 2%), p99 latency 227-274ms (SLO: 800ms), saturation 0.42-0.44 (warning: 0.85). The v681 deploy at 14:05 has not yet occurred in the observed window, and no degradation has been detected. Per runbook OC-BLIP-01, no sustained signal exists to warrant paging. Per OC-DEPLOY-02, post-deploy degradation would require action, but none has been observed. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 11824,
+          "output_tokens": 2648,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007173
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004804,
+      "latency_s": 40.599,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 9,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Four consecutive samples from 14:00-14:03 show all metrics well within SLO thresholds: error rates 0.34-0.59% (SLO: 2%), p99 latencies 240-296ms (SLO: 800ms), saturation 0.42-0.46 (warning: 0.85). No recent deploys, no maintenance window. No degraded metrics or transients observed. Per runbook OC-BLIP-01, silence is the correct action when metrics are normal.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9274,
+          "output_tokens": 1435,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004804
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005944,
+      "latency_s": 48.77,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Auth-service telemetry from 14:00-14:04 shows consistently healthy operation: error rates ranged 0.34-0.63% (well below 2% SLO), p99 latencies ranged 272-381ms (well below 800ms SLO), and saturation ranged 0.50-0.55 (well below 0.85 warning threshold). No recent deploys or maintenance windows that would change interpretation. Per runbook OC-BLIP-01, there is no sustained degradation signal to act on. The service is operating normally within all SLO thresholds.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 11631,
+          "output_tokens": 1736,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005944
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.010675,
+      "latency_s": 81.555,
+      "n_api_calls": 10,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 9,
+        "detectable_tick": 0,
+        "onset_tick": 5,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 10,
+        "error": null,
+        "reasoning": "Sustained degradation observed from 14:05\u201314:08 (error rate 8.8\u20139.2%, p99 1592\u20131631ms), well above SLO thresholds. However, an approved maintenance window is active for storage migration with degraded latency explicitly expected (per service context). Runbook OC-MAINT-04 states: \"During an approved maintenance window, degraded metrics on the affected service are expected and must not page.\" The observed degradation matches the expected maintenance impact, so no action is warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 10,
+          "input_tokens": 20574,
+          "output_tokens": 3196,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.010675
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004666,
+      "latency_s": 38.637,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Observed 4 consecutive minutes (14:00-14:03) of healthy telemetry: error rates ranged from 0.28% to 0.48% (well below 2% SLO), p99 latency ranged from 281ms to 299ms (well below 800ms SLO), and saturation ranged from 0.615 to 0.691 (below 0.85 warning threshold). No recent deploys and no active maintenance window. All metrics are stable and within normal operating parameters. Per runbook OC-BLIP-01, when metrics are normal, the correct action is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9241,
+          "output_tokens": 1335,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004666
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004394,
+      "latency_s": 33.58,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 5 minutes of observation (14:00-14:04), auth-service metrics remained well within all SLO thresholds: error rates ranged from 0.25% to 0.53% (SLO: 2%), p99 latency ranged from 221ms to 298ms (SLO: 800ms), and saturation ranged from 0.477 to 0.539 (warning threshold: 0.85). No recent deploys and no active maintenance window. Per runbook OC-BLIP-01, there is no degradation signal to act on \u2014 all metrics are healthy and stable. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9766,
+          "output_tokens": 991,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004394
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.0093,
+      "latency_s": 78.09,
+      "n_api_calls": 9,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "page"
+        },
+        "ticks_seen": 8,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 9,
+        "error": null,
+        "reasoning": "Post-deploy regression detected on checkout-api (tier-1). Deploy v423 completed at 14:06. At 14:06, error rate hit 2.0% and p99 latency jumped to 501ms. At 14:07, error rate spiked to 4.26% (2x the 2% SLO) and p99 hit 846ms (above the 800ms SLO). Two consecutive post-deploy samples breaching both error rate and latency SLOs. Per runbook OC-DEPLOY-02, degradation beginning shortly after a deploy is a regression until proven otherwise, will not self-heal, and has a rollback available \u2014 page rather than wait it out. This is not a transient (OC-BLIP-01) as it is sustained across multiple samples and directly correlates with the deploy.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 9,
+          "input_tokens": 16845,
+          "output_tokens": 3054,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.0093
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004648,
+      "latency_s": 52.506,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 12,
+        "onset_tick": 9,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Watched 4 minutes of telemetry (14:00-14:03) for checkout-api. All metrics remain well within SLO thresholds: error rates ranged from 0.26% to 0.53% (SLO: 2%), p99 latencies from 216ms to 274ms (SLO: 800ms), and saturation from 0.41 to 0.44 (warning: 0.85). No recent deploys and no active maintenance window. Per runbook OC-BLIP-01, there is no sustained degradation signal - in fact, all metrics are healthy and stable. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9426,
+          "output_tokens": 1275,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004648
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00487,
+      "latency_s": 37.692,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 5 minutes (14:00-14:04), error rate showed a minor transient blip: 0.36% \u2192 0.36% \u2192 0.57% \u2192 0.82% \u2192 0.58%. Peak of 0.82% remained well below the 2% SLO threshold, and the metric was already declining by the final sample. P99 latency (257-386ms) and saturation (0.487-0.551) stayed comfortably within SLOs. No recent deploys (per service context), so per OC-DEPLOY-02 this is more likely an upstream transient than a regression. Per OC-BLIP-01, a single bad sample or short-lived blip that recovers on its own does not warrant paging; the correct action is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9687,
+          "output_tokens": 1383,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00487
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006371,
+      "latency_s": 47.904,
+      "n_api_calls": 7,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 7,
+        "error": null,
+        "reasoning": "Across 5 samples (14:00\u201314:04), all metrics are healthy and well within SLO thresholds: error rate ranged 0.37%\u20130.56% (SLO: 2%), p99 latency ranged 209\u2013261ms (SLO: 800ms), saturation ranged 0.44\u20130.47 (warning: 0.85). No slow burn drift detected (OC-SLOW-03). An approved maintenance window for storage migration is active, which would suppress pages for degraded metrics per OC-MAINT-04, but no degradation was observed. No recent deploys (OC-DEPLOY-02 not applicable). No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 7,
+          "input_tokens": 12658,
+          "output_tokens": 1813,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006371
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00762,
+      "latency_s": 64.649,
+      "n_api_calls": 8,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 6,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 8,
+        "error": null,
+        "reasoning": "Over 6 minutes of observation (14:00-14:05), all metrics remained well within SLO thresholds: error rates ranged 0.25%-0.62% (vs 2% SLO), p99 latency 287-346ms (vs 800ms SLO), saturation 0.62-0.69 (vs 0.85 warning). No recent deploys or maintenance window. The minor fluctuations in error rate and saturation represent normal operational variation, not a sustained degradation. Per runbook OC-BLIP-01, there is no sustained signal warranting a page or ticket.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 8,
+          "input_tokens": 13381,
+          "output_tokens": 2608,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00762
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005126,
+      "latency_s": 43.285,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 4,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Across 4 minutes of observation (14:00\u201314:03), all metrics are well within SLO thresholds: error rate peaked at 0.63% (SLO: 2%), p99 latency peaked at 259ms (SLO: 800ms), and saturation peaked at 0.55 (warning: 0.85). No recent deploys and no maintenance window active. Per runbook OC-BLIP-01, there is no sustained signal or even a transient blip to act on \u2014 the service is operating normally. No action warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9278,
+          "output_tokens": 1685,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005126
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005556,
+      "latency_s": 45.907,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "DEPLOY_REGRESSION",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 8,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Observed 5 minutes of telemetry (14:00-14:04) for search-index, all metrics well within SLOs: error rates ranged 0.23-0.46% (SLO: 2%), p99 latency ranged 191-260ms (SLO: 800ms), saturation ranged 0.40-0.43 (warning: 0.85). No degradation observed. A rolling deploy (v552) is scheduled for 14:06, but no post-deploy issues have manifested in the observed window. Per runbook OC-BLIP-01, there is no sustained signal to act on, and per OC-DEPLOY-02, while post-deploy degradations warrant paging, no degradation has occurred. Correct action is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9796,
+          "output_tokens": 1892,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005556
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005333,
+      "latency_s": 41.955,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "UPSTREAM_BLIP",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 10,
+        "onset_tick": 7,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 5 minutes of telemetry (14:00\u201314:04), all metrics are healthy and well within SLO thresholds: error rate ranged 0.36%\u20130.49% (SLO: 2%), p99 latency ranged 210ms\u2013248ms (SLO: 800ms), and saturation ranged 0.43\u20130.47 (warning: 0.85). No recent deploys and no maintenance window are active. Per runbook OC-BLIP-01, there is no sustained degradation signal \u2014 in fact there is no degradation at all. The correct action is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 10067,
+          "output_tokens": 1650,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005333
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 0.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.015768,
+      "latency_s": 113.277,
+      "n_api_calls": 14,
+      "detail": {
+        "archetype": "SLOW_BURN",
+        "gold": {
+          "severity": "page"
+        },
+        "predicted": {
+          "severity": "ticket"
+        },
+        "ticks_seen": 12,
+        "detectable_tick": 16,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 14,
+        "error": null,
+        "reasoning": "Over 12 minutes (14:00\u201314:11), the error rate drifted steadily upward from 0.30% to 1.65%, a 5x increase consistent with the OC-SLOW-03 slow-burn pattern. P99 latency also drifted from 263ms to 638ms, and saturation from 0.50 to 0.63. No recent deploys (OC-DEPLOY-02 not applicable) and no maintenance window. The error rate has not yet crossed the 2% SLO threshold and the last two samples suggest the climb may be plateauing (~1.65\u20131.68%), so this does not yet meet the page threshold. However, the sustained drift is a real degradation that warrants investigation during working hours.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 14,
+          "input_tokens": 30778,
+          "output_tokens": 4624,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.015768
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.01355,
+      "latency_s": 106.857,
+      "n_api_calls": 12,
+      "detail": {
+        "archetype": "MAINTENANCE_WINDOW",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 10,
+        "detectable_tick": 0,
+        "onset_tick": 6,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 12,
+        "error": null,
+        "reasoning": "From 14:06\u201314:09, error rate sustained at ~9% (SLO 2%) and p99 at ~1570ms (SLO 800ms) \u2014 well above thresholds and not a transient. However, the service context confirms an active approved maintenance window for storage migration with \"degraded latency expected.\" Runbook OC-MAINT-04 states that during an approved maintenance window, degraded metrics are expected and must not page. No recent deploys to suggest a regression. The degradation is consistent with the planned maintenance activity. Correct action is silence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 12,
+          "input_tokens": 24528,
+          "output_tokens": 4454,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.01355
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 0.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005238,
+      "latency_s": 40.299,
+      "n_api_calls": 6,
+      "detail": {
+        "archetype": "CAPACITY_TREND",
+        "gold": {
+          "severity": "ticket"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 5,
+        "detectable_tick": 15,
+        "onset_tick": 0,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "Over 5 minutes of telemetry (14:00\u201314:04), all metrics are healthy and well within SLO thresholds: error rate peaked at 0.57% (SLO: 2%), p99 latency peaked at 345ms (SLO: 800ms), and saturation peaked at 0.684 (warning: 0.85). No recent deploys and no active maintenance window. Per runbook OC-BLIP-01, there is no sustained signal of degradation \u2014 in fact there is no degradation at all. No action is warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 6,
+          "input_tokens": 9838,
+          "output_tokens": 1633,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005238
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "severity_correct": 1.0,
+        "no_false_page": 1.0,
+        "caught_incident": 1.0,
+        "patience_ok": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.012239,
+      "latency_s": 94.472,
+      "n_api_calls": 12,
+      "detail": {
+        "archetype": "HEALTHY",
+        "gold": {
+          "severity": "none"
+        },
+        "predicted": {
+          "severity": "none"
+        },
+        "ticks_seen": 9,
+        "detectable_tick": 19,
+        "onset_tick": null,
+        "saw_context": true,
+        "searched_runbook": true,
+        "n_turns": 12,
+        "error": null,
+        "reasoning": "Error rate showed a transient climb from 0.25% to 0.55% over 4 minutes (14:00-14:03), then self-healed back to 0.2-0.3% range by 14:05. P99 latency (216-281ms) and saturation (0.49-0.53) remained healthy throughout. No SLO thresholds were breached (peak error rate 0.55% vs 2% SLO). Per OC-BLIP-01, this transient recovered within 2-3 minutes without intervention, so the correct action is silence. No deploy was present to suggest a regression requiring rollback.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 12,
+          "input_tokens": 23675,
+          "output_tokens": 3643,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.012239
+        }
+      }
+    }
+  ]
+}
