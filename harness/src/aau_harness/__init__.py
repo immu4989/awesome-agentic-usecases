@@ -9,6 +9,13 @@ from .agent_loop import (
     make_backend,
     run_tool_agent,
 )
+from .delegation import (
+    CrewRun,
+    DelegationRecord,
+    Specialist,
+    make_delegate_tool,
+    run_crew,
+)
 
 __all__ = [
     "CostTracker",
@@ -23,4 +30,9 @@ __all__ = [
     "MockUsage",
     "make_backend",
     "run_tool_agent",
+    "CrewRun",
+    "DelegationRecord",
+    "Specialist",
+    "make_delegate_tool",
+    "run_crew",
 ]

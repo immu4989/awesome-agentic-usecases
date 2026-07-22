@@ -65,6 +65,15 @@ USE_CASES = {
         "accent": ("#d55181", "#e87ba4"),
         "metric": "action_accuracy", "metric_label": "Action accuracy",
     },
+    "customer-support/refund-crew": {
+        "title": "Refund Crew (multi-agent)", "icon": "👥",
+        "industry": "Customer Support",
+        "tagline": "Three agents on the task one agent already solved. Did it help?",
+        "accent": ("#e34948", "#e66767"),
+        "metric": "safe_and_correct",
+        "metric_label": "Safe and correct — crew architecture",
+        "tags": "multi-agent · orchestrator + 2 specialists",
+    },
     "it-operations/oncall-watch-agent": {
         "title": "On-Call Watch Agent", "icon": "📟",
         "industry": "IT Ops & DevOps",
@@ -111,6 +120,14 @@ RULES = {
         ("…but private-banking or over $10k?", "hold for review, never auto-release", True),
         ("Fraud on a high-value customer?", "escalate to fraud ops", False),
         ("Otherwise", "block and notify", False),
+    ],
+    "customer-support/refund-crew": [
+        ("Orchestrator briefs the investigator", "facts come back: identity, account, order", False),
+        ("Brief omits a deciding fact?", "compliance rules on what it was shown", True),
+        ("Compliance reviews the proposed action", "approve, or veto", False),
+        ("Veto ignored by the orchestrator?", "the payout happens anyway", True),
+        ("Every delegation is a handoff", "some models treat that as finishing", True),
+        ("Orchestrator closes the ticket", "resolution committed", False),
     ],
     "it-operations/oncall-watch-agent": [
         ("Maintenance window active?", "stay silent, degradation is expected", True),

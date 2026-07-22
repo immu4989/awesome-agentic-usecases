@@ -33,6 +33,10 @@ jobs:
           - dir: it-operations/oncall-watch-agent
             cli: oncall-watch-agent
             seed: 29
+          - dir: customer-support/refund-crew
+            cli: refund-crew
+            seed: 23
+            extra: customer-support/refund-resolution-agent
     name: ${{ matrix.cli }}
     steps:
       - uses: actions/checkout@v4
@@ -40,10 +44,14 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install
-        run: pip install -e harness[dev] -e ${{ matrix.dir }}[dev]
+        run: |
+          pip install -e harness[dev]
+          if [ -n "${{ matrix.extra }}" ]; then pip install -e ${{ matrix.extra }}; fi
+          pip install -e ${{ matrix.dir }}[dev]
       - name: Tests
         run: pytest harness/tests ${{ matrix.dir }}/tests -q
       - name: Scenario file is reproducible
+        if: ${{ matrix.extra == '' }}
         run: |
           ${{ matrix.cli }} generate --n 30 --seed ${{ matrix.seed }} --out /tmp/scenarios.jsonl
           diff /tmp/scenarios.jsonl ${{ matrix.dir }}/evals/scenarios.jsonl

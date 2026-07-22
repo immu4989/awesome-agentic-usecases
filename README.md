@@ -29,7 +29,7 @@ model backends include free tiers, so reproducing any result costs nothing.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="7 industries shipping, 24 verified model-evals, 38 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="7 industries shipping, 27 verified model-evals, 44 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 ## Four models, one agent
@@ -69,6 +69,7 @@ Every failure has a reproducing scenario id in
 | [🚩 fraud-alert-triage-agent](financial-services-fraud/fraud-alert-triage-agent/) | Financial Services | `investigate` `decide` | Which fraud queue does each transaction alert belong in, which release, which block, and which need the fraud team now? |
 | [🎞️ release-qc-triage-agent](media-streaming/release-qc-triage-agent/) | Media & Streaming | `investigate` `decide` | When QC flags an asset before premiere, who owns the defect and what happens to the release — waive, redeliver, fix in house, delay, or escalate? |
 | [💸 refund-resolution-agent](customer-support/refund-resolution-agent/) | Customer Support | `plan` `act` `human-in-loop` | **The agent that acts.** Can it resolve a refund end to end — verifying identity first, avoiding payouts it cannot claw back, and handing off when policy says it must? |
+| [👥 refund-crew](customer-support/refund-crew/) | Customer Support | `multi-agent` | **Does orchestration help?** Three agents on the exact task one agent already solved, same scenarios, same gold. The controlled comparison almost nobody publishes. |
 | [📟 oncall-watch-agent](it-operations/oncall-watch-agent/) | IT Ops & DevOps | `watch` `decide` | **The agent that waits.** Telemetry arrives a minute at a time and it cannot see ahead. Can it tell a real regression from a blip that heals itself, without crying wolf or sleeping through the outage? |
 
 Every use case is tagged by what the agent *does*: `predict` · `decide` · `plan` ·
@@ -100,6 +101,10 @@ only a per-use-case harness surfaces:
   a perfect 1.000 on "never paged a quiet window" — by quitting after ~4 of the 20
   minutes of telemetry and missing a third of real incidents. Restraint and absence are
   indistinguishable unless you also measure whether the agent looked.
+- **Multi-agent amplifies whatever the model already does.** The same crew, on the same
+  task, moved one model up 8 points and another down 60 — and never beat the best single
+  agent. Orchestration is a corrective for a weak model and a tax on a strong one, and
+  which you get is only knowable from a single-agent baseline.
 
 ## Industries
 
