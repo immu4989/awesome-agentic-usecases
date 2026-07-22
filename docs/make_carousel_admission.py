@@ -4,6 +4,9 @@ artifact-admission use case, from its committed results.
 Every number is read or computed from results/*.json, never retyped, so the slides cannot
 drift from the eval. Rendered with headless Chrome so they share the repo palette.
 
+Palette: a light "editorial" page with dark data panels, so the prose reads as a research
+brief while the breach numbers still sit on dark and punch.
+
     python docs/make_carousel_admission.py     # -> ~/Desktop/agentic-admission-*.{pdf,png}
 
 4:5 portrait carousel (1080x1350), 16:9 X card, 4:5 Facebook card.
@@ -11,7 +14,6 @@ drift from the eval. Rendered with headless Chrome so they share the repo palett
 
 from __future__ import annotations
 
-import collections
 import json
 import os
 import subprocess
@@ -21,9 +23,12 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 RESULTS = os.path.join(ROOT, "security-operations/artifact-admission-agent/results")
 
-# security-ops violet; the lighter shade is used for text/bar so it reads on dark
-SURFACE, INK, INK2, MUTED = "#1a1a19", "#ffffff", "#c3c2b7", "#898781"
-ACCENT, GOOD, BAD, WARN = "#9085e9", "#0ca30c", "#e34948", "#eda100"
+# light editorial page
+SURFACE, INK, INK2, MUTED = "#f6f5f0", "#1a1a19", "#54524b", "#7c7a72"
+ACCENT = "#4a3aa7"
+# dark data panels + the numbers that sit on them
+PANEL, PANEL_INK, PANEL_INK2, PANEL_MUTED = "#1c1b19", "#f3f2ec", "#c6c5ba", "#95938b"
+GOOD, BAD, WARN = "#18b24a", "#f0524d", "#f0a500"
 FONT = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
 
 
@@ -57,6 +62,7 @@ scan_pct = min(scanned_config_pct(MISTRAL), scanned_config_pct(GPTOSS), scanned_
 m_breach_j = MISTRAL["metric_means"]["breach_judgment"]
 m_breach_s = MISTRAL["metric_means"]["breach_sandbox"]
 qwen_acc = QWEN["metric_means"]["disposition_accuracy"]
+qwen_of90 = int(round(qwen_acc * 90))
 
 
 def slides() -> list[str]:
@@ -95,8 +101,10 @@ def slides() -> list[str]:
         # 4 — the reveal
         f"""<div class="s center">
           <div class="kicker">I WAS WRONG</div>
-          <div class="big good">{scan_pct}%</div>
-          <h2>of artifacts got the deeper scan</h2>
+          <div class="statpanel">
+            <div class="big good">{scan_pct}%</div>
+            <div class="stcap">of artifacts got the deeper scan</div>
+          </div>
           <p class="lead">All three models scanned the config and blocked the undeclared
             execution. The only thing in the whole eval that reproduces the breach is the
             dumb baseline that never looks. Told to verify, they verified.</p>
@@ -105,7 +113,7 @@ def slides() -> list[str]:
         f"""<div class="s">
           <div class="kicker">THE REAL FAILURES WERE QUIETER</div>
           <h2>And every model broke differently.</h2>
-          <div class="mrow good-b"><b>Qwen3.7-Plus</b> — solved it clean. {int(round(qwen_acc*90))} of 90,
+          <div class="mrow good-b"><b>Qwen3.7-Plus</b> — solved it clean. {qwen_of90} of 90,
             zero unsafe, zero over-block, no stalls.</div>
           <div class="mrow warn-b"><b>gpt-oss-120b</b> — never made an unsafe call, then
             quit with no decision on {gpt_stalls} of {gpt_n} runs.</div>
@@ -145,8 +153,10 @@ def slides() -> list[str]:
         # 8 — CTA
         f"""<div class="s center">
           <div class="kicker">VERIFIED, NOT ASSERTED</div>
-          <div class="big">{qwen_acc:.3f}</div>
-          <h2>one model solved it, {int(round(qwen_acc*90))} for {90}</h2>
+          <div class="statpanel">
+            <div class="big">{qwen_acc:.3f}</div>
+            <div class="stcap">one model solved it, {qwen_of90} for 90</div>
+          </div>
           <p class="lead">The task is solvable. Which model you put on the gate is a
             decision worth making with evidence, not vibes.</p>
           <div class="cta">7 industries · 36 model evals · 58 documented failure modes<br>
@@ -173,31 +183,37 @@ HTML = """<!doctype html><meta charset="utf-8"><style>
   .lead {{ font-size: 33px; line-height: 1.42; color: {ink2}; }}
   ul {{ list-style: none; font-size: 31px; line-height: 1.65; color: {ink2}; }}
   li b {{ color: {ink}; }}
-  .rule {{ border-left: 5px solid {good}; padding: 18px 26px; font-size: 29px;
-           line-height: 1.4; color: {ink2}; background: rgba(255,255,255,.04);
-           border-radius: 0 10px 10px 0; }}
-  .rule.bad {{ border-left-color: {bad}; }}
-  .rule b {{ color: {ink}; }}
-  .mrow {{ padding: 22px 26px; font-size: 30px; line-height: 1.4; color: {ink2};
-           background: rgba(255,255,255,.05); border-left: 6px solid {muted};
+  .rule {{ border-left: 5px solid {good}; padding: 20px 28px; font-size: 29px;
+           line-height: 1.4; color: {pink2}; background: {panel};
            border-radius: 0 12px 12px 0; }}
-  .mrow b {{ color: {ink}; }}
+  .rule.bad {{ border-left-color: {bad}; }}
+  .rule b {{ color: {pink}; }}
+  .rule.bad b {{ color: {bad}; }}
+  .rule.good b {{ color: {good}; }}
+  .mrow {{ padding: 24px 28px; font-size: 30px; line-height: 1.4; color: {pink2};
+           background: {panel}; border-left: 6px solid {muted};
+           border-radius: 0 12px 12px 0; }}
+  .mrow b {{ color: {pink}; }}
   .mrow.good-b {{ border-left-color: {good}; }}
   .mrow.warn-b {{ border-left-color: {warn}; }}
   .mrow.bad-b {{ border-left-color: {bad}; }}
-  .big {{ font-size: 200px; font-weight: 800; letter-spacing: -6px; line-height: 1; }}
+  .statpanel {{ background: {panel}; border-radius: 22px; padding: 48px 78px;
+                display: inline-block; }}
+  .big {{ font-size: 172px; font-weight: 800; letter-spacing: -6px; line-height: 1;
+          color: {pink}; }}
   .big.good {{ color: {good}; }}
+  .stcap {{ font-size: 38px; font-weight: 700; color: {pink}; margin-top: 14px; }}
   .split {{ display: flex; gap: 26px; margin-top: 8px; }}
-  .col {{ flex: 1; padding: 32px 28px; border-radius: 14px; text-align: center;
-          background: rgba(255,255,255,.05); border-top: 6px solid {muted}; }}
+  .col {{ flex: 1; padding: 34px 28px; border-radius: 16px; text-align: center;
+          background: {panel}; border-top: 6px solid {muted}; }}
   .col.good-b {{ border-top-color: {good}; }}
   .col.bad-b {{ border-top-color: {bad}; }}
-  .lbl {{ font-size: 22px; letter-spacing: 2px; color: {muted}; font-weight: 700; }}
-  .cp {{ font-size: 25px; line-height: 1.35; color: {ink2}; margin: 14px 0 18px; }}
+  .lbl {{ font-size: 22px; letter-spacing: 2px; color: {pmuted}; font-weight: 700; }}
+  .cp {{ font-size: 25px; line-height: 1.35; color: {pink2}; margin: 14px 0 18px; }}
   .mini {{ font-size: 92px; font-weight: 800; letter-spacing: -3px; line-height: 1; }}
   .mini.good {{ color: {good}; }}
   .mini.bad {{ color: {bad}; }}
-  .ml {{ font-size: 22px; color: {muted}; letter-spacing: 1px; margin-top: 4px; }}
+  .ml {{ font-size: 22px; color: {pmuted}; letter-spacing: 1px; margin-top: 4px; }}
   .foot {{ position: absolute; left: 88px; right: 88px; bottom: 66px; font-size: 24px;
            color: {muted}; line-height: 1.5; }}
   .s.center .foot {{ text-align: center; }}
@@ -238,12 +254,12 @@ def card(landscape: bool) -> str:
   .sub {{ font-size: 28px; color: {MUTED}; line-height: 1.35; }}
   .row {{ display: flex; flex-direction: {row_dir}; gap: {'40px' if landscape else '26px'};
           margin-top: 44px; }}
-  .cardc {{ flex: 1; padding: 32px 36px; border-radius: 18px;
-            background: rgba(255,255,255,.05); border-top: 6px solid {MUTED}; }}
+  .cardc {{ flex: 1; padding: 34px 38px; border-radius: 18px;
+            background: {PANEL}; border-top: 6px solid {MUTED}; }}
   .cardc.g {{ border-top-color: {GOOD}; }}
   .cardc.b {{ border-top-color: {BAD}; }}
-  .lbl {{ font-size: 21px; letter-spacing: 2px; color: {MUTED}; font-weight: 700; }}
-  .cp {{ font-size: 24px; color: {INK2}; line-height: 1.32; margin-top: 6px; }}
+  .lbl {{ font-size: 21px; letter-spacing: 2px; color: {PANEL_MUTED}; font-weight: 700; }}
+  .cp {{ font-size: 24px; color: {PANEL_INK2}; line-height: 1.32; margin-top: 6px; }}
   .num {{ font-size: {104 if landscape else 96}px; font-weight: 800; letter-spacing: -4px;
           line-height: 1.05; margin: 12px 0 4px; }}
   .num.g {{ color: {GOOD}; }}
@@ -275,10 +291,12 @@ def card(landscape: bool) -> str:
 
 def main() -> None:
     tmp = "/tmp/aau-admission-carousel.html"
+    html = HTML.format(font=FONT, surface=SURFACE, ink=INK, ink2=INK2, muted=MUTED,
+                       accent=ACCENT, panel=PANEL, pink=PANEL_INK, pink2=PANEL_INK2,
+                       pmuted=PANEL_MUTED, good=GOOD, bad=BAD, warn=WARN,
+                       body="".join(slides()))
     with open(tmp, "w") as f:
-        f.write(HTML.format(font=FONT, surface=SURFACE, ink=INK, ink2=INK2, muted=MUTED,
-                            accent=ACCENT, good=GOOD, bad=BAD, warn=WARN,
-                            body="".join(slides())))
+        f.write(html)
     _render(tmp, os.path.expanduser("~/Desktop/agentic-admission-carousel.pdf"),
             (1080, 1350), pdf=True)
     print(f"  ({len(slides())} slides)")
