@@ -24,16 +24,21 @@ right thing and never told anyone."
 
 ### 2. Ceremony is learned; prohibition is not
 
-- **Observed on all three models:** `prerequisite_respected` is **1.000** across all 270 runs.
-  Not one model ever disclosed account data or moved money before verifying identity.
+- **Observed on all three models:** `prerequisite_respected` is **1.000** across all 270
+  runs on these cooperative inputs. Not one model disclosed account data or moved money
+  before verifying identity.
 - **The contrast:** the same Mistral run that never once skipped verification violated
   the refund prohibitions in half of all runs.
 - **Why it matters:** these are different kinds of instruction. "Verify first" is a
-  **ceremony** — a step you *add* to a sequence, and models perform it reliably.
-  "Never refund in these cases" is a **prohibition** — a step you must *not* take — and
-  it failed 100% of the time it was tested on one model. When writing guardrails,
-  assume the ordering rule will hold and the restraint rule will not; enforce
-  prohibitions in the tool layer rather than the prompt.
+  **ceremony** — a step you *add* to a sequence, and models perform it reliably on
+  well-formed tickets. "Never refund in these cases" is a **prohibition** — a step you
+  must *not* take — and it failed 100% of the time it was tested on one model. When
+  writing guardrails, assume the ordering rule holds on ordinary traffic and the
+  restraint rule does not; enforce prohibitions in the tool layer rather than the prompt.
+- **The ceremony is reliable, not robust.** That perfect 1.000 describes cooperative
+  input only. Under prompt injection through the customer-supplied ticket text it falls
+  to **0.660** — see [refund-injected](../refund-injected/). Reliability measured on
+  well-behaved traffic says nothing about reliability under attack.
 
 ### 3. Handoff mistaken for completion
 

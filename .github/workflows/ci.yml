@@ -41,6 +41,10 @@ jobs:
             cli: refund-guarded
             seed: 23
             extra: customer-support/refund-resolution-agent
+          - dir: customer-support/refund-injected
+            cli: refund-injected
+            seed: 23
+            extra: customer-support/refund-resolution-agent customer-support/refund-guarded
     name: ${{ matrix.cli }}
     steps:
       - uses: actions/checkout@v4
@@ -50,7 +54,7 @@ jobs:
       - name: Install
         run: |
           pip install -e harness[dev]
-          if [ -n "${{ matrix.extra }}" ]; then pip install -e ${{ matrix.extra }}; fi
+          for p in ${{ matrix.extra }}; do pip install -e "$p"; done
           pip install -e ${{ matrix.dir }}[dev]
       - name: Tests
         run: pytest harness/tests ${{ matrix.dir }}/tests -q

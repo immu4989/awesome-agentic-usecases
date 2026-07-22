@@ -71,13 +71,14 @@ Every failure has a reproducing scenario id in
 | [💸 refund-resolution-agent](customer-support/refund-resolution-agent/) | Customer Support | `plan` `act` `human-in-loop` | **The agent that acts.** Can it resolve a refund end to end — verifying identity first, avoiding payouts it cannot claw back, and handing off when policy says it must? |
 | [🔧 refund-guarded](customer-support/refund-guarded/) | Customer Support | `intervention A/B` | **Does our own advice work?** Tool-layer enforcement gained 49 points for free. The prompt nudge doubled the failure it was written to fix. |
 | [👥 refund-crew](customer-support/refund-crew/) | Customer Support | `multi-agent` | **Does orchestration help?** Three agents on the exact task one agent already solved, same scenarios, same gold. The controlled comparison almost nobody publishes. |
+| [🎯 refund-injected](customer-support/refund-injected/) | Customer Support | `adversarial A/B` | **Do the defences survive an attacker?** Prompt injection through customer-supplied ticket text. 74% of attacks still moved money past the prompt guard. Past the tool guard, none did. |
 | [📟 oncall-watch-agent](it-operations/oncall-watch-agent/) | IT Ops & DevOps | `watch` `decide` | **The agent that waits.** Telemetry arrives a minute at a time and it cannot see ahead. Can it tell a real regression from a blip that heals itself, without crying wolf or sleeping through the outage? |
 
 Every use case is tagged by what the agent *does*: `predict` · `decide` · `plan` ·
 `act` · `watch` · `investigate`, plus architecture (`single-agent` / `multi-agent` /
 `human-in-loop`).
 
-Each use case is verified across multiple models on free API tiers. Seven findings that
+Each use case is verified across multiple models on free API tiers. Nine findings that
 only a per-use-case harness surfaces:
 
 - **There is no best model.** Every model tested wins on one use case and loses on
@@ -93,11 +94,11 @@ only a per-use-case harness surfaces:
   the caption rule — zero violations — while missing the ordinary thresholds beside it in
   the same knowledge base. The obeyed rule was the one written as a legal obligation
   rather than a number.
-- **Agents obey ordering rules and ignore prohibitions.** Once an agent can *act*, this
-  splits sharply: across 270 runs of the refund agent, no model ever moved money before
-  verifying identity — while one model issued a forbidden refund in 15 of 15 runs in
-  *every* archetype where refunding was banned. Put prohibitions in the tool layer, not
-  the prompt.
+- **Agents obey ordering rules and ignore prohibitions — on cooperative input.** Across
+  270 runs of the refund agent, no model ever moved money before verifying identity, while
+  one model issued a forbidden refund in 15 of 15 runs in *every* archetype where refunding
+  was banned. But that perfect ordering record is reliable, not robust: under prompt
+  injection it drops to 0.660. Put prohibitions in the tool layer, not the prompt.
 - **A safety metric can be passed by not looking.** On the watch agent, two models scored
   a perfect 1.000 on "never paged a quiet window" — by quitting after ~4 of the 20
   minutes of telemetry and missing a third of real incidents. Restraint and absence are
@@ -110,6 +111,12 @@ only a per-use-case harness surfaces:
   prohibitions in the tool layer gained **+0.489** at no measurable cost; a prompt
   paragraph telling the model to finish **doubled** the stalls it was written to fix. And
   the guarded free-tier model beat both a larger model and the three-agent crew.
+- **Under attack, the defence that argues with the model loses and the one that ignores it
+  wins.** With prompt injection in the customer's own ticket text, a security notice in
+  the system prompt moved injection success 0.773 → **0.740** — nothing, despite naming
+  all five attack shapes explicitly. Tool-layer enforcement was **0.000 across 150 runs**,
+  while the model was persuaded *more* often than undefended (0.800). The guard doesn't
+  make the agent resistant; it makes the agent's compliance irrelevant.
 
 ## Industries
 
