@@ -51,6 +51,14 @@ USE_CASES = {
         "accent": ("#4a3aa7", "#9085e9"),
         "metric": "exact_match", "metric_label": "Exact match (queue + disposition)",
     },
+    "security-operations/artifact-admission-agent": {
+        "title": "Artifact Admission Agent", "icon": "🛂",
+        "industry": "Security Operations",
+        "tagline": "The manifest says no code. Do you believe it?",
+        "accent": ("#4a3aa7", "#9085e9"),
+        "metric": "disposition_accuracy", "metric_label": "Disposition accuracy",
+        "tags": "supply-chain · admission control",
+    },
     "financial-services-fraud/fraud-alert-triage-agent": {
         "title": "Fraud Alert Triage Agent", "icon": "🚩",
         "industry": "Financial Services & Fraud",
@@ -114,6 +122,14 @@ RULES = {
         ("…but the asset is crown-jewel or admin?", "route to analyst, never auto-close", True),
         ("Active threat on crown-jewel or admin?", "escalate to incident response", False),
         ("Otherwise", "route to the analyst queue", False),
+    ],
+    "security-operations/artifact-admission-agent": [
+        ("Config executes but the manifest declared no code?", "block — undeclared execution", True),
+        ("Loader has exec / outbound / credential access?", "block — malicious loader", False),
+        ("Live code from an unverified publisher?", "block", False),
+        ("Live code, verified but on a mutable ref?", "escalate to a human", True),
+        ("Live code, verified + pinned, benign?", "sandbox — no network, no creds", False),
+        ("No executable path at all?", "admit for normal processing", False),
     ],
     "financial-services-fraud/fraud-alert-triage-agent": [
         ("Travel notice or allowlisted beneficiary?", "false positive — allow", True),

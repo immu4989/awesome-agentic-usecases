@@ -66,6 +66,7 @@ Every failure has a reproducing scenario id in
 | [🎫 exception-triage-agent](logistics-supply-chain/exception-triage-agent/) | Logistics | `investigate` `decide` | Which resolution queue should each stuck-shipment ticket go to, which can resolve themselves, and which need a human? |
 | [🧑‍🍳 shift-coverage-triage-agent](retail-workforce/shift-coverage-triage-agent/) | Retail & Workforce | `investigate` `decide` | When crew call out, what's the compliant fill — overtime, borrow, run short, or escalate — under labor-law caps the ticket never mentions? |
 | [🚨 alert-triage-agent](security-operations/alert-triage-agent/) | Security Ops | `investigate` `decide` | Which queue does each security alert belong in, which can safely auto-close, and which need incident response now? |
+| [🛂 artifact-admission-agent](security-operations/artifact-admission-agent/) | Security Ops | `gate` `environment A/B` | **The Hugging Face breach, as a gate.** A dataset's manifest says no code; its config executes anyway. Admit, sandbox, block, or escalate — before any of it runs? |
 | [🚩 fraud-alert-triage-agent](financial-services-fraud/fraud-alert-triage-agent/) | Financial Services | `investigate` `decide` | Which fraud queue does each transaction alert belong in, which release, which block, and which need the fraud team now? |
 | [🎞️ release-qc-triage-agent](media-streaming/release-qc-triage-agent/) | Media & Streaming | `investigate` `decide` | When QC flags an asset before premiere, who owns the defect and what happens to the release — waive, redeliver, fix in house, delay, or escalate? |
 | [💸 refund-resolution-agent](customer-support/refund-resolution-agent/) | Customer Support | `plan` `act` `human-in-loop` | **The agent that acts.** Can it resolve a refund end to end — verifying identity first, avoiding payouts it cannot claw back, and handing off when policy says it must? |
@@ -75,10 +76,10 @@ Every failure has a reproducing scenario id in
 | [📟 oncall-watch-agent](it-operations/oncall-watch-agent/) | IT Ops & DevOps | `watch` `decide` | **The agent that waits.** Telemetry arrives a minute at a time and it cannot see ahead. Can it tell a real regression from a blip that heals itself, without crying wolf or sleeping through the outage? |
 
 Every use case is tagged by what the agent *does*: `predict` · `decide` · `plan` ·
-`act` · `watch` · `investigate`, plus architecture (`single-agent` / `multi-agent` /
+`act` · `watch` · `gate` · `investigate`, plus architecture (`single-agent` / `multi-agent` /
 `human-in-loop`).
 
-Each use case is verified across multiple models on free API tiers. Nine findings that
+Each use case is verified across multiple models on free API tiers. Ten findings that
 only a per-use-case harness surfaces:
 
 - **There is no best model.** Every model tested wins on one use case and loses on
@@ -117,6 +118,14 @@ only a per-use-case harness surfaces:
   all five attack shapes explicitly. Tool-layer enforcement was **0.000 across 150 runs**,
   while the model was persuaded *more* often than undefended (0.800). The guard doesn't
   make the agent resistant; it makes the agent's compliance irrelevant.
+- **A predicted failure that didn't happen is still a finding.** We built the
+  [Hugging Face breach as an admission gate](security-operations/artifact-admission-agent/)
+  expecting models to repeat the mistake — trust the manifest, skip the config scan, admit
+  undeclared execution. All three scanned the config ~100% of the time and blocked it; only
+  the naive mock reproduces the breach. The real failures split by model: one solved it
+  90/90, one was safe but **stalled 22%** of runs, one admitted trusted live code straight
+  to full privilege. And the environment A/B held again — sandbox-by-default contained the
+  one model's unsafe admits (0.122 → **0.000**) on identical decisions.
 
 ## Industries
 

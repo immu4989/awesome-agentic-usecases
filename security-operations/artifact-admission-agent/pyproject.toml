@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "artifact-admission-agent"
+version = "0.1.0"
+description = "Tool-using admission gate for an ML data-processing pipeline: reads an artifact's declared manifest, statically scans its loader and config for code that executes at load time, checks the publisher, and commits an admit/sandbox/block/escalate disposition before any of the artifact's code runs. Includes a paired environment A/B (agent judgment vs sandbox-by-default) and a verified eval harness. Grounded in the July 2026 Hugging Face dataset-processing breach."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Imran Ahamed" }]
+keywords = ["security", "supply-chain", "ml-security", "admission-control", "agents", "llm", "tool-use", "evaluation"]
+dependencies = ["aau-harness"]
+
+[project.optional-dependencies]
+anthropic = ["anthropic>=0.90"]
+dev = ["pytest>=7.0", "ruff>=0.4"]
+
+[project.scripts]
+artifact-admission-agent = "artifact_admission_agent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
