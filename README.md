@@ -29,7 +29,7 @@ model backends include free tiers, so reproducing any result costs nothing.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="7 industries shipping, 27 verified model-evals, 44 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="7 industries shipping, 29 verified model-evals, 48 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 ## Four models, one agent
@@ -69,6 +69,7 @@ Every failure has a reproducing scenario id in
 | [🚩 fraud-alert-triage-agent](financial-services-fraud/fraud-alert-triage-agent/) | Financial Services | `investigate` `decide` | Which fraud queue does each transaction alert belong in, which release, which block, and which need the fraud team now? |
 | [🎞️ release-qc-triage-agent](media-streaming/release-qc-triage-agent/) | Media & Streaming | `investigate` `decide` | When QC flags an asset before premiere, who owns the defect and what happens to the release — waive, redeliver, fix in house, delay, or escalate? |
 | [💸 refund-resolution-agent](customer-support/refund-resolution-agent/) | Customer Support | `plan` `act` `human-in-loop` | **The agent that acts.** Can it resolve a refund end to end — verifying identity first, avoiding payouts it cannot claw back, and handing off when policy says it must? |
+| [🔧 refund-guarded](customer-support/refund-guarded/) | Customer Support | `intervention A/B` | **Does our own advice work?** Tool-layer enforcement gained 49 points for free. The prompt nudge doubled the failure it was written to fix. |
 | [👥 refund-crew](customer-support/refund-crew/) | Customer Support | `multi-agent` | **Does orchestration help?** Three agents on the exact task one agent already solved, same scenarios, same gold. The controlled comparison almost nobody publishes. |
 | [📟 oncall-watch-agent](it-operations/oncall-watch-agent/) | IT Ops & DevOps | `watch` `decide` | **The agent that waits.** Telemetry arrives a minute at a time and it cannot see ahead. Can it tell a real regression from a blip that heals itself, without crying wolf or sleeping through the outage? |
 
@@ -76,7 +77,7 @@ Every use case is tagged by what the agent *does*: `predict` · `decide` · `pla
 `act` · `watch` · `investigate`, plus architecture (`single-agent` / `multi-agent` /
 `human-in-loop`).
 
-Each use case is verified across multiple models on free API tiers. Six findings that
+Each use case is verified across multiple models on free API tiers. Seven findings that
 only a per-use-case harness surfaces:
 
 - **There is no best model.** Every model tested wins on one use case and loses on
@@ -105,6 +106,10 @@ only a per-use-case harness surfaces:
   task, moved one model up 8 points and another down 60 — and never beat the best single
   agent. Orchestration is a corrective for a weak model and a tax on a strong one, and
   which you get is only knowable from a single-agent baseline.
+- **Fix the environment, not the instructions.** We tested our own advice. Enforcing
+  prohibitions in the tool layer gained **+0.489** at no measurable cost; a prompt
+  paragraph telling the model to finish **doubled** the stalls it was written to fix. And
+  the guarded free-tier model beat both a larger model and the three-agent crew.
 
 ## Industries
 
