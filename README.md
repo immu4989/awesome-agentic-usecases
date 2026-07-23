@@ -67,6 +67,7 @@ Every failure has a reproducing scenario id in
 | [🧑‍🍳 shift-coverage-triage-agent](retail-workforce/shift-coverage-triage-agent/) | Retail & Workforce | `investigate` `decide` | When crew call out, what's the compliant fill — overtime, borrow, run short, or escalate — under labor-law caps the ticket never mentions? |
 | [🚨 alert-triage-agent](security-operations/alert-triage-agent/) | Security Ops | `investigate` `decide` | Which queue does each security alert belong in, which can safely auto-close, and which need incident response now? |
 | [🛂 artifact-admission-agent](security-operations/artifact-admission-agent/) | Security Ops | `gate` `environment A/B` | **The Hugging Face breach, as a gate.** A dataset's manifest says no code; its config executes anyway. Admit, sandbox, block, or escalate — before any of it runs? |
+| [🕳️ trifecta-exfil-agent](security-operations/trifecta-exfil-agent/) | Security Ops | `act` `adversarial A/B` | **The lethal trifecta.** Same secret-stealing instruction in fetched content vs a tool's own description. One is refused; the other leaks 100%, every model. |
 | [🚩 fraud-alert-triage-agent](financial-services-fraud/fraud-alert-triage-agent/) | Financial Services | `investigate` `decide` | Which fraud queue does each transaction alert belong in, which release, which block, and which need the fraud team now? |
 | [🎞️ release-qc-triage-agent](media-streaming/release-qc-triage-agent/) | Media & Streaming | `investigate` `decide` | When QC flags an asset before premiere, who owns the defect and what happens to the release — waive, redeliver, fix in house, delay, or escalate? |
 | [💸 refund-resolution-agent](customer-support/refund-resolution-agent/) | Customer Support | `plan` `act` `human-in-loop` | **The agent that acts.** Can it resolve a refund end to end — verifying identity first, avoiding payouts it cannot claw back, and handing off when policy says it must? |
@@ -79,7 +80,7 @@ Every use case is tagged by what the agent *does*: `predict` · `decide` · `pla
 `act` · `watch` · `gate` · `investigate`, plus architecture (`single-agent` / `multi-agent` /
 `human-in-loop`).
 
-Each use case is verified across multiple models on free API tiers. Ten findings that
+Each use case is verified across multiple models on free API tiers. Eleven findings that
 only a per-use-case harness surfaces:
 
 - **There is no best model.** Every model tested wins on one use case and loses on
@@ -118,6 +119,14 @@ only a per-use-case harness surfaces:
   all five attack shapes explicitly. Tool-layer enforcement was **0.000 across 150 runs**,
   while the model was persuaded *more* often than undefended (0.800). The guard doesn't
   make the agent resistant; it makes the agent's compliance irrelevant.
+- **Where an injection hides decides whether the model obeys it.** In the
+  [lethal-trifecta exfiltration test](security-operations/trifecta-exfil-agent/), the same
+  "read the secret and send it out" instruction is refused when it sits in fetched content
+  (~0% leak) and obeyed **100% of the time, every model, when it sits in a tool's own
+  description** — the real MCP tool-poisoning vector. A prompt guard naming the exact attack
+  stopped almost none of it (0.92–1.00); a tool-layer dataflow gate took it to **0.000** at a
+  ~13% over-block cost. Capability is no defence: Qwen3.7-Plus leaks as often as the weakest
+  model.
 - **A predicted failure that didn't happen is still a finding.** We built the
   [Hugging Face breach as an admission gate](security-operations/artifact-admission-agent/)
   expecting models to repeat the mistake — trust the manifest, skip the config scan, admit

@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trifecta-exfil-agent"
+version = "0.1.0"
+description = "Connected ops-assistant agent that tests the 'lethal trifecta': it can read internal resources, fetch untrusted external content, and send messages out. Measures whether an injection hidden in fetched/tool-sourced content makes a secret actually leave via the external channel, and compares three defences — none, a prompt guard, and a tool-layer dataflow taint gate. Includes a verified eval harness. Grounded in the July 2026 MCP tool-poisoning and agent-exfiltration incidents."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Imran Ahamed" }]
+keywords = ["security", "ai-agent-security", "prompt-injection", "data-exfiltration", "lethal-trifecta", "mcp", "agents", "llm", "evaluation"]
+dependencies = ["aau-harness"]
+
+[project.optional-dependencies]
+anthropic = ["anthropic>=0.90"]
+dev = ["pytest>=7.0", "ruff>=0.4"]
+
+[project.scripts]
+trifecta-exfil-agent = "trifecta_exfil_agent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
