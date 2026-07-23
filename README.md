@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="#four-models-one-agent">Results</a> ·
+  <a href="#there-is-no-best-model">Results</a> ·
   <a href="#use-cases">Use cases</a> ·
   <a href="#industries">Industries</a> ·
   <a href="#what-verified-means-here">The verification bar</a> ·
@@ -29,13 +29,57 @@ model backends include free tiers, so reproducing any result costs nothing.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="7 industries shipping, 29 verified model-evals, 48 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="7 industries shipping, 45 verified model-evals, 64 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
-## Four models, one agent
+## There is no best model
 
-The flagship comparison, from the [logistics exemplar](logistics-supply-chain/exception-triage-agent/):
-same agent, same 30 scenarios, 3 repeats per model — reproducible on free tiers.
+Every model tested wins at least one use case and loses another. This matrix is generated
+from the committed `results/` — each use case's headline metric, every model that ran it,
+winner starred, blank where a model wasn't run.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/leaderboard-dark.svg">
+  <img alt="Model accuracy by use case: every model wins at least one and loses another" src="docs/assets/leaderboard-light.svg" width="100%">
+</picture>
+
+<details>
+<summary><b>Exact numbers</b> (the same matrix as a table)</summary>
+<br>
+
+<!-- LEADERBOARD:START -->
+
+| Use case | Industry | kimi-k2p6 | gpt-oss-120b | Qwen3.7-Plus | mistral-small | Llama-3.3-70B |
+|---|---|---|---|---|---|---|
+| [Exception Triage](logistics-supply-chain/exception-triage-agent/) | Logistics | **1.000** | 0.778 | — | 0.700 | 0.167 |
+| [Shift Coverage](retail-workforce/shift-coverage-triage-agent/) | Retail | **0.822** | 0.667 | — | 0.644 | — |
+| [Alert Triage](security-operations/alert-triage-agent/) | Security | 0.956 | **0.967** | — | 0.811 | — |
+| [Fraud Triage](financial-services-fraud/fraud-alert-triage-agent/) | Finance | 0.844 | 0.600 | **0.967** | 0.500 | — |
+| [Release QC](media-streaming/release-qc-triage-agent/) | Media | 0.711 | **0.800** | **0.800** | 0.433 | — |
+| [Refund Resolution](customer-support/refund-resolution-agent/) | Support | — | 0.644 | **0.978** | 0.333 | — |
+| [On-Call Watch](it-operations/oncall-watch-agent/) | IT Ops | — | 0.444 | 0.567 | **0.622** | — |
+| [Artifact Admission](security-operations/artifact-admission-agent/) | Security | — | 0.778 | **1.000** | 0.756 | — |
+| **Use cases won** | | **2** | **2** | **4** | **1** | **0** |
+
+<!-- LEADERBOARD:END -->
+
+The three adversarial A/B use cases ([refund-guarded](customer-support/refund-guarded/),
+[refund-injected](customer-support/refund-injected/), [trifecta-exfil](security-operations/trifecta-exfil-agent/))
+aren't here — they compare *defences*, not models, so a per-model column would misrepresent them.
+
+</details>
+
+kimi tops the two hardest routing tasks and comes dead last on cost; Qwen3.7-Plus sweeps
+the acting and gating tasks but wasn't the first-picked model anywhere early; **mistral —
+the cheapest, free-tier model — wins the on-call watch task outright**, where the expensive
+models stop looking before the incident arrives. Picking a model without a per-use-case
+number is guessing.
+
+## Four models, one agent — one row, up close
+
+The matrix above is the summary. Here is what a single row looks like in depth, from the
+[logistics exemplar](logistics-supply-chain/exception-triage-agent/): same agent, same 30
+scenarios, 3 repeats per model, reproducible on free tiers.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/results-dark.svg">

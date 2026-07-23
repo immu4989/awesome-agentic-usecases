@@ -1,0 +1,60 @@
+name: New use case proposal
+description: Propose a new verified agentic use case before opening a PR.
+title: "[use case] <industry>: <the agent's job>"
+labels: ["use-case"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        CONTRIBUTING.md asks for an issue before a PR. This helps us agree the use case
+        clears [VERIFICATION.md](../blob/main/VERIFICATION.md) before you build it.
+  - type: input
+    id: industry
+    attributes:
+      label: Industry & use case
+      description: e.g. "Healthcare — prior-authorization triage agent"
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: The question it answers
+      description: What decision would a real team make from this eval? What would the agent get wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: ground-truth
+    attributes:
+      label: Programmatic ground truth
+      description: How does a seeded generator produce the correct answer for each scenario? What are the decision rules?
+    validations:
+      required: true
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Metrics & the trap
+      description: What is the headline metric, and what is the deception/edge case that makes it a real measurement rather than a demo?
+    validations:
+      required: true
+  - type: dropdown
+    id: capability
+    attributes:
+      label: Capability shape
+      options:
+        - investigate / decide (triage)
+        - plan / act (does the work)
+        - watch (streaming / temporal)
+        - gate (admission)
+        - multi-agent
+        - adversarial or intervention A/B
+    validations:
+      required: true
+  - type: checkboxes
+    id: bar
+    attributes:
+      label: Can it clear the bar?
+      options:
+        - label: ≥20 synthetic scenarios with seeded, committed ground truth
+        - label: Runs on the mock backend with no API key
+        - label: I can run n≥3 real-model repeats on a free tier and commit the results
+        - label: I expect ≥3 observed failure modes (an eval that never fails is too easy)

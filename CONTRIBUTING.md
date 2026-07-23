@@ -27,3 +27,11 @@ pip install -e harness[dev] -e <industry>/<use-case>[dev]
 pytest <industry>/<use-case>/tests harness/tests
 ruff check .
 ```
+
+After committing a new use case's `results/`, regenerate the derived assets so the charts
+and the cross-use-case matrix never drift from the data:
+
+```bash
+python docs/make_assets.py        # per-use-case banner + results chart + decision ladder
+python docs/make_leaderboard.py   # the root-README "no best model" matrix + heatmap
+```
