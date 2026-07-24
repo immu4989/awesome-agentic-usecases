@@ -50,6 +50,17 @@ Two design choices make the eval mean something beyond the trap above:
 - **Ground truth is programmatic.** The scenario generator's own rules
   (`world.gold_triage`) are the answer key, so scoring is exact and auditable.
 
+## ▶️ Watch a real run
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/demo-dark.svg">
+  <img alt="Animated terminal replaying a real eval: the agent's tool calls, one scenario it got right, one it got wrong, and the measured summary" src="docs/demo-light.svg" width="100%">
+</picture>
+
+Not a mock-up — this is replayed from the committed results below. The tool calls, the
+scenario it nailed, the one it failed, and every number are read straight from
+[`results/`](results/).
+
 ## Results
 
 30 scenarios × 3 repeats per model. "$/scenario" prices measured token usage at list

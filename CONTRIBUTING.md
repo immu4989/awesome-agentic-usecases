@@ -32,6 +32,11 @@ After committing a new use case's `results/`, regenerate the derived assets so t
 and the cross-use-case matrix never drift from the data:
 
 ```bash
-python docs/make_assets.py        # per-use-case banner + results chart + decision ladder
-python docs/make_leaderboard.py   # the root-README "no best model" matrix + heatmap
+python docs/make_assets.py         # per-use-case banner + results chart + decision ladder
+python docs/make_leaderboard.py    # the root-README "no best model" matrix + heatmap
+python docs/make_terminal_demo.py  # the animated terminal casts (replayed from results)
 ```
+
+The terminal casts replay a real scenario the model passed and one it failed, so they
+change when the evals do. Add a new solve-the-task use case to the `CASTS` list in
+`docs/make_terminal_demo.py` and to `USE_CASES` in `docs/make_leaderboard.py`.

@@ -60,6 +60,17 @@ Two deceptions pull in opposite directions, so neither "block anything with code
   loader only reads local shards and the publisher is verified and pinned. Looks scary,
   **is** fine → sandbox, never block.
 
+## ▶️ Watch a real run
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/demo-dark.svg">
+  <img alt="Animated terminal replaying a real eval: the agent's tool calls, one scenario it got right, one it got wrong, and the measured summary" src="docs/demo-light.svg" width="100%">
+</picture>
+
+Not a mock-up — this is replayed from the committed results below. The tool calls, the
+scenario it nailed, the one it failed, and every number are read straight from
+[`results/`](results/).
+
 ## Results
 
 30 artifacts × 3 repeats per model. Free-tier rows cost $0 to reproduce.

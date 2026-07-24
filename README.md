@@ -32,6 +32,13 @@ model backends include free tiers, so reproducing any result costs nothing.
   <img alt="7 industries shipping, 45 verified model-evals, 64 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/demo-dark.svg">
+  <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo-light.svg" width="100%">
+</picture>
+
+<p align="center"><i>Every number in this repo is produced by that loop — and you can re-run any of it.</i></p>
+
 ## There is no best model
 
 Every model tested wins at least one use case and loses another. This matrix is generated
@@ -223,6 +230,31 @@ Five rules, no exceptions — the full reasoning lives in [VERIFICATION.md](VERI
 | 3️⃣ | **Cost per run in dollars**, computed from actual token usage, never estimated |
 | 4️⃣ | **n≥3 repeated runs with bootstrap CIs** — single-run agent numbers are noise |
 | 5️⃣ | **≥3 observed failure modes**, each with a reproducing input |
+
+<details>
+<summary><b>How a number gets made</b> — the path from a seed to a committed result</summary>
+<br>
+
+```mermaid
+flowchart LR
+  S["🎲 seeded generator<br/>world.py"] --> G["📏 gold rules<br/>the same function<br/>the scorer uses"]
+  S --> SC["📄 scenarios.jsonl<br/>committed"]
+  SC --> L["🤖 agent loop<br/>tools · turns · usage"]
+  L -->|"n≥3 repeats"| SCORE["✅ scorer"]
+  G --> SCORE
+  L --> C["💵 CostTracker<br/>from usage blocks"]
+  SCORE --> B["📊 paired bootstrap<br/>CI over scenarios"]
+  C --> B
+  B --> R["📁 results/*.json<br/>committed"]
+  R --> A["🖼️ charts · casts · matrix<br/>generated, never typed"]
+  R --> F["🐞 FAILURE_MODES.md<br/>observed, with repro ids"]
+```
+
+Ground truth comes from the **same function** the generator used, so scoring is exact
+rather than judged. Every asset in every README is regenerated from `results/`, which is
+why no chart in this repo can disagree with the eval behind it.
+
+</details>
 
 ## Quick start
 
