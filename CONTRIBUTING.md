@@ -38,5 +38,7 @@ python docs/make_terminal_demo.py  # the animated terminal casts (replayed from 
 ```
 
 The terminal casts replay a real scenario the model passed and one it failed, so they
-change when the evals do. Add a new solve-the-task use case to the `CASTS` list in
+change when the evals do. They are always dark (a terminal is a dark object, and GitHub
+defaults to light), so unlike the other assets there is no light/dark pair — one
+`demo.svg` per use case. Add a new solve-the-task use case to the `CASTS` list in
 `docs/make_terminal_demo.py` and to `USE_CASES` in `docs/make_leaderboard.py`.

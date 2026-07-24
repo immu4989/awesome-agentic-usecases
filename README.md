@@ -32,10 +32,7 @@ model backends include free tiers, so reproducing any result costs nothing.
   <img alt="7 industries shipping, 45 verified model-evals, 64 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/demo-dark.svg">
-  <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo-light.svg" width="100%">
-</picture>
+<img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
 
 <p align="center"><i>Every number in this repo is produced by that loop — and you can re-run any of it.</i></p>
 

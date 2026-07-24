@@ -249,9 +249,15 @@ def esc(s: str) -> str:
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def render(lines, mode: str, accent: tuple[str, str], title: str) -> str:
-    t = THEME[mode]
-    acc = accent[0] if mode == "light" else accent[1]
+def render(lines, accent: tuple[str, str], title: str) -> str:
+    """Always dark.
+
+    A terminal is a dark object, and GitHub's default is light — a light-themed cast
+    rendered washed out against the page. One dark cast reads as a real terminal in both
+    GitHub themes and needs no <picture> switch.
+    """
+    t = THEME["dark"]
+    acc = accent[1]
     n = len(lines)
     body_h = n * LH + PAD * 2
     H = TITLE_H + body_h
@@ -289,7 +295,10 @@ def render(lines, mode: str, accent: tuple[str, str], title: str) -> str:
          f"<style>{''.join(css)}</style>",
          f'<rect width="{WIDTH}" height="{H}" rx="10" fill="{t["body"]}"/>',
          f'<path d="M0 10a10 10 0 0 1 10-10h{WIDTH-20}a10 10 0 0 1 10 10v{TITLE_H-10}H0z" '
-         f'fill="{t["chrome"]}"/>']
+         f'fill="{t["chrome"]}"/>',
+         # hairline edge so the dark window still has a defined border on a white page
+         f'<rect x=".5" y=".5" width="{WIDTH-1}" height="{H-1}" rx="9.5" fill="none" '
+         f'stroke="#3a3934" stroke-opacity=".55"/>']
     for i, c in enumerate(("#f0524d", "#f0a500", "#22c55e")):
         o.append(f'<circle cx="{20 + i * 17}" cy="{TITLE_H/2}" r="5" fill="{c}" opacity=".85"/>')
     o.append(f'<text class="t" x="{WIDTH/2}" y="{TITLE_H/2}" fill="{t["muted"]}" '
@@ -322,23 +331,31 @@ def render(lines, mode: str, accent: tuple[str, str], title: str) -> str:
 def main() -> None:
     adir = os.path.join(ROOT, "docs", "assets")
     made = 0
-    for mode in ("light", "dark"):
-        svg = render(hero_lines(), mode, ("#4a3aa7", "#9085e9"),
-                     "verify any result in this repo — one command, no API key")
-        open(os.path.join(adir, f"demo-{mode}.svg"), "w").write(svg)
-        made += 1
-    print("hero demo -> docs/assets/demo-{light,dark}.svg")
+    svg = render(hero_lines(), ("#4a3aa7", "#9085e9"),
+                 "verify any result in this repo — one command, no API key")
+    open(os.path.join(adir, "demo.svg"), "w").write(svg)
+    made += 1
+    print("hero demo -> docs/assets/demo.svg")
 
     for cfg in CASTS:
         out = os.path.join(ROOT, cfg["out"])
         os.makedirs(out, exist_ok=True)
         lines = cast_lines(cfg)
-        for mode in ("light", "dark"):
-            svg = render(lines, mode, tuple(cfg["accent"]), f"{cfg['cli']} · real eval run")
-            open(os.path.join(out, f"demo-{mode}.svg"), "w").write(svg)
-            made += 2 if mode == "dark" else 0
+        svg = render(lines, tuple(cfg["accent"]), f"{cfg['cli']} · real eval run")
+        open(os.path.join(out, "demo.svg"), "w").write(svg)
+        made += 1
         print(f"{cfg['path']}: cast with {len(lines)} lines")
-    print(f"wrote {made + len(CASTS)} animated SVGs")
+
+    # the old light/dark pair is superseded by a single always-dark cast
+    stale = [os.path.join(adir, f"demo-{m}.svg") for m in ("light", "dark")]
+    stale += [os.path.join(ROOT, c["out"], f"demo-{m}.svg")
+              for c in CASTS for m in ("light", "dark")]
+    removed = 0
+    for p in stale:
+        if os.path.exists(p):
+            os.remove(p)
+            removed += 1
+    print(f"wrote {made} animated SVGs; removed {removed} superseded light/dark files")
 
 
 if __name__ == "__main__":

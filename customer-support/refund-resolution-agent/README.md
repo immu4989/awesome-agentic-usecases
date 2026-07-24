@@ -53,10 +53,7 @@ double-payment trap), a high-value order (specialist approval), a final-sale ite
 
 ## ▶️ Watch a real run
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/demo-dark.svg">
-  <img alt="Animated terminal replaying a real eval: the agent's tool calls, one scenario it got right, one it got wrong, and the measured summary" src="docs/demo-light.svg" width="100%">
-</picture>
+<img alt="Animated terminal replaying a real eval: the agent's tool calls, one scenario it got right, one it got wrong, and the measured summary" src="docs/demo.svg" width="100%">
 
 Not a mock-up — this is replayed from the committed results below. The tool calls, the
 scenario it nailed, the one it failed, and every number are read straight from
