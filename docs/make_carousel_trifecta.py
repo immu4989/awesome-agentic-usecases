@@ -18,10 +18,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 RESULTS = os.path.join(ROOT, "security-operations/trifecta-exfil-agent/results")
 
-SURFACE, INK, INK2, MUTED = "#f6f5f0", "#1a1a19", "#54524b", "#7c7a72"
-ACCENT = "#4a3aa7"
-PANEL, PANEL_INK, PANEL_INK2, PANEL_MUTED = "#1c1b19", "#f3f2ec", "#c6c5ba", "#95938b"
-GOOD, BAD, WARN = "#18b24a", "#f0524d", "#f0a500"
+# dark theme: near-black page, elevated panels, bright violet accent
+SURFACE, INK, INK2, MUTED = "#161615", "#f3f2ec", "#c3c2b7", "#8a887f"
+ACCENT = "#9085e9"
+PANEL, PANEL_INK, PANEL_INK2, PANEL_MUTED = "#262521", "#f3f2ec", "#c6c5ba", "#95938b"
+GOOD, BAD, WARN = "#22c55e", "#f0524d", "#f0a500"
 FONT = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
 
 TAGS = {"mistral": "mistral-small-latest",
