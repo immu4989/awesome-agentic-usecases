@@ -1,0 +1,4560 @@
+{
+  "backend": "fireworks",
+  "model": "accounts/fireworks/models/kimi-k2p6",
+  "arm": "drift",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "acted_on_stale": 0.2667,
+    "action_accuracy": 0.6111,
+    "exact_match": 0.6111,
+    "noticed": 0.3333,
+    "queue_accuracy": 1.0,
+    "submitted": 1.0
+  },
+  "metric_ci95": {
+    "acted_on_stale": [
+      0.1222,
+      0.4222
+    ],
+    "action_accuracy": [
+      0.4333,
+      0.7778
+    ],
+    "exact_match": [
+      0.4333,
+      0.7778
+    ],
+    "noticed": [
+      0.1778,
+      0.5
+    ],
+    "queue_accuracy": [
+      1.0,
+      1.0
+    ],
+    "submitted": [
+      1.0,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.006484,
+  "total_cost_usd": 0.5836,
+  "p50_latency_s": 14.195,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004577,
+      "latency_s": 9.804,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code ADDRESS_INVALID and the carrier scan history confirms the delivery was attempted but the address could not be found, with the package now held at the destination facility. The address service has no validated candidate address (has_validated_address_candidate: false). Per policy POL-ADDR-02, invalid-address exceptions without a validated candidate must be routed to the address-correction queue for manual research. The shipment value ($367.63) and SLA (72 hours remaining) do not meet escalation thresholds, and the customer is Gold tier, so no human escalation is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2750,
+          "output_tokens": 609,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004577
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006267,
+      "latency_s": 16.955,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record (live) shows exception code CUSTOMS_HOLD for tracking ID NO1300026767, with a declared value of $299.58 and 76 hours remaining on the SLA. The carrier\u2019s authoritative scan history confirms the shipment is currently \u201cHeld by customs at port of entry. Awaiting broker documentation.\u201d Policy POL-CUST-03 states that customs holds must always be routed to the customs-clearance queue and never auto-resolved. The value is below the $2,000 escalation threshold, the customer is standard tier, and SLA hours are well above 24, so no human escalation is required. The customer\u2019s claim of being lost for a week is inconsistent with the carrier data, which shows a recent customs-hold scan; nevertheless, the exception requires broker intervention, so it belongs in the customs-clearance queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2883,
+          "output_tokens": 1128,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006267
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005798,
+      "latency_s": 13.383,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s authoritative scan history confirms the package was damaged during sortation and a contents inspection was filed (exception code DAMAGED_IN_TRANSIT). Per POL-CLM-04, confirmed damage in transit routes to carrier-claims and the carrier scan history serves as the required evidence. The shipment value ($193.99) and customer profile (standard tier with 77 hours SLA remaining) do not meet the escalation thresholds in POL-ESC-01, so no human escalation is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2822,
+          "output_tokens": 992,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005798
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00843,
+      "latency_s": 22.191,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier\u2019s scan history confirms the shipment is presumed lost: after departing the origin hub on 11 July there has been no further scan activity, and on 14 July NORTHFREIGHT initiated a trace and marked it \"presumed lost.\" The internal record also shows exception code LOST_IN_TRANSIT, value $266.55, standard tier, and 44 SLA hours remaining. Because the declared value is below the $2,000 escalation threshold and the customer is not Platinum with <24 hours remaining, no human escalation is required. Per POL-CLM-04, confirmed loss in transit routes to carrier-claims, using the carrier scan history as evidence. The customer\u2019s request for a refund or replacement should be handled by the claims team.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4287,
+          "output_tokens": 1381,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00843
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.015375,
+      "latency_s": 40.402,
+      "n_api_calls": 6,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 6,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the delivery was refused by the recipient (front desk) and the package is returning to the origin facility. The internal record shows a declared value of $3,800. Per policy POL-ESC-01, shipments with a declared value exceeding $2,000 must be escalated to a human operator, and this escalation threshold overrides any automation eligibility. While the exception type (DELIVERY_REFUSED) would normally route to the returns queue per POL-RET-06, the high value requires human review.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 6,
+          "input_tokens": 7212,
+          "output_tokens": 2721,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.015375
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005598,
+      "latency_s": 12.942,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a WEATHER_DELAY exception with ground transport suspended due to severe weather and a revised ETA of +72 hours. The internal record shows a standard-tier customer, declared value of $233.80, and 11 SLA hours remaining. Per policy POL-WX-05, weather delays are informational and may be auto-resolved via the customer-notification workflow after sending the customer the revised ETA. No escalation thresholds are met (value is under $2,000 and customer is not Platinum tier).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2667,
+          "output_tokens": 977,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005598
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007067,
+      "latency_s": 19.929,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code ADDRESS_INVALID with a validated address candidate available, and the carrier scan history confirms a delivery exception due to 'address not found.' Under POL-ADDR-02, this would normally be eligible for auto-resolution by applying the candidate address. However, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. The policy explicitly states that escalation overrides any automation eligibility, so a human operator must handle this ticket despite the presence of a validated address candidate.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2885,
+          "output_tokens": 1394,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007067
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.008499,
+      "latency_s": 20.373,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier\u2019s authoritative scan history shows the shipment is currently held by customs at the port of entry awaiting broker documentation (exception code CUSTOMS_HOLD, scan dated 2026-07-15). The internal record carries an older, cached exception code (DAMAGED_IN_TRANSIT, as_of 2026-07-09), but the carrier\u2019s more recent scan supersedes it. Per policy POL-CUST-03, customs holds must always be routed to the customs-clearance queue and must never be auto-resolved. The declared value ($121.55), customer tier (standard), and remaining SLA (33 hours) do not meet any escalation threshold under POL-ESC-01, so broker-assisted resolution via the customs-clearance queue is the appropriate next step.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4263,
+          "output_tokens": 1412,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.008499
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007176,
+      "latency_s": 16.599,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier\u2019s scan history confirms the package was damaged during sortation (exception code DAMAGED_IN_TRANSIT, scan: \u201cPackage reported damaged during sortation. Contents inspection filed.\u201d). Per policy POL-CLM-04, confirmed damage in transit routes to the carrier-claims queue and the carrier scan history serves as the required evidence. The shipment value ($567.90) and customer tier (standard) with 83 SLA hours remaining do not meet the escalation thresholds in POL-ESC-01, so this can be routed directly to carrier-claims for specialist handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 3972,
+          "output_tokens": 1068,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007176
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006956,
+      "latency_s": 14.195,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows a declared value of $3,800 and exception code LOST_IN_TRANSIT, and the carrier\u2019s scan history confirms the last scan was \u201cDeparted origin hub\u201d on 2026-07-10 with a subsequent exception on 2026-07-14 stating \u201cNo scan activity for 10+ days. Trace initiated; presumed lost.\u201d Per POL-ESC-01, the value exceeds the $2,000 escalation threshold, which overrides automation eligibility and requires a human operator decision. The nature of the issue (confirmed loss in transit) aligns with the carrier-claims queue per POL-CLM-04.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2846,
+          "output_tokens": 1370,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006956
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004515,
+      "latency_s": 7.128,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record (exception code DELIVERY_REFUSED) and the carrier scan history confirm the delivery was refused by the recipient and the parcel is already returning to the origin facility. The declared value is $348.21 (below the $2,000 escalation threshold), the customer tier is standard, and 36 hours remain on the SLA, so no human escalation is required. Per POL-RET-06, refused deliveries route to the returns queue to initiate return-to-sender and refund review.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2667,
+          "output_tokens": 616,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004515
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006273,
+      "latency_s": 11.301,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a WEATHER_DELAY exception: ground transport is suspended due to severe weather with the ETA revised +72 hours. While weather delays are normally eligible for auto-resolution via proactive customer notification (POL-WX-05), the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. That policy states escalation overrides any automation eligibility, so a human operator must handle this ticket.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2868,
+          "output_tokens": 1135,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006273
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006519,
+      "latency_s": 26.19,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s authoritative scan history shows an ADDRESS_INVALID exception: delivery was attempted but the address was not found, and the package is held at the destination facility pending correction. The internal record is stale (as_of 2026-07-09, before the 2026-07-15 exception) and incorrectly lists CUSTOMS_HOLD. There is no validated address candidate available, so per POL-ADDR-02 this must be routed to the address-correction queue for manual research. No escalation thresholds are met (declared value $394.81, standard tier, 49 hours SLA remaining).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2757,
+          "output_tokens": 1254,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006519
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004301,
+      "latency_s": 7.183,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record and carrier scan history both confirm the shipment is under a customs hold (exception code CUSTOMS_HOLD) at the port of entry, awaiting broker documentation. Policy POL-CUST-03 mandates that customs holds always route to the customs-clearance queue and must never be auto-resolved. No escalation thresholds are met (declared value and customer tier are unavailable, and SLA hours remaining is null). The customer\u2019s claim that the package is \"lost\" is incorrect; it is held by customs and needs broker intervention.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2708,
+          "output_tokens": 531,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004301
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006433,
+      "latency_s": 15.767,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal record shows a declared value of $3,800 and exception code DAMAGED_IN_TRANSIT, and the carrier scan history confirms the package was reported damaged during sortation with a contents inspection filed. Per POL-ESC-01, shipments with a declared value exceeding $2,000 must be escalated to a human operator, which overrides any automation eligibility. The issue type (confirmed transit damage) maps to the carrier-claims queue per POL-CLM-04.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2830,
+          "output_tokens": 1201,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006433
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006278,
+      "latency_s": 19.659,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s scan history confirms the shipment is presumed lost: the last scan was \u201cDeparted origin hub\u201d on 2026-07-11, and on 2026-07-14 the carrier logged an EXCEPTION with code LOST_IN_TRANSIT stating \u201cNo scan activity for 10+ days. Trace initiated; presumed lost.\u201d The internal record matches this exception code. The declared value is $612.43 (below the $2,000 escalation threshold), the customer is Gold tier (not Platinum), and 54 hours remain on the SLA (above the <24-hour escalation threshold), so no human escalation is required. Per policy POL-CLM-04, confirmed loss in transit routes to carrier-claims, and we have the carrier scan history as required evidence.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2843,
+          "output_tokens": 1145,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006278
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004779,
+      "latency_s": 9.19,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code DELIVERY_REFUSED and the carrier scan history confirms the recipient refused delivery, with the package already returning to the origin facility. Per policy POL-RET-06, deliveries refused by the recipient must be routed to the returns queue to initiate return-to-sender and refund review. The shipment value ($900) and customer tier/SLA (standard, 36 hours remaining) do not meet any escalation threshold under POL-ESC-01, so no human escalation is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2835,
+          "output_tokens": 648,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004779
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.01269,
+      "latency_s": 34.457,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier\u2019s authoritative scan history shows the shipment is currently under a WEATHER_DELAY exception (ground transport suspended due to severe weather, ETA revised +72h), which matches the customer\u2019s inquiry about a storm. The internal record\u2019s ADDRESS_INVALID exception is stale (as_of 2026-07-09) and the shipment has since moved (picked up 2026-07-06, departed hub 2026-07-13), confirming the address issue is resolved. Per POL-WX-05, weather delays are informational and may be auto-resolved via the customer-notification workflow with a proactive ETA update. No escalation thresholds are met (value $272.95 < $2,000, standard tier, SLA > 24h).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4344,
+          "output_tokens": 2782,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.01269
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004584,
+      "latency_s": 8.371,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record and carrier scan history both confirm an ADDRESS_INVALID exception: VELOX attempted delivery but could not locate the address and is holding the package at the destination facility. The address service has no validated candidate address (has_validated_address_candidate: false). Per policy POL-ADDR-02, invalid-address exceptions without a validated candidate must be routed to the address-correction queue for manual research rather than auto-resolved. No escalation thresholds (value > $2,000, Platinum tier with <24h SLA) are met, so a specialist queue is the correct next step.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2715,
+          "output_tokens": 623,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004584
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004781,
+      "latency_s": 8.432,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier\u2019s scan history confirm a true customs hold (exception code CUSTOMS_HOLD: \u201cHeld by customs at port of entry. Awaiting broker documentation\u201d). Per policy POL-CUST-03, customs holds must be routed to the customs-clearance queue and cannot be auto-resolved. Additionally, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01, so a human decision is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2672,
+          "output_tokens": 703,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004781
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005529,
+      "latency_s": 10.109,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal record and carrier scan history both confirm a DAMAGED_IN_TRANSIT exception. The carrier\u2019s authoritative scan states \u201cPackage reported damaged during sortation. Contents inspection filed.\u201d Per POL-CLM-04, confirmed damage in transit routes to carrier-claims and the carrier scan history serves as required evidence. No escalation threshold is met: declared value is $384.96 (below $2,000) and SLA remaining is 37 hours (Platinum tier requires <24 hours to trigger escalation per POL-ESC-01).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2841,
+          "output_tokens": 896,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005529
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006354,
+      "latency_s": 13.253,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s scan history confirms the shipment is presumed lost (LOST_IN_TRANSIT exception, no scan activity for 10+ days, trace initiated). Per POL-CLM-04, confirmed loss in transit routes to carrier-claims and the carrier scan history serves as evidence. However, per POL-ESC-01, the declared value of $3,800 exceeds the $2,000 escalation threshold, which overrides any automation eligibility and requires a human operator to handle the refund/replacement decision.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2949,
+          "output_tokens": 1135,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006354
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006343,
+      "latency_s": 14.989,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s authoritative scan history shows exception code DELIVERY_REFUSED with disposition \u201cDelivery refused by recipient. Package returning to origin facility,\u201d which matches the customer\u2019s report that the front desk refused the parcel. Per policy POL-RET-06, deliveries refused by the recipient route to the returns queue to initiate return-to-sender and refund review. No escalation thresholds are triggered: the declared value is $207.11 (under $2,000) and, although the customer is Platinum tier, 47 hours remain on the SLA (above the 24-hour threshold), so a human escalation is not required.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2866,
+          "output_tokens": 1159,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006343
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007324,
+      "latency_s": 13.939,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a WEATHER_DELAY exception (ground transport suspended, ETA revised +72h). The internal record shows a $116.10 shipment for a Gold-tier customer with 69 hours of SLA remaining. Per POL-WX-05, weather delays are informational and may be auto-resolved via the customer-notification workflow after sending a proactive notification with the revised ETA. No escalation threshold is met (value < $2,000; not Platinum with <24h SLA), so automation is safe.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4108,
+          "output_tokens": 1072,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007324
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006347,
+      "latency_s": 17.493,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms an ADDRESS_INVALID exception: delivery was attempted but the address was not found, and the package is held at the destination facility pending correction. The internal record shows a validated address candidate is available, which under POL-ADDR-02 would normally make this eligible for auto-resolution. However, the declared shipment value is $3,800, exceeding the $2,000 escalation threshold in POL-ESC-01. Because escalation overrides any automation eligibility, a human operator must decide how to proceed on this high-value shipment.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2930,
+          "output_tokens": 1139,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006347
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004508,
+      "latency_s": 11.228,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code CUSTOMS_HOLD, and the carrier scan history confirms the shipment is 'Held by customs at port of entry. Awaiting broker documentation.' Policy POL-CUST-03 states that customs holds always route to the customs-clearance queue and must never be auto-resolved. The escalation thresholds (value >$2,000 or Platinum tier with <24 SLA hours) are not met (value $94.63, SLA 81 hours remaining), so no human escalation is required. Route to customs-clearance for broker resolution.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2666,
+          "output_tokens": 614,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004508
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005536,
+      "latency_s": 21.142,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal record shows a declared value of $3,800 USD and exception code DAMAGED_IN_TRANSIT. The carrier scan history confirms the package was reported damaged during sortation with a contents inspection filed. Per policy POL-ESC-01, any shipment with a declared value exceeding $2,000 must be escalated to a human operator, and this escalation threshold overrides automation eligibility. The underlying issue is a confirmed damage-in-transit claim, which routes to the carrier-claims queue, but requires human handling due to the high value.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2914,
+          "output_tokens": 874,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005536
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006611,
+      "latency_s": 15.44,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal record shows exception code DELIVERY_REFUSED, but the authoritative carrier scan history confirms the shipment is LOST_IN_TRANSIT (\"No scan activity for 10+ days. Trace initiated; presumed lost.\"). The declared value is $439.71 (below the $2,000 escalation threshold), the customer is standard tier, and 69 SLA hours remain, so no human escalation is required. Per policy POL-CLM-04, confirmed loss in transit with carrier scan evidence routes to the carrier-claims queue for a damage/loss claim.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2894,
+          "output_tokens": 1239,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006611
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004886,
+      "latency_s": 9.681,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the delivery was refused by the recipient (exception code DELIVERY_REFUSED) and the package is already returning to the origin facility. The internal shipment record shows the same exception code. Per POL-RET-06, refused deliveries route to the returns queue to initiate return-to-sender and refund review. The degraded internal record shows null values for declared value, customer tier, and SLA hours, so no escalation threshold from POL-ESC-01 is met. Routing to the returns queue is the correct action.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2846,
+          "output_tokens": 680,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004886
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005287,
+      "latency_s": 12.089,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a weather delay (exception code WEATHER_DELAY) with ground transport suspended and ETA revised +72 hours, matching the customer\u2019s report. While weather delays are normally informational and eligible for auto-resolution via the customer-notification queue (POL-WX-05), the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. Escalation overrides automation eligibility, so a human operator must handle this ticket.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2776,
+          "output_tokens": 837,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005287
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004775,
+      "latency_s": 11.362,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code ADDRESS_INVALID with no validated address candidate (has_validated_address_candidate: false), and the carrier scan history confirms the delivery attempt failed because the address could not be found. Per policy POL-ADDR-02, invalid-address exceptions without a validated candidate must be routed to the address-correction queue for manual research. The shipment value ($367.63) is below the $2,000 escalation threshold, the customer is Gold tier (not Platinum), and 72 SLA hours remain (well above the 24-hour escalation threshold), so no human escalation is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2750,
+          "output_tokens": 675,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004775
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.010955,
+      "latency_s": 24.157,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The customer claims the shipment is lost, but both the refreshed internal record and the carrier's scan history confirm a live customs hold (exception code CUSTOMS_HOLD). The most recent carrier scan on 2026-07-14 shows the package is 'Held by customs at port of entry. Awaiting broker documentation.' The refreshed declared value is $299.58 (standard tier) with 76 SLA hours remaining, so no escalation threshold is met. Per policy POL-CUST-03, customs holds must always be routed to the customs-clearance queue and never auto-resolved, as brokers own the resolution.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4316,
+          "output_tokens": 2213,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.010955
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006126,
+      "latency_s": 13.36,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The customer\u2019s concern about an incident at the sort facility is confirmed by the carrier\u2019s authoritative scan history, which shows an exception for \"Package reported damaged during sortation. Contents inspection filed.\" (exception code DAMAGED_IN_TRANSIT). Although the internal shipment record lists a different exception code (CUSTOMS_HOLD), the carrier scan history takes precedence for disambiguating stuck shipments and serves as the required evidence per policy POL-CLM-04. The shipment value is $193.99 (below the $2,000 escalation threshold), the customer tier is standard, and 77 SLA hours remain (well above the 24-hour Platinum threshold), so no human escalation is required. The correct resolution path is to route to the carrier-claims queue for damage/loss claim handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2877,
+          "output_tokens": 1083,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006126
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007992,
+      "latency_s": 22.153,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier\u2019s scan history confirms the shipment is lost in transit: the last scan was on 2026-07-14 with exception code LOST_IN_TRANSIT and disposition \u201cNo scan activity for 10+ days. Trace initiated; presumed lost.\u201d Per policy POL-CLM-04, confirmed loss in transit routes to carrier-claims and the carrier scan history serves as the required evidence. Escalation thresholds are not met (declared value $266.55, standard tier, 44 SLA hours remaining), so a human escalation is unnecessary. The customer\u2019s request for a refund or replacement should be handled by the carrier-claims queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4287,
+          "output_tokens": 1235,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007992
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006057,
+      "latency_s": 28.477,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record (exception code DELIVERY_REFUSED) and the carrier scan history confirm the delivery was refused by the recipient and the parcel is returning to the origin facility. Policy POL-RET-06 directs refused deliveries to the returns queue. However, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. That policy states escalation overrides any automation eligibility, so a human operator must handle this ticket despite the clear exception type.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2811,
+          "output_tokens": 1082,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006057
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005949,
+      "latency_s": 15.078,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a WEATHER_DELAY exception with a revised ETA of +72 hours. The internal record shows a standard-tier customer, a declared value of $233.80 (well below the $2,000 escalation threshold), and 11 SLA hours remaining. Per POL-WX-05, weather delays are informational and may be auto-resolved via the customer-notification workflow after sending the customer the revised ETA. No escalation thresholds from POL-ESC-01 are met.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2760,
+          "output_tokens": 1063,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005949
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006251,
+      "latency_s": 12.122,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal record shows exception code ADDRESS_INVALID with a validated address candidate available, which under POL-ADDR-02 would normally make this eligible for auto-resolution. However, the declared shipment value is $3,800, exceeding the $2,000 escalation threshold in POL-ESC-01. The policy explicitly states that escalation overrides any automation eligibility, so a human operator must review this high-value address correction.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2945,
+          "output_tokens": 1102,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006251
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007436,
+      "latency_s": 18.533,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s authoritative scan history shows exception code CUSTOMS_HOLD with the shipment held by customs at the port of entry awaiting broker documentation, while the internal record incorrectly lists DAMAGED_IN_TRANSIT\u2014this discrepancy explains the customer\u2019s confusion about missing updates. Per POL-CUST-03, customs holds must always route to the customs-clearance queue and can never be auto-resolved. The shipment value ($121.55), standard customer tier, and 33 remaining SLA hours do not meet any escalation threshold in POL-ESC-01, so broker-assisted resolution via the customs-clearance queue is the correct path.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2870,
+          "output_tokens": 1522,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007436
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006891,
+      "latency_s": 12.612,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the shipment was damaged during sortation (exception code DAMAGED_IN_TRANSIT, scan: 'Package reported damaged during sortation. Contents inspection filed'). The internal record shows a declared value of $567.90, standard tier, and 83 hours remaining on the SLA. Per policy POL-CLM-04, confirmed damage routes to the carrier-claims queue, and we have the required carrier scan evidence. No escalation threshold is met (value under $2,000, customer is not Platinum with <24h SLA), so this can be routed to queue specialists rather than escalated to a human.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 3972,
+          "output_tokens": 973,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006891
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00572,
+      "latency_s": 14.032,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows a declared value of $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. The carrier scan history confirms the LOST_IN_TRANSIT exception: there have been no scans since the shipment departed the origin hub on 2026-07-10, and the carrier initiated a trace on 2026-07-14 with disposition \"presumed lost.\" Because the value threshold mandates human escalation regardless of automation eligibility, this ticket must be escalated to a human operator for the carrier-claims queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2810,
+          "output_tokens": 970,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00572
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005142,
+      "latency_s": 9.785,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier\u2019s scan history confirm exception code DELIVERY_REFUSED, with the carrier stating the package was refused by the recipient and is returning to the origin facility. Policy POL-RET-06 requires refused deliveries to be routed to the returns queue to initiate return-to-sender and refund review. No escalation thresholds apply: the declared value is $348.21 (well below the $2,000 threshold), the customer tier is standard, and 36 hours remain on the SLA.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2802,
+          "output_tokens": 780,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005142
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007166,
+      "latency_s": 16.288,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a WEATHER_DELAY exception with ground transport suspended and ETA revised +72 hours. While weather delays are normally informational and eligible for auto-resolution via customer-notification (POL-WX-05), the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. The policy states that escalation overrides any automation eligibility, so this ticket must be handled by a human operator despite the standard-tier customer having 65 SLA hours remaining.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2870,
+          "output_tokens": 1432,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007166
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005424,
+      "latency_s": 22.947,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The customer reported a generic 'delivery exception,' but the carrier's authoritative scan history shows an ADDRESS_INVALID exception: 'Delivery attempted; address not found. Held at destination facility pending correction.' The internal record incorrectly flags a CUSTOMS_HOLD, so the carrier status governs. There is no validated address candidate in the address service, which per POL-ADDR-02 prevents auto-resolution and requires manual research. The shipment value ($394.81) and customer tier (standard) with 49 SLA hours remaining do not meet any escalation threshold in POL-ESC-01. Therefore, the ticket should be routed to the address-correction queue for specialist research and correction.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2886,
+          "output_tokens": 846,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005424
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004541,
+      "latency_s": 9.766,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The shipment is not lost. The carrier scan history shows it was picked up, departed the origin hub, and is currently held by customs at the port of entry awaiting broker documentation (exception code CUSTOMS_HOLD). Per policy POL-CUST-03, customs holds must always be routed to the customs-clearance queue for broker resolution and must never be auto-resolved.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2699,
+          "output_tokens": 614,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004541
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004713,
+      "latency_s": 7.691,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal record shows a declared value of $3,800, which exceeds the $2,000 escalation threshold per POL-ESC-01, requiring a human decision regardless of automation eligibility. The carrier scan history confirms a DAMAGED_IN_TRANSIT exception with the note \"Package reported damaged during sortation. Contents inspection filed,\" so the underlying issue is a carrier damage claim. I am routing to the carrier-claims queue but escalating to a human because of the high value.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2682,
+          "output_tokens": 677,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004713
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006069,
+      "latency_s": 11.909,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s scan history confirms the shipment is lost in transit: the last scan was \u201cDeparted origin hub\u201d on 2026-07-11, and on 2026-07-14 the carrier logged an exception stating \u201cNo scan activity for 10+ days. Trace initiated; presumed lost.\u201d (exception code LOST_IN_TRANSIT). The declared value is $612.43, the customer is Gold tier, and 54 hours remain on the SLA, so no escalation threshold (>$2,000 or Platinum with <24h SLA) is met. Per policy POL-CLM-04, confirmed loss in transit routes to the carrier-claims queue, using the carrier scan history as evidence.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2850,
+          "output_tokens": 1073,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006069
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005059,
+      "latency_s": 10.555,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code DELIVERY_REFUSED, and the carrier scan history confirms the recipient refused delivery and the package is returning to the origin facility. Per POL-RET-06, deliveries refused by the recipient route to the returns queue to initiate return-to-sender and refund review. No escalation thresholds apply: the declared value is $900 (below the $2,000 threshold), the customer is standard tier, and 36 hours remain on the SLA (above the 24-hour threshold for Platinum tier only).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2839,
+          "output_tokens": 740,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005059
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.014672,
+      "latency_s": 39.152,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier\u2019s authoritative scan history shows the shipment departed the origin hub on 2026-07-13 and is currently delayed by a weather exception (WEATHER_DELAY) with a revised ETA of +72 hours, which disambiguates the stale internal ADDRESS_INVALID exception (as_of 2026-07-09). Because the shipment is already in transit and the active delay is due to severe weather, the correct classification is an informational weather delay. Per policy POL-WX-05, weather delays may be auto-resolved via the customer-notification workflow by sending the customer a proactive notification with the revised ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4016,
+          "output_tokens": 3552,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.014672
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004786,
+      "latency_s": 15.489,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier\u2019s scan history confirm an ADDRESS_INVALID exception for PA3192782745, with the carrier stating the address could not be found and the shipment is held pending correction. The internal record shows has_validated_address_candidate = false, so per POL-ADDR-02 this is ineligible for auto-resolution and must be routed to the address-correction queue for manual research. No escalation thresholds are triggered (declared value and customer tier are unavailable/null, not exceeding $2,000 or Platinum tier with <24h SLA).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2716,
+          "output_tokens": 690,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004786
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005072,
+      "latency_s": 9.632,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier\u2019s scan history confirm a customs hold (exception code CUSTOMS_HOLD; carrier: \u201cHeld by customs at port of entry. Awaiting broker documentation\u201d). Policy POL-CUST-03 requires all customs holds to be routed to the customs-clearance queue and prohibits auto-resolution. Additionally, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01, mandating escalation to a human operator. Therefore, this ticket must be escalated to a human in the customs-clearance queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2672,
+          "output_tokens": 800,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005072
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005092,
+      "latency_s": 8.639,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal record and carrier scan history both confirm exception code DAMAGED_IN_TRANSIT: the carrier reported the package was damaged during sortation and filed a contents inspection. The declared value is $384.96 (below the $2,000 escalation threshold) and the customer is Platinum tier with 37 hours remaining on the SLA (above the <24-hour escalation threshold), so no human escalation is required. Per policy POL-CLM-04, confirmed damage in transit routes to carrier-claims, and we have the carrier\u2019s scan history as required evidence.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2827,
+          "output_tokens": 755,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005092
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006943,
+      "latency_s": 29.023,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s scan history confirms the shipment is presumed lost (no scan activity for 10+ days, trace initiated, exception code LOST_IN_TRANSIT). The internal record shows a declared value of $3,800 USD, which exceeds the $2,000 escalation threshold in POL-ESC-01, mandating a human operator decision regardless of automation eligibility. While confirmed loss in transit normally routes to carrier-claims per POL-CLM-04, the high value requires escalation so a human can authorize the refund or replacement the customer requested.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2950,
+          "output_tokens": 1331,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006943
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005998,
+      "latency_s": 14.731,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s authoritative scan history shows a DELIVERY_REFUSED exception with the package already returning to the origin facility, which matches the customer\u2019s report that the front desk refused the parcel. The internal record\u2019s CUSTOMS_HOLD code is inconsistent with the carrier data and should be disregarded. Per POL-RET-06, deliveries refused by the recipient route to the returns queue to initiate return-to-sender and refund review. No escalation thresholds are met: the declared value is $207.11 (well below $2,000) and the customer is Platinum tier with 47 SLA hours remaining (above the 24-hour threshold). Therefore, the ticket should be routed to the returns queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3007,
+          "output_tokens": 997,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005998
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007345,
+      "latency_s": 13.707,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a WEATHER_DELAY exception with a revised ETA (+72 hours from 2026-07-15). The internal record shows a Gold-tier customer, $116.10 value, and 69 hours SLA remaining. Per POL-WX-05, weather delays are informational and may be auto-resolved via the customer-notification workflow. No escalation thresholds from POL-ESC-01 are met (value <$2,000; not Platinum tier with <24h SLA). A proactive notification with the revised ETA should be sent, and the ticket can be safely auto-resolved.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4165,
+          "output_tokens": 1060,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007345
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005826,
+      "latency_s": 15.051,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code ADDRESS_INVALID with a validated address candidate available, and the carrier scan history confirms a delivery attempt failed because the address was not found, with the package held at the destination facility pending correction. While POL-ADDR-02 would make this eligible for auto-resolution by applying the candidate address, POL-ESC-01 mandates escalation to a human operator whenever the declared shipment value exceeds $2,000. This shipment is valued at $3,800, so the value threshold overrides automation eligibility and requires a human decision.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2772,
+          "output_tokens": 1018,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005826
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005311,
+      "latency_s": 10.911,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record (exception code CUSTOMS_HOLD) and the carrier scan history (\"Held by customs at port of entry. Awaiting broker documentation\") confirm this is a genuine customs hold, not a tracking misstatement. Per policy POL-CUST-03, customs holds must always be routed to the customs-clearance queue for broker resolution and are never eligible for auto-resolve. Escalation thresholds are not met: declared value is $94.63 (well below $2,000) and the customer is Platinum tier with 81 hours remaining on the SLA (above the 24-hour threshold).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2803,
+          "output_tokens": 836,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005311
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005876,
+      "latency_s": 23.991,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows a declared value of $3,800 and exception code DAMAGED_IN_TRANSIT. The carrier\u2019s scan history confirms the package was reported damaged during sortation with a contents inspection filed. Per POL-CLM-04, confirmed damage routes to the carrier-claims queue. However, per POL-ESC-01, any shipment with a declared value exceeding $2,000 must be escalated to a human operator, overriding automation eligibility. Therefore this ticket requires human handling in the carrier-claims queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2912,
+          "output_tokens": 988,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005876
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009663,
+      "latency_s": 18.893,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code DELIVERY_REFUSED, but the authoritative carrier scan history (dated after the internal record) shows the shipment as LOST_IN_TRANSIT with a trace initiated and no scan activity for 10+ days. Per policy POL-CLM-04, confirmed loss in transit routes to the carrier-claims queue, and the carrier scan history provides the required evidence. The declared value ($439.71) and customer tier (standard) do not meet escalation thresholds, so this can be routed directly to carrier-claims for claim initiation and refund/replacement review.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4461,
+          "output_tokens": 1734,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009663
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00784,
+      "latency_s": 16.134,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier\u2019s authoritative scan history shows the package was refused by the recipient at the delivery address and is already returning to the origin facility (exception code DELIVERY_REFUSED). The internal shipment record confirms the same exception code. Per policy POL-RET-06, deliveries refused by the recipient route to the returns queue to initiate return-to-sender and refund review. The internal record is degraded and lacks declared value, customer tier, and SLA hours, but there is no evidence that any escalation threshold (value >$2,000 or Platinum tier with <24h SLA) is met, so standard routing applies.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 3943,
+          "output_tokens": 1299,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00784
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005853,
+      "latency_s": 18.146,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a WEATHER_DELAY exception with ground transport suspended and a +72h revised ETA. While weather delays are normally eligible for auto-resolution via the customer-notification workflow (POL-WX-05), the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. Escalation overrides automation eligibility, so a human operator must handle this ticket.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2778,
+          "output_tokens": 1025,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005853
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005167,
+      "latency_s": 10.944,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code ADDRESS_INVALID with no validated address candidate (has_validated_address_candidate: false), and the carrier scan history confirms a delivery attempt failed because the address was not found. Per POL-ADDR-02, invalid-address exceptions without a validated candidate must be routed to the address-correction queue for manual research. The escalation threshold (POL-ESC-01) does not apply because the declared value is $367.63 (under $2,000), the customer is Gold tier, and 72 hours remain on the SLA.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2800,
+          "output_tokens": 789,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005167
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009299,
+      "latency_s": 19.168,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier scan history shows the shipment is not lost but is actively held by customs at the port of entry awaiting broker documentation (exception code CUSTOMS_HOLD, last scan 2026-07-14). The refreshed internal record confirms a live customs hold, a standard-tier customer, 76 SLA hours remaining, and a declared value of $299.58. Per policy POL-CUST-03, customs holds must always route to the customs-clearance queue and must never be auto-resolved. The $2000 escalation threshold in POL-ESC-01 is not met. The customer\u2019s claim of \"no updates for a week\" is explained by the customs hold status, which requires broker intervention.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4316,
+          "output_tokens": 1661,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009299
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007081,
+      "latency_s": 16.559,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The customer asked about an incident at the sort facility. The internal shipment record shows a stale cached exception of CUSTOMS_HOLD, but the authoritative carrier scan history confirms the package was \"reported damaged during sortation\" with exception code DAMAGED_IN_TRANSIT. Per policy POL-SRC-07, the carrier scan history is authoritative when records disagree. Per policy POL-CLM-04, confirmed damage in transit routes to carrier-claims and requires the carrier scan history as evidence, which we have. The order is not OK; it needs to be filed as a damage claim with the carrier.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4288,
+          "output_tokens": 931,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007081
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.009601,
+      "latency_s": 25.695,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier\u2019s scan history confirms the shipment is lost in transit: the last scan on 2026-07-14 shows exception code LOST_IN_TRANSIT with disposition \u201cNo scan activity for 10+ days. Trace initiated; presumed lost.\u201d The internal record shows a declared value of $266.55, standard customer tier, and 44 SLA hours remaining\u2014none of the escalation thresholds (value >$2,000 or Platinum tier with <24 hours SLA) are met. Per policy POL-CLM-04, confirmed loss in transit routes to the carrier-claims queue, and the carrier scan history provides the required evidence. The customer\u2019s request for a refund or replacement is appropriately handled by carrier-claims.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4315,
+          "output_tokens": 1762,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.009601
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005017,
+      "latency_s": 18.652,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the delivery was refused by the recipient (exception code DELIVERY_REFUSED) and the package is returning to the origin facility. Per POL-RET-06, refused deliveries route to the returns queue. However, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. Escalation overrides automation eligibility, so this must go to a human operator despite being a straightforward refused-delivery case.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2761,
+          "output_tokens": 752,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005017
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005797,
+      "latency_s": 12.345,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a WEATHER_DELAY exception with a revised ETA of +72 hours. The internal record shows a standard-tier shipment valued at $233.80 with 11 SLA hours remaining. Per policy POL-WX-05, weather delays are informational and may be auto-resolved via the customer-notification workflow. No escalation thresholds are met (value <$2,000, customer is not Platinum tier). Therefore, we can safely auto-resolve this by sending the customer a proactive notification with the revised ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2806,
+          "output_tokens": 997,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005797
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005249,
+      "latency_s": 12.126,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms an ADDRESS_INVALID exception (delivery attempted; address not found, held at destination facility). The internal record shows a validated address candidate is available, which under POL-ADDR-02 would normally make this eligible for auto-resolution. However, the shipment\u2019s declared value is $3,800, exceeding the $2,000 escalation threshold in POL-ESC-01. That policy states escalation overrides any automation eligibility, so a human operator must decide how to proceed.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2885,
+          "output_tokens": 788,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005249
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006352,
+      "latency_s": 15.909,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The customer claims the shipment is lost, but the carrier\u2019s authoritative scan history shows the parcel is currently on a customs hold at the port of entry awaiting broker documentation (exception code CUSTOMS_HOLD, scan dated 2026-07-15). The internal record is cached and outdated (as_of 2026-07-09) and incorrectly lists DAMAGED_IN_TRANSIT. Per policy POL-CUST-03, customs holds must always be routed to the customs-clearance queue for broker resolution and may never be auto-resolved. The shipment value ($121.55) and standard customer tier with 33 hours SLA remaining do not meet any escalation threshold.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2848,
+          "output_tokens": 1168,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006352
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006784,
+      "latency_s": 14.023,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record and carrier scan history both confirm exception code DAMAGED_IN_TRANSIT: PARCELINE reported the package was damaged during sortation and filed a contents inspection. The declared value is $567.90, the customer tier is standard, and SLA hours remaining are 83, so no escalation threshold (>$2,000 or Platinum tier with <24 hours SLA) is met. Per policy POL-CLM-04, confirmed damage in transit routes to carrier-claims and the carrier scan history provides the required evidence. This ticket should be routed to carrier-claims for claim handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4264,
+          "output_tokens": 840,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006784
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006636,
+      "latency_s": 13.43,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s scan history confirms the shipment is presumed lost (exception code LOST_IN_TRANSIT, no scans for 10+ days). While confirmed loss in transit normally routes to carrier-claims, the declared value is $3,800\u2014exceeding the $2,000 escalation threshold in POL-ESC-01\u2014so a human operator must handle this high-value claim.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2949,
+          "output_tokens": 1229,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006636
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004734,
+      "latency_s": 10.751,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code DELIVERY_REFUSED, and the carrier scan history confirms the parcel was refused by the recipient and is already returning to the origin facility. The declared value is $348.21 (below the $2,000 escalation threshold), the customer tier is standard, and 36 hours remain on the SLA, so no human escalation is required. Per policy POL-RET-06, refused deliveries route to the returns queue to initiate return-to-sender and refund review.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2667,
+          "output_tokens": 689,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004734
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005565,
+      "latency_s": 17.76,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal record and carrier scan history both confirm a WEATHER_DELAY exception with ground transport suspended due to severe weather and the ETA revised +72 hours. Policy POL-WX-05 states weather delays are informational and may be auto-resolved via the customer-notification workflow by sending a proactive notification with the revised ETA. The shipment has a validated address candidate, so no address correction is needed. A proactive comms auto-resolution is the correct path.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2763,
+          "output_tokens": 934,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005565
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.007538,
+      "latency_s": 21.954,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier scan history (authoritative per POL-SRC-07) shows the actual exception is ADDRESS_INVALID \u2014 \"Delivery attempted; address not found. Held at destination facility pending correction\" \u2014 contradicting the stale internal record that lists CUSTOMS_HOLD. The shipment has no validated candidate address (has_validated_address_candidate: false), so per POL-ADDR-02 it cannot be auto-resolved and must be routed to the address-correction queue for manual research. No escalation thresholds are met: the customer is standard tier, the declared value is $394.81 (well below the $2,000 threshold), and 49 SLA hours remain.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4463,
+          "output_tokens": 1025,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.007538
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006782,
+      "latency_s": 12.341,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier scan history and internal record confirm the shipment is not lost; it is on a customs hold (exception code CUSTOMS_HOLD) at the port of entry awaiting broker documentation. Per policy POL-CUST-03, customs holds must be routed to the customs-clearance queue and cannot be auto-resolved. No escalation thresholds are met (declared value $763.07, standard tier, 28 hours SLA remaining).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 3953,
+          "output_tokens": 943,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006782
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005014,
+      "latency_s": 16.059,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows a declared value of $3,800 and exception code DAMAGED_IN_TRANSIT. The carrier\u2019s scan history confirms the exception: \u201cPackage reported damaged during sortation. Contents inspection filed.\u201d Per POL-ESC-01, any shipment with a declared value exceeding $2,000 must be escalated to a human operator, and this threshold overrides automation eligibility. Although the damage would normally route to carrier-claims (POL-CLM-04), the high value requires human decision-making.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2827,
+          "output_tokens": 729,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005014
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005531,
+      "latency_s": 11.988,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s authoritative scan history confirms the shipment is presumed lost: the last scan was \u201cDeparted origin hub\u201d on 2026-07-11, and on 2026-07-14 the carrier logged exception code LOST_IN_TRANSIT with the note \u201cNo scan activity for 10+ days. Trace initiated; presumed lost.\u201d The declared value is $612.43 (below the $2,000 escalation threshold), the customer is Gold tier, and 54 hours remain on the SLA, so no escalation rule applies. Per policy POL-CLM-04, confirmed loss in transit routes to carrier-claims and requires the carrier scan history as evidence, which we have. Therefore the ticket should be routed to the carrier-claims queue for claim filing.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2795,
+          "output_tokens": 912,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005531
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005232,
+      "latency_s": 15.254,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record (exception_code: DELIVERY_REFUSED) and the carrier scan history confirm the recipient refused delivery. The shipment value is $900 (below the $2,000 escalation threshold), the customer is standard tier, and 36 hours remain on the SLA, so no human escalation is required. Per POL-RET-06, refused deliveries route to the returns queue to initiate return-to-sender and refund review.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2835,
+          "output_tokens": 799,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005232
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006894,
+      "latency_s": 15.652,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s authoritative scan history shows a WEATHER_DELAY exception (ground transport suspended due to severe weather, ETA revised +72h), which supersedes the stale internal ADDRESS_INVALID record per POL-SRC-07. Weather delays are informational and eligible for auto-resolution via proactive customer notification with the revised ETA per POL-WX-05. No escalation thresholds are met (declared value $272.95, standard tier, 45 hours SLA remaining).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 3072,
+          "output_tokens": 1274,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006894
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004327,
+      "latency_s": 9.885,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record and carrier scan history both confirm an ADDRESS_INVALID exception: VELOX attempted delivery but could not locate the address and is holding the package at the destination facility. The internal record shows has_validated_address_candidate: false, so per POL-ADDR-02 the shipment cannot be auto-resolved and must be routed to the address-correction queue for manual research. No escalation thresholds (value >$2,000 or Platinum tier with <24h SLA) are met, so a human escalation is not required.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2716,
+          "output_tokens": 537,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004327
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004976,
+      "latency_s": 11.406,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier scan history confirm a customs hold (exception code CUSTOMS_HOLD): the carrier reports the shipment is 'Held by customs at port of entry. Awaiting broker documentation.' The declared value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01, so a human decision is required. POL-CUST-03 further mandates that customs holds always route to the customs-clearance queue and must never be auto-resolved. Therefore, the ticket is escalated to a human and routed to the customs-clearance queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2672,
+          "output_tokens": 768,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004976
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00547,
+      "latency_s": 11.037,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier\u2019s scan history confirm a DAMAGED_IN_TRANSIT exception (package reported damaged during sortation with contents inspection filed). The declared value is $384.96 (below the $2,000 escalation threshold), and while the customer is Platinum tier, 37 hours remain on the SLA (above the 24-hour threshold), so no human escalation is required. Per POL-CLM-04, confirmed damage in transit routes to carrier-claims, and we have the carrier scan history as evidence.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2827,
+          "output_tokens": 881,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00547
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.006655,
+      "latency_s": 14.428,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows a declared value of $3,800 USD, which exceeds the $2,000 escalation threshold in POL-ESC-01, requiring a human operator decision regardless of automation eligibility. The carrier\u2019s authoritative scan history confirms the shipment has had no scan activity for 10+ days and is presumed lost (exception code LOST_IN_TRANSIT). Because this is a confirmed loss in transit, the underlying issue belongs to the carrier-claims queue, but the high value mandates human handling for the customer\u2019s refund/replacement request.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2950,
+          "output_tokens": 1235,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.006655
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005767,
+      "latency_s": 12.703,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s authoritative scan history shows the parcel was refused by the recipient (front desk) and is already returning to the origin facility (exception code DELIVERY_REFUSED). This matches the customer\u2019s report. Per policy POL-RET-06, deliveries refused by the recipient must be routed to the returns queue to initiate return-to-sender and refund review. Escalation thresholds are not met: the declared value is $207.11 (well below the $2,000 threshold) and the customer is Platinum tier with 47 hours remaining on the SLA (above the 24-hour escalation threshold).",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2857,
+          "output_tokens": 970,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005767
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005194,
+      "latency_s": 10.419,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a WEATHER_DELAY exception with ground transport suspended and an ETA revised +72 hours from 2026-07-15T09:30:00Z (approximately 2026-07-18T09:30:00Z). The internal record matches this exception code. Per POL-WX-05, weather delays are informational and may be auto-resolved via the customer-notification workflow. No escalation thresholds apply (no declared value, no Platinum tier, no SLA hours remaining data). The ticket can be safely closed with an automated proactive notification providing the revised ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2848,
+          "output_tokens": 782,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005194
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005996,
+      "latency_s": 12.782,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms an ADDRESS_INVALID exception: delivery was attempted but the address was not found, and the package is held at the destination facility pending correction. The internal record shows a validated address candidate is available, which under POL-ADDR-02 would normally make this eligible for auto-resolution. However, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold defined in POL-ESC-01. That policy states escalation overrides any automation eligibility, so a human operator must decide how to proceed despite the validated candidate.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2771,
+          "output_tokens": 1075,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005996
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004806,
+      "latency_s": 9.589,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code CUSTOMS_HOLD, and the carrier\u2019s scan history confirms the package is \u201cHeld by customs at port of entry. Awaiting broker documentation.\u201d Policy POL-CUST-03 states that customs holds always route to the customs-clearance queue and must never be auto-resolved. The escalation threshold (POL-ESC-01) is not triggered because the declared value is $94.63 (well below $2,000) and the Platinum customer still has 81 SLA hours remaining (more than 24). Therefore, the correct action is to route this ticket to the customs-clearance queue for broker-led resolution.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2823,
+          "output_tokens": 661,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004806
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.005197,
+      "latency_s": 19.058,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows a declared value of $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01, mandating a human decision regardless of automation eligibility. The carrier\u2019s scan history confirms a DAMAGED_IN_TRANSIT exception with evidence (\u201cPackage reported damaged during sortation. Contents inspection filed.\u201d), so the underlying issue belongs in the carrier-claims queue per POL-CLM-04. I am escalating to a human in carrier-claims because the high-value threshold overrides automation.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2917,
+          "output_tokens": 760,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.005197
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.011254,
+      "latency_s": 21.252,
+      "n_api_calls": 5,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code DELIVERY_REFUSED, but the carrier\u2019s authoritative scan history (per POL-SRC-07) states the package has had no scan activity for 10+ days, a trace was initiated, and it is presumed lost with exception code LOST_IN_TRANSIT. Because the carrier scan history is the source of truth when records disagree, this is a confirmed loss in transit. Per POL-CLM-04, confirmed loss routes to carrier-claims, and the carrier scan history provides the required evidence. The declared value ($439.71) and customer tier (standard) do not meet escalation thresholds (POL-ESC-01), so it can be handled by the queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 5,
+          "input_tokens": 6064,
+          "output_tokens": 1730,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.011254
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004983,
+      "latency_s": 11.423,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier\u2019s scan history confirm the exception code DELIVERY_REFUSED, with the carrier stating the package is already returning to the origin facility. Policy POL-RET-06 mandates that refused deliveries be routed to the returns queue to initiate return-to-sender and refund review. The internal record is degraded (value, tier, and SLA unavailable), so the escalation thresholds in POL-ESC-01 (value >$2,000 or Platinum tier with <24h SLA) are not met. No validated address candidate exists, but the root cause is refusal, not an address problem.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 3,
+          "input_tokens": 2838,
+          "output_tokens": 715,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004983
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.01254,
+      "latency_s": 34.859,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a WEATHER_DELAY exception with ground transport suspended and ETA revised +72h, matching the customer\u2019s report. Weather delays are normally informational and eligible for auto-resolution via proactive customer notification (POL-WX-05). However, the internal record shows a declared shipment value of $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. Policy states that escalation overrides any automation eligibility, so this ticket must be decided by a human operator despite the straightforward weather exception.",
+        "usage": {
+          "model": "accounts/fireworks/models/kimi-k2p6",
+          "api_calls": 4,
+          "input_tokens": 4068,
+          "output_tokens": 2824,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.01254
+        }
+      }
+    }
+  ]
+}

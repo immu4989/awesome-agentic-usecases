@@ -13,6 +13,7 @@ baseline results for the same 30 scenarios.
 from __future__ import annotations
 
 import copy
+import hashlib
 
 from exception_triage_agent.world import (
     ESCALATION_PLATINUM_SLA_H,
@@ -61,9 +62,20 @@ def _flip_value(shipment: dict) -> dict:
 
 
 def _wrong_code(shipment: dict) -> str:
-    codes = [c for c in EXCEPTIONS if c != shipment["exception_code"]]
-    # deterministic pick so scenarios stay reproducible
-    return codes[hash(shipment["tracking_id"]) % len(codes)]
+    """A conflicting exception code that actually changes the answer.
+
+    Two constraints, both learned from a failing test. The candidate must route to a
+    *different queue* — several codes share one (DAMAGED_IN_TRANSIT and LOST_IN_TRANSIT are
+    both carrier-claims), and swapping within a queue corrupts the record without moving the
+    decision, which measures nothing. And the pick must use a stable hash: Python's built-in
+    `hash()` is salted per process, so it would have made the scenarios irreproducible
+    across runs and quietly broken the repo's determinism bar.
+    """
+    true_code = shipment["exception_code"]
+    true_queue = EXCEPTIONS[true_code][0]
+    codes = [c for c in EXCEPTIONS if EXCEPTIONS[c][0] != true_queue]
+    digest = hashlib.sha256(shipment["tracking_id"].encode()).digest()
+    return codes[digest[0] % len(codes)]
 
 
 def served_view(scenario: Scenario, archetype: str) -> dict:

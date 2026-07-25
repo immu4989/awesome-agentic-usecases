@@ -1,0 +1,4491 @@
+{
+  "backend": "together",
+  "model": "Qwen/Qwen3.7-Plus",
+  "arm": "drift",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "acted_on_stale": 0.1444,
+    "action_accuracy": 0.6667,
+    "exact_match": 0.6333,
+    "noticed": 0.4556,
+    "queue_accuracy": 0.9667,
+    "submitted": 1.0
+  },
+  "metric_ci95": {
+    "acted_on_stale": [
+      0.0556,
+      0.2556
+    ],
+    "action_accuracy": [
+      0.5111,
+      0.8111
+    ],
+    "exact_match": [
+      0.4778,
+      0.7889
+    ],
+    "noticed": [
+      0.2889,
+      0.6222
+    ],
+    "queue_accuracy": [
+      0.9,
+      1.0
+    ],
+    "submitted": [
+      1.0,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.002693,
+  "total_cost_usd": 0.2424,
+  "p50_latency_s": 26.05,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002484,
+      "latency_s": 25.263,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms an ADDRESS_INVALID exception as of 2026-07-14; the package is held at the destination facility pending correction. The internal record shows has_validated_address_candidate=false, so per POL-ADDR-02 the ticket cannot be auto-resolved and must be routed to the address-correction queue for manual research. Shipment value ($367.63) is below the $2,000 escalation threshold, customer is Gold tier (not Platinum), and 72 SLA hours remain, so no escalation is warranted.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3886,
+          "output_tokens": 969,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002484
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00262,
+      "latency_s": 26.104,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The shipment is held by customs at the port of entry (exception code CUSTOMS_HOLD, confirmed by carrier scan history on 2026-07-14). Per POL-CUST-03, customs holds must route to the customs-clearance queue and never be auto-resolved. However, the declared value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01, requiring escalation to a human operator. The customer's claim that the package is \"completely lost\" is inaccurate \u2014 it is in a customs hold awaiting broker documentation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4082,
+          "output_tokens": 1026,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00262
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00278,
+      "latency_s": 29.187,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history confirms the package was damaged during sortation (exception code DAMAGED_IN_TRANSIT, disposition: \"Package reported damaged during sortation. Contents inspection filed.\") on 2026-07-14. Per POL-CLM-04, confirmed damage in transit routes to carrier-claims with the carrier scan history as evidence. The declared value is $193.99 (below the $2,000 escalation threshold per POL-ESC-01), the customer is standard tier, and 77 SLA hours remain, so no escalation is required. The internal record's CUSTOMS_HOLD code appears stale or incorrect relative to the carrier's authoritative status.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3939,
+          "output_tokens": 1187,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00278
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002699,
+      "latency_s": 26.95,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier (NORTHFREIGHT) has confirmed the shipment PA9845919668 is presumed lost after 10+ days with no scan activity (exception code LOST_IN_TRANSIT). The declared value is $266.55, which is below the $2,000 escalation threshold per POL-ESC-01, and the customer is standard tier, so no human escalation is required. Per POL-CLM-04, confirmed loss in transit routes to carrier-claims with the carrier's scan history as evidence. The customer's request for a refund or replacement will be addressed through the claims process.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3945,
+          "output_tokens": 1122,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002699
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002433,
+      "latency_s": 23.132,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms the delivery was refused by the recipient (exception code DELIVERY_REFUSED, package returning to origin). Per POL-RET-06, refused deliveries route to the returns queue. However, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. Escalation overrides automation eligibility, so this ticket must be escalated to a human operator for return-to-sender and refund review.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3875,
+          "output_tokens": 932,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002433
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002286,
+      "latency_s": 20.63,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a WEATHER_DELAY exception (ground transport suspended due to severe weather, ETA revised +72h). The shipment value is $233.80 (below the $2,000 escalation threshold) and the customer is standard tier, so no escalation is required. Per POL-WX-05, weather delays are informational and should be handled by sending the customer a proactive notification with the revised ETA, then auto-resolving via the customer-notification workflow.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3892,
+          "output_tokens": 813,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002286
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002121,
+      "latency_s": 18.932,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms an ADDRESS_INVALID exception (delivery attempted, address not found, held at destination facility). The internal shipment record shows a validated address candidate is available from the address service. Per policy POL-ADDR-02, invalid-address exceptions with a validated candidate may be auto-resolved by applying the candidate. No manual research is needed.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4020,
+          "output_tokens": 652,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002121
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002915,
+      "latency_s": 29.729,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The customer reported the shipment as lost, but the carrier's authoritative scan history shows a CUSTOMS_HOLD disposition at the port of entry awaiting broker documentation (last scan 2026-07-15). Per POL-CUST-03, customs holds always route to the customs-clearance queue and must never be auto-resolved since brokers own the resolution. The shipment value ($121.55) and customer tier (standard) do not trigger any escalation thresholds under POL-ESC-01.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4025,
+          "output_tokens": 1271,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002915
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002518,
+      "latency_s": 23.399,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the package was damaged in transit during sortation (exception code DAMAGED_IN_TRANSIT, disposition \"Package reported damaged during sortation. Contents inspection filed\"). Per POL-CLM-04, confirmed damage routes to carrier-claims with carrier scan history as evidence. The declared value is $567.90 (below the $2,000 escalation threshold in POL-ESC-01) and the customer is standard tier with 83 SLA hours remaining, so no human escalation is required.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3938,
+          "output_tokens": 983,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002518
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002252,
+      "latency_s": 20.805,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the shipment is lost in transit (exception code LOST_IN_TRANSIT, last scan departed origin hub on 2026-07-10 with no activity for 10+ days). The declared value is $3,800, which exceeds the $2,000 escalation threshold per POL-ESC-01, requiring a human operator to handle the claim. The carrier's scan history provides the necessary evidence for the loss claim. Although the customer is Platinum tier with 30 SLA hours remaining (not triggering the second escalation condition), the value threshold alone mandates escalation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3907,
+          "output_tokens": 783,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002252
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002329,
+      "latency_s": 21.67,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms the delivery was refused by the recipient (exception code DELIVERY_REFUSED, package returning to origin). Shipment value is $348.21 (below the $2,000 escalation threshold) and customer tier is standard, so no escalation is triggered. Per POL-RET-06, refused deliveries route to the returns queue to initiate return-to-sender and refund review.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3874,
+          "output_tokens": 851,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002329
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00273,
+      "latency_s": 26.721,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO1368871838 is confirmed delayed by a carrier-verified weather exception (WEATHER_DELAY, ETA +72h). While POL-WX-05 allows weather delays to be auto-resolved via customer-notification, POL-ESC-01 mandates escalation to a human when the declared value exceeds $2,000. The shipment's declared value is $3,800, triggering mandatory escalation. A human should handle the proactive customer communication regarding the revised ETA and the customer's Friday delivery need.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3990,
+          "output_tokens": 1135,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00273
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002591,
+      "latency_s": 24.717,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history shows an ADDRESS_INVALID exception (\"Delivery attempted; address not found. Held at destination facility pending correction\"), contradicting the internal record's CUSTOMS_HOLD code. The address service has no validated candidate address available, so per POL-ADDR-02 the shipment must be routed to the address-correction queue for manual research. Shipment value ($394.81) and customer tier (standard) do not meet escalation thresholds per POL-ESC-01.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4034,
+          "output_tokens": 1016,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002591
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003286,
+      "latency_s": 30.509,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the shipment (VE7518208696) is held by customs at the port of entry awaiting broker documentation \u2014 it is not lost. The internal record corroborates with exception code CUSTOMS_HOLD. Shipment value is $763.07 (below the $2,000 escalation threshold) and the customer is Standard tier, so no escalation conditions per POL-ESC-01 are met. Per POL-CUST-03, customs holds always route to the customs-clearance queue and must never be auto-resolved, as brokers own the resolution.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5752,
+          "output_tokens": 1129,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003286
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002595,
+      "latency_s": 25.586,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the package was damaged during sortation (exception code DAMAGED_IN_TRANSIT, disposition \"Package reported damaged during sortation. Contents inspection filed.\"). Per POL-CLM-04, confirmed damage routes to carrier-claims. Per POL-ESC-01, the declared shipment value of $3,800 exceeds the $2,000 escalation threshold, requiring human review. The customer's order is not intact and a damage claim must be processed with carrier evidence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3902,
+          "output_tokens": 1052,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002595
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002191,
+      "latency_s": 20.693,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the shipment has had no activity since departing the origin hub on 2026-07-11, and the carrier has already initiated a trace with a disposition of \"presumed lost\" (exception code LOST_IN_TRANSIT). The declared value is $612.43, which does not exceed the $2,000 escalation threshold (POL-ESC-01), and the customer is Gold tier (not Platinum), so no escalation is required. This is a confirmed lost-in-transit case that needs a carrier claim filed, so it should be routed to the carrier-claims queue.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3879,
+          "output_tokens": 742,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002191
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002317,
+      "latency_s": 21.722,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the recipient refused delivery (exception code DELIVERY_REFUSED, disposition \"Package returning to origin facility\"), which matches the customer's report. Per POL-RET-06, refused deliveries route to the returns queue to initiate return-to-sender and refund review. The shipment value is $900 (below the $2,000 escalation threshold in POL-ESC-01), the customer is standard tier, and 36 hours remain on the SLA, so no escalation is required.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4070,
+          "output_tokens": 793,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002317
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.004368,
+      "latency_s": 51.201,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception code ADDRESS_INVALID as the primary blocker, not the weather delay the customer reported. The address service has a validated candidate address available. Per POL-ADDR-02, invalid-address exceptions with a validated candidate may be auto-resolved by applying the candidate. The customer is standard tier with a $272.95 declared value and 45 SLA hours remaining, so no escalation thresholds (POL-ESC-01) are triggered. The carrier's weather delay (WEATHER_DELAY, +72h ETA revision) is a secondary factor but does not change the resolution path \u2014 the address must be corrected first for the shipment to proceed.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4099,
+          "output_tokens": 2388,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.004368
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002466,
+      "latency_s": 24.035,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms an ADDRESS_INVALID exception with the package held at the destination facility pending correction. The internal shipment record shows no validated candidate address from the address service. Per POL-ADDR-02, without a validated candidate the ticket must be routed to the address-correction queue for manual research. The declared value ($1,025.55) is below the $2,000 escalation threshold and the customer is Gold tier (not Platinum), so POL-ESC-01 escalation criteria are not met.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3926,
+          "output_tokens": 945,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002466
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002442,
+      "latency_s": 23.674,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier confirms a CUSTOMS_HOLD at the port of entry awaiting broker documentation, and the internal record corroborates this with exception code CUSTOMS_HOLD. Per POL-CUST-03, customs holds always route to the customs-clearance queue and must never be auto-resolved. Per POL-ESC-01, the declared value of $3,800 exceeds the $2,000 escalation threshold, requiring a human operator to handle the case. The customer's description of \"held for processing\" misstates the actual situation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3906,
+          "output_tokens": 931,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002442
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002636,
+      "latency_s": 27.562,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms the package was damaged during sortation (exception code DAMAGED_IN_TRANSIT, disposition \"Package reported damaged during sortation. Contents inspection filed.\"). Per POL-CLM-04, confirmed damage routes to carrier-claims with carrier scans as evidence. The declared value is $384.96 (below the $2,000 escalation threshold in POL-ESC-01) and the Platinum-tier customer has 37 SLA hours remaining (above the 24-hour escalation trigger), so no human escalation is required. The case is routed to carrier-claims for claim processing.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3914,
+          "output_tokens": 1081,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002636
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002647,
+      "latency_s": 27.226,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the shipment is lost in transit (exception code LOST_IN_TRANSIT, last scan 12+ days ago with \"presumed lost\" disposition). Per POL-CLM-04, confirmed loss routes to carrier-claims with the carrier scan history as evidence. The declared value is $27.19 and the customer is Gold tier, so neither escalation threshold in POL-ESC-01 is triggered (requires >$2,000 or Platinum tier with <24 hrs SLA). The ticket should be routed to carrier-claims specialists to process the loss claim and arrange a refund or replacement for the customer.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3944,
+          "output_tokens": 1082,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002647
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003324,
+      "latency_s": 36.277,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history confirms the package was refused at delivery (DELIVERY_REFUSED) and is returning to origin, which aligns with the customer's report that the front desk refused the parcel. The internal record's CUSTOMS_HOLD exception code is contradicted by the carrier evidence and appears to be a data discrepancy. Per POL-RET-06, refused deliveries route to the returns queue to initiate return-to-sender and refund review. No escalation is required: the customer is Platinum tier but 47 hours remain on the SLA (above the 24-hour threshold), and the declared value of $207.11 is well below the $2,000 escalation threshold (POL-ESC-01).",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4067,
+          "output_tokens": 1580,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003324
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00262,
+      "latency_s": 27.8,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms a WEATHER_DELAY exception with ETA revised +72h due to severe weather suspending ground transport. Shipment value is $116.10 (below $2,000 escalation threshold) and customer is Gold tier (not Platinum), so POL-ESC-01 escalation does not apply. Per POL-WX-05, weather delays are informational and may be auto-resolved via the customer-notification workflow by sending the customer a proactive notification with the revised ETA.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4139,
+          "output_tokens": 1012,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00262
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00261,
+      "latency_s": 30.632,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier confirmed an ADDRESS_INVALID exception (delivery attempted, address not found, held at destination facility). A validated candidate address exists, which under POL-ADDR-02 would normally permit auto-resolution. However, the declared shipment value is $3,800, exceeding the $2,000 threshold in POL-ESC-01, which mandates escalation to a human operator and explicitly overrides any automation eligibility. The customer is standard tier with 69 SLA hours remaining, so the Platinum/SLA condition does not apply, but the value threshold alone triggers escalation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4043,
+          "output_tokens": 1028,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00261
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00268,
+      "latency_s": 32.544,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the shipment (NO5030181318) is held by customs at the port of entry awaiting broker documentation, matching the internal exception code CUSTOMS_HOLD. Per POL-CUST-03, customs holds always route to the customs-clearance queue and must never be auto-resolved. Per POL-ESC-01, escalation to a human is not required because the declared value ($94.63) does not exceed $2,000 and although the customer is Platinum tier, 81 hours remain on the SLA (well above the 24-hour threshold). The ticket is routed to customs-clearance for broker documentation resolution.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3902,
+          "output_tokens": 1118,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00268
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00288,
+      "latency_s": 35.602,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the package was damaged in transit during sortation (exception code DAMAGED_IN_TRANSIT, scan dated 2026-07-14). Per POL-CLM-04, confirmed damage routes to carrier-claims with the carrier scan history as evidence. The shipment value is $289.08 and the customer is standard tier, so POL-ESC-01 escalation thresholds are not triggered. The ticket is routed to carrier-claims for claim filing.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4128,
+          "output_tokens": 1218,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00288
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002863,
+      "latency_s": 41.877,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history confirms the shipment (NO6059041472) is LOST_IN_TRANSIT with no scan activity for 10+ days and a trace initiated. Although the internal record shows DELIVERY_REFUSED, the carrier data is authoritative and indicates loss. The declared value is $439.71 (below the $2,000 escalation threshold) and the customer is standard tier, so no escalation is required. Per POL-CLM-04, confirmed loss in transit routes to carrier-claims with the carrier's scan history as evidence. The customer's request for a refund/replacement will be addressed through the claims process.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4060,
+          "output_tokens": 1222,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002863
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00315,
+      "latency_s": 41.259,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history confirms the delivery was refused on 2026-07-14 and the package is returning to origin (exception code DELIVERY_REFUSED). Per POL-RET-06, refused deliveries route to the returns queue. However, the refreshed internal record shows a declared value of $2,294.12, which exceeds the $2,000 escalation threshold in POL-ESC-01. Therefore, this ticket must be escalated to a human operator for return-to-sender and refund review.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5599,
+          "output_tokens": 1061,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00315
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002676,
+      "latency_s": 33.132,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier confirms a weather delay (WEATHER_DELAY exception, ground transport suspended, ETA revised +72h). Per POL-WX-05, weather delays are normally auto-resolvable via the customer-notification workflow with a proactive revised-ETA notice. However, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. POL-ESC-01 explicitly states that escalation overrides any automation eligibility, so this ticket must be routed to a human operator despite being a weather-related informational delay.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4042,
+          "output_tokens": 1080,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002676
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00264,
+      "latency_s": 30.528,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO5071050724 has an ADDRESS_INVALID exception confirmed by both the internal record and VELOX carrier scans (held at destination facility since 2026-07-14). The address service has no validated candidate address (has_validated_address_candidate=false), so per POL-ADDR-02 this cannot be auto-resolved and must be routed to the address-correction queue for manual research. Shipment value ($367.63) and customer tier (Gold) do not meet escalation thresholds under POL-ESC-01.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3910,
+          "output_tokens": 1085,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00264
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00229,
+      "latency_s": 24.431,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The customer reports the shipment as \"lost,\" but the internal record (exception code CUSTOMS_HOLD) and the carrier's authoritative scan history both confirm the package is held by customs at the port of entry awaiting broker documentation since 2026-07-14. Per POL-CUST-03, customs holds always route to the customs-clearance queue and must never be auto-resolved. The declared value is $299.58 (below the $2,000 escalation threshold) and the customer is standard tier with 76 SLA hours remaining, so no human escalation is required per POL-ESC-01. Routing to customs-clearance for broker resolution.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3912,
+          "output_tokens": 811,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00229
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00278,
+      "latency_s": 28.54,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history confirms the package was damaged during sortation (exception code DAMAGED_IN_TRANSIT, disposition: \"Package reported damaged during sortation. Contents inspection filed.\") on 2026-07-14. Per POL-CLM-04, confirmed damage in transit routes to carrier-claims with the carrier scan history as evidence. The declared value is $193.99 (below the $2,000 escalation threshold per POL-ESC-01), the customer is standard tier, and 77 SLA hours remain, so no escalation is required. The internal record's CUSTOMS_HOLD code appears stale or incorrect relative to the carrier's authoritative status.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3939,
+          "output_tokens": 1187,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00278
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002714,
+      "latency_s": 28.728,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the shipment PA9845919668 is presumed lost in transit (LOST_IN_TRANSIT exception, no scan activity for 10+ days, trace initiated). The declared value is $266.55, which is below the $2,000 escalation threshold, and the customer is standard tier, so no human escalation is required per POL-ESC-01. Per POL-CLM-04, confirmed loss in transit routes to carrier-claims with the carrier's scan history as evidence. The customer is requesting a refund or replacement, which the carrier-claims specialists will process.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3945,
+          "output_tokens": 1134,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002714
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002379,
+      "latency_s": 23.562,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms delivery was refused by the recipient (exception code DELIVERY_REFUSED, package returning to origin). Per POL-RET-06, refused deliveries route to the returns queue. However, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. Escalation overrides automation eligibility, so this ticket must be escalated to a human operator for return-to-sender and refund review given the high value.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3875,
+          "output_tokens": 890,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002379
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002664,
+      "latency_s": 26.615,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA8717592285 is delayed due to a confirmed weather exception (WEATHER_DELAY) per both the internal record and carrier scan history. The carrier revised the ETA +72h. Per POL-WX-05, weather delays are informational and may be auto-resolved via the customer-notification workflow by sending the customer a proactive notification with the revised ETA. The shipment value ($233.80) is below the $2,000 escalation threshold and the customer is standard tier, so POL-ESC-01 does not apply.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3878,
+          "output_tokens": 1112,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002664
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002728,
+      "latency_s": 26.676,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier confirms an ADDRESS_INVALID exception with the package held at the destination facility. A validated candidate address exists, which under POL-ADDR-02 would normally permit auto-resolution. However, the declared shipment value is $3,800, exceeding the $2,000 threshold in POL-ESC-01, which mandates escalation to a human operator and explicitly overrides any automation eligibility. The customer is standard tier with 35 SLA hours remaining, so no additional escalation triggers apply, but the value threshold alone requires human review before the address correction is applied.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4256,
+          "output_tokens": 1067,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002728
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003067,
+      "latency_s": 33.263,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The customer reported the shipment as lost, but the carrier's authoritative scan history shows a CUSTOMS_HOLD exception as of 2026-07-15 with disposition \"Held by customs at port of entry. Awaiting broker documentation.\" Per POL-CUST-03, customs holds always route to the customs-clearance queue and must never be auto-resolved. The declared value is $121.55 (below the $2,000 escalation threshold) and the customer is standard tier with 33 SLA hours remaining, so no escalation is required per POL-ESC-01. The customs-clearance specialists will coordinate with the broker to provide the required documentation and release the shipment.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4112,
+          "output_tokens": 1368,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003067
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002519,
+      "latency_s": 24.146,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record (exception_code: DAMAGED_IN_TRANSIT) and the carrier's authoritative scan history confirm the package was damaged during sortation on 2026-07-15. Per POL-CLM-04, confirmed damage in transit routes to carrier-claims with the carrier scan history as evidence. The shipment value of $567.90 is below the $2,000 escalation threshold (POL-ESC-01), the customer is standard tier (not Platinum), and 83 SLA hours remain, so no human escalation is required. Routing to carrier-claims for claim processing.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4019,
+          "output_tokens": 963,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002519
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002477,
+      "latency_s": 24.782,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The shipment NO5739655724 is confirmed lost in transit per both the internal record (exception code LOST_IN_TRANSIT) and the carrier's authoritative scan history (no activity since departing origin hub on 2026-07-10, formal exception filed 2026-07-14). The declared value is $3,800, which exceeds the $2,000 escalation threshold per POL-ESC-01, requiring mandatory escalation to a human operator. The customer (Platinum tier) correctly reported the shipment as lost. Routed to carrier-claims for loss claim processing.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3937,
+          "output_tokens": 951,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002477
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002319,
+      "latency_s": 22.298,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms the delivery was refused by the recipient (exception code DELIVERY_REFUSED, package returning to origin). Shipment value is $348.21 (below the $2,000 escalation threshold) and customer tier is standard, so no escalation is triggered. Per POL-RET-06, refused deliveries route to the returns queue to initiate return-to-sender and refund review.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3874,
+          "output_tokens": 843,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002319
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002588,
+      "latency_s": 25.078,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO1368871838 is confirmed delayed by a weather exception (WEATHER_DELAY, ETA +72h). While POL-WX-05 allows weather delays to be auto-resolved via customer-notification, POL-ESC-01 mandates escalation to a human when the declared value exceeds $2,000. This shipment's declared value is $3,800, triggering mandatory escalation. The customer also has a Friday deadline and 65 hours of SLA remaining, which a human should evaluate given the revised ETA.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3990,
+          "output_tokens": 1024,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002588
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002664,
+      "latency_s": 26.134,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history confirms the package is held due to ADDRESS_INVALID (\"Delivery attempted; address not found. Held at destination facility pending correction\"). The internal record's CUSTOMS_HOLD code is inconsistent with the carrier data. No validated candidate address exists from the address service, so per POL-ADDR-02 the ticket must be routed to the address-correction queue for manual research. Shipment value ($394.81) is below the $2,000 escalation threshold, customer is standard tier, and 49 SLA hours remain, so no escalation is required.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4034,
+          "output_tokens": 1073,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002664
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002467,
+      "latency_s": 22.913,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the package is held by customs at the port of entry awaiting broker documentation (exception code CUSTOMS_HOLD since 2026-07-14). Per POL-CUST-03, customs holds always route to the customs-clearance queue and must never be auto-resolved. The declared value ($763.07) is below the $2,000 escalation threshold and the customer is standard tier with 28 SLA hours remaining, so no human escalation is triggered per POL-ESC-01. The customer's claim that the package is \"lost\" is incorrect \u2014 it is in a customs hold requiring broker action.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3930,
+          "output_tokens": 945,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002467
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00251,
+      "latency_s": 24.2,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the package was damaged during sortation (exception code DAMAGED_IN_TRANSIT, scan dated 2026-07-15). Per POL-CLM-04, confirmed damage routes to carrier-claims. However, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01, requiring escalation to a human operator. The customer's concern is valid \u2014 the package was indeed damaged in transit.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3889,
+          "output_tokens": 989,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00251
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002559,
+      "latency_s": 24.964,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record (exception code LOST_IN_TRANSIT) and the carrier's authoritative scan history (last scan 2026-07-14, disposition \"presumed lost\" after 10+ days with no activity) confirm this shipment is lost. The declared value is $612.43, which is below the $2,000 escalation threshold, and the customer is Gold tier with 54 SLA hours remaining, so no human escalation is required per POL-ESC-01. The ticket should be routed to the carrier-claims queue for specialists to file a loss claim with NORTHFREIGHT.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3990,
+          "output_tokens": 1002,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002559
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00234,
+      "latency_s": 21.982,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the recipient refused delivery on 2026-07-14 and the package is returning to origin (exception code DELIVERY_REFUSED). The shipment value is $900 (below the $2,000 escalation threshold) and the customer is standard tier with 36 hours SLA remaining, so no escalation is required. Per POL-RET-06, refused deliveries route to the returns queue to initiate return-to-sender and refund review.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3967,
+          "output_tokens": 836,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00234
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003691,
+      "latency_s": 40.925,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record flags ADDRESS_INVALID as the exception code, but the address service has a validated candidate address available. Per POL-ADDR-02, this may be auto-resolved by applying the candidate. The carrier also reports a WEATHER_DELAY (+72h ETA revision), which per POL-WX-05 is informational and can be handled via customer-notification. The customer is standard tier with a $272.95 declared value and 45 SLA hours remaining, so no escalation thresholds (POL-ESC-01) are triggered. The primary blocker is the invalid address; resolving it via automation is the correct disposition.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4047,
+          "output_tokens": 1872,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003691
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002676,
+      "latency_s": 26.245,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier VELOX confirms an ADDRESS_INVALID exception with the package held at the Miami destination facility. The internal record shows no validated candidate address from the address service. Per POL-ADDR-02, auto-resolution requires a validated candidate; without one, the ticket must be routed to the address-correction queue for manual research. Per POL-ESC-01, escalation is not triggered: declared value ($1,025.55) is below the $2,000 threshold and the customer is Gold tier (not Platinum), so no escalation override applies.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4069,
+          "output_tokens": 1073,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002676
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002442,
+      "latency_s": 24.104,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier confirms a CUSTOMS_HOLD at the port of entry awaiting broker documentation, and the internal record corroborates this with exception code CUSTOMS_HOLD. Per POL-CUST-03, customs holds always route to the customs-clearance queue and must never be auto-resolved. Per POL-ESC-01, the declared value of $3,800 exceeds the $2,000 escalation threshold, requiring a human operator to handle the case. The customer's description of \"held for processing\" misstates the actual situation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3906,
+          "output_tokens": 931,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002442
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002384,
+      "latency_s": 22.434,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the package was damaged during sortation (exception code DAMAGED_IN_TRANSIT, disposition: \"Package reported damaged during sortation. Contents inspection filed.\"). Per POL-CLM-04, confirmed damage in transit routes to carrier-claims with the carrier scan history as evidence. Escalation is not required per POL-ESC-01: the declared value is $384.96 (below the $2,000 threshold), and although the customer is Platinum tier, 37 hours remain on the SLA (above the 24-hour trigger). The ticket is routed to carrier-claims for claim processing.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3914,
+          "output_tokens": 884,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002384
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002788,
+      "latency_s": 29.106,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment VE3882590715 is confirmed LOST_IN_TRANSIT per both the internal exception code and the carrier's scan history (last scan July 14: \"No scan activity for 10+ days. Trace initiated; presumed lost.\"). Declared value is $27.19 and customer is Gold tier, so no escalation thresholds are triggered (POL-ESC-01 requires >$2,000 value or Platinum tier with <24h SLA). Per POL-CLM-04, confirmed loss routes to carrier-claims with carrier scan history as evidence. Routing to carrier-claims for claim processing.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3944,
+          "output_tokens": 1192,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002788
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003323,
+      "latency_s": 35.888,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history confirms the package was refused at delivery (DELIVERY_REFUSED) and is returning to origin, which aligns with the customer's report that the front desk refused the parcel. The internal record's CUSTOMS_HOLD exception code is contradicted by the carrier evidence and appears to be a data discrepancy. Per POL-RET-06, refused deliveries route to the returns queue to initiate return-to-sender and refund review. No escalation is required: the customer is Platinum tier but 47 hours remain on the SLA (above the 24-hour threshold), and the declared value of $207.11 is well below the $2,000 escalation threshold (POL-ESC-01).",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4067,
+          "output_tokens": 1579,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003323
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002511,
+      "latency_s": 24.154,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms a WEATHER_DELAY exception (ground transport suspended due to severe weather, ETA revised +72h). Per POL-WX-05, weather delays are informational and should be handled by sending the customer a proactive notification with the revised ETA. No escalation thresholds are triggered (declared value and customer tier are unavailable/null). The customer-notification workflow can auto-resolve this ticket.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3914,
+          "output_tokens": 983,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002511
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00264,
+      "latency_s": 26.39,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier confirmed an ADDRESS_INVALID exception (delivery attempted, address not found, held at destination facility). A validated candidate address exists, which under POL-ADDR-02 would normally permit auto-resolution. However, the declared shipment value is $3,800, exceeding the $2,000 threshold in POL-ESC-01, which mandates escalation to a human operator and explicitly overrides any automation eligibility. The customer is standard tier with 69 SLA hours remaining, so the Platinum/SLA condition does not apply, but the value threshold alone triggers escalation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4043,
+          "output_tokens": 1052,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00264
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002522,
+      "latency_s": 24.99,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the shipment is held by customs at the port of entry awaiting broker documentation (exception code CUSTOMS_HOLD). Per POL-CUST-03, customs holds always route to the customs-clearance queue and must never be auto-resolved. The shipment value is $94.63 (below the $2,000 escalation threshold) and the Platinum-tier customer has 81 SLA hours remaining (above the 24-hour escalation threshold per POL-ESC-01), so no human escalation is required. Routing to customs-clearance specialists for broker documentation resolution.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3902,
+          "output_tokens": 995,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002522
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002441,
+      "latency_s": 23.138,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the package was damaged during sortation (exception code DAMAGED_IN_TRANSIT), which per POL-CLM-04 routes to carrier-claims. However, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold defined in POL-ESC-01. Per policy, escalation overrides any automation eligibility, so this ticket must be escalated to a human operator for the damage claim decision.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3989,
+          "output_tokens": 910,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002441
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002798,
+      "latency_s": 28.4,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history confirms the shipment is LOST_IN_TRANSIT (no scan activity for 10+ days, trace initiated, presumed lost). The declared value is $439.71, which is below the $2,000 escalation threshold, and the customer is standard tier, so no human escalation is required. Per POL-CLM-04, confirmed loss in transit routes to carrier-claims with the carrier scan history as evidence. The customer's request for a refund or replacement will be addressed through the claims process.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4007,
+          "output_tokens": 1184,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002798
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003196,
+      "latency_s": 29.811,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history confirms DELIVERY_REFUSED \u2014 the front desk refused the parcel and it is returning to origin. Per POL-RET-06, refused deliveries route to the returns queue. However, the refreshed shipment record shows a declared value of $2,294.12, which exceeds the $2,000 escalation threshold in POL-ESC-01, requiring a human operator to decide on return-to-sender and refund review. Customer tier is standard and SLA has 85 hours remaining, so no other escalation criteria apply, but the value threshold is dispositive.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5634,
+          "output_tokens": 1088,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003196
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002601,
+      "latency_s": 26.05,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO1701138477 is confirmed delayed by severe weather (WEATHER_DELAY exception, carrier revised ETA +72h). Per POL-WX-05, weather delays are normally handled via proactive customer notification and auto-resolved. However, the declared value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. Since escalation overrides automation eligibility, this ticket must be escalated to a human operator to decide on the appropriate customer communication and any expedited recovery options given the customer's Friday deadline.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4044,
+          "output_tokens": 1021,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002601
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002536,
+      "latency_s": 25.669,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms an ADDRESS_INVALID exception with the package held at the destination facility. The internal record shows no validated candidate address from the address service, so per POL-ADDR-02 this cannot be auto-resolved and must be routed to the address-correction queue for manual research. Shipment value ($367.63) is below the $2,000 escalation threshold, customer is Gold tier (not Platinum), and 72 SLA hours remain, so no escalation is required per POL-ESC-01.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3888,
+          "output_tokens": 1009,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002536
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00262,
+      "latency_s": 25.619,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The shipment is held by customs at the port of entry (exception code CUSTOMS_HOLD, confirmed by carrier scan history on 2026-07-14). Per POL-CUST-03, customs holds must route to the customs-clearance queue and never be auto-resolved. However, the declared value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01, requiring escalation to a human operator. The customer's claim that the package is \"completely lost\" is inaccurate \u2014 it is in a customs hold awaiting broker documentation.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4082,
+          "output_tokens": 1026,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00262
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002757,
+      "latency_s": 27.515,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history confirms the package was damaged during sortation (DAMAGED_IN_TRANSIT, 2026-07-14) with a contents inspection filed. Per POL-CLM-04, confirmed damage in transit routes to carrier-claims. The declared value of $193.99 is below the $2,000 escalation threshold (POL-ESC-01), the customer is standard tier, and 77 SLA hours remain, so no human escalation is required. Routing to carrier-claims specialists to file a claim using the carrier scan history as evidence.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3939,
+          "output_tokens": 1169,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002757
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002537,
+      "latency_s": 24.864,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the shipment PA9845919668 is LOST_IN_TRANSIT \u2014 the last scan was an EXCEPTION on 2026-07-14 with disposition \"No scan activity for 10+ days. Trace initiated; presumed lost.\" The internal record corroborates this with exception code LOST_IN_TRANSIT. The declared value is $266.55 (under the $2,000 escalation threshold) and the customer is standard tier, so policy does not require escalation to a human. The customer is requesting a refund or replacement for a confirmed lost package, which falls squarely within the carrier-claims queue for specialist handling.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3896,
+          "output_tokens": 1008,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002537
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002405,
+      "latency_s": 22.811,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms the delivery was refused by the recipient and the package is returning to origin, which per POL-RET-06 routes to the returns queue. However, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. Escalation overrides automation eligibility, so this ticket must be escalated to a human operator for return-to-sender and refund review.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3976,
+          "output_tokens": 885,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002405
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002637,
+      "latency_s": 26.93,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA8717592285 has a carrier-confirmed WEATHER_DELAY exception (ground transport suspended, ETA revised +72h). Customer is standard tier with a $233.80 declared value, so no escalation thresholds (POL-ESC-01) are triggered. Per POL-WX-05, weather delays are informational and may be auto-resolved via the customer-notification workflow by sending a proactive notification with the revised ETA.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3878,
+          "output_tokens": 1091,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002637
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002637,
+      "latency_s": 25.148,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The shipment NO5797889912 is held at the destination facility with an ADDRESS_INVALID exception. A validated candidate address exists, which under POL-ADDR-02 would normally permit auto-resolution. However, the declared shipment value is $3,800, exceeding the $2,000 threshold in POL-ESC-01, which mandates escalation to a human operator and explicitly overrides any automation eligibility. The ticket must be escalated to a human in the address-correction queue to approve and apply the candidate address correction.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4168,
+          "output_tokens": 1018,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002637
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003092,
+      "latency_s": 31.591,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The customer reported the shipment as lost, but the carrier's authoritative scan history confirms it is under a CUSTOMS_HOLD at the port of entry awaiting broker documentation (last scan 2026-07-15). Per POL-CUST-03, customs holds always route to the customs-clearance queue and must never be auto-resolved. The shipment value ($121.55) and customer tier (standard) do not trigger any escalation thresholds under POL-ESC-01.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4161,
+          "output_tokens": 1375,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003092
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002341,
+      "latency_s": 22.356,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the package was damaged during sortation (exception code DAMAGED_IN_TRANSIT, disposition \"Package reported damaged during sortation. Contents inspection filed\"). Per POL-CLM-04, confirmed damage in transit routes to carrier-claims with the carrier's scan history as evidence. The declared value is $567.90 and the customer is standard tier with 83 SLA hours remaining, so no escalation threshold is triggered per POL-ESC-01 (requires >$2000 value or Platinum tier with <24h SLA). Routing to carrier-claims for claim filing.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3924,
+          "output_tokens": 848,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002341
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002491,
+      "latency_s": 25.452,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier has confirmed the shipment is lost in transit (exception code LOST_IN_TRANSIT, no scans since July 10, trace initiated). The declared value is $3,800, which exceeds the $2,000 escalation threshold defined in POL-ESC-01, requiring a human operator to handle the claim decision. The customer is Platinum tier, adding further sensitivity to the resolution.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3881,
+          "output_tokens": 976,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002491
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002479,
+      "latency_s": 23.596,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history and internal shipment record both confirm DELIVERY_REFUSED \u2014 the front desk refused the parcel and it is returning to origin. Per POL-RET-06, refused deliveries route to the returns queue for return-to-sender and refund review. No escalation criteria are met: declared value is $348.21 (under $2,000 threshold), customer tier is standard (not Platinum), and 36 SLA hours remain.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3899,
+          "output_tokens": 962,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002479
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002801,
+      "latency_s": 28.371,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO1368871838 is confirmed delayed by a carrier-verified weather event (WEATHER_DELAY, ETA revised +72h). While POL-WX-05 allows weather delays to be auto-resolved via customer-notification, POL-ESC-01 mandates escalation to a human when the declared value exceeds $2,000. The shipment's declared value is $3,800, triggering mandatory escalation. The customer also expressed a Friday delivery need, which the revised ETA may not meet, further warranting human review.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4146,
+          "output_tokens": 1152,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002801
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002543,
+      "latency_s": 25.272,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history shows an ADDRESS_INVALID exception (\"Delivery attempted; address not found. Held at destination facility pending correction\"), contradicting the internal record's CUSTOMS_HOLD code. The address service has no validated candidate address available (has_validated_address_candidate: false). Per POL-ADDR-02, without a validated candidate the ticket must be routed to the address-correction queue for manual research. Shipment value ($394.81) and customer tier (standard) do not trigger escalation under POL-ESC-01.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4034,
+          "output_tokens": 978,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002543
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003379,
+      "latency_s": 32.124,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the shipment is held by customs at the port of entry since July 14, awaiting broker documentation \u2014 it is not lost. The declared value is $763.07 (below the $2,000 escalation threshold) and the customer is Standard tier, so no escalation is required. Per POL-CUST-03, customs holds always route to the customs-clearance queue and must never be auto-resolved, as brokers own the resolution.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5636,
+          "output_tokens": 1231,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003379
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002425,
+      "latency_s": 24.285,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the package was damaged during sortation (exception code DAMAGED_IN_TRANSIT, scan dated 2026-07-15). Per POL-CLM-04, confirmed damage routes to carrier-claims. However, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01, requiring escalation to a human operator. The customer's concern is valid \u2014 the package was indeed damaged in transit.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3889,
+          "output_tokens": 922,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002425
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002559,
+      "latency_s": 24.791,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record (exception code LOST_IN_TRANSIT) and the carrier's authoritative scan history (last scan 2026-07-14, disposition \"presumed lost\" after 10+ days with no activity) confirm this shipment is lost. The declared value is $612.43, which is below the $2,000 escalation threshold, and the customer is Gold tier with 54 SLA hours remaining, so no human escalation is required per POL-ESC-01. The ticket should be routed to the carrier-claims queue for specialists to file a loss claim with NORTHFREIGHT.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3990,
+          "output_tokens": 1002,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002559
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002365,
+      "latency_s": 22.083,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms DELIVERY_REFUSED exception with package returning to origin. Shipment value is $900 (below $2,000 escalation threshold), customer is standard tier with 36 SLA hours remaining, so no escalation is needed. Per POL-RET-06, refused deliveries route to the returns queue for return-to-sender and refund review.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4070,
+          "output_tokens": 830,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002365
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00482,
+      "latency_s": 57.161,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal shipment record flags exception code ADDRESS_INVALID, but the address service has a validated candidate address available. Per POL-ADDR-02, this may be auto-resolved by applying the candidate. The carrier also reports a WEATHER_DELAY (ground transport suspended, ETA +72h), which per POL-WX-05 is informational and can be handled via proactive customer notification. The shipment value ($272.95) and customer tier (standard) do not trigger escalation under POL-ESC-01. The address correction is the primary blocker for delivery and can be resolved automatically.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4049,
+          "output_tokens": 2753,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00482
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002466,
+      "latency_s": 24.693,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history confirms an ADDRESS_INVALID exception with the package held at the destination facility pending correction. The internal shipment record shows no validated candidate address from the address service. Per POL-ADDR-02, without a validated candidate the ticket must be routed to the address-correction queue for manual research. The declared value ($1,025.55) is below the $2,000 escalation threshold and the customer is Gold tier (not Platinum), so POL-ESC-01 escalation criteria are not met.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3926,
+          "output_tokens": 945,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002466
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002503,
+      "latency_s": 25.857,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier confirms the shipment is held by customs at the port of entry awaiting broker documentation (exception code CUSTOMS_HOLD). Per POL-CUST-03, customs holds must route to the customs-clearance queue and never be auto-resolved. However, the declared shipment value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01, requiring escalation to a human operator. The escalation policy overrides automation eligibility, so this ticket is escalated to a human within the customs-clearance queue.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3906,
+          "output_tokens": 979,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002503
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002403,
+      "latency_s": 23.397,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's scan history confirms the package was damaged during sortation (exception code DAMAGED_IN_TRANSIT, disposition: \"Package reported damaged during sortation. Contents inspection filed.\"). Per POL-CLM-04, confirmed damage in transit routes to carrier-claims with the carrier's scan history as evidence. Escalation per POL-ESC-01 is not triggered: the declared value is $384.96 (below the $2,000 threshold), and although the customer is Platinum tier, 37 hours remain on the SLA (above the 24-hour escalation trigger). The ticket is routed to carrier-claims for claim processing.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3914,
+          "output_tokens": 899,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002403
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 1.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002821,
+      "latency_s": 30.06,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment VE3882590715 is confirmed LOST_IN_TRANSIT by carrier NORTHFREIGHT (last scan 2026-07-14, disposition: \"presumed lost\" after 10+ days with no scan activity). The declared value is $3,800, which exceeds the $2,000 escalation threshold per POL-ESC-01, requiring human review. The customer (Gold tier) is requesting a refund or replacement. Per POL-CLM-04, confirmed loss routes to carrier-claims with carrier scan history as evidence. Escalation to human is mandatory due to the high shipment value.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4027,
+          "output_tokens": 1197,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002821
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003884,
+      "latency_s": 44.404,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history confirms the package was refused by the recipient (front desk did not recognize the sender) and is being returned to origin. Per POL-RET-06, refused deliveries route to the returns queue for return-to-sender and refund review. Although the internal record shows a CUSTOMS_HOLD exception code, the carrier's scan history contains no customs events and is the authoritative source for what actually occurred. The customer is platinum tier with 47 hours SLA remaining and a $207.11 declared value, so neither escalation threshold in POL-ESC-01 is met.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4076,
+          "output_tokens": 2015,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003884
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003347,
+      "latency_s": 32.382,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment NO4020012165 has a carrier-confirmed WEATHER_DELAY exception (ground transport suspended, ETA revised +72h from 2026-07-15). Declared value is $116.10 (below $2,000 escalation threshold) and customer tier is Gold (not Platinum), so no escalation is required per POL-ESC-01. Per POL-WX-05, weather delays are informational and should be handled via proactive customer notification with the revised ETA, auto-resolvable through the customer-notification workflow.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5638,
+          "output_tokens": 1205,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003347
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002546,
+      "latency_s": 26.904,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier confirms an ADDRESS_INVALID exception (delivery attempted, address not found, held at destination facility). Although a validated candidate address exists \u2014 which under POL-ADDR-02 would normally permit auto-resolution \u2014 the declared shipment value of $3,800 exceeds the $2,000 escalation threshold in POL-ESC-01, which states that escalation overrides any automation eligibility. A human operator must review and approve the address correction before the package can be released.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4005,
+          "output_tokens": 988,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002546
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002447,
+      "latency_s": 28.832,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a CUSTOMS_HOLD exception at the port of entry, awaiting broker documentation. Per POL-CUST-03, customs holds always route to the customs-clearance queue and must never be auto-resolved. Per POL-ESC-01, escalation is not required because the declared value ($94.63) is below the $2,000 threshold and the Platinum-tier customer has 81 hours remaining on the SLA (above the 24-hour escalation trigger). The case is routed to customs-clearance specialists for broker documentation resolution.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 3902,
+          "output_tokens": 936,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002447
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001876,
+      "latency_s": 19.727,
+      "n_api_calls": 2,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 2,
+        "error": null,
+        "reasoning": "The carrier scan history and internal record both confirm the package was damaged in transit during sortation (exception code DAMAGED_IN_TRANSIT, contents inspection filed by VELOX on 2026-07-14). The declared value is $289.08 and the customer is standard tier, so no escalation threshold (>$2,000 or Platinum+<24h SLA) is triggered. This is a damage claim that requires carrier-claims specialists to process the loss and determine resolution for the customer.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 2,
+          "input_tokens": 2482,
+          "output_tokens": 845,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001876
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002796,
+      "latency_s": 30.259,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history confirms the shipment is LOST_IN_TRANSIT (no scan activity for 10+ days, trace initiated). The internal record's DELIVERY_REFUSED code is contradicted by the carrier data. Per POL-CLM-04, confirmed loss routes to carrier-claims. The declared value is $439.71 (below the $2,000 escalation threshold per POL-ESC-01) and the customer is standard tier, so no human escalation is required. The customer's refund/replacement request will be addressed through the claims process.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4009,
+          "output_tokens": 1182,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002796
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.003039,
+      "latency_s": 28.529,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "lookup_shipment",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier scan history confirms the delivery was refused by the recipient and the package is returning to origin (exception code DELIVERY_REFUSED). Per POL-RET-06, refused deliveries route to the returns queue. However, the refreshed shipment record shows a declared value of $2,294.12, which exceeds the $2,000 escalation threshold in POL-ESC-01. This requires escalation to a human operator for return-to-sender and refund review, overriding automation eligibility.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 4,
+          "input_tokens": 5601,
+          "output_tokens": 974,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.003039
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.002601,
+      "latency_s": 25.471,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO1701138477 is confirmed delayed by severe weather (WEATHER_DELAY exception, carrier revised ETA +72h). Per POL-WX-05, weather delays are normally handled via proactive customer notification and auto-resolved. However, the declared value is $3,800, which exceeds the $2,000 escalation threshold in POL-ESC-01. Since escalation overrides automation eligibility, this ticket must be escalated to a human operator to decide on the appropriate customer communication and any expedited recovery options given the customer's Friday deadline.",
+        "usage": {
+          "model": "Qwen/Qwen3.7-Plus",
+          "api_calls": 3,
+          "input_tokens": 4044,
+          "output_tokens": 1021,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.002601
+        }
+      }
+    }
+  ]
+}

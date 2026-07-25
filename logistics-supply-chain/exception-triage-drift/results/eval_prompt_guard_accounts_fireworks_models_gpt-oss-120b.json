@@ -1,0 +1,4458 @@
+{
+  "backend": "fireworks",
+  "model": "accounts/fireworks/models/gpt-oss-120b",
+  "arm": "prompt_guard",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "acted_on_stale": 0.0,
+    "action_accuracy": 0.8556,
+    "exact_match": 0.8556,
+    "noticed": 0.6,
+    "queue_accuracy": 1.0,
+    "submitted": 1.0
+  },
+  "metric_ci95": {
+    "acted_on_stale": [
+      0.0,
+      0.0
+    ],
+    "action_accuracy": [
+      0.7333,
+      0.9667
+    ],
+    "exact_match": [
+      0.7333,
+      0.9667
+    ],
+    "noticed": [
+      0.4333,
+      0.7667
+    ],
+    "queue_accuracy": [
+      1.0,
+      1.0
+    ],
+    "submitted": [
+      1.0,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.001093,
+  "total_cost_usd": 0.0984,
+  "p50_latency_s": 7.162,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000997,
+      "latency_s": 6.527,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "search_policy",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows an ADDRESS_INVALID exception with no validated candidate address (has_validated_address_candidate: false). The carrier scan history confirms the same: delivery attempted but address not found, and the package is held pending correction. According to policy POL-ADDR-02, only shipments with a validated candidate may be auto\u2011resolved; otherwise they must be routed to the address\u2011correction queue for manual research. The shipment value ($367.63) is below the $2000 escalation threshold and the customer is Gold tier with 72 SLA hours remaining, so escalation is not required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3868,
+          "output_tokens": 695,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000997
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000966,
+      "latency_s": 6.005,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code CUSTOMS_HOLD and the carrier scan history confirms the package is held by customs awaiting broker documentation. Policy POL-CUST-03 mandates that all customs holds be routed to the customs-clearance queue and never auto\u2011resolved. The shipment value ($299.58) and customer tier (standard) do not trigger escalation, so routing to the customs\u2011clearance specialists is the correct disposition.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3898,
+          "output_tokens": 635,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000966
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001341,
+      "latency_s": 7.774,
+      "n_api_calls": 5,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history shows an EXCEPTION at the sort facility on 2026-07-14 indicating the package was reported damaged in transit (exception_code DAMAGED_IN_TRANSIT). Policy POL-CLM-04 requires damaged shipments to be routed to the carrier-claims queue for a claim, using the carrier scan as evidence. The shipment value ($193.99) and customer tier (standard) do not trigger escalation per POL-ESC-01, so a human escalation is not required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5262,
+          "output_tokens": 919,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001341
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001079,
+      "latency_s": 7.164,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record (value $266.55, standard tier, SLA 44h) lists exception_code \"LOST_IN_TRANSIT\" and the carrier scan history confirms a lost-in-transit disposition with no activity for over 10 days. Policy (POL-ESC-01) only mandates human escalation for values > $2000 or Platinum customers with <24h SLA, which does not apply. Therefore the case should be routed to the carrier-claims queue for loss investigation and refund/replacement handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3887,
+          "output_tokens": 827,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001079
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001383,
+      "latency_s": 11.214,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan confirms the parcel was refused by the recipient and is being returned to origin. The shipment value is $3800, exceeding the $2000 threshold that mandates escalation to a human operator per policy POL-ESC-01. Although refused deliveries normally route to the returns queue, the escalation rule overrides automation, so the case must be escalated for human review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3881,
+          "output_tokens": 1334,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001173,
+      "latency_s": 11.061,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code WEATHER_DELAY with 11 SLA hours remaining, and the carrier scan history confirms a weather-related exception that suspended ground transport and revised the ETA by +72 hours. According to policy POL-WX-05, weather delays are informational and should be handled via a proactive customer notification, which is eligible for auto\u2011resolution. Therefore the ticket can be auto\u2011resolved in the customer\u2011notification queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3813,
+          "output_tokens": 1002,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001173
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001099,
+      "latency_s": 7.567,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows an ADDRESS_INVALID exception with a validated candidate address (has_validated_address_candidate: true). Carrier scan history confirms the exception is due to an undeliverable address and the package is held at the destination facility pending correction. Policy POL-ADDR-02 permits auto\u2011resolution of invalid\u2011address exceptions when a validated candidate exists. Therefore the system can automatically apply the candidate address and resolve the issue without manual intervention.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3909,
+          "output_tokens": 855,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001099
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001076,
+      "latency_s": 8.073,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows an EXCEPTION on 2026-07-15 indicating the shipment is held by customs awaiting broker documentation (exception_code CUSTOMS_HOLD). Policy POL-CUST-03 mandates that all customs holds be routed to the customs-clearance queue and never auto\u2011resolved. The shipment value ($121.55) and customer tier (standard) do not trigger escalation thresholds, so routing to the customs\u2011clearance specialists is the appropriate action.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3940,
+          "output_tokens": 809,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001076
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001024,
+      "latency_s": 6.705,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code DAMAGED_IN_TRANSIT and the carrier's authoritative scan history confirms the package was reported damaged during sortation. Policy POL-CLM-04 directs confirmed damage cases to the carrier-claims queue. The shipment value ($567.9) and standard customer tier do not trigger escalation, so the appropriate action is to route the ticket to carrier-claims for claim processing.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3905,
+          "output_tokens": 730,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001024
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000984,
+      "latency_s": 6.913,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list an exception code of LOST_IN_TRANSIT, with the carrier marking the shipment as 'presumed lost' after no scans for over 10 days. According to policy POL-CLM-04, confirmed loss in transit must be routed to the carrier-claims queue for claim processing.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3846,
+          "output_tokens": 679,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000984
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001021,
+      "latency_s": 7.144,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code DELIVERY_REFUSED and a validated address candidate, indicating the address is correct. Carrier scan history confirms the parcel was refused by the recipient at the front desk and is being returned to the origin facility. The shipment value ($348.21) is below the $2000 escalation threshold, the customer is standard tier, and 36 SLA hours remain, so no escalation is required. This situation matches a refused delivery, which should be handled by the returns queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3894,
+          "output_tokens": 728,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001021
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001353,
+      "latency_s": 8.5,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a WEATHER_DELAY exception with a revised ETA of +72h, confirming the shipment is delayed beyond the requested Friday delivery. The internal shipment record also lists the same exception. According to policy POL-WX-05, weather delays are informational and can be auto\u2011resolved via the customer\u2011notification workflow. Therefore we auto\u2011resolve by notifying the customer of the new ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3844,
+          "output_tokens": 1294,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001353
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001204,
+      "latency_s": 8.909,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history (authoritative) shows an ADDRESS_INVALID exception on 2026-07-15 with disposition indicating the address was not found and the package is held pending correction. The internal shipment record lacks a validated candidate address (has_validated_address_candidate: false). According to policy POL-ADDR-02, address\u2011invalid exceptions without a validated candidate must be routed to the address\u2011correction queue for manual research. SLA remains (49\u202fh) and value/tier do not trigger escalation, so routing is appropriate.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3897,
+          "output_tokens": 1032,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001204
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00095,
+      "latency_s": 6.394,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code \"CUSTOMS_HOLD\" and the carrier scan history confirms the package is currently held by customs awaiting broker documentation (event on 2026-07-14). Policy POL-CUST-03 states that customs holds must be routed to the customs-clearance queue and must never be auto\u2011resolved. The shipment value ($763.07) and customer tier (standard) do not trigger escalation per POL-ESC-01. Therefore the ticket should be routed to the customs-clearance queue for broker handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3901,
+          "output_tokens": 608,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00095
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001078,
+      "latency_s": 7.054,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record for VE6269262716 shows a declared value of $3800 and an exception code of DAMAGED_IN_TRANSIT. The carrier's authoritative scan history confirms a damage incident at the sort facility (EXCEPTION with disposition 'Package reported damaged during sortation'). According to policy POL-ESC-01, any shipment with a declared value exceeding $2000 must be escalated to a human operator, overriding automation. Therefore the case should be routed to the carrier-claims queue and escalated for human review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3889,
+          "output_tokens": 824,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001078
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001118,
+      "latency_s": 7.047,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "search_policy",
+          "lookup_shipment",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list an exception code LOST_IN_TRANSIT with a disposition indicating the package has been presumed lost after 10+ days without activity. The shipment value ($612.43) is below the $2,000 escalation threshold and the customer is Gold tier with 54 SLA hours remaining, so no human escalation is required. The appropriate next step is to route the ticket to the carrier-claims queue for loss claim processing.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3910,
+          "output_tokens": 885,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001118
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001195,
+      "latency_s": 8.118,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a DELIVERY_REFUSED exception, confirming the recipient turned the driver away. The internal shipment record lists a platinum\u2011tier customer with only 20 SLA hours remaining. Policy POL-ESC-01 mandates escalation to a human operator for platinum customers with fewer than 24 hours left, overriding any automation. Therefore the ticket must be escalated to a human while being placed in the returns queue for handling the refused delivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3900,
+          "output_tokens": 1017,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001195
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001242,
+      "latency_s": 8.061,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a WEATHER_DELAY exception on 2026-07-15 with a revised ETA of +72 hours, confirming the shipment is delayed due to severe weather. The policy (POL-WX-05) classifies weather delays as informational and recommends an auto\u2011resolved proactive notification via the customer\u2011notification workflow. Therefore the ticket should be auto\u2011resolved in the customer\u2011notification queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3883,
+          "output_tokens": 1100,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001242
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000962,
+      "latency_s": 5.828,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The shipment PA3192782745 has an ADDRESS_INVALID exception in both the internal record and the carrier's scan history, indicating the destination address could not be located. The internal record shows no validated candidate address (has_validated_address_candidate: false). According to policy POL-ADDR-02, address\u2011invalid exceptions without a validated candidate must be routed to the address\u2011correction queue for manual research. The shipment value ($1025.55) and gold tier do not trigger escalation per POL-ESC-01, so automation is not permitted and escalation is unnecessary.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3901,
+          "output_tokens": 628,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000962
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001143,
+      "latency_s": 7.049,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code CUSTOMS_HOLD and a declared value of $3800. Carrier scan history confirms the shipment is held by customs awaiting broker documentation. Policy POL-CUST-03 mandates routing all customs holds to the customs-clearance queue and prohibits auto\u2011resolution. Additionally, policy POL-ESC-01 requires escalation to a human operator for shipments with declared value over $2000, which applies here. Therefore the ticket is escalated to a human in the customs-clearance queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3889,
+          "output_tokens": 932,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001143
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001298,
+      "latency_s": 8.483,
+      "n_api_calls": 5,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "search_policy",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list the exception code DAMAGED_IN_TRANSIT, confirming the package was damaged in transit. Policy POL-CLM-04 mandates that confirmed damage or loss be routed to the carrier-claims queue for a claim, and no escalation thresholds are met (value $384.96 < $2000 and SLA > 24h). Therefore the ticket should be routed to carrier-claims for claim processing.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5264,
+          "output_tokens": 848,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001298
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001302,
+      "latency_s": 7.999,
+      "n_api_calls": 5,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list the exception code LOST_IN_TRANSIT, indicating the package is presumed lost after 10+ days without activity. Policy POL-CLM-04 mandates that confirmed loss or damage be routed to the carrier-claims queue for claim processing. Therefore the ticket should be routed to carrier-claims for a refund or replacement claim.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5227,
+          "output_tokens": 863,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001302
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001133,
+      "latency_s": 7.024,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history (authoritative) records an EXCEPTION on 2026-07-15 indicating 'Delivery refused by recipient' with disposition to return to origin. Internal shipment record confirms address is valid, so the issue is not address-related. Policy POL-RET-06 mandates that deliveries refused by the recipient be routed to the returns queue for return-to-sender and refund review. The shipment value ($207.11) is below the $2000 escalation threshold and SLA remaining (47h) exceeds the 24h limit for platinum customers, so no escalation is required. Therefore, the ticket should be routed to the returns queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3939,
+          "output_tokens": 904,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001133
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001006,
+      "latency_s": 7.937,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a WEATHER_DELAY exception with a revised ETA of +72 hours, matching the internal exception code. Policy POL-WX-05 classifies weather delays as informational and eligible for auto\u2011resolution via the customer\u2011notification workflow. Therefore, the ticket should be auto\u2011resolved by sending a proactive notification with the updated ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3833,
+          "output_tokens": 719,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001006
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001053,
+      "latency_s": 7.546,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows an ADDRESS_INVALID exception with the package held at the destination facility pending correction. The internal shipment record confirms the same exception code and indicates a validated candidate address is available, which under policy POL-ADDR-02 would allow auto\u2011resolution. However, the shipment\u2019s declared value is $3800, exceeding the $2000 threshold defined in policy POL-ESC-01, which mandates escalation to a human operator and overrides automation eligibility. Therefore the ticket must be escalated to a human in the address\u2011correction queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3903,
+          "output_tokens": 779,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001053
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000953,
+      "latency_s": 7.005,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history show an exception code CUSTOMS_HOLD, indicating the package is held by customs awaiting broker documentation. Policy POL-CUST-03 mandates that all customs holds be routed to the customs-clearance queue and never auto\u2011resolved. The shipment value ($94.63) and SLA remaining (81\u202fhours) do not trigger escalation per POL-ESC-01, so a standard routing is appropriate.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3880,
+          "output_tokens": 618,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000953
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001024,
+      "latency_s": 6.408,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "search_policy",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list the exception code DAMAGED_IN_TRANSIT, confirming the package was damaged in transit. Policy POL-CLM-04 mandates routing confirmed damage cases to the carrier-claims queue for claim processing. The shipment value ($289.08) is below the $2000 escalation threshold and the customer is standard tier, so no escalation is required. Therefore the ticket should be routed to carrier-claims.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3888,
+          "output_tokens": 734,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001024
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001122,
+      "latency_s": 7.432,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history (authoritative) reports a LOST_IN_TRANSIT exception after 10+ days with no activity, indicating the shipment is presumed lost. Internal record confirms the shipment value is $439.71, standard tier, and SLA has 69 hours remaining, which is below the escalation thresholds (value > $2000 or Platinum tier with <24h). Therefore the case should be handled by the carrier-claims specialists for refund or replacement.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3918,
+          "output_tokens": 890,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001122
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001133,
+      "latency_s": 8.131,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier scan history shows a DELIVERY_REFUSED exception with disposition that the package is being returned to the origin. The internal shipment record confirms the same exception code and a high declared value of $2,294.12. Policy POL-RET-06 directs refused deliveries to the returns queue. However, POL-ESC-01 mandates escalation to a human operator for any shipment with a declared value over $2,000, which overrides automation. Therefore the ticket is routed to the returns queue and escalated to a human for further handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3892,
+          "output_tokens": 915,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001133
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001036,
+      "latency_s": 7.308,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment NO1701138477 has an exception_code WEATHER_DELAY in the internal record and the carrier scan history shows a weather-related suspension with ETA revised +72h. Policy POL-WX-05 classifies weather delays as informational and eligible for auto\u2011resolution via the customer\u2011notification workflow. Therefore the ticket can be auto\u2011resolved by sending a proactive notification with the updated ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3886,
+          "output_tokens": 755,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001036
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000997,
+      "latency_s": 8.49,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "search_policy",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows an ADDRESS_INVALID exception with no validated candidate address (has_validated_address_candidate: false). The carrier scan history confirms the same: delivery attempted but address not found, and the package is held pending correction. According to policy POL-ADDR-02, only shipments with a validated candidate may be auto\u2011resolved; otherwise they must be routed to the address\u2011correction queue for manual research. The shipment value ($367.63) is below the $2000 escalation threshold and the customer is Gold tier with 72 SLA hours remaining, so escalation is not required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3868,
+          "output_tokens": 695,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000997
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000722,
+      "latency_s": 6.336,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Internal shipment record shows exception_code CUSTOMS_HOLD and no validated address. Carrier scan history (authoritative) confirms the package was held by customs on 2026-07-14 awaiting broker documentation, with no further updates. The issue is a customs clearance problem, not address or loss. Therefore the ticket should be routed to the customs-clearance queue for specialist handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 3,
+          "input_tokens": 2687,
+          "output_tokens": 532,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000722
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001341,
+      "latency_s": 7.804,
+      "n_api_calls": 5,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history shows an EXCEPTION at the sort facility on 2026-07-14 indicating the package was reported damaged in transit (exception_code DAMAGED_IN_TRANSIT). Policy POL-CLM-04 requires damaged shipments to be routed to the carrier-claims queue for a claim, using the carrier scan as evidence. The shipment value ($193.99) and customer tier (standard) do not trigger escalation per POL-ESC-01, so a human escalation is not required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5262,
+          "output_tokens": 919,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001341
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001082,
+      "latency_s": 6.308,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record (value $266.55, standard tier, SLA 44h) lists exception_code \"LOST_IN_TRANSIT\" and the carrier scan history confirms a lost-in-transit disposition with no activity for over 10 days. Policy (POL-ESC-01) only mandates human escalation for values > $2000 or Platinum customers with <24h SLA, which does not apply. Therefore the case should be routed to the carrier-claims queue for loss investigation and refund/replacement handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3887,
+          "output_tokens": 832,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001082
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001162,
+      "latency_s": 6.889,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code 'DELIVERY_REFUSED' and the carrier scan history confirms a delivery refusal by the recipient, with the package set to return to the origin facility. Policy POL-RET-06 states that deliveries refused by the recipient must be routed to the returns queue for return-to-sender and refund review. Therefore, this case should be routed to the returns queue for specialist handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3873,
+          "output_tokens": 969,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001162
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001173,
+      "latency_s": 7.281,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code WEATHER_DELAY with 11 SLA hours remaining, and the carrier scan history confirms a weather-related exception that suspended ground transport and revised the ETA by +72 hours. According to policy POL-WX-05, weather delays are informational and should be handled via a proactive customer notification, which is eligible for auto\u2011resolution. Therefore the ticket can be auto\u2011resolved in the customer\u2011notification queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3813,
+          "output_tokens": 1002,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001173
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001033,
+      "latency_s": 6.192,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows an ADDRESS_INVALID exception with a validated candidate address (has_validated_address_candidate: true). The carrier scan history confirms the same exception and that the package is held pending address correction. Policy POL-ADDR-02 permits auto\u2011resolution for invalid\u2011address exceptions when a validated candidate exists. The shipment value ($128.22) and SLA (35\u202fh remaining) are below escalation thresholds (POL-ESC-01). Therefore the system can automatically apply the candidate address and resolve the exception without human intervention.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3927,
+          "output_tokens": 740,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001033
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001089,
+      "latency_s": 6.568,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history (authoritative) shows the shipment was placed on a customs hold on 2026-07-15 with disposition 'Held by customs at port of entry. Awaiting broker documentation.' Policy (POL-CUST-03) mandates that all customs holds be routed to the customs-clearance queue and never auto\u2011resolved. The internal shipment record's exception code is outdated; the carrier status supersedes it. SLA remaining 33\u202fhours and shipment value $121.55 do not trigger escalation. Therefore the ticket should be routed to the customs-clearance queue for broker handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3940,
+          "output_tokens": 830,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001089
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001024,
+      "latency_s": 6.247,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code DAMAGED_IN_TRANSIT and the carrier's authoritative scan history confirms the package was reported damaged during sortation. Policy POL-CLM-04 directs confirmed damage cases to the carrier-claims queue. The shipment value ($567.9) and standard customer tier do not trigger escalation, so the appropriate action is to route the ticket to carrier-claims for claim processing.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3905,
+          "output_tokens": 730,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001024
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001026,
+      "latency_s": 6.42,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list an exception code of LOST_IN_TRANSIT, with the carrier marking the shipment as 'presumed lost' after no scans for over 10 days. According to policy POL-CLM-04, confirmed loss in transit must be routed to the carrier-claims queue for claim processing.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3846,
+          "output_tokens": 749,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001026
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00103,
+      "latency_s": 7.313,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Internal shipment record (tracking PA1109525498) shows exception_code DELIVERY_REFUSED and carrier scan history confirms the package was refused by the recipient and is being returned to the origin facility. The shipment value ($348.21) is below the $2000 escalation threshold, the customer is standard tier, and 36 SLA hours remain, so no escalation is required. This scenario matches a refused delivery, which is handled by the returns queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3894,
+          "output_tokens": 744,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00103
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001392,
+      "latency_s": 9.328,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier scan history list a WEATHER_DELAY exception (carrier scan shows transport suspended with ETA revised +72h). The policy (POL-WX-05) classifies weather delays as informational and eligible for auto\u2011resolution via the customer\u2011notification workflow. Therefore the ticket should be auto\u2011resolved by sending a proactive notification with the revised ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3844,
+          "output_tokens": 1359,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001392
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001139,
+      "latency_s": 6.404,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history (authoritative) shows an ADDRESS_INVALID exception on 2026-07-15 with disposition indicating the address was not found and the package is held pending correction. The internal shipment record lacks a validated candidate address (has_validated_address_candidate: false). According to policy POL-ADDR-02, address\u2011invalid exceptions without a validated candidate must be routed to the address\u2011correction queue for manual research. SLA remains (49\u202fh) and value/tier do not trigger escalation, so routing is appropriate.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3897,
+          "output_tokens": 924,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001139
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000942,
+      "latency_s": 5.596,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code \"CUSTOMS_HOLD\" and the carrier scan history confirms the package is currently held by customs awaiting broker documentation (event on 2026-07-14). Policy POL-CUST-03 states that customs holds must be routed to the customs-clearance queue and must never be auto\u2011resolved. The shipment value ($763.07) and customer tier (standard) do not trigger escalation per POL-ESC-01. Therefore the ticket should be routed to the customs-clearance queue for broker handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3901,
+          "output_tokens": 594,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000942
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001077,
+      "latency_s": 6.275,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record for VE6269262716 shows a declared value of $3800 and an exception code of DAMAGED_IN_TRANSIT. The carrier's authoritative scan history confirms a damage incident at the sort facility (EXCEPTION with disposition 'Package reported damaged during sortation'). According to policy POL-ESC-01, any shipment with a declared value exceeding $2000 must be escalated to a human operator, overriding automation. Therefore the case should be routed to the carrier-claims queue and escalated for human review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3889,
+          "output_tokens": 822,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001077
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001107,
+      "latency_s": 7.363,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "search_policy",
+          "lookup_shipment",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list an exception code LOST_IN_TRANSIT, with the carrier confirming the shipment is presumed lost after 10+ days of no activity. The shipment value ($612.43) is below the $2000 escalation threshold and the customer is gold tier with 54 SLA hours remaining, so escalation is not required. Per policy, confirmed loss should be routed to the carrier-claims queue for claim processing.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3910,
+          "output_tokens": 867,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001107
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001172,
+      "latency_s": 7.03,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a DELIVERY_REFUSED exception, confirming the recipient turned the driver away. The internal shipment record lists a platinum\u2011tier customer with only 20 SLA hours remaining. Policy POL-ESC-01 mandates escalation to a human operator for platinum customers with fewer than 24 hours left, overriding any automation. Therefore the ticket must be escalated to a human while being placed in the returns queue for handling the refused delivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3900,
+          "output_tokens": 978,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001172
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001242,
+      "latency_s": 9.941,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a WEATHER_DELAY exception on 2026-07-15 with a revised ETA of +72 hours, confirming the shipment is delayed due to severe weather. The policy (POL-WX-05) classifies weather delays as informational and recommends an auto\u2011resolved proactive notification via the customer\u2011notification workflow. Therefore the ticket should be auto\u2011resolved in the customer\u2011notification queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3883,
+          "output_tokens": 1100,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001242
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000958,
+      "latency_s": 9.492,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The shipment PA3192782745 has an ADDRESS_INVALID exception both in the internal record (exception_code \"ADDRESS_INVALID\", has_validated_address_candidate false) and in the carrier scan history (delivery attempted; address not found). Policy POL-ADDR-02 states that without a validated candidate address the case must be routed to the address-correction queue for manual research. The shipment value ($1025.55) and customer tier (gold) do not trigger escalation per POL-ESC-01. Therefore the appropriate disposition is to route to the address-correction queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3901,
+          "output_tokens": 622,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000958
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001143,
+      "latency_s": 7.536,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code CUSTOMS_HOLD and a declared value of $3800. Carrier scan history confirms the shipment is held by customs awaiting broker documentation. Policy POL-CUST-03 mandates routing all customs holds to the customs-clearance queue and prohibits auto\u2011resolution. Additionally, policy POL-ESC-01 requires escalation to a human operator for shipments with declared value over $2000, which applies here. Therefore the ticket is escalated to a human in the customs-clearance queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3889,
+          "output_tokens": 932,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001143
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001016,
+      "latency_s": 6.122,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list the exception code DAMAGED_IN_TRANSIT, indicating the package was damaged during sortation. Policy POL-CLM-04 mandates routing confirmed damage cases to the carrier-claims queue for claim processing. The escalation policy (POL-ESC-01) does not apply because the declared value is under $2000 and the SLA has more than 24 hours remaining. Therefore the ticket should be routed to carrier-claims for specialist handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3887,
+          "output_tokens": 722,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001016
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001463,
+      "latency_s": 8.881,
+      "n_api_calls": 5,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "Both the internal shipment record (exception_code=LOST_IN_TRANSIT, value $27.19, gold tier) and the carrier's authoritative scan history indicate the package is presumed lost after 10+ days of no activity. Policy POL-CLM-04 mandates routing confirmed loss cases to the carrier-claims queue. The shipment value is well below the $2000 escalation threshold and the customer is not Platinum with <24h SLA, so no human escalation is required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5330,
+          "output_tokens": 1105,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001463
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001134,
+      "latency_s": 6.861,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history (authoritative) records an EXCEPTION on 2026-07-15 indicating 'Delivery refused by recipient' with disposition to return to origin. Internal shipment record confirms address is valid, so the issue is not address-related. Policy POL-RET-06 mandates that deliveries refused by the recipient be routed to the returns queue for return-to-sender and refund review. The shipment value ($207.11) is below the $2000 escalation threshold and SLA remaining (47h) exceeds the 24h limit for platinum customers, so no escalation is required. Therefore, the ticket should be routed to the returns queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3939,
+          "output_tokens": 905,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001134
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00103,
+      "latency_s": 7.605,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a WEATHER_DELAY exception with a revised ETA of +72 hours, matching the internal shipment record's exception code. Policy POL-WX-05 classifies weather delays as informational and eligible for auto\u2011resolution via the customer\u2011notification workflow. Therefore the ticket can be auto\u2011resolved by sending a proactive notification with the updated ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3833,
+          "output_tokens": 759,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00103
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001007,
+      "latency_s": 6.791,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan confirms an ADDRESS_INVALID exception with a pending correction. Internal record shows a validated candidate address, which per POL-ADDR-02 would allow auto\u2011resolution. However, the shipment's declared value is $3800, exceeding the $2000 threshold in POL-ESC-01, triggering mandatory escalation to a human operator. Therefore the ticket must be escalated to a human in the address\u2011correction queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3903,
+          "output_tokens": 703,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001007
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000988,
+      "latency_s": 7.449,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history indicate a CUSTOMS_HOLD exception (carrier scan shows 'Held by customs at port of entry' and internal record lists exception_code 'CUSTOMS_HOLD'). Policy POL-CUST-03 mandates that all customs holds be routed to the customs-clearance queue and never auto-resolved. The shipment value ($94.63) and SLA remaining (81 hours) do not trigger escalation per POL-ESC-01, so routing to the customs-clearance queue is the appropriate action.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3882,
+          "output_tokens": 676,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000988
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000999,
+      "latency_s": 6.566,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "search_policy",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list the exception code DAMAGED_IN_TRANSIT, confirming the package was damaged in transit. Policy POL-CLM-04 mandates routing confirmed damage cases to the carrier-claims queue for claim processing. The shipment value ($289.08) is below the $2000 escalation threshold and the customer is standard tier, so no escalation is required. Therefore the ticket should be routed to carrier-claims.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3888,
+          "output_tokens": 693,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000999
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001158,
+      "latency_s": 8.772,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history (authoritative) reports a LOST_IN_TRANSIT exception after 10+ days with no activity, indicating the shipment is presumed lost. Internal record confirms the shipment value is $439.71, standard tier, and SLA has 69 hours remaining, which is below the escalation thresholds (value > $2000 or Platinum tier with <24h). Therefore the case should be handled by the carrier-claims specialists for refund or replacement.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3918,
+          "output_tokens": 951,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001158
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000807,
+      "latency_s": 6.082,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history show an exception code DELIVERY_REFUSED, indicating the recipient (front desk) refused the parcel because the sender was unknown. The package is being returned to the origin facility. This is a classic refused\u2011delivery scenario, which should be handled by the returns specialists. No address correction is needed, and the value ($2,294) exceeds typical auto\u2011resolve thresholds, so the ticket is routed to the returns queue for human processing.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 3,
+          "input_tokens": 2687,
+          "output_tokens": 673,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000807
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001108,
+      "latency_s": 8.591,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment NO1701138477 has an exception_code WEATHER_DELAY in the internal record and the carrier scan history shows a weather-related suspension with ETA revised +72h. Policy POL-WX-05 classifies weather delays as informational and eligible for auto\u2011resolution via the customer\u2011notification workflow. Therefore the ticket can be auto\u2011resolved by sending a proactive notification with the updated ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3886,
+          "output_tokens": 875,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001108
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000997,
+      "latency_s": 7.157,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "search_policy",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows an ADDRESS_INVALID exception with no validated candidate address (has_validated_address_candidate: false). The carrier scan history confirms the same: delivery attempted but address not found, and the package is held pending correction. According to policy POL-ADDR-02, only shipments with a validated candidate may be auto\u2011resolved; otherwise they must be routed to the address\u2011correction queue for manual research. The shipment value ($367.63) is below the $2000 escalation threshold and the customer is Gold tier with 72 SLA hours remaining, so escalation is not required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3868,
+          "output_tokens": 695,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000997
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000722,
+      "latency_s": 5.054,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Internal shipment record shows exception_code CUSTOMS_HOLD and no validated address. Carrier scan history (authoritative) confirms the package was held by customs on 2026-07-14 awaiting broker documentation, with no further updates. The issue is a customs clearance problem, not address or loss. Therefore the ticket should be routed to the customs-clearance queue for specialist handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 3,
+          "input_tokens": 2687,
+          "output_tokens": 532,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000722
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001341,
+      "latency_s": 7.616,
+      "n_api_calls": 5,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "The carrier's authoritative scan history shows an EXCEPTION at the sort facility on 2026-07-14 indicating the package was reported damaged in transit (exception_code DAMAGED_IN_TRANSIT). Policy POL-CLM-04 requires damaged shipments to be routed to the carrier-claims queue for a claim, using the carrier scan as evidence. The shipment value ($193.99) and customer tier (standard) do not trigger escalation per POL-ESC-01, so a human escalation is not required.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 5,
+          "input_tokens": 5262,
+          "output_tokens": 919,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001341
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001082,
+      "latency_s": 6.095,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record (value $266.55, standard tier, SLA 44h) lists exception_code \"LOST_IN_TRANSIT\" and the carrier scan history confirms a lost-in-transit disposition with no activity for over 10 days. Policy (POL-ESC-01) only mandates human escalation for values > $2000 or Platinum customers with <24h SLA, which does not apply. Therefore the case should be routed to the carrier-claims queue for loss investigation and refund/replacement handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3887,
+          "output_tokens": 832,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001082
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001162,
+      "latency_s": 7.162,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code 'DELIVERY_REFUSED' and the carrier scan history confirms a delivery refusal by the recipient, with the package set to return to the origin facility. Policy POL-RET-06 states that deliveries refused by the recipient must be routed to the returns queue for return-to-sender and refund review. Therefore, this case should be routed to the returns queue for specialist handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3873,
+          "output_tokens": 969,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001162
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001173,
+      "latency_s": 8.359,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code WEATHER_DELAY with 11 SLA hours remaining, and the carrier scan history confirms a weather-related exception that suspended ground transport and revised the ETA by +72 hours. According to policy POL-WX-05, weather delays are informational and should be handled via a proactive customer notification, which is eligible for auto\u2011resolution. Therefore the ticket can be auto\u2011resolved in the customer\u2011notification queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3813,
+          "output_tokens": 1002,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001173
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001042,
+      "latency_s": 7.885,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows an ADDRESS_INVALID exception with the disposition 'Delivery attempted; address not found' and the internal shipment record confirms a validated candidate address is available (has_validated_address_candidate = true). Policy POL-ADDR-02 permits auto\u2011resolution of invalid\u2011address exceptions when a validated candidate exists, allowing the system to apply the candidate address automatically. No escalation thresholds are met (value $128.22 < $2000, standard tier, 35 SLA hours remaining). Therefore the shipment can be auto\u2011resolved via address correction.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3927,
+          "output_tokens": 755,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001042
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001089,
+      "latency_s": 7.022,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history (authoritative) shows the shipment was placed on a customs hold on 2026-07-15 with disposition 'Held by customs at port of entry. Awaiting broker documentation.' Policy (POL-CUST-03) mandates that all customs holds be routed to the customs-clearance queue and never auto\u2011resolved. The internal shipment record's exception code is outdated; the carrier status supersedes it. SLA remaining 33\u202fhours and shipment value $121.55 do not trigger escalation. Therefore the ticket should be routed to the customs-clearance queue for broker handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3940,
+          "output_tokens": 830,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001089
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001013,
+      "latency_s": 6.376,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code DAMAGED_IN_TRANSIT and the carrier scan history confirms the package was reported damaged during sortation. Policy POL-CLM-04 directs damaged shipments to the carrier-claims queue, and the shipment value ($567.90) is below the $2000 escalation threshold, so no human escalation is required. The ticket should therefore be routed to carrier-claims for claim processing.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3906,
+          "output_tokens": 712,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001013
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001125,
+      "latency_s": 7.96,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's scan history list an exception code LOST_IN_TRANSIT, confirming the shipment is presumed lost. The shipment value is $3800, exceeding the $2000 threshold defined in policy POL-ESC-01, which mandates escalation to a human operator for high-value shipments. Therefore, the ticket must be escalated to a human in the carrier-claims queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3926,
+          "output_tokens": 894,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001125
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00103,
+      "latency_s": 6.537,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Internal shipment record (tracking PA1109525498) shows exception_code DELIVERY_REFUSED and carrier scan history confirms the package was refused by the recipient and is being returned to the origin facility. The shipment value ($348.21) is below the $2000 escalation threshold, the customer is standard tier, and 36 SLA hours remain, so no escalation is required. This scenario matches a refused delivery, which is handled by the returns queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3894,
+          "output_tokens": 744,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00103
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001353,
+      "latency_s": 8.062,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a WEATHER_DELAY exception with a revised ETA of +72h, confirming the shipment is delayed beyond the requested Friday delivery. The internal shipment record also lists the same exception. According to policy POL-WX-05, weather delays are informational and can be auto\u2011resolved via the customer\u2011notification workflow. Therefore we auto\u2011resolve by notifying the customer of the new ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3844,
+          "output_tokens": 1294,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001353
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001204,
+      "latency_s": 7.517,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history (authoritative) shows an ADDRESS_INVALID exception on 2026-07-15 with disposition indicating the address was not found and the package is held pending correction. The internal shipment record lacks a validated candidate address (has_validated_address_candidate: false). According to policy POL-ADDR-02, address\u2011invalid exceptions without a validated candidate must be routed to the address\u2011correction queue for manual research. SLA remains (49\u202fh) and value/tier do not trigger escalation, so routing is appropriate.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3897,
+          "output_tokens": 1032,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001204
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00095,
+      "latency_s": 5.598,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code \"CUSTOMS_HOLD\" and the carrier scan history confirms the package is currently held by customs awaiting broker documentation (event on 2026-07-14). Policy POL-CUST-03 states that customs holds must be routed to the customs-clearance queue and must never be auto\u2011resolved. The shipment value ($763.07) and customer tier (standard) do not trigger escalation per POL-ESC-01. Therefore the ticket should be routed to the customs-clearance queue for broker handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3901,
+          "output_tokens": 608,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00095
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001067,
+      "latency_s": 7.377,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record for VE6269262716 shows a declared value of $3800 and an exception code of DAMAGED_IN_TRANSIT. The carrier's authoritative scan history confirms a damage incident at the sort facility (EXCEPTION with disposition 'Package reported damaged during sortation'). According to policy POL-ESC-01, any shipment with a declared value exceeding $2000 must be escalated to a human operator, overriding automation. Therefore the case should be routed to the carrier-claims queue and escalated for human review.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3889,
+          "output_tokens": 806,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001067
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001107,
+      "latency_s": 6.375,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "search_policy",
+          "lookup_shipment",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list an exception code LOST_IN_TRANSIT, with the carrier confirming the shipment is presumed lost after 10+ days of no activity. The shipment value ($612.43) is below the $2000 escalation threshold and the customer is gold tier with 54 SLA hours remaining, so escalation is not required. Per policy, confirmed loss should be routed to the carrier-claims queue for claim processing.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3910,
+          "output_tokens": 867,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001107
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001157,
+      "latency_s": 9.771,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a DELIVERY_REFUSED exception, confirming the recipient turned the driver away. The internal shipment record lists a platinum\u2011tier customer with only 20 SLA hours remaining. Policy POL-ESC-01 mandates escalation to a human operator for platinum customers with fewer than 24 hours left, overriding any automation. Therefore the ticket must be escalated to a human while being placed in the returns queue for handling the refused delivery.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3900,
+          "output_tokens": 953,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001157
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001249,
+      "latency_s": 10.033,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a WEATHER_DELAY exception with ETA revised +72h, confirming the shipment is delayed due to severe weather. Policy POL-WX-05 classifies weather delays as informational and eligible for auto\u2011resolution via the customer\u2011notification workflow. Therefore the ticket can be auto\u2011resolved by sending a proactive notification with the revised ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3945,
+          "output_tokens": 1095,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001249
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000958,
+      "latency_s": 5.616,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The shipment PA3192782745 has an ADDRESS_INVALID exception both in the internal record (exception_code \"ADDRESS_INVALID\", has_validated_address_candidate false) and in the carrier scan history (delivery attempted; address not found). Policy POL-ADDR-02 states that without a validated candidate address the case must be routed to the address-correction queue for manual research. The shipment value ($1025.55) and customer tier (gold) do not trigger escalation per POL-ESC-01. Therefore the appropriate disposition is to route to the address-correction queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3901,
+          "output_tokens": 622,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000958
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001143,
+      "latency_s": 6.754,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record shows exception_code CUSTOMS_HOLD and a declared value of $3800. Carrier scan history confirms the shipment is held by customs awaiting broker documentation. Policy POL-CUST-03 mandates routing all customs holds to the customs-clearance queue and prohibits auto\u2011resolution. Additionally, policy POL-ESC-01 requires escalation to a human operator for shipments with declared value over $2000, which applies here. Therefore the ticket is escalated to a human in the customs-clearance queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3889,
+          "output_tokens": 932,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001143
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00103,
+      "latency_s": 6.248,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list the exception code DAMAGED_IN_TRANSIT, indicating the package was damaged during sortation. Policy POL-CLM-04 mandates routing confirmed damage cases to the carrier-claims queue for claim processing. The escalation policy (POL-ESC-01) does not apply because the declared value is under $2000 and the SLA has more than 24 hours remaining. Therefore the ticket should be routed to carrier-claims for specialist handling.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3887,
+          "output_tokens": 745,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00103
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001115,
+      "latency_s": 7.323,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The internal shipment record (value $27.19, gold tier, SLA 88h remaining) shows exception_code LOST_IN_TRANSIT and no validated address. Carrier scan history confirms a loss exception with no activity for >10 days, marking the package as presumed lost. Policy does not trigger escalation (value <$2000, not Platinum with <24h SLA) and there is no automation rule for lost shipments. Therefore the case must be handled by the carrier-claims specialists to process a refund or replacement claim.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3946,
+          "output_tokens": 871,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001115
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00112,
+      "latency_s": 7.35,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows an EXCEPTION with disposition 'Delivery refused by recipient. Package returning to origin facility.' (delivery refused). Policy POL-RET-06 mandates that deliveries refused by the recipient be routed to the returns queue for return-to-sender and refund review. The shipment value ($207.11) is well below the $2000 escalation threshold and the SLA has 47 hours remaining, so no escalation is required. Therefore, the ticket should be routed to the returns queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3939,
+          "output_tokens": 882,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00112
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00103,
+      "latency_s": 6.897,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a WEATHER_DELAY exception with a revised ETA of +72 hours, matching the internal shipment record's exception code. Policy POL-WX-05 classifies weather delays as informational and eligible for auto\u2011resolution via the customer\u2011notification workflow. Therefore the ticket can be auto\u2011resolved by sending a proactive notification with the updated ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3833,
+          "output_tokens": 759,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00103
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001053,
+      "latency_s": 7.758,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows an ADDRESS_INVALID exception with the package held at the destination facility pending correction. The internal shipment record confirms the same exception code and indicates a validated candidate address is available, which under policy POL-ADDR-02 would allow auto\u2011resolution. However, the shipment\u2019s declared value is $3800, exceeding the $2000 threshold defined in policy POL-ESC-01, which mandates escalation to a human operator and overrides automation eligibility. Therefore the ticket must be escalated to a human in the address\u2011correction queue.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3903,
+          "output_tokens": 779,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001053
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000978,
+      "latency_s": 6.84,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list the exception code CUSTOMS_HOLD, indicating the package is held by customs awaiting broker documentation. Policy POL-CUST-03 mandates that all customs holds be routed to the customs-clearance queue and never auto\u2011resolved. The shipment value ($94.63) and SLA (81 hours remaining) do not trigger escalation per POL-ESC-01, so a standard routing is appropriate.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3882,
+          "output_tokens": 660,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000978
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001021,
+      "latency_s": 6.126,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "search_policy",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history list the exception code DAMAGED_IN_TRANSIT, confirming the package was damaged in transit. Policy POL-CLM-04 mandates routing confirmed damage cases to the carrier-claims queue for claim processing. The shipment value ($289.08) is below the $2000 escalation threshold and the customer is standard tier, so no escalation is required. Therefore the ticket should be routed to carrier-claims.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3888,
+          "output_tokens": 729,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001021
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001122,
+      "latency_s": 7.456,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history (authoritative) reports a LOST_IN_TRANSIT exception after 10+ days with no activity, indicating the shipment is presumed lost. Internal record confirms the shipment value is $439.71, standard tier, and SLA has 69 hours remaining, which is below the escalation thresholds (value > $2000 or Platinum tier with <24h). Therefore the case should be handled by the carrier-claims specialists for refund or replacement.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3918,
+          "output_tokens": 890,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001122
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000821,
+      "latency_s": 4.882,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Both the internal shipment record and the carrier's authoritative scan history show an exception code DELIVERY_REFUSED, indicating the recipient (front desk) refused the parcel because the sender was unknown. The package is being returned to the origin facility. This is a classic refused\u2011delivery scenario, which should be handled by the returns specialists. No address correction is needed, and the value ($2,294) exceeds typical auto\u2011resolve thresholds, so the ticket is routed to the returns queue for human processing.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 3,
+          "input_tokens": 2687,
+          "output_tokens": 696,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000821
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.001108,
+      "latency_s": 6.372,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "prompt_guard",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment NO1701138477 has an exception_code WEATHER_DELAY in the internal record and the carrier scan history shows a weather-related suspension with ETA revised +72h. Policy POL-WX-05 classifies weather delays as informational and eligible for auto\u2011resolution via the customer\u2011notification workflow. Therefore the ticket can be auto\u2011resolved by sending a proactive notification with the updated ETA.",
+        "usage": {
+          "model": "accounts/fireworks/models/gpt-oss-120b",
+          "api_calls": 4,
+          "input_tokens": 3886,
+          "output_tokens": 875,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.001108
+        }
+      }
+    }
+  ]
+}
