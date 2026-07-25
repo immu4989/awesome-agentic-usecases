@@ -29,7 +29,7 @@ def main(argv=None) -> int:
     e = sub.add_parser("eval", help="run an intervention variant")
     e.add_argument("--variant", choices=VARIANTS, default="enforced")
     e.add_argument("--backend", choices=["mock", "anthropic", "mistral", "groq", "gemini",
-                                         "cerebras", "deepseek", "together", "fireworks"],
+                                         "cerebras", "deepseek", "together", "fireworks", "openrouter"],
                    default="mock")
     e.add_argument("--model", default=None)
     e.add_argument("--repeats", type=int, default=3)

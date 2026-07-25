@@ -63,6 +63,8 @@ class CostTracker:
 
     def __post_init__(self) -> None:
         if self.model not in PRICING_PER_MTOK:
+            _lazy_price(self.model)
+        if self.model not in PRICING_PER_MTOK:
             raise ValueError(
                 f"No pricing for model {self.model!r}; add it to PRICING_PER_MTOK"
             )
@@ -107,3 +109,44 @@ class CostTracker:
             "cache_read_input_tokens": self.cache_read_input_tokens,
             "cost_usd": round(self.cost_usd, 6),
         }
+
+
+def register_pricing(model: str, input_per_mtok: float, output_per_mtok: float) -> None:
+    """Record a model's published rate so measured tokens can be priced.
+
+    The table above is a hand-maintained cache of published list prices. Aggregators serve
+    hundreds of models and publish exact per-token rates over their API, so for those the
+    honest move is to read the rate rather than hardcode or guess it — the invariant this
+    repo keeps is that every reported dollar comes from a published rate applied to
+    measured tokens, never from an estimate.
+    """
+    PRICING_PER_MTOK[model] = (float(input_per_mtok), float(output_per_mtok))
+
+
+def _lazy_price(model: str) -> None:
+    """Fetch a rate from OpenRouter for models served through it (ids look like `a/b`)."""
+    import json as _json
+    import os as _os
+    import urllib.request as _u
+
+    if "/" not in model:
+        return
+    key = _os.environ.get("OPENROUTER_API_KEY", "")
+    if not key:
+        return
+    try:
+        req = _u.Request(
+            "https://openrouter.ai/api/v1/models",
+            headers={"Authorization": f"Bearer {key}",
+                     "User-Agent": "aau-harness/0.1"},
+        )
+        with _u.urlopen(req, timeout=30) as resp:
+            for m in _json.loads(resp.read())["data"]:
+                if m["id"] == model:
+                    p = m["pricing"]
+                    # OpenRouter quotes USD per token; the table is per million.
+                    register_pricing(model, float(p["prompt"]) * 1e6,
+                                     float(p["completion"]) * 1e6)
+                    return
+    except Exception:
+        return  # leave it unpriced; CostTracker will raise with a clear message

@@ -49,6 +49,13 @@ PROVIDERS = {
                          "meta-llama/Llama-3.3-70B-Instruct-Turbo", 0.5),
     "fireworks": Provider("fireworks", "https://api.fireworks.ai/inference/v1", "FIREWORKS_API_KEY",
                           "accounts/fireworks/models/gpt-oss-120b", 0.5),
+    # One key, ~274 tool-calling models, 15 of them free — which is how this repo keeps its
+    # "$0 to reproduce" promise now that single-vendor free tiers have proven unreliable.
+    # Free `:free` models are rate-limited hard, hence the conservative throttle. The
+    # default is chosen for tool-calling support: several free models ignore tools
+    # entirely and answer in prose, which fails every use case here.
+    "openrouter": Provider("openrouter", "https://openrouter.ai/api/v1", "OPENROUTER_API_KEY",
+                           "nvidia/nemotron-3-super-120b-a12b:free", 2.5),
 }
 
 

@@ -30,7 +30,7 @@ def main(argv=None) -> int:
     e = sub.add_parser("eval", help="run one reliability arm")
     e.add_argument("--arm", choices=ARMS, default="drift")
     e.add_argument("--backend", choices=["mock", "anthropic", "mistral", "groq", "gemini",
-                                         "cerebras", "deepseek", "together", "fireworks"],
+                                         "cerebras", "deepseek", "together", "fireworks", "openrouter"],
                    default="mock")
     e.add_argument("--model", default=None)
     e.add_argument("--repeats", type=int, default=3)

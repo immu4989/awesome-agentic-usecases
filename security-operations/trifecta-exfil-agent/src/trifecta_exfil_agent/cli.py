@@ -33,7 +33,7 @@ def main(argv=None) -> int:
     e.add_argument("--arm", choices=ARMS, default="none")
     e.add_argument("--backend",
                    choices=["mock", "anthropic", "mistral", "groq", "gemini", "cerebras",
-                            "deepseek", "together", "fireworks"],
+                            "deepseek", "together", "fireworks", "openrouter"],
                    default="mock")
     e.add_argument("--model", default=None)
     e.add_argument("--repeats", type=int, default=3)

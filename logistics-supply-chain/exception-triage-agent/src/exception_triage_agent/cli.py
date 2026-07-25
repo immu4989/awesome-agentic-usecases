@@ -36,7 +36,7 @@ def main(argv=None) -> int:
     e.add_argument(
         "--backend",
         choices=["mock", "anthropic", "mistral", "groq", "gemini", "cerebras",
-                 "deepseek", "together", "fireworks"],
+                 "deepseek", "together", "fireworks", "openrouter"],
         default="mock",
         help="mock = deterministic $0 pipeline check; mistral/groq/gemini/cerebras have "
              "free tiers; together/fireworks bill per token (~$0.55 per full eval on 70B)",
