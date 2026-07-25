@@ -1,5 +1,12 @@
 from .cost import CostTracker, PRICING_PER_MTOK
-from .runner import EvalAggregate, ScenarioResult, run_eval
+from .runner import (
+    EvalAggregate,
+    ProviderUnavailable,
+    ScenarioResult,
+    check_results_are_measurements,
+    provider_error_rate,
+    run_eval,
+)
 from .report import render_report
 from .agent_loop import (
     AgentRun,
@@ -23,6 +30,9 @@ __all__ = [
     "EvalAggregate",
     "ScenarioResult",
     "run_eval",
+    "ProviderUnavailable",
+    "check_results_are_measurements",
+    "provider_error_rate",
     "render_report",
     "AgentRun",
     "AnthropicBackend",

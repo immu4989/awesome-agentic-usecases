@@ -9,10 +9,28 @@ each scenario's repeats together).
 from __future__ import annotations
 
 import random
+import re
 import statistics
 import time
 from dataclasses import dataclass, field
 from typing import Callable, Sequence
+
+# Errors that mean "the eval never ran" rather than "the model got it wrong". An expired
+# key or a dead endpoint produces a full sweep of zeros that is indistinguishable, in the
+# saved JSON, from a model that failed every scenario — and would then be charted and
+# published as a real score. Runs like that are not measurements and must not be saved.
+# The status code may be adjacent to "HTTP" (the native backend) or separated by "Error"
+# (urllib, which every OpenAI-compatible provider goes through), so allow a short gap.
+_TRANSPORT_ERROR = re.compile(
+    r"HTTP[^0-9]{0,12}(4\d\d|5\d\d)"
+    r"|Unauthorized|Forbidden|Payment\s*Required|RemoteDisconnected|ConnectionError"
+    r"|Timed?\s*out|Too\s*Many\s*Requests|SSLError|NameResolution|Quota",
+    re.IGNORECASE,
+)
+
+
+class ProviderUnavailable(RuntimeError):
+    """Raised when an eval's runs failed at the transport layer instead of on the task."""
 
 
 @dataclass
@@ -130,3 +148,29 @@ def run_eval(
         p50_latency_s=latencies[len(latencies) // 2] if latencies else 0.0,
         results=results,
     )
+
+
+def provider_error_rate(agg: EvalAggregate) -> float:
+    """Fraction of runs that failed at the transport layer rather than on the task.
+
+    A wrong answer is data. A 401 is not — it means the eval never happened. Use this
+    before saving results so an expired key can't be published as a model's score.
+    """
+    if not agg.results:
+        return 0.0
+    bad = sum(
+        1 for r in agg.results
+        if _TRANSPORT_ERROR.search(str(r.detail.get("error") or ""))
+    )
+    return bad / len(agg.results)
+
+
+def check_results_are_measurements(agg: EvalAggregate, threshold: float = 0.5) -> None:
+    """Raise if most runs never reached the model. Call this before save_results()."""
+    rate = provider_error_rate(agg)
+    if rate >= threshold:
+        raise ProviderUnavailable(
+            f"{rate:.0%} of runs failed at the transport layer (auth, network, or rate "
+            f"limits), so these numbers measure the provider, not the model. Nothing was "
+            f"saved. Check the API key and endpoint, then re-run."
+        )
