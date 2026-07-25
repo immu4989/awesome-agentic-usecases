@@ -48,7 +48,8 @@ quality begins.
 
 ## Results
 
-30 scenarios × 3 repeats per arm. **Read the conditional column** — see the caveat below.
+30 scenarios × 3 repeats per arm. **Read the conditional column**, and read a model's clean
+score before reading its drift score — see the caveats below.
 
 | Model | world | accuracy | submitted | **accuracy \| submitted** | refresh rate |
 |---|---|---|---|---|---|
@@ -58,6 +59,8 @@ quality begins.
 | | **drift** | 0.667 | 1.000 | **0.667** | 0.52 |
 | **gpt-oss-120b** | clean | 0.800 | 0.833 | **0.960** | 1.00 |
 | | **drift** | 0.767 | 0.922 | **0.831** | 1.00 |
+| **mistral-small** | clean | 0.744 | 1.000 | **0.744** | 0.42 |
+| | **drift** | 0.716 | 0.978 | **0.716** | 0.41 |
 
 ### Every model collapses. The best one collapses hardest.
 
@@ -69,15 +72,34 @@ last Tuesday.
 
 Line the three models up by how often they re-read the record before deciding:
 
-| Model | refresh rate | accuracy lost to the unreliable world |
-|---|---|---|
-| kimi-k2p6 | 0.20 | **−39 points** |
-| Qwen3.7-Plus | 0.52 | **−33 points** |
-| gpt-oss-120b | 1.00 | **−13 points** |
+| Model | clean | refresh rate | accuracy lost to the unreliable world |
+|---|---|---|---|
+| kimi-k2p6 | 1.000 | 0.20 | **−39 points** |
+| Qwen3.7-Plus | 1.000 | 0.52 | **−33 points** |
+| gpt-oss-120b | 0.960 | 1.00 | **−13 points** |
+| *mistral-small* | *0.744* | *0.41* | *−3 points* |
 
-Monotonic across three models from three vendors. And it shows up exactly where it should —
-accuracy on the stale-cache archetype tracks the same order: kimi **0.22**, Qwen **0.33**,
-gpt-oss **0.89**.
+Among the three models that actually solve the clean task, the ordering is monotonic across
+three vendors, and it shows up exactly where it should — accuracy on the stale-cache
+archetype tracks the same order: kimi **0.22**, Qwen **0.33**, gpt-oss **0.89**.
+
+### The fourth model breaks the rule, and the reason matters more than the rule
+
+`mistral-small` looks like the most robust model here: it loses **3 points**, less than a
+quarter of gpt-oss's loss, on a middling refresh rate of 0.41. Taken at face value it
+falsifies the pattern.
+
+It isn't robustness. On the **clean** arm, mistral scores **0 of 6 on escalation cases** and
+answers `route_to_queue` 78 times out of 90. It does not use the value threshold when the
+value is correct, so corrupting the value cannot change an answer that never depended on it.
+Its stale-cache score of 0.61 is the same effect: you cannot mislead a model with a number
+it was ignoring.
+
+**A small drop is not evidence of resilience.** It is equally consistent with an agent that
+never read the field you corrupted — which is the same trap as
+[safety by inaction](../../FAILURE_TAXONOMY.md#safety-by-inaction), one metric down. The
+corrected claim: *among agents that actually use the data, robustness tracks how often they
+re-read it.* Check the clean arm before reading a drift result as strength.
 
 ### What they all handle, and what none of them do
 

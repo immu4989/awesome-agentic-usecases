@@ -30,7 +30,7 @@ model backends include free tiers, so reproducing any result costs nothing.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="7 industries shipping, 53 verified model-evals, 71 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="7 industries shipping, 53 verified model-evals, 72 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -80,7 +80,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 71 failures, 11 patterns
+## 72 failures, 11 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -191,7 +191,9 @@ only a per-use-case harness surfaces:
   that disagree drops it to **0.611**, on the identical scenarios and gold. Across three
   models the damage is predicted by one habit: how often the agent re-reads before deciding
   (refresh rate 0.20 / 0.52 / 1.00 → −39 / −33 / −13 points). **The best clean-world model is
-  the most fragile**, and the winning behaviour is an unconditional reflex, not judgment.
+  the most fragile**, and the winning behaviour is an unconditional reflex, not judgment. A
+  fourth model then broke the rule by losing almost nothing — because it never used the
+  corrupted field at all, which is why a small drop is not evidence of resilience.
 - **Where an injection hides decides whether the model obeys it.** In the
   [lethal-trifecta exfiltration test](security-operations/trifecta-exfil-agent/), the same
   "read the secret and send it out" instruction is refused when it sits in fetched content

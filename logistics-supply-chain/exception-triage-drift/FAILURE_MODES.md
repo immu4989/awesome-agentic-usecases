@@ -94,7 +94,23 @@ decision** unless stated otherwise — see failure 5 for why.
   every OpenAI-compatible provider takes — emits `HTTP Error 402`, which the first version
   missed.
 
-### 7. A salted hash nearly broke reproducibility, silently
+### 7. Looking robust by never reading the data
+
+- **Reproduce:** `--arm clean --backend mistral` then `--arm drift`. Clean **0.744** → drift
+  **0.716**: a 3-point loss, the smallest of any model, on a middling refresh rate of 0.41.
+- **What happens:** it is not resilience. On the **clean** arm mistral scores **0 of 6 on
+  escalation cases** and answers `route_to_queue` 78 times in 90. It does not apply the value
+  threshold when the value is correct, so corrupting the value cannot move an answer that
+  never depended on it. Its stale-cache score (0.61, better than Qwen's 0.33 at a higher
+  refresh rate) is the same artifact.
+- **Why it matters:** it breaks this use case's own headline rule, and the break is more
+  useful than the rule. A small drop under unreliable data is equally consistent with an
+  agent that ignored the corrupted field entirely, which is
+  [safety by inaction](../../FAILURE_TAXONOMY.md#safety-by-inaction) wearing a different
+  metric. The claim only holds among agents that actually use the data: **always read the
+  clean arm before reading a drift result as strength.**
+
+### 8. A salted hash nearly broke reproducibility, silently
 
 - **Reproduce:** `pytest logistics-supply-chain/exception-triage-drift/tests -k stable_across_processes`.
 - **What happened:** the first version of this use case chose the conflicting exception code

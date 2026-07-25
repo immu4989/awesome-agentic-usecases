@@ -1,0 +1,4484 @@
+{
+  "backend": "mistral",
+  "model": "mistral-small-latest",
+  "arm": "drift",
+  "n_scenarios": 30,
+  "n_repeats": 3,
+  "metric_means": {
+    "acted_on_stale": 0.0,
+    "action_accuracy": 0.7,
+    "exact_match": 0.6333,
+    "noticed": 0.6,
+    "queue_accuracy": 0.8778,
+    "submitted": 0.9778
+  },
+  "metric_ci95": {
+    "acted_on_stale": [
+      0.0,
+      0.0
+    ],
+    "action_accuracy": [
+      0.5556,
+      0.8333
+    ],
+    "exact_match": [
+      0.4778,
+      0.7778
+    ],
+    "noticed": [
+      0.4333,
+      0.7667
+    ],
+    "queue_accuracy": [
+      0.7556,
+      0.9667
+    ],
+    "submitted": [
+      0.9444,
+      1.0
+    ]
+  },
+  "mean_cost_per_scenario_usd": 0.000435,
+  "total_cost_usd": 0.0391,
+  "p50_latency_s": 6.034,
+  "results": [
+    {
+      "scenario_id": "sc-000",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000374,
+      "latency_s": 4.714,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The internal record shows exception_code ADDRESS_INVALID and has_validated_address_candidate=false. The carrier\u2019s scan history confirms \u201cDelivery attempted; address not found. Held at destination facility pending correction.\u201d The declared value is $367.63 (< $2000) and the customer is Gold tier with 72 hours SLA remaining, so automation is not required. This requires specialist address correction handling.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3203,
+          "output_tokens": 180,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000374
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00055,
+      "latency_s": 7.544,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment NO1300026767 is held by customs at the port of entry (exception_code CUSTOMS_HOLD) per both the internal record (refreshed) and the carrier\u2019s scan history. The declared value is $299.58 (< $2000) and the customer is standard tier, so no escalation is required. Customs holds must route to the customs-clearance queue per policy POL-CUST-03.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4831,
+          "output_tokens": 224,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00055
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000395,
+      "latency_s": 6.03,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history shows a 'DAMAGED_IN_TRANSIT' exception on 2026-07-14 with a disposition noting 'Package reported damaged during sortation. Contents inspection filed.' The internal record confirms a customs hold (exception_code: CUSTOMS_HOLD) but the carrier's authoritative event indicates physical damage. The shipment value is $193.99 (below the $2000 escalation threshold) and the customer is standard tier, so automation is not required. This requires specialist review in the carrier-claims queue to determine liability and next steps.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3273,
+          "output_tokens": 225,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000395
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000562,
+      "latency_s": 8.203,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment PA9845919668 is confirmed lost in transit per carrier scan history (no activity since 2026-07-14; carrier marked as presumed lost). Internal record shows $266.55 declared value, standard tier, and 44 hours of SLA remaining. Policy POL-ESC-01 requires human escalation for lost-in-transit claims regardless of value, as the customer is requesting a refund or replacement.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4868,
+          "output_tokens": 251,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000562
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000382,
+      "latency_s": 5.904,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA7222695482 shows a carrier scan exception 'Delivery refused by recipient' with the package already en route back to the origin facility. The internal record confirms exception_code DELV_REFUSED, has_validated_address_candidate=false, and the declared value is $3800 (> $2000), triggering escalation override. Policy POL-RET-06 directs refused deliveries to the returns queue for return-to-sender and refund review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3252,
+          "output_tokens": 189,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000382
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000387,
+      "latency_s": 5.695,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA8717592285 is delayed due to a carrier WEATHER_DELAY exception with an ETA revision of +72h. The internal record shows a standard customer tier, $233.80 declared value, and 11 hours remaining on the SLA. Policy POL-ESC-01 does not require escalation, and automation is not applicable for weather delays. The customer needs proactive communication about the delay and revised ETA.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3274,
+          "output_tokens": 197,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000387
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000535,
+      "latency_s": 7.459,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment NO5797889912 has an ADDRESS_INVALID exception with a validated candidate address available (has_validated_address_candidate=true). Policy POL-ADDR-02 permits auto-resolution in this scenario, so the candidate address will be applied and the shipment released for delivery.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4788,
+          "output_tokens": 189,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000535
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000389,
+      "latency_s": 5.826,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history shows a customs hold at port of entry (exception code CUSTOMS_HOLD) and the internal record confirms the shipment is held by customs. The declared value is $121.55 (below the $2000 escalation threshold) and the customer is standard tier with 33 hours SLA remaining, so no escalation is required. Customs holds must route to the customs-clearance queue per policy POL-CUST-03.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3315,
+          "output_tokens": 193,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000389
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000542,
+      "latency_s": 7.787,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment VE7727384337 shows a PARCELINE exception code DAMAGED_IN_TRANSIT with carrier scan history confirming 'Package reported damaged during sortation. Contents inspection filed.' The declared value is $567.90 (standard tier) and SLA hours remaining is 83. Policy POL-CLM-04 requires confirmed damage or loss in transit to route to carrier-claims. Evidence from carrier scan history is attached.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4742,
+          "output_tokens": 225,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000542
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 5.853,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO5739655724 has an authoritative carrier exception code LOST_IN_TRANSIT with no scans since 2026-07-14. Declared value is $3800 (> $2000) and customer tier is Platinum with 30 hours of SLA remaining. Policy POL-ESC-01 mandates escalation to a human operator for any lost shipment exceeding $2000.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3233,
+          "output_tokens": 198,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000381,
+      "latency_s": 5.763,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA1109525498 shows a carrier scan event of 'Delivery refused by recipient' with the parcel returning to origin. The internal record confirms exception_code DELIVERY_REFUSED, value_usd 348.21 (below the $2000 escalation threshold), and customer_tier standard. Policy POL-RET-06 directs refused deliveries to the returns queue for return-to-sender and refund review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3254,
+          "output_tokens": 184,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000381
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000421,
+      "latency_s": 6.449,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO1368871838 is delayed due to a carrier-reported weather exception (WEATHER_DELAY) with a revised ETA +72h. The declared value is $1,660.02 (below the $2,000 escalation threshold) and the customer is standard tier with 65 hours of SLA remaining. No damage/loss or address issue is indicated, so the appropriate action is to route to customer-notification for proactive communication about the delay.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3517,
+          "output_tokens": 230,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000421
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 7.074,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA9980821922 shows a customs hold exception (exception_code CUSTOMS_HOLD) in the internal record and carrier scan history confirms it is held at the destination facility. Policy POL-CUST-03 requires customs holds to route to the customs-clearance queue for broker-led resolution. Automation is not permitted for customs holds.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3320,
+          "output_tokens": 170,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000542,
+      "latency_s": 7.527,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows the shipment has been held by customs at the port of entry since 2026-07-14 with exception code CUSTOMS_HOLD. The refreshed internal record confirms the hold and shows a live SLA of 28 hours remaining with a declared value of $763.07 for a standard-tier customer. Policy POL-CUST-03 requires all customs holds to route to the customs-clearance queue; no escalation or auto-resolution is permitted.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4734,
+          "output_tokens": 229,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000542
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000387,
+      "latency_s": 5.906,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a 'DAMAGED_IN_TRANSIT' exception on 2026-07-15 at 09:30 UTC with a disposition noting 'Package reported damaged during sortation. Contents inspection filed.' The internal shipment record shows a declared value of $3800.00 (above the $2000 escalation threshold) and the customer is 'standard' tier with 82 hours of SLA remaining. Per policy POL-ESC-01, this requires human review for potential claims processing.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3221,
+          "output_tokens": 217,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000387
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000387,
+      "latency_s": 5.736,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO4818273214 has an exception_code of LOST_IN_TRANSIT with a declared value of $612.43 (below the $2000 escalation threshold) and the customer is Gold tier. The carrier\u2019s scan history shows no activity since 2026-07-14 and a disposition of 'presumed lost,' confirming the loss. This requires specialist handling for a carrier claim, so it is routed to carrier-claims.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3242,
+          "output_tokens": 209,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000387
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000547,
+      "latency_s": 7.459,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history confirms delivery was refused by the recipient on 2026-07-14 and the package is returning to origin. The shipment\u2019s declared value ($144.68) is below the $2000 escalation threshold and the customer is Platinum tier with 20 hours of SLA remaining, so no escalation is required. Policy POL-RET-06 directs refused deliveries to the returns queue to initiate return-to-sender and refund review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4805,
+          "output_tokens": 220,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000547
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000391,
+      "latency_s": 5.734,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The shipment record shows an ADDRESS_INVALID exception (exception_code: ADDRESS_INVALID) with a validated candidate address available (has_validated_address_candidate: true). The carrier scan history confirms a weather-related delay (WEATHER_DELAY) with an ETA revision of +72h, but the root cause is the invalid address. Policy POL-ADDR-02 requires routing invalid-address exceptions with a validated candidate to the address-correction queue for correction, even if other exceptions are present.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3312,
+          "output_tokens": 199,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000391
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000532,
+      "latency_s": 7.622,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment PA3192782745 has an ADDRESS_INVALID exception per both internal record and carrier scan history (ADDRESS_INVALID, held at destination facility). No validated address candidate exists, so this requires specialist handling. The declared value ($1025.55) and customer tier (gold) do not meet escalation thresholds in POL-ESC-01, so automation is not appropriate.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4673,
+          "output_tokens": 216,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000532
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000384,
+      "latency_s": 5.746,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment VE1244051092 is held by customs at the port of entry per both the internal record (exception_code=CUSTOMS_HOLD) and the carrier scan history. The declared value is $3,800 (> $2,000), so escalation is required per policy POL-ESC-01, and customs holds must route to the customs-clearance queue per policy POL-CUST-03.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3268,
+          "output_tokens": 190,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000384
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000388,
+      "latency_s": 5.949,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA5043716558 shows a PARCELINE exception code DAMAGED_IN_TRANSIT with carrier scan history confirming package reported damaged during sortation. The declared value is $384.96 (below $2000) and the customer is Platinum tier with 37 hours SLA remaining (above 24h threshold), so no escalation is required. Evidence supports routing to carrier-claims for claim filing.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3275,
+          "output_tokens": 203,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000388
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000395,
+      "latency_s": 6.034,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment VE3882590715 is coded LOST_IN_TRANSIT by Northfreight with no scans since 2026-07-14. The internal record shows a gold-tier customer and a declared value of $27.19, which is below the $2000 escalation threshold. The policy does not require human escalation here, so the case is routed to carrier-claims for loss investigation and to arrange a refund or replacement per standard claims procedure.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3308,
+          "output_tokens": 214,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000395
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000388,
+      "latency_s": 5.675,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan shows 'Delivery refused by recipient' with return in progress (exception_code DELIVERY_REFUSED). Internal record confirms exception_code CUSTOMS_HOLD and Platinum customer tier, but the refusal event supersedes the hold. Policy POL-RET-06 directs refused deliveries to the returns queue for return-to-sender and refund review. No escalation needed (value $207.11 < $2000 and SLA hours remaining 47 > 24).",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3308,
+          "output_tokens": 192,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000388
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000536,
+      "latency_s": 7.579,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a weather-related exception (WEATHER_DELAY) and revised ETA +72h. Policy POL-WX-05 states weather delays are informational and may be auto-resolved via the customer-notification workflow. Shipment value is $116.10 (< $2000) and customer is Gold tier, so no escalation required per POL-ESC-01.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4732,
+          "output_tokens": 211,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000536
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000369,
+      "latency_s": 5.652,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history shows exception code ADDRESS_INVALID with disposition 'Delivery attempted; address not found' and the package is held at the destination facility. The internal shipment record confirms exception_code ADDRESS_INVALID and has_validated_address_candidate=true, so the address-correction queue can apply the validated candidate to resolve the issue.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3206,
+          "output_tokens": 163,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000369
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000392,
+      "latency_s": 5.917,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO5030181318 is held by customs at the port of entry per the carrier's scan history. The internal record confirms exception_code CUSTOMS_HOLD and shows a declared value of $94.63 for a Platinum-tier customer with 81 hours of SLA remaining. Policy POL-CUST-03 requires all customs holds to route to the customs-clearance queue; automation is prohibited. No escalation is needed under POL-ESC-01 given the value is below $2000 and SLA hours exceed 24.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3264,
+          "output_tokens": 218,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000392
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000419,
+      "latency_s": 5.872,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO3670196012 shows a carrier-reported exception code DAMAGED_IN_TRANSIT on 2026-07-14 with scan history evidence. The declared value is $289.08 (below the $2000 escalation threshold in POL-ESC-01) and the customer is standard tier. Per POL-CLM-04, confirmed damage in transit must route to carrier-claims for claim filing.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3504,
+          "output_tokens": 228,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000419
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000386,
+      "latency_s": 6.31,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO6059041472 shows an exception code DELIVERY_REFUSED with carrier scan history indicating 'No scan activity for 10+ days. Trace initiated; presumed lost.' The policy POL-RET-06 states refused deliveries route to the returns queue for return-to-sender and refund review. The internal record confirms a validated address candidate exists, but the refusal status takes precedence.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3325,
+          "output_tokens": 179,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000386
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000536,
+      "latency_s": 7.693,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The shipment PA6280946842 shows a carrier scan event of 'Delivery refused by recipient' with the package returning to origin. The internal record confirms a declared value of $2294.12 (standard tier) and no validated address candidate. Policy POL-RET-06 directs refused deliveries to the returns queue, and the value does not meet escalation threshold POL-ESC-01 ($2000).",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4719,
+          "output_tokens": 213,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000536
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 0,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00038,
+      "latency_s": 5.605,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The shipment NO1701138477 is delayed due to a carrier-reported WEATHER_DELAY exception (ground transport suspended due to severe weather, ETA revised +72h). The internal record confirms the exception_code='WEATHER_DELAY' and the customer's SLA allows 68 hours remaining. Since this is an informational delay requiring proactive communication to the customer about the revised ETA, it is routed to customer-notification for handling.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3211,
+          "output_tokens": 197,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 5.927,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO5071050724 shows an ADDRESS_INVALID exception with no validated candidate address. The carrier scan history confirms delivery was attempted but the address could not be found, and the package is held at the destination facility. The declared value is $367.63 (below the $2000 escalation threshold) and the customer is Gold tier with 72 hours of SLA remaining, so no escalation is required. This requires address correction by the address-correction queue.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3207,
+          "output_tokens": 208,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000551,
+      "latency_s": 8.145,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment NO1300026767 is held by customs at the port of entry (exception code CUSTOMS_HOLD) per the carrier\u2019s scan history. The internal record confirms the hold and shows a live declared value of $299.58 (< $2000) and standard customer tier, so no escalation is required. Policy POL-CUST-03 mandates that customs holds always route to the customs-clearance queue for broker resolution.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4831,
+          "output_tokens": 225,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000551
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000385,
+      "latency_s": 6.041,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s scan history shows a DAMAGED_IN_TRANSIT exception on 2026-07-14 with a disposition noting \u2018Package reported damaged during sortation. Contents inspection filed.\u2019 The internal record confirms a declared value of $193.99 (below the $2000 escalation threshold) and a standard customer tier. This requires specialist handling in the carrier-claims queue to file and track the damage claim.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3273,
+          "output_tokens": 194,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000385
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000717,
+      "latency_s": 9.295,
+      "n_api_calls": 5,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 5,
+        "error": null,
+        "reasoning": "Shipment PA9845919668 shows an exception code LOST_IN_TRANSIT with carrier scan history indicating no activity since 2026-07-14 and a trace result of presumed lost. The declared value is $266.55 (standard tier, SLA 44 hours remaining). Policy POL-CLM-04 requires loss claims to be routed to carrier-claims with carrier evidence, which is satisfied here. Customer refund/replacement request aligns with loss claim process.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 5,
+          "input_tokens": 6373,
+          "output_tokens": 265,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000717
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000388,
+      "latency_s": 6.369,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA7222695482 shows a carrier exception 'Delivery refused' with the parcel returning to origin. The internal record confirms exception_code DELV_REFUSED, has_validated_address_candidate=false, and the carrier scan history corroborates refusal by recipient. Policy POL-RET-06 directs refused deliveries to the returns queue for return-to-sender and refund review. Although the declared value is $3800 (> $2000) and customer_tier=gold, the policy explicitly routes these cases to the returns queue rather than escalating.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3252,
+          "output_tokens": 209,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000388
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 5.655,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA8717592285 shows a carrier-reported weather delay (exception_code WEATHER_DELAY) with a revised ETA +72h. The internal record confirms a standard-tier customer, $233.80 declared value, and 11 hours of SLA remaining. Policy POL-WX-05 requires a proactive customer notification with the revised ETA, making the customer-notification queue the correct resolution path.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3262,
+          "output_tokens": 189,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00055,
+      "latency_s": 7.536,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment NO5797889912 has an ADDRESS_INVALID exception with a validated candidate address available. Policy POL-ADDR-02 permits auto-resolution in this scenario. The carrier scan history confirms the package is held at the destination facility pending address correction. No escalation is required as the declared value ($128.22) is below the $2000 threshold and the customer is standard tier.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4859,
+          "output_tokens": 214,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00055
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000381,
+      "latency_s": 6.104,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history shows a CUSTOMS_HOLD exception with status 'Held by customs at port of entry. Awaiting broker documentation.' The internal record confirms exception_code CUSTOMS_HOLD and a declared value of $121.55 (below the $2000 escalation threshold). The shipment is therefore routed to the customs-clearance queue for specialist resolution.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3269,
+          "output_tokens": 181,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000381
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000535,
+      "latency_s": 7.968,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier scan history confirms a DAMAGED_IN_TRANSIT exception on 2026-07-15 with a filed contents inspection. The shipment\u2019s declared value is $567.90, which is below the $2000 escalation threshold, so automation is not required. The issue is a carrier-caused damage claim, which falls under the carrier-claims queue for processing.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4697,
+          "output_tokens": 218,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000535
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000387,
+      "latency_s": 6.005,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO5739655724 (value $3,800, Platinum customer, 30 SLA hours left) has an internal exception code LOST_IN_TRANSIT and the carrier\u2019s scan history shows no activity since 2026-07-14 with a disposition of \u201cpresumed lost.\u201d Policy POL-ESC-01 mandates human escalation for Platinum customers with declared value > $2000, so this must be escalated to a human operator for claims processing.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3233,
+          "output_tokens": 213,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000387
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000384,
+      "latency_s": 5.704,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA1109525498 shows a carrier exception code DELIVERY_REFUSED with the disposition 'Delivery refused by recipient. Package returning to origin facility.' The internal record confirms exception_code=DELIVERY_REFUSED, has_validated_address_candidate=true, and the value $348.21 is below the $2000 escalation threshold. Policy POL-RET-06 directs refused deliveries to the returns queue for return-to-sender and refund review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3254,
+          "output_tokens": 194,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000384
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.000225,
+      "latency_s": 20.848,
+      "n_api_calls": 2,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": null,
+          "action": null
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [],
+        "n_turns": 0,
+        "error": "RemoteDisconnected: Remote end closed connection without response",
+        "reasoning": "",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 2,
+          "input_tokens": 2026,
+          "output_tokens": 76,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000225
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000387,
+      "latency_s": 5.086,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA9980821922 shows an exception_code of CUSTOMS_HOLD in the internal record and the carrier\u2019s scan history indicates it is held at the destination facility pending address correction. However, the internal record\u2019s exception_code takes precedence for routing. Policy POL-CUST-03 requires all customs holds to route to the customs-clearance queue, so the ticket is being sent there for specialist resolution.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3320,
+          "output_tokens": 184,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000387
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000541,
+      "latency_s": 8.783,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment VE7518208696 is held by customs at the port of entry (Miami, FL) as confirmed by the carrier scan history. The internal record shows a live exception code of CUSTOMS_HOLD, a declared value of $763.07, and 28 hours remaining on the delivery SLA. Policy POL-CUST-03 requires all customs holds to route to the customs-clearance queue; no escalation or automation is indicated.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4734,
+          "output_tokens": 227,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000541
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000384,
+      "latency_s": 6.174,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier\u2019s scan history confirms a DAMAGED_IN_TRANSIT exception on 2026-07-15 at 09:30 UTC with a disposition noting \u2018Package reported damaged during sortation. Contents inspection filed.\u2019 The shipment\u2019s declared value is $3800 (> $2000), triggering escalation override per POL-ESC-01. Evidence is sufficient to route to carrier-claims for claim filing.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3266,
+          "output_tokens": 190,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000384
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 5.811,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO4818273214 (value $612.43, gold tier) has been marked LOST_IN_TRANSIT by the carrier after 10+ days without scans. Policy POL-ESC-01 does not mandate human escalation based on value or SLA, but the exception_code LOST_IN_TRANSIT requires specialist review for claims filing and customer reimbursement. Routing to carrier-claims for human triage.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3231,
+          "output_tokens": 200,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 0.0
+      },
+      "cost_usd": 0.000362,
+      "latency_s": 93.308,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": null,
+          "action": null
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [],
+        "n_turns": 0,
+        "error": "RemoteDisconnected: Remote end closed connection without response",
+        "reasoning": "",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3340,
+          "output_tokens": 92,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000362
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000391,
+      "latency_s": 4.801,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The shipment VE2081622282 is delayed due to a weather-related exception (Ground transport suspended due to severe weather, ETA revised +72h) as confirmed by the carrier's scan history. However, the internal shipment record shows an ADDRESS_INVALID exception with a validated candidate address available. Since the address issue must be resolved before the shipment can proceed, this ticket is routed to the address-correction queue for manual resolution of the address and application of the validated candidate address.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3312,
+          "output_tokens": 200,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000391
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000525,
+      "latency_s": 9.699,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment PA3192782745 has an ADDRESS_INVALID exception per both internal record and carrier scan history (delivery attempted; address not found). The address service reports no validated candidate address (has_validated_address_candidate=false), so automation is not permitted under POL-ADDR-02. Route to address-correction for manual research and correction.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4655,
+          "output_tokens": 198,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000525
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000392,
+      "latency_s": 5.744,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment VE1244051092 is held by customs at the port of entry per the carrier\u2019s scan history. The internal record confirms exception_code CUSTOMS_HOLD and a declared value of $3800. Policy POL-CUST-03 requires all customs holds to route to the customs-clearance queue; automation is prohibited. Although the customer tier is standard and SLA hours remaining (68) exceed 24, the value exceeds $2000, so escalation to a human is not required per POL-ESC-01.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3268,
+          "output_tokens": 217,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000392
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000386,
+      "latency_s": 5.9,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA5043716558 shows a PARCELINE exception code DAMAGED_IN_TRANSIT with a carrier scan noting 'Package reported damaged during sortation. Contents inspection filed.' The declared value is $384.96 and the customer is Platinum tier with 37 hours of SLA remaining. Policy POL-ESC-01 requires escalation to a human operator for Platinum customers regardless of SLA hours when damage is reported, due to the potential for high-touch service recovery.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3221,
+          "output_tokens": 212,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000386
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000395,
+      "latency_s": 6.178,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment VE3882590715 (value $27.19, gold tier) shows a carrier exception code LOST_IN_TRANSIT with no scan activity since 2026-07-14. The carrier\u2019s own history confirms it is presumed lost. Policy POL-ESC-01 does not require escalation for this value or tier, so the correct route is the carrier-claims queue to initiate a loss claim and arrange a refund or replacement for the customer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3308,
+          "output_tokens": 214,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000395
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 6.008,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history shows a DELIVERY_REFUSED exception with the disposition 'Delivery refused by recipient. Package returning to origin facility.' The internal shipment record confirms a customs hold (exception_code: CUSTOMS_HOLD) and the customer is platinum tier with 47 hours of SLA remaining. The policy POL-ADDR-02 specifies that delivery refusal issues should be routed to the returns queue for handling, as this involves managing the returned parcel and any subsequent actions.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3256,
+          "output_tokens": 191,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000549,
+      "latency_s": 7.673,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a weather-related delay with a revised ETA +72h. The shipment value ($116.10) and customer tier (gold) do not meet escalation thresholds. Policy POL-WX-05 explicitly allows auto-resolution for weather delays by sending a proactive customer notification with the revised ETA.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4877,
+          "output_tokens": 205,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000549
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00038,
+      "latency_s": 5.733,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment VE6074724585 shows an ADDRESS_INVALID exception (carrier scan: 'Delivery attempted; address not found'). The internal record confirms exception_code ADDRESS_INVALID and has_validated_address_candidate=true, so a corrected address is available. Per policy POL-ADDR-02, this qualifies for auto-resolution by applying the candidate, but since the ticket specifically requests manual resolution and the validated candidate exists, I am routing to address-correction for specialist handling.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3203,
+          "output_tokens": 198,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 5.676,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO5030181318 is held by customs at the port of entry per both the internal record (exception_code=CUSTOMS_HOLD) and the carrier scan history. The declared value is $94.63 and the customer is Platinum tier with 81 hours of SLA remaining, so no escalation override applies. Policy POL-CUST-03 requires all customs holds to route to the customs-clearance queue.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3264,
+          "output_tokens": 190,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000415,
+      "latency_s": 8.197,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The shipment NO3670196012 shows a carrier-verified exception code DAMAGED_IN_TRANSIT with scan history indicating damage during sortation. The declared value is $289.08 (below the $2000 escalation threshold), and the customer is standard tier. Evidence from the carrier's scan history confirms the damage, so this requires specialist handling in the carrier-claims queue to file a claim.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3502,
+          "output_tokens": 216,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000415
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000407,
+      "latency_s": 5.929,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO6059041472 shows an exception_code of DELIVERY_REFUSED in our record and the carrier\u2019s scan history confirms a LOST_IN_TRANSIT disposition after 10+ days with no scan activity. Policy POL-RET-06 directs refused deliveries to the returns queue for return-to-sender and refund review. The declared value is $439.71 and the customer is standard tier, so no escalation override applies.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3431,
+          "output_tokens": 212,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000407
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000539,
+      "latency_s": 9.217,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history confirms delivery was refused by the recipient (exception_code: DELIVERY_REFUSED). The shipment is now returning to origin. Declared value is $2,294.12 (standard tier, 85 hours SLA remaining). Policy POL-RET-06 directs refused deliveries to the returns queue for return-to-sender and refund review. No escalation needed per POL-ESC-01 (value < $2000 and SLA > 24h).",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4719,
+          "output_tokens": 224,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000539
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 1,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000378,
+      "latency_s": 5.963,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO1701138477 is delayed due to weather (exception_code WEATHER_DELAY). The carrier's scan history confirms a ground transport suspension with a revised ETA +72h. Policy POL-WX-05 requires proactive customer notification for weather delays, which is eligible for auto-resolution via the customer-notification workflow.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3263,
+          "output_tokens": 171,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000378
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-000",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 6.323,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO5071050724 shows an ADDRESS_INVALID exception with no validated candidate address. The carrier scan history confirms delivery was attempted but the address could not be found, and the package is now held at the destination facility. The declared value is $367.63 (below the $2000 escalation threshold) and the customer is Gold tier with 72 hours of SLA remaining, so no escalation is required. This requires address correction by the address-correction queue.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3207,
+          "output_tokens": 209,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-001",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000551,
+      "latency_s": 8.19,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment NO1300026767 is held by customs at the port of entry (exception code CUSTOMS_HOLD) per the carrier\u2019s scan history. The internal record confirms the hold and shows a declared value of $299.58 (< $2000) and standard customer tier, so no escalation is required. Policy POL-CUST-03 mandates that customs holds always route to the customs-clearance queue for broker-led resolution.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4831,
+          "output_tokens": 225,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000551
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-002",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000389,
+      "latency_s": 5.845,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history shows a 'DAMAGED_IN_TRANSIT' exception on 2026-07-14 with a disposition noting 'Package reported damaged during sortation. Contents inspection filed.' The internal shipment record confirms an exception_code of 'DAMAGED_IN_TRANSIT' and a declared value of $193.99 (below the $2000 escalation threshold). This requires specialist handling in the carrier-claims queue to file and track the damage claim.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3273,
+          "output_tokens": 205,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000389
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-003",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000572,
+      "latency_s": 7.7,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment PA9845919668 is confirmed lost in transit per carrier scan history (last scan 2026-07-14, exception code LOST_IN_TRANSIT). The declared value is $266.55 (standard tier, 44 hours SLA remaining). Policy POL-ESC-01 does not require escalation for this value, and the customer\u2019s refund/replacement request aligns with carrier-claims handling for lost shipments. Routing to carrier-claims for claim initiation and resolution.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4929,
+          "output_tokens": 263,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000572
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-004",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000388,
+      "latency_s": 5.87,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA7222695482 shows a carrier scan exception 'Delivery refused by recipient' with the package now returning to origin. The internal record confirms exception_code DELIVERY_REFUSED, has_validated_address_candidate is false, and the declared value is $3800 (> $2000). Policy POL-RET-06 directs refused deliveries to the returns queue, and policy POL-ESC-01 requires human escalation for shipments over $2000, hence route_to_queue with escalation_to_human is appropriate.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3252,
+          "output_tokens": 210,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000388
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-005",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000368,
+      "latency_s": 5.673,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history shows a weather-related ground transport suspension with a revised ETA +72h (exception_code WEATHER_DELAY). Policy POL-WX-05 classifies this as informational; the shipment remains in good standing and no further intervention is required. Auto-resolving via customer-notification queue to trigger proactive ETA update to the customer.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3186,
+          "output_tokens": 166,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000368
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-006",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000541,
+      "latency_s": 7.271,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment NO5797889912 shows an ADDRESS_INVALID exception per both internal record and carrier scan history (ADDRESS_INVALID, held at destination facility). The system has a validated candidate address, but policy POL-ADDR-02 requires manual review when an exception is already present, so it must be routed to the address-correction queue for specialist handling.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4788,
+          "output_tokens": 206,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000541
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-007",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000402,
+      "latency_s": 5.836,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan history shows a customs hold at port of entry (exception code CUSTOMS_HOLD) and the internal record confirms the shipment is awaiting broker documentation. Policy POL-CUST-03 requires all customs holds to route to the customs-clearance queue; the shipment value ($121.55) and customer tier (standard) do not meet escalation thresholds in POL-ESC-01.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3415,
+          "output_tokens": 203,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000402
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-008",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00053,
+      "latency_s": 7.173,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "The carrier scan history confirms 'Package reported damaged during sortation. Contents inspection filed.' The refreshed shipment record shows a declared value of $567.90 and a standard customer tier, which does not meet the escalation threshold per POL-ESC-01. This is a damage claim requiring specialist handling in the carrier-claims queue.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4696,
+          "output_tokens": 202,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00053
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-009",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 5.572,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO5739655724 has an authoritative carrier exception code LOST_IN_TRANSIT with no scans since 2026-07-14. Declared value is $3800 (> $2000) and customer is Platinum tier with 30 hours of SLA remaining. Policy POL-ESC-01 mandates escalation to a human operator for any lost shipment exceeding $2000.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3233,
+          "output_tokens": 198,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-010",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 7.28,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA1109525498 shows a carrier scan event of 'Delivery refused by recipient' with the parcel returning to origin. The internal record confirms exception_code DELIVERY_REFUSED and has a validated address candidate. Policy POL-RET-06 directs refused deliveries to the returns queue for return-to-sender and refund review. Declared value $348.21 and standard customer tier do not meet escalation thresholds in POL-ESC-01.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3254,
+          "output_tokens": 191,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-011",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000558,
+      "latency_s": 7.71,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment NO1368871838 is delayed due to WEATHER_DELAY (severe weather along the route). The carrier's scan history confirms a revised ETA of +72h. The declared value is $1660.02 (<$2000 threshold) and the customer is standard tier, so no escalation is required. Policy POL-WX-05 states weather delays are informational and should trigger a proactive customer notification with the revised ETA. This qualifies for auto-resolution via the customer-notification queue.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4845,
+          "output_tokens": 245,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000558
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-012",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000408,
+      "latency_s": 6.064,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA9980821922 shows a customs hold exception (exception_code CUSTOMS_HOLD) with a declared value of $394.81 and 49 hours of SLA remaining. The carrier\u2019s scan history confirms the hold at the destination facility. Policy POL-CUST-03 requires all customs holds to be routed to the customs-clearance queue for broker-led resolution; automation is not permitted.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3465,
+          "output_tokens": 204,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000408
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-013",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000539,
+      "latency_s": 7.65,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows the shipment has been held by customs at the port of entry since 2026-07-14 with exception code CUSTOMS_HOLD. The internal shipment record confirms this status and shows a live declared value of $763.07 with 28 hours remaining on the delivery SLA. Policy POL-CUST-03 requires all customs holds to route to the customs-clearance queue for broker resolution.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4734,
+          "output_tokens": 218,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000539
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-014",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 5.995,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The carrier scan history shows a 'DAMAGED_IN_TRANSIT' exception on 2026-07-15 at 09:30 UTC with a disposition of 'Package reported damaged during sortation. Contents inspection filed.' The internal shipment record confirms the exception code and shows a declared value of $3800.00 (above the $2000 escalation threshold). This requires specialist review in the carrier-claims queue to determine coverage and next steps.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3221,
+          "output_tokens": 203,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-015",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000387,
+      "latency_s": 6.211,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO4818273214 has an exception_code LOST_IN_TRANSIT with carrier scan history showing no activity since 2026-07-14 and a carrier disposition 'presumed lost'. The declared value is $612.43 (below the $2000 escalation threshold) and the customer is Gold tier with 54 hours SLA remaining (above 24 hours). This requires specialist handling for a carrier claim, so it is routed to carrier-claims.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3232,
+          "output_tokens": 211,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000387
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-016",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000548,
+      "latency_s": 8.112,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history confirms the recipient refused delivery on 2026-07-14 at 09:30Z, triggering a return to origin. The shipment\u2019s declared value is $144.68 (below the $2000 escalation threshold) and the customer is Platinum tier with 20 hours of SLA remaining (below the 24-hour threshold). Policy POL-RET-06 directs refused deliveries to the returns queue for return-to-sender and refund review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4805,
+          "output_tokens": 226,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000548
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-017",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000386,
+      "latency_s": 5.914,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The shipment VE2081622282 is delayed due to a carrier-reported weather exception (WEATHER_DELAY) with an ETA revision of +72h, but the internal record shows an exception_code ADDRESS_INVALID and has a validated candidate address. Per policy POL-ADDR-02, invalid-address exceptions with a validated candidate must be routed to the address-correction queue for manual application of the candidate address before the carrier can proceed, even though the weather is the primary delay cause.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3259,
+          "output_tokens": 201,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000386
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-018",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000545,
+      "latency_s": 31.235,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Shipment PA3192782745 shows an ADDRESS_INVALID exception in both the internal record and carrier scan history (event: 'Delivery attempted; address not found'). The address service has no validated candidate address (has_validated_address_candidate=false), so automation is not permitted per POL-ADDR-02. Although the customer is Gold tier and the shipment value is $1025.55 (below the $2000 escalation threshold), the address issue requires manual research to correct before further delivery attempts can be made.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4732,
+          "output_tokens": 240,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000545
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-019",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000386,
+      "latency_s": 5.917,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment VE1244051092 is held by customs at the port of entry per both the internal record (exception_code=CUSTOMS_HOLD, value_usd=3800.0) and the carrier\u2019s scan history. Policy POL-CUST-03 requires all customs holds to be routed to the customs-clearance queue; automation is prohibited. Although the declared value exceeds $2000, the hold itself mandates specialist handling rather than escalation.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3268,
+          "output_tokens": 197,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000386
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-020",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000384,
+      "latency_s": 5.738,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment PA5043716558 shows a PARCELINE exception code DAMAGED_IN_TRANSIT with a carrier scan noting 'Package reported damaged during sortation. Contents inspection filed.' The declared value is $384.96 and the customer is Platinum tier with 37 hours of SLA remaining. Policy POL-ESC-01 requires escalation to a human operator for Platinum customers regardless of value, so this must be escalated for immediate claims handling.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3221,
+          "output_tokens": 207,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000384
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-021",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000401,
+      "latency_s": 6.073,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "escalate_to_human"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment VE3882590715 is coded LOST_IN_TRANSIT by Northfreight with no scans since 2026-07-14. Declared value is $27.19 (< $2000) and customer is Gold tier with 88 SLA hours remaining, so automation is not blocked by policy POL-ESC-01. However, the customer is explicitly requesting a refund or replacement, which requires a human decision to authorize payment or replacement issuance. Routing to carrier-claims for immediate human triage.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3308,
+          "output_tokens": 233,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000401
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-022",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000383,
+      "latency_s": 5.923,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Carrier scan shows delivery was refused by recipient (exception code DELIVERY_REFUSED) and is already returning to origin. Internal record confirms exception_code CUSTOMS_HOLD, but policy POL-RET-06 directs refused deliveries to the returns queue for return-to-sender and refund review. Platinum tier and 47 SLA hours remaining do not meet escalation threshold POL-ESC-01.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3308,
+          "output_tokens": 174,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000383
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-023",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000534,
+      "latency_s": 7.679,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history shows a weather-related delay with a revised ETA +72h (exception_code WEATHER_DELAY). The shipment is gold-tier with $116.10 declared value and 69 hours of SLA remaining, so no escalation is required. Policy POL-WX-05 indicates weather delays are informational and can be auto-resolved via the customer-notification workflow.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4729,
+          "output_tokens": 204,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000534
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-024",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00038,
+      "latency_s": 16.567,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "address-correction",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "address-correction",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment VE6074724585 shows an ADDRESS_INVALID exception with the latest carrier scan stating 'Delivery attempted; address not found. Held at destination facility pending correction.' The internal record confirms exception_code ADDRESS_INVALID and has_validated_address_candidate=true, so the address service has a corrected address. Per policy POL-ADDR-02, this requires manual review in the address-correction queue to apply the candidate address before the shipment can move again.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3206,
+          "output_tokens": 197,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00038
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-025",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000385,
+      "latency_s": 5.755,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "CLEAN",
+        "detectable": false,
+        "gold": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "customs-clearance",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO5030181318 is held by customs at the port of entry per both the internal record (exception_code=CUSTOMS_HOLD) and the carrier\u2019s scan history. The declared value is $94.63 and the customer is Platinum tier with 81 hours of SLA remaining, so no escalation override applies. Policy POL-CUST-03 requires all customs holds to route to the customs-clearance queue for broker-led resolution.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3264,
+          "output_tokens": 195,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000385
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-026",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 1.0,
+        "exact_match": 1.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000415,
+      "latency_s": 6.012,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "STALE_SNAPSHOT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "The shipment NO3670196012 has a carrier-verified exception code DAMAGED_IN_TRANSIT with evidence from the carrier scan history showing 'Package reported damaged during sortation. Contents inspection filed.' The declared value is $289.08 (below the $2000 escalation threshold), and the customer tier is standard. This requires specialist handling in the carrier-claims queue to process the damage claim.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3502,
+          "output_tokens": 216,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000415
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-027",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 0.0,
+        "action_accuracy": 1.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000389,
+      "latency_s": 5.905,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SOURCE_CONFLICT",
+        "detectable": true,
+        "gold": {
+          "queue": "carrier-claims",
+          "action": "route_to_queue"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO6059041472 shows an exception code DELIVERY_REFUSED with a carrier scan history indicating no activity since July 15 and a presumed lost status. The internal record confirms the refusal and has a validated address candidate, but the carrier's authoritative status indicates a lost-in-transit scenario. Per policy POL-RET-06, refused deliveries route to the returns queue for return-to-sender processing and refund review.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3325,
+          "output_tokens": 187,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000389
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-028",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 1.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.00054,
+      "latency_s": 7.568,
+      "n_api_calls": 4,
+      "detail": {
+        "arm": "drift",
+        "archetype": "DEGRADED_PARTIAL",
+        "detectable": true,
+        "gold": {
+          "queue": "returns",
+          "action": "escalate_to_human"
+        },
+        "predicted": {
+          "queue": "returns",
+          "action": "route_to_queue"
+        },
+        "refreshed": true,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "lookup_shipment",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 4,
+        "error": null,
+        "reasoning": "Carrier scan history confirms delivery was refused at destination (Seattle, WA) on 2026-07-14. The shipment\u2019s declared value is $2,294.12 (standard tier, 85 SLA hours remaining). Policy POL-RET-06 directs refused deliveries to the returns queue for return-to-sender and refund review. No escalation required per POL-ESC-01 since the value is under $2,000 and the customer is standard tier.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 4,
+          "input_tokens": 4719,
+          "output_tokens": 227,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.00054
+        }
+      }
+    },
+    {
+      "scenario_id": "sc-029",
+      "repeat": 2,
+      "metrics": {
+        "queue_accuracy": 1.0,
+        "action_accuracy": 0.0,
+        "exact_match": 0.0,
+        "noticed": 0.0,
+        "acted_on_stale": 0.0,
+        "submitted": 1.0
+      },
+      "cost_usd": 0.000379,
+      "latency_s": 5.867,
+      "n_api_calls": 3,
+      "detail": {
+        "arm": "drift",
+        "archetype": "SILENT_WRONG",
+        "detectable": false,
+        "gold": {
+          "queue": "customer-notification",
+          "action": "auto_resolve"
+        },
+        "predicted": {
+          "queue": "customer-notification",
+          "action": "route_to_queue"
+        },
+        "refreshed": false,
+        "read_carrier": true,
+        "gate_repaired": [],
+        "tool_calls": [
+          "lookup_shipment",
+          "get_carrier_status",
+          "search_policy",
+          "submit_triage"
+        ],
+        "n_turns": 3,
+        "error": null,
+        "reasoning": "Shipment NO1701138477 is delayed due to a carrier-reported WEATHER_DELAY exception with a +72h ETA revision. The internal record confirms exception_code='WEATHER_DELAY' and SLA hours remaining (68h) exceed the policy threshold for escalation. Proactive customer communication is required, so routing to customer-notification for a notification to the customer about the delay and revised ETA.",
+        "usage": {
+          "model": "mistral-small-latest",
+          "api_calls": 3,
+          "input_tokens": 3211,
+          "output_tokens": 192,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cost_usd": 0.000379
+        }
+      }
+    }
+  ]
+}
