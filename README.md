@@ -11,6 +11,7 @@
 </p>
 
 <p align="center">
+  <a href="FAILURE_TAXONOMY.md">Failure taxonomy</a> ·
   <a href="#there-is-no-best-model">Results</a> ·
   <a href="#use-cases">Use cases</a> ·
   <a href="#industries">Industries</a> ·
@@ -78,6 +79,23 @@ the acting and gating tasks but wasn't the first-picked model anywhere early; **
 the cheapest, free-tier model — wins the on-call watch task outright**, where the expensive
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
+
+## 64 failures, 11 patterns
+
+The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
+the product** — every failure this repo has observed, cross-cut into the patterns that keep
+reappearing across industries that share nothing but the shape of the agent.
+
+| Pattern | In short | Found in |
+|---|---|---|
+| [Commit-stall](FAILURE_TAXONOMY.md#commit-stall) | Investigates correctly, concludes correctly, never commits — and accuracy metrics can't see it | **8 of 12** use cases |
+| [The environment beats the prompt](FAILURE_TAXONOMY.md#the-environment-beats-the-prompt) | Changing what the agent *can* do works; telling it what it *should* do mostly doesn't | 4 controlled A/Bs |
+| [Safety by inaction](FAILURE_TAXONOMY.md#safety-by-inaction) | A "did it avoid the bad action" metric is passed perfectly by an agent that does nothing | 3 use cases |
+| [Trust follows the channel](FAILURE_TAXONOMY.md#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition | 2 use cases |
+| [Prior over policy](FAILURE_TAXONOMY.md#prior-over-policy) | Models cite the rule in their reasoning, then violate it in the same breath | 4 use cases |
+
+<a href="FAILURE_TAXONOMY.md"><b>→ Read all 11 patterns</b></a>, each with measured incidence and
+a link to the run that produced it.
 
 ## Four models, one agent — one row, up close
 

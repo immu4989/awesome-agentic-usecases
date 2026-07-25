@@ -35,6 +35,7 @@ and the cross-use-case matrix never drift from the data:
 python docs/make_assets.py         # per-use-case banner + results chart + decision ladder
 python docs/make_leaderboard.py    # the root-README "no best model" matrix + heatmap
 python docs/make_terminal_demo.py  # the animated terminal casts (replayed from results)
+python docs/make_taxonomy.py       # FAILURE_TAXONOMY.md (fails loudly on a dead citation)
 ```
 
 The terminal casts replay a real scenario the model passed and one it failed, so they
