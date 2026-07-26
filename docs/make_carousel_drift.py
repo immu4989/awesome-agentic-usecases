@@ -1,7 +1,7 @@
 """Wave-12 launch assets (LinkedIn carousel PDF + X/Facebook cards) from committed results.
 
 Every number is read from the exception-triage-drift results, never retyped. Runs on the
-"ember" palette rather than the security violet — see docs/palettes.py.
+"orchid" palette — see docs/palettes.py to switch flavours.
 
     python docs/make_carousel_drift.py   # -> ~/Desktop/agentic-drift-*.{pdf,png}
 """
@@ -19,9 +19,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 R = os.path.join(ROOT, "logistics-supply-chain/exception-triage-drift/results")
 
-# The drift wave runs warm on purpose: amber and rust read as aged and corrupted, mint as
-# fresh, so the palette carries the subject instead of repeating the security violet.
-P = palette("ember")
+P = palette("orchid")
 SURFACE, INK, INK2, MUTED = P["surface"], P["ink"], P["ink2"], P["muted"]
 ACCENT = P["accent"]
 PANEL, PANEL_INK, PANEL_INK2, PANEL_MUTED = P["panel"], P["ink"], P["ink2"], P["panel_muted"]
