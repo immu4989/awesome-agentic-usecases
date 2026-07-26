@@ -56,6 +56,29 @@ for name, tag in MODELS:
 K = STATS["kimi-k2p6"]
 
 
+def stale_example() -> dict:
+    """A real scenario where one cached field flips the decision — used by the X card.
+
+    Read from the world rather than typed in, so if the corruption logic changes the card
+    changes with it instead of quietly becoming fiction.
+    """
+    from exception_triage_agent.world import generate_scenarios, gold_triage
+    from exception_triage_drift.drift import archetype_for, served_view
+
+    for i, sc in enumerate(generate_scenarios(30, 7)):
+        if archetype_for(i) != "STALE_SNAPSHOT":
+            continue
+        served = served_view(sc, "STALE_SNAPSHOT")["shipment"]
+        if gold_triage(served)[1] != gold_triage(sc.shipment)[1]:
+            return {"sc": sc, "served": served, "true": sc.shipment,
+                    "served_action": gold_triage(served)[1],
+                    "true_action": gold_triage(sc.shipment)[1]}
+    raise RuntimeError("no decision-flipping stale scenario found")
+
+
+EX = stale_example()
+
+
 def pts(x: float) -> str:
     return f"{round(x * 100)}"
 
@@ -189,6 +212,64 @@ def _render(tmp: str, out: str, size, pdf: bool) -> None:
     print(f"wrote {out} ({os.path.getsize(out)/1024:.0f} KB)")
 
 
+def x_card() -> str:
+    """A different shape from every other card in this repo.
+
+    The stat-panel composition had been used for three waves running and had started to
+    read as the same image. This one shows the actual artifact instead of the summary: two
+    near-identical records, one field three days stale, and the decision it flipped. It
+    asks the reader to find something rather than to read a number, which is the only
+    reliable way to buy a second look on a fast feed.
+    """
+    t, sv = EX["true"], EX["served"]
+
+    def rec(label: str, ship: dict) -> str:
+        rows = "".join(
+            f'<div class="ln"><span class="k">{k}</span>'
+            f'<span class="v">{v}</span></div>'
+            for k, v in (
+                ("tracking_id", ship["tracking_id"]),
+                ("carrier", ship["carrier"]),
+                ("exception_code", ship["exception_code"]),
+                ("value_usd", f'{ship["value_usd"]:,.2f}'),
+                ("customer_tier", ship["customer_tier"]),
+                ("sla_hours_remaining", ship["sla_hours_remaining"]),
+            ))
+        return f'<div class="rec"><div class="rl">{label}</div>{rows}</div>'
+
+    return f"""<!doctype html><meta charset="utf-8"><style>
+  * {{ box-sizing: border-box; margin: 0; }}
+  body {{ width: 1600px; height: 900px; font-family: {FONT}; background: {SURFACE};
+         color: {INK}; padding: 60px 72px; position: relative; display: flex;
+         flex-direction: column; justify-content: center; }}
+  body::before {{ content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+                  width: 14px; background: {ACCENT}; }}
+  .kicker {{ color: {ACCENT}; font-size: 24px; font-weight: 700; letter-spacing: 2.4px; }}
+  h1 {{ font-size: 58px; font-weight: 700; letter-spacing: -1.2px; margin: 14px 0 6px; }}
+  .sub {{ font-size: 26px; color: {MUTED}; }}
+  .pair {{ display: flex; gap: 34px; margin-top: 34px; }}
+  .rec {{ flex: 1; background: {PANEL}; border-radius: 16px; padding: 26px 30px;
+          font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
+  .rl {{ font-size: 18px; letter-spacing: 2px; color: {PANEL_MUTED}; font-weight: 700;
+         margin-bottom: 14px; font-family: {FONT}; }}
+  .ln {{ display: flex; justify-content: space-between; font-size: 25px; padding: 7px 0; }}
+  .k {{ color: {PANEL_MUTED}; }}
+  .v {{ color: {PANEL_INK}; font-weight: 600; }}
+  .foot {{ position: absolute; left: 72px; right: 68px; bottom: 40px; display: flex;
+           justify-content: space-between; align-items: baseline; font-size: 23px;
+           color: {MUTED}; }}
+  .foot b {{ color: {ACCENT}; }}
+</style>
+<div class="kicker">SAME SHIPMENT · SAME AGENT · TWO RECORDS</div>
+<h1>One of these is three days out of date.</h1>
+<div class="sub">The agent couldn't tell either. Can you?</div>
+<div class="pair">{rec("RECORD A", sv)}{rec("RECORD B", t)}</div>
+<div class="foot">
+  <span>it escalated a $300 shipment · a model that scored 1.000 here dropped to {K['drift']:.3f}</span>
+  <span><b>github.com/immu4989/awesome-agentic-usecases</b></span>
+</div>"""
+
+
 def card(landscape: bool) -> str:
     w, h = (1600, 900) if landscape else (1080, 1350)
     return f"""<!doctype html><meta charset="utf-8"><style>
@@ -242,10 +323,12 @@ def main() -> None:
     open(tmp, "w").write(html)
     _render(tmp, os.path.expanduser("~/Desktop/agentic-drift-carousel.pdf"), (1080, 1350), True)
     print(f"  ({len(slides())} slides)")
-    for land, nm, size in ((True, "x", (1600, 900)), (False, "fb", (1080, 1350))):
-        t = f"/tmp/aau-drift-{nm}.html"
-        open(t, "w").write(card(land))
-        _render(t, os.path.expanduser(f"~/Desktop/agentic-drift-{nm}-card.png"), size, False)
+    open("/tmp/aau-drift-x.html", "w").write(x_card())
+    _render("/tmp/aau-drift-x.html",
+            os.path.expanduser("~/Desktop/agentic-drift-x-card.png"), (1600, 900), False)
+    open("/tmp/aau-drift-fb.html", "w").write(card(False))
+    _render("/tmp/aau-drift-fb.html",
+            os.path.expanduser("~/Desktop/agentic-drift-fb-card.png"), (1080, 1350), False)
     print("\ndata:", {n: {k: round(v, 3) for k, v in s.items()} for n, s in STATS.items()})
 
 
