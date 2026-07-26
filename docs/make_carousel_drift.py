@@ -1,7 +1,7 @@
 """Wave-12 launch assets (LinkedIn carousel PDF + X/Facebook cards) from committed results.
 
-Every number is read from the exception-triage-drift results, never retyped. Dark theme,
-matching the Wave-11 assets.
+Every number is read from the exception-triage-drift results, never retyped. Runs on the
+"ember" palette rather than the security violet — see docs/palettes.py.
 
     python docs/make_carousel_drift.py   # -> ~/Desktop/agentic-drift-*.{pdf,png}
 """
@@ -13,14 +13,19 @@ import os
 import subprocess
 import sys
 
+from palettes import palette
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 R = os.path.join(ROOT, "logistics-supply-chain/exception-triage-drift/results")
 
-SURFACE, INK, INK2, MUTED = "#161615", "#f3f2ec", "#c3c2b7", "#8a887f"
-ACCENT = "#9085e9"
-PANEL, PANEL_INK, PANEL_INK2, PANEL_MUTED = "#262521", "#f3f2ec", "#c6c5ba", "#95938b"
-GOOD, BAD, WARN = "#22c55e", "#f0524d", "#f0a500"
+# The drift wave runs warm on purpose: amber and rust read as aged and corrupted, mint as
+# fresh, so the palette carries the subject instead of repeating the security violet.
+P = palette("ember")
+SURFACE, INK, INK2, MUTED = P["surface"], P["ink"], P["ink2"], P["muted"]
+ACCENT = P["accent"]
+PANEL, PANEL_INK, PANEL_INK2, PANEL_MUTED = P["panel"], P["ink"], P["ink2"], P["panel_muted"]
+GOOD, BAD, WARN = P["good"], P["bad"], P["warn"]
 FONT = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
 
 MODELS = [("kimi-k2p6", "accounts_fireworks_models_kimi-k2p6"),
