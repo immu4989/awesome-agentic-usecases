@@ -20,6 +20,23 @@ A new use case PR needs:
 - Demos without evals, evals without ground truth, results from a single run.
 - Use cases requiring proprietary data or paid services beyond the model API.
 
+## Start from the generator, not a blank page
+
+The bar below is high on purpose, and writing a seeded world, a shared gold function, a
+deterministic mock and the tests that hold them together is a day of work before you reach
+the interesting part. Skip it:
+
+```bash
+pip install -e harness
+aau-new-use-case --industry healthcare --name prior-auth-triage-agent --seed 41
+```
+
+That emits a complete use case and then verifies it: installs it, generates the scenario
+file, runs the tests, and runs a mock eval. All four have to pass before it prints the next
+steps, so your first command succeeds and every later edit is checked by tests that already
+encode the bar. Search the tree for `TODO(domain)` and replace the placeholder domain with
+yours; pick a `--seed` no other use case uses.
+
 ## Development
 
 ```bash

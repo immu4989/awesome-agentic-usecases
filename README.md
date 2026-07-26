@@ -302,6 +302,16 @@ model to the comparison is one flag.
 
 ## Contributing
 
+```bash
+pip install -e harness
+aau-new-use-case --industry healthcare --name prior-auth-triage-agent --seed 41
+```
+
+That scaffolds a complete use case — seeded world, shared gold function, deterministic mock
+with an engineered gap, and the tests that hold the bar in place — then installs it,
+generates the scenarios, runs the tests and a mock eval, and only then prints your next
+steps. Replace the placeholder domain; the rigor is already installed.
+
 New use cases are welcome if they clear the [verification bar](VERIFICATION.md) —
 see [CONTRIBUTING.md](CONTRIBUTING.md). Link-list additions aren't a fit; this isn't
 a link list.
