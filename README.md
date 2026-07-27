@@ -256,6 +256,10 @@ Five rules, no exceptions — the full reasoning lives in [VERIFICATION.md](VERI
 | 4️⃣ | **n≥3 repeated runs with bootstrap CIs** — single-run agent numbers are noise |
 | 5️⃣ | **≥3 observed failure modes**, each with a reproducing input |
 
+What this method does **not** support is stated in [LIMITATIONS.md](LIMITATIONS.md) — the
+worlds are synthetic, the intervals are wide, and three published conclusions here were
+later found wrong and are documented rather than removed.
+
 <details>
 <summary><b>How a number gets made</b> — the path from a seed to a committed result</summary>
 <br>
