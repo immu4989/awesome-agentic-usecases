@@ -313,7 +313,7 @@ model to the comparison is one flag.
   title   = {{Awesome Agentic Use Cases: verified agentic AI use cases
              with evals, measured cost, and observed failure modes}},
   year    = {2026},
-  version = {0.1.1},
+  version = {0.1.2},
   doi     = {10.5281/zenodo.21631852},
   url     = {https://doi.org/10.5281/zenodo.21631852}
 }

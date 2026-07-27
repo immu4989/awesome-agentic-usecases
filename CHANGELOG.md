@@ -3,6 +3,17 @@
 Notable changes to the repository. Versions follow [semantic versioning](https://semver.org/):
 the harness API is what is versioned; use cases are additive.
 
+## [0.1.2] — 2026-07-27
+
+### Added
+- **Harness API documentation** (`harness/README.md`): install, a runnable quickstart,
+  and reference for every public export, plus the design commitments the library is built
+  around.
+- Two documentation tests: the README quickstart is **executed** in CI, and every name in
+  `__all__` must appear in the README. The second caught three exports that were shipping
+  undocumented.
+- ORCID on the author record across paper, citation file and Zenodo metadata.
+
 ## [0.1.1] — 2026-07-27
 
 Archival release. Adds `.zenodo.json` so the deposited record carries a real title,
