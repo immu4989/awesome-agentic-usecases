@@ -8,7 +8,7 @@ tags:
   - reproducibility
   - benchmarking
 authors:
-  - name: Imran Ahamed
+  - name: Fnu Imran Ahamed
     orcid: 0009-0002-7717-7480
     affiliation: 1
 affiliations:

@@ -309,7 +309,7 @@ model to the comparison is one flag.
 
 ```bibtex
 @software{ahamed_awesome_agentic_usecases,
-  author  = {Ahamed, Imran},
+  author  = {Ahamed, Fnu Imran},
   title   = {{Awesome Agentic Use Cases: verified agentic AI use cases
              with evals, measured cost, and observed failure modes}},
   year    = {2026},
