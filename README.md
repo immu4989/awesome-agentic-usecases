@@ -7,6 +7,7 @@
   <a href="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml"><img src="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/python-3.10%2B-2a78d6" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/license-Apache--2.0-008300" alt="Apache-2.0 license">
+  <a href="https://doi.org/10.5281/zenodo.21631852"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21631852.svg" alt="DOI"></a>
   <img src="https://img.shields.io/badge/reproduce%20for-%240%20(free%20tiers)-4a3aa7" alt="Reproduce for $0 on free tiers">
 </p>
 
@@ -309,11 +310,13 @@ model to the comparison is one flag.
              with evals, measured cost, and observed failure modes}},
   year    = {2026},
   version = {0.1.1},
-  url     = {https://github.com/immu4989/awesome-agentic-usecases}
+  doi     = {10.5281/zenodo.21631852},
+  url     = {https://doi.org/10.5281/zenodo.21631852}
 }
 ```
 
-See [CITATION.cff](CITATION.cff). Every result carries its own provenance — the timestamp,
+Archived on Zenodo: [10.5281/zenodo.21631852](https://doi.org/10.5281/zenodo.21631852) — a concept DOI, so it always
+resolves to the newest version. See [CITATION.cff](CITATION.cff). Every result carries its own provenance — the timestamp,
 harness version, and the model the provider actually served — and results taken against
 floating aliases say so.
 
