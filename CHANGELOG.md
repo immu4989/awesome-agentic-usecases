@@ -3,6 +3,12 @@
 Notable changes to the repository. Versions follow [semantic versioning](https://semver.org/):
 the harness API is what is versioned; use cases are additive.
 
+## [0.1.1] — 2026-07-27
+
+Archival release. Adds `.zenodo.json` so the deposited record carries a real title,
+abstract, keywords and licence — including the synthetic-world limitation, since a DOI is
+permanent and is cited by people who never open the README. No functional changes.
+
 ## [0.1.0] — 2026-07-27
 
 First tagged release. Thirteen verified use cases across seven industries, 55 real-model

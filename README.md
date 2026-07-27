@@ -308,7 +308,7 @@ model to the comparison is one flag.
   title   = {{Awesome Agentic Use Cases: verified agentic AI use cases
              with evals, measured cost, and observed failure modes}},
   year    = {2026},
-  version = {0.1.0},
+  version = {0.1.1},
   url     = {https://github.com/immu4989/awesome-agentic-usecases}
 }
 ```
