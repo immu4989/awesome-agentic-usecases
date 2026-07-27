@@ -300,6 +300,23 @@ DeepSeek · Together · Fireworks**, plus a native `anthropic` backend — so ev
 case can be verified on free tiers before anyone spends a dollar, and adding a new
 model to the comparison is one flag.
 
+## Cite this
+
+```bibtex
+@software{ahamed_awesome_agentic_usecases,
+  author  = {Ahamed, Imran},
+  title   = {{Awesome Agentic Use Cases: verified agentic AI use cases
+             with evals, measured cost, and observed failure modes}},
+  year    = {2026},
+  version = {0.1.0},
+  url     = {https://github.com/immu4989/awesome-agentic-usecases}
+}
+```
+
+See [CITATION.cff](CITATION.cff). Every result carries its own provenance — the timestamp,
+harness version, and the model the provider actually served — and results taken against
+floating aliases say so.
+
 ## Contributing
 
 ```bash

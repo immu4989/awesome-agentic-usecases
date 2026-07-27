@@ -56,7 +56,12 @@ class EvalAggregate:
     results: list[ScenarioResult]
 
     def as_dict(self) -> dict:
+        from .provenance import snapshot
+
         return {
+            # Stamped here rather than in each use case's save_results, so every result
+            # in the repo carries its provenance whether or not its author thought about it.
+            "provenance": snapshot(),
             "n_scenarios": self.n_scenarios,
             "n_repeats": self.n_repeats,
             "metric_means": {k: round(v, 4) for k, v in self.metric_means.items()},

@@ -106,15 +106,27 @@ def run_tool_agent(
 
 def make_backend(kind: str, model: str | None = None, mock_factory: Callable | None = None):
     """Resolve a backend by name: 'mock' (use case supplies the factory),
-    'anthropic', or any provider in llm_providers.PROVIDERS."""
+    'anthropic', or any provider in llm_providers.PROVIDERS.
+
+    Every backend is registered for provenance, so a saved result records which model
+    actually answered without each use case having to plumb that through itself.
+    """
+    from .provenance import register_backend
+
     if kind == "mock":
         if mock_factory is None:
             raise ValueError("this use case has no mock backend registered")
-        return mock_factory()
+        backend = mock_factory()
+        register_backend(backend)
+        return backend
     if kind == "anthropic":
-        return AnthropicBackend(model=model or "claude-opus-4-8")
+        backend = AnthropicBackend(model=model or "claude-opus-4-8")
+        register_backend(backend)
+        return backend
     from .llm_providers import PROVIDERS, OpenAICompatBackend
 
     if kind in PROVIDERS:
-        return OpenAICompatBackend(kind, model=model)
+        backend = OpenAICompatBackend(kind, model=model)
+        register_backend(backend)
+        return backend
     raise ValueError(f"unknown backend {kind!r}")

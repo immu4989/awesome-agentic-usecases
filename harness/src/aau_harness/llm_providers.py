@@ -156,6 +156,9 @@ class OpenAICompatBackend:
         if not self.api_key:
             raise RuntimeError(f"{self.provider.env_key} is not set")
         self._last_call = 0.0
+        # Providers echo the concrete model they served; aliases like "-latest" resolve
+        # here, which is the only place the real identity is observable.
+        self.served_model: str | None = None
         # Some models (e.g. Together's Qwen3.7 family) reject non-streaming
         # requests outright. Detected on first use, then latched on.
         self._force_stream = False
@@ -183,7 +186,10 @@ class OpenAICompatBackend:
             try:
                 with urllib.request.urlopen(req, timeout=120) as resp:
                     self._last_call = time.monotonic()
-                    return json.loads(resp.read())
+                    data = json.loads(resp.read())
+                    if not self.served_model:
+                        self.served_model = data.get("model") or self.model
+                    return data
             except urllib.error.HTTPError as e:
                 self._last_call = time.monotonic()
                 detail = e.read().decode(errors="replace")[:500]
