@@ -55,6 +55,11 @@ jobs:
             cli: refund-injected
             seed: 23
             extra: customer-support/refund-resolution-agent customer-support/refund-guarded
+          - dir: customer-support/refund-memory
+            cli: refund-memory
+            seed: 43
+            n: 24
+            extra: customer-support/refund-resolution-agent
     name: ${{ matrix.cli }}
     steps:
       - uses: actions/checkout@v4
@@ -69,10 +74,26 @@ jobs:
       - name: Tests
         run: pytest harness/tests ${{ matrix.dir }}/tests -q
       - name: Scenario file is reproducible
-        if: ${{ matrix.extra == '' }}
+        # Keyed on the file existing, not on `extra`: use cases that reuse a baseline's
+        # scenarios have nothing of their own to check, but one that ships its own file
+        # must be verified even though it depends on another package.
         run: |
-          ${{ matrix.cli }} generate --n 30 --seed ${{ matrix.seed }} --out /tmp/scenarios.jsonl
-          diff /tmp/scenarios.jsonl ${{ matrix.dir }}/evals/scenarios.jsonl
+          committed="${{ matrix.dir }}/evals/scenarios.jsonl"
+          if [ ! -f "$committed" ]; then
+            echo "no committed scenario file for ${{ matrix.cli }}; nothing to verify"
+            exit 0
+          fi
+          n="${{ matrix.n || 30 }}"
+          # Two different hash seeds. Python salts hash() per process, so a generator that
+          # reaches for it produces different scenarios on every run — which silently
+          # invalidated a wave of collected results before this check existed.
+          PYTHONHASHSEED=0 ${{ matrix.cli }} generate --n "$n" --seed ${{ matrix.seed }} \
+            --out /tmp/scenarios_a.jsonl
+          PYTHONHASHSEED=12345 ${{ matrix.cli }} generate --n "$n" --seed ${{ matrix.seed }} \
+            --out /tmp/scenarios_b.jsonl
+          diff /tmp/scenarios_a.jsonl /tmp/scenarios_b.jsonl \
+            || { echo "generator is not hash-seed independent"; exit 1; }
+          diff /tmp/scenarios_a.jsonl "$committed"
       - name: Mock eval runs green
         run: ${{ matrix.cli }} eval --backend mock --repeats 3 --out /tmp/results
       - name: Lint

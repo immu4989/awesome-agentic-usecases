@@ -62,8 +62,20 @@ def snapshot() -> dict:
     }
     # The honest flag: if the identifier floats and the provider did not pin it for us,
     # this result is a point-in-time observation, not something a reader can reproduce.
-    out["model_pinned"] = bool(served) and not is_floating(served)
-    if requested and is_floating(requested) and not out["model_pinned"]:
+    #
+    # A name that carries no floating marker can still be an alias. `deepseek-chat` reads
+    # as pinned and served `deepseek-v4-flash`, so the mismatch itself is the evidence --
+    # whatever the identifier looks like, asking for one model and being given another
+    # means the name tracks a moving target.
+    redirected = bool(requested) and bool(served) and served != requested
+    out["served_differs_from_requested"] = redirected
+    out["model_pinned"] = bool(served) and not is_floating(served) and not redirected
+    if redirected:
+        out["reproducibility_note"] = (
+            f"requested {requested!r} but the provider served {served!r}; the identifier "
+            "is an alias, so re-running may exercise different weights."
+        )
+    elif requested and is_floating(requested) and not out["model_pinned"]:
         out["reproducibility_note"] = (
             f"{requested!r} is a floating alias; the provider did not report a pinned "
             "snapshot, so re-running may exercise different weights."

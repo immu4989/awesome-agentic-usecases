@@ -31,7 +31,7 @@ model backends include free tiers, so reproducing any result costs nothing.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="7 industries shipping, 53 verified model-evals, 72 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="7 industries shipping, 64 verified model-evals, 79 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -81,7 +81,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 72 failures, 11 patterns
+## 79 failures, 11 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -142,6 +142,7 @@ Every failure has a reproducing scenario id in
 | [🔧 refund-guarded](customer-support/refund-guarded/) | Customer Support | `intervention A/B` | **Does our own advice work?** Tool-layer enforcement gained 49 points for free. The prompt nudge doubled the failure it was written to fix. |
 | [👥 refund-crew](customer-support/refund-crew/) | Customer Support | `multi-agent` | **Does orchestration help?** Three agents on the exact task one agent already solved, same scenarios, same gold. The controlled comparison almost nobody publishes. |
 | [🎯 refund-injected](customer-support/refund-injected/) | Customer Support | `adversarial A/B` | **Do the defences survive an attacker?** Prompt injection through customer-supplied ticket text. 74% of attacks still moved money past the prompt guard. Past the tool guard, none did. |
+| [🧠 refund-memory](customer-support/refund-memory/) | Customer Support | `adversarial A/B` `memory` | **Harm that outlives the attacker.** A false fact written in one session steers a later session that contains no attacker at all. Verification collapsed 1.00 → 0.56 in 2 of 3 models; a write-time provenance gate restored it on the one channel it can trace. |
 | [📟 oncall-watch-agent](it-operations/oncall-watch-agent/) | IT Ops & DevOps | `watch` `decide` | **The agent that waits.** Telemetry arrives a minute at a time and it cannot see ahead. Can it tell a real regression from a blip that heals itself, without crying wolf or sleeping through the outage? |
 
 Every use case is tagged by what the agent *does*: `predict` · `decide` · `plan` ·
