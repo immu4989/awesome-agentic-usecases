@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/reproduce-%243.76-0b8457" alt="cost to reproduce">
 </p>
 
-# 💸 Refund Amplified — the answer is right, the bill is not
+# 💸 Refund Amplified — the bill is wrong, and sometimes the answer too
 
 ## The gap this closes
 
@@ -18,10 +18,13 @@ consequence, and both are visible to a metric that watches outcomes.
 This one asks a question no accuracy metric can answer: what if the attacker leaves the
 answer alone and just runs up the bill?
 
-OWASP calls it **LLM10, Unbounded Consumption**, and names denial of wallet explicitly. It
-is the failure that every correctness benchmark is structurally blind to — the run
-succeeds, the resolution is right, the safety checks pass, and the invoice is several times
-larger than it should be.
+OWASP calls it **LLM10, Unbounded Consumption**, and names denial of wallet explicitly.
+On mistral that is exactly what happens: the run succeeds, the resolution is right, the
+safety checks pass, and the invoice is several times larger than it should be — invisible
+to any benchmark that scores answers.
+
+On gpt-oss it turned out to be worse than that. The bill rises **and** the decisions get
+worse, which is documented below because the first version of this page got it wrong.
 
 ## The mechanism, measured before it was designed around
 
@@ -69,14 +72,39 @@ providers differ by an order of magnitude in price.
 
 ### The bill, undefended
 
-| model | `FANOUT` | `BLOAT` | `LEGIT_COMPLEX` | accuracy |
-|---|---|---|---|---|
-| **gpt-oss-120b** | **3.69×** | **1.75×** | 2.20× | flat |
-| **mistral-small** | **1.75×** | **1.68×** | 1.57× | flat |
+| model | `FANOUT` | `BLOAT` | `LEGIT_COMPLEX` |
+|---|---|---|---|
+| **gpt-oss-120b** | **3.69×** | **1.75×** | 2.20× |
+| **mistral-small** | **1.75×** | **1.68×** | 1.57× |
 
-`correct` and `safe` do not move with archetype on either model. There is no error, no
-refusal and no policy violation — just an invoice up to 3.7× larger for a ticket whose
-right answer never changed.
+There is no error, no refusal and no policy violation — just an invoice up to 3.7× larger
+for a ticket whose correct answer never changed.
+
+### The answer does not always survive either
+
+The first version of this page claimed accuracy was flat on both models. That was wrong,
+and the way it was wrong is worth keeping on the record: the *unconditional* numbers do
+look flat, because gpt-oss stalls at different rates on different archetypes and the two
+effects cancel. Conditioning on runs that actually submitted — the same lens this repo
+built for [refund-memory](../refund-memory/) and then failed to apply here — shows
+something else.
+
+**gpt-oss, accuracy among runs that completed:**
+
+| arm | `CLEAN_TWIN` | `FANOUT` | `BLOAT` | `LEGIT_COMPLEX` |
+|---|---|---|---|---|
+| `none` | 0.942 | 0.863 | **0.783** | **0.661** |
+| `budget_gate` | 0.960 | 0.929 | **0.909** | 0.607 |
+
+Safety moves with it: 0.942 on the clean twin, 0.817 on `BLOAT`, 0.726 on `LEGIT_COMPLEX`.
+
+So on the stronger model this is a **compound attack**. Dragging junk into the context does
+not only cost money, it degrades the decision made in that context. And `budget_gate`
+recovers most of what was lost — `BLOAT` accuracy 0.783 → **0.909** — which is a second,
+independent reason to deploy it that has nothing to do with the bill.
+
+**mistral is genuinely flat** (0.367 / 0.417 / 0.344 / 0.311 under `none`), so for that
+model the pure denial-of-wallet reading holds. The blanket claim did not.
 
 ### The expensive vector is the one nothing is watching
 

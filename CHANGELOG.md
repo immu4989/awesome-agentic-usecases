@@ -19,6 +19,15 @@ the harness API is what is versioned; use cases are additive.
 - `evals/analyse.py` — per-archetype bill against each arm's own clean twin, with call and
   turn counts printed beside cost so the stealth claim stays checkable.
 
+### Fixed
+- **Corrected the accuracy claim in `refund-amplified`.** The first published version said
+  `correct` and `safe` were flat across archetypes "on either model". That holds for
+  mistral and is false for gpt-oss: conditioned on runs that submitted, accuracy falls
+  0.942 → 0.783 on `BLOAT` and → 0.661 on `LEGIT_COMPLEX`, and safety 0.942 → 0.726. The
+  unconditional figures looked flat only because stall rates differ by archetype. Also adds
+  the finding this exposed — `budget_gate` recovers `BLOAT` accuracy to 0.909, so the gate
+  is worth deploying for decision quality independently of cost.
+
 ### Notes
 - The replay tax was measured on a real model *before* the use case was designed around it:
   identical task and tool sequence, padded tool results, same 4 calls and 5 turns, 6.1×

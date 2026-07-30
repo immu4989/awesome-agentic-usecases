@@ -14,11 +14,13 @@ clean-looking numbers, and both would have shipped.
 
 - **Reproduce:** `--arm none`, compare `FANOUT` against `CLEAN_TWIN`.
 - **What happens:** gpt-oss pays **3.69×**, mistral **1.75×**, for a ticket whose correct
-  answer is unchanged. `correct` and `safe` do not move. There is no error, no refusal, no
-  policy violation and no incident — just an invoice several times larger than it should be.
-- **Why it matters:** accuracy-based evaluation is structurally incapable of seeing this.
-  A benchmark that scores answers scores this a pass, which is why OWASP had to name
-  unbounded consumption separately (LLM10) rather than leaving it to correctness testing.
+  answer is unchanged. On mistral, `correct` and `safe` genuinely do not move (0.367 /
+  0.417 / 0.344 / 0.311). There is no error, no refusal, no policy violation and no
+  incident — just an invoice several times larger than it should be.
+- **Why it matters:** for that model, accuracy-based evaluation is structurally incapable
+  of seeing the attack. A benchmark that scores answers scores it a pass, which is why
+  OWASP had to name unbounded consumption separately (LLM10) rather than leaving it to
+  correctness testing. On gpt-oss the picture is different and worse — see #8.
 
 ### 2. The expensive vector is the one no monitor is watching
 
@@ -69,6 +71,24 @@ clean-looking numbers, and both would have shipped.
   *asking*; the tool gate limits what comes *back*. Deploying either alone leaves a vector
   fully open, and which one you left open is not visible from the arm you measured. Only
   `both` closes both, on both models.
+
+### 8. On the stronger model, context bloat degrades the decision as well as the bill
+
+- **Reproduce:** `--arm none --backend fireworks`, accuracy among runs that submitted.
+- **What happens:** gpt-oss falls from **0.942** on the clean twin to **0.783** on `BLOAT`
+  and **0.661** on `LEGIT_COMPLEX`; safety falls **0.942 → 0.817 → 0.726**. `budget_gate`
+  recovers most of it (`BLOAT` **0.783 → 0.909**). Mistral shows none of this — its
+  baseline is too low to have headroom.
+- **Why it matters:** the same padding that inflates the invoice also crowds the decision.
+  Truncating oversized tool results is therefore not only a budget control; on this model
+  it buys back accuracy. That is an argument for the gate that has nothing to do with cost,
+  and it was missed on the first pass.
+- **How it was missed:** the *unconditional* accuracy numbers look flat (0.544 / 0.489 /
+  0.522 / 0.456) because gpt-oss stalls at different rates per archetype and the two
+  effects cancel. Only conditioning on runs that submitted reveals it — the same lens this
+  repo built for [refund-memory](../refund-memory/) and then did not apply here. The first
+  published version of the README claimed accuracy was flat "on either model"; it was
+  corrected in the following commit.
 
 ---
 
