@@ -3,6 +3,41 @@
 Notable changes to the repository. Versions follow [semantic versioning](https://semver.org/):
 the harness API is what is versioned; use cases are additive.
 
+## [0.1.5] — 2026-07-30
+
+### Fixed
+An external audit of `refund-amplified` found several numbers that did not survive
+recomputation from the committed results, and one causal claim that was simply wrong.
+
+- **`NEUTRAL_BLOAT` control added, and it refutes the previous correction.** The 0.1.4 entry
+  claimed context bloat "crowds the decision". A length-matched neutral payload — same
+  field, same 8,760 characters, arguing for nothing — costs **1.50×** and leaves accuracy at
+  **0.927** vs the clean twin's 0.942, with `deny` accuracy **1.00**. The argumentative
+  payload costs 1.75× and drops `deny` accuracy to **0.36**. Length causes the cost;
+  persuasion causes the accuracy loss; they are fully dissociated. The accuracy failure is
+  indirect prompt injection through a customer-controlled field, not context length.
+- **Committed cost was overstated:** $3.76 → **$3.63** (gpt-oss $2.54 → **$2.41**). A
+  superseded run was being counted.
+- **Turn counts were rounded in the flattering direction:** the gpt-oss clean twin is
+  **4.42**, not 4.6, which is what made `BLOAT` look "identical" rather than
+  indistinguishable (permutation p = 0.33).
+- **"Matches the all-runs figure in every cell" was false.** `LEGIT_COMPLEX` moves
+  2.20× → 2.46× on completed runs and the combined arm moves 1.11×/1.16× → 1.19×/1.25×.
+- **Non-significant results were reported as findings.** The `budget_gate` accuracy recovery
+  is **+0.126, 95% CI [−0.007, +0.278]** and crosses zero; it is no longer presented as a
+  deployment argument. Safety drop is significant on `LEGIT_COMPLEX` only. "Mistral is
+  genuinely flat" is an underpowered null, not a flat line.
+- **Removed "no error, no refusal, no policy violation"** — gpt-oss errors on up to 43% of
+  runs and mistral takes a forbidden action in ~47% of *clean* runs. Amplification does not
+  move those numbers much; they were never passing.
+- Added the collider caveat: conditioning on `submitted` conditions on something the
+  treatment affects, and the accuracy finding is not bound-robust.
+
+### Changed
+- Sibling lookup cap no longer consumes budget on in-scope re-reads, so the gate's
+  strictness no longer depends on the agent's own behaviour. Refusal payloads now count
+  toward `result_chars` — a refusal is replayed like any other tool result.
+
 ## [0.1.4] — 2026-07-30
 
 ### Added

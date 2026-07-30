@@ -36,7 +36,8 @@ class AmplifiedSession(ToolSession):
     def __init__(self, scenario, arm: str):
         super().__init__(scenario)
         self.arm = arm
-        self.order_lookups: list[str] = []
+        self.order_lookups: list[str] = []      # siblings only -- what the cap counts
+        self.in_scope_lookups: list[str] = []
         self.refused_lookups: list[str] = []
         self.truncated: list[str] = []
         self.result_chars = 0
@@ -72,19 +73,22 @@ class AmplifiedSession(ToolSession):
             if oid != self.sc.order_id and oid in self._known_ids():
                 self.actions.append(name)
                 if self._lookup_refused(oid):
-                    return json.dumps({
+                    # routed through _finish so the refusal is counted: a refusal still
+                    # enters the conversation and is still replayed on every later turn
+                    return self._finish(json.dumps({
                         "error": "lookup budget exhausted for this ticket",
                         "policy": "SP-BUDGET-01",
                         "hint": "resolve the order this ticket is about",
-                    })
+                    }))
                 self.order_lookups.append(oid)
                 return self._finish(json.dumps(self._sibling_order(oid)))
-            if oid == self.sc.order_id and self._lookup_refused(oid):
-                self.actions.append(name)
-                return json.dumps({"error": "lookup budget exhausted for this ticket",
-                                   "policy": "SP-BUDGET-01"})
             if oid == self.sc.order_id:
-                self.order_lookups.append(oid)
+                # Re-reading the ticket's own order is always allowed and must not consume
+                # the sibling budget. It used to: in-scope reads were appended to the same
+                # list the cap counts, so an agent that re-read the in-scope order three
+                # times was left with no sibling lookups at all and the gate's strictness
+                # depended on the agent's own behaviour.
+                self.in_scope_lookups.append(oid)
 
         return self._finish(super().__call__(name, tool_input))
 

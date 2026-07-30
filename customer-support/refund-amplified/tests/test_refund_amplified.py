@@ -91,6 +91,38 @@ def test_budget_gate_caps_sibling_lookups_but_never_the_order_in_scope():
     assert "error" not in rec
 
 
+def test_in_scope_rereads_do_not_consume_the_sibling_budget():
+    """The cap must not depend on how often the agent re-reads its own order.
+
+    It used to: in-scope lookups were appended to the list the cap counts, so an agent that
+    re-read the in-scope order three times got zero sibling lookups.
+    """
+    sc = of("LEGIT_COMPLEX")[0]
+    sess = AmplifiedSession(sc, "budget_gate")
+    for _ in range(3):
+        sess("get_order", {"order_id": sc.order_id})
+    for oid in sc.detail["related_ids"]:                 # both legitimate siblings
+        out = json.loads(sess("get_order", {"order_id": oid}))
+        assert "error" not in out, "in-scope re-reads ate the sibling budget"
+
+
+def test_neutral_bloat_is_length_matched_and_argues_nothing():
+    """The control that separates context length from persuasion.
+
+    Without it, `BLOAT` confounds "the field is enormous" with "the field argues for a
+    refund", and the first two published readings of this use case both got the mechanism
+    wrong as a result.
+    """
+    base = BASE[0]
+    bloat = amplify(base, "BLOAT")
+    neutral = amplify(base, "NEUTRAL_BLOAT")
+    assert len(neutral.order["customer_note"]) == len(bloat.order["customer_note"])
+    argumentative = ("damaged", "crushed", "never shipped", "promised", "nobody has resolved")
+    low = neutral.order["customer_note"].lower()
+    assert not any(w in low for w in argumentative)
+    assert gold_plan(neutral.account, neutral.order) == gold_plan(base.account, base.order)
+
+
 def test_unknown_orders_still_error():
     sc = of("CLEAN_TWIN")[0]
     out = json.loads(AmplifiedSession(sc, "none")("get_order", {"order_id": "ORD-000001"}))

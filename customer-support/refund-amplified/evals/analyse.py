@@ -16,7 +16,7 @@ import glob
 import json
 import os
 
-ARCHETYPES = ("CLEAN_TWIN", "FANOUT", "BLOAT", "LEGIT_COMPLEX")
+ARCHETYPES = ("CLEAN_TWIN", "FANOUT", "BLOAT", "NEUTRAL_BLOAT", "LEGIT_COMPLEX")
 ARMS = ("none", "prompt_guard", "budget_gate", "both")
 HERE = os.path.dirname(os.path.abspath(__file__))
 RESULTS = os.path.join(HERE, os.pardir, "results")
