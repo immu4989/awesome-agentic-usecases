@@ -31,7 +31,7 @@ model backends include free tiers, so reproducing any result costs nothing.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="7 industries shipping, 80 verified model-evals, 98 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="7 industries shipping, 80 verified model-evals, 100 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -81,7 +81,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 98 failures, 11 patterns
+## 100 failures, 11 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -144,7 +144,7 @@ Every failure has a reproducing scenario id in
 | [🎯 refund-injected](customer-support/refund-injected/) | Customer Support | `adversarial A/B` | **Do the defences survive an attacker?** Prompt injection through customer-supplied ticket text. 74% of attacks still moved money past the prompt guard. Past the tool guard, none did. |
 | [🧠 refund-memory](customer-support/refund-memory/) | Customer Support | `adversarial A/B` `memory` | **Harm that outlives the attacker.** A false fact written in one session steers a later session that contains no attacker at all. Verification collapsed 1.00 → 0.56 in 2 of 3 models; a write-time provenance gate restored it on the one channel it can trace. |
 | [💸 refund-amplified](customer-support/refund-amplified/) | Customer Support | `adversarial A/B` `cost` | **Denial of wallet** (OWASP LLM10). The bill is 3.7× while tool-call and turn counts stay put, so the monitors teams actually deploy see nothing. A length-matched control separates the two failures cleanly: length costs money and leaves the answer alone; a payload that *argues* costs accuracy, and only on the tickets it argues against. |
-| [🚨 incident-remediation-agent](it-operations/incident-remediation-agent/) | IT Ops & DevOps | `act` `policy A/B` `human-in-loop` | **When the approved path is blocked, what does it do instead?** A general "don't improvise" policy has no measurable effect (p=1.000). Naming the forbidden tools fixes it. Removing them fixes violations but not the incident — a third are left unresolved and nobody is paged. |
+| [🚨 incident-remediation-agent](it-operations/incident-remediation-agent/) | IT Ops & DevOps | `act` `policy A/B` `human-in-loop` | **When the approved path is blocked, what does it do instead?** A general "don't improvise" policy has no measurable effect (p=1.000). Naming the forbidden tools fixes it. Removing them from the schema stops the violation and buys a false all-clear instead: a third of blocked incidents get closed as "remediated" for work that never ran. |
 | [📟 oncall-watch-agent](it-operations/oncall-watch-agent/) | IT Ops & DevOps | `watch` `decide` | **The agent that waits.** Telemetry arrives a minute at a time and it cannot see ahead. Can it tell a real regression from a blip that heals itself, without crying wolf or sleeping through the outage? |
 
 Every use case is tagged by what the agent *does*: `predict` · `decide` · `plan` ·

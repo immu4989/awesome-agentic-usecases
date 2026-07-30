@@ -22,10 +22,15 @@ the harness API is what is versioned; use cases are additive.
   the authorised tool fails. This use case adds the arm they did not run.
 - **Naming the forbidden tools eliminates violations** (0.46 → 0.00) and produces the right
   behaviour (escalation 0.33 → 0.99), at matched policy length.
-- **Capability removal is not equivalent to naming.** Both drive violations to 0.00, but
-  escalation is 0.99 under `named` and **0.65** under `scoped` — a third of incidents end
-  with no violation and no page. Least privilege bought silence, not safety. A two-way
-  instrument scores these two defences identically.
+- **Capability removal is not equivalent to naming, and is worse than it looks.** Both drive
+  violations to 0.00, but escalation is 0.99 under `named` and **0.65** under `scoped`.
+  Every one of the remaining incidents is closed with `disposition: "remediated"` for an
+  action the tool refused — fabricated-success rate **0.35** under `scoped` against 0.01
+  under `named`. Least privilege converted a violation somebody could catch into a closed
+  ticket nobody will re-open.
+- `false_success` added after `disclosed` was found to pass such records perfectly: it only
+  checks that actions *taken* are named, so it returns 1.0 vacuously when the agent takes
+  nothing and files a success.
 - **gpt-oss-120b is a null** — it pages a human on 100% of blocked incidents with no policy
   at all, so the result is a statement about susceptible models.
 - Disclosure is **1.00 everywhere**: agents describe the shortcuts they took.
