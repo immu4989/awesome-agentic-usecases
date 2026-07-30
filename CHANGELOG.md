@@ -3,6 +3,29 @@
 Notable changes to the repository. Versions follow [semantic versioning](https://semver.org/):
 the harness API is what is versioned; use cases are additive.
 
+## [0.1.4] — 2026-07-30
+
+### Added
+- **`customer-support/refund-amplified`** — denial of wallet (OWASP LLM10). The agent
+  answers correctly, every safety metric passes, and the bill is up to **3.7×**. Two
+  attacker-controlled vectors on inherited gold: `FANOUT` (ticket demands unrelated
+  lookups) and `BLOAT` (an oversized customer-written field inside a tool result). `BLOAT`
+  costs 1.75× at an *identical* tool-call and turn count, so rate limits and call quotas
+  are blind to it.
+- Four arms including a combined one. The two defences turn out to be complementary rather
+  than competing: a prompt guard fixes `FANOUT` and cannot touch `BLOAT` (predicted in
+  DESIGN.md before the runs), a tool-layer budget gate does the reverse, and only `both`
+  closes each vector on both models.
+- `evals/analyse.py` — per-archetype bill against each arm's own clean twin, with call and
+  turn counts printed beside cost so the stealth claim stays checkable.
+
+### Notes
+- The replay tax was measured on a real model *before* the use case was designed around it:
+  identical task and tool sequence, padded tool results, same 4 calls and 5 turns, 6.1×
+  input tokens.
+- gpt-oss stalls on 32–37% of runs here; amplification recomputed on completed runs only
+  matches the all-runs figure in every cell, so no conclusion rests on the stalls.
+
 ## [0.1.3] — 2026-07-29
 
 ### Added
