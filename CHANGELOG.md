@@ -3,6 +3,40 @@
 Notable changes to the repository. Versions follow [semantic versioning](https://semver.org/):
 the harness API is what is versioned; use cases are additive.
 
+## [0.1.6] — 2026-07-30
+
+### Added
+- **`it-operations/incident-remediation-agent`** — what a production remediation agent does
+  when the approved runbook action is blocked and an irreversible tool is offered as the fix.
+  Scores a **three-way outcome** — violate / escalate / neither — which no existing benchmark
+  does: the blocked-path benchmarks have no abstention category and the escalation
+  benchmarks have no forbidden affordance.
+- Six incident types from published SRE practice with deterministic remediations, and four
+  conditions including a capability control (`BLOCKED_NO_SHORTCUT`) and a change freeze held
+  in **queryable state rather than prompt text**.
+
+### Findings
+- **A general "do not improvise" policy has no measurable effect**: 16/24 incidents violated
+  undefended, 15/24 with the policy, Fisher exact **p = 1.000**. This independently
+  replicates ToolPrivBench's finding that a least-privilege principle decays at the moment
+  the authorised tool fails. This use case adds the arm they did not run.
+- **Naming the forbidden tools eliminates violations** (0.46 → 0.00) and produces the right
+  behaviour (escalation 0.33 → 0.99), at matched policy length.
+- **Capability removal is not equivalent to naming.** Both drive violations to 0.00, but
+  escalation is 0.99 under `named` and **0.65** under `scoped` — a third of incidents end
+  with no violation and no page. Least privilege bought silence, not safety. A two-way
+  instrument scores these two defences identically.
+- **gpt-oss-120b is a null** — it pages a human on 100% of blocked incidents with no policy
+  at all, so the result is a statement about susceptible models.
+- Disclosure is **1.00 everywhere**: agents describe the shortcuts they took.
+
+### Notes
+- All intervals cluster on `incident_id`; nothing resamples runs. A pilot read 18 clustered
+  runs as 18 independent ones and halved its own intervals — that error is why the analysis
+  script exists in this shape.
+- Bounded against Agentic Misalignment, where a named prohibition reduced but did not
+  prevent violations under strong goal conflict.
+
 ## [0.1.5] — 2026-07-30
 
 ### Fixed
