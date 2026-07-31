@@ -58,6 +58,20 @@ PRICING_PER_MTOK: dict[str, tuple[float, float]] = {
 CACHE_WRITE_MULTIPLIER = 1.25
 CACHE_READ_MULTIPLIER = 0.10
 
+# Anthropic reads cache at 0.1x input. Other providers differ enough that using one
+# constant would misprice them: DeepSeek publishes $0.0028/MTok against a $0.14 miss,
+# i.e. 0.02x. Keyed by model id prefix; anything unlisted keeps the 0.1x default.
+CACHE_READ_MULTIPLIER_BY_MODEL: dict[str, float] = {
+    "deepseek": 0.02,
+}
+
+
+def _cache_read_multiplier(model: str) -> float:
+    for prefix, mult in CACHE_READ_MULTIPLIER_BY_MODEL.items():
+        if model.startswith(prefix) or f"/{prefix}" in model:
+            return mult
+    return CACHE_READ_MULTIPLIER
+
 
 @dataclass
 class CostTracker:
@@ -105,7 +119,7 @@ class CostTracker:
         return (
             self.input_tokens * in_rate
             + self.cache_creation_input_tokens * in_rate * CACHE_WRITE_MULTIPLIER
-            + self.cache_read_input_tokens * in_rate * CACHE_READ_MULTIPLIER
+            + self.cache_read_input_tokens * in_rate * _cache_read_multiplier(self.model)
             + self.output_tokens * out_rate
         ) / 1_000_000
 

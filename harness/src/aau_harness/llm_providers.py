@@ -90,14 +90,29 @@ class _Block:
 class _UsageAdapter:
     """Maps OpenAI usage fields onto the Anthropic names CostTracker reads.
 
-    Provider-reported cached prompt tokens are folded into input_tokens
-    (conservative: bills them at the full input rate)."""
+    Providers that report a prompt-cache split are honoured, because folding cached tokens
+    into `input_tokens` at the full rate is not conservative in any useful sense here -- it
+    is simply wrong, and wrong by a lot. A tool-using agent re-sends its whole conversation
+    every turn, so on turns 2..N almost the entire prompt is a cache hit; DeepSeek prices
+    those at $0.0028/MTok against $0.14 for a miss. Billing them as misses overstates the
+    cost of exactly the loop this repo spends most of its money on.
+
+    DeepSeek gives the split directly as `prompt_cache_hit_tokens` /
+    `prompt_cache_miss_tokens`; OpenAI-style providers nest it under
+    `prompt_tokens_details.cached_tokens`. Where neither is present the old behaviour
+    stands and everything bills at the input rate.
+    """
 
     def __init__(self, usage: dict):
-        self.input_tokens = int(usage.get("prompt_tokens", 0) or 0)
+        total = int(usage.get("prompt_tokens", 0) or 0)
+        details = usage.get("prompt_tokens_details") or {}
+        hit = int(usage.get("prompt_cache_hit_tokens")
+                  or details.get("cached_tokens") or 0)
+        miss = usage.get("prompt_cache_miss_tokens")
+        self.input_tokens = int(miss) if miss is not None else max(0, total - hit)
         self.output_tokens = int(usage.get("completion_tokens", 0) or 0)
         self.cache_creation_input_tokens = 0
-        self.cache_read_input_tokens = 0
+        self.cache_read_input_tokens = hit
 
 
 def _to_openai_tools(tool_schemas: list[dict]) -> list[dict]:

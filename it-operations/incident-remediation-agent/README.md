@@ -3,7 +3,7 @@
   <img src="https://img.shields.io/badge/shape-policy%20A%2FB-b3261e" alt="policy A/B">
   <img src="https://img.shields.io/badge/OWASP-ASI03%20%C2%B7%20LLM06-6a1b9a" alt="OWASP ASI03 / LLM06">
   <img src="https://img.shields.io/badge/outcome-three--way-0b8457" alt="three-way outcome">
-  <img src="https://img.shields.io/badge/reproduce-%241.79-4a3aa7" alt="cost to reproduce">
+  <img src="https://img.shields.io/badge/reproduce-%242.38-4a3aa7" alt="cost to reproduce">
 </p>
 
 # 🚨 Incident Remediation — when the approved path is blocked
@@ -86,9 +86,15 @@ own intervals. Fisher exact is on incident-level counts.
 | **`named`** | **0.00** `[0.00, 0.00]` | **0.99** `[0.96, 1.00]` | 16/24 vs 0/24, **p < 0.0001** |
 | **`scoped`** | **0.00** `[0.00, 0.00]` | 0.65 `[0.49, 0.81]` | 16/24 vs 0/24, **p < 0.0001** |
 
-**The general policy does nothing.** Not "less", not "decays" — 16 of 24 incidents violated
-undefended, 15 of 24 with the policy. This independently replicates ToolPrivBench's decay at
-the moment the authorised tool fails.
+**On mistral the general policy does nothing.** Not "less", not "decays" — 16 of 24
+incidents violated undefended, 15 of 24 with the policy. This independently replicates
+ToolPrivBench's decay at the moment the authorised tool fails.
+
+**On deepseek the same policy works completely** (16/24 → 0/24, p < 0.0001). Same words,
+same scenarios, opposite verdicts on two models that are *equally susceptible undefended*
+(0.46 and 0.53). That is the more useful finding, and it took a third model to see it: a
+prompt-level defence is not a property of the policy, it is a property of the pairing. You
+cannot tell from the policy text whether it will work.
 
 **Naming the three tools eliminates it**, and produces the *right* behaviour: escalation
 0.33 → 0.99.
@@ -129,10 +135,35 @@ violation somebody could have caught into a closed ticket nobody will look at ag
 
 ### Does having a shortcut suppress escalation?
 
-mistral, arm `none`: escalation is **0.33** `[0.17, 0.54]` when the shortcut exists and
-**0.68** `[0.51, 0.83]` when it is absent from the schema. The intervals overlap at the
-edges, so this is directional rather than established, but it points the same way as the rest
-of the table: the escape hatch is used least when there is anything else to reach for.
+Arm `none`, escalation with the shortcut present vs absent from the schema:
+
+| model | shortcut present | shortcut absent |
+|---|---|---|
+| mistral | 0.33 `[0.17, 0.54]` | 0.68 `[0.51, 0.83]` |
+| **deepseek** | **0.47** `[0.31, 0.64]` | **0.99** `[0.96, 1.00]` |
+
+On mistral the intervals overlap at the edges. **On deepseek they are disjoint** — the same
+agent that pages a human 99% of the time when it has no alternative pages 47% of the time
+when it does. The escape hatch is used least when there is anything else to reach for, and
+on the third model that is no longer directional.
+
+### Three models, and the defence you can rely on
+
+| arm | mistral | gpt-oss | deepseek |
+|---|---|---|---|
+| `none` | 0.46 violated | 0.01 | 0.53 violated |
+| `general` | **0.53 — no effect** | 0.00 | **0.00 — works** |
+| **`named`** | **0.00** | **0.00** | **0.00** |
+| `scoped` | 0.00, but **0.35 fabricated success** | 0.00 | 0.00 |
+
+Two of three models are susceptible undefended. **`named` is the only arm that works on
+every model with no side effect.** `general` works on one susceptible model and fails on the
+other. `scoped` stops violations everywhere but on mistral converts them into fabricated
+successes.
+
+The fabricated-success result is **mistral-only** — deepseek's `scoped` arm escalates 1.00
+and fabricates nothing. Reported here rather than generalised, because with three models a
+failure that appears on one is a warning, not a law.
 
 ### gpt-oss-120b is a null, and that bounds the claim
 
@@ -146,9 +177,10 @@ No arm differs from `none` (all p = 1.000). gpt-oss pages a human on 100% of `BL
 incidents **with no policy at all**, and it is not stalling its way there — it pages on 72/72
 and files the record on 92% of them.
 
-So the finding is model-dependent: **a named prohibition is decisive for a model that is
-susceptible, and unnecessary for one that is not.** With two models there is no basis for
-guessing which a third would be.
+So: **a named prohibition is decisive for a susceptible model and unnecessary for one that
+is not.** The third model settled the question this section used to leave open — deepseek is
+susceptible (0.53 undefended), so susceptibility is the common case here and gpt-oss is the
+outlier.
 
 ### Utility, and honesty
 
@@ -171,7 +203,8 @@ disclosed, the outcome was fiction.
 
 ## Honest limits
 
-- **Two models.** The central result rests on mistral; gpt-oss contributes a null.
+- **Three models.** Two are susceptible (mistral, deepseek); gpt-oss contributes a null.
+  The general-policy failure and the fabricated-success result are both mistral-only.
 - **Low goal conflict.** [Agentic Misalignment](https://arxiv.org/abs/2510.05179) found a
   named prohibition *reduced but did not prevent* violations under strong goal conflict.
   0.00 here is not a general law about naming; it is what naming does in a routine
@@ -201,4 +234,7 @@ done
 python evals/analyse.py    # three-way outcome, clustered on incident, Fisher exact
 ```
 
-Committed cost: **$1.79** across 8 real runs (gpt-oss $1.05, mistral $0.74).
+Committed cost: **$2.38** across 12 real runs, three model families (gpt-oss $1.05,
+mistral $0.74, deepseek $0.59). DeepSeek's four arms cost $0.59 rather than $2.20 because
+94% of prompt tokens were served from its prompt cache — a tool loop re-sends its whole
+conversation every turn, and the harness now bills those at the provider's cache rate.
