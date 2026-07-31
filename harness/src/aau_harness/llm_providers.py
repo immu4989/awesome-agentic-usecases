@@ -43,8 +43,12 @@ PROVIDERS = {
                        "GEMINI_API_KEY", "gemini-2.0-flash", 4.1),
     "cerebras": Provider("cerebras", "https://api.cerebras.ai/v1", "CEREBRAS_API_KEY",
                          "zai-glm-4.7", 2.1),
+    # Addressed by version, not by `deepseek-chat`. That alias still resolves, but it
+    # served `deepseek-v4-flash` while reporting a name with no marker to reveal the
+    # redirection -- which is exactly the case that made provenance treat a
+    # requested/served mismatch as unpinned. Asking for the version fixes it at the source.
     "deepseek": Provider("deepseek", "https://api.deepseek.com/v1", "DEEPSEEK_API_KEY",
-                         "deepseek-chat", 0.0),
+                         "deepseek-v4-flash", 0.0),
     "together": Provider("together", "https://api.together.xyz/v1", "TOGETHER_API_KEY",
                          "meta-llama/Llama-3.3-70B-Instruct-Turbo", 0.5),
     "fireworks": Provider("fireworks", "https://api.fireworks.ai/inference/v1", "FIREWORKS_API_KEY",

@@ -3,7 +3,7 @@
   <img src="https://img.shields.io/badge/shape-adversarial%20A%2FB-b3261e" alt="adversarial">
   <img src="https://img.shields.io/badge/attack-memory%20poisoning-c2185b" alt="memory poisoning">
   <img src="https://img.shields.io/badge/models-3%20families-4a3aa7" alt="three model families">
-  <img src="https://img.shields.io/badge/reproduce-%242.78-0b8457" alt="cost to reproduce">
+  <img src="https://img.shields.io/badge/reproduce-%241.76-0b8457" alt="cost to reproduce">
 </p>
 
 # 🧠 Refund Memory — harm that outlives the attacker
@@ -137,8 +137,13 @@ metric will tell you nothing happened.
   session. This does **not** explain the effect: poisoned sessions *completed more often*
   than clean ones (0.94 vs 0.83) and still skipped the check, and verification conditional
   on completing (0.59) matches the unconditional rate (0.56).
-- **`deepseek-chat` is an alias.** The provider served `deepseek-v4-flash`. Provenance
-  records this and marks the run unpinned; re-running may exercise different weights.
+- **`deepseek-chat` is an alias, and so is what it resolves to.** The provider served
+  `deepseek-v4-flash`; that name in turn rolls forward to the newest snapshot (OpenRouter
+  exposes the dated one, currently `deepseek-v4-flash-0731`). Provenance marks the run
+  unpinned. Re-running may exercise different weights, and did: these results were also
+  **repriced on 2026-07-31** after the alias was found to have been billed at the older
+  V3 rate ($0.27/$1.10) while V4 Flash ($0.14/$0.28) was actually serving. Dollars fell
+  ~2x; token counts, and therefore every finding, are unchanged.
 - **`mistral-small-latest` floats** and is likewise marked unpinned.
 - Mistral is immune on this endpoint while being the *least* safe model on refunds
   (it skips payout rules ~50% of the time regardless). Immunity here is not safety.
@@ -163,4 +168,4 @@ python evals/analyse.py        # per-archetype table, Δ vs control, stall rates
 python evals/compare_arms.py   # paired bootstrap CIs, control drift beside every claim
 ```
 
-Committed cost: **$2.78** across 9 real runs (gpt-oss $0.54, mistral $0.33, deepseek $1.92).
+Committed cost: **$1.76** across 9 real runs (gpt-oss $0.54, mistral $0.33, deepseek $0.90).

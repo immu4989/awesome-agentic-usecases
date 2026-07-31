@@ -26,7 +26,17 @@ PRICING_PER_MTOK: dict[str, tuple[float, float]] = {
     "llama-3.3-70b": (0.85, 1.20),  # Cerebras
     "gemini-2.0-flash": (0.10, 0.40),
     "gemini-2.5-flash": (0.30, 2.50),
-    "deepseek-chat": (0.27, 1.10),
+    # DeepSeek's direct API addresses models by rolling, undated names: `deepseek-chat`
+    # and `deepseek-reasoner` both resolve to `deepseek-v4-flash`, and that name itself
+    # rolls forward to the newest snapshot (OpenRouter exposes the dated one, currently
+    # `deepseek-v4-flash-0731`). None of these is a pinned identifier; use the OpenRouter
+    # dated id when a result needs to be reproducible.
+    # These were priced at the V3 rate (0.27, 1.10) while the API was already serving V4
+    # Flash, which overstated every deepseek cost in this repo by roughly 2x until 2026-07-31.
+    "deepseek-chat": (0.14, 0.28),
+    "deepseek-reasoner": (0.14, 0.28),
+    "deepseek-v4-flash": (0.14, 0.28),
+    "deepseek/deepseek-v4-flash-0731": (0.14, 0.28),
     "zai-glm-4.7": (2.25, 2.50),  # Cerebras-hosted GLM; approximate list rate
     "gpt-oss-120b": (0.35, 0.75),  # Cerebras-hosted; approximate list rate
     "meta-llama/Llama-3.3-70B-Instruct-Turbo": (0.88, 0.88),  # Together
