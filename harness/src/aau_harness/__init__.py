@@ -23,6 +23,12 @@ from .delegation import (
     make_delegate_tool,
     run_crew,
 )
+from .reporting import (
+    ReportFidelity,
+    ReportSpec,
+    check_report,
+    claims_success,
+)
 
 __all__ = [
     "CostTracker",
@@ -43,6 +49,10 @@ __all__ = [
     "CrewRun",
     "DelegationRecord",
     "Specialist",
+    "ReportFidelity",
+    "ReportSpec",
+    "check_report",
+    "claims_success",
     "make_delegate_tool",
     "run_crew",
 ]
