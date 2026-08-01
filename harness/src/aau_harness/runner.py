@@ -131,13 +131,22 @@ def run_eval(
     metric_ci95: dict[str, tuple[float, float]] = {}
     scenario_ids = sorted({r.scenario_id for r in results})
     for m in metric_names:
-        # per-scenario mean across repeats, then bootstrap over scenarios
-        per_scenario = [
-            statistics.fmean(
-                [r.metrics[m] for r in results if r.scenario_id == sid and m in r.metrics]
-            )
-            for sid in scenario_ids
-        ]
+        # Per-scenario mean across repeats, then bootstrap over scenarios.
+        #
+        # A metric need not apply to every scenario. `aau_harness.reporting` omits its
+        # omission rate entirely on runs where nothing consequential was done, precisely so
+        # that a run with nothing to hide cannot be scored as having hidden nothing. So a
+        # scenario contributing no value for a metric is dropped from that metric rather
+        # than counted as a zero -- averaging in the inapplicable cases would dilute exactly
+        # the rate the caller went to the trouble of not faking.
+        per_scenario = []
+        for sid in scenario_ids:
+            values = [r.metrics[m] for r in results
+                      if r.scenario_id == sid and m in r.metrics]
+            if values:
+                per_scenario.append(statistics.fmean(values))
+        if not per_scenario:
+            continue
         metric_means[m] = statistics.fmean(per_scenario)
         metric_ci95[m] = _bootstrap_ci(per_scenario)
 

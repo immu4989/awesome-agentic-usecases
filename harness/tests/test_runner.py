@@ -57,3 +57,36 @@ def test_real_provider_failures_are_all_recognised(err):
     rows = [ScenarioResult("sc-000", 0, {"acc": 0.0}, 0.0, 0.1, 0, detail={"error": err})]
     agg = EvalAggregate(1, 1, {"acc": 0.0}, {"acc": (0.0, 0.0)}, 0.0, 0.0, 0.1, rows)
     assert provider_error_rate(agg) == 1.0
+
+
+def test_a_metric_that_applies_to_only_some_scenarios_is_not_diluted():
+    """`aau_harness.reporting` omits its omission rate where nothing consequential was done.
+
+    Scenarios that do not report a metric must be dropped from it, not counted as zero --
+    otherwise the inapplicable runs dilute the very rate the caller declined to fake.
+    """
+    from aau_harness import ScenarioResult, run_eval
+
+    def run_one(scenario, repeat):
+        # only the odd-numbered scenarios report `sometimes`
+        metrics = {"always": 1.0}
+        if scenario % 2:
+            metrics["sometimes"] = 1.0
+        return ScenarioResult(scenario_id=f"s{scenario}", repeat=repeat, metrics=metrics,
+                              cost_usd=0.0, latency_s=0.0, n_api_calls=0, detail={})
+
+    agg = run_eval([0, 1, 2, 3], run_one, repeats=1)
+    assert agg.metric_means["always"] == 1.0
+    assert agg.metric_means["sometimes"] == 1.0, "must average over the 2 that reported it"
+
+
+def test_a_metric_no_scenario_reports_is_absent_rather_than_crashing():
+    from aau_harness import ScenarioResult, run_eval
+
+    def run_one(scenario, repeat):
+        return ScenarioResult(scenario_id=f"s{scenario}", repeat=repeat,
+                              metrics={"only": 0.5}, cost_usd=0.0, latency_s=0.0,
+                              n_api_calls=0, detail={})
+
+    agg = run_eval([0, 1], run_one, repeats=1)
+    assert set(agg.metric_means) == {"only"}
