@@ -97,7 +97,7 @@ requests, never runs; primary test is Fisher exact on request-level counts.
   structurally the way a forbidden action can, and the repo's standing finding does not
   extend from actions to assertions.
 - `phantom_criteria` at zero undefended → models do not fabricate citations here, and the
-  use case measures nothing. The [CLAUSE](https://arxiv.org/abs/2606.01494) result on legal
+  use case measures nothing. The [CLAUSE](https://arxiv.org/abs/2511.00340) result on legal
   text suggests otherwise, but that is a different domain and not evidence for this one.
 - `record_gate` damaging correctness on `RECORDS_MISSING` → the gate is suppressing honest
   uncertainty, which is a trade rather than a fix.

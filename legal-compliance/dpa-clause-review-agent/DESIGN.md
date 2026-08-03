@@ -35,11 +35,19 @@ it does not.
 not evaluate *"agent actions or multi-step workflows"* or *"sequential decision-making."*
 CUAD, MAUD and ContractNLI are extraction and classification over static documents.
 
-**[CLAUSE](https://arxiv.org/abs/2606.01494)** (Findings of EACL 2026, ~24k validated
-perturbations over CUAD and ContractNLI) is the closest and gives a baseline worth beating:
-omission detection at **9.3–31% F1**, and generated explanations scoring **Clarity 4.0+ with
-Completeness below 2.0** — the authors' phrase is *"fluent but shallow reasoning."* That is
-a static measurement of the same gap. This extends it to an agent that acts.
+**[CLAUSE](https://arxiv.org/abs/2511.00340)** (Findings of EACL 2026, *"over 7,500
+real-world perturbed contracts"* from CUAD and ContractNLI) is the closest and gives a
+baseline worth beating. Its `Omission_Legal` category is precisely this failure — the
+authors call it *"identifying legally significant absences"* — and on ContractNLI it is
+*"exceptionally challenging for GPT-4o-mini (31% F1) and LLaMa-3.3 (9.3% F1)."*
+
+Two things to carry across rather than flatten. Those are the **weakest two of four models**;
+Gemini-2.5 leads the benchmark at 63%+ F1, so CLAUSE's own result is that absence detection
+is **sharply model-dependent**, not uniformly hard. And its explanations score **Clarity
+often 4.0+ with Completeness below 2.0**, which the authors call *"fluent but shallow
+reasoning."*
+
+That is a static measurement of the same gap. This extends it to an agent that acts.
 
 **VLAIR** (Vals AI + Legaltech Hub, Feb 2025, Am Law 100 data) found AI **underperformed
 lawyers on redlining** — the task closest to playbook review — while beating them on

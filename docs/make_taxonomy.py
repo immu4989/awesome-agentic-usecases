@@ -103,6 +103,29 @@ PATTERNS = [
         ],
     },
     {
+        "id": "displaced-intent",
+        "name": "Removing the tool displaces the intent",
+        "one_liner": "Take the forbidden action out of the schema and the goal reroutes — through a legal-but-wrong channel, or into a claim that the work was done.",
+        "why": (
+            "Least privilege is the one control this repo consistently finds effective, so its "
+            "failure mode deserves naming. Deleting a capability removes the *act*, never the "
+            "objective that motivated it. The agent still needs to dispose of the case, and it "
+            "reaches for whatever remains — which is why the residue lands somewhere that looks "
+            "compliant. In both observations below the resulting record is **honest and the "
+            "reasoning correct**, so no truthfulness check fires. Removing a tool is not "
+            "finished until you have asked what the agent will do instead."
+        ),
+        "numbers": [
+            ("healthcare prior auth", "barred by statute from medical-necessity denial, the agent refuses through the **administrative** channel instead — **0.42** `[0.21, 0.62]` of routing cases. The clinical reasoning is right, the rationale accurate; only the channel is wrong, and the channel is what the statute regulates"),
+            ("incident remediation", "with the forbidden tools gone, one model of three closed incidents as *'remediated'* for work that never ran — the capability control bought a false all-clear"),
+        ],
+        "cites": [
+            ("healthcare-life-sciences/prior-auth-review-agent", "unlocked door"),
+            ("it-operations/incident-remediation-agent", "did not remove the capability"),
+            ("it-operations/incident-remediation-agent", "false all-clear"),
+        ],
+    },
+    {
         "id": "safety-by-inaction",
         "name": "Safety by inaction",
         "one_liner": "A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing.",
@@ -116,11 +139,13 @@ PATTERNS = [
             ("on-call watch", "two models scored a **perfect 1.000** on 'never paged a quiet window' while missing a third of real incidents — by watching 3.6 and 5.8 of 20 minutes"),
             ("artifact admission", "gpt-oss posted zero unsafe admits and zero over-blocks — on the 78% of runs where it decided at all"),
             ("trifecta exfil", "zero leaks on the content channel, largely by never reaching a decision"),
+            ("legal clause review", "the variant that defeats a diligence metric: mistral calls `read_clause` in **84 of 84** runs and records a clause-level verdict in almost none (`flag` 6/84, `accept` 1/84), escalating wholesale instead. It looked at everything and adjudicated nothing"),
         ],
         "cites": [
             ("it-operations/oncall-watch-agent", "passed by not looking"),
             ("security-operations/artifact-admission-agent", "never finished"),
             ("security-operations/trifecta-exfil-agent", "Safe by not finishing"),
+            ("legal-compliance/dpa-clause-review-agent", "adjudicates nothing"),
         ],
     },
     {
@@ -221,11 +246,13 @@ PATTERNS = [
             ("fraud", "three of four models over-called fraud on benign transactions and never the reverse — Qwen3.7-Plus broke the pattern with zero such errors, falsifying the universal claim"),
             ("retail / media / security", "over-escalation on one model and under-escalation on another, on the identical scenario set"),
             ("refund", "one model's action errors were 22 of 23 the *same* substitution"),
+            ("healthcare + legal, record fidelity", "infidelity is one-directional too: across **1,512 runs in two industries**, models never once claimed an action they had not taken, while gpt-oss failed to name an action it *had* taken in 0.39 of legal records. They do not invent — they under-report"),
         ],
         "cites": [
             ("financial-services-fraud/fraud-alert-triage-agent", "One-directional bias"),
             ("retail-workforce/shift-coverage-triage-agent", "Over-escalation"),
             ("security-operations/alert-triage-agent", "Over-escalation"),
+            ("legal-compliance/dpa-clause-review-agent", "expected and did not occur"),
         ],
     },
     {
@@ -242,12 +269,14 @@ PATTERNS = [
             ("across 8 tasks", "wins: Qwen3.7-Plus 4, kimi-k2p6 2, gpt-oss-120b 2, mistral-small 1 — the cheapest free-tier model wins the on-call watch task outright"),
             ("trifecta", "capability is not protection: the strongest model leaks through a poisoned tool as often as the weakest"),
             ("logistics vs media", "kimi is the only model to score a perfect 90/90 on one task and comes last on another, at 7.7× the cost per scenario"),
+            ("legal, missing GDPR clause", "the widest spread in the repo: **0.00 to 0.98 on identical contracts**, intervals disjoint. One model solves it outright, so the task is demonstrably not the limit — and no arm moves any of them (p ≥ 0.48)"),
         ],
         "cites": [
             ("security-operations/alert-triage-agent", "different domain, different competence"),
             ("retail-workforce/shift-coverage-triage-agent", "different domain, different competence"),
             ("financial-services-fraud/fraud-alert-triage-agent", "No best model"),
             ("security-operations/trifecta-exfil-agent", "Capability is not protection"),
+            ("legal-compliance/dpa-clause-review-agent", "property of the model, not the task"),
         ],
     },
     {

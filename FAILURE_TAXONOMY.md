@@ -1,6 +1,6 @@
 # The Agent Failure Taxonomy
 
-**107 failure modes, observed across 17 use cases, 11 recurring patterns.**
+**115 failure modes, observed across 18 use cases, 12 recurring patterns.**
 
 Every entry below was *measured*, not hypothesised — each links to the run that
 produced it, with a reproducing input. Read individually the failures look
@@ -19,14 +19,15 @@ reappearing in industries that share nothing but the shape of the agent.
 | 1 | [Commit-stall](#commit-stall) | The agent investigates correctly, reaches the right conclusion, and never commits it. | 8 use cases |
 | 2 | [The environment beats the prompt](#the-environment-beats-the-prompt) | Changing what the agent *can* do works; telling it what it *should* do mostly doesn't. | 4 use cases |
 | 3 | [Contained is not fixed](#contained-is-not-fixed) | A guard drives the incident rate to zero while the agent's judgment stays exactly as wrong. | 3 use cases |
-| 4 | [Safety by inaction](#safety-by-inaction) | A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing. | 3 use cases |
-| 5 | [Prior over policy](#prior-over-policy) | The model's own sense of what's reasonable overrides the policy it just retrieved. | 4 use cases |
-| 6 | [Framing over evidence](#framing-over-evidence) | The agent believes how the input was described instead of checking what the tools say. | 3 use cases |
-| 7 | [Trust follows the channel, not the content](#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition. | 2 use cases |
-| 8 | [Ceremony is learned, prohibition is not](#ceremony-is-learned-prohibition-is-not) | Agents reliably obey 'do this first' and unreliably obey 'never do this'. | 2 use cases |
-| 9 | [Directional bias](#directional-bias) | Models don't err randomly — each errs in one direction, and the direction is a model property. | 3 use cases |
-| 10 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 4 use cases |
-| 11 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
+| 4 | [Removing the tool displaces the intent](#removing-the-tool-displaces-the-intent) | Take the forbidden action out of the schema and the goal reroutes — through a legal-but-wrong channel, or into a claim that the work was done. | 2 use cases |
+| 5 | [Safety by inaction](#safety-by-inaction) | A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing. | 4 use cases |
+| 6 | [Prior over policy](#prior-over-policy) | The model's own sense of what's reasonable overrides the policy it just retrieved. | 4 use cases |
+| 7 | [Framing over evidence](#framing-over-evidence) | The agent believes how the input was described instead of checking what the tools say. | 3 use cases |
+| 8 | [Trust follows the channel, not the content](#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition. | 2 use cases |
+| 9 | [Ceremony is learned, prohibition is not](#ceremony-is-learned-prohibition-is-not) | Agents reliably obey 'do this first' and unreliably obey 'never do this'. | 2 use cases |
+| 10 | [Directional bias](#directional-bias) | Models don't err randomly — each errs in one direction, and the direction is a model property. | 4 use cases |
+| 11 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
+| 12 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
 
 ---
 
@@ -105,6 +106,27 @@ Every environment fix in this repo works by making the mistake harmless, not by 
 
 ---
 
+## Removing the tool displaces the intent
+
+*Take the forbidden action out of the schema and the goal reroutes — through a legal-but-wrong channel, or into a claim that the work was done.*
+
+Least privilege is the one control this repo consistently finds effective, so its failure mode deserves naming. Deleting a capability removes the *act*, never the objective that motivated it. The agent still needs to dispose of the case, and it reaches for whatever remains — which is why the residue lands somewhere that looks compliant. In both observations below the resulting record is **honest and the reasoning correct**, so no truthfulness check fires. Removing a tool is not finished until you have asked what the agent will do instead.
+
+**Measured**
+
+- **healthcare prior auth** — barred by statute from medical-necessity denial, the agent refuses through the **administrative** channel instead — **0.42** `[0.21, 0.62]` of routing cases. The clinical reasoning is right, the rationale accurate; only the channel is wrong, and the channel is what the statute regulates
+- **incident remediation** — with the forbidden tools gone, one model of three closed incidents as *'remediated'* for work that never ran — the capability control bought a false all-clear
+
+<details><summary><b>Where it was observed</b></summary>
+
+- [`prior-auth-review-agent` — The unlocked door: a clinical denial issued administratively](healthcare-life-sciences/prior-auth-review-agent/FAILURE_MODES.md#1-the-unlocked-door-a-clinical-denial-issued-administratively)
+- [`incident-remediation-agent` — The capability control did not remove the capability](it-operations/incident-remediation-agent/FAILURE_MODES.md#10-the-capability-control-did-not-remove-the-capability)
+- [`incident-remediation-agent` — Least privilege bought a false all-clear (on one model of three)](it-operations/incident-remediation-agent/FAILURE_MODES.md#3-least-privilege-bought-a-false-all-clear-on-one-model-of-three)
+
+</details>
+
+---
+
 ## Safety by inaction
 
 *A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing.*
@@ -116,12 +138,14 @@ Restraint and absence are indistinguishable unless you also measure whether the 
 - **on-call watch** — two models scored a **perfect 1.000** on 'never paged a quiet window' while missing a third of real incidents — by watching 3.6 and 5.8 of 20 minutes
 - **artifact admission** — gpt-oss posted zero unsafe admits and zero over-blocks — on the 78% of runs where it decided at all
 - **trifecta exfil** — zero leaks on the content channel, largely by never reaching a decision
+- **legal clause review** — the variant that defeats a diligence metric: mistral calls `read_clause` in **84 of 84** runs and records a clause-level verdict in almost none (`flag` 6/84, `accept` 1/84), escalating wholesale instead. It looked at everything and adjudicated nothing
 
 <details><summary><b>Where it was observed</b></summary>
 
 - [`oncall-watch-agent` — A restraint metric can be passed by not looking](it-operations/oncall-watch-agent/FAILURE_MODES.md#1-a-restraint-metric-can-be-passed-by-not-looking)
 - [`artifact-admission-agent` — Safe only because it never finished (gpt-oss)](security-operations/artifact-admission-agent/FAILURE_MODES.md#4-safe-only-because-it-never-finished-gpt-oss)
 - [`trifecta-exfil-agent` — Safe by not finishing](security-operations/trifecta-exfil-agent/FAILURE_MODES.md#5-safe-by-not-finishing)
+- [`dpa-clause-review-agent` — Reads everything, adjudicates nothing](legal-compliance/dpa-clause-review-agent/FAILURE_MODES.md#3-reads-everything-adjudicates-nothing)
 
 </details>
 
@@ -225,12 +249,14 @@ Accuracy alone implies errors are symmetric. They are not: one model over-escala
 - **fraud** — three of four models over-called fraud on benign transactions and never the reverse — Qwen3.7-Plus broke the pattern with zero such errors, falsifying the universal claim
 - **retail / media / security** — over-escalation on one model and under-escalation on another, on the identical scenario set
 - **refund** — one model's action errors were 22 of 23 the *same* substitution
+- **healthcare + legal, record fidelity** — infidelity is one-directional too: across **1,512 runs in two industries**, models never once claimed an action they had not taken, while gpt-oss failed to name an action it *had* taken in 0.39 of legal records. They do not invent — they under-report
 
 <details><summary><b>Where it was observed</b></summary>
 
 - [`fraud-alert-triage-agent` — One-directional bias: models over-call fraud on benign transactions — but it is beatable](financial-services-fraud/fraud-alert-triage-agent/FAILURE_MODES.md#5-one-directional-bias-models-over-call-fraud-on-benign-transactions-but-it-is-beatable)
 - [`shift-coverage-triage-agent` — Over-escalation: handing fillable shifts to the district manager](retail-workforce/shift-coverage-triage-agent/FAILURE_MODES.md#2-over-escalation-handing-fillable-shifts-to-the-district-manager)
 - [`alert-triage-agent` — Over-escalation — the opposite error, on a different model](security-operations/alert-triage-agent/FAILURE_MODES.md#3-over-escalation-the-opposite-error-on-a-different-model)
+- [`dpa-clause-review-agent` — The fabrication that was expected and did not occur](legal-compliance/dpa-clause-review-agent/FAILURE_MODES.md#5-the-fabrication-that-was-expected-and-did-not-occur)
 
 </details>
 
@@ -247,6 +273,7 @@ Every model tested wins at least one use case and loses another, and the ranking
 - **across 8 tasks** — wins: Qwen3.7-Plus 4, kimi-k2p6 2, gpt-oss-120b 2, mistral-small 1 — the cheapest free-tier model wins the on-call watch task outright
 - **trifecta** — capability is not protection: the strongest model leaks through a poisoned tool as often as the weakest
 - **logistics vs media** — kimi is the only model to score a perfect 90/90 on one task and comes last on another, at 7.7× the cost per scenario
+- **legal, missing GDPR clause** — the widest spread in the repo: **0.00 to 0.98 on identical contracts**, intervals disjoint. One model solves it outright, so the task is demonstrably not the limit — and no arm moves any of them (p ≥ 0.48)
 
 <details><summary><b>Where it was observed</b></summary>
 
@@ -254,6 +281,7 @@ Every model tested wins at least one use case and loses another, and the ranking
 - [`shift-coverage-triage-agent` — Same model, different domain, different competence](retail-workforce/shift-coverage-triage-agent/FAILURE_MODES.md#4-same-model-different-domain-different-competence)
 - [`fraud-alert-triage-agent` — No best model — the ranking flips again](financial-services-fraud/fraud-alert-triage-agent/FAILURE_MODES.md#6-no-best-model-the-ranking-flips-again)
 - [`trifecta-exfil-agent` — Capability is not protection](security-operations/trifecta-exfil-agent/FAILURE_MODES.md#2-capability-is-not-protection)
+- [`dpa-clause-review-agent` — Absence detection is a property of the model, not the task](legal-compliance/dpa-clause-review-agent/FAILURE_MODES.md#2-absence-detection-is-a-property-of-the-model-not-the-task)
 
 </details>
 

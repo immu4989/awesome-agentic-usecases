@@ -40,8 +40,9 @@ average of 1.2 seconds on each case"*, ProPublica 2023-03-25).
 **It does not happen.** `phantom_criteria` is **0.00 on all three models and all three
 arms.** And the metric is not vacuous — agents cite 2.0–2.7 criteria per review, every one
 actually retrieved. DeepSeek cites exactly what it fetched; mistral cites *fewer* than it
-read. Given [CLAUSE](https://arxiv.org/abs/2606.01494) measures the static analogue at
-9–31% F1 on legal text, this null is worth reporting rather than burying.
+read. Given [CLAUSE](https://arxiv.org/abs/2511.00340) (Findings of EACL 2026) measures the
+static analogue on legal text at **9.3–31% F1 for its two weakest models**, this null is
+worth reporting rather than burying.
 
 One model does fabricate, in the other list: **gpt-oss claims documents it never fetched at
 0.33**, which `record_gate` drives to **0.00** across 23 refused records.
