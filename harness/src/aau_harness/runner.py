@@ -159,7 +159,7 @@ def run_eval(
         metric_ci95=metric_ci95,
         mean_cost_per_scenario_usd=statistics.fmean(costs) if costs else 0.0,
         total_cost_usd=sum(costs),
-        p50_latency_s=latencies[len(latencies) // 2] if latencies else 0.0,
+        p50_latency_s=statistics.median(latencies) if latencies else 0.0,
         results=results,
     )
 

@@ -90,3 +90,22 @@ def test_a_metric_no_scenario_reports_is_absent_rather_than_crashing():
 
     agg = run_eval([0, 1], run_one, repeats=1)
     assert set(agg.metric_means) == {"only"}
+
+
+def test_p50_latency_interpolates_the_middle_pair_for_an_even_run_count():
+    from aau_harness import ScenarioResult, run_eval
+
+    latencies = {"fast": 1.0, "slow": 3.0}
+
+    def run_one(scenario, repeat):
+        return ScenarioResult(
+            scenario_id=scenario,
+            repeat=repeat,
+            metrics={"ok": 1.0},
+            cost_usd=0.0,
+            latency_s=latencies[scenario],
+            n_api_calls=0,
+        )
+
+    agg = run_eval(["fast", "slow"], run_one, repeats=1)
+    assert agg.p50_latency_s == 2.0
