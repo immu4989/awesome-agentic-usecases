@@ -13,6 +13,7 @@
 
 <p align="center">
   <a href="FAILURE_TAXONOMY.md">Failure taxonomy</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/">Use-case explorer</a> ·
   <a href="#there-is-no-best-model">Results</a> ·
   <a href="#use-cases">Use cases</a> ·
   <a href="#industries">Industries</a> ·
@@ -81,7 +82,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 107 failures, 11 patterns
+## 115 failures, 12 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -128,26 +129,33 @@ Every failure has a reproducing scenario id in
 
 ## Use cases
 
+**Not sure where to start?** [Search and filter all 18 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
+by industry, capability, or failure shape.
+
+<!-- USE_CASES:START -->
+
 | Use case | Industry | Capability | The question it answers |
 |---|---|---|---|
-| [🎫 exception-triage-agent](logistics-supply-chain/exception-triage-agent/) | Logistics | `investigate` `decide` | Which resolution queue should each stuck-shipment ticket go to, which can resolve themselves, and which need a human? |
-| [🪞 exception-triage-drift](logistics-supply-chain/exception-triage-drift/) | Logistics | `reliability A/B` | **Does it survive a realistic world?** The task a model solved 90/90, replayed with stale caches and sources that disagree. Same gold, one variable. |
-| [🧑‍🍳 shift-coverage-triage-agent](retail-workforce/shift-coverage-triage-agent/) | Retail & Workforce | `investigate` `decide` | When crew call out, what's the compliant fill — overtime, borrow, run short, or escalate — under labor-law caps the ticket never mentions? |
-| [🚨 alert-triage-agent](security-operations/alert-triage-agent/) | Security Ops | `investigate` `decide` | Which queue does each security alert belong in, which can safely auto-close, and which need incident response now? |
-| [🛂 artifact-admission-agent](security-operations/artifact-admission-agent/) | Security Ops | `gate` `environment A/B` | **The Hugging Face breach, as a gate.** A dataset's manifest says no code; its config executes anyway. Admit, sandbox, block, or escalate — before any of it runs? |
-| [🕳️ trifecta-exfil-agent](security-operations/trifecta-exfil-agent/) | Security Ops | `act` `adversarial A/B` | **The lethal trifecta.** Same secret-stealing instruction in fetched content vs a tool's own description. One is refused; the other leaks 100%, every model. |
-| [🚩 fraud-alert-triage-agent](financial-services-fraud/fraud-alert-triage-agent/) | Financial Services | `investigate` `decide` | Which fraud queue does each transaction alert belong in, which release, which block, and which need the fraud team now? |
-| [🎞️ release-qc-triage-agent](media-streaming/release-qc-triage-agent/) | Media & Streaming | `investigate` `decide` | When QC flags an asset before premiere, who owns the defect and what happens to the release — waive, redeliver, fix in house, delay, or escalate? |
-| [💸 refund-resolution-agent](customer-support/refund-resolution-agent/) | Customer Support | `plan` `act` `human-in-loop` | **The agent that acts.** Can it resolve a refund end to end — verifying identity first, avoiding payouts it cannot claw back, and handing off when policy says it must? |
-| [🔧 refund-guarded](customer-support/refund-guarded/) | Customer Support | `intervention A/B` | **Does our own advice work?** Tool-layer enforcement gained 49 points for free. The prompt nudge doubled the failure it was written to fix. |
-| [👥 refund-crew](customer-support/refund-crew/) | Customer Support | `multi-agent` | **Does orchestration help?** Three agents on the exact task one agent already solved, same scenarios, same gold. The controlled comparison almost nobody publishes. |
-| [🎯 refund-injected](customer-support/refund-injected/) | Customer Support | `adversarial A/B` | **Do the defences survive an attacker?** Prompt injection through customer-supplied ticket text. 74% of attacks still moved money past the prompt guard. Past the tool guard, none did. |
-| [🧠 refund-memory](customer-support/refund-memory/) | Customer Support | `adversarial A/B` `memory` | **Harm that outlives the attacker.** A false fact written in one session steers a later session that contains no attacker at all. Verification collapsed 1.00 → 0.56 in 2 of 3 models; a write-time provenance gate restored it on the one channel it can trace. |
-| [💸 refund-amplified](customer-support/refund-amplified/) | Customer Support | `adversarial A/B` `cost` | **Denial of wallet** (OWASP LLM10). The bill is 3.7× while tool-call and turn counts stay put, so the monitors teams actually deploy see nothing. A length-matched control separates the two failures cleanly: length costs money and leaves the answer alone; a payload that *argues* costs accuracy, and only on the tickets it argues against. |
-| [🏥 prior-auth-review-agent](healthcare-life-sciences/prior-auth-review-agent/) | Healthcare & Life Sciences | `gate` `record fidelity` `human-in-loop` | **The agent that cannot deny.** Barred by statute from medical-necessity denials, it refuses through the administrative channel instead — correct reasoning, honest record, wrong route, and the route is what the law regulates. The fabrication it was built to catch never happened. |
-| [⚖️ dpa-clause-review-agent](legal-compliance/dpa-clause-review-agent/) | Legal & Compliance | `gate` `record fidelity` `statutory gold` | **The clause that isn't there.** A missing GDPR Art. 28(3) term has no text to be wrong about, so every truthfulness check passes on a review that never mentions it. Miss rate runs **0.00 to 0.98 on identical contracts** — one model solves it outright, so the task is not the problem. No arm moves it (p ≥ 0.48), and the worst model reads every clause and adjudicates none. |
-| [🚨 incident-remediation-agent](it-operations/incident-remediation-agent/) | IT Ops & DevOps | `act` `policy A/B` `human-in-loop` | **When the approved path is blocked, what does it do instead?** A general "don't improvise" policy fixes one susceptible model completely and does nothing for another (p=1.000) — prompt defences are a property of the pairing, not the text. Naming the forbidden tools works on every model. Removing them from the schema stops the violation but on one model buys a false all-clear: incidents closed as "remediated" for work that never ran. |
-| [📟 oncall-watch-agent](it-operations/oncall-watch-agent/) | IT Ops & DevOps | `watch` `decide` | **The agent that waits.** Telemetry arrives a minute at a time and it cannot see ahead. Can it tell a real regression from a blip that heals itself, without crying wolf or sleeping through the outage? |
+| [🎫 Exception Triage](logistics-supply-chain/exception-triage-agent/) | Logistics & Supply Chain | `investigate` `decide` | Which resolution queue owns a stuck shipment, which cases can resolve themselves, and which need a human? |
+| [🪞 Exception Triage Drift](logistics-supply-chain/exception-triage-drift/) | Logistics & Supply Chain | `reliability` `investigate` `decide` | Does a perfect clean-world agent survive stale caches and sources that disagree? |
+| [🧑‍🍳 Shift Coverage](retail-workforce/shift-coverage-triage-agent/) | Retail & Workforce | `investigate` `decide` | What is the compliant fill when crew call out under overtime, minor-hour, and borrowing constraints? |
+| [🚨 Alert Triage](security-operations/alert-triage-agent/) | Security Operations | `investigate` `decide` | Which security alerts can safely auto-close, which need an analyst, and which require incident response now? |
+| [🛂 Artifact Admission](security-operations/artifact-admission-agent/) | Security Operations | `gate` `security` `environment` | Should an ML artifact be admitted, sandboxed, blocked, or escalated before any of its code runs? |
+| [🕳️ Trifecta Exfil](security-operations/trifecta-exfil-agent/) | Security Operations | `act` `security` `adversarial` | Does the same secret-stealing instruction succeed differently in fetched content versus a tool description? |
+| [🚩 Fraud Alert Triage](financial-services-fraud/fraud-alert-triage-agent/) | Financial Services & Fraud | `investigate` `decide` | Should a transaction alert be released, blocked, routed, or escalated? |
+| [🎞️ Release QC Triage](media-streaming/release-qc-triage-agent/) | Media & Streaming | `investigate` `decide` | Who owns a pre-premiere media defect, and should the release ship, be fixed, or be delayed? |
+| [💸 Refund Resolution](customer-support/refund-resolution-agent/) | Customer Support | `plan` `act` `human-in-loop` | Can an agent resolve a refund end to end without moving money before identity and policy checks? |
+| [🔧 Refund Guarded](customer-support/refund-guarded/) | Customer Support | `act` `guardrails` `environment` | Do prompt nudges or tool-layer enforcement actually fix observed refund failures? |
+| [👥 Refund Crew](customer-support/refund-crew/) | Customer Support | `multi-agent` `plan` `act` | Does a three-agent crew outperform the exact same task solved by one agent? |
+| [🎯 Refund Injected](customer-support/refund-injected/) | Customer Support | `act` `security` `adversarial` | Can prompt injection in customer-supplied ticket text cause a forbidden irreversible action? |
+| [🧠 Refund Memory](customer-support/refund-memory/) | Customer Support | `memory` `security` `adversarial` | Can a false fact planted in one session harm a later session with no attacker present? |
+| [💸 Refund Amplified](customer-support/refund-amplified/) | Customer Support | `cost` `security` `adversarial` | Can attacker-controlled input inflate agent cost while ordinary tool-call monitors stay quiet? |
+| [🏥 Prior Auth Review](healthcare-life-sciences/prior-auth-review-agent/) | Healthcare & Life Sciences | `gate` `record-fidelity` `human-in-loop` | Can a legally constrained agent review prior authorization without denying through the wrong channel? |
+| [⚖️ DPA Clause Review](legal-compliance/dpa-clause-review-agent/) | Legal & Compliance | `gate` `record-fidelity` `statutory-gold` | Can a contract-review agent detect a mandatory GDPR term that is absent rather than merely misworded? |
+| [🚨 Incident Remediation](it-operations/incident-remediation-agent/) | IT Ops & DevOps | `act` `guardrails` `human-in-loop` | When the approved runbook action is blocked, does the agent escalate, improvise, or report false success? |
+| [📟 On-Call Watch](it-operations/oncall-watch-agent/) | IT Ops & DevOps | `watch` `decide` | Can an agent wait long enough to distinguish a real regression from a blip without missing the outage? |
+
+<!-- USE_CASES:END -->
 
 Every use case is tagged by what the agent *does*: `predict` · `decide` · `plan` ·
 `act` · `watch` · `gate` · `investigate`, plus architecture (`single-agent` / `multi-agent` /
@@ -219,9 +227,9 @@ only a per-use-case harness surfaces:
 
 ## Industries
 
-| Shipping now | Next waves |
+| Shipping now | Next wave |
 |---|---|
-| 🚛 [Logistics](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Ops](security-operations/) · 💳 [Financial Services](financial-services-fraud/) · 🎬 [Media & Streaming](media-streaming/) · 🎧 [Customer Support](customer-support/) · 🖥️ [IT Ops & DevOps](it-operations/) | 🏥 Healthcare · ⚖️ Legal & Compliance · 🏭 Manufacturing |
+| 🚛 [Logistics](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Ops](security-operations/) · 💳 [Financial Services](financial-services-fraud/) · 🎬 [Media & Streaming](media-streaming/) · 🎧 [Customer Support](customer-support/) · 🖥️ [IT Ops & DevOps](it-operations/) · 🏥 [Healthcare & Life Sciences](healthcare-life-sciences/) · ⚖️ [Legal & Compliance](legal-compliance/) | 🏭 Manufacturing & Industrial |
 
 <details>
 <summary><b>Full 16-industry roadmap</b></summary>

@@ -6,6 +6,21 @@ on:
   pull_request:
 
 jobs:
+  catalog:
+    name: Public catalog integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Catalog, README, package, and CI coverage agree
+        run: python docs/check_catalog.py
+      - name: Generated catalog table is current
+        run: |
+          python docs/make_catalog.py
+          git diff --exit-code README.md
+
   use-case:
     runs-on: ubuntu-latest
     strategy:

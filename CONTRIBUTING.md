@@ -59,4 +59,6 @@ The terminal casts replay a real scenario the model passed and one it failed, so
 change when the evals do. They are always dark (a terminal is a dark object, and GitHub
 defaults to light), so unlike the other assets there is no light/dark pair — one
 `demo.svg` per use case. Add a new solve-the-task use case to the `CASTS` list in
-`docs/make_terminal_demo.py` and to `USE_CASES` in `docs/make_leaderboard.py`.
+`docs/make_terminal_demo.py`, `docs/use-cases.json`, and to `USE_CASES` in
+`docs/make_leaderboard.py`. Run `python docs/make_catalog.py` after changing the catalog;
+CI verifies that the catalog, README, runnable packages, and test matrix all agree.
