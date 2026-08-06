@@ -19,6 +19,12 @@ the harness API is what is versioned; use cases are additive.
 - The root README now leads with user goals and a runnable no-key example before presenting
   the research results. Catalog, taxonomy-count, package, and CI-matrix drift remain checked
   automatically.
+- The repository and live explorer now use a distinctive **agent evaluation observatory**
+  visual system: an evidence-trace cover, editorial experiment cards, proof-first metrics,
+  color-coded evaluation states, and a responsive dark catalog designed around the actual
+  research rather than generic AI imagery.
+- Explorer search now matches every entered term independently, so queries such as
+  `security gate` surface useful intersections instead of requiring an exact phrase.
 
 ## [0.1.6] — 2026-07-30
 

@@ -62,9 +62,15 @@ def main() -> None:
     html = (ROOT / "docs" / "index.html").read_text()
     readme = (ROOT / "README.md").read_text()
     industries = {item["industry"] for item in cases}
-    expected = [f"<b>{len(cases)}</b> use cases", f"<b>{len(industries)}</b> industries"]
+    expected = [
+        f"<b>{len(cases)}</b><small>use cases</small>",
+        f"<b>{len(industries)}</b><small>industries</small>",
+    ]
     for text in expected:
         assert text in html, f"explorer proof point is stale: expected {text!r}"
+
+    for asset in ("hero-v2.png", "hero-v2.webp"):
+        assert (ROOT / "docs" / "assets" / asset).is_file(), f"missing visual asset: {asset}"
 
     taxonomy = json.loads((ROOT / "docs" / "assets" / "taxonomy.json").read_text())
     taxonomy_heading = f"## {taxonomy['failure_modes']} failures, {taxonomy['patterns']} patterns"

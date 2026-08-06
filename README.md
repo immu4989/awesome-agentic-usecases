@@ -1,7 +1,4 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg">
-  <img alt="Awesome Agentic Use Cases — agentic AI use cases that are verified, not just runnable" src="docs/assets/banner-light.svg" width="100%">
-</picture>
+<img src="docs/assets/hero-v2.webp" alt="Awesome Agentic Use Cases — an evidence trace branching through tool calls, policy gates, verified outcomes, uncertainty, and observed failures" width="100%">
 
 <p align="center">
   <a href="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml"><img src="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
@@ -72,6 +69,35 @@ aau doctor                             # validate your checkout or fork
 ```
 
 <p align="center"><b><a href="START_HERE.md">Choose a guided path</a></b> · <b><a href="https://immu4989.github.io/awesome-agentic-usecases/">Open the visual explorer</a></b></p>
+
+## Enter the lab
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="logistics-supply-chain/exception-triage-agent/"><picture><source media="(prefers-color-scheme: dark)" srcset="logistics-supply-chain/exception-triage-agent/docs/banner-dark.svg"><img src="logistics-supply-chain/exception-triage-agent/docs/banner-light.svg" alt="Exception Triage Agent"></picture></a><br>
+      <b>Benchmark a decision</b><br>
+      <sub>Same 30 cases, four models, four disjoint failure mechanisms. One model solves all 90 runs; another cannot reliably form the tool call.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <a href="customer-support/refund-resolution-agent/"><picture><source media="(prefers-color-scheme: dark)" srcset="customer-support/refund-resolution-agent/docs/banner-dark.svg"><img src="customer-support/refund-resolution-agent/docs/banner-light.svg" alt="Refund Resolution Agent"></picture></a><br>
+      <b>Score an irreversible action</b><br>
+      <sub>The correct refund through an unsafe route is still a failure. Measure prerequisites, forbidden payouts, completion, and outcome together.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="security-operations/artifact-admission-agent/"><picture><source media="(prefers-color-scheme: dark)" srcset="security-operations/artifact-admission-agent/docs/banner-dark.svg"><img src="security-operations/artifact-admission-agent/docs/banner-light.svg" alt="Artifact Admission Agent"></picture></a><br>
+      <b>Gate untrusted capability</b><br>
+      <sub>Manifest says no code; configuration executes anyway. Compare unchanged agent judgment with sandbox-by-default containment.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <a href="it-operations/oncall-watch-agent/"><picture><source media="(prefers-color-scheme: dark)" srcset="it-operations/oncall-watch-agent/docs/banner-dark.svg"><img src="it-operations/oncall-watch-agent/docs/banner-light.svg" alt="On-Call Watch Agent"></picture></a><br>
+      <b>Measure patience, not silence</b><br>
+      <sub>Telemetry arrives one minute at a time. A perfect no-false-page score can hide an agent that stopped looking before the outage.</sub>
+    </td>
+  </tr>
+</table>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">

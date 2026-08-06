@@ -16,16 +16,27 @@ function searchable(item) {
 }
 
 function filteredCases() {
-  const query = state.search.trim().toLocaleLowerCase();
+  const terms = state.search.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
   return state.cases.filter((item) => {
     const matchesIndustry = state.industry === "all" || item.industry === state.industry;
-    return matchesIndustry && (!query || searchable(item).includes(query));
+    const haystack = searchable(item);
+    return matchesIndustry && terms.every((term) => haystack.includes(term));
   });
+}
+
+function cardAccent(item) {
+  const terms = `${item.kind} ${item.industry} ${item.capabilities.join(" ")}`.toLocaleLowerCase();
+  if (/security|adversarial|injection|exfil|poison/.test(terms)) return "var(--red)";
+  if (/guardrail|environment|tool enforcement|approval/.test(terms)) return "var(--green)";
+  if (/regulated|statutory|record|compliance|financial/.test(terms)) return "var(--amber)";
+  if (/memory|multi-agent|coordination|context/.test(terms)) return "var(--violet)";
+  return "var(--blue)";
 }
 
 function card(item) {
   const article = document.createElement("article");
   article.className = "card";
+  article.style.setProperty("--card-accent", cardAccent(item));
 
   const top = document.createElement("div");
   top.className = "card-top";
@@ -66,9 +77,13 @@ function card(item) {
   copy.textContent = "Copy start command";
   copy.setAttribute("aria-label", `Copy the aau start command for ${item.title}`);
   copy.addEventListener("click", async () => {
-    await navigator.clipboard.writeText(`aau start ${item.cli}`);
-    copy.textContent = "Copied";
-    setTimeout(() => { copy.textContent = "Copy start command"; }, 1600);
+    try {
+      await navigator.clipboard.writeText(`aau start ${item.cli}`);
+      copy.textContent = "Copied";
+    } catch {
+      copy.textContent = `aau start ${item.cli}`;
+    }
+    setTimeout(() => { copy.textContent = "Copy start command"; }, 1800);
   });
 
   const actions = document.createElement("div");
