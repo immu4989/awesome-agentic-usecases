@@ -3,6 +3,23 @@
 Notable changes to the repository. Versions follow [semantic versioning](https://semver.org/):
 the harness API is what is versioned; use cases are additive.
 
+## Unreleased
+
+### Added
+- **Repository navigator (`aau`)** — search the machine-readable catalog by industry,
+  capability, or failure shape; inspect a use case; print its dependency-aware install and
+  no-key run commands; or validate a fork with `aau doctor`.
+- **Guided user journeys** — `START_HERE.md`, practical failure-to-intervention playbooks,
+  and a fork/adaptation guide for turning a production decision into an exact eval.
+- **Intent filters in the web explorer** and copyable `aau start` commands on every card.
+- A request template for users who have a real workflow to evaluate but do not intend to
+  implement the use case themselves.
+
+### Changed
+- The root README now leads with user goals and a runnable no-key example before presenting
+  the research results. Catalog, taxonomy-count, package, and CI-matrix drift remain checked
+  automatically.
+
 ## [0.1.6] — 2026-07-30
 
 ### Added

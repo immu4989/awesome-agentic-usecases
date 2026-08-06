@@ -18,7 +18,8 @@
 - [ ] Real-model results committed under `results/` — n≥3 repeats, cost per run in dollars
 - [ ] `FAILURE_MODES.md` with ≥3 **observed** failures, each with a reproducing input
 - [ ] README follows the template: Problem → How it decides → Results → Failure modes → Run it
-- [ ] Added to the root README use-case table and the CI matrix in `.github/workflows/ci.yml`
+- [ ] Added to `docs/use-cases.json` and the CI matrix in `.github/workflows/ci.yml`
+- [ ] Ran `python docs/make_catalog.py` and `aau doctor`
 
 ## Checks
 

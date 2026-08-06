@@ -16,15 +16,33 @@ pip install -e harness          # from a clone of the repo
 pip install -e harness[dev]     # plus pytest and ruff
 ```
 
-Requires Python 3.10+. The core has **no runtime dependencies**; the `anthropic` extra is
-only needed for the native Anthropic backend, and every other provider is reached over
-`urllib` from the standard library.
+Requires Python 3.10+. The core uses only the standard library on Python 3.11+ (Python
+3.10 installs the small `tomli` compatibility package); the `anthropic` extra is only
+needed for the native Anthropic backend, and every other provider is reached over `urllib`.
 
 Verify the install:
 
 ```bash
 pytest harness/tests -q
 ```
+
+### Find the right use case
+
+Installing the harness also adds the repository navigator. It searches the committed
+machine-readable catalog and prints exact commands without making network calls:
+
+```bash
+aau list
+aau list --industry healthcare
+aau find "security adversarial"
+aau show refund-memory
+aau start refund-injected
+aau doctor
+```
+
+`aau start` understands local package dependencies, so controlled comparisons that reuse a
+baseline are installed in the correct order. It prints commands; it never changes your
+environment by itself.
 
 ## Quickstart
 

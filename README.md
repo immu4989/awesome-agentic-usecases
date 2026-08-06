@@ -5,6 +5,8 @@
 
 <p align="center">
   <a href="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml"><img src="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/immu4989/awesome-agentic-usecases/stargazers"><img src="https://img.shields.io/github/stars/immu4989/awesome-agentic-usecases?style=flat&color=eda100" alt="GitHub stars"></a>
+  <a href="https://github.com/immu4989/awesome-agentic-usecases/forks"><img src="https://img.shields.io/github/forks/immu4989/awesome-agentic-usecases?style=flat&color=2a78d6" alt="GitHub forks"></a>
   <img src="https://img.shields.io/badge/python-3.10%2B-2a78d6" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/license-Apache--2.0-008300" alt="Apache-2.0 license">
   <a href="https://doi.org/10.5281/zenodo.21631852"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21631852.svg" alt="DOI"></a>
@@ -12,23 +14,64 @@
 </p>
 
 <p align="center">
-  <a href="FAILURE_TAXONOMY.md">Failure taxonomy</a> ·
+  <a href="START_HERE.md">Start here</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/">Use-case explorer</a> ·
+  <a href="#run-one-now">Run one</a> ·
+  <a href="PLAYBOOKS.md">Playbooks</a> ·
+  <a href="BUILD_YOUR_OWN.md">Build your own</a> ·
+  <a href="FAILURE_TAXONOMY.md">Failure taxonomy</a> ·
   <a href="#there-is-no-best-model">Results</a> ·
-  <a href="#use-cases">Use cases</a> ·
-  <a href="#industries">Industries</a> ·
-  <a href="#what-verified-means-here">The verification bar</a> ·
-  <a href="#quick-start">Quickstart</a> ·
   <a href="CONTRIBUTING.md">Contribute</a>
 </p>
 
-Most agent demos prove an agent *can run once*. Almost none prove it *works*: how often
-it gets the right answer, what a run costs in dollars, and where it breaks. Every use
-case here ships with the harness that proves it — an eval set with programmatic ground
-truth, cost measured from token usage, results across repeated runs (agents are
-stochastic; n=1 proves nothing), and failure modes that were **observed, not
-hypothesized**. All of it runs end-to-end on synthetic data with one command, and the
-model backends include free tiers, so reproducing any result costs nothing.
+Most agent collections answer **“what could I build?”** This one answers the harder next
+question: **“how do I know it works?”**
+
+Every use case is a complete, production-shaped evaluation lab: seeded scenarios with
+programmatic ground truth, tools and state, repeated model runs, cost from actual token
+usage, confidence intervals, and failure modes that were **observed—not hypothesized**.
+Everything runs on synthetic data, the deterministic backend needs no API key, and real
+model backends include free tiers.
+
+## What are you trying to do?
+
+| I want to… | Start here | What you get |
+|---|---|---|
+| **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Three short paths through routing, irreversible action, and tool-poisoning failures |
+| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 18 verified use cases by industry, capability, or failure shape |
+| **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
+| **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
+| **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
+| **Contribute a use case** | [Contribution guide](CONTRIBUTING.md) | A clear verification bar, proposal template, and CI-enforced checklist |
+
+## Run one now
+
+No API key, external service, or model download is required:
+
+```bash
+git clone https://github.com/immu4989/awesome-agentic-usecases.git
+cd awesome-agentic-usecases
+python -m venv .venv && source .venv/bin/activate
+python -m pip install -e harness -e logistics-supply-chain/exception-triage-agent
+exception-triage-agent eval --backend mock
+```
+
+The output is a full repeated-run report with accuracy, 95% confidence intervals,
+submission rate, latency, cost, and scenario-level details. The mock contains a deliberate
+mistake so the failure path is exercised at **$0**; switch one flag when you want a real
+model.
+
+The repository navigator makes the larger collection approachable:
+
+```bash
+aau list --industry security           # browse by domain
+aau find "act guardrails"              # search by what the agent does
+aau show refund-memory                 # understand one experiment
+aau start refund-injected              # print its exact local install + run commands
+aau doctor                             # validate your checkout or fork
+```
+
+<p align="center"><b><a href="START_HERE.md">Choose a guided path</a></b> · <b><a href="https://immu4989.github.io/awesome-agentic-usecases/">Open the visual explorer</a></b></p>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
@@ -96,7 +139,7 @@ reappearing across industries that share nothing but the shape of the agent.
 | [Trust follows the channel](FAILURE_TAXONOMY.md#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition | 2 use cases |
 | [Prior over policy](FAILURE_TAXONOMY.md#prior-over-policy) | Models cite the rule in their reasoning, then violate it in the same breath | 4 use cases |
 
-<a href="FAILURE_TAXONOMY.md"><b>→ Read all 11 patterns</b></a>, each with measured incidence and
+<a href="FAILURE_TAXONOMY.md"><b>→ Read all 12 patterns</b></a>, each with measured incidence and
 a link to the run that produced it.
 
 ## Four models, one agent — one row, up close
@@ -298,19 +341,16 @@ why no chart in this repo can disagree with the eval behind it.
 
 </details>
 
-## Quick start
+## Run a real model
 
 ```bash
-git clone https://github.com/immu4989/awesome-agentic-usecases
-cd awesome-agentic-usecases
-pip install -e harness -e logistics-supply-chain/exception-triage-agent
-
-# Full eval on the built-in deterministic mock model — no API key, no cost
-exception-triage-agent eval --backend mock
-
 # Real-model eval on a free tier — $0 actual spend
 export MISTRAL_API_KEY=...
 exception-triage-agent eval --backend mistral --repeats 3
+
+# Or use any OpenAI-compatible endpoint/model
+export OPENROUTER_API_KEY=...
+exception-triage-agent eval --backend openrouter --model <model-id> --repeats 3
 ```
 
 One OpenAI-compatible backend covers **Mistral · Groq · Gemini · Cerebras (GLM) ·

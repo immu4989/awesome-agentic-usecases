@@ -60,10 +60,20 @@ def main() -> None:
     assert {f"{path}/" for path in paths} == readme_use_case_paths(), "catalog and README table differ"
 
     html = (ROOT / "docs" / "index.html").read_text()
+    readme = (ROOT / "README.md").read_text()
     industries = {item["industry"] for item in cases}
     expected = [f"<b>{len(cases)}</b> use cases", f"<b>{len(industries)}</b> industries"]
     for text in expected:
         assert text in html, f"explorer proof point is stale: expected {text!r}"
+
+    taxonomy = json.loads((ROOT / "docs" / "assets" / "taxonomy.json").read_text())
+    taxonomy_heading = f"## {taxonomy['failure_modes']} failures, {taxonomy['patterns']} patterns"
+    assert taxonomy_heading in readme, f"README taxonomy heading is stale: {taxonomy_heading!r}"
+    assert f"Read all {taxonomy['patterns']} patterns" in readme, "README taxonomy link is stale"
+
+    for guide in ("START_HERE.md", "PLAYBOOKS.md", "BUILD_YOUR_OWN.md"):
+        assert (ROOT / guide).is_file(), f"missing user journey guide: {guide}"
+        assert f'"{guide}"' in readme or f"({guide})" in readme, f"README does not link {guide}"
 
     print(f"catalog integrity OK: {len(cases)} use cases, {len(industries)} industries")
 

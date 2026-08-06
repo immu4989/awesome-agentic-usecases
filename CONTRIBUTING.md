@@ -3,6 +3,11 @@
 Contributions are welcome — the bar is [VERIFICATION.md](VERIFICATION.md), applied
 without exceptions. Please open an issue describing the use case before sending a PR.
 
+If you have a real workflow but do not plan to implement it yourself, use the
+[use-case request](https://github.com/immu4989/awesome-agentic-usecases/issues/new/choose)
+instead. Describe the decision, evidence, and costly failure; no eval-design experience is
+required.
+
 ## What gets merged
 
 A new use case PR needs:
@@ -36,6 +41,11 @@ file, runs the tests, and runs a mock eval. All four have to pass before it prin
 steps, so your first command succeeds and every later edit is checked by tests that already
 encode the bar. Search the tree for `TODO(domain)` and replace the placeholder domain with
 yours; pick a `--seed` no other use case uses.
+
+The [Build Your Own guide](BUILD_YOUR_OWN.md) shows how to choose a nearby use case,
+translate a production workflow into programmatic gold, and preserve the invariants that
+make the result trustworthy. Use `aau find`, `aau show`, and `aau start` to explore before
+you scaffold.
 
 ## Development
 

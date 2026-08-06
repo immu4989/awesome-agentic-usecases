@@ -6,7 +6,8 @@ const els = {
   count: document.querySelector("#count"),
   search: document.querySelector("#search"),
   industry: document.querySelector("#industry"),
-  clear: document.querySelector("#clear")
+  clear: document.querySelector("#clear"),
+  goals: document.querySelectorAll("[data-query]")
 };
 
 function searchable(item) {
@@ -59,7 +60,22 @@ function card(item) {
   link.textContent = "Open verified use case →";
   link.setAttribute("aria-label", `Open ${item.title} on GitHub`);
 
-  article.append(top, heading, industry, question, tags, link);
+  const copy = document.createElement("button");
+  copy.className = "copy";
+  copy.type = "button";
+  copy.textContent = "Copy start command";
+  copy.setAttribute("aria-label", `Copy the aau start command for ${item.title}`);
+  copy.addEventListener("click", async () => {
+    await navigator.clipboard.writeText(`aau start ${item.cli}`);
+    copy.textContent = "Copied";
+    setTimeout(() => { copy.textContent = "Copy start command"; }, 1600);
+  });
+
+  const actions = document.createElement("div");
+  actions.className = "card-actions";
+  actions.append(link, copy);
+
+  article.append(top, heading, industry, question, tags, actions);
   return article;
 }
 
@@ -123,6 +139,16 @@ async function init() {
     render();
     els.search.focus();
   });
+  for (const goal of els.goals) {
+    goal.addEventListener("click", () => {
+      state.search = goal.dataset.query;
+      state.industry = "all";
+      els.search.value = state.search;
+      els.industry.value = "all";
+      syncUrl();
+      render();
+    });
+  }
   render();
 }
 
