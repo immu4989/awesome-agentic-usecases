@@ -12,6 +12,26 @@
   <img src="https://img.shields.io/badge/reproduce-%241.76-0b8457" alt="cost to reproduce">
 </p>
 
+<!-- VISUAL-BRIEFING:START -->
+
+## Visual briefing
+
+### See the trap
+
+<img src="docs/scenario-map.svg" width="100%" alt="Refund Memory scenario anatomy: surface story, hidden truth, unsafe shortcut, and exact proof">
+
+### Read the evidence
+
+<img src="docs/benchmark.svg" width="100%" alt="Refund Memory benchmark chart generated from committed real-model evaluations">
+
+### Learn from the misses
+
+<img src="docs/failure-cards.svg" width="100%" alt="Three observed and reproducible Refund Memory failure modes">
+
+<p align="center"><sub>Generated from committed <a href="results/">evaluation results</a> and <a href="FAILURE_MODES.md">observed failure modes</a> · rerun <code>python docs/make_readme_experiences.py</code> from the repository root</sub></p>
+
+<!-- VISUAL-BRIEFING:END -->
+
 # 🧠 Refund Memory — harm that outlives the attacker
 
 ## The gap this closes

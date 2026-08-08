@@ -18,7 +18,8 @@ A new use case PR needs:
 - [ ] Real-model eval results committed under `results/` — n≥3 repeats, cost per run in dollars
 - [ ] `FAILURE_MODES.md` with ≥3 observed failures, each with a reproducing input
 - [ ] README following the standard template: Problem → Architecture → Results → Failure modes → Run it
-- [ ] A themed entry in `docs/make_readme_experiences.py`, with the generated opener committed
+- [ ] A themed entry and four-card scenario anatomy in `docs/make_readme_experiences.py`,
+  with the generated opener, evidence chart, scenario map, and failure cards committed
 
 ## What doesn't
 
@@ -64,7 +65,7 @@ python docs/make_assets.py         # per-use-case banner + results chart + decis
 python docs/make_leaderboard.py    # the root-README "no best model" matrix + heatmap
 python docs/make_terminal_demo.py  # the animated terminal casts (replayed from results)
 python docs/make_taxonomy.py       # FAILURE_TAXONOMY.md (fails loudly on a dead citation)
-python docs/make_readme_experiences.py  # themed, dark-mode README opener for every use case
+python docs/make_readme_experiences.py  # complete visual briefing for every use-case README
 ```
 
 The terminal casts replay a real scenario the model passed and one it failed, so they
@@ -73,4 +74,6 @@ defaults to light), so unlike the other assets there is no light/dark pair — o
 `demo.svg` per use case. Add a new solve-the-task use case to the `CASTS` list in
 `docs/make_terminal_demo.py`, `docs/use-cases.json`, and to `USE_CASES` in
 `docs/make_leaderboard.py`. Run `python docs/make_catalog.py` after changing the catalog;
-CI verifies that the catalog, README, runnable packages, and test matrix all agree.
+CI verifies that the catalog, README, runnable packages, visual briefings, and test matrix
+all agree. The README experience generator reads non-mock JSON results and
+`FAILURE_MODES.md` directly, so rerun it whenever either evidence source changes.

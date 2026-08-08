@@ -32,6 +32,11 @@ usage, confidence intervals, and failure modes that were **observed—not hypoth
 Everything runs on synthetic data, the deterministic backend needs no API key, and real
 model backends include free tiers.
 
+Every use-case page now includes a **visual briefing**: a domain-specific map of the hidden
+trap, a responsive chart generated from committed real-model runs, and observed failure
+cards with a direct path to reproduction. Start with
+[Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
+
 ## New specialty: did the service actually serve the person?
 
 <picture>

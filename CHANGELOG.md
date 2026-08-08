@@ -6,6 +6,10 @@ the harness API is what is versioned; use cases are additive.
 ## Unreleased
 
 ### Added
+- **A complete visual briefing for every use case** — all 20 READMEs now open with a
+  domain-specific scenario-anatomy map, a responsive chart generated from committed
+  non-mock model results, and three cards drawn from observed failure modes. The 60 new
+  SVGs are dark-mode aware, accessible, lightweight, and reproducible from one generator.
 - **Public Value Contract** — a reusable, schema-backed service-agent standard that scores
   correct outcome together with minimum evidence burden, accessibility, recourse, deadline
   protection, rights safety, prohibited intent, and a truthful terminal record.

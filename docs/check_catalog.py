@@ -54,11 +54,14 @@ def main() -> None:
         for name in ("README.md", "FAILURE_MODES.md", "pyproject.toml", "tests"):
             assert (directory / name).exists(), f"{item['path']} is missing {name}"
         use_case_readme = (directory / "README.md").read_text()
-        marker = "<!-- README-EXPERIENCE:START -->"
-        assert use_case_readme.count(marker) == 1, f"{item['path']} is missing its README experience"
-        assert (directory / "docs" / "experience.svg").exists(), (
-            f"{item['path']} is missing docs/experience.svg"
-        )
+        markers = {
+            "<!-- README-EXPERIENCE:START -->": "README experience",
+            "<!-- VISUAL-BRIEFING:START -->": "visual briefing",
+        }
+        for marker, label in markers.items():
+            assert use_case_readme.count(marker) == 1, f"{item['path']} is missing its {label}"
+        for asset in ("experience.svg", "scenario-map.svg", "benchmark.svg", "failure-cards.svg"):
+            assert (directory / "docs" / asset).exists(), f"{item['path']} is missing docs/{asset}"
 
     catalog_paths = set(paths)
     assert catalog_paths == discover_packages(), "catalog and runnable package directories differ"
