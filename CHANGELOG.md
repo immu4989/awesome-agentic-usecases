@@ -23,6 +23,8 @@ the harness API is what is versioned; use cases are additive.
   implement the use case themselves.
 
 ### Changed
+- GitHub CI and Pages workflows now use the current Node 24-based official Action majors,
+  removing runtime-deprecation annotations from otherwise successful builds.
 - The root README now leads with user goals and a runnable no-key example before presenting
   the research results. Catalog, taxonomy-count, package, and CI-matrix drift remain checked
   automatically.
