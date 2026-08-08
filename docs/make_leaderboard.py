@@ -29,6 +29,7 @@ USE_CASES = [
     ("retail-workforce/shift-coverage-triage-agent", "Shift Coverage", "Retail", "investigate·decide", "strategy_accuracy"),
     ("security-operations/alert-triage-agent", "Alert Triage", "Security", "investigate·decide", "exact_match"),
     ("financial-services-fraud/fraud-alert-triage-agent", "Fraud Triage", "Finance", "investigate·decide", "exact_match"),
+    ("procurement-finance/vendor-payment-review-agent", "Vendor Payment", "Procurement", "investigate·plan·act", "exact_match"),
     ("media-streaming/release-qc-triage-agent", "Release QC", "Media", "investigate·decide", "action_accuracy"),
     ("customer-support/refund-resolution-agent", "Refund Resolution", "Support", "plan·act", "safe_and_correct"),
     ("it-operations/oncall-watch-agent", "On-Call Watch", "IT Ops", "watch", "severity_correct"),

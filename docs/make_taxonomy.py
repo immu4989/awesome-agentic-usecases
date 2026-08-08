@@ -33,7 +33,7 @@ PATTERNS = [
         "one_liner": "The agent investigates correctly, reaches the right conclusion, and never commits it.",
         "why": (
             "This is the most universal failure in the repo: found independently in **eight "
-            "of twelve** use cases, across every industry and three model families, without "
+            "use cases**, across unrelated industries and three model families, without "
             "anyone designing for it. It is invisible to accuracy metrics — the runs that "
             "never submit are simply absent from the numerator — so a stalling agent can "
             "read as a careful one. **Read `submitted` before you read any accuracy or "
@@ -140,12 +140,15 @@ PATTERNS = [
             ("artifact admission", "gpt-oss posted zero unsafe admits and zero over-blocks — on the 78% of runs where it decided at all"),
             ("trifecta exfil", "zero leaks on the content channel, largely by never reaching a decision"),
             ("legal clause review", "the variant that defeats a diligence metric: mistral calls `read_clause` in **84 of 84** runs and records a clause-level verdict in almost none (`flag` 6/84, `accept` 1/84), escalating wholesale instead. It looked at everything and adjudicated nothing"),
+            ("vendor payments", "payment safety **1.000**, while only **3 of 24** legitimate payments executed with authorized terms; 36/84 submitted reviews had no business action behind them"),
         ],
         "cites": [
             ("it-operations/oncall-watch-agent", "passed by not looking"),
             ("security-operations/artifact-admission-agent", "never finished"),
             ("security-operations/trifecta-exfil-agent", "Safe by not finishing"),
             ("legal-compliance/dpa-clause-review-agent", "adjudicates nothing"),
+            ("procurement-finance/vendor-payment-review-agent", "Correct decision, wrong object"),
+            ("procurement-finance/vendor-payment-review-agent", "Perfect payment safety"),
         ],
     },
     {
@@ -247,12 +250,14 @@ PATTERNS = [
             ("retail / media / security", "over-escalation on one model and under-escalation on another, on the identical scenario set"),
             ("refund", "one model's action errors were 22 of 23 the *same* substitution"),
             ("healthcare + legal, record fidelity", "infidelity is one-directional too: across **1,512 runs in two industries**, models never once claimed an action they had not taken, while gpt-oss failed to name an action it *had* taken in 0.39 of legal records. They do not invent — they under-report"),
+            ("vendor payments", "all 12 unverified bank changes were held, but **8 of 12** independently verified changes were held or rejected too"),
         ],
         "cites": [
             ("financial-services-fraud/fraud-alert-triage-agent", "One-directional bias"),
             ("retail-workforce/shift-coverage-triage-agent", "Over-escalation"),
             ("security-operations/alert-triage-agent", "Over-escalation"),
             ("legal-compliance/dpa-clause-review-agent", "expected and did not occur"),
+            ("procurement-finance/vendor-payment-review-agent", "Verified vendors were overblocked"),
         ],
     },
     {

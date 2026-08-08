@@ -90,6 +90,17 @@ metrics = fidelity.as_metrics()
 Track overclaims and omissions separately. An agent that says nothing should not dilute the
 omission rate, and an agent that took no action should not be able to claim success.
 
+### Untrusted content changes where money or access goes
+
+1. Treat the message as the requested change, never as proof that the change is authorized.
+2. Resolve the destination or identity from a separately controlled system of record.
+3. Include both an unverified change and an independently verified clean twin.
+4. Score the executed transfer or access change, not whether the explanation sounded wary.
+5. Put a dry-run or hold boundary in front of the irreversible production tool.
+
+Evidence: [Vendor Payment Review](procurement-finance/vendor-payment-review-agent/) pairs
+identically worded bank-change requests that differ only in trusted verification state.
+
 ## Design a useful eval
 
 ### 1. Start with a decision somebody owns

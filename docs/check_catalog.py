@@ -62,22 +62,37 @@ def main() -> None:
     html = (ROOT / "docs" / "index.html").read_text()
     readme = (ROOT / "README.md").read_text()
     industries = {item["industry"] for item in cases}
+    taxonomy = json.loads((ROOT / "docs" / "assets" / "taxonomy.json").read_text())
+    verified_model_evals = sum(
+        json.loads(path.read_text()).get("backend") != "mock"
+        for path in ROOT.glob("*/*/results/eval_*.json")
+    )
     expected = [
         f"<b>{len(cases)}</b><small>use cases</small>",
         f"<b>{len(industries)}</b><small>industries</small>",
+        f"<b>{verified_model_evals}</b><small>model evals</small>",
+        f"<b>{taxonomy['failure_modes']}</b><small>observed failures</small>",
     ]
     for text in expected:
         assert text in html, f"explorer proof point is stale: expected {text!r}"
 
-    for asset in ("hero-v2.png", "hero-v2.webp"):
+    proof_copy = (
+        f"{len(industries)} industries shipping, {verified_model_evals} verified model-evals, "
+        f"{taxonomy['failure_modes']} failure modes observed"
+    )
+    assert proof_copy in readme, f"README proof strip is stale: expected {proof_copy!r}"
+    for mode in ("light", "dark"):
+        stats = (ROOT / "docs" / "assets" / f"stats-{mode}.svg").read_text()
+        assert proof_copy in stats, f"stats-{mode}.svg is stale: expected {proof_copy!r}"
+
+    for asset in ("hero-v4.png", "hero-v4.webp"):
         assert (ROOT / "docs" / "assets" / asset).is_file(), f"missing visual asset: {asset}"
 
-    taxonomy = json.loads((ROOT / "docs" / "assets" / "taxonomy.json").read_text())
     taxonomy_heading = f"## {taxonomy['failure_modes']} failures, {taxonomy['patterns']} patterns"
     assert taxonomy_heading in readme, f"README taxonomy heading is stale: {taxonomy_heading!r}"
     assert f"Read all {taxonomy['patterns']} patterns" in readme, "README taxonomy link is stale"
 
-    for guide in ("START_HERE.md", "PLAYBOOKS.md", "BUILD_YOUR_OWN.md"):
+    for guide in ("START_HERE.md", "PLAYBOOKS.md", "BUILD_YOUR_OWN.md", "USE_CASE_RADAR.md"):
         assert (ROOT / guide).is_file(), f"missing user journey guide: {guide}"
         assert f'"{guide}"' in readme or f"({guide})" in readme, f"README does not link {guide}"
 

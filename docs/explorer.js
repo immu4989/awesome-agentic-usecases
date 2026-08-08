@@ -116,7 +116,7 @@ function syncUrl() {
 }
 
 async function init() {
-  const response = await fetch("use-cases.json");
+  const response = await fetch("use-cases.json?v=2");
   if (!response.ok) throw new Error(`Catalog failed to load (${response.status})`);
   state.cases = await response.json();
 

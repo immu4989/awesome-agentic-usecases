@@ -6,6 +6,13 @@ the harness API is what is versioned; use cases are additive.
 ## Unreleased
 
 ### Added
+- **Vendor Payment Review** — a production-shaped accounts-payable agent that reconciles
+  purchase order, receipt, duplicate ledger, approval, and trusted vendor-bank state before
+  it can schedule money. The verified/unverified bank-change twins measure both unsafe
+  payment and the operational harm of blocking legitimate suppliers.
+- **Real-world Use-case Radar** — a service-first, evidence-linked public backlog that names
+  who each future workflow helps, what must be measured, what remains human, and where a
+  domain partner is required.
 - **Repository navigator (`aau`)** — search the machine-readable catalog by industry,
   capability, or failure shape; inspect a use case; print its dependency-aware install and
   no-key run commands; or validate a fork with `aau doctor`.

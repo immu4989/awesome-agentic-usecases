@@ -15,6 +15,7 @@ yours, even if its industry does not.
 |---|---|
 | Investigates records and routes work | [Exception Triage](logistics-supply-chain/exception-triage-agent/) |
 | Executes an irreversible business action | [Refund Resolution](customer-support/refund-resolution-agent/) |
+| Reconciles several records before moving money | [Vendor Payment Review](procurement-finance/vendor-payment-review-agent/) |
 | Watches a stream before deciding | [On-Call Watch](it-operations/oncall-watch-agent/) |
 | Admits or rejects an artifact/request | [Artifact Admission](security-operations/artifact-admission-agent/) |
 | Must produce a faithful regulated record | [DPA Clause Review](legal-compliance/dpa-clause-review-agent/) |
@@ -118,3 +119,7 @@ Open a [new use case proposal](https://github.com/immu4989/awesome-agentic-useca
 before the pull request. The high bar is intentional, but the generator means contributors
 can spend their time on domain truth and interesting failures rather than repository
 boilerplate.
+
+Not ready to build? The [Real-world Use-case Radar](USE_CASE_RADAR.md) lists high-value
+problems where a domain review, policy boundary, or set of counterexamples may be more
+useful than code.

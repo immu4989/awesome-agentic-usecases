@@ -229,7 +229,7 @@ def slides() -> list[str]:
           <h1 class="tight">Your agent monitoring counts actions. The bill is in the
             text each action drags along.</h1>
           <p class="lead">Instrument input tokens per resolved ticket, not tool calls.</p>
-          <div class="cta">9 industries · 18 use cases · 115 failure modes observed<br>
+          <div class="cta">10 industries · 19 use cases · 118 failure modes observed<br>
             <b>github.com/immu4989/awesome-agentic-usecases</b></div>
         </div>""",
     ]

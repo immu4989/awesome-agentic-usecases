@@ -66,6 +66,15 @@ USE_CASES = {
         "accent": ("#1baf7a", "#199e70"),
         "metric": "exact_match", "metric_label": "Exact match (queue + disposition)",
     },
+    "procurement-finance/vendor-payment-review-agent": {
+        "title": "Vendor Payment Review", "icon": "🧾",
+        "industry": "Procurement & Finance",
+        "tagline": "The invoice matches. Does the bank account?",
+        "accent": ("#c98500", "#eead35"),
+        "metric": "exact_match", "metric_label": "Safe exact match (decision + executed action)",
+        "tags": "investigate · plan · act · payment-safety",
+        "n": 28,
+    },
     "media-streaming/release-qc-triage-agent": {
         "title": "Release QC Triage Agent", "icon": "🎞️",
         "industry": "Media & Streaming",
@@ -136,6 +145,14 @@ RULES = {
         ("…but private-banking or over $10k?", "hold for review, never auto-release", True),
         ("Fraud on a high-value customer?", "escalate to fraud ops", False),
         ("Otherwise", "block and notify", False),
+    ],
+    "procurement-finance/vendor-payment-review-agent": [
+        ("Same vendor + invoice already paid or scheduled?", "reject the duplicate", False),
+        ("Invoice bank differs from the verified vendor master?", "hold for trusted verification", True),
+        ("Amount outside PO tolerance?", "hold for reconciliation", False),
+        ("No receiving record?", "hold until receipt is confirmed", True),
+        ("High-value approval still pending?", "hold — do not bypass the approver", False),
+        ("Every control passes?", "schedule the payment", False),
     ],
     "customer-support/refund-crew": [
         ("Orchestrator briefs the investigator", "facts come back: identity, account, order", False),
@@ -226,7 +243,7 @@ def banner(cfg: dict, mode: str) -> str:
     <g font-size="13" fill="{t['muted']}">
       <text x="44" y="155">{esc(cfg.get('tags', 'investigate · decide'))}</text>
       <text x="200" y="155">single-agent</text>
-      <text x="320" y="155">30 scenarios × 3 repeats</text>
+      <text x="320" y="155">{cfg.get('n', 30)} scenarios × 3 repeats</text>
       <text x="530" y="155">verified</text>
     </g>
     <circle cx="512" cy="151" r="4" fill="{t['good']}"/>

@@ -1,4 +1,4 @@
-<img src="docs/assets/hero-v2.webp" alt="Awesome Agentic Use Cases — an evidence trace branching through tool calls, policy gates, verified outcomes, uncertainty, and observed failures" width="100%">
+<img src="docs/assets/hero-v4.webp" alt="Awesome Agentic Use Cases — an evidence trace branching through tool calls, policy gates, verified outcomes, uncertainty, and observed failures" width="100%">
 
 <p align="center">
   <a href="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml"><img src="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
@@ -15,6 +15,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/">Use-case explorer</a> ·
   <a href="#run-one-now">Run one</a> ·
   <a href="PLAYBOOKS.md">Playbooks</a> ·
+  <a href="USE_CASE_RADAR.md">Use-case radar</a> ·
   <a href="BUILD_YOUR_OWN.md">Build your own</a> ·
   <a href="FAILURE_TAXONOMY.md">Failure taxonomy</a> ·
   <a href="#there-is-no-best-model">Results</a> ·
@@ -35,10 +36,11 @@ model backends include free tiers.
 | I want to… | Start here | What you get |
 |---|---|---|
 | **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Three short paths through routing, irreversible action, and tool-poisoning failures |
-| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 18 verified use cases by industry, capability, or failure shape |
+| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 19 verified use cases by industry, capability, or failure shape |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
+| **See what the community should solve next** | [Real-world Use-case Radar](USE_CASE_RADAR.md) | Prioritized workflows, safety boundaries, closest templates, and places where a domain partner is needed |
 | **Contribute a use case** | [Contribution guide](CONTRIBUTING.md) | A clear verification bar, proposal template, and CI-enforced checklist |
 
 ## Run one now
@@ -101,7 +103,7 @@ aau doctor                             # validate your checkout or fork
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="9 industries shipping, 103 verified model-evals, 115 failure modes observed, 90 runs per model, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="10 industries shipping, 104 verified model-evals, 118 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -131,11 +133,12 @@ winner starred, blank where a model wasn't run.
 | [Shift Coverage](retail-workforce/shift-coverage-triage-agent/) | Retail | **0.822** | 0.667 | — | 0.644 | — |
 | [Alert Triage](security-operations/alert-triage-agent/) | Security | 0.956 | **0.967** | — | 0.811 | — |
 | [Fraud Triage](financial-services-fraud/fraud-alert-triage-agent/) | Finance | 0.844 | 0.600 | **0.967** | 0.500 | — |
+| [Vendor Payment](procurement-finance/vendor-payment-review-agent/) | Procurement | — | — | — | **0.417** | — |
 | [Release QC](media-streaming/release-qc-triage-agent/) | Media | 0.711 | **0.800** | **0.800** | 0.433 | — |
 | [Refund Resolution](customer-support/refund-resolution-agent/) | Support | — | 0.644 | **0.978** | 0.333 | — |
 | [On-Call Watch](it-operations/oncall-watch-agent/) | IT Ops | — | 0.444 | 0.567 | **0.622** | — |
 | [Artifact Admission](security-operations/artifact-admission-agent/) | Security | — | 0.778 | **1.000** | 0.756 | — |
-| **Use cases won** | | **2** | **2** | **4** | **1** | **0** |
+| **Use cases won** | | **2** | **2** | **4** | **2** | **0** |
 
 <!-- LEADERBOARD:END -->
 
@@ -151,7 +154,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 115 failures, 12 patterns
+## 118 failures, 12 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -198,7 +201,7 @@ Every failure has a reproducing scenario id in
 
 ## Use cases
 
-**Not sure where to start?** [Search and filter all 18 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
+**Not sure where to start?** [Search and filter all 19 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
 by industry, capability, or failure shape.
 
 <!-- USE_CASES:START -->
@@ -212,6 +215,7 @@ by industry, capability, or failure shape.
 | [🛂 Artifact Admission](security-operations/artifact-admission-agent/) | Security Operations | `gate` `security` `environment` | Should an ML artifact be admitted, sandboxed, blocked, or escalated before any of its code runs? |
 | [🕳️ Trifecta Exfil](security-operations/trifecta-exfil-agent/) | Security Operations | `act` `security` `adversarial` | Does the same secret-stealing instruction succeed differently in fetched content versus a tool description? |
 | [🚩 Fraud Alert Triage](financial-services-fraud/fraud-alert-triage-agent/) | Financial Services & Fraud | `investigate` `decide` | Should a transaction alert be released, blocked, routed, or escalated? |
+| [🧾 Vendor Payment Review](procurement-finance/vendor-payment-review-agent/) | Procurement & Finance | `investigate` `plan` `act` `payment-safety` | Can an AP agent reconcile a legitimate invoice without paying bank details supplied only through a compromised email? |
 | [🎞️ Release QC Triage](media-streaming/release-qc-triage-agent/) | Media & Streaming | `investigate` `decide` | Who owns a pre-premiere media defect, and should the release ship, be fixed, or be delayed? |
 | [💸 Refund Resolution](customer-support/refund-resolution-agent/) | Customer Support | `plan` `act` `human-in-loop` | Can an agent resolve a refund end to end without moving money before identity and policy checks? |
 | [🔧 Refund Guarded](customer-support/refund-guarded/) | Customer Support | `act` `guardrails` `environment` | Do prompt nudges or tool-layer enforcement actually fix observed refund failures? |
@@ -298,10 +302,10 @@ only a per-use-case harness surfaces:
 
 | Shipping now | Next wave |
 |---|---|
-| 🚛 [Logistics](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Ops](security-operations/) · 💳 [Financial Services](financial-services-fraud/) · 🎬 [Media & Streaming](media-streaming/) · 🎧 [Customer Support](customer-support/) · 🖥️ [IT Ops & DevOps](it-operations/) · 🏥 [Healthcare & Life Sciences](healthcare-life-sciences/) · ⚖️ [Legal & Compliance](legal-compliance/) | 🏭 Manufacturing & Industrial |
+| 🚛 [Logistics](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Ops](security-operations/) · 💳 [Financial Services](financial-services-fraud/) · 🧾 [Procurement & Finance](procurement-finance/) · 🎬 [Media & Streaming](media-streaming/) · 🎧 [Customer Support](customer-support/) · 🖥️ [IT Ops & DevOps](it-operations/) · 🏥 [Healthcare & Life Sciences](healthcare-life-sciences/) · ⚖️ [Legal & Compliance](legal-compliance/) | 🏭 Manufacturing & Industrial |
 
 <details>
-<summary><b>Full 16-industry roadmap</b></summary>
+<summary><b>Full 17-industry roadmap</b></summary>
 <br>
 
 | # | Industry | Status |
@@ -315,14 +319,14 @@ only a per-use-case harness surfaces:
 | 7 | 🖥️ IT Ops & DevOps | ✅ Shipping |
 | 8 | 🏥 Healthcare & Life Sciences | ✅ Shipping |
 | 9 | ⚖️ Legal & Compliance | ✅ Shipping |
-| 10 | 🏭 Manufacturing & Industrial | 📋 Roadmap |
-| 11 | 🧾 Insurance | 📋 Roadmap |
-| 12 | 👥 HR & Recruiting | 📋 Roadmap |
-| 13 | 📈 Sales & Marketing | 📋 Roadmap |
-
-| 14 | ⚡ Energy & Utilities | 📋 Roadmap |
-| 15 | 🏗️ Real Estate & Construction | 📋 Roadmap |
-| 16 | 🎓 Education | 📋 Roadmap |
+| 10 | 🧾 Procurement & Finance | ✅ Shipping |
+| 11 | 🏭 Manufacturing & Industrial | 📋 Roadmap |
+| 12 | 🧾 Insurance | 📋 Roadmap |
+| 13 | 👥 HR & Recruiting | 📋 Roadmap |
+| 14 | 📈 Sales & Marketing | 📋 Roadmap |
+| 15 | ⚡ Energy & Utilities | 📋 Roadmap |
+| 16 | 🏗️ Real Estate & Construction | 📋 Roadmap |
+| 17 | 🎓 Education | 📋 Roadmap |
 
 </details>
 

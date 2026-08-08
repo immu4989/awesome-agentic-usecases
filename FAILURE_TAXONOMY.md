@@ -1,6 +1,6 @@
 # The Agent Failure Taxonomy
 
-**115 failure modes, observed across 18 use cases, 12 recurring patterns.**
+**118 failure modes, observed across 19 use cases, 12 recurring patterns.**
 
 Every entry below was *measured*, not hypothesised — each links to the run that
 produced it, with a reproducing input. Read individually the failures look
@@ -20,12 +20,12 @@ reappearing in industries that share nothing but the shape of the agent.
 | 2 | [The environment beats the prompt](#the-environment-beats-the-prompt) | Changing what the agent *can* do works; telling it what it *should* do mostly doesn't. | 4 use cases |
 | 3 | [Contained is not fixed](#contained-is-not-fixed) | A guard drives the incident rate to zero while the agent's judgment stays exactly as wrong. | 3 use cases |
 | 4 | [Removing the tool displaces the intent](#removing-the-tool-displaces-the-intent) | Take the forbidden action out of the schema and the goal reroutes — through a legal-but-wrong channel, or into a claim that the work was done. | 2 use cases |
-| 5 | [Safety by inaction](#safety-by-inaction) | A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing. | 4 use cases |
+| 5 | [Safety by inaction](#safety-by-inaction) | A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing. | 5 use cases |
 | 6 | [Prior over policy](#prior-over-policy) | The model's own sense of what's reasonable overrides the policy it just retrieved. | 4 use cases |
 | 7 | [Framing over evidence](#framing-over-evidence) | The agent believes how the input was described instead of checking what the tools say. | 3 use cases |
 | 8 | [Trust follows the channel, not the content](#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition. | 2 use cases |
 | 9 | [Ceremony is learned, prohibition is not](#ceremony-is-learned-prohibition-is-not) | Agents reliably obey 'do this first' and unreliably obey 'never do this'. | 2 use cases |
-| 10 | [Directional bias](#directional-bias) | Models don't err randomly — each errs in one direction, and the direction is a model property. | 4 use cases |
+| 10 | [Directional bias](#directional-bias) | Models don't err randomly — each errs in one direction, and the direction is a model property. | 5 use cases |
 | 11 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
 | 12 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
 
@@ -35,7 +35,7 @@ reappearing in industries that share nothing but the shape of the agent.
 
 *The agent investigates correctly, reaches the right conclusion, and never commits it.*
 
-This is the most universal failure in the repo: found independently in **eight of twelve** use cases, across every industry and three model families, without anyone designing for it. It is invisible to accuracy metrics — the runs that never submit are simply absent from the numerator — so a stalling agent can read as a careful one. **Read `submitted` before you read any accuracy or safety metric.**
+This is the most universal failure in the repo: found independently in **eight use cases**, across unrelated industries and three model families, without anyone designing for it. It is invisible to accuracy metrics — the runs that never submit are simply absent from the numerator — so a stalling agent can read as a careful one. **Read `submitted` before you read any accuracy or safety metric.**
 
 **Measured**
 
@@ -139,6 +139,7 @@ Restraint and absence are indistinguishable unless you also measure whether the 
 - **artifact admission** — gpt-oss posted zero unsafe admits and zero over-blocks — on the 78% of runs where it decided at all
 - **trifecta exfil** — zero leaks on the content channel, largely by never reaching a decision
 - **legal clause review** — the variant that defeats a diligence metric: mistral calls `read_clause` in **84 of 84** runs and records a clause-level verdict in almost none (`flag` 6/84, `accept` 1/84), escalating wholesale instead. It looked at everything and adjudicated nothing
+- **vendor payments** — payment safety **1.000**, while only **3 of 24** legitimate payments executed with authorized terms; 36/84 submitted reviews had no business action behind them
 
 <details><summary><b>Where it was observed</b></summary>
 
@@ -146,6 +147,8 @@ Restraint and absence are indistinguishable unless you also measure whether the 
 - [`artifact-admission-agent` — Safe only because it never finished (gpt-oss)](security-operations/artifact-admission-agent/FAILURE_MODES.md#4-safe-only-because-it-never-finished-gpt-oss)
 - [`trifecta-exfil-agent` — Safe by not finishing](security-operations/trifecta-exfil-agent/FAILURE_MODES.md#5-safe-by-not-finishing)
 - [`dpa-clause-review-agent` — Reads everything, adjudicates nothing](legal-compliance/dpa-clause-review-agent/FAILURE_MODES.md#3-reads-everything-adjudicates-nothing)
+- [`vendor-payment-review-agent` — Correct decision, wrong object: the action failed and the review still closed](procurement-finance/vendor-payment-review-agent/FAILURE_MODES.md#1-correct-decision-wrong-object-the-action-failed-and-the-review-still-closed)
+- [`vendor-payment-review-agent` — Perfect payment safety hid an 87.5% clean-payment failure rate](procurement-finance/vendor-payment-review-agent/FAILURE_MODES.md#2-perfect-payment-safety-hid-an-875-clean-payment-failure-rate)
 
 </details>
 
@@ -250,6 +253,7 @@ Accuracy alone implies errors are symmetric. They are not: one model over-escala
 - **retail / media / security** — over-escalation on one model and under-escalation on another, on the identical scenario set
 - **refund** — one model's action errors were 22 of 23 the *same* substitution
 - **healthcare + legal, record fidelity** — infidelity is one-directional too: across **1,512 runs in two industries**, models never once claimed an action they had not taken, while gpt-oss failed to name an action it *had* taken in 0.39 of legal records. They do not invent — they under-report
+- **vendor payments** — all 12 unverified bank changes were held, but **8 of 12** independently verified changes were held or rejected too
 
 <details><summary><b>Where it was observed</b></summary>
 
@@ -257,6 +261,7 @@ Accuracy alone implies errors are symmetric. They are not: one model over-escala
 - [`shift-coverage-triage-agent` — Over-escalation: handing fillable shifts to the district manager](retail-workforce/shift-coverage-triage-agent/FAILURE_MODES.md#2-over-escalation-handing-fillable-shifts-to-the-district-manager)
 - [`alert-triage-agent` — Over-escalation — the opposite error, on a different model](security-operations/alert-triage-agent/FAILURE_MODES.md#3-over-escalation-the-opposite-error-on-a-different-model)
 - [`dpa-clause-review-agent` — The fabrication that was expected and did not occur](legal-compliance/dpa-clause-review-agent/FAILURE_MODES.md#5-the-fabrication-that-was-expected-and-did-not-occur)
+- [`vendor-payment-review-agent` — Verified vendors were overblocked while every risky change was held](procurement-finance/vendor-payment-review-agent/FAILURE_MODES.md#3-verified-vendors-were-overblocked-while-every-risky-change-was-held)
 
 </details>
 

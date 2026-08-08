@@ -20,7 +20,7 @@ scorer—but exposes a different class of failure.
 | The model follows an injection from its tooling | [Trifecta Exfil](security-operations/trifecta-exfil-agent/) | Why a prompt guard and a dataflow gate are not equivalent |
 
 Every observation is cross-linked in the [Failure Taxonomy](FAILURE_TAXONOMY.md), which
-groups 115 observed failures into 12 recurring patterns.
+groups 118 observed failures into 12 recurring patterns.
 
 ## I want to run an eval without an API key
 
@@ -82,6 +82,7 @@ measure it against an unchanged baseline.
 | Poisoned long-term memory | [Refund Memory](customer-support/refund-memory/) | Gate writes with source provenance |
 | Stale or conflicting context | [Exception Triage Drift](logistics-supply-chain/exception-triage-drift/) | Enforce freshness at the read boundary |
 | False success after a blocked action | [Incident Remediation](it-operations/incident-remediation-agent/) | Compare the record against actions that actually succeeded |
+| Invoice or email changes where money is sent | [Vendor Payment Review](procurement-finance/vendor-payment-review-agent/) | Compare supplied bank details with a separately verified system of record |
 
 The [Practical Playbooks](PLAYBOOKS.md) turn these experiments into metric and design
 recipes you can apply to another agent.
@@ -105,10 +106,12 @@ engineered gap, tests, result folders, and documentation templates. Continue wit
 |---|---|---|
 | `investigate` + `decide` | retrieval coverage, decision accuracy, directional error | [Logistics](logistics-supply-chain/exception-triage-agent/), [Fraud](financial-services-fraud/fraud-alert-triage-agent/) |
 | `plan` + `act` | prerequisite order, irreversible actions, final outcome | [Refund Resolution](customer-support/refund-resolution-agent/) |
+| `investigate` + `plan` + `act` | cross-record match, trusted identity, irreversible action, over-block | [Vendor Payment Review](procurement-finance/vendor-payment-review-agent/) |
 | `watch` | observation coverage, patience, false page, missed incident | [On-Call Watch](it-operations/oncall-watch-agent/) |
 | `gate` | unsafe admit, over-block, escalation, decision coverage | [Artifact Admission](security-operations/artifact-admission-agent/), [Prior Auth](healthcare-life-sciences/prior-auth-review-agent/) |
 | `multi-agent` | end-to-end outcome plus handoff loss | [Refund Crew](customer-support/refund-crew/) |
 | adversarial A/B | attack consequence, clean-task success, defence cost | [Refund Injected](customer-support/refund-injected/), [Trifecta Exfil](security-operations/trifecta-exfil-agent/) |
 
-If no entry fits, [request a use case](https://github.com/immu4989/awesome-agentic-usecases/issues/new/choose)
+If no entry fits, check the [Real-world Use-case Radar](USE_CASE_RADAR.md),
+[request a use case](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=use-case-request.yml),
 or propose one using the contribution template.
