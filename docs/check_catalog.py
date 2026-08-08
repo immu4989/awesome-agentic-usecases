@@ -56,11 +56,19 @@ def main() -> None:
         use_case_readme = (directory / "README.md").read_text()
         markers = {
             "<!-- README-EXPERIENCE:START -->": "README experience",
-            "<!-- VISUAL-BRIEFING:START -->": "visual briefing",
+            "<!-- VISUAL-BRIEFING:START -->": "visual case file",
         }
         for marker, label in markers.items():
             assert use_case_readme.count(marker) == 1, f"{item['path']} is missing its {label}"
-        for asset in ("experience.svg", "scenario-map.svg", "benchmark.svg", "failure-cards.svg"):
+        for asset in (
+            "experience.svg",
+            "story.svg",
+            "scenario-map.svg",
+            "benchmark.svg",
+            "contrast.svg",
+            "result-profile.svg",
+            "failure-cards.svg",
+        ):
             assert (directory / "docs" / asset).exists(), f"{item['path']} is missing docs/{asset}"
 
     catalog_paths = set(paths)

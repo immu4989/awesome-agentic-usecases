@@ -14,15 +14,23 @@
 
 <!-- VISUAL-BRIEFING:START -->
 
-## Visual briefing
+## Visual case file
 
-### See the trap
+### Follow the story
+
+<img src="docs/story.svg" width="100%" alt="Animated four-act story explaining the human stakes of On-Call Watch">
+
+### See where the obvious answer breaks
 
 <img src="docs/scenario-map.svg" width="100%" alt="On-Call Watch scenario anatomy: surface story, hidden truth, unsafe shortcut, and exact proof">
 
-### Read the evidence
+### Read the complete evidence
 
 <img src="docs/benchmark.svg" width="100%" alt="On-Call Watch benchmark chart generated from committed real-model evaluations">
+
+<img src="docs/contrast.svg" width="100%" alt="Strongest and weakest verified On-Call Watch result contrasted on the headline metric">
+
+<img src="docs/result-profile.svg" width="100%" alt="Outcome, completion, latency, and cost profile for the strongest headline On-Call Watch result">
 
 ### Learn from the misses
 

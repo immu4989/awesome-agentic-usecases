@@ -14,15 +14,23 @@
 
 <!-- VISUAL-BRIEFING:START -->
 
-## Visual briefing
+## Visual case file
 
-### See the trap
+### Follow the story
+
+<img src="docs/story.svg" width="100%" alt="Animated four-act story explaining the human stakes of DPA Clause Review">
+
+### See where the obvious answer breaks
 
 <img src="docs/scenario-map.svg" width="100%" alt="DPA Clause Review scenario anatomy: surface story, hidden truth, unsafe shortcut, and exact proof">
 
-### Read the evidence
+### Read the complete evidence
 
 <img src="docs/benchmark.svg" width="100%" alt="DPA Clause Review benchmark chart generated from committed real-model evaluations">
+
+<img src="docs/contrast.svg" width="100%" alt="Strongest and weakest verified DPA Clause Review result contrasted on the headline metric">
+
+<img src="docs/result-profile.svg" width="100%" alt="Outcome, completion, latency, and cost profile for the strongest headline DPA Clause Review result">
 
 ### Learn from the misses
 

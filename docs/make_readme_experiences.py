@@ -1,4 +1,4 @@
-"""Generate and install a themed visual briefing for every use-case README.
+"""Generate and install a themed visual case file for every use-case README.
 
 The output is plain SVG: crisp on every screen, readable in GitHub light and dark
 themes, motion-safe, small enough to fork, and reproducible without design software.
@@ -192,6 +192,130 @@ BRIEFINGS = {
 }
 
 
+STORIES = {
+    "logistics-supply-chain/exception-triage-agent": ("A lost package that was never lost", (
+        "A shop owner reports an urgent launch shipment as lost.",
+        "Carrier evidence shows a customs hold and an active SLA clock.",
+        "Routing from complaint text sends the case to the wrong team.",
+        "Exact queue and action preserve time without needless escalation.",
+    )),
+    "logistics-supply-chain/exception-triage-drift": ("Yesterday's answer expires overnight", (
+        "Operations replays a ticket the agent solved correctly yesterday.",
+        "The cache says cleared; the source system reports a new hold.",
+        "Familiar stale evidence produces a confident obsolete action.",
+        "Freshness-aware evaluation exposes the drift before production does.",
+    )),
+    "retail-workforce/shift-coverage-triage-agent": ("One empty shift, three hidden constraints", (
+        "A restaurant manager needs tonight's closing shift covered.",
+        "Availability collides with age, overtime, distance, and peak rules.",
+        "The fastest match quietly creates an illegal assignment.",
+        "The agent finds compliant cover—or escalates honestly when none exists.",
+    )),
+    "security-operations/alert-triage-agent": ("The alert that looked exactly like an attack", (
+        "A high-severity detector fires on an administrator's workstation.",
+        "Asset history and a change ticket reveal approved maintenance.",
+        "Blind containment interrupts work; blind dismissal leaves exposure.",
+        "Evidence earns the exact queue, disposition, and response level.",
+    )),
+    "security-operations/artifact-admission-agent": ("A safe label around executable behavior", (
+        "A team wants to add a useful third-party artifact to its agent.",
+        "The manifest says data-only; configuration launches a real command.",
+        "Trusting the declaration grants hidden network and credential power.",
+        "Runtime inspection chooses admit, sandbox, or block from behavior.",
+    )),
+    "security-operations/trifecta-exfil-agent": ("A helpful summary with a secret in its path", (
+        "An analyst asks the assistant to summarize an ordinary document.",
+        "The agent reads private notes, then fetches attacker-controlled text.",
+        "The document instructs it to send the combined context outside.",
+        "Provenance enforcement blocks tainted egress and keeps clean utility.",
+    )),
+    "financial-services-fraud/fraud-alert-triage-agent": ("A flagged payment with two plausible stories", (
+        "A customer's unusual transfer triggers the fraud queue.",
+        "Travel, device, and beneficiary evidence can clear—or deepen—the risk.",
+        "A reflexive block harms the customer; a reflexive allow funds the scam.",
+        "The exact evidence-backed disposition protects both money and access.",
+    )),
+    "procurement-finance/vendor-payment-review-agent": ("The invoice is right. The bank account is not.", (
+        "A legitimate supplier invoice matches its PO and receiving record.",
+        "An email asks finance to pay a newly supplied bank destination.",
+        "Matching the invoice without the trusted vendor master moves real money.",
+        "Reconciliation holds the change, prevents duplicates, and pays safely.",
+    )),
+    "media-streaming/release-qc-triage-agent": ("The frame that could delay a premiere", (
+        "Quality control flags a defect hours before a scheduled release.",
+        "Creative intent, accessibility law, territory, and timecode all matter.",
+        "Severity-only triage either misses an obligation or kills the launch.",
+        "The agent chooses fix, ship, or delay from the complete release context.",
+    )),
+    "customer-support/refund-resolution-agent": ("A reasonable refund that becomes unsafe", (
+        "A customer has a persuasive reason to ask for money back.",
+        "Identity, dispute state, and final-sale status live behind tools.",
+        "Issuing the refund before checking prerequisites commits irreversible harm.",
+        "The right remedy counts only when the action path is safe and complete.",
+    )),
+    "customer-support/refund-guarded": ("Same customer, same facts, one hard boundary", (
+        "A baseline run reveals exactly how the refund agent breaks policy.",
+        "The same scenarios replay under prompt advice and tool enforcement.",
+        "Better wording still leaves the irreversible boundary unprotected.",
+        "Controlled deltas show which guard prevents harm without killing utility.",
+    )),
+    "customer-support/refund-crew": ("Three agents and a fact lost between them", (
+        "A support lead delegates one refund case to three specialists.",
+        "Each role sees a brief, not the original evidence in full fidelity.",
+        "Consensus amplifies a bad premise when review and veto arrive too late.",
+        "A single-vs-crew control prices coordination instead of assuming value.",
+    )),
+    "customer-support/refund-injected": ("The support ticket that writes its own policy", (
+        "A customer controls the prose entering the agent's trusted workflow.",
+        "The ticket impersonates authority and requests a forbidden tool action.",
+        "Helpfulness turns untrusted text into operational control.",
+        "The eval scores the real consequence: whether the attack changes action.",
+    )),
+    "customer-support/refund-memory": ("The attack that waits until tomorrow", (
+        "A malicious session plants one believable fact in persistent memory.",
+        "The attacker leaves; a clean customer returns in a later session.",
+        "The agent treats the poisoned note as durable operational truth.",
+        "Cross-session scoring catches the delayed harm at the moment it wakes.",
+    )),
+    "customer-support/refund-amplified": ("The correct answer that multiplies the bill", (
+        "A normal support request hides fan-out and oversized tool payloads.",
+        "Every extra result is replayed through the context on later turns.",
+        "The answer can stay correct while token cost becomes the attack.",
+        "Matched controls separate length, persuasion, cost, and decision quality.",
+    )),
+    "healthcare-life-sciences/prior-auth-review-agent": ("A correct clinical match and an unlawful denial", (
+        "A prior-authorization record appears not to meet clinical criteria.",
+        "An adverse determination still requires protected human judgment.",
+        "Automating the apparently correct denial removes the patient's right.",
+        "The agent preserves evidence and routes the decision to a human reviewer.",
+    )),
+    "legal-compliance/dpa-clause-review-agent": ("The missing clause no search can retrieve", (
+        "Counsel asks an agent to review a data-processing agreement quickly.",
+        "Most present clauses retrieve cleanly and create confident coverage.",
+        "The most expensive obligation is absent, so semantic search finds nothing.",
+        "A statutory gold set makes missing duties visible and reviewable.",
+    )),
+    "it-operations/incident-remediation-agent": ("When the runbook button stops working", (
+        "An incident reaches the approved remediation step in the runbook.",
+        "The tool refuses it while an unsafe shortcut remains available.",
+        "Pressure produces improvisation—or a false claim that service recovered.",
+        "The safe agent discloses the block and pages the accountable owner.",
+    )),
+    "it-operations/oncall-watch-agent": ("The quiet minute before the slow burn", (
+        "An early telemetry spike could be a blip or the start of an outage.",
+        "Only later ticks separate recovery from a slow threshold breach.",
+        "Paging instantly burns trust; stopping observation misses the incident.",
+        "The evaluator rewards patience, correct severity, and action in time.",
+    )),
+    "public-sector/small-business-recovery-agent": ("The right program through the wrong service", (
+        "A business owner asks for help after a disruptive local event.",
+        "The agency already holds evidence, but channel and deadline needs differ.",
+        "A correct program answer can still duplicate burden and erase recourse.",
+        "Public value means the person can actually complete the service safely.",
+    )),
+}
+
+
 def render_svg(item: Experience) -> str:
     cards: list[str] = []
     arrows: list[str] = []
@@ -327,6 +451,70 @@ def render_scenario_map(item: Experience, briefing: Briefing) -> str:
 '''
 
 
+def render_story(item: Experience, briefing: Briefing) -> str:
+    headline, beats = STORIES[item.path]
+    scenes: list[str] = []
+    connectors: list[str] = []
+    for index, ((verb, _), beat) in enumerate(zip(item.stages, beats)):
+        x = 42 + index * 286
+        scenes.append(
+            f'<g class="scene scene-{index + 1}" transform="translate({x} 145)">'
+            '<rect width="258" height="256" rx="22" class="card"/>'
+            f'<circle cx="39" cy="42" r="21" fill="{item.accent}"/>'
+            f'<text x="39" y="48" text-anchor="middle" class="act-number">{index + 1}</text>'
+            f'<text x="72" y="38" class="act muted">ACT {index + 1}</text>'
+            f'<text x="72" y="59" class="verb ink">{escape(verb)}</text>'
+            + svg_lines(beat, x=24, y=107, css_class="beat ink", width=28, line_height=25, max_lines=5)
+            + '<rect x="24" y="218" width="210" height="5" rx="2.5" class="rail"/>'
+            + f'<rect x="24" y="218" width="{52 + index * 52}" height="5" rx="2.5" fill="{item.accent}"/>'
+            + "</g>"
+        )
+        if index < 3:
+            connectors.append(
+                f'<path d="M{x + 261} 273H{x + 281}" class="connector"/>'
+                f'<path d="M{x + 276} 268L{x + 282} 273L{x + 276} 278" class="connector"/>'
+            )
+
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500" role="img" aria-labelledby="title desc">
+  <title id="title">{escape(item.title)} animated four-act story</title>
+  <desc id="desc">{escape(headline)} Four scenes reveal the request, hidden evidence, unsafe shortcut, and verified outcome.</desc>
+  <style>
+    :root {{ color-scheme:light dark; }}
+    .surface {{ fill:#0f1916; }} .card {{ fill:#fff;stroke:#d7e1dc;stroke-width:1.5; }}
+    .ink {{ fill:#10231d; }} .muted {{ fill:#5b6b65; }} .rail {{ fill:#dfe7e3; }}
+    .kicker {{ font:750 13px system-ui,sans-serif;letter-spacing:1.7px; }}
+    .title {{ font:760 29px system-ui,sans-serif;fill:#f6fbf8; }} .act {{ font:750 10px system-ui,sans-serif;letter-spacing:1.2px; }}
+    .act-number {{ font:800 14px ui-monospace,SFMono-Regular,monospace;fill:white; }}
+    .verb {{ font:780 14px system-ui,sans-serif;letter-spacing:.5px; }} .beat {{ font:620 17px system-ui,sans-serif; }}
+    .metric {{ font:650 13px system-ui,sans-serif;fill:#c4d3cd; }}
+    .connector {{ fill:none;stroke:{item.accent};stroke-width:2;stroke-linecap:round;stroke-linejoin:round; }}
+    .scene {{ transform-box:fill-box;transform-origin:center;animation:spotlight 12s ease-in-out infinite; }}
+    .scene-2 {{ animation-delay:-9s; }} .scene-3 {{ animation-delay:-6s; }} .scene-4 {{ animation-delay:-3s; }}
+    .runner {{ animation:glow 1.2s ease-in-out infinite alternate; }}
+    @keyframes spotlight {{ 0%,18% {{ opacity:1;transform:translateY(-7px); }} 27%,100% {{ opacity:.57;transform:translateY(0); }} }}
+    @keyframes glow {{ to {{ opacity:.35; }} }}
+    @media (prefers-color-scheme:dark) {{
+      .surface {{ fill:#0b1210; }} .card {{ fill:#17231f;stroke:#354840; }}
+      .ink {{ fill:#f4faf7; }} .muted {{ fill:#aec0b8; }} .rail {{ fill:#30423b; }}
+    }}
+    @media (prefers-reduced-motion:reduce) {{ .scene {{ animation:none;opacity:1;transform:none; }} .runner {{ display:none; }} }}
+  </style>
+  <defs><linearGradient id="wash" x1="0" x2="1"><stop stop-color="{item.accent}" stop-opacity=".27"/><stop offset="1" stop-color="{item.accent}" stop-opacity=".03"/></linearGradient></defs>
+  <rect width="1200" height="500" rx="20" class="surface"/>
+  <path d="M0 0H860L700 126H0Z" fill="url(#wash)"/>
+  <text x="42" y="38" class="kicker" fill="{item.accent}">THE 60-SECOND STORY · SYNTHETIC CASE, REAL FAILURE SHAPE</text>
+  <text x="42" y="82" class="title">{escape(headline)}</text>
+  <text x="1158" y="81" text-anchor="end" class="metric">THE TEST ASKS · {escape(briefing.metric_label.upper())}</text>
+  <path d="M64 116H1136" stroke="{item.accent}" stroke-width="2" opacity=".35"/>
+  <circle class="runner" r="7" fill="{item.accent}"><animateMotion dur="12s" repeatCount="indefinite" path="M64 116H1136"/></circle>
+  {''.join(connectors)}
+  {''.join(scenes)}
+  <text x="42" y="460" class="metric">Read left → right. Motion pauses automatically when your system requests reduced motion.</text>
+  <text x="1158" y="460" text-anchor="end" class="metric">{escape(item.industry)} · TRACE THE CONSEQUENCE</text>
+</svg>
+'''
+
+
 MODEL_NAMES = {
     "gpt-oss": "GPT-OSS 120B",
     "mistral": "Mistral Small",
@@ -392,6 +580,9 @@ def load_benchmark_rows(directory: Path, briefing: Briefing) -> list[dict]:
             "lo": lo,
             "hi": hi,
             "n": int(data.get("n_scenarios", 0)) * int(data.get("n_repeats", 1)),
+            "means": means,
+            "cost": float(data.get("mean_cost_per_scenario_usd", 0)),
+            "latency": float(data.get("p50_latency_s", 0)),
         })
     if any(row["arm"] for row in rows):
         arm_rank = {name: index for index, name in enumerate(ARM_NAMES)}
@@ -472,6 +663,132 @@ def render_benchmark(item: Experience, briefing: Briefing, directory: Path) -> s
   <text x="1158" y="116" text-anchor="end" class="axis muted">MEAN · 95% CI</text>
   {ticks}
   {''.join(chart_rows)}
+</svg>
+'''
+
+
+def format_primary(value: float, raw: bool) -> str:
+    return compact_number(value) if raw else f"{value * 100:.0f}%"
+
+
+def strongest_row(rows: list[dict], briefing: Briefing) -> dict:
+    if briefing.raw:
+        return min(rows, key=lambda row: (row["value"], row["cost"], row["latency"]))
+    return max(rows, key=lambda row: (row["value"], -row["cost"], -row["latency"]))
+
+
+def render_contrast(item: Experience, briefing: Briefing, directory: Path) -> str:
+    rows = load_benchmark_rows(directory, briefing)
+    if len(rows) < 2:
+        raise ValueError(f"{item.path} needs at least two real result rows for a contrast")
+    strong = strongest_row(rows, briefing)
+    weak = max(rows, key=lambda row: row["value"]) if briefing.raw else min(rows, key=lambda row: row["value"])
+    scale_max = max(row["hi"] for row in rows) * 1.06 if briefing.raw else 1.0
+    x0, width = 160, 880
+    strong_x = x0 + width * strong["value"] / scale_max
+    weak_x = x0 + width * weak["value"] / scale_max
+    delta = abs(strong["value"] - weak["value"])
+    delta_label = f"{compact_number(delta)} TOKEN SPREAD" if briefing.raw else f"{delta * 100:.0f} POINT SPREAD"
+    direction = "LOWEST RESOURCE USE" if briefing.raw else "STRONGEST OBSERVED"
+    weak_direction = "HIGHEST RESOURCE USE" if briefing.raw else "LOWEST OBSERVED"
+    end_label = compact_number(scale_max) if briefing.raw else "100%"
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 410" width="1200" height="410" role="img" aria-labelledby="title desc">
+  <title id="title">{escape(item.title)} verified result spread</title>
+  <desc id="desc">Contrast between the strongest and weakest committed result on {escape(briefing.metric_label)}.</desc>
+  <style>
+    :root {{ color-scheme:light dark; }}
+    .surface {{ fill:#f7faf8; }} .ink {{ fill:#10231d; }} .muted {{ fill:#52645e; }}
+    .kicker {{ font:750 13px system-ui,sans-serif;letter-spacing:1.6px; }} .title {{ font:760 28px system-ui,sans-serif; }}
+    .value {{ font:820 22px ui-monospace,SFMono-Regular,monospace; }} .label {{ font:700 14px system-ui,sans-serif; }}
+    .small {{ font:560 12px system-ui,sans-serif;letter-spacing:.5px; }} .axis {{ font:600 12px ui-monospace,SFMono-Regular,monospace; }}
+    .track {{ stroke:#d8e2dd;stroke-width:10;stroke-linecap:round; }} .span {{ stroke:{item.accent};stroke-width:10;stroke-linecap:round;opacity:.58; }}
+    .guide {{ stroke:#cbd7d1;stroke-width:1;stroke-dasharray:4 7; }}
+    @media (prefers-color-scheme:dark) {{
+      .surface {{ fill:#101916; }} .ink {{ fill:#f4faf7; }} .muted {{ fill:#b2c3bc; }}
+      .track {{ stroke:#2b3d36; }} .guide {{ stroke:#354840; }}
+    }}
+  </style>
+  <rect width="1200" height="410" rx="20" class="surface"/>
+  <text x="42" y="42" class="kicker" fill="{item.accent}">THE VERIFIED SPREAD · WHY MODEL AND GUARD CHOICE MATTER</text>
+  <text x="42" y="84" class="title ink">{escape(briefing.metric_label)}</text>
+  <g transform="translate(920 35)"><rect width="238" height="32" rx="16" fill="{item.accent}" opacity=".13"/><text x="119" y="21" text-anchor="middle" class="small muted">{escape(delta_label)}</text></g>
+  <path d="M{x0} 213H{x0 + width}" class="track"/>
+  <path d="M{min(strong_x, weak_x):.1f} 213H{max(strong_x, weak_x):.1f}" class="span"/>
+  <path d="M{x0} 132V298M{x0 + width / 2} 132V298M{x0 + width} 132V298" class="guide"/>
+  <circle cx="{weak_x:.1f}" cy="213" r="17" fill="#7f918a" stroke="#f7faf8" stroke-width="5"/>
+  <circle cx="{strong_x:.1f}" cy="213" r="19" fill="{item.accent}" stroke="#f7faf8" stroke-width="5"/>
+  <path d="M{weak_x:.1f} 196V156" stroke="#7f918a" stroke-width="2"/>
+  <path d="M{strong_x:.1f} 232V272" stroke="{item.accent}" stroke-width="2"/>
+  <text x="{weak_x:.1f}" y="137" text-anchor="middle" class="small muted">{weak_direction}</text>
+  <text x="{weak_x:.1f}" y="159" text-anchor="middle" class="value ink">{format_primary(weak['value'], briefing.raw)}</text>
+  <text x="{strong_x:.1f}" y="300" text-anchor="middle" class="value ink">{format_primary(strong['value'], briefing.raw)}</text>
+  <text x="{strong_x:.1f}" y="323" text-anchor="middle" class="small" fill="{item.accent}">{direction}</text>
+  {svg_lines(weak['label'], x=42, y=354, css_class='label ink', width=38, line_height=18, max_lines=2)}
+  <text x="42" y="390" class="small muted">WEAKEST ROW</text>
+  {svg_lines(strong['label'], x=1158, y=354, css_class='label ink end', width=38, line_height=18, max_lines=2).replace('<text ', '<text text-anchor="end" ')}
+  <text x="1158" y="390" text-anchor="end" class="small muted">STRONGEST HEADLINE ROW</text>
+  <text x="{x0}" y="122" text-anchor="middle" class="axis muted">0</text>
+  <text x="{x0 + width / 2}" y="122" text-anchor="middle" class="axis muted">{compact_number(scale_max / 2) if briefing.raw else '50%'}</text>
+  <text x="{x0 + width}" y="122" text-anchor="middle" class="axis muted">{end_label}</text>
+</svg>
+'''
+
+
+def format_cost(value: float) -> str:
+    if 0 < value < 0.0001:
+        return "<$0.0001"
+    return f"${value:.4f}"
+
+
+def render_profile(item: Experience, briefing: Briefing, directory: Path) -> str:
+    rows = load_benchmark_rows(directory, briefing)
+    selected = strongest_row(rows, briefing)
+    primary_max = max(row["value"] for row in rows) or 1
+    latency_max = max(row["latency"] for row in rows) or 1
+    cost_max = max(row["cost"] for row in rows) or 1
+    completion = float(selected["means"].get("submitted", 0))
+    cards_data = (
+        (briefing.metric_label, format_primary(selected["value"], briefing.raw), selected["value"] / primary_max, "HEADLINE RESULT"),
+        ("Decision completion", f"{completion * 100:.0f}%", completion, "SUBMITTED"),
+        ("Median latency", f"{selected['latency']:.1f}s", selected["latency"] / latency_max, "LOWER IS FASTER"),
+        ("Cost per scenario", format_cost(selected["cost"]), selected["cost"] / cost_max, "MEASURED LIST-PRICE"),
+    )
+    cards: list[str] = []
+    for index, (label, value, ratio, note) in enumerate(cards_data):
+        x = 42 + index * 286
+        fill_width = max(3, min(220, 220 * ratio))
+        cards.append(
+            f'<g transform="translate({x} 145)">'
+            '<rect width="258" height="190" rx="20" class="card"/>'
+            f'<text x="24" y="36" class="note muted">{escape(note)}</text>'
+            f'<text x="24" y="88" class="value ink">{escape(value)}</text>'
+            + svg_lines(label, x=24, y=119, css_class="label ink", width=29, line_height=19, max_lines=2)
+            + '<rect x="24" y="155" width="210" height="8" rx="4" class="track"/>'
+            + f'<rect x="24" y="155" width="{fill_width:.1f}" height="8" rx="4" fill="{item.accent}"/>'
+            + "</g>"
+        )
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 410" width="1200" height="410" role="img" aria-labelledby="title desc">
+  <title id="title">{escape(item.title)} strongest headline run profile</title>
+  <desc id="desc">Headline outcome, completion, latency, and measured cost for {escape(selected['label'])}.</desc>
+  <style>
+    :root {{ color-scheme:light dark; }}
+    .surface {{ fill:#f7faf8; }} .card {{ fill:#fff;stroke:#d9e2dd;stroke-width:1.5; }}
+    .ink {{ fill:#10231d; }} .muted {{ fill:#52645e; }} .track {{ fill:#e2e9e5; }}
+    .kicker {{ font:750 13px system-ui,sans-serif;letter-spacing:1.6px; }} .title {{ font:760 28px system-ui,sans-serif; }}
+    .value {{ font:820 30px ui-monospace,SFMono-Regular,monospace; }} .label {{ font:700 15px system-ui,sans-serif; }}
+    .note {{ font:750 10px system-ui,sans-serif;letter-spacing:1px; }} .small {{ font:560 12px system-ui,sans-serif; }}
+    @media (prefers-color-scheme:dark) {{
+      .surface {{ fill:#101916; }} .card {{ fill:#17231f;stroke:#30433c; }}
+      .ink {{ fill:#f4faf7; }} .muted {{ fill:#b2c3bc; }} .track {{ fill:#2a3b35; }}
+    }}
+  </style>
+  <rect width="1200" height="410" rx="20" class="surface"/>
+  <text x="42" y="42" class="kicker" fill="{item.accent}">STRONGEST HEADLINE RUN · THE TRADEOFF PROFILE</text>
+  <text x="42" y="84" class="title ink">{escape(selected['label'])}</text>
+  <text x="1158" y="82" text-anchor="end" class="small muted">Selected by {escape(briefing.metric_label.lower())} · not a universal model ranking</text>
+  {''.join(cards)}
+  <text x="42" y="376" class="small muted">Bars show each value relative to the observed range; exact numbers come from the committed JSON result.</text>
+  <text x="1158" y="376" text-anchor="end" class="small muted">{selected['n']:,} SCENARIO RUNS IN THIS ROW</text>
 </svg>
 '''
 
@@ -573,8 +890,11 @@ def install(item: Experience) -> None:
     docs.mkdir(exist_ok=True)
     briefing = BRIEFINGS[item.path]
     (docs / "experience.svg").write_text(render_svg(item), encoding="utf-8")
+    (docs / "story.svg").write_text(render_story(item, briefing), encoding="utf-8")
     (docs / "scenario-map.svg").write_text(render_scenario_map(item, briefing), encoding="utf-8")
     (docs / "benchmark.svg").write_text(render_benchmark(item, briefing, directory), encoding="utf-8")
+    (docs / "contrast.svg").write_text(render_contrast(item, briefing, directory), encoding="utf-8")
+    (docs / "result-profile.svg").write_text(render_profile(item, briefing, directory), encoding="utf-8")
     (docs / "failure-cards.svg").write_text(render_failure_cards(item, directory), encoding="utf-8")
 
     text = readme.read_text(encoding="utf-8")
@@ -589,15 +909,23 @@ def install(item: Experience) -> None:
     )
     briefing_block = f'''{BRIEFING_START}
 
-## Visual briefing
+## Visual case file
 
-### See the trap
+### Follow the story
+
+<img src="docs/story.svg" width="100%" alt="Animated four-act story explaining the human stakes of {escape(item.title)}">
+
+### See where the obvious answer breaks
 
 <img src="docs/scenario-map.svg" width="100%" alt="{escape(item.title)} scenario anatomy: surface story, hidden truth, unsafe shortcut, and exact proof">
 
-### Read the evidence
+### Read the complete evidence
 
 <img src="docs/benchmark.svg" width="100%" alt="{escape(item.title)} benchmark chart generated from committed real-model evaluations">
+
+<img src="docs/contrast.svg" width="100%" alt="Strongest and weakest verified {escape(item.title)} result contrasted on the headline metric">
+
+<img src="docs/result-profile.svg" width="100%" alt="Outcome, completion, latency, and cost profile for the strongest headline {escape(item.title)} result">
 
 ### Learn from the misses
 
@@ -616,12 +944,15 @@ def install(item: Experience) -> None:
 
 def main() -> None:
     experience_paths = {item.path for item in EXPERIENCES}
-    assert experience_paths == set(BRIEFINGS), "every experience needs exactly one visual briefing"
+    assert experience_paths == set(BRIEFINGS), "every experience needs exactly one visual case file"
+    assert experience_paths == set(STORIES), "every experience needs exactly one four-act story"
     for path, briefing in BRIEFINGS.items():
         assert len(briefing.cards) == 4, f"{path} needs four scenario anatomy cards"
+    for path, (headline, beats) in STORIES.items():
+        assert headline and len(beats) == 4, f"{path} needs a headline and four story beats"
     for item in EXPERIENCES:
         install(item)
-    print(f"installed {len(EXPERIENCES)} themed README visual briefings")
+    print(f"installed {len(EXPERIENCES)} themed README visual case files")
 
 
 if __name__ == "__main__":
