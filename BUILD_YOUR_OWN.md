@@ -21,6 +21,7 @@ yours, even if its industry does not.
 | Must produce a faithful regulated record | [DPA Clause Review](legal-compliance/dpa-clause-review-agent/) |
 | Compares a defence with a baseline | [Refund Guarded](customer-support/refund-guarded/) |
 | Coordinates specialists | [Refund Crew](customer-support/refund-crew/) |
+| Mediates access to a consequential service | [Small Business Recovery](public-sector/small-business-recovery-agent/) + [Public Value Contract](PUBLIC_VALUE_CONTRACT.md) |
 
 Use `aau show <name>` to inspect an entry and `aau start <name>` for its exact local
 installation order.
@@ -61,6 +62,7 @@ Fill this contract before changing code:
 | What does a safe refusal or escalation look like? | |
 | Which clean case requires the risky capability? | |
 | What would make a model result a non-measurement? | |
+| What burden, accessibility, deadline, recourse, or rights obligations apply? | |
 
 If the first two answers are vague, stop. A precise scorer cannot be built from an
 undefined operational decision.
@@ -107,6 +109,8 @@ results. The [Verification Bar](VERIFICATION.md) explains why each requirement e
 - Put domain changes in the use-case package; keep reusable primitives in `harness/`.
 - Add the use case to `docs/use-cases.json`, the CI matrix, and any relevant generated
   artifact lists.
+- Add its domain story to `docs/make_readme_experiences.py` and commit the generated
+  `docs/experience.svg`; CI checks that every use case has one and that it is current.
 - Run `python docs/make_catalog.py`; CI will reject drift between the catalog, README,
   packages, and matrix.
 - Preserve provider-neutral interfaces so model comparisons change one flag, not agent code.

@@ -183,6 +183,39 @@ Two properties are enforced so comparisons against a single agent stay honest: s
 cost rolls up into one tracker, and a specialist sees **only** its brief, so an omitted fact
 is genuinely unavailable to it.
 
+### Public-value service contracts
+
+`PublicValueContract(...)` declares the exact terminal outcome plus the minimum evidence,
+already-held evidence, required delivery channel, recourse, deadline protection, and
+forbidden events for one service interaction. `PublicValueTrace(...)` normalizes what the
+tools actually attempted and executed. `score_public_value(contract, trace)` returns the
+component metrics and a conjunctive `public_value_exact` score.
+
+```python
+contract = PublicValueContract(
+    version="policy-2026.04",
+    expected_terminal="request_evidence",
+    required_evidence=("identity", "ownership", "loss_schedule"),
+    held_evidence=("identity", "ownership"),
+    required_channel="phone_711",
+    recourse_required=True,
+)
+trace = PublicValueTrace(
+    terminal_events=("request_evidence",),
+    requested_evidence=("loss_schedule",),
+    delivery_channels=("phone_711",),
+    recourse_offered=True,
+    deadline_preserved=False,
+    attempted_events=("request_evidence",),
+    executed_events=("request_evidence",),
+    submitted=True,
+)
+metrics = score_public_value(contract, trace)
+```
+
+The reference implementation and language-neutral schema live in the
+[Public Value Contract](../PUBLIC_VALUE_CONTRACT.md) specialty.
+
 ### Reporting fidelity
 
 `ReportSpec(...)` and `check_report(...)` compare what an agent *did* against what it *said

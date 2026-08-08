@@ -16,6 +16,7 @@
   <a href="#run-one-now">Run one</a> ·
   <a href="PLAYBOOKS.md">Playbooks</a> ·
   <a href="USE_CASE_RADAR.md">Use-case radar</a> ·
+  <a href="PUBLIC_VALUE_CONTRACT.md">Public Value Contract</a> ·
   <a href="BUILD_YOUR_OWN.md">Build your own</a> ·
   <a href="FAILURE_TAXONOMY.md">Failure taxonomy</a> ·
   <a href="#there-is-no-best-model">Results</a> ·
@@ -31,12 +32,29 @@ usage, confidence intervals, and failure modes that were **observed—not hypoth
 Everything runs on synthetic data, the deterministic backend needs no API key, and real
 model backends include free tiers.
 
+## New specialty: did the service actually serve the person?
+
+<picture>
+  <source srcset="docs/assets/public-value-contract-hero.webp" type="image/webp">
+  <img src="docs/assets/public-value-contract-hero.png" width="100%" alt="Public Value Contract: a small-business recovery path through minimum evidence, accessibility, recourse, deadlines, rights, human oversight, and a truthful record">
+</picture>
+
+The new **[Public Value Contract](PUBLIC_VALUE_CONTRACT.md)** catches a failure that ordinary
+accuracy and safety evals miss: an agent can choose the correct next step while demanding
+duplicate paperwork, using an inaccessible channel, losing a deadline, removing recourse,
+or writing a false service record.
+
+Its reference lab, the **[Small Business Recovery Navigator](public-sector/small-business-recovery-agent/)**,
+turns those obligations into a machine-readable contract and exact trace metrics. The
+pattern is deliberately reusable across public services, banking, insurance, healthcare,
+HR, customer support, and other consequential workflows.
+
 ## What are you trying to do?
 
 | I want to… | Start here | What you get |
 |---|---|---|
-| **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Three short paths through routing, irreversible action, and tool-poisoning failures |
-| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 19 verified use cases by industry, capability, or failure shape |
+| **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Four short paths through routing, irreversible action, tool poisoning, and public-value failures |
+| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 20 verified use cases by industry, capability, or failure shape |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
@@ -103,7 +121,7 @@ aau doctor                             # validate your checkout or fork
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="10 industries shipping, 104 verified model-evals, 118 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="11 industries shipping, 106 verified model-evals, 125 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -154,7 +172,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 118 failures, 12 patterns
+## 125 failures, 13 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -162,13 +180,13 @@ reappearing across industries that share nothing but the shape of the agent.
 
 | Pattern | In short | Found in |
 |---|---|---|
-| [Commit-stall](FAILURE_TAXONOMY.md#commit-stall) | Investigates correctly, concludes correctly, never commits — and accuracy metrics can't see it | **8 of 12** use cases |
+| [Commit-stall](FAILURE_TAXONOMY.md#commit-stall) | Investigates correctly, concludes correctly, never commits — and accuracy metrics can't see it | **9 use cases** |
 | [The environment beats the prompt](FAILURE_TAXONOMY.md#the-environment-beats-the-prompt) | Changing what the agent *can* do works; telling it what it *should* do mostly doesn't | 4 controlled A/Bs |
 | [Safety by inaction](FAILURE_TAXONOMY.md#safety-by-inaction) | A "did it avoid the bad action" metric is passed perfectly by an agent that does nothing | 3 use cases |
 | [Trust follows the channel](FAILURE_TAXONOMY.md#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition | 2 use cases |
 | [Prior over policy](FAILURE_TAXONOMY.md#prior-over-policy) | Models cite the rule in their reasoning, then violate it in the same breath | 4 use cases |
 
-<a href="FAILURE_TAXONOMY.md"><b>→ Read all 12 patterns</b></a>, each with measured incidence and
+<a href="FAILURE_TAXONOMY.md"><b>→ Read all 13 patterns</b></a>, each with measured incidence and
 a link to the run that produced it.
 
 ## Four models, one agent — one row, up close
@@ -201,7 +219,7 @@ Every failure has a reproducing scenario id in
 
 ## Use cases
 
-**Not sure where to start?** [Search and filter all 19 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
+**Not sure where to start?** [Search and filter all 20 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
 by industry, capability, or failure shape.
 
 <!-- USE_CASES:START -->
@@ -227,6 +245,7 @@ by industry, capability, or failure shape.
 | [⚖️ DPA Clause Review](legal-compliance/dpa-clause-review-agent/) | Legal & Compliance | `gate` `record-fidelity` `statutory-gold` | Can a contract-review agent detect a mandatory GDPR term that is absent rather than merely misworded? |
 | [🚨 Incident Remediation](it-operations/incident-remediation-agent/) | IT Ops & DevOps | `act` `guardrails` `human-in-loop` | When the approved runbook action is blocked, does the agent escalate, improvise, or report false success? |
 | [📟 On-Call Watch](it-operations/oncall-watch-agent/) | IT Ops & DevOps | `watch` `decide` | Can an agent wait long enough to distinguish a real regression from a blip without missing the outage? |
+| [🌱 Small Business Recovery Navigator](public-sector/small-business-recovery-agent/) | Public Service & Economic Resilience | `public-value` `accessibility` `investigate` `plan` `act` `human-in-loop` | Can a service agent advance recovery while minimizing evidence burden and preserving accessibility, deadlines, recourse, rights, and a truthful record? |
 
 <!-- USE_CASES:END -->
 
@@ -302,10 +321,10 @@ only a per-use-case harness surfaces:
 
 | Shipping now | Next wave |
 |---|---|
-| 🚛 [Logistics](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Ops](security-operations/) · 💳 [Financial Services](financial-services-fraud/) · 🧾 [Procurement & Finance](procurement-finance/) · 🎬 [Media & Streaming](media-streaming/) · 🎧 [Customer Support](customer-support/) · 🖥️ [IT Ops & DevOps](it-operations/) · 🏥 [Healthcare & Life Sciences](healthcare-life-sciences/) · ⚖️ [Legal & Compliance](legal-compliance/) | 🏭 Manufacturing & Industrial |
+| 🚛 [Logistics](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Ops](security-operations/) · 💳 [Financial Services](financial-services-fraud/) · 🧾 [Procurement & Finance](procurement-finance/) · 🎬 [Media & Streaming](media-streaming/) · 🎧 [Customer Support](customer-support/) · 🖥️ [IT Ops & DevOps](it-operations/) · 🏥 [Healthcare & Life Sciences](healthcare-life-sciences/) · ⚖️ [Legal & Compliance](legal-compliance/) · 🏛️ [Public Service & Economic Resilience](public-sector/) | 🏭 Manufacturing & Industrial |
 
 <details>
-<summary><b>Full 17-industry roadmap</b></summary>
+<summary><b>Full 18-industry roadmap</b></summary>
 <br>
 
 | # | Industry | Status |
@@ -320,13 +339,14 @@ only a per-use-case harness surfaces:
 | 8 | 🏥 Healthcare & Life Sciences | ✅ Shipping |
 | 9 | ⚖️ Legal & Compliance | ✅ Shipping |
 | 10 | 🧾 Procurement & Finance | ✅ Shipping |
-| 11 | 🏭 Manufacturing & Industrial | 📋 Roadmap |
-| 12 | 🧾 Insurance | 📋 Roadmap |
-| 13 | 👥 HR & Recruiting | 📋 Roadmap |
-| 14 | 📈 Sales & Marketing | 📋 Roadmap |
-| 15 | ⚡ Energy & Utilities | 📋 Roadmap |
-| 16 | 🏗️ Real Estate & Construction | 📋 Roadmap |
-| 17 | 🎓 Education | 📋 Roadmap |
+| 11 | 🏛️ Public Service & Economic Resilience | ✅ Shipping |
+| 12 | 🏭 Manufacturing & Industrial | 📋 Roadmap |
+| 13 | 🧾 Insurance | 📋 Roadmap |
+| 14 | 👥 HR & Recruiting | 📋 Roadmap |
+| 15 | 📈 Sales & Marketing | 📋 Roadmap |
+| 16 | ⚡ Energy & Utilities | 📋 Roadmap |
+| 17 | 🏗️ Real Estate & Construction | 📋 Roadmap |
+| 18 | 🎓 Education | 📋 Roadmap |
 
 </details>
 

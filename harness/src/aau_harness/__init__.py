@@ -29,6 +29,11 @@ from .reporting import (
     check_report,
     claims_success,
 )
+from .public_value import (
+    PublicValueContract,
+    PublicValueTrace,
+    score_public_value,
+)
 
 __all__ = [
     "CostTracker",
@@ -55,4 +60,7 @@ __all__ = [
     "claims_success",
     "make_delegate_tool",
     "run_crew",
+    "PublicValueContract",
+    "PublicValueTrace",
+    "score_public_value",
 ]

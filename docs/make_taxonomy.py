@@ -32,7 +32,7 @@ PATTERNS = [
         "name": "Commit-stall",
         "one_liner": "The agent investigates correctly, reaches the right conclusion, and never commits it.",
         "why": (
-            "This is the most universal failure in the repo: found independently in **eight "
+            "This is the most universal failure in the repo: found independently in **nine "
             "use cases**, across unrelated industries and three model families, without "
             "anyone designing for it. It is invisible to accuracy metrics — the runs that "
             "never submit are simply absent from the numerator — so a stalling agent can "
@@ -54,6 +54,7 @@ PATTERNS = [
             ("customer-support/refund-crew", "handoffs as completion"),
             ("security-operations/artifact-admission-agent", "never finished"),
             ("security-operations/trifecta-exfil-agent", "Safe by not finishing"),
+            ("public-sector/small-business-recovery-agent", "empty-action closeout"),
         ],
     },
     {
@@ -192,6 +193,7 @@ PATTERNS = [
             ("security-operations/alert-triage-agent", "scanner deception"),
             ("financial-services-fraud/fraud-alert-triage-agent", "travel deception"),
             ("media-streaming/release-qc-triage-agent", "looks broken, is fine"),
+            ("public-sector/small-business-recovery-agent", "accessibility attention displaces"),
         ],
     },
     {
@@ -258,6 +260,30 @@ PATTERNS = [
             ("security-operations/alert-triage-agent", "Over-escalation"),
             ("legal-compliance/dpa-clause-review-agent", "expected and did not occur"),
             ("procurement-finance/vendor-payment-review-agent", "Verified vendors were overblocked"),
+        ],
+    },
+    {
+        "id": "outcome-without-public-value",
+        "name": "The outcome can be right while the service fails",
+        "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse.",
+        "why": (
+            "Outcome metrics see where a case landed, not what the person had to surrender or "
+            "risk to get there. Service agents need a second gold object that binds the outcome "
+            "to minimum evidence, accessible delivery, deadlines, recourse, rights, intent, "
+            "and a truthful record. Otherwise an organization can optimize its queue while "
+            "quietly transferring the cost to users."
+        ),
+        "numbers": [
+            ("small-business recovery baseline", "outcome accuracy and completion **1.000**; exact public value only **0.375** across 32 scenarios × 3 repeats"),
+            ("administrative burden", "minimum-evidence compliance **0.625** because a one-document gap triggered the full checklist"),
+            ("access and remedy", "accessible channel **0.875**, deadline protection **0.750**, and recourse only **0.375**"),
+        ],
+        "cites": [
+            ("public-sector/small-business-recovery-agent", "outcome mirage"),
+            ("public-sector/small-business-recovery-agent", "full-checklist reflex"),
+            ("public-sector/small-business-recovery-agent", "portal default"),
+            ("public-sector/small-business-recovery-agent", "recourse disappears"),
+            ("public-sector/small-business-recovery-agent", "deadline is known"),
         ],
     },
     {

@@ -1,7 +1,8 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/banner-dark.svg">
-  <img alt="Vendor Payment Review — the invoice matches, but does the bank account?" src="docs/banner-light.svg" width="100%">
-</picture>
+<!-- README-EXPERIENCE:START -->
+<p align="center">
+  <img src="docs/experience.svg" width="100%" alt="Vendor Payment Review — animated case trace">
+</p>
+<!-- README-EXPERIENCE:END -->
 
 <p align="center">
   <a href="../../README.md">← all use cases</a> ·

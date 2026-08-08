@@ -18,6 +18,7 @@ A new use case PR needs:
 - [ ] Real-model eval results committed under `results/` — n≥3 repeats, cost per run in dollars
 - [ ] `FAILURE_MODES.md` with ≥3 observed failures, each with a reproducing input
 - [ ] README following the standard template: Problem → Architecture → Results → Failure modes → Run it
+- [ ] A themed entry in `docs/make_readme_experiences.py`, with the generated opener committed
 
 ## What doesn't
 
@@ -63,6 +64,7 @@ python docs/make_assets.py         # per-use-case banner + results chart + decis
 python docs/make_leaderboard.py    # the root-README "no best model" matrix + heatmap
 python docs/make_terminal_demo.py  # the animated terminal casts (replayed from results)
 python docs/make_taxonomy.py       # FAILURE_TAXONOMY.md (fails loudly on a dead citation)
+python docs/make_readme_experiences.py  # themed, dark-mode README opener for every use case
 ```
 
 The terminal casts replay a real scenario the model passed and one it failed, so they

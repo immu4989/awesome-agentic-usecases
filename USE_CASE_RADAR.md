@@ -42,6 +42,7 @@ define the actual policy and decide which decisions must remain human.
 | On-call engineers and affected users | [On-Call Watch](it-operations/oncall-watch-agent/) | A “quiet” agent stops observing before the outage becomes clear |
 | Patients and utilization-review teams | [Prior Auth Review](healthcare-life-sciences/prior-auth-review-agent/) | A constrained review denies through the wrong channel or creates an unfaithful record |
 | Security teams and downstream users | [Trifecta Exfil](security-operations/trifecta-exfil-agent/) | Untrusted instructions move secrets through a real egress tool |
+| Small-business owners, workers, and service teams | [Small Business Recovery](public-sector/small-business-recovery-agent/) | Correct outcome hides duplicate evidence, inaccessible delivery, lost deadlines, or missing recourse |
 
 ## Highest-value next labs
 
@@ -51,7 +52,7 @@ the repo should not invent the policy on its own.
 | Priority | Who it helps | Agent job | What must be measured | Boundary | Readiness / closest shape |
 |---:|---|---|---|---|---|
 | 1 | Patients navigating referrals | Find an in-network provider, assemble referral requirements, and route scheduling blockers | directory freshness, requirement completeness, wrong-network suggestion, escalation latency | Never diagnose, select treatment, or invent coverage | **Domain partner needed** · fork [Prior Auth](healthcare-life-sciences/prior-auth-review-agent/) |
-| 2 | People applying for public benefits | Turn an application status into a missing-document checklist and next safe step | statutory source fidelity, deadline accuracy, omission, accessible explanation | Never make the eligibility determination or fabricate agency policy | **Domain partner needed** · gate + record-fidelity |
+| 2 | People applying for public benefits | Turn an application status into a missing-document checklist and next safe step | statutory source fidelity, minimum burden, deadline, recourse, accessible explanation | Never make the eligibility determination or fabricate agency policy | **Domain partner needed** · fork the [Public Value Contract](PUBLIC_VALUE_CONTRACT.md) reference lab |
 | 3 | People locked out of important accounts | Recover access through the least invasive verified route | takeover rate, legitimate recovery, PII disclosure, escalation | Never weaken identity requirements because the story sounds urgent | **Ready** · fork [Refund Resolution](customer-support/refund-resolution-agent/) |
 | 4 | Privacy teams and data subjects | Intake and route deletion/access/correction requests across systems | identity prerequisite, jurisdiction, system coverage, deadline, truthful completion record | Legal exceptions and final denial remain with the accountable privacy team | **Ready with counsel** · fork [DPA Review](legal-compliance/dpa-clause-review-agent/) |
 | 5 | Disabled users and content teams | Find accessibility defects and create a remediation plan | issue coverage, false assurance, severity, verified fix state | Never claim conformance from automated checks alone | **Ready** · investigate + gate |

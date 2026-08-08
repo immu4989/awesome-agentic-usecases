@@ -1,3 +1,9 @@
+<!-- README-EXPERIENCE:START -->
+<p align="center">
+  <img src="docs/experience.svg" width="100%" alt="Refund Guarded — animated case trace">
+</p>
+<!-- README-EXPERIENCE:END -->
+
 <p align="center">
   <a href="../../README.md">← all use cases</a> ·
   <img src="https://img.shields.io/badge/shape-intervention%20A%2FB-008300" alt="intervention">

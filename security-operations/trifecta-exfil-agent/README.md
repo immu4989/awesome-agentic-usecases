@@ -1,3 +1,9 @@
+<!-- README-EXPERIENCE:START -->
+<p align="center">
+  <img src="docs/experience.svg" width="100%" alt="Trifecta Exfil — animated case trace">
+</p>
+<!-- README-EXPERIENCE:END -->
+
 <p align="center">
   <a href="../../README.md">← all use cases</a> ·
   <img src="https://img.shields.io/badge/industry-Security%20Ops-4a3aa7" alt="industry">

@@ -1,6 +1,6 @@
 # The Agent Failure Taxonomy
 
-**118 failure modes, observed across 19 use cases, 12 recurring patterns.**
+**125 failure modes, observed across 20 use cases, 13 recurring patterns.**
 
 Every entry below was *measured*, not hypothesised — each links to the run that
 produced it, with a reproducing input. Read individually the failures look
@@ -16,18 +16,19 @@ reappearing in industries that share nothing but the shape of the agent.
 
 | # | Pattern | In short | Seen in |
 |---|---|---|---|
-| 1 | [Commit-stall](#commit-stall) | The agent investigates correctly, reaches the right conclusion, and never commits it. | 8 use cases |
+| 1 | [Commit-stall](#commit-stall) | The agent investigates correctly, reaches the right conclusion, and never commits it. | 9 use cases |
 | 2 | [The environment beats the prompt](#the-environment-beats-the-prompt) | Changing what the agent *can* do works; telling it what it *should* do mostly doesn't. | 4 use cases |
 | 3 | [Contained is not fixed](#contained-is-not-fixed) | A guard drives the incident rate to zero while the agent's judgment stays exactly as wrong. | 3 use cases |
 | 4 | [Removing the tool displaces the intent](#removing-the-tool-displaces-the-intent) | Take the forbidden action out of the schema and the goal reroutes — through a legal-but-wrong channel, or into a claim that the work was done. | 2 use cases |
 | 5 | [Safety by inaction](#safety-by-inaction) | A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing. | 5 use cases |
 | 6 | [Prior over policy](#prior-over-policy) | The model's own sense of what's reasonable overrides the policy it just retrieved. | 4 use cases |
-| 7 | [Framing over evidence](#framing-over-evidence) | The agent believes how the input was described instead of checking what the tools say. | 3 use cases |
+| 7 | [Framing over evidence](#framing-over-evidence) | The agent believes how the input was described instead of checking what the tools say. | 4 use cases |
 | 8 | [Trust follows the channel, not the content](#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition. | 2 use cases |
 | 9 | [Ceremony is learned, prohibition is not](#ceremony-is-learned-prohibition-is-not) | Agents reliably obey 'do this first' and unreliably obey 'never do this'. | 2 use cases |
 | 10 | [Directional bias](#directional-bias) | Models don't err randomly — each errs in one direction, and the direction is a model property. | 5 use cases |
-| 11 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
-| 12 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
+| 11 | [The outcome can be right while the service fails](#the-outcome-can-be-right-while-the-service-fails) | Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse. | 1 use case |
+| 12 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
+| 13 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
 
 ---
 
@@ -35,7 +36,7 @@ reappearing in industries that share nothing but the shape of the agent.
 
 *The agent investigates correctly, reaches the right conclusion, and never commits it.*
 
-This is the most universal failure in the repo: found independently in **eight use cases**, across unrelated industries and three model families, without anyone designing for it. It is invisible to accuracy metrics — the runs that never submit are simply absent from the numerator — so a stalling agent can read as a careful one. **Read `submitted` before you read any accuracy or safety metric.**
+This is the most universal failure in the repo: found independently in **nine use cases**, across unrelated industries and three model families, without anyone designing for it. It is invisible to accuracy metrics — the runs that never submit are simply absent from the numerator — so a stalling agent can read as a careful one. **Read `submitted` before you read any accuracy or safety metric.**
 
 **Measured**
 
@@ -54,6 +55,7 @@ This is the most universal failure in the repo: found independently in **eight u
 - [`refund-crew` — Delegation is a handoff, and some models treat handoffs as completion](customer-support/refund-crew/FAILURE_MODES.md#2-delegation-is-a-handoff-and-some-models-treat-handoffs-as-completion)
 - [`artifact-admission-agent` — Safe only because it never finished (gpt-oss)](security-operations/artifact-admission-agent/FAILURE_MODES.md#4-safe-only-because-it-never-finished-gpt-oss)
 - [`trifecta-exfil-agent` — Safe by not finishing](security-operations/trifecta-exfil-agent/FAILURE_MODES.md#5-safe-by-not-finishing)
+- [`small-business-recovery-agent` — The empty-action closeout](public-sector/small-business-recovery-agent/FAILURE_MODES.md#6-the-empty-action-closeout)
 
 </details>
 
@@ -195,6 +197,7 @@ Every triage domain in this repo has a case that reads as one thing and is anoth
 - [`alert-triage-agent` — The scanner deception — trusting the alert text over the telemetry](security-operations/alert-triage-agent/FAILURE_MODES.md#1-the-scanner-deception-trusting-the-alert-text-over-the-telemetry)
 - [`fraud-alert-triage-agent` — Trusting the alert framing over a benign explanation (the travel deception)](financial-services-fraud/fraud-alert-triage-agent/FAILURE_MODES.md#1-trusting-the-alert-framing-over-a-benign-explanation-the-travel-deception)
 - [`release-qc-triage-agent` — Creative intent read as a defect (the "looks broken, is fine" deception)](media-streaming/release-qc-triage-agent/FAILURE_MODES.md#2-creative-intent-read-as-a-defect-the-looks-broken-is-fine-deception)
+- [`small-business-recovery-agent` — Accessibility attention displaces evidence checking](public-sector/small-business-recovery-agent/FAILURE_MODES.md#7-accessibility-attention-displaces-evidence-checking)
 
 </details>
 
@@ -262,6 +265,30 @@ Accuracy alone implies errors are symmetric. They are not: one model over-escala
 - [`alert-triage-agent` — Over-escalation — the opposite error, on a different model](security-operations/alert-triage-agent/FAILURE_MODES.md#3-over-escalation-the-opposite-error-on-a-different-model)
 - [`dpa-clause-review-agent` — The fabrication that was expected and did not occur](legal-compliance/dpa-clause-review-agent/FAILURE_MODES.md#5-the-fabrication-that-was-expected-and-did-not-occur)
 - [`vendor-payment-review-agent` — Verified vendors were overblocked while every risky change was held](procurement-finance/vendor-payment-review-agent/FAILURE_MODES.md#3-verified-vendors-were-overblocked-while-every-risky-change-was-held)
+
+</details>
+
+---
+
+## The outcome can be right while the service fails
+
+*Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse.*
+
+Outcome metrics see where a case landed, not what the person had to surrender or risk to get there. Service agents need a second gold object that binds the outcome to minimum evidence, accessible delivery, deadlines, recourse, rights, intent, and a truthful record. Otherwise an organization can optimize its queue while quietly transferring the cost to users.
+
+**Measured**
+
+- **small-business recovery baseline** — outcome accuracy and completion **1.000**; exact public value only **0.375** across 32 scenarios × 3 repeats
+- **administrative burden** — minimum-evidence compliance **0.625** because a one-document gap triggered the full checklist
+- **access and remedy** — accessible channel **0.875**, deadline protection **0.750**, and recourse only **0.375**
+
+<details><summary><b>Where it was observed</b></summary>
+
+- [`small-business-recovery-agent` — The outcome mirage](public-sector/small-business-recovery-agent/FAILURE_MODES.md#1-the-outcome-mirage)
+- [`small-business-recovery-agent` — The full-checklist reflex](public-sector/small-business-recovery-agent/FAILURE_MODES.md#2-the-full-checklist-reflex)
+- [`small-business-recovery-agent` — The portal default](public-sector/small-business-recovery-agent/FAILURE_MODES.md#3-the-portal-default)
+- [`small-business-recovery-agent` — Recourse disappears at the handoff](public-sector/small-business-recovery-agent/FAILURE_MODES.md#4-recourse-disappears-at-the-handoff)
+- [`small-business-recovery-agent` — The deadline is known but not preserved](public-sector/small-business-recovery-agent/FAILURE_MODES.md#5-the-deadline-is-known-but-not-preserved)
 
 </details>
 

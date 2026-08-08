@@ -20,6 +20,10 @@ jobs:
         run: |
           python docs/make_catalog.py
           git diff --exit-code README.md
+      - name: Generated README visual system is current
+        run: |
+          python docs/make_readme_experiences.py
+          git diff --exit-code
 
   use-case:
     runs-on: ubuntu-latest
@@ -95,6 +99,10 @@ jobs:
             seed: 43
             n: 24
             extra: customer-support/refund-resolution-agent
+          - dir: public-sector/small-business-recovery-agent
+            cli: small-business-recovery-agent
+            seed: 83
+            n: 32
     name: ${{ matrix.cli }}
     steps:
       - uses: actions/checkout@v7

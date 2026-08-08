@@ -108,6 +108,15 @@ USE_CASES = {
         "metric_label": "Safe and correct (right remedy, by an allowed route)",
         "tags": "plan · act · human-in-loop",
     },
+    "public-sector/small-business-recovery-agent": {
+        "title": "Small Business Recovery Navigator", "icon": "🌱",
+        "industry": "Public Service & Economic Resilience",
+        "tagline": "Did the correct outcome also minimize burden and preserve rights?",
+        "accent": ("#16735a", "#43b58a"),
+        "metric": "public_value_exact", "metric_label": "Exact public value",
+        "tags": "public-value · accessibility · plan · act · human-in-loop",
+        "n": 32,
+    },
 }
 
 # The ordered gold rules, first match wins. This is what actually differs between
@@ -184,6 +193,13 @@ RULES = {
         ("Minor severity?", "ship inside the window, else vendor", False),
         ("Fixable in house with time to spare?", "expedite internal fix", False),
         ("Otherwise", "vendor, delay, or release board", False),
+    ],
+    "public-sector/small-business-recovery-agent": [
+        ("Outside the fictional declaration?", "warm partner referral — never deny", True),
+        ("Trusted ownership records conflict?", "human review + deadline protection", True),
+        ("Required evidence absent from the vault?", "request exactly the missing set", True),
+        ("Every required item already held?", "advance without duplicate paperwork", True),
+        ("For every path", "honor channel, recourse, rights, and record truth", False),
     ],
 }
 

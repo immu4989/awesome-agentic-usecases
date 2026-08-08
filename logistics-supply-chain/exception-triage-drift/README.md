@@ -1,3 +1,9 @@
+<!-- README-EXPERIENCE:START -->
+<p align="center">
+  <img src="docs/experience.svg" width="100%" alt="Exception Triage Drift — animated case trace">
+</p>
+<!-- README-EXPERIENCE:END -->
+
 <p align="center">
   <a href="../../README.md">← all use cases</a> ·
   <img src="https://img.shields.io/badge/industry-Logistics-2a78d6" alt="industry">

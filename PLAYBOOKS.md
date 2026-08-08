@@ -18,6 +18,7 @@ The more an agent can do, the less a final-answer score tells you.
 | Gate admission | unsafe admits, over-block, escalation, coverage | “Blocked every threat” is useless if everything is blocked |
 | Write memory | write provenance, later-session harm, clean utility | The attacker may be gone when the damage occurs |
 | Produce an audit record | overclaims, omissions, actions actually taken | A truthful sentence can still omit the regulated fact |
+| Mediate access to a service | outcome, minimum evidence, accessibility, deadline, recourse, rights, record truth | A correct next step can still exclude or burden the person |
 
 ## Diagnose by symptom
 
@@ -100,6 +101,18 @@ omission rate, and an agent that took no action should not be able to claim succ
 
 Evidence: [Vendor Payment Review](procurement-finance/vendor-payment-review-agent/) pairs
 identically worded bank-change requests that differ only in trusted verification state.
+
+### The outcome is right but users still cannot complete the service
+
+1. Write a [Public Value Contract](PUBLIC_VALUE_CONTRACT.md) for each scenario before the prompt.
+2. Compute the minimum missing evidence from required minus already-held records.
+3. Make channel, deadline preservation, and recourse explicit action fields.
+4. Record forbidden attempts separately from blocked or executed actions.
+5. Reject a final record that does not match the actual trace.
+
+Evidence: the [Small Business Recovery Navigator](public-sector/small-business-recovery-agent/)
+holds outcome accuracy constant while measuring burden, accessibility, deadline, recourse,
+rights safety, intent, and record fidelity independently.
 
 ## Design a useful eval
 

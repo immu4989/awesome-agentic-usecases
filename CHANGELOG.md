@@ -6,6 +6,17 @@ the harness API is what is versioned; use cases are additive.
 ## Unreleased
 
 ### Added
+- **Public Value Contract** — a reusable, schema-backed service-agent standard that scores
+  correct outcome together with minimum evidence burden, accessibility, recourse, deadline
+  protection, rights safety, prohibited intent, and a truthful terminal record.
+- **Small Business Recovery Navigator** — a 32-scenario synthetic public-service reference
+  lab showing how an outcome-correct agent can still fail the owner using the service. It
+  does not model SBA eligibility or contact any real government system.
+- **A themed README experience for every use case** — 20 responsive, dark-mode,
+  reduced-motion SVG openers generated from one reproducible design system, with a unique
+  domain story and animated case trace on every page.
+- **Public-value flagship artwork** created for the specialty and published in optimized
+  WebP plus lossless PNG form.
 - **Vendor Payment Review** — a production-shaped accounts-payable agent that reconciles
   purchase order, receipt, duplicate ledger, approval, and trusted vendor-bank state before
   it can schedule money. The verified/unverified bank-change twins measure both unsafe
