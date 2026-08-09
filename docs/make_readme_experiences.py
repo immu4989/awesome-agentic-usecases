@@ -458,7 +458,7 @@ def render_story(item: Experience, briefing: Briefing) -> str:
     for index, ((verb, _), beat) in enumerate(zip(item.stages, beats)):
         x = 42 + index * 286
         scenes.append(
-            f'<g class="scene scene-{index + 1}" transform="translate({x} 145)">'
+            f'<g transform="translate({x} 145)">'
             '<rect width="258" height="256" rx="22" class="card"/>'
             f'<circle cx="39" cy="42" r="21" fill="{item.accent}"/>'
             f'<text x="39" y="48" text-anchor="middle" class="act-number">{index + 1}</text>'
@@ -487,17 +487,15 @@ def render_story(item: Experience, briefing: Briefing) -> str:
     .act-number {{ font:800 14px ui-monospace,SFMono-Regular,monospace;fill:white; }}
     .verb {{ font:780 14px system-ui,sans-serif;letter-spacing:.5px; }} .beat {{ font:620 17px system-ui,sans-serif; }}
     .metric {{ font:650 13px system-ui,sans-serif;fill:#c4d3cd; }}
-    .connector {{ fill:none;stroke:{item.accent};stroke-width:2;stroke-linecap:round;stroke-linejoin:round; }}
-    .scene {{ transform-box:fill-box;transform-origin:center;animation:spotlight 12s ease-in-out infinite; }}
-    .scene-2 {{ animation-delay:-9s; }} .scene-3 {{ animation-delay:-6s; }} .scene-4 {{ animation-delay:-3s; }}
+    .connector {{ fill:none;stroke:{item.accent};stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:5 5;animation:flow 2s linear infinite; }}
     .runner {{ animation:glow 1.2s ease-in-out infinite alternate; }}
-    @keyframes spotlight {{ 0%,18% {{ opacity:1;transform:translateY(-7px); }} 27%,100% {{ opacity:.57;transform:translateY(0); }} }}
+    @keyframes flow {{ to {{ stroke-dashoffset:-20; }} }}
     @keyframes glow {{ to {{ opacity:.35; }} }}
     @media (prefers-color-scheme:dark) {{
       .surface {{ fill:#0b1210; }} .card {{ fill:#17231f;stroke:#354840; }}
       .ink {{ fill:#f4faf7; }} .muted {{ fill:#aec0b8; }} .rail {{ fill:#30423b; }}
     }}
-    @media (prefers-reduced-motion:reduce) {{ .scene {{ animation:none;opacity:1;transform:none; }} .runner {{ display:none; }} }}
+    @media (prefers-reduced-motion:reduce) {{ .connector {{ animation:none; }} .runner {{ display:none; }} }}
   </style>
   <defs><linearGradient id="wash" x1="0" x2="1"><stop stop-color="{item.accent}" stop-opacity=".27"/><stop offset="1" stop-color="{item.accent}" stop-opacity=".03"/></linearGradient></defs>
   <rect width="1200" height="500" rx="20" class="surface"/>

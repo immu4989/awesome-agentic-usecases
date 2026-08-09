@@ -38,6 +38,12 @@ the harness API is what is versioned; use cases are additive.
 - A request template for users who have a real workflow to evaluate but do not intend to
   implement the use case themselves.
 
+### Fixed
+- **Four-act stories remain readable throughout their animation.** GitHub applied the CSS
+  transform animation in place of each card's SVG position, collapsing all four acts onto
+  one another. Act cards are now fixed at full opacity; motion is isolated to progress and
+  connector accents, and catalog CI rejects any future card-position or opacity animation.
+
 ### Changed
 - GitHub CI and Pages workflows now use the current Node 24-based official Action majors,
   removing runtime-deprecation annotations from otherwise successful builds.

@@ -70,6 +70,13 @@ def main() -> None:
             "failure-cards.svg",
         ):
             assert (directory / "docs" / asset).exists(), f"{item['path']} is missing docs/{asset}"
+        story_svg = (directory / "docs" / "story.svg").read_text()
+        assert story_svg.count('<rect width="258" height="256"') == 4, (
+            f"{item['path']} story must keep four fixed, readable act cards"
+        )
+        assert "animation:spotlight" not in story_svg and 'class="scene' not in story_svg, (
+            f"{item['path']} story must never animate card opacity or position"
+        )
 
     catalog_paths = set(paths)
     assert catalog_paths == discover_packages(), "catalog and runnable package directories differ"
