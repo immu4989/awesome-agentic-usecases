@@ -6,6 +6,22 @@ the harness API is what is versioned; use cases are additive.
 ## Unreleased
 
 ### Added
+- **Unemployment Claim Navigator** — a 32-scenario Employment & Social Insurance lab
+  that preserves appeal and weekly-certification paths, reuses records already held, honors
+  accessible channels, and never decides eligibility or bypasses identity safeguards. Two
+  committed model smoke suites add 48 measured runs and three reproducible failure modes.
+- **Farm Disaster Deadline Agent** — a 32-scenario Agriculture & Food Systems lab with an
+  exact set-valued deadline oracle across crop, livestock, and grazing routes. It catches
+  hidden program clocks, invented notices, repeated farm records, and false awards. Two
+  committed model smoke suites add 48 measured runs and three reproducible failure modes.
+- **Permit Readiness Agent** — a 32-scenario Housing & Construction lab that binds every
+  checklist to the exact jurisdiction, project class, rule identifier, and intake window.
+  It prepares a submission without certifying code compliance or pretending to approve a
+  permit. Two committed model smoke suites add 48 measured runs and three failure modes.
+- **Student Accommodation Navigator** — a 32-scenario Education Services lab that makes
+  sensitive-data minimization a programmatic gold metric while preserving accessible,
+  timely review by the authorized school team. It never diagnoses, decides, or denies an
+  accommodation. Two committed model smoke suites add 48 measured runs and three failure modes.
 - **Household Energy Lifeline** — a 32-scenario Energy & Utilities reference lab that
   tests whether an agent preserves an authorized essential-service path while minimizing
   evidence, honoring accessibility, protecting deadlines and recourse, and never inventing
@@ -16,16 +32,20 @@ the harness API is what is versioned; use cases are additive.
   catches invented awards, hidden sources, repeated evidence, lost deadlines, and false
   completion without modeling real coverage or federal eligibility. Two committed model
   smoke suites add another 48 measured runs and three reproducible failure modes.
-- **Committed industry expansion roadmap** — Energy & Utilities ships first, followed by
-  Insurance & Disaster Recovery; employment, agriculture, housing, and education remain in
-  an explicit public queue instead of disappearing into issue history.
+- **Completed committed industry expansion roadmap** — Energy & Utilities, Insurance &
+  Disaster Recovery, Employment & Social Insurance, Agriculture & Food Systems, Housing &
+  Construction, and Education Services now all ship as runnable, CI-enforced reference labs.
+- **Seven-path service map in the live explorer** — a responsive, color-coded entry point
+  helps users choose the public-value failure they need to prevent before browsing the full
+  catalog. The explorer now reports 26 use cases, 17 industries, 118 model evals, and 143
+  observed failure modes.
 - **Essential-service continuity in the Public Value Contract** — service agents can now
   be scored on whether they preserve a policy-authorized continuity path without inventing
   eligibility, promising an indefinite hold, or hiding the true service state.
-- **A complete visual case file for every use case** — all 22 READMEs now open with a
+- **A complete visual case file for every use case** — all 26 READMEs now open with a
   unique animated four-act story, domain-specific scenario anatomy, a responsive benchmark
   generated from committed non-mock results, a strongest-vs-weakest contrast, an exact
-  outcome/completion/latency/cost profile, and three observed-failure cards. The 132 case
+  outcome/completion/latency/cost profile, and three observed-failure cards. The 156 case
   visuals are dark-mode aware, accessible, lightweight, and reproducible from one generator.
 - **Public Value Contract** — a reusable, schema-backed service-agent standard that scores
   correct outcome together with minimum evidence burden, accessibility, recourse, deadline
@@ -33,7 +53,7 @@ the harness API is what is versioned; use cases are additive.
 - **Small Business Recovery Navigator** — a 32-scenario synthetic public-service reference
   lab showing how an outcome-correct agent can still fail the owner using the service. It
   does not model SBA eligibility or contact any real government system.
-- **A themed README experience for every use case** — 20 responsive, dark-mode,
+- **A themed README experience for every use case** — 26 responsive, dark-mode,
   reduced-motion SVG openers generated from one reproducible design system, with a unique
   domain story and animated case trace on every page.
 - **Public-value flagship artwork** created for the specialty and published in optimized

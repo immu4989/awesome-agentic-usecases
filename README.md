@@ -50,18 +50,23 @@ accuracy and safety evals miss: an agent can choose the correct next step while 
 duplicate paperwork, using an inaccessible channel, losing a deadline, removing recourse,
 or writing a false service record.
 
-Three reference labs now turn those obligations into machine-readable contracts and exact
+Seven reference labs now turn those obligations into machine-readable contracts and exact
 trace metrics: **[Small Business Recovery](public-sector/small-business-recovery-agent/)**,
-**[Household Energy Lifeline](energy-utilities/household-energy-lifeline/)**, and
-**[Disaster Claim and Aid Coordination](insurance-disaster-recovery/disaster-claim-aid-coordinator/)**.
-The latter two add exact essential-service continuity and compensation-source coordination.
+**[Household Energy Lifeline](energy-utilities/household-energy-lifeline/)**,
+**[Disaster Claim and Aid Coordination](insurance-disaster-recovery/disaster-claim-aid-coordinator/)**,
+**[Unemployment Claim Navigation](employment-social-insurance/unemployment-claim-navigator/)**,
+**[Farm Disaster Deadlines](agriculture-food-systems/farm-disaster-deadline-agent/)**,
+**[Permit Readiness](housing-construction/permit-readiness-agent/)**, and
+**[Student Accommodation Navigation](education-services/student-accommodation-navigator/)**.
+Together they add exact continuity, compensation-source, claim-clock, deadline-map,
+jurisdiction-rule, and sensitive-data-minimization proofs without automating protected decisions.
 
 ## What are you trying to do?
 
 | I want to… | Start here | What you get |
 |---|---|---|
 | **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Four short paths through routing, irreversible action, tool poisoning, and public-value failures |
-| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 22 verified use cases by industry, capability, or failure shape |
+| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 26 verified use cases by industry, capability, or failure shape |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
@@ -128,7 +133,7 @@ aau doctor                             # validate your checkout or fork
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="13 industries shipping, 110 verified model-evals, 131 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="17 industries shipping, 118 verified model-evals, 143 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -179,7 +184,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 131 failures, 13 patterns
+## 143 failures, 13 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -226,7 +231,7 @@ Every failure has a reproducing scenario id in
 
 ## Use cases
 
-**Not sure where to start?** [Search and filter all 22 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
+**Not sure where to start?** [Search and filter all 26 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
 by industry, capability, or failure shape.
 
 <!-- USE_CASES:START -->
@@ -255,6 +260,10 @@ by industry, capability, or failure shape.
 | [🌱 Small Business Recovery Navigator](public-sector/small-business-recovery-agent/) | Public Service & Economic Resilience | `public-value` `accessibility` `investigate` `plan` `act` `human-in-loop` | Can a service agent advance recovery while minimizing evidence burden and preserving accessibility, deadlines, recourse, rights, and a truthful record? |
 | [⚡ Household Energy Lifeline](energy-utilities/household-energy-lifeline/) | Energy & Utilities | `public-value` `service-continuity` `accessibility` `investigate` `act` `human-in-loop` | Can an agent preserve a household's available energy-service path without approving assistance, repeating evidence, or promising a hold? |
 | [🏠 Disaster Claim and Aid Coordinator](insurance-disaster-recovery/disaster-claim-aid-coordinator/) | Insurance & Disaster Recovery | `public-value` `source-coordination` `accessibility` `investigate` `plan` `human-in-loop` | Can an agent coordinate insurance and disaster aid without hiding compensation, duplicating evidence, losing a deadline, or deciding entitlement? |
+| [🧭 Unemployment Claim Navigator](employment-social-insurance/unemployment-claim-navigator/) | Employment & Social Insurance | `public-value` `appeal-preservation` `accessibility` `investigate` `act` `human-in-loop` | Can an agent preserve appeal and weekly-certification paths without repeating evidence, bypassing identity controls, or deciding eligibility? |
+| [🌾 Farm Disaster Deadline Agent](agriculture-food-systems/farm-disaster-deadline-agent/) | Agriculture & Food Systems | `public-value` `deadline-coordination` `accessibility` `investigate` `plan` `human-in-loop` | Can an agent preserve every applicable farm-disaster notice window without duplicating records, changing a loss date, or inventing an award? |
+| [🏗️ Permit Readiness Agent](housing-construction/permit-readiness-agent/) | Housing & Construction | `public-value` `rule-provenance` `accessibility` `investigate` `plan` `human-in-loop` | Can an agent prepare jurisdiction-specific permit intake without treating readiness as approval or code compliance? |
+| [🎓 Student Accommodation Navigator](education-services/student-accommodation-navigator/) | Education Services | `public-value` `data-minimization` `accessibility` `investigate` `plan` `human-in-loop` | Can an agent preserve a timely qualified-team handoff while refusing unnecessary sensitive records and never deciding an accommodation? |
 
 <!-- USE_CASES:END -->
 

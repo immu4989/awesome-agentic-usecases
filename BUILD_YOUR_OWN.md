@@ -22,6 +22,9 @@ yours, even if its industry does not.
 | Compares a defence with a baseline | [Refund Guarded](customer-support/refund-guarded/) |
 | Coordinates specialists | [Refund Crew](customer-support/refund-crew/) |
 | Mediates access to a consequential service | [Small Business Recovery](public-sector/small-business-recovery-agent/) + [Public Value Contract](PUBLIC_VALUE_CONTRACT.md) |
+| Must preserve several parallel filing windows | [Farm Disaster Deadline](agriculture-food-systems/farm-disaster-deadline-agent/) or [Unemployment Claim Navigation](employment-social-insurance/unemployment-claim-navigator/) |
+| Must prove which jurisdictional rule it used | [Permit Readiness](housing-construction/permit-readiness-agent/) |
+| Must minimize sensitive evidence before human review | [Student Accommodation](education-services/student-accommodation-navigator/) |
 
 Use `aau show <name>` to inspect an entry and `aau start <name>` for its exact local
 installation order.

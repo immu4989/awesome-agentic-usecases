@@ -112,7 +112,11 @@ identically worded bank-change requests that differ only in trusted verification
 
 Evidence: the [Small Business Recovery Navigator](public-sector/small-business-recovery-agent/)
 holds outcome accuracy constant while measuring burden, accessibility, deadline, recourse,
-rights safety, intent, and record fidelity independently.
+rights safety, intent, and record fidelity independently. The same contract now has exact
+extensions for [claim paths](employment-social-insurance/unemployment-claim-navigator/),
+[multi-program deadlines](agriculture-food-systems/farm-disaster-deadline-agent/),
+[jurisdiction rules](housing-construction/permit-readiness-agent/), and
+[sensitive-data minimization](education-services/student-accommodation-navigator/).
 
 ## Design a useful eval
 

@@ -42,10 +42,10 @@ policy, but new ideas do not silently displace an earlier commitment.
 |---:|---|---|---|---|
 | 1 | Energy & Utilities | **[Household Energy Lifeline](energy-utilities/household-energy-lifeline/)** | **Shipping** | Preserve essential-service options, minimum evidence, accessibility, deadlines, recourse, and truthful completion together |
 | 2 | Insurance & Disaster Recovery | **[Disaster Claim and Aid Coordinator](insurance-disaster-recovery/disaster-claim-aid-coordinator/)** | **Shipping** | Coordinate insurer and public-aid paths without double-counting compensation or deciding entitlement |
-| 3 | Employment & Social Insurance | Unemployment Claim Navigator | Later | Explain status and protect appeal paths without adjudicating eligibility or identity exceptions |
-| 4 | Agriculture & Food Systems | Farm Disaster Deadline Agent | Later | Reuse held records across program-specific notice windows without inventing an award |
-| 5 | Housing & Construction | Permit Readiness Agent | Later | Validate a jurisdiction-specific submission without claiming that a permit will be approved |
-| 6 | Education Services | Student Accommodation Navigator | Later · domain partner required | Minimize sensitive evidence and preserve a timely human accommodation decision |
+| 3 | Employment & Social Insurance | **[Unemployment Claim Navigator](employment-social-insurance/unemployment-claim-navigator/)** | **Shipping** | Explain status and protect appeal and weekly-certification paths without adjudicating eligibility or identity exceptions |
+| 4 | Agriculture & Food Systems | **[Farm Disaster Deadline Agent](agriculture-food-systems/farm-disaster-deadline-agent/)** | **Shipping** | Preserve the exact set of program-specific notice windows while reusing held farm records and never inventing an award |
+| 5 | Housing & Construction | **[Permit Readiness Agent](housing-construction/permit-readiness-agent/)** | **Shipping** | Bind the packet to the exact jurisdiction and project rule without claiming the permit will be approved |
+| 6 | Education Services | **[Student Accommodation Navigator](education-services/student-accommodation-navigator/)** | **Shipping · domain review required** | Minimize sensitive evidence and preserve a timely, accessible human accommodation decision |
 
 The first lab also extends the [Public Value Contract](PUBLIC_VALUE_CONTRACT.md) with an
 optional, exact **essential-service continuity** obligation. That reusable specialty is
@@ -64,6 +64,13 @@ where a correct referral can still arrive too late to prevent immediate harm.
 | Small-business owners, workers, and service teams | [Small Business Recovery](public-sector/small-business-recovery-agent/) | Correct outcome hides duplicate evidence, inaccessible delivery, lost deadlines, or missing recourse |
 | Households facing loss of essential energy service | [Household Energy Lifeline](energy-utilities/household-energy-lifeline/) | Correct emergency routing omits continuity, repeats evidence, or overstates what was approved |
 | Disaster survivors moving across insurers and aid programs | [Disaster Claim and Aid Coordinator](insurance-disaster-recovery/disaster-claim-aid-coordinator/) | Correct next-step routing hides compensation sources, duplicates a shared file, or invents an award |
+| Claimants navigating unemployment services | [Unemployment Claim Navigator](employment-social-insurance/unemployment-claim-navigator/) | A correct status explanation omits an appeal, weekly certification, accessible channel, or evidence already on file |
+| Producers recovering from crop, livestock, and grazing losses | [Farm Disaster Deadline Agent](agriculture-food-systems/farm-disaster-deadline-agent/) | The first helpful deadline hides another applicable program clock or repeats farm records |
+| Small builders and permit applicants | [Permit Readiness Agent](housing-construction/permit-readiness-agent/) | A complete-looking packet is bound to the wrong jurisdiction, project class, or current intake rule |
+| Students, families, and school teams | [Student Accommodation Navigator](education-services/student-accommodation-navigator/) | The route over-collects sensitive records, loses the timely review, or implies the agent decided the accommodation |
+
+The committed six-industry queue is now complete. New candidates remain below so domain
+owners can see the next service gaps without displacing work that was already promised.
 
 ## Highest-value next labs
 
@@ -79,9 +86,8 @@ the repo should not invent the policy on its own.
 | 5 | Disabled users and content teams | Find accessibility defects and create a remediation plan | issue coverage, false assurance, severity, verified fix state | Never claim conformance from automated checks alone | **Ready** · investigate + gate |
 | 6 | Patients requesting medication refills | Check identity, remaining authorization, recent changes, and route the request | wrong-patient action, expired authorization, interaction omission, escalation | Never prescribe, change dosage, or override a clinician | **Domain partner needed** · plan + act |
 | 7 | Families coordinating home or field service | Diagnose scheduling and parts prerequisites, then book or escalate safely | wrong dispatch, repeat visit, unsafe DIY advice, completion fidelity | Emergency and safety-critical conditions escalate immediately | **Ready** · fork [Exception Triage](logistics-supply-chain/exception-triage-agent/) |
-| 8 | Students and educators | Assemble accommodation evidence and route a request without exposing unrelated records | required-document coverage, privacy leakage, deadline, faithful handoff | The authorized school team makes the accommodation decision | **Domain partner needed** · gate + record-fidelity |
-| 9 | Small nonprofits | Match grant obligations to evidence and draft a submission checklist | requirement omission, unsupported claim, deadline, source provenance | Never fabricate outcomes or certify a filing | **Ready** · fork [DPA Review](legal-compliance/dpa-clause-review-agent/) |
-| 10 | Knowledge workers and researchers | Verify claims against cited sources before a report ships | citation entailment, source freshness, unsupported claim, correction coverage | Human owns interpretation and publication | **Ready** · investigate + decide |
+| 8 | Small nonprofits | Match grant obligations to evidence and draft a submission checklist | requirement omission, unsupported claim, deadline, source provenance | Never fabricate outcomes or certify a filing | **Ready** · fork [DPA Review](legal-compliance/dpa-clause-review-agent/) |
+| 9 | Knowledge workers and researchers | Verify claims against cited sources before a report ships | citation entailment, source freshness, unsupported claim, correction coverage | Human owns interpretation and publication | **Ready** · investigate + decide |
 
 ## How a candidate becomes a lab
 

@@ -277,6 +277,7 @@ PATTERNS = [
             ("small-business recovery baseline", "outcome accuracy and completion **1.000**; exact public value only **0.375** across 32 scenarios × 3 repeats"),
             ("household energy baseline", "outcome accuracy **1.000**; exact public value **0.250** after continuity, evidence, access, deadline, recourse, and record truth are combined"),
             ("disaster claim-and-aid baseline", "outcome accuracy **1.000**; exact public value **0.125** when known compensation sources and service obligations must also be exact"),
+            ("four new service baselines", "outcome accuracy **1.000** in unemployment, farm-disaster, permit, and student navigation while their distinctive exact metrics ranged from **0.250 to 0.875**"),
             ("administrative burden", "minimum-evidence compliance **0.625** because a one-document gap triggered the full checklist"),
             ("access and remedy", "accessible channel **0.875**, deadline protection **0.750**, and recourse only **0.375**"),
         ],
@@ -290,6 +291,10 @@ PATTERNS = [
             ("energy-utilities/household-energy-lifeline", "Medical minimization"),
             ("insurance-disaster-recovery/disaster-claim-aid-coordinator", "referral is recorded"),
             ("insurance-disaster-recovery/disaster-claim-aid-coordinator", "Overlap review asks"),
+            ("employment-social-insurance/unemployment-claim-navigator", "Correct appeal route"),
+            ("agriculture-food-systems/farm-disaster-deadline-agent", "first deadline hides"),
+            ("housing-construction/permit-readiness-agent", "Residential rule applied"),
+            ("education-services/student-accommodation-navigator", "voluntary offer"),
         ],
     },
     {

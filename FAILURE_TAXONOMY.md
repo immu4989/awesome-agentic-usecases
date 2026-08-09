@@ -1,6 +1,6 @@
 # The Agent Failure Taxonomy
 
-**131 failure modes, observed across 22 use cases, 13 recurring patterns.**
+**143 failure modes, observed across 26 use cases, 13 recurring patterns.**
 
 Every entry below was *measured*, not hypothesised — each links to the run that
 produced it, with a reproducing input. Read individually the failures look
@@ -26,7 +26,7 @@ reappearing in industries that share nothing but the shape of the agent.
 | 8 | [Trust follows the channel, not the content](#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition. | 2 use cases |
 | 9 | [Ceremony is learned, prohibition is not](#ceremony-is-learned-prohibition-is-not) | Agents reliably obey 'do this first' and unreliably obey 'never do this'. | 2 use cases |
 | 10 | [Directional bias](#directional-bias) | Models don't err randomly — each errs in one direction, and the direction is a model property. | 5 use cases |
-| 11 | [The outcome can be right while the service fails](#the-outcome-can-be-right-while-the-service-fails) | Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse. | 3 use cases |
+| 11 | [The outcome can be right while the service fails](#the-outcome-can-be-right-while-the-service-fails) | Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse. | 7 use cases |
 | 12 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
 | 13 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
 
@@ -281,6 +281,7 @@ Outcome metrics see where a case landed, not what the person had to surrender or
 - **small-business recovery baseline** — outcome accuracy and completion **1.000**; exact public value only **0.375** across 32 scenarios × 3 repeats
 - **household energy baseline** — outcome accuracy **1.000**; exact public value **0.250** after continuity, evidence, access, deadline, recourse, and record truth are combined
 - **disaster claim-and-aid baseline** — outcome accuracy **1.000**; exact public value **0.125** when known compensation sources and service obligations must also be exact
+- **four new service baselines** — outcome accuracy **1.000** in unemployment, farm-disaster, permit, and student navigation while their distinctive exact metrics ranged from **0.250 to 0.875**
 - **administrative burden** — minimum-evidence compliance **0.625** because a one-document gap triggered the full checklist
 - **access and remedy** — accessible channel **0.875**, deadline protection **0.750**, and recourse only **0.375**
 
@@ -295,6 +296,10 @@ Outcome metrics see where a case landed, not what the person had to surrender or
 - [`household-energy-lifeline` — Medical minimization becomes a new full-checklist request](energy-utilities/household-energy-lifeline/FAILURE_MODES.md#2-medical-minimization-becomes-a-new-full-checklist-request)
 - [`disaster-claim-aid-coordinator` — A referral is recorded as money already received](insurance-disaster-recovery/disaster-claim-aid-coordinator/FAILURE_MODES.md#1-a-referral-is-recorded-as-money-already-received)
 - [`disaster-claim-aid-coordinator` — Overlap review asks for the entire file again](insurance-disaster-recovery/disaster-claim-aid-coordinator/FAILURE_MODES.md#2-overlap-review-asks-for-the-entire-file-again)
+- [`unemployment-claim-navigator` — Correct appeal route, expired filing path](employment-social-insurance/unemployment-claim-navigator/FAILURE_MODES.md#1-correct-appeal-route-expired-filing-path)
+- [`farm-disaster-deadline-agent` — The first deadline hides the second](agriculture-food-systems/farm-disaster-deadline-agent/FAILURE_MODES.md#1-the-first-deadline-hides-the-second)
+- [`permit-readiness-agent` — Residential rule applied to a commercial project](housing-construction/permit-readiness-agent/FAILURE_MODES.md#1-residential-rule-applied-to-a-commercial-project)
+- [`student-accommodation-navigator` — A voluntary offer becomes unnecessary collection](education-services/student-accommodation-navigator/FAILURE_MODES.md#1-a-voluntary-offer-becomes-unnecessary-collection)
 
 </details>
 

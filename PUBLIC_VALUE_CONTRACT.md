@@ -102,14 +102,23 @@ metrics = score_public_value(contract, PublicValueTrace(
 
 The serialized contract format is defined by
 [`public-value-contract.schema.json`](docs/standards/public-value-contract.schema.json).
-Three reference implementations show different service obligations:
+Seven reference implementations show how a common service contract can carry a precise,
+domain-specific proof without turning the agent into the protected decision-maker:
 
 - [Small Business Recovery Navigator](public-sector/small-business-recovery-agent/) — the
   general burden, accessibility, deadline, recourse, rights, and record contract;
 - [Household Energy Lifeline](energy-utilities/household-energy-lifeline/) — optional exact
   essential-service continuity;
 - [Disaster Claim and Aid Coordinator](insurance-disaster-recovery/disaster-claim-aid-coordinator/)
-  — Public Value Contract plus exact compensation-source coordination.
+  — exact compensation-source coordination;
+- [Unemployment Claim Navigator](employment-social-insurance/unemployment-claim-navigator/)
+  — appeal and weekly-certification path preservation;
+- [Farm Disaster Deadline Agent](agriculture-food-systems/farm-disaster-deadline-agent/)
+  — exact set-valued program deadline mapping;
+- [Permit Readiness Agent](housing-construction/permit-readiness-agent/)
+  — exact jurisdiction and rule provenance;
+- [Student Accommodation Navigator](education-services/student-accommodation-navigator/)
+  — sensitive-data minimization before qualified-team review.
 
 ## What this standard does not claim
 
