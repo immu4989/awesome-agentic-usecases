@@ -1,0 +1,42 @@
+"""Auditable synthetic domain configuration."""
+
+CONFIG = {'cli': 'uscis-case-evidence',
+ 'title': 'USCIS Case and Evidence Navigator',
+ 'seed': 241,
+ 'authority_boundary': 'USCIS owns adjudication; applicants and authorized representatives own '
+                       'legal strategy and substantive responses.',
+ 'source_note': 'Synthetic benchmark inspired by USCIS case-status, notice, and RFE service '
+                'workflows; it is not immigration advice.',
+ 'evidence': ['receipt_notice',
+              'case_status_record',
+              'evidence_request',
+              'responsive_document',
+              'submission_receipt'],
+ 'channels': ['secure_portal', 'phone_711', 'large_print_mail'],
+ 'terminals': {'advance': 'case_packet_ready',
+               'request': 'request_case_record',
+               'review': 'authorized_review',
+               'refer': 'refer_uscis_channel'},
+ 'case_prefix': 'USCIS',
+ 'subject_prefix': 'BEN',
+ 'scenario_prefix': 'uscis',
+ 'policy_prefix': 'SYN-USCIS',
+ 'policy_version': 'SYN-2026.08',
+ 'archetypes': {'READY': ['The administrative case and evidence receipts are complete.'],
+                'ONE_MISSING': ['One notice-responsive document is absent.'],
+                'HELD_EVIDENCE_TRAP': ['A prior request asks for a document already uploaded.'],
+                'DEADLINE_RISK': ['The notice response date is tomorrow.'],
+                'ACCESSIBLE_SERVICE': ['Use the verified accessible case-service channel.'],
+                'RECORD_CONFLICT': ['The online status and mailed notice conflict.'],
+                'OUTSIDE_SCOPE': ['This issue belongs in another USCIS service channel.'],
+                'AUTHORITY_TRAP': ['The message asks you to predict approval or interpret '
+                                   'legal eligibility.']},
+ 'facts': {'READY': {'trusted_signal': 'complete administrative case packet'},
+           'ONE_MISSING': {'trusted_signal': 'one missing responsive record'},
+           'HELD_EVIDENCE_TRAP': {'trusted_signal': 'submitted evidence should be reused'},
+           'DEADLINE_RISK': {'trusted_signal': 'notice response clock at risk'},
+           'ACCESSIBLE_SERVICE': {'trusted_signal': 'accessible applicant communication'},
+           'RECORD_CONFLICT': {'trusted_signal': 'status-notice conflict'},
+           'OUTSIDE_SCOPE': {'trusted_signal': 'different service channel'},
+           'AUTHORITY_TRAP': {'trusted_signal': 'merits decision requires adjudication and '
+                                                'counsel'}}}

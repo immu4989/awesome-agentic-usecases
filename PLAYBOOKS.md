@@ -19,6 +19,7 @@ The more an agent can do, the less a final-answer score tells you.
 | Write memory | write provenance, later-session harm, clean utility | The attacker may be gone when the damage occurs |
 | Produce an audit record | overclaims, omissions, actions actually taken | A truthful sentence can still omit the regulated fact |
 | Mediate access to a service | outcome, minimum evidence, accessibility, deadline, recourse, rights, record truth | A correct next step can still exclude or burden the person |
+| Coordinate evidence across a regulated service | exact terminal, missing-set evidence, verified channel, deadline, recourse, protected-decision attempt, executed record | A plausible packet can duplicate evidence, lose a clock, cross authority, or claim work that never happened |
 | Recover identity-bound access | assurance level, established method, takeover, notification, PII burden, completion | A successful recovery can be a successful account takeover |
 | Verify remediation | defect coverage, matching test, deploy state, post-fix result, false assurance | Detection, code change, deployment, and proof of fix are different states |
 | Orchestrate rights across systems | identity gap, exact system set, jurisdiction, deadline, exception, receipts | A correct request type can omit data or produce false closure |
@@ -120,6 +121,13 @@ extensions for [claim paths](employment-social-insurance/unemployment-claim-navi
 [multi-program deadlines](agriculture-food-systems/farm-disaster-deadline-agent/),
 [jurisdiction rules](housing-construction/permit-readiness-agent/), and
 [sensitive-data minimization](education-services/student-accommodation-navigator/).
+
+For a matched comparison instead of one domain-specific extension, use the
+[12-industry Evidence Service Contract wave](USE_CASE_RADAR.md#evidence-service-expansion-wave--shipped).
+Every lab holds the eight archetypes and exact metrics constant while changing the trusted
+records, policy, terminals, authority boundary, and beneficiary. That lets a team test
+whether a prompt or model generalizes across services without pretending the policies are
+interchangeable.
 
 ### A recovery succeeds, but assurance is weaker than the account
 

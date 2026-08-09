@@ -1057,6 +1057,45 @@ def install(item: Experience) -> None:
     readme.write_text(opener + body.lstrip(), encoding="utf-8")
 
 
+def load_external_visual_briefs() -> None:
+    """Load contributor-owned visual briefs without growing this central source table."""
+    global EXPERIENCES
+
+    known = {item.path for item in EXPERIENCES}
+    additions: list[Experience] = []
+    for visual_path in sorted(ROOT.glob("*/*/visual.json")):
+        path = str(visual_path.parent.relative_to(ROOT))
+        if path in known:
+            continue
+        data = json.loads(visual_path.read_text(encoding="utf-8"))
+        additions.append(
+            Experience(
+                path=path,
+                title=data["title"],
+                icon=data["icon"],
+                industry=data["industry"],
+                tagline=data["tagline"],
+                accent=data["accent"],
+                stages=tuple(tuple(stage) for stage in data["stages"]),
+            )
+        )
+        brief = data["briefing"]
+        BRIEFINGS[path] = Briefing(
+            metric=brief["metric"],
+            metric_label=brief["metric_label"],
+            cards=tuple(tuple(card) for card in brief["cards"]),
+            invert=bool(brief.get("invert", False)),
+            raw=bool(brief.get("raw", False)),
+        )
+        story = data["story"]
+        STORIES[path] = (story["headline"], tuple(story["beats"]))
+        known.add(path)
+    EXPERIENCES += tuple(additions)
+
+
+load_external_visual_briefs()
+
+
 def main() -> None:
     experience_paths = {item.path for item in EXPERIENCES}
     assert experience_paths == set(BRIEFINGS), "every experience needs exactly one visual case file"

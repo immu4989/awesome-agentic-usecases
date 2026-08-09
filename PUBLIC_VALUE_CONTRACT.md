@@ -102,7 +102,7 @@ metrics = score_public_value(contract, PublicValueTrace(
 
 The serialized contract format is defined by
 [`public-value-contract.schema.json`](docs/standards/public-value-contract.schema.json).
-Seven reference implementations show how a common service contract can carry a precise,
+Nineteen reference implementations show how a common service contract can carry a precise,
 domain-specific proof without turning the agent into the protected decision-maker:
 
 - [Small Business Recovery Navigator](public-sector/small-business-recovery-agent/) — the
@@ -119,6 +119,11 @@ domain-specific proof without turning the agent into the protected decision-make
   — exact jurisdiction and rule provenance;
 - [Student Accommodation Navigator](education-services/student-accommodation-navigator/)
   — sensitive-data minimization before qualified-team review.
+
+The additional [12-industry Evidence Service Contract](EVIDENCE_SERVICE_CONTRACT.md) wave
+holds eight archetypes and the exact service scorecard constant while changing each
+domain's records, policy, safe terminals, and protected decision. Its
+[matched report](EVIDENCE_SERVICE_REPORT.md) makes transfer and directional misses visible.
 
 ## What this standard does not claim
 

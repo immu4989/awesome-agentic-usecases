@@ -28,6 +28,7 @@ yours, even if its industry does not.
 | Recovers an account under assurance and takeover risk | [Account Recovery Assurance](identity-access/account-recovery-assurance-agent/) |
 | Must distinguish finding, fixing, deploying, and verifying | [Accessibility Remediation](accessibility-digital-services/accessibility-remediation-verifier/) |
 | Must cover an exact system set and prove completion | [Privacy Rights Orchestration](privacy-data-governance/privacy-rights-orchestrator/) |
+| Must coordinate exact evidence and protect access, clocks, recourse, and human authority | Any lab in the [12-industry Evidence Service Contract wave](USE_CASE_RADAR.md#evidence-service-expansion-wave--shipped) |
 
 Use `aau show <name>` to inspect an entry and `aau start <name>` for its exact local
 installation order.
@@ -115,8 +116,10 @@ results. The [Verification Bar](VERIFICATION.md) explains why each requirement e
 - Put domain changes in the use-case package; keep reusable primitives in `harness/`.
 - Add the use case to `docs/use-cases.json`, the CI matrix, and any relevant generated
   artifact lists.
-- Add its four-act domain story, benchmark metric, and scenario anatomy to
-  `docs/make_readme_experiences.py`; commit the generated `experience.svg`, `story-v2.svg`,
+- Add a local `visual.json` with its four-stage path, four-act domain story, benchmark
+  metric, and scenario anatomy. `docs/make_readme_experiences.py` discovers this brief
+  automatically; use the central file only for older labs that predate local briefs.
+  Commit the generated `experience.svg`, `story-v2.svg`,
   `scenario-map.svg`, `benchmark.svg`, `contrast.svg`, `result-profile.svg`, and
   `failure-cards.svg`. CI checks that every use case has the full visual case file and that
   it is current with committed evidence.

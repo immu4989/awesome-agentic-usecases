@@ -35,7 +35,8 @@ plausible rather than authoritative.
 
 ## 3. Sample sizes are small and the intervals are wide
 
-The standard is 30 scenarios × 3 repeats = 90 runs per model per use case. Bootstrap 95%
+The standard is typically 30 or 32 scenarios × at least 3 repeats per model per use case.
+Bootstrap 95%
 intervals frequently span 0.15–0.25. Two models separated by a few points are **not**
 distinguishable, and the tables should not be read as rankings when intervals overlap.
 
@@ -44,14 +45,14 @@ not a fix.
 
 ## 4. Multiple comparisons are not corrected
 
-Across 13 use cases, several metrics each, and up to five models, the repository performs
+Across 41 use cases, several metrics each, and up to five models, the repository performs
 many implicit comparisons. No family-wise or false-discovery correction is applied. Some
 "findings" at the level of a single use case will be noise.
 
 This is why the [failure taxonomy](FAILURE_TAXONOMY.md) is organised around patterns that
 recur **independently across domains** rather than around any single result. A pattern seen
-in eight of thirteen use cases is robust to this concern in a way that one surprising number
-is not. Single-use-case results should be read as observations, not established effects.
+repeatedly in unrelated services is more robust to this concern than one surprising number.
+Single-use-case results should be read as observations, not established effects.
 
 ## 5. Some results ran against floating model aliases
 

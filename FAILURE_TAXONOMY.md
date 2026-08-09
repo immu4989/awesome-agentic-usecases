@@ -1,6 +1,6 @@
 # The Agent Failure Taxonomy
 
-**152 failure modes, observed across 29 use cases, 13 recurring patterns.**
+**188 failure modes, observed across 41 use cases, 13 recurring patterns.**
 
 Every entry below was *measured*, not hypothesised — each links to the run that
 produced it, with a reproducing input. Read individually the failures look
@@ -26,7 +26,7 @@ reappearing in industries that share nothing but the shape of the agent.
 | 8 | [Trust follows the channel, not the content](#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition. | 2 use cases |
 | 9 | [Ceremony is learned, prohibition is not](#ceremony-is-learned-prohibition-is-not) | Agents reliably obey 'do this first' and unreliably obey 'never do this'. | 2 use cases |
 | 10 | [Directional bias](#directional-bias) | Models don't err randomly — each errs in one direction, and the direction is a model property. | 5 use cases |
-| 11 | [The outcome can be right while the service fails](#the-outcome-can-be-right-while-the-service-fails) | Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse. | 7 use cases |
+| 11 | [The outcome can be right while the service fails](#the-outcome-can-be-right-while-the-service-fails) | Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse. | 19 use cases |
 | 12 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
 | 13 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
 
@@ -282,8 +282,9 @@ Outcome metrics see where a case landed, not what the person had to surrender or
 - **household energy baseline** — outcome accuracy **1.000**; exact public value **0.250** after continuity, evidence, access, deadline, recourse, and record truth are combined
 - **disaster claim-and-aid baseline** — outcome accuracy **1.000**; exact public value **0.125** when known compensation sources and service obligations must also be exact
 - **four new service baselines** — outcome accuracy **1.000** in unemployment, farm-disaster, permit, and student navigation while their distinctive exact metrics ranged from **0.250 to 0.875**
+- **twelve-industry evidence-service baseline** — outcome accuracy **0.875** but exact service only **0.250** in every matched 32-scenario × 3-repeat suite; the common gaps are duplicate evidence, lost access/date/recourse, and authority crossing
 - **administrative burden** — minimum-evidence compliance **0.625** because a one-document gap triggered the full checklist
-- **access and remedy** — accessible channel **0.875**, deadline protection **0.750**, and recourse only **0.375**
+- **access and remedy** — the matched evidence-service baseline keeps accessible channel and deadline protection at **0.875**, while recourse falls to **0.250**
 
 <details><summary><b>Where it was observed</b></summary>
 
@@ -300,6 +301,18 @@ Outcome metrics see where a case landed, not what the person had to surrender or
 - [`farm-disaster-deadline-agent` — The first deadline hides the second](agriculture-food-systems/farm-disaster-deadline-agent/FAILURE_MODES.md#1-the-first-deadline-hides-the-second)
 - [`permit-readiness-agent` — Residential rule applied to a commercial project](housing-construction/permit-readiness-agent/FAILURE_MODES.md#1-residential-rule-applied-to-a-commercial-project)
 - [`student-accommodation-navigator` — A voluntary offer becomes unnecessary collection](education-services/student-accommodation-navigator/FAILURE_MODES.md#1-a-voluntary-offer-becomes-unnecessary-collection)
+- [`food-recall-traceability-coordinator` — The complete-checklist reflex](food-safety-manufacturing/food-recall-traceability-coordinator/FAILURE_MODES.md#1-the-complete-checklist-reflex)
+- [`drinking-water-notice-coordinator` — Unknown becomes a conclusion](water-sanitation/drinking-water-notice-coordinator/FAILURE_MODES.md#1-unknown-becomes-a-conclusion)
+- [`irs-notice-response-navigator` — The due date disappears](federal-taxpayer-services/irs-notice-response-navigator/FAILURE_MODES.md#2-the-due-date-disappears)
+- [`veterans-claim-evidence-navigator` — The claim file is rebuilt](veterans-services/veterans-claim-evidence-navigator/FAILURE_MODES.md#1-the-claim-file-is-rebuilt)
+- [`paratransit-access-coordinator` — The accessibility process is inaccessible](public-transit-mobility/paratransit-access-coordinator/FAILURE_MODES.md#2-the-accessibility-process-is-inaccessible)
+- [`foia-routing-appeal-navigator` — The request starts over](government-transparency/foia-routing-appeal-navigator/FAILURE_MODES.md#1-the-request-starts-over)
+- [`uscis-case-evidence-navigator` — The whole immigration file is requested](immigration-citizenship/uscis-case-evidence-navigator/FAILURE_MODES.md#1-the-whole-immigration-file-is-requested)
+- [`export-transaction-evidence-agent` — Classification becomes clearance](manufacturing-international-trade/export-transaction-evidence-agent/FAILURE_MODES.md#1-classification-becomes-clearance)
+- [`school-meal-access-coordinator` — Direct certification is ignored](child-nutrition-family-services/school-meal-access-coordinator/FAILURE_MODES.md#1-direct-certification-is-ignored)
+- [`provisional-ballot-status-navigator` — Registration facts become ballot status](election-administration/provisional-ballot-status-navigator/FAILURE_MODES.md#1-registration-facts-become-ballot-status)
+- [`hospital-discharge-readiness-coordinator` — Paper completeness becomes readiness](care-transitions/hospital-discharge-readiness-coordinator/FAILURE_MODES.md#1-paper-completeness-becomes-readiness)
+- [`occupational-license-mobility-navigator` — Reciprocity becomes a promise](workforce-mobility/occupational-license-mobility-navigator/FAILURE_MODES.md#1-reciprocity-becomes-a-promise)
 
 </details>
 

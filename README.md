@@ -17,6 +17,8 @@
   <a href="PLAYBOOKS.md">Playbooks</a> ·
   <a href="USE_CASE_RADAR.md">Use-case radar</a> ·
   <a href="PUBLIC_VALUE_CONTRACT.md">Public Value Contract</a> ·
+  <a href="EVIDENCE_SERVICE_CONTRACT.md">Evidence Service Contract</a> ·
+  <a href="EVIDENCE_SERVICE_REPORT.md">Matched report</a> ·
   <a href="BUILD_YOUR_OWN.md">Build your own</a> ·
   <a href="FAILURE_TAXONOMY.md">Failure taxonomy</a> ·
   <a href="#there-is-no-best-model">Results</a> ·
@@ -38,21 +40,30 @@ real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
 
-## New release: trust, access, and proof
+## New release: one exact service contract, twelve new industries
 
-Three new runnable labs cover failures that affect nearly every digital service:
+Twelve research-backed ideas are now runnable evaluation labs—not demo folders or roadmap
+promises. Each ships 32 synthetic scenarios across eight balanced archetypes, strict tools,
+programmatic ground truth, three-repeat deterministic and real-model runs, observed failure
+modes, official-source grounding, and a domain-specific visual case file.
 
-- **[Account Recovery Assurance](identity-access/account-recovery-assurance-agent/)** tests
-  whether urgent recovery stays assurance-matched, takeover-resistant, PII-minimal, and notified.
-- **[Accessibility Remediation Verification](accessibility-digital-services/accessibility-remediation-verifier/)**
-  joins automated and manual evidence, tracks proof of fix, and blocks unsupported conformance claims.
-- **[Privacy Rights Orchestration](privacy-data-governance/privacy-rights-orchestrator/)** maps
-  access, deletion, and correction across exact systems while preserving identity, clocks,
-  recourse, exceptions, and truthful completion.
+| Public infrastructure | People and accountable services | Economic coordination |
+|---|---|---|
+| [Food recall traceability](food-safety-manufacturing/food-recall-traceability-coordinator/) | [IRS notice response](federal-taxpayer-services/irs-notice-response-navigator/) | [Export transaction evidence](manufacturing-international-trade/export-transaction-evidence-agent/) |
+| [Drinking-water notices](water-sanitation/drinking-water-notice-coordinator/) | [Veterans claim evidence](veterans-services/veterans-claim-evidence-navigator/) | [Occupational-license mobility](workforce-mobility/occupational-license-mobility-navigator/) |
+| [Paratransit access](public-transit-mobility/paratransit-access-coordinator/) | [USCIS case evidence](immigration-citizenship/uscis-case-evidence-navigator/) | [Hospital discharge readiness](care-transitions/hospital-discharge-readiness-coordinator/) |
+| [FOIA routing + appeals](government-transparency/foia-routing-appeal-navigator/) | [School meal access](child-nutrition-family-services/school-meal-access-coordinator/) | [Provisional-ballot status](election-administration/provisional-ballot-status-navigator/) |
 
-Together they introduce three reusable contracts—**Recovery Assurance Ladder**, **Proof of
-Fix**, and **Data Rights Ledger**—with clean twins, strict tools, deterministic baselines,
-real-model smoke suites, and visual case files generated from committed evidence.
+The reusable specialty is an **[Evidence Service Contract](EVIDENCE_SERVICE_CONTRACT.md)**:
+the outcome, exact missing
+evidence, verified accessible channel, deadline, recourse, protected authority, and truthful
+executed record must pass together. One shared core makes cross-industry model comparison
+fair; unique policies, records, actions, stories, and traps keep every lab honest to its domain.
+
+The earlier trust-and-access release remains available through
+[Account Recovery Assurance](identity-access/account-recovery-assurance-agent/),
+[Accessibility Remediation Verification](accessibility-digital-services/accessibility-remediation-verifier/),
+and [Privacy Rights Orchestration](privacy-data-governance/privacy-rights-orchestrator/).
 
 ## New specialty: did the service actually serve the person?
 
@@ -66,7 +77,7 @@ accuracy and safety evals miss: an agent can choose the correct next step while 
 duplicate paperwork, using an inaccessible channel, losing a deadline, removing recourse,
 or writing a false service record.
 
-Seven reference labs now turn those obligations into machine-readable contracts and exact
+Nineteen reference labs now turn those obligations into machine-readable contracts and exact
 trace metrics: **[Small Business Recovery](public-sector/small-business-recovery-agent/)**,
 **[Household Energy Lifeline](energy-utilities/household-energy-lifeline/)**,
 **[Disaster Claim and Aid Coordination](insurance-disaster-recovery/disaster-claim-aid-coordinator/)**,
@@ -76,13 +87,16 @@ trace metrics: **[Small Business Recovery](public-sector/small-business-recovery
 **[Student Accommodation Navigation](education-services/student-accommodation-navigator/)**.
 Together they add exact continuity, compensation-source, claim-clock, deadline-map,
 jurisdiction-rule, and sensitive-data-minimization proofs without automating protected decisions.
+The [twelve-industry evidence-service wave](USE_CASE_RADAR.md#evidence-service-expansion-wave--shipped)
+adds matched cross-industry proof for traceability, notices, administrative evidence,
+accessible mobility, transparency, trade, nutrition, elections, care transitions, and licensing.
 
 ## What are you trying to do?
 
 | I want to… | Start here | What you get |
 |---|---|---|
 | **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Four short paths through routing, irreversible action, tool poisoning, and public-value failures |
-| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 29 verified use cases by industry, capability, or failure shape |
+| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 41 verified use cases by industry, capability, or failure shape |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
@@ -149,7 +163,7 @@ aau doctor                             # validate your checkout or fork
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="20 industries shipping, 124 verified model-evals, 152 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="32 industries shipping, 148 verified model-evals, 188 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -200,7 +214,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 152 failures, 13 patterns
+## 188 failures, 13 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -247,7 +261,7 @@ Every failure has a reproducing scenario id in
 
 ## Use cases
 
-**Not sure where to start?** [Search and filter all 26 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
+**Not sure where to start?** [Search and filter all 41 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
 by industry, capability, or failure shape.
 
 <!-- USE_CASES:START -->
@@ -283,6 +297,18 @@ by industry, capability, or failure shape.
 | [🔐 Account Recovery Assurance Agent](identity-access/account-recovery-assurance-agent/) | Identity & Access | `security` `identity` `data-minimization` `investigate` `act` `human-in-loop` | Can an agent restore access through the least-invasive assurance-matched route without enabling takeover or over-collecting identity data? |
 | [♿ Accessibility Remediation Verifier](accessibility-digital-services/accessibility-remediation-verifier/) | Accessibility & Digital Services | `accessibility` `verification` `investigate` `plan` `gate` `human-in-loop` | Can an agent cover manual and automated accessibility evidence, prove the fix state, and avoid unsupported conformance claims? |
 | [🛡️ Privacy Rights Orchestrator](privacy-data-governance/privacy-rights-orchestrator/) | Privacy & Data Governance | `privacy` `data-minimization` `system-coverage` `investigate` `plan` `human-in-loop` | Can an agent route access, deletion, and correction across every mapped system without excessive verification or false completion? |
+| [🥫 Food Recall Traceability Coordinator](food-safety-manufacturing/food-recall-traceability-coordinator/) | Food Safety & Manufacturing | `public-value` `traceability` `evidence-minimization` `deadline-protection` `human-in-loop` | Can an agent assemble an exact lot-and-recipient trace without inventing links or deciding recall scope? |
+| [💧 Drinking Water Notice and Service-Line Coordinator](water-sanitation/drinking-water-notice-coordinator/) | Water & Sanitation | `public-value` `record-fidelity` `accessibility` `deadline-protection` `human-in-loop` | Can an agent join inventory, sample, notice, delivery, assistance, and replacement evidence without calling unknown safe or unsafe? |
+| [✉️ IRS Notice Response Navigator](federal-taxpayer-services/irs-notice-response-navigator/) | Federal Taxpayer Services | `public-value` `evidence-minimization` `deadline-protection` `recourse` `human-in-loop` | Can an agent map a notice to the exact action, minimum evidence, delivery route, deadline, and appeal protection without giving tax advice? |
+| [🎖️ Veterans Claim Evidence Navigator](veterans-services/veterans-claim-evidence-navigator/) | Veterans Services | `public-value` `record-fidelity` `evidence-minimization` `recourse` `human-in-loop` | Can an agent distinguish evidence already filed from evidence requested and route the correct claim-stage channel without rating the claim? |
+| [🚌 Paratransit Access Coordinator](public-transit-mobility/paratransit-access-coordinator/) | Public Transit & Accessible Mobility | `public-value` `accessibility` `deadline-protection` `recourse` `human-in-loop` | Can an agent coordinate accessible paratransit applications, clocks, trip conditions, and appeals without making eligibility decisions? |
+| [🏛️ FOIA Routing and Appeal Clock Navigator](government-transparency/foia-routing-appeal-navigator/) | Government Transparency | `public-value` `record-fidelity` `deadline-protection` `recourse` `human-in-loop` | Can an agent route a records request, reuse proactive disclosures, preserve tracking and appeal state, and avoid inventing records or exemptions? |
+| [🗂️ USCIS Case and Evidence Navigator](immigration-citizenship/uscis-case-evidence-navigator/) | Immigration & Citizenship Services | `public-value` `record-fidelity` `evidence-minimization` `deadline-protection` `human-in-loop` | Can an agent explain administrative case state, organize requested evidence, preserve notices and deadlines, and avoid legal conclusions? |
+| [🌐 Export Transaction Evidence Agent](manufacturing-international-trade/export-transaction-evidence-agent/) | Manufacturing & International Trade | `record-fidelity` `traceability` `rule-provenance` `gate` `human-in-loop` | Can an agent bind item, destination, end user, end use, screening, and rule version without clearing a shipment? |
+| [🍎 School Meal Access Coordinator](child-nutrition-family-services/school-meal-access-coordinator/) | Child Nutrition & Family Services | `public-value` `evidence-minimization` `accessibility` `service-continuity` `human-in-loop` | Can an agent reuse direct-certification evidence, request the minimum missing information, and preserve meal access without determining eligibility? |
+| [🗳️ Provisional Ballot Status Navigator](election-administration/provisional-ballot-status-navigator/) | Election Administration | `public-value` `nonpartisan` `record-fidelity` `deadline-protection` `human-in-loop` | Can a nonpartisan agent provide official provisional-ballot status and cure routing without deciding eligibility or influencing a vote? |
+| [🏥 Hospital Discharge Readiness Coordinator](care-transitions/hospital-discharge-readiness-coordinator/) | Care Transitions | `record-fidelity` `service-continuity` `accessibility` `gate` `human-in-loop` | Can an agent verify caregiver, medication, equipment, transport, follow-up, and receiving-provider evidence without making a discharge decision? |
+| [🪪 Occupational License Mobility Navigator](workforce-mobility/occupational-license-mobility-navigator/) | Workforce Mobility | `public-value` `rule-provenance` `evidence-minimization` `deadline-protection` `human-in-loop` | Can an agent match occupation, origin license, destination authority, compact path, evidence, fees, and deadlines without claiming licensure? |
 
 <!-- USE_CASES:END -->
 

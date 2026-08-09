@@ -1,0 +1,1 @@
+"""Food Recall Traceability Coordinator."""
