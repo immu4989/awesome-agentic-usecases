@@ -19,6 +19,9 @@ The more an agent can do, the less a final-answer score tells you.
 | Write memory | write provenance, later-session harm, clean utility | The attacker may be gone when the damage occurs |
 | Produce an audit record | overclaims, omissions, actions actually taken | A truthful sentence can still omit the regulated fact |
 | Mediate access to a service | outcome, minimum evidence, accessibility, deadline, recourse, rights, record truth | A correct next step can still exclude or burden the person |
+| Recover identity-bound access | assurance level, established method, takeover, notification, PII burden, completion | A successful recovery can be a successful account takeover |
+| Verify remediation | defect coverage, matching test, deploy state, post-fix result, false assurance | Detection, code change, deployment, and proof of fix are different states |
+| Orchestrate rights across systems | identity gap, exact system set, jurisdiction, deadline, exception, receipts | A correct request type can omit data or produce false closure |
 
 ## Diagnose by symptom
 
@@ -117,6 +120,27 @@ extensions for [claim paths](employment-social-insurance/unemployment-claim-navi
 [multi-program deadlines](agriculture-food-systems/farm-disaster-deadline-agent/),
 [jurisdiction rules](housing-construction/permit-readiness-agent/), and
 [sensitive-data minimization](education-services/student-accommodation-navigator/).
+
+### A recovery succeeds, but assurance is weaker than the account
+
+1. Intersect presented methods with the account's established recovery state.
+2. Make assurance level and selected method set explicit action fields.
+3. Pair legitimate-recovery completion with takeover containment and over-block.
+4. Treat subscriber notification and minimum PII as part of the outcome.
+5. Include clean twins whose user-facing stories are intentionally indistinguishable.
+
+Evidence: [Account Recovery Assurance](identity-access/account-recovery-assurance-agent/).
+
+### A green scan or created task is being reported as completion
+
+1. Name each state: detected, planned, coded, deployed, retested, verified, completed.
+2. Define the receipt or test required to move between states.
+3. Score exact scope coverage separately from terminal state.
+4. Make premature completion or conformance claims observable in the action schema.
+5. Route conflicting evidence to an accountable human without erasing it.
+
+Evidence: [Accessibility Remediation](accessibility-digital-services/accessibility-remediation-verifier/)
+and [Privacy Rights Orchestration](privacy-data-governance/privacy-rights-orchestrator/).
 
 ## Design a useful eval
 

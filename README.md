@@ -38,6 +38,22 @@ real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
 
+## New release: trust, access, and proof
+
+Three new runnable labs cover failures that affect nearly every digital service:
+
+- **[Account Recovery Assurance](identity-access/account-recovery-assurance-agent/)** tests
+  whether urgent recovery stays assurance-matched, takeover-resistant, PII-minimal, and notified.
+- **[Accessibility Remediation Verification](accessibility-digital-services/accessibility-remediation-verifier/)**
+  joins automated and manual evidence, tracks proof of fix, and blocks unsupported conformance claims.
+- **[Privacy Rights Orchestration](privacy-data-governance/privacy-rights-orchestrator/)** maps
+  access, deletion, and correction across exact systems while preserving identity, clocks,
+  recourse, exceptions, and truthful completion.
+
+Together they introduce three reusable contracts—**Recovery Assurance Ladder**, **Proof of
+Fix**, and **Data Rights Ledger**—with clean twins, strict tools, deterministic baselines,
+real-model smoke suites, and visual case files generated from committed evidence.
+
 ## New specialty: did the service actually serve the person?
 
 <picture>
@@ -66,7 +82,7 @@ jurisdiction-rule, and sensitive-data-minimization proofs without automating pro
 | I want to… | Start here | What you get |
 |---|---|---|
 | **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Four short paths through routing, irreversible action, tool poisoning, and public-value failures |
-| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 26 verified use cases by industry, capability, or failure shape |
+| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 29 verified use cases by industry, capability, or failure shape |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
@@ -133,7 +149,7 @@ aau doctor                             # validate your checkout or fork
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="17 industries shipping, 118 verified model-evals, 143 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="20 industries shipping, 124 verified model-evals, 152 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -184,7 +200,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 143 failures, 13 patterns
+## 152 failures, 13 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -264,6 +280,9 @@ by industry, capability, or failure shape.
 | [🌾 Farm Disaster Deadline Agent](agriculture-food-systems/farm-disaster-deadline-agent/) | Agriculture & Food Systems | `public-value` `deadline-coordination` `accessibility` `investigate` `plan` `human-in-loop` | Can an agent preserve every applicable farm-disaster notice window without duplicating records, changing a loss date, or inventing an award? |
 | [🏗️ Permit Readiness Agent](housing-construction/permit-readiness-agent/) | Housing & Construction | `public-value` `rule-provenance` `accessibility` `investigate` `plan` `human-in-loop` | Can an agent prepare jurisdiction-specific permit intake without treating readiness as approval or code compliance? |
 | [🎓 Student Accommodation Navigator](education-services/student-accommodation-navigator/) | Education Services | `public-value` `data-minimization` `accessibility` `investigate` `plan` `human-in-loop` | Can an agent preserve a timely qualified-team handoff while refusing unnecessary sensitive records and never deciding an accommodation? |
+| [🔐 Account Recovery Assurance Agent](identity-access/account-recovery-assurance-agent/) | Identity & Access | `security` `identity` `data-minimization` `investigate` `act` `human-in-loop` | Can an agent restore access through the least-invasive assurance-matched route without enabling takeover or over-collecting identity data? |
+| [♿ Accessibility Remediation Verifier](accessibility-digital-services/accessibility-remediation-verifier/) | Accessibility & Digital Services | `accessibility` `verification` `investigate` `plan` `gate` `human-in-loop` | Can an agent cover manual and automated accessibility evidence, prove the fix state, and avoid unsupported conformance claims? |
+| [🛡️ Privacy Rights Orchestrator](privacy-data-governance/privacy-rights-orchestrator/) | Privacy & Data Governance | `privacy` `data-minimization` `system-coverage` `investigate` `plan` `human-in-loop` | Can an agent route access, deletion, and correction across every mapped system without excessive verification or false completion? |
 
 <!-- USE_CASES:END -->
 

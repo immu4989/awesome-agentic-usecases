@@ -19,6 +19,9 @@ scorer—but exposes a different class of failure.
 | The model chooses an unsafe irreversible action | [Refund Resolution](customer-support/refund-resolution-agent/) | Why acting agents must be scored on the route, not only the result |
 | The model follows an injection from its tooling | [Trifecta Exfil](security-operations/trifecta-exfil-agent/) | Why a prompt guard and a dataflow gate are not equivalent |
 | The outcome is right but the service burdens the user | [Small Business Recovery](public-sector/small-business-recovery-agent/) | Why evidence, accessibility, deadlines, recourse, rights, and record truth need their own contract |
+| Recovery succeeds through an attacker-controlled route | [Account Recovery Assurance](identity-access/account-recovery-assurance-agent/) | Why legitimate recovery and takeover containment must be measured together |
+| The scanner is green but the service is unusable | [Accessibility Remediation Verifier](accessibility-digital-services/accessibility-remediation-verifier/) | Why automated coverage and proof of fix are different claims |
+| The request is routed but an archive survives | [Privacy Rights Orchestrator](privacy-data-governance/privacy-rights-orchestrator/) | Why exact system coverage and truthful completion need receipts |
 
 Every observation is cross-linked in the [Failure Taxonomy](FAILURE_TAXONOMY.md), which
 groups 143 observed failures into 13 recurring patterns.
@@ -91,6 +94,9 @@ measure it against an unchanged baseline.
 | Correct farm program with an incomplete disaster-deadline map | [Farm Disaster Deadline Agent](agriculture-food-systems/farm-disaster-deadline-agent/) | Require the exact set of applicable program notices, with no invented deadline |
 | Complete permit packet bound to the wrong jurisdiction or project rule | [Permit Readiness Agent](housing-construction/permit-readiness-agent/) | Score the rule identifier and source authority, not checklist completion alone |
 | Timely accommodation route that over-collects a student's records | [Student Accommodation Navigator](education-services/student-accommodation-navigator/) | Make sensitive-data minimization an exact service outcome |
+| Urgent recovery route weakens assurance | [Account Recovery Assurance](identity-access/account-recovery-assurance-agent/) | Intersect presented methods with trusted account state and score takeover consequence |
+| Automated accessibility checks produce false assurance | [Accessibility Remediation Verifier](accessibility-digital-services/accessibility-remediation-verifier/) | Join manual evidence, source inspection, deployment, and retest state |
+| Privacy workflow silently omits systems or closes early | [Privacy Rights Orchestrator](privacy-data-governance/privacy-rights-orchestrator/) | Make system coverage and receipt-backed completion exact |
 
 The [Practical Playbooks](PLAYBOOKS.md) turn these experiments into metric and design
 recipes you can apply to another agent.
@@ -119,6 +125,9 @@ engineered gap, tests, result folders, and documentation templates. Continue wit
 | `gate` | unsafe admit, over-block, escalation, decision coverage | [Artifact Admission](security-operations/artifact-admission-agent/), [Prior Auth](healthcare-life-sciences/prior-auth-review-agent/) |
 | `multi-agent` | end-to-end outcome plus handoff loss | [Refund Crew](customer-support/refund-crew/) |
 | `public-value` | outcome, minimum evidence, accessibility, deadline, recourse, rights, continuity, record truth, and domain-specific fidelity | [Small Business Recovery](public-sector/small-business-recovery-agent/), [Energy Lifeline](energy-utilities/household-energy-lifeline/), [Disaster Coordination](insurance-disaster-recovery/disaster-claim-aid-coordinator/), [Unemployment](employment-social-insurance/unemployment-claim-navigator/), [Farm Disaster](agriculture-food-systems/farm-disaster-deadline-agent/), [Permits](housing-construction/permit-readiness-agent/), [Student Accommodation](education-services/student-accommodation-navigator/) |
+| `identity` + `act` | assurance match, established method, takeover containment, notification, PII minimization | [Account Recovery Assurance](identity-access/account-recovery-assurance-agent/) |
+| `accessibility` + `verification` | defect coverage, matching test, deploy state, proof of fix, false assurance | [Accessibility Remediation](accessibility-digital-services/accessibility-remediation-verifier/) |
+| `privacy` + `system-coverage` | identity gap, exact system set, jurisdiction, deadline, recourse, truthful completion | [Privacy Rights Orchestration](privacy-data-governance/privacy-rights-orchestrator/) |
 | adversarial A/B | attack consequence, clean-task success, defence cost | [Refund Injected](customer-support/refund-injected/), [Trifecta Exfil](security-operations/trifecta-exfil-agent/) |
 
 If no entry fits, check the [Real-world Use-case Radar](USE_CASE_RADAR.md),
