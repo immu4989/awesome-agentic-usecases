@@ -110,7 +110,7 @@ results. The [Verification Bar](VERIFICATION.md) explains why each requirement e
 - Add the use case to `docs/use-cases.json`, the CI matrix, and any relevant generated
   artifact lists.
 - Add its four-act domain story, benchmark metric, and scenario anatomy to
-  `docs/make_readme_experiences.py`; commit the generated `experience.svg`, `story.svg`,
+  `docs/make_readme_experiences.py`; commit the generated `experience.svg`, `story-v2.svg`,
   `scenario-map.svg`, `benchmark.svg`, `contrast.svg`, `result-profile.svg`, and
   `failure-cards.svg`. CI checks that every use case has the full visual case file and that
   it is current with committed evidence.

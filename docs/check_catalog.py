@@ -62,7 +62,7 @@ def main() -> None:
             assert use_case_readme.count(marker) == 1, f"{item['path']} is missing its {label}"
         for asset in (
             "experience.svg",
-            "story.svg",
+            "story-v2.svg",
             "scenario-map.svg",
             "benchmark.svg",
             "contrast.svg",
@@ -70,7 +70,7 @@ def main() -> None:
             "failure-cards.svg",
         ):
             assert (directory / "docs" / asset).exists(), f"{item['path']} is missing docs/{asset}"
-        story_svg = (directory / "docs" / "story.svg").read_text()
+        story_svg = (directory / "docs" / "story-v2.svg").read_text()
         assert story_svg.count('<rect width="258" height="256"') == 4, (
             f"{item['path']} story must keep four fixed, readable act cards"
         )

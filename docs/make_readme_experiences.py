@@ -888,7 +888,7 @@ def install(item: Experience) -> None:
     docs.mkdir(exist_ok=True)
     briefing = BRIEFINGS[item.path]
     (docs / "experience.svg").write_text(render_svg(item), encoding="utf-8")
-    (docs / "story.svg").write_text(render_story(item, briefing), encoding="utf-8")
+    (docs / "story-v2.svg").write_text(render_story(item, briefing), encoding="utf-8")
     (docs / "scenario-map.svg").write_text(render_scenario_map(item, briefing), encoding="utf-8")
     (docs / "benchmark.svg").write_text(render_benchmark(item, briefing, directory), encoding="utf-8")
     (docs / "contrast.svg").write_text(render_contrast(item, briefing, directory), encoding="utf-8")
@@ -911,7 +911,7 @@ def install(item: Experience) -> None:
 
 ### Follow the story
 
-<img src="docs/story.svg" width="100%" alt="Animated four-act story explaining the human stakes of {escape(item.title)}">
+<img src="docs/story-v2.svg" width="100%" alt="Animated four-act story explaining the human stakes of {escape(item.title)}">
 
 ### See where the obvious answer breaks
 

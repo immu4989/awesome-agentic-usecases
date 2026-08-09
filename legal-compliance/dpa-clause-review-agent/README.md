@@ -18,7 +18,7 @@
 
 ### Follow the story
 
-<img src="docs/story.svg" width="100%" alt="Animated four-act story explaining the human stakes of DPA Clause Review">
+<img src="docs/story-v2.svg" width="100%" alt="Animated four-act story explaining the human stakes of DPA Clause Review">
 
 ### See where the obvious answer breaks
 
