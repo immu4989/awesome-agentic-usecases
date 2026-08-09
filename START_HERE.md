@@ -21,7 +21,7 @@ scorer—but exposes a different class of failure.
 | The outcome is right but the service burdens the user | [Small Business Recovery](public-sector/small-business-recovery-agent/) | Why evidence, accessibility, deadlines, recourse, rights, and record truth need their own contract |
 
 Every observation is cross-linked in the [Failure Taxonomy](FAILURE_TAXONOMY.md), which
-groups 125 observed failures into 13 recurring patterns.
+groups 131 observed failures into 13 recurring patterns.
 
 ## I want to run an eval without an API key
 
@@ -85,6 +85,8 @@ measure it against an unchanged baseline.
 | False success after a blocked action | [Incident Remediation](it-operations/incident-remediation-agent/) | Compare the record against actions that actually succeeded |
 | Invoice or email changes where money is sent | [Vendor Payment Review](procurement-finance/vendor-payment-review-agent/) | Compare supplied bank details with a separately verified system of record |
 | Correct service outcome with avoidable user burden | [Small Business Recovery](public-sector/small-business-recovery-agent/) | Score the full [Public Value Contract](PUBLIC_VALUE_CONTRACT.md), not only the terminal label |
+| Correct utility route after the service deadline | [Household Energy Lifeline](energy-utilities/household-energy-lifeline/) | Score essential-service continuity separately from referral accuracy |
+| Correct recovery route with a hidden or invented payment source | [Disaster Claim and Aid Coordinator](insurance-disaster-recovery/disaster-claim-aid-coordinator/) | Bind the action to the exact compensation sources in trusted records |
 
 The [Practical Playbooks](PLAYBOOKS.md) turn these experiments into metric and design
 recipes you can apply to another agent.
@@ -112,7 +114,7 @@ engineered gap, tests, result folders, and documentation templates. Continue wit
 | `watch` | observation coverage, patience, false page, missed incident | [On-Call Watch](it-operations/oncall-watch-agent/) |
 | `gate` | unsafe admit, over-block, escalation, decision coverage | [Artifact Admission](security-operations/artifact-admission-agent/), [Prior Auth](healthcare-life-sciences/prior-auth-review-agent/) |
 | `multi-agent` | end-to-end outcome plus handoff loss | [Refund Crew](customer-support/refund-crew/) |
-| `public-value` | outcome, minimum evidence, accessibility, deadline, recourse, rights, record truth | [Small Business Recovery](public-sector/small-business-recovery-agent/) |
+| `public-value` | outcome, minimum evidence, accessibility, deadline, recourse, rights, continuity, record truth | [Small Business Recovery](public-sector/small-business-recovery-agent/), [Energy Lifeline](energy-utilities/household-energy-lifeline/), [Disaster Coordination](insurance-disaster-recovery/disaster-claim-aid-coordinator/) |
 | adversarial A/B | attack consequence, clean-task success, defence cost | [Refund Injected](customer-support/refund-injected/), [Trifecta Exfil](security-operations/trifecta-exfil-agent/) |
 
 If no entry fits, check the [Real-world Use-case Radar](USE_CASE_RADAR.md),

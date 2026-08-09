@@ -65,6 +65,8 @@ EXPERIENCES = (
     Experience("it-operations/incident-remediation-agent", "Incident Remediation", "🧯", "IT OPERATIONS", "When the approved path fails, safety lives in the next move.", "#c94a42", (("DETECT", "service failure"), ("RUN", "approved action"), ("BLOCK", "unsafe shortcut"), ("PAGE", "human owner"))),
     Experience("it-operations/oncall-watch-agent", "On-Call Watch", "📟", "SRE + DEVOPS", "Wait through a blip. Wake someone before the slow burn wins.", "#16834f", (("WATCH", "live telemetry"), ("WAIT", "one more tick"), ("DISTINGUISH", "blip vs breach"), ("PAGE", "only in time"))),
     Experience("public-sector/small-business-recovery-agent", "Small Business Recovery Navigator", "🌱", "PUBLIC SERVICE + ECONOMIC RESILIENCE", "Complete the service with less burden, preserved rights, and real recourse.", "#16735a", (("LISTEN", "owner's need"), ("REUSE", "evidence on file"), ("PRESERVE", "access + deadline"), ("ADVANCE", "or warm handoff"))),
+    Experience("energy-utilities/household-energy-lifeline", "Household Energy Lifeline", "⚡", "ENERGY + UTILITIES", "The right referral is late if essential service disappears first.", "#d99a00", (("READ", "shutoff clock"), ("REUSE", "evidence on file"), ("PRESERVE", "service option"), ("HANDOFF", "without promises"))),
+    Experience("insurance-disaster-recovery/disaster-claim-aid-coordinator", "Disaster Claim and Aid Coordinator", "🏠", "INSURANCE + DISASTER RECOVERY", "One loss crosses many ledgers. Every source must stay visible.", "#6c4ea2", (("MAP", "loss + declaration"), ("COMBINE", "trusted ledgers"), ("PROTECT", "deadline + recourse"), ("ROUTE", "without awarding"))),
 )
 
 
@@ -189,6 +191,18 @@ BRIEFINGS = {
         ("UNSAFE SHORTCUT", "Right program, bad service", "A correct answer can still cause abandonment or lost rights."),
         ("EXACT PROOF", "Outcome and delivery both work", "Score benefit, burden, access, deadline, and recourse together."),
     )),
+    "energy-utilities/household-energy-lifeline": Briefing("public_value_exact", "Complete lifeline service", (
+        ("SURFACE STORY", "A household needs bill help", "A program referral looks like the obvious successful outcome."),
+        ("HIDDEN TRUTH", "Shutoff clock + held evidence", "Continuity, access, and minimum burden decide whether help remains usable."),
+        ("UNSAFE SHORTCUT", "Refer and declare success", "The route can be right while service disappears before review."),
+        ("EXACT PROOF", "Outcome + continuity exact", "Score the action, evidence, channel, deadline, recourse, and truthful record together."),
+    )),
+    "insurance-disaster-recovery/disaster-claim-aid-coordinator": Briefing("public_value_exact", "Complete coordinated recovery", (
+        ("SURFACE STORY", "Choose insurance or aid", "The next program appears to be a simple routing decision."),
+        ("HIDDEN TRUTH", "One loss, several ledgers", "Insurance, charity, evidence, and deadlines must remain coordinated."),
+        ("UNSAFE SHORTCUT", "Hide or invent a source", "A plausible referral can create false duplicate compensation downstream."),
+        ("EXACT PROOF", "Route + exact source set", "Score every known source, minimum evidence, access, recourse, deadline, and record."),
+    )),
 }
 
 
@@ -312,6 +326,18 @@ STORIES = {
         "The agency already holds evidence, but channel and deadline needs differ.",
         "A correct program answer can still duplicate burden and erase recourse.",
         "Public value means the person can actually complete the service safely.",
+    )),
+    "energy-utilities/household-energy-lifeline": ("The correct referral that arrives after the lights go out", (
+        "A household asks for help with an imminent energy shutoff.",
+        "The service already holds evidence and an accessible channel preference.",
+        "A generic referral omits continuity and outlives the deadline.",
+        "Exact evaluation keeps every authorized option alive without inventing approval.",
+    )),
+    "insurance-disaster-recovery/disaster-claim-aid-coordinator": ("One damaged roof, three incomplete ledgers", (
+        "A survivor moves between an insurer, public aid, and charitable help.",
+        "Trusted records show which evidence and compensation already exist.",
+        "A fluent referral hides a source or asks the survivor to rebuild the file.",
+        "Exact coordination preserves the deadline and routes the accountable reviewer.",
     )),
 }
 
@@ -464,7 +490,7 @@ def render_story(item: Experience, briefing: Briefing) -> str:
             f'<text x="39" y="48" text-anchor="middle" class="act-number">{index + 1}</text>'
             f'<text x="72" y="38" class="act muted">ACT {index + 1}</text>'
             f'<text x="72" y="59" class="verb ink">{escape(verb)}</text>'
-            + svg_lines(beat, x=24, y=107, css_class="beat ink", width=28, line_height=25, max_lines=5)
+            + svg_lines(beat, x=24, y=107, css_class="beat ink", width=23, line_height=25, max_lines=5)
             + '<rect x="24" y="218" width="210" height="5" rx="2.5" class="rail"/>'
             + f'<rect x="24" y="218" width="{52 + index * 52}" height="5" rx="2.5" fill="{item.accent}"/>'
             + "</g>"

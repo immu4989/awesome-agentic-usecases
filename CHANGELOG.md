@@ -6,10 +6,26 @@ the harness API is what is versioned; use cases are additive.
 ## Unreleased
 
 ### Added
-- **A complete visual case file for every use case** — all 20 READMEs now open with a
+- **Household Energy Lifeline** — a 32-scenario Energy & Utilities reference lab that
+  tests whether an agent preserves an authorized essential-service path while minimizing
+  evidence, honoring accessibility, protecting deadlines and recourse, and never inventing
+  assistance or an indefinite service hold. Two committed model smoke suites add 48 measured
+  runs and three reproducible failure modes.
+- **Disaster Claim and Aid Coordinator** — a 32-scenario Insurance & Disaster Recovery lab
+  that binds the next claim or aid route to an exact set of known compensation sources. It
+  catches invented awards, hidden sources, repeated evidence, lost deadlines, and false
+  completion without modeling real coverage or federal eligibility. Two committed model
+  smoke suites add another 48 measured runs and three reproducible failure modes.
+- **Committed industry expansion roadmap** — Energy & Utilities ships first, followed by
+  Insurance & Disaster Recovery; employment, agriculture, housing, and education remain in
+  an explicit public queue instead of disappearing into issue history.
+- **Essential-service continuity in the Public Value Contract** — service agents can now
+  be scored on whether they preserve a policy-authorized continuity path without inventing
+  eligibility, promising an indefinite hold, or hiding the true service state.
+- **A complete visual case file for every use case** — all 22 READMEs now open with a
   unique animated four-act story, domain-specific scenario anatomy, a responsive benchmark
   generated from committed non-mock results, a strongest-vs-weakest contrast, an exact
-  outcome/completion/latency/cost profile, and three observed-failure cards. The 120 case
+  outcome/completion/latency/cost profile, and three observed-failure cards. The 132 case
   visuals are dark-mode aware, accessible, lightweight, and reproducible from one generator.
 - **Public Value Contract** — a reusable, schema-backed service-agent standard that scores
   correct outcome together with minimum evidence burden, accessibility, recourse, deadline

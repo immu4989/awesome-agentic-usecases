@@ -275,6 +275,8 @@ PATTERNS = [
         ),
         "numbers": [
             ("small-business recovery baseline", "outcome accuracy and completion **1.000**; exact public value only **0.375** across 32 scenarios × 3 repeats"),
+            ("household energy baseline", "outcome accuracy **1.000**; exact public value **0.250** after continuity, evidence, access, deadline, recourse, and record truth are combined"),
+            ("disaster claim-and-aid baseline", "outcome accuracy **1.000**; exact public value **0.125** when known compensation sources and service obligations must also be exact"),
             ("administrative burden", "minimum-evidence compliance **0.625** because a one-document gap triggered the full checklist"),
             ("access and remedy", "accessible channel **0.875**, deadline protection **0.750**, and recourse only **0.375**"),
         ],
@@ -284,6 +286,10 @@ PATTERNS = [
             ("public-sector/small-business-recovery-agent", "portal default"),
             ("public-sector/small-business-recovery-agent", "recourse disappears"),
             ("public-sector/small-business-recovery-agent", "deadline is known"),
+            ("energy-utilities/household-energy-lifeline", "stale paperwork"),
+            ("energy-utilities/household-energy-lifeline", "Medical minimization"),
+            ("insurance-disaster-recovery/disaster-claim-aid-coordinator", "referral is recorded"),
+            ("insurance-disaster-recovery/disaster-claim-aid-coordinator", "Overlap review asks"),
         ],
     },
     {

@@ -33,6 +33,25 @@ Sources: [OpenAI enterprise AI report](https://openai.com/business/guides-and-re
 These sources identify demand, not ground truth. Each lab still needs a domain owner to
 define the actual policy and decide which decisions must remain human.
 
+## Committed industry expansion queue
+
+This is the repository's recorded build order. Research may refine a lab's synthetic
+policy, but new ideas do not silently displace an earlier commitment.
+
+| Order | New industry | Flagship lab | Status | Distinctive proof |
+|---:|---|---|---|---|
+| 1 | Energy & Utilities | **[Household Energy Lifeline](energy-utilities/household-energy-lifeline/)** | **Shipping** | Preserve essential-service options, minimum evidence, accessibility, deadlines, recourse, and truthful completion together |
+| 2 | Insurance & Disaster Recovery | **[Disaster Claim and Aid Coordinator](insurance-disaster-recovery/disaster-claim-aid-coordinator/)** | **Shipping** | Coordinate insurer and public-aid paths without double-counting compensation or deciding entitlement |
+| 3 | Employment & Social Insurance | Unemployment Claim Navigator | Later | Explain status and protect appeal paths without adjudicating eligibility or identity exceptions |
+| 4 | Agriculture & Food Systems | Farm Disaster Deadline Agent | Later | Reuse held records across program-specific notice windows without inventing an award |
+| 5 | Housing & Construction | Permit Readiness Agent | Later | Validate a jurisdiction-specific submission without claiming that a permit will be approved |
+| 6 | Education Services | Student Accommodation Navigator | Later · domain partner required | Minimize sensitive evidence and preserve a timely human accommodation decision |
+
+The first lab also extends the [Public Value Contract](PUBLIC_VALUE_CONTRACT.md) with an
+optional, exact **essential-service continuity** obligation. That reusable specialty is
+intended for energy, water, communications, housing, healthcare access, and other services
+where a correct referral can still arrive too late to prevent immediate harm.
+
 ## Shipped now
 
 | People served | Verified workflow | Real failure the lab exposes |
@@ -43,6 +62,8 @@ define the actual policy and decide which decisions must remain human.
 | Patients and utilization-review teams | [Prior Auth Review](healthcare-life-sciences/prior-auth-review-agent/) | A constrained review denies through the wrong channel or creates an unfaithful record |
 | Security teams and downstream users | [Trifecta Exfil](security-operations/trifecta-exfil-agent/) | Untrusted instructions move secrets through a real egress tool |
 | Small-business owners, workers, and service teams | [Small Business Recovery](public-sector/small-business-recovery-agent/) | Correct outcome hides duplicate evidence, inaccessible delivery, lost deadlines, or missing recourse |
+| Households facing loss of essential energy service | [Household Energy Lifeline](energy-utilities/household-energy-lifeline/) | Correct emergency routing omits continuity, repeats evidence, or overstates what was approved |
+| Disaster survivors moving across insurers and aid programs | [Disaster Claim and Aid Coordinator](insurance-disaster-recovery/disaster-claim-aid-coordinator/) | Correct next-step routing hides compensation sources, duplicates a shared file, or invents an award |
 
 ## Highest-value next labs
 

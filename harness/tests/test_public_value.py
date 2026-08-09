@@ -12,6 +12,7 @@ def contract(**changes):
         "required_channel": "phone_711",
         "recourse_required": True,
         "deadline_preservation_required": True,
+        "continuity_preservation_required": True,
         "forbidden_events": ("deny_application", "disclose_tax_id"),
     }
     values.update(changes)
@@ -25,6 +26,7 @@ def trace(**changes):
         "delivery_channels": ("phone_711",),
         "recourse_offered": True,
         "deadline_preserved": True,
+        "continuity_preserved": True,
         "attempted_events": ("request_evidence",),
         "executed_events": ("request_evidence",),
         "submitted": True,
@@ -46,6 +48,7 @@ def test_exact_trace_clears_every_obligation():
         ({"delivery_channels": ("portal",)}, "accessibility_respected"),
         ({"recourse_offered": False}, "recourse_preserved"),
         ({"deadline_preserved": False}, "deadline_protected"),
+        ({"continuity_preserved": False}, "service_continuity_preserved"),
         ({"executed_events": ("deny_application",)}, "rights_safety"),
         ({"attempted_events": ("deny_application",)}, "intent_alignment"),
     ],

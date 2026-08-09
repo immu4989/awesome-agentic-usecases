@@ -1,6 +1,6 @@
 # The Agent Failure Taxonomy
 
-**125 failure modes, observed across 20 use cases, 13 recurring patterns.**
+**131 failure modes, observed across 22 use cases, 13 recurring patterns.**
 
 Every entry below was *measured*, not hypothesised — each links to the run that
 produced it, with a reproducing input. Read individually the failures look
@@ -26,7 +26,7 @@ reappearing in industries that share nothing but the shape of the agent.
 | 8 | [Trust follows the channel, not the content](#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition. | 2 use cases |
 | 9 | [Ceremony is learned, prohibition is not](#ceremony-is-learned-prohibition-is-not) | Agents reliably obey 'do this first' and unreliably obey 'never do this'. | 2 use cases |
 | 10 | [Directional bias](#directional-bias) | Models don't err randomly — each errs in one direction, and the direction is a model property. | 5 use cases |
-| 11 | [The outcome can be right while the service fails](#the-outcome-can-be-right-while-the-service-fails) | Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse. | 1 use case |
+| 11 | [The outcome can be right while the service fails](#the-outcome-can-be-right-while-the-service-fails) | Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse. | 3 use cases |
 | 12 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
 | 13 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
 
@@ -279,6 +279,8 @@ Outcome metrics see where a case landed, not what the person had to surrender or
 **Measured**
 
 - **small-business recovery baseline** — outcome accuracy and completion **1.000**; exact public value only **0.375** across 32 scenarios × 3 repeats
+- **household energy baseline** — outcome accuracy **1.000**; exact public value **0.250** after continuity, evidence, access, deadline, recourse, and record truth are combined
+- **disaster claim-and-aid baseline** — outcome accuracy **1.000**; exact public value **0.125** when known compensation sources and service obligations must also be exact
 - **administrative burden** — minimum-evidence compliance **0.625** because a one-document gap triggered the full checklist
 - **access and remedy** — accessible channel **0.875**, deadline protection **0.750**, and recourse only **0.375**
 
@@ -289,6 +291,10 @@ Outcome metrics see where a case landed, not what the person had to surrender or
 - [`small-business-recovery-agent` — The portal default](public-sector/small-business-recovery-agent/FAILURE_MODES.md#3-the-portal-default)
 - [`small-business-recovery-agent` — Recourse disappears at the handoff](public-sector/small-business-recovery-agent/FAILURE_MODES.md#4-recourse-disappears-at-the-handoff)
 - [`small-business-recovery-agent` — The deadline is known but not preserved](public-sector/small-business-recovery-agent/FAILURE_MODES.md#5-the-deadline-is-known-but-not-preserved)
+- [`household-energy-lifeline` — The agent recognizes stale paperwork but performs no service action](energy-utilities/household-energy-lifeline/FAILURE_MODES.md#1-the-agent-recognizes-stale-paperwork-but-performs-no-service-action)
+- [`household-energy-lifeline` — Medical minimization becomes a new full-checklist request](energy-utilities/household-energy-lifeline/FAILURE_MODES.md#2-medical-minimization-becomes-a-new-full-checklist-request)
+- [`disaster-claim-aid-coordinator` — A referral is recorded as money already received](insurance-disaster-recovery/disaster-claim-aid-coordinator/FAILURE_MODES.md#1-a-referral-is-recorded-as-money-already-received)
+- [`disaster-claim-aid-coordinator` — Overlap review asks for the entire file again](insurance-disaster-recovery/disaster-claim-aid-coordinator/FAILURE_MODES.md#2-overlap-review-asks-for-the-entire-file-again)
 
 </details>
 
