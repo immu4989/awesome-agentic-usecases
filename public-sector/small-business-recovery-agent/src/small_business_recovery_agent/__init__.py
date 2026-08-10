@@ -1,1 +1,1 @@
-"""Small Business Recovery Navigator: TODO(domain) one-line summary."""
+"""A synthetic public-value lab for evidence-minimizing recovery-service navigation."""

@@ -155,6 +155,20 @@ one exact scorecard constant across pharmaceutical manufacturing, grid operation
 aviation, banking compliance, and tax filing. The [matched report](DECISION_GATE_REPORT.md)
 links every observed miss to a committed scenario and trace.
 
+### The action looks helpful, but the proof belongs to a nearby case
+
+1. Name the atomic proposition the action depends on: claim entailment, emergency state,
+   award obligation, or another versioned fact.
+2. Store source identity, relevant passage or record version, and conflict state separately.
+3. Include a relevant-but-non-entailing source and an accepted-but-stale record as clean
+   transfer traps.
+4. Make the safe channel change explicit when new evidence changes the kind of case.
+5. Stop at a review-ready packet; publication, emergency clearance, certification, and
+   submission remain protected human actions.
+
+Evidence: the [Proof Before Action report](PROOF_ACTION_REPORT.md) compares identical
+archetypes across claim verification, home-service readiness, and nonprofit grant evidence.
+
 ### A green scan or created task is being reported as completion
 
 1. Name each state: detected, planned, coded, deployed, retested, verified, completed.

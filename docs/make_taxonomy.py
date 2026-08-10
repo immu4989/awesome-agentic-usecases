@@ -317,12 +317,12 @@ PATTERNS = [
         "why": (
             "Retrieval can be accurate and the recommendation can still inherit the wrong "
             "rule. These matched cases differ by a narrow fact—sterility path, clearance "
-            "owner, consumer-report reliance, aircraft identity, aggregate ownership, or a "
-            "filing-year dependency. The remedy is not more general knowledge; it is an "
+            "owner, consumer-report reliance, aircraft identity, aggregate ownership, filing-year "
+            "dependency, claim entailment, emergency evidence, or award version. The remedy is not more general knowledge; it is an "
             "exact rule code, evidence set, and counterexample at the decision boundary."
         ),
         "numbers": [
-            ("six deterministic baselines", "the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy"),
+            ("nine deterministic baselines", "the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy"),
             ("pharmaceutical transfer test", "an inconclusive sterility-positive investigation is routed through the more permissive chemical OOS path"),
             ("approved-data transfer", "a prior aircraft deferral or prior-year tax dependency is treated as authority for the current record"),
         ],
@@ -333,6 +333,9 @@ PATTERNS = [
             ("aviation-operations/aircraft-dispatch-evidence-gate", "Fleet analogy overrides"),
             ("banking-compliance/aml-kyc-sanctions-case-gate", "No list hit becomes"),
             ("tax-filing-services/tax-return-completeness-navigator", "Balanced means complete"),
+            ("research-knowledge-work/claim-evidence-verifier", "Citation presence replaces entailment"),
+            ("home-field-services/service-visit-readiness-coordinator", "Routine symptom hides emergency evidence"),
+            ("nonprofit-grant-management/grant-obligation-evidence-navigator", "Prior acceptance becomes current authority"),
         ],
     },
     {

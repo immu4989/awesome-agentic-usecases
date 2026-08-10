@@ -40,20 +40,20 @@ policy, but new ideas do not silently displace an earlier commitment.
 
 | Order | New industry | Flagship lab | Status | Distinctive proof |
 |---:|---|---|---|---|
-| 1 | Energy & Utilities | **[Household Energy Lifeline](energy-utilities/household-energy-lifeline/)** | **Shipping** | Preserve essential-service options, minimum evidence, accessibility, deadlines, recourse, and truthful completion together |
-| 2 | Insurance & Disaster Recovery | **[Disaster Claim and Aid Coordinator](insurance-disaster-recovery/disaster-claim-aid-coordinator/)** | **Shipping** | Coordinate insurer and public-aid paths without double-counting compensation or deciding entitlement |
-| 3 | Employment & Social Insurance | **[Unemployment Claim Navigator](employment-social-insurance/unemployment-claim-navigator/)** | **Shipping** | Explain status and protect appeal and weekly-certification paths without adjudicating eligibility or identity exceptions |
-| 4 | Agriculture & Food Systems | **[Farm Disaster Deadline Agent](agriculture-food-systems/farm-disaster-deadline-agent/)** | **Shipping** | Preserve the exact set of program-specific notice windows while reusing held farm records and never inventing an award |
-| 5 | Housing & Construction | **[Permit Readiness Agent](housing-construction/permit-readiness-agent/)** | **Shipping** | Bind the packet to the exact jurisdiction and project rule without claiming the permit will be approved |
-| 6 | Education Services | **[Student Accommodation Navigator](education-services/student-accommodation-navigator/)** | **Shipping · domain review required** | Minimize sensitive evidence and preserve a timely, accessible human accommodation decision |
+| 1 | Energy & Utilities | **[Household Energy Lifeline](energy-utilities/household-energy-lifeline/)** | **Shipped** | Preserve essential-service options, minimum evidence, accessibility, deadlines, recourse, and truthful completion together |
+| 2 | Insurance & Disaster Recovery | **[Disaster Claim and Aid Coordinator](insurance-disaster-recovery/disaster-claim-aid-coordinator/)** | **Shipped** | Coordinate insurer and public-aid paths without double-counting compensation or deciding entitlement |
+| 3 | Employment & Social Insurance | **[Unemployment Claim Navigator](employment-social-insurance/unemployment-claim-navigator/)** | **Shipped** | Explain status and protect appeal and weekly-certification paths without adjudicating eligibility or identity exceptions |
+| 4 | Agriculture & Food Systems | **[Farm Disaster Deadline Agent](agriculture-food-systems/farm-disaster-deadline-agent/)** | **Shipped** | Preserve the exact set of program-specific notice windows while reusing held farm records and never inventing an award |
+| 5 | Housing & Construction | **[Permit Readiness Agent](housing-construction/permit-readiness-agent/)** | **Shipped** | Bind the packet to the exact jurisdiction and project rule without claiming the permit will be approved |
+| 6 | Education Services | **[Student Accommodation Navigator](education-services/student-accommodation-navigator/)** | **Shipped · domain review required** | Minimize sensitive evidence and preserve a timely, accessible human accommodation decision |
 
 ### Trust and access release wave
 
 | Order | New industry | Flagship lab | Status | Distinctive proof |
 |---:|---|---|---|---|
-| 1 | Identity & Access | **[Account Recovery Assurance Agent](identity-access/account-recovery-assurance-agent/)** | **Shipping · security review required** | Match recovery to account assurance while containing takeover, minimizing PII, and notifying the subscriber |
-| 2 | Accessibility & Digital Services | **[Accessibility Remediation Verifier](accessibility-digital-services/accessibility-remediation-verifier/)** | **Shipping · affected-user review required** | Join scans, manual paths, source, deployment, and post-fix tests without turning bounded evidence into conformance |
-| 3 | Privacy & Data Governance | **[Privacy Rights Orchestrator](privacy-data-governance/privacy-rights-orchestrator/)** | **Shipping · counsel review required** | Cover the exact data-system set while minimizing verification burden, preserving clocks, and refusing false completion |
+| 1 | Identity & Access | **[Account Recovery Assurance Agent](identity-access/account-recovery-assurance-agent/)** | **Shipped · security review required** | Match recovery to account assurance while containing takeover, minimizing PII, and notifying the subscriber |
+| 2 | Accessibility & Digital Services | **[Accessibility Remediation Verifier](accessibility-digital-services/accessibility-remediation-verifier/)** | **Shipped · affected-user review required** | Join scans, manual paths, source, deployment, and post-fix tests without turning bounded evidence into conformance |
+| 3 | Privacy & Data Governance | **[Privacy Rights Orchestrator](privacy-data-governance/privacy-rights-orchestrator/)** | **Shipped · counsel review required** | Cover the exact data-system set while minimizing verification burden, preserving clocks, and refusing false completion |
 
 ### Decision-gate industry wave — shipped
 
@@ -111,8 +111,24 @@ where a correct referral can still arrive too late to prevent immediate harm.
 | Patients, caregivers, clinicians, and receiving providers | [Hospital Discharge Readiness Coordinator](care-transitions/hospital-discharge-readiness-coordinator/) | Complete paperwork hides an absent caregiver, equipment receipt, transport, follow-up, or clinical gate |
 | Licensed workers, employers, and state mobility teams | [Occupational License Mobility Navigator](workforce-mobility/occupational-license-mobility-navigator/) | A compact or endorsement path is confused with licensure and current authority provenance is lost |
 
-The committed six-industry public-value queue and the three-lab trust-and-access wave are
-now complete. New candidates remain below so domain owners can see the next service gaps.
+The committed public-value, trust-and-access, evidence-service, decision-gate, and
+proof-before-action waves are complete. New candidates remain below so domain owners can
+see the next service gaps.
+
+## Proof Before Action wave — shipped
+
+Three suggestions that were previously marked ready are now complete runnable labs. They
+hold the same eight archetypes and exact Decision Gate Contract constant, but change the
+proof boundary, protected action, source record, visual story, and industry language.
+
+| New industry | Flagship lab | Transfer failure the benchmark exposes | Protected boundary |
+|---|---|---|---|
+| Research & Knowledge Work | **[Claim & Citation Evidence Verifier](research-knowledge-work/claim-evidence-verifier/)** | A valid, relevant citation is treated as entailment for a stronger drafted claim | A human editor owns interpretation and publication |
+| Home & Field Services | **[Service Visit Readiness Coordinator](home-field-services/service-visit-readiness-coordinator/)** | A routine no-heat booking path survives after gas odor or a CO alarm changes the case | Emergency response stays outside routine diagnosis, repair, and booking |
+| Nonprofit Grant Management | **[Grant Obligation Evidence Navigator](nonprofit-grant-management/grant-obligation-evidence-navigator/)** | An accepted prior-award packet is treated as proof for the current award or cost | The authorized official owns allowability, certification, and submission |
+
+See the [matched model report](PROOF_ACTION_REPORT.md) and dated
+[primary-source research notes](docs/PROOF_ACTION_RESEARCH_NOTES.md).
 
 ## Highest-value next labs
 
@@ -124,9 +140,6 @@ the repo should not invent the policy on its own.
 | 1 | Patients navigating referrals | Find an in-network provider, assemble referral requirements, and route scheduling blockers | directory freshness, requirement completeness, wrong-network suggestion, escalation latency | Never diagnose, select treatment, or invent coverage | **Domain partner needed** · fork [Prior Auth](healthcare-life-sciences/prior-auth-review-agent/) |
 | 2 | People applying for public benefits | Turn an application status into a missing-document checklist and next safe step | statutory source fidelity, minimum burden, deadline, recourse, accessible explanation | Never make the eligibility determination or fabricate agency policy | **Domain partner needed** · fork the [Public Value Contract](PUBLIC_VALUE_CONTRACT.md) reference lab |
 | 3 | Patients requesting medication refills | Check identity, remaining authorization, recent changes, and route the request | wrong-patient action, expired authorization, interaction omission, escalation | Never prescribe, change dosage, or override a clinician | **Domain partner needed** · plan + act |
-| 4 | Families coordinating home or field service | Diagnose scheduling and parts prerequisites, then book or escalate safely | wrong dispatch, repeat visit, unsafe DIY advice, completion fidelity | Emergency and safety-critical conditions escalate immediately | **Ready** · fork [Exception Triage](logistics-supply-chain/exception-triage-agent/) |
-| 5 | Small nonprofits | Match grant obligations to evidence and draft a submission checklist | requirement omission, unsupported claim, deadline, source provenance | Never fabricate outcomes or certify a filing | **Ready** · fork [DPA Review](legal-compliance/dpa-clause-review-agent/) |
-| 6 | Knowledge workers and researchers | Verify claims against cited sources before a report ships | citation entailment, source freshness, unsupported claim, correction coverage | Human owns interpretation and publication | **Ready** · investigate + decide |
 
 ## Evidence-service expansion wave — shipped
 

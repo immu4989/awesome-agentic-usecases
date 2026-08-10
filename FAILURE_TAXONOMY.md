@@ -1,6 +1,6 @@
 # The Agent Failure Taxonomy
 
-**206 failure modes, observed across 47 use cases, 14 recurring patterns.**
+**215 failure modes, observed across 50 use cases, 14 recurring patterns.**
 
 Every entry below was *measured*, not hypothesised — each links to the run that
 produced it, with a reproducing input. Read individually the failures look
@@ -27,7 +27,7 @@ reappearing in industries that share nothing but the shape of the agent.
 | 9 | [Ceremony is learned, prohibition is not](#ceremony-is-learned-prohibition-is-not) | Agents reliably obey 'do this first' and unreliably obey 'never do this'. | 2 use cases |
 | 10 | [Directional bias](#directional-bias) | Models don't err randomly — each errs in one direction, and the direction is a model property. | 5 use cases |
 | 11 | [The outcome can be right while the service fails](#the-outcome-can-be-right-while-the-service-fails) | Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse. | 19 use cases |
-| 12 | [Similarity erases the exception](#similarity-erases-the-exception) | A valid rule from the clean twin is confidently reused where one deciding fact reverses it. | 6 use cases |
+| 12 | [Similarity erases the exception](#similarity-erases-the-exception) | A valid rule from the clean twin is confidently reused where one deciding fact reverses it. | 9 use cases |
 | 13 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
 | 14 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
 
@@ -323,11 +323,11 @@ Outcome metrics see where a case landed, not what the person had to surrender or
 
 *A valid rule from the clean twin is confidently reused where one deciding fact reverses it.*
 
-Retrieval can be accurate and the recommendation can still inherit the wrong rule. These matched cases differ by a narrow fact—sterility path, clearance owner, consumer-report reliance, aircraft identity, aggregate ownership, or a filing-year dependency. The remedy is not more general knowledge; it is an exact rule code, evidence set, and counterexample at the decision boundary.
+Retrieval can be accurate and the recommendation can still inherit the wrong rule. These matched cases differ by a narrow fact—sterility path, clearance owner, consumer-report reliance, aircraft identity, aggregate ownership, filing-year dependency, claim entailment, emergency evidence, or award version. The remedy is not more general knowledge; it is an exact rule code, evidence set, and counterexample at the decision boundary.
 
 **Measured**
 
-- **six deterministic baselines** — the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy
+- **nine deterministic baselines** — the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy
 - **pharmaceutical transfer test** — an inconclusive sterility-positive investigation is routed through the more permissive chemical OOS path
 - **approved-data transfer** — a prior aircraft deferral or prior-year tax dependency is treated as authority for the current record
 
@@ -339,6 +339,9 @@ Retrieval can be accurate and the recommendation can still inherit the wrong rul
 - [`aircraft-dispatch-evidence-gate` — Fleet analogy overrides approved data](aviation-operations/aircraft-dispatch-evidence-gate/FAILURE_MODES.md#1-fleet-analogy-overrides-approved-data)
 - [`aml-kyc-sanctions-case-gate` — No list hit becomes clearance](banking-compliance/aml-kyc-sanctions-case-gate/FAILURE_MODES.md#1-no-list-hit-becomes-clearance)
 - [`tax-return-completeness-navigator` — Balanced means complete](tax-filing-services/tax-return-completeness-navigator/FAILURE_MODES.md#1-balanced-means-complete)
+- [`claim-evidence-verifier` — Citation presence replaces entailment](research-knowledge-work/claim-evidence-verifier/FAILURE_MODES.md#1-citation-presence-replaces-entailment)
+- [`service-visit-readiness-coordinator` — Routine symptom hides emergency evidence](home-field-services/service-visit-readiness-coordinator/FAILURE_MODES.md#1-routine-symptom-hides-emergency-evidence)
+- [`grant-obligation-evidence-navigator` — Prior acceptance becomes current authority](nonprofit-grant-management/grant-obligation-evidence-navigator/FAILURE_MODES.md#1-prior-acceptance-becomes-current-authority)
 
 </details>
 

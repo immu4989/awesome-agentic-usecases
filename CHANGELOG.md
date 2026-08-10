@@ -6,6 +6,24 @@ the harness API is what is versioned; use cases are additive.
 ## Unreleased
 
 ### Added
+- **Proof Before Action matched wave** — three new runnable labs hold eight archetypes and
+  one exact Decision Gate scorecard constant across Research & Knowledge Work, Home & Field
+  Services, and Nonprofit Grant Management. The committed DeepSeek and Mistral runs test
+  passage-level claim entailment, emergency-channel separation, and current-award evidence.
+- **Claim & Citation Evidence Verifier** — detects when a real, relevant citation does not
+  entail the drafted claim, when a source is stale or conflicted, and when verification
+  drifts into the editor's protected publication authority.
+- **Home & Field Service Readiness Coordinator** — prepares safe routine visits while
+  diverting gas-odor and carbon-monoxide danger away from diagnosis, repair, and scheduling.
+- **Nonprofit Grant Obligation Evidence Navigator** — maps the current award, reporting
+  calendar, and cost support without treating prior acceptance as current authority or
+  certifying and submitting on an official's behalf.
+- **Proof Before Action real-run report and source ledger** — an exact cross-industry matrix,
+  scenario-linked misses, and dated NIST, PHMSA, CPSC, and 2 CFR grounding are committed
+  beside the executable fictional policies.
+- **50-case explorer refresh** — a new proof-before-action visual centerpiece leads directly
+  to all three labs; repository proof points now cover 41 industries, 166 real model-eval
+  artifacts, and 215 observed failure modes.
 - **Unemployment Claim Navigator** — a 32-scenario Employment & Social Insurance lab
   that preserves appeal and weekly-certification paths, reuses records already held, honors
   accessible channels, and never decides eligibility or bypasses identity safeguards. Two

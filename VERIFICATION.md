@@ -60,6 +60,10 @@ Use the [Decision Gate Contract](DECISION_GATE_CONTRACT.md) and require:
 The benchmark must also include a clean twin and a nearby transfer trap. A model that knows
 one valid rule has not demonstrated that it knows where that rule stops.
 
+The [Proof Before Action report](PROOF_ACTION_REPORT.md) provides three lower-authority but
+still consequential examples: claim publication, home-service routing, and nonprofit grant
+evidence. They use the same extension because “helpful” is not a waiver for exact proof.
+
 ---
 
 ## Why this bar exists

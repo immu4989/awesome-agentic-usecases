@@ -18,6 +18,7 @@
   <a href="USE_CASE_RADAR.md">Use-case radar</a> ·
   <a href="DECISION_GATE_CONTRACT.md">Decision Gate Contract</a> ·
   <a href="DECISION_GATE_REPORT.md">Decision Gate report</a> ·
+  <a href="PROOF_ACTION_REPORT.md">Proof Before Action report</a> ·
   <a href="PUBLIC_VALUE_CONTRACT.md">Public Value Contract</a> ·
   <a href="EVIDENCE_SERVICE_CONTRACT.md">Evidence Service Contract</a> ·
   <a href="EVIDENCE_SERVICE_REPORT.md">Matched report</a> ·
@@ -42,7 +43,24 @@ real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
 
-## New release: the exact gate before consequential action
+## New release: proof before action
+
+Three new industries test a deceptively common failure: the agent has enough context to be
+helpful, but not enough proof to act. Each lab ships the same eight-archetype Decision Gate
+Contract, 32 seeded scenarios, strict stateful tools, three-repeat deterministic and
+real-model runs, observed failures, and a unique seven-visual case file.
+
+| Verify knowledge | Protect the household | Steward public-purpose funds |
+|---|---|---|
+| **[Claim & Citation Evidence Verifier](research-knowledge-work/claim-evidence-verifier/)** asks whether the cited passage actually entails the drafted claim—not merely whether the link exists. | **[Home & Field Service Readiness](home-field-services/service-visit-readiness-coordinator/)** keeps routine booking separate from gas-odor and carbon-monoxide emergency channels. | **[Grant Obligation Evidence Navigator](nonprofit-grant-management/grant-obligation-evidence-navigator/)** binds the checklist to this award, this reporting period, and support for this cost. |
+
+The **[matched report](PROOF_ACTION_REPORT.md)** compares DeepSeek and Mistral on the same
+proof-transfer traps and links every miss to committed evidence. The dated
+**[research notes](docs/PROOF_ACTION_RESEARCH_NOTES.md)** separate official NIST, PHMSA,
+CPSC, and 2 CFR grounding from the labs' fictional policies. These agents verify and
+prepare; accountable people still publish, clear emergencies, certify, and submit.
+
+## Previous release: the exact gate before consequential action
 
 Six high-stakes industry requests are now a matched, runnable benchmark wave. Every lab
 ships 32 synthetic scenarios across eight balanced archetypes, strict stateful tools,
@@ -123,7 +141,7 @@ accessible mobility, transparency, trade, nutrition, elections, care transitions
 | I want to… | Start here | What you get |
 |---|---|---|
 | **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Four short paths through routing, irreversible action, tool poisoning, and public-value failures |
-| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 47 verified use cases by industry, capability, or failure shape |
+| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 50 verified use cases by industry, capability, or failure shape |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
@@ -190,7 +208,7 @@ aau doctor                             # validate your checkout or fork
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="38 industries shipping, 160 verified model-evals, 206 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="41 industries shipping, 166 verified model-evals, 215 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -241,7 +259,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 206 failures, 14 patterns
+## 215 failures, 14 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -254,7 +272,7 @@ reappearing across industries that share nothing but the shape of the agent.
 | [Safety by inaction](FAILURE_TAXONOMY.md#safety-by-inaction) | A "did it avoid the bad action" metric is passed perfectly by an agent that does nothing | 3 use cases |
 | [Trust follows the channel](FAILURE_TAXONOMY.md#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition | 2 use cases |
 | [Prior over policy](FAILURE_TAXONOMY.md#prior-over-policy) | Models cite the rule in their reasoning, then violate it in the same breath | 4 use cases |
-| [Similarity erases the exception](FAILURE_TAXONOMY.md#similarity-erases-the-exception) | A valid rule from the clean twin is reused where one deciding fact reverses it | 6 matched decision-gate labs |
+| [Similarity erases the exception](FAILURE_TAXONOMY.md#similarity-erases-the-exception) | A valid rule from the clean twin is reused where one deciding fact reverses it | 9 matched decision-gate labs |
 
 <a href="FAILURE_TAXONOMY.md"><b>→ Read all 14 patterns</b></a>, each with measured incidence and
 a link to the run that produced it.
@@ -343,6 +361,9 @@ by industry, capability, or failure shape.
 | [✈️ Aircraft Dispatch Evidence Gate](aviation-operations/aircraft-dispatch-evidence-gate/) | Aviation Operations | `safety` `tool use` `approved-data grounding` `conjunctive gates` `human review` | Can an agent apply the aircraft-specific MEL and limitations without turning a deferral packet into a dispatch release? |
 | [🏦 AML, KYC & Sanctions Case Gate](banking-compliance/aml-kyc-sanctions-case-gate/) | Banking Compliance | `regulated` `tool use` `confidentiality` `ownership aggregation` `human review` | Can an agent keep CIP, sanctions ownership, SAR timing, and SAR secrecy distinct while preserving the compliance officer's authority? |
 | [🧾 Tax Return Completeness Navigator](tax-filing-services/tax-return-completeness-navigator/) | Tax Filing Services | `regulated` `tool use` `absence detection` `deadline protection` `human review` | Can an agent find the one form or authorization absent from a versioned return packet without filing or signing it? |
+| [🔎 Claim and Citation Evidence Verifier](research-knowledge-work/claim-evidence-verifier/) | Research & Knowledge Work | `verification` `citations` `source freshness` `fact checking` `human review` | Can an agent prove that every material claim is entailed by a current cited source without publishing or certifying it? |
+| [🧰 Home and Field Service Readiness Coordinator](home-field-services/service-visit-readiness-coordinator/) | Home & Field Services | `safety` `scheduling` `prerequisite verification` `service continuity` `human review` | Can an agent prepare the right visit while diverting gas or carbon-monoxide danger away from routine service? |
+| [🤝 Nonprofit Grant Obligation Evidence Navigator](nonprofit-grant-management/grant-obligation-evidence-navigator/) | Nonprofit Grant Management | `public-value` `obligation mapping` `evidence minimization` `deadline protection` `human review` | Can an agent map the current award's obligations to evidence without certifying compliance or submitting? |
 
 <!-- USE_CASES:END -->
 
@@ -416,7 +437,7 @@ only a per-use-case harness surfaces:
 
 ## Industries
 
-The catalog now spans **38 distinct industries**. Use the
+The catalog now spans **41 distinct industries**. Use the
 [interactive explorer](https://immu4989.github.io/awesome-agentic-usecases/) to filter the
 full verified set; these are the major reusable families:
 
@@ -426,6 +447,7 @@ full verified set; these are the major reusable families:
 | Public value + access | Public recovery, household energy, disaster insurance, unemployment, agriculture, permits, education, identity, accessibility, privacy |
 | Evidence services | Food safety, drinking water, federal taxpayer services, veterans, transit, transparency, immigration, international trade, child nutrition, elections, care transitions, workforce mobility |
 | Decision gates | Pharmaceutical manufacturing, grid operations, hiring, aviation operations, banking compliance, tax filing services |
+| Proof before action | Research and knowledge work, home and field services, nonprofit grant management |
 
 The [Use-case Radar](USE_CASE_RADAR.md) records what has shipped, what needs domain review,
 and the next high-value workflow shapes. Industry count is generated from the machine-readable

@@ -30,6 +30,7 @@ yours, even if its industry does not.
 | Must cover an exact system set and prove completion | [Privacy Rights Orchestration](privacy-data-governance/privacy-rights-orchestrator/) |
 | Must coordinate exact evidence and protect access, clocks, recourse, and human authority | Any lab in the [12-industry Evidence Service Contract wave](USE_CASE_RADAR.md#evidence-service-expansion-wave--shipped) |
 | Prepares evidence immediately before a protected high-stakes decision | Any lab in the [six-industry Decision Gate Contract](DECISION_GATE_CONTRACT.md) wave |
+| Must prove a source, safety state, or current record before a helpful action | Any lab in the [Proof Before Action report](PROOF_ACTION_REPORT.md) |
 
 Use `aau show <name>` to inspect an entry and `aau start <name>` for its exact local
 installation order.
