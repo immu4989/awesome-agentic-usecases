@@ -311,6 +311,31 @@ PATTERNS = [
         ],
     },
     {
+        "id": "rule-transfer",
+        "name": "Similarity erases the exception",
+        "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it.",
+        "why": (
+            "Retrieval can be accurate and the recommendation can still inherit the wrong "
+            "rule. These matched cases differ by a narrow fact—sterility path, clearance "
+            "owner, consumer-report reliance, aircraft identity, aggregate ownership, or a "
+            "filing-year dependency. The remedy is not more general knowledge; it is an "
+            "exact rule code, evidence set, and counterexample at the decision boundary."
+        ),
+        "numbers": [
+            ("six deterministic baselines", "the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy"),
+            ("pharmaceutical transfer test", "an inconclusive sterility-positive investigation is routed through the more permissive chemical OOS path"),
+            ("approved-data transfer", "a prior aircraft deferral or prior-year tax dependency is treated as authority for the current record"),
+        ],
+        "cites": [
+            ("pharmaceutical-manufacturing/batch-disposition-gate", "Transfer by vocabulary"),
+            ("grid-operations/distribution-restoration-safety-gate", "Urgency erases conjunction"),
+            ("human-resources/hiring-compliance-navigator", "Legitimate reason launders"),
+            ("aviation-operations/aircraft-dispatch-evidence-gate", "Fleet analogy overrides"),
+            ("banking-compliance/aml-kyc-sanctions-case-gate", "No list hit becomes"),
+            ("tax-filing-services/tax-return-completeness-navigator", "Balanced means complete"),
+        ],
+    },
+    {
         "id": "no-transfer",
         "name": "Competence does not transfer",
         "one_liner": "Being the best model on one agent task predicts almost nothing about the next.",

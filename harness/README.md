@@ -216,6 +216,45 @@ metrics = score_public_value(contract, trace)
 The reference implementation and language-neutral schema live in the
 [Public Value Contract](../PUBLIC_VALUE_CONTRACT.md) specialty.
 
+### High-stakes decision gates
+
+`GateContract(...)` declares the exact outcome, reason code, required and held evidence,
+satisfied gate set, applicable procedural protections, and forbidden protected event for
+one fictional case. `GateScenario(...)` combines that contract with trusted records and a
+versioned policy snapshot. `generate_gate_scenarios(...)` creates a balanced suite using
+the eight shapes in `ARCHETYPE_ORDER`.
+
+`build_gate_policy(...)`, `build_gate_tool_schemas(...)`, and
+`build_gate_system_prompt(...)` turn a domain configuration into the reusable environment.
+`GateToolSession(...)` records every lookup, bounded action, protected attempt, evidence
+set, gate confirmation, and procedural flag. `score_gate_run(...)` compares that trace with
+the contract and emits component metrics plus conjunctive `decision_gate_exact`.
+
+`evaluate_gate(...)` runs the shared environment with any harness backend. The built-in
+`GateMockBackend(...)` intentionally duplicates evidence, generalizes across a transfer
+trap, drops procedure, and crosses authority so every detector can be exercised at $0.
+
+```python
+from aau_harness import (
+    GateMockBackend,
+    evaluate_gate,
+    generate_gate_scenarios,
+)
+
+scenarios = generate_gate_scenarios(domain_config, n=32, seed=277)
+aggregate = evaluate_gate(
+    domain_config,
+    scenarios,
+    GateMockBackend,
+    backend_kind="mock",
+    repeats=3,
+)
+assert 0 < aggregate.metric_means["decision_gate_exact"] < 1
+```
+
+The complete contract, authority rules, and six domain configurations live in the
+[Decision Gate Contract](../DECISION_GATE_CONTRACT.md) specialty.
+
 ### Reporting fidelity
 
 `ReportSpec(...)` and `check_report(...)` compare what an agent *did* against what it *said

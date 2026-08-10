@@ -10,7 +10,7 @@ You do not need an API key to begin. Pick the route that matches the job you are
 
 ## I want to see a real agent failure
 
-Start with one of these seven. Each takes the same shape—scenario, tools, agent, exact
+Start with one of these eight. Each takes the same shape—scenario, tools, agent, exact
 scorer—but exposes a different class of failure.
 
 | Failure you want to understand | Start here | What it demonstrates |
@@ -22,9 +22,10 @@ scorer—but exposes a different class of failure.
 | Recovery succeeds through an attacker-controlled route | [Account Recovery Assurance](identity-access/account-recovery-assurance-agent/) | Why legitimate recovery and takeover containment must be measured together |
 | The scanner is green but the service is unusable | [Accessibility Remediation Verifier](accessibility-digital-services/accessibility-remediation-verifier/) | Why automated coverage and proof of fix are different claims |
 | The request is routed but an archive survives | [Privacy Rights Orchestrator](privacy-data-governance/privacy-rights-orchestrator/) | Why exact system coverage and truthful completion need receipts |
+| The recommendation is right but the gate or authority is wrong | [Batch Disposition Gate](pharmaceutical-manufacturing/batch-disposition-gate/) | Why a nearby valid rule cannot substitute for exact evidence, procedure, owner, and action trace |
 
 Every observation is cross-linked in the [Failure Taxonomy](FAILURE_TAXONOMY.md), which
-groups 188 observed failures into 13 recurring patterns.
+groups 206 observed failures into 14 recurring patterns.
 
 ## I want to run an eval without an API key
 
@@ -98,6 +99,7 @@ measure it against an unchanged baseline.
 | Automated accessibility checks produce false assurance | [Accessibility Remediation Verifier](accessibility-digital-services/accessibility-remediation-verifier/) | Join manual evidence, source inspection, deployment, and retest state |
 | Privacy workflow silently omits systems or closes early | [Privacy Rights Orchestrator](privacy-data-governance/privacy-rights-orchestrator/) | Make system coverage and receipt-backed completion exact |
 | A plausible service route requests the wrong evidence or crosses authority | [Food Recall Traceability](food-safety-manufacturing/food-recall-traceability-coordinator/) | Run one of 12 matched Evidence Service Contract labs and compare the same obligations across industries |
+| A correct-looking recommendation applies the clean twin's rule to an exception | [Batch Disposition Gate](pharmaceutical-manufacturing/batch-disposition-gate/) | Run the matched [Decision Gate Contract](DECISION_GATE_CONTRACT.md) and score reason, evidence, gates, procedure, authority, and record truth together |
 
 The [Practical Playbooks](PLAYBOOKS.md) turn these experiments into metric and design
 recipes you can apply to another agent.
@@ -127,6 +129,7 @@ engineered gap, tests, result folders, and documentation templates. Continue wit
 | `multi-agent` | end-to-end outcome plus handoff loss | [Refund Crew](customer-support/refund-crew/) |
 | `public-value` | outcome, minimum evidence, accessibility, deadline, recourse, rights, continuity, record truth, and domain-specific fidelity | [Small Business Recovery](public-sector/small-business-recovery-agent/), [Energy Lifeline](energy-utilities/household-energy-lifeline/), [Disaster Coordination](insurance-disaster-recovery/disaster-claim-aid-coordinator/), [Unemployment](employment-social-insurance/unemployment-claim-navigator/), [Farm Disaster](agriculture-food-systems/farm-disaster-deadline-agent/), [Permits](housing-construction/permit-readiness-agent/), [Student Accommodation](education-services/student-accommodation-navigator/) |
 | `evidence-service` | exact terminal, missing-set evidence, accessible channel, deadline, recourse, protected authority, and executed record together | [Food Recall](food-safety-manufacturing/food-recall-traceability-coordinator/), [Water Notice](water-sanitation/drinking-water-notice-coordinator/), [IRS Notice](federal-taxpayer-services/irs-notice-response-navigator/), or any lab in the [matched 12-industry wave](USE_CASE_RADAR.md#evidence-service-expansion-wave--shipped) |
+| `decision-gate` | exact outcome, rule-specific reason, held/missing evidence, satisfied conjuncts, procedure, protected authority, and executed record | [Pharma](pharmaceutical-manufacturing/batch-disposition-gate/), [Grid](grid-operations/distribution-restoration-safety-gate/), [Hiring](human-resources/hiring-compliance-navigator/), [Aviation](aviation-operations/aircraft-dispatch-evidence-gate/), [Banking](banking-compliance/aml-kyc-sanctions-case-gate/), [Tax](tax-filing-services/tax-return-completeness-navigator/) |
 | `identity` + `act` | assurance match, established method, takeover containment, notification, PII minimization | [Account Recovery Assurance](identity-access/account-recovery-assurance-agent/) |
 | `accessibility` + `verification` | defect coverage, matching test, deploy state, proof of fix, false assurance | [Accessibility Remediation](accessibility-digital-services/accessibility-remediation-verifier/) |
 | `privacy` + `system-coverage` | identity gap, exact system set, jurisdiction, deadline, recourse, truthful completion | [Privacy Rights Orchestration](privacy-data-governance/privacy-rights-orchestrator/) |

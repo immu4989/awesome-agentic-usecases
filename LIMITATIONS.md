@@ -45,7 +45,7 @@ not a fix.
 
 ## 4. Multiple comparisons are not corrected
 
-Across 41 use cases, several metrics each, and up to five models, the repository performs
+Across 47 use cases, several metrics each, and up to five models, the repository performs
 many implicit comparisons. No family-wise or false-discovery correction is applied. Some
 "findings" at the level of a single use case will be noise.
 
@@ -109,6 +109,20 @@ but was an artifact of a model stalling more in the control arm; a model that ap
 to corrupted data but had never read the corrupted field; and a scenario generator whose
 per-process hash would have made its own scenarios irreproducible. This is offered as
 evidence the method catches its own errors, not as evidence it catches all of them.
+
+## 11. Primary-source grounding is not a compliance determination
+
+The decision-gate labs cite current agency or eCFR anchors and record the retrieval date,
+but their executable policies and records are deliberately fictional. A source can support a
+narrow synthetic gold label without establishing scope, jurisdiction, exceptions, operator
+procedures, or production fitness. The research also found a concrete example of this risk:
+a suggested draft EU GMP annex was not present in the current final EudraLex annex index and
+was removed as an operative premise before implementation.
+
+No benchmark result authorizes batch release, grid energization, a hiring action, aircraft
+dispatch, sanctions or SAR action, or tax filing. A production adaptation needs a qualified
+domain owner, dated source capture, legal or safety review where appropriate, change control,
+privacy and security assessment, and independent validation.
 
 ---
 

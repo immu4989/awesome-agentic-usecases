@@ -16,6 +16,8 @@
   <a href="#run-one-now">Run one</a> ·
   <a href="PLAYBOOKS.md">Playbooks</a> ·
   <a href="USE_CASE_RADAR.md">Use-case radar</a> ·
+  <a href="DECISION_GATE_CONTRACT.md">Decision Gate Contract</a> ·
+  <a href="DECISION_GATE_REPORT.md">Decision Gate report</a> ·
   <a href="PUBLIC_VALUE_CONTRACT.md">Public Value Contract</a> ·
   <a href="EVIDENCE_SERVICE_CONTRACT.md">Evidence Service Contract</a> ·
   <a href="EVIDENCE_SERVICE_REPORT.md">Matched report</a> ·
@@ -40,7 +42,32 @@ real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
 
-## New release: one exact service contract, twelve new industries
+## New release: the exact gate before consequential action
+
+Six high-stakes industry requests are now a matched, runnable benchmark wave. Every lab
+ships 32 synthetic scenarios across eight balanced archetypes, strict stateful tools,
+programmatic ground truth, three-repeat deterministic and real-model runs, primary-source
+research notes, observed failure modes, and a themed seven-visual case file.
+
+| Safety-critical operations | Regulated decisions | Evidence completeness |
+|---|---|---|
+| [Distribution restoration safety](grid-operations/distribution-restoration-safety-gate/) | [Pharmaceutical batch disposition](pharmaceutical-manufacturing/batch-disposition-gate/) | [Tax return completeness](tax-filing-services/tax-return-completeness-navigator/) |
+| [Aircraft dispatch evidence](aviation-operations/aircraft-dispatch-evidence-gate/) | [AML, KYC & sanctions cases](banking-compliance/aml-kyc-sanctions-case-gate/) | [Hiring compliance + candidate rights](human-resources/hiring-compliance-navigator/) |
+
+Their new **[Decision Gate Contract](DECISION_GATE_CONTRACT.md)** catches the failure between
+a correct-looking recommendation and a legitimate action. Outcome, rule-specific reason,
+available evidence, satisfied gates, applicable procedure, protected human authority, and
+the executed record must all pass together. The **[matched report](DECISION_GATE_REPORT.md)**
+compares the same eight failure shapes across six industries and links every miss back to a
+reproducible scenario and tool trace.
+
+The centerpiece is a transfer-failure test: a model must not carry a valid rule from a clean
+twin into a nearby exception. Chemical OOS is not a sterility-positive investigation; a
+similar aircraft is not this aircraft's approved MEL; a defensible hiring criterion does not
+erase notice; a nearly complete restoration gate is still incomplete. See the dated
+[primary-source research and premise corrections](docs/DECISION_GATE_RESEARCH_NOTES.md).
+
+## Previous release: one exact service contract, twelve industries
 
 Twelve research-backed ideas are now runnable evaluation labs—not demo folders or roadmap
 promises. Each ships 32 synthetic scenarios across eight balanced archetypes, strict tools,
@@ -96,7 +123,7 @@ accessible mobility, transparency, trade, nutrition, elections, care transitions
 | I want to… | Start here | What you get |
 |---|---|---|
 | **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Four short paths through routing, irreversible action, tool poisoning, and public-value failures |
-| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 41 verified use cases by industry, capability, or failure shape |
+| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 47 verified use cases by industry, capability, or failure shape |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
@@ -163,7 +190,7 @@ aau doctor                             # validate your checkout or fork
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="32 industries shipping, 148 verified model-evals, 188 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="38 industries shipping, 160 verified model-evals, 206 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -214,7 +241,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 188 failures, 13 patterns
+## 206 failures, 14 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -227,8 +254,9 @@ reappearing across industries that share nothing but the shape of the agent.
 | [Safety by inaction](FAILURE_TAXONOMY.md#safety-by-inaction) | A "did it avoid the bad action" metric is passed perfectly by an agent that does nothing | 3 use cases |
 | [Trust follows the channel](FAILURE_TAXONOMY.md#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition | 2 use cases |
 | [Prior over policy](FAILURE_TAXONOMY.md#prior-over-policy) | Models cite the rule in their reasoning, then violate it in the same breath | 4 use cases |
+| [Similarity erases the exception](FAILURE_TAXONOMY.md#similarity-erases-the-exception) | A valid rule from the clean twin is reused where one deciding fact reverses it | 6 matched decision-gate labs |
 
-<a href="FAILURE_TAXONOMY.md"><b>→ Read all 13 patterns</b></a>, each with measured incidence and
+<a href="FAILURE_TAXONOMY.md"><b>→ Read all 14 patterns</b></a>, each with measured incidence and
 a link to the run that produced it.
 
 ## Four models, one agent — one row, up close
@@ -309,6 +337,12 @@ by industry, capability, or failure shape.
 | [🗳️ Provisional Ballot Status Navigator](election-administration/provisional-ballot-status-navigator/) | Election Administration | `public-value` `nonpartisan` `record-fidelity` `deadline-protection` `human-in-loop` | Can a nonpartisan agent provide official provisional-ballot status and cure routing without deciding eligibility or influencing a vote? |
 | [🏥 Hospital Discharge Readiness Coordinator](care-transitions/hospital-discharge-readiness-coordinator/) | Care Transitions | `record-fidelity` `service-continuity` `accessibility` `gate` `human-in-loop` | Can an agent verify caregiver, medication, equipment, transport, follow-up, and receiving-provider evidence without making a discharge decision? |
 | [🪪 Occupational License Mobility Navigator](workforce-mobility/occupational-license-mobility-navigator/) | Workforce Mobility | `public-value` `rule-provenance` `evidence-minimization` `deadline-protection` `human-in-loop` | Can an agent match occupation, origin license, destination authority, compact path, evidence, fees, and deadlines without claiming licensure? |
+| [🧪 Batch Disposition Evidence Gate](pharmaceutical-manufacturing/batch-disposition-gate/) | Pharmaceutical Manufacturing | `regulated` `tool use` `transfer failure` `exact evidence` `human review` | Can an agent keep chemical OOS discretion separate from the sterility-positive rejection path without releasing a batch? |
+| [⚡ Distribution Restoration Safety Gate](grid-operations/distribution-restoration-safety-gate/) | Grid Operations | `safety` `tool use` `conjunctive gates` `record fidelity` `human review` | Can an agent prove every re-energization condition and clearance owner without treating outage urgency as an exception? |
+| [🧭 Hiring Compliance Navigator](human-resources/hiring-compliance-navigator/) | Human Resources & Hiring | `regulated` `tool use` `candidate rights` `deadline protection` `human review` | Can an employer-side agent preserve AEDT and FCRA process rights without making the hiring decision? |
+| [✈️ Aircraft Dispatch Evidence Gate](aviation-operations/aircraft-dispatch-evidence-gate/) | Aviation Operations | `safety` `tool use` `approved-data grounding` `conjunctive gates` `human review` | Can an agent apply the aircraft-specific MEL and limitations without turning a deferral packet into a dispatch release? |
+| [🏦 AML, KYC & Sanctions Case Gate](banking-compliance/aml-kyc-sanctions-case-gate/) | Banking Compliance | `regulated` `tool use` `confidentiality` `ownership aggregation` `human review` | Can an agent keep CIP, sanctions ownership, SAR timing, and SAR secrecy distinct while preserving the compliance officer's authority? |
+| [🧾 Tax Return Completeness Navigator](tax-filing-services/tax-return-completeness-navigator/) | Tax Filing Services | `regulated` `tool use` `absence detection` `deadline protection` `human review` | Can an agent find the one form or authorization absent from a versioned return packet without filing or signing it? |
 
 <!-- USE_CASES:END -->
 
@@ -382,36 +416,21 @@ only a per-use-case harness surfaces:
 
 ## Industries
 
-| Shipping now | Next wave |
+The catalog now spans **38 distinct industries**. Use the
+[interactive explorer](https://immu4989.github.io/awesome-agentic-usecases/) to filter the
+full verified set; these are the major reusable families:
+
+| Family | Industries shipping |
 |---|---|
-| 🚛 [Logistics](logistics-supply-chain/) · 🛒 [Retail & Workforce](retail-workforce/) · 🛡️ [Security Ops](security-operations/) · 💳 [Financial Services](financial-services-fraud/) · 🧾 [Procurement & Finance](procurement-finance/) · 🎬 [Media & Streaming](media-streaming/) · 🎧 [Customer Support](customer-support/) · 🖥️ [IT Ops & DevOps](it-operations/) · 🏥 [Healthcare & Life Sciences](healthcare-life-sciences/) · ⚖️ [Legal & Compliance](legal-compliance/) · 🏛️ [Public Service](public-sector/) · ⚡ [Energy & Utilities](energy-utilities/) · 🏠 [Insurance & Disaster Recovery](insurance-disaster-recovery/) | 🏭 Manufacturing · 👥 Employment & Social Insurance · 🌾 Agriculture & Food · 🏗️ Housing & Construction · 🎓 Education Services |
+| Core operations | Logistics, retail workforce, security operations, fraud, procurement, media, customer support, IT operations, legal review, healthcare |
+| Public value + access | Public recovery, household energy, disaster insurance, unemployment, agriculture, permits, education, identity, accessibility, privacy |
+| Evidence services | Food safety, drinking water, federal taxpayer services, veterans, transit, transparency, immigration, international trade, child nutrition, elections, care transitions, workforce mobility |
+| Decision gates | Pharmaceutical manufacturing, grid operations, hiring, aviation operations, banking compliance, tax filing services |
 
-<details>
-<summary><b>Full 18-industry roadmap</b></summary>
-<br>
-
-| # | Industry | Status |
-|---|---|---|
-| 1 | 🚛 Logistics & Supply Chain | ✅ Shipping |
-| 2 | 🛒 Retail & Workforce | ✅ Shipping |
-| 3 | 🛡️ Security Operations | ✅ Shipping |
-| 4 | 💳 Financial Services & Fraud | ✅ Shipping |
-| 5 | 🎬 Media & Streaming | ✅ Shipping |
-| 6 | 🎧 Customer Support & Success | ✅ Shipping |
-| 7 | 🖥️ IT Ops & DevOps | ✅ Shipping |
-| 8 | 🏥 Healthcare & Life Sciences | ✅ Shipping |
-| 9 | ⚖️ Legal & Compliance | ✅ Shipping |
-| 10 | 🧾 Procurement & Finance | ✅ Shipping |
-| 11 | 🏛️ Public Service & Economic Resilience | ✅ Shipping |
-| 12 | 🏭 Manufacturing & Industrial | 📋 Roadmap |
-| 13 | 🏠 Insurance & Disaster Recovery | ✅ Shipping |
-| 14 | 👥 HR & Recruiting | 📋 Roadmap |
-| 15 | 📈 Sales & Marketing | 📋 Roadmap |
-| 16 | ⚡ Energy & Utilities | ✅ Shipping |
-| 17 | 🏗️ Real Estate & Construction | 📋 Roadmap |
-| 18 | 🎓 Education | 📋 Roadmap |
-
-</details>
+The [Use-case Radar](USE_CASE_RADAR.md) records what has shipped, what needs domain review,
+and the next high-value workflow shapes. Industry count is generated from the machine-readable
+[catalog](docs/use-cases.json), so forks can add or rename a domain without maintaining a
+second hand-written list.
 
 ## What "verified" means here
 

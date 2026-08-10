@@ -20,6 +20,7 @@ The more an agent can do, the less a final-answer score tells you.
 | Produce an audit record | overclaims, omissions, actions actually taken | A truthful sentence can still omit the regulated fact |
 | Mediate access to a service | outcome, minimum evidence, accessibility, deadline, recourse, rights, record truth | A correct next step can still exclude or burden the person |
 | Coordinate evidence across a regulated service | exact terminal, missing-set evidence, verified channel, deadline, recourse, protected-decision attempt, executed record | A plausible packet can duplicate evidence, lose a clock, cross authority, or claim work that never happened |
+| Prepare a high-stakes decision gate | outcome, rule-specific reason, held/requested evidence, satisfied conjuncts, procedure, protected-authority attempt, executed record, transfer specificity | A correct-looking recommendation can use the wrong exception, invent one gate, or become the decision |
 | Recover identity-bound access | assurance level, established method, takeover, notification, PII burden, completion | A successful recovery can be a successful account takeover |
 | Verify remediation | defect coverage, matching test, deploy state, post-fix result, false assurance | Detection, code change, deployment, and proof of fix are different states |
 | Orchestrate rights across systems | identity gap, exact system set, jurisdiction, deadline, exception, receipts | A correct request type can omit data or produce false closure |
@@ -138,6 +139,21 @@ interchangeable.
 5. Include clean twins whose user-facing stories are intentionally indistinguishable.
 
 Evidence: [Account Recovery Assurance](identity-access/account-recovery-assurance-agent/).
+
+### The recommendation is right, but the decision process is not
+
+1. Freeze a dated rule snapshot and give every distinct path its own reason code.
+2. Derive relied-on and requested evidence from trusted held/required sets.
+3. Represent every conjunctive condition independently; confirm only satisfied gates.
+4. Put notice, deadline, or confidentiality requirements in the action schema.
+5. Make the protected final action a separate forbidden tool and reconcile the closeout
+   record with what actually executed.
+6. Add a clean twin and a nearby transfer trap whose surface stories look equally plausible.
+
+Evidence: the [Decision Gate Contract](DECISION_GATE_CONTRACT.md) holds eight archetypes and
+one exact scorecard constant across pharmaceutical manufacturing, grid operations, hiring,
+aviation, banking compliance, and tax filing. The [matched report](DECISION_GATE_REPORT.md)
+links every observed miss to a committed scenario and trace.
 
 ### A green scan or created task is being reported as completion
 

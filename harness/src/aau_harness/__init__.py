@@ -34,6 +34,19 @@ from .public_value import (
     PublicValueTrace,
     score_public_value,
 )
+from .decision_gate import (
+    ARCHETYPE_ORDER,
+    GateContract,
+    GateMockBackend,
+    GateScenario,
+    GateToolSession,
+    build_gate_policy,
+    build_gate_system_prompt,
+    build_gate_tool_schemas,
+    evaluate_gate,
+    generate_gate_scenarios,
+    score_gate_run,
+)
 
 __all__ = [
     "CostTracker",
@@ -63,4 +76,15 @@ __all__ = [
     "PublicValueContract",
     "PublicValueTrace",
     "score_public_value",
+    "ARCHETYPE_ORDER",
+    "GateContract",
+    "GateMockBackend",
+    "GateScenario",
+    "GateToolSession",
+    "build_gate_policy",
+    "build_gate_system_prompt",
+    "build_gate_tool_schemas",
+    "evaluate_gate",
+    "generate_gate_scenarios",
+    "score_gate_run",
 ]

@@ -44,6 +44,22 @@ runs — the input that triggers it, what the agent did, and what it should have
 Hypothetical failure modes don't count. A use case whose evals never fail has an eval
 set that's too easy, and that's a finding too.
 
+## High-stakes extension: prove the gate, not just the answer
+
+For a workflow immediately upstream of a regulated, safety-critical, financial, employment,
+or other protected decision, the five repository rules are necessary but not sufficient.
+Use the [Decision Gate Contract](DECISION_GATE_CONTRACT.md) and require:
+
+- a dated policy snapshot and rule-specific reason vocabulary;
+- exact held, relied-on, and requested evidence sets;
+- exact conjunctive-gate state with no urgency waiver;
+- explicit notice, deadline, and confidentiality fields where applicable;
+- a separately observable protected action that the agent cannot execute; and
+- reconciliation of the closeout record with the actual tool trace.
+
+The benchmark must also include a clean twin and a nearby transfer trap. A model that knows
+one valid rule has not demonstrated that it knows where that rule stops.
+
 ---
 
 ## Why this bar exists

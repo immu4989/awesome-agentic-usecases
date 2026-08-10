@@ -20,6 +20,11 @@ jobs:
         run: |
           python docs/make_catalog.py
           git diff --exit-code README.md
+      - name: Generated decision-gate labs are current
+        run: |
+          python docs/make_decision_gate_wave.py
+          python docs/make_readme_experiences.py
+          git diff --exit-code pharmaceutical-manufacturing grid-operations human-resources aviation-operations banking-compliance tax-filing-services
       - name: Generated README visual system is current
         run: |
           python docs/make_readme_experiences.py
@@ -28,6 +33,10 @@ jobs:
         run: |
           python docs/make_evidence_service_report.py
           git diff --exit-code EVIDENCE_SERVICE_REPORT.md
+      - name: Matched decision-gate report is current
+        run: |
+          python docs/make_decision_gate_report.py
+          git diff --exit-code DECISION_GATE_REPORT.md
 
   use-case:
     runs-on: ubuntu-latest
@@ -190,6 +199,30 @@ jobs:
           - dir: workforce-mobility/occupational-license-mobility-navigator
             cli: occupational-license-mobility
             seed: 271
+            n: 32
+          - dir: pharmaceutical-manufacturing/batch-disposition-gate
+            cli: batch-disposition-gate
+            seed: 277
+            n: 32
+          - dir: grid-operations/distribution-restoration-safety-gate
+            cli: distribution-restoration-gate
+            seed: 281
+            n: 32
+          - dir: human-resources/hiring-compliance-navigator
+            cli: hiring-compliance-navigator
+            seed: 283
+            n: 32
+          - dir: aviation-operations/aircraft-dispatch-evidence-gate
+            cli: aircraft-dispatch-gate
+            seed: 293
+            n: 32
+          - dir: banking-compliance/aml-kyc-sanctions-case-gate
+            cli: aml-kyc-sanctions-gate
+            seed: 307
+            n: 32
+          - dir: tax-filing-services/tax-return-completeness-navigator
+            cli: tax-return-completeness
+            seed: 311
             n: 32
     name: ${{ matrix.cli }}
     steps:

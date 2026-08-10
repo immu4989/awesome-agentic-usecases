@@ -55,6 +55,25 @@ policy, but new ideas do not silently displace an earlier commitment.
 | 2 | Accessibility & Digital Services | **[Accessibility Remediation Verifier](accessibility-digital-services/accessibility-remediation-verifier/)** | **Shipping · affected-user review required** | Join scans, manual paths, source, deployment, and post-fix tests without turning bounded evidence into conformance |
 | 3 | Privacy & Data Governance | **[Privacy Rights Orchestrator](privacy-data-governance/privacy-rights-orchestrator/)** | **Shipping · counsel review required** | Cover the exact data-system set while minimizing verification burden, preserving clocks, and refusing false completion |
 
+### Decision-gate industry wave — shipped
+
+Six requested industries now share one [Decision Gate Contract](DECISION_GATE_CONTRACT.md)
+and matched [cross-industry report](DECISION_GATE_REPORT.md). Each lab preserves the named
+human authority and tests a different rule-transfer failure.
+
+| Industry | Flagship lab | Distinctive proof | Review required |
+|---|---|---|---|
+| Pharmaceutical Manufacturing | **[Batch Disposition Gate](pharmaceutical-manufacturing/batch-disposition-gate/)** | Chemical OOS discretion does not transfer to an inconclusive sterility-positive investigation | Quality/GMP owner |
+| Grid Operations | **[Distribution Restoration Safety Gate](grid-operations/distribution-restoration-safety-gate/)** | Every re-energization conjunct and clearance owner survives outage urgency | Qualified utility safety owner |
+| Human Resources & Hiring | **[Hiring Compliance Navigator](human-resources/hiring-compliance-navigator/)** | AEDT and consumer-report procedures remain distinct from the selection reason | Employment counsel + hiring owner |
+| Aviation Operations | **[Aircraft Dispatch Evidence Gate](aviation-operations/aircraft-dispatch-evidence-gate/)** | Only aircraft/operator-specific approved MEL evidence reaches dispatch review | Certificated operator, dispatcher + PIC |
+| Banking Compliance | **[AML, KYC & Sanctions Case Gate](banking-compliance/aml-kyc-sanctions-case-gate/)** | CIP, aggregate ownership, SAR basis/clock, and SAR secrecy do not collapse into one alert | BSA/AML and sanctions officers |
+| Tax Filing Services | **[Tax Return Completeness Navigator](tax-filing-services/tax-return-completeness-navigator/)** | Filing-year dependencies and authorization are detected without signing or transmission | Tax professional |
+
+The dated [research notes](docs/DECISION_GATE_RESEARCH_NOTES.md) record the primary anchors
+and three premise corrections made before implementation, including that a draft EU GMP
+Annex 22 was not treated as an operative final annex.
+
 The first lab also extends the [Public Value Contract](PUBLIC_VALUE_CONTRACT.md) with an
 optional, exact **essential-service continuity** obligation. That reusable specialty is
 intended for energy, water, communications, housing, healthcare access, and other services
