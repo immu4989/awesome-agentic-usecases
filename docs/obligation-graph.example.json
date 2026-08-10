@@ -1,0 +1,87 @@
+{
+  "contract_version": "aau-obligation-graph/1.0",
+  "event_id": "MDR-SYNTHETIC-1042",
+  "event_facts": {
+    "reporter_role": "importer",
+    "event_type": "serious_injury",
+    "awareness_at": "2026-08-10T14:00:00Z"
+  },
+  "applicability_proof": {
+    "rule_snapshot": "SYN-MDR-2026.08",
+    "evaluated_rule_ids": [
+      "SYN-MDR-IMPORTER-FDA-30",
+      "SYN-MDR-IMPORTER-MANUFACTURER-30"
+    ],
+    "inapplicable_rule_ids": [
+      "SYN-MDR-MANUFACTURER-5"
+    ]
+  },
+  "obligations": [
+    {
+      "obligation_id": "notify-fda",
+      "rule_id": "SYN-MDR-IMPORTER-FDA-30",
+      "rule_version": "2026.08",
+      "trigger_facts": [
+        "reporter_role=importer",
+        "event_type=serious_injury"
+      ],
+      "clock_origin": {
+        "fact": "importer awareness",
+        "occurred_at": "2026-08-10T14:00:00Z",
+        "source_record": "synthetic-complaint-1042"
+      },
+      "deadline": {
+        "due_at": "2026-09-09T14:00:00Z",
+        "time_semantics": "calendar_days",
+        "calculation_basis": "30 calendar days after awareness"
+      },
+      "recipient": {
+        "organization": "FDA",
+        "channel": "synthetic eMDR route"
+      },
+      "human_owner": "authorized importer regulatory official",
+      "depends_on": [],
+      "receipt": {
+        "stage": "prepared",
+        "receipt_id": null,
+        "occurred_at": null,
+        "source_record": "synthetic-draft-1042-fda"
+      }
+    },
+    {
+      "obligation_id": "notify-manufacturer",
+      "rule_id": "SYN-MDR-IMPORTER-MANUFACTURER-30",
+      "rule_version": "2026.08",
+      "trigger_facts": [
+        "reporter_role=importer",
+        "event_type=serious_injury"
+      ],
+      "clock_origin": {
+        "fact": "importer awareness",
+        "occurred_at": "2026-08-10T14:00:00Z",
+        "source_record": "synthetic-complaint-1042"
+      },
+      "deadline": {
+        "due_at": "2026-09-09T14:00:00Z",
+        "time_semantics": "calendar_days",
+        "calculation_basis": "30 calendar days after awareness"
+      },
+      "recipient": {
+        "organization": "device manufacturer",
+        "channel": "approved synthetic safety-notice route"
+      },
+      "human_owner": "authorized importer regulatory official",
+      "depends_on": [],
+      "receipt": {
+        "stage": "accepted",
+        "receipt_id": "SYN-ACK-8821",
+        "occurred_at": "2026-08-10T18:42:00Z",
+        "source_record": "synthetic-acknowledgment-8821"
+      }
+    }
+  ],
+  "protected_decisions": [
+    "medical causality",
+    "regulatory submission certification"
+  ]
+}

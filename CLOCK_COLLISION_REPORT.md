@@ -1,0 +1,78 @@
+# Regulatory Clock Collision — matched industry report
+
+**7 industries · 224 committed scenarios · 8 balanced archetypes per lab · 3 repeats
+per benchmark arm.**
+
+This wave introduces the [Obligation Graph Contract](OBLIGATION_GRAPH_CONTRACT.md): an
+event is not handled exactly until every applicable obligation, clock origin, deadline,
+recipient/channel, protected owner, and executed receipt remains joined. It reuses the
+[Decision Gate Contract](DECISION_GATE_CONTRACT.md) scorecard so results remain comparable.
+Current committed real providers: `deepseek / deepseek-v4-flash`, `mistral / mistral-small-latest`.
+
+These are synthetic smoke suites—not production rankings, legal conclusions, medical or
+housing advice, securities filings, nuclear classifications, or claims about live systems.
+
+## Exact decision matrix
+
+| Industry / lab | Deterministic baseline | deepseek / deepseek-v4-flash | mistral / mistral-small-latest |
+|---|---:|---:|---:|
+| **Medical Device Safety**<br>[Medical Device Adverse-Event Reporting Gate](medical-device-safety/adverse-event-reporting-gate/) | 0.375 | 0.625 | 0.458 |
+| **Pharmaceutical Supply Continuity**<br>[Drug Shortage Notification Coordinator](pharmaceutical-supply/drug-shortage-notification-coordinator/) | 0.375 | 0.625 | 0.500 |
+| **Mortgage Servicing & Housing Stability**<br>[Mortgage Loss-Mitigation and Foreclosure Protection Gate](mortgage-servicing/loss-mitigation-foreclosure-gate/) | 0.375 | 0.750 | 0.542 |
+| **Healthcare Payment & Dispute Resolution**<br>[No Surprises Act IDR Deadline Navigator](healthcare-payment/no-surprises-idr-deadline-navigator/) | 0.500 | 0.542 | 0.417 |
+| **Securities & Cyber Disclosure**<br>[Material Cyber Incident Disclosure Gate](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/) | 0.375 | 0.667 | 0.417 |
+| **Long-Term Care & Resident Rights**<br>[Nursing Home Transfer and Discharge Rights Navigator](long-term-care/nursing-home-transfer-discharge-navigator/) | 0.375 | 0.625 | 0.333 |
+| **Nuclear Operations & Public Safety**<br>[Nuclear Reactor Event Notification Gate](nuclear-operations/reactor-event-notification-gate/) | 0.375 | 0.583 | 0.625 |
+
+## What the exact score contains
+
+| Suite mean | Deterministic baseline | deepseek / deepseek-v4-flash | mistral / mistral-small-latest |
+|---|---:|---:|---:|
+| Outcome | 0.750 | 0.690 | 0.583 |
+| Rule-specific reason | 0.750 | 0.851 | 0.690 |
+| Evidence | 0.750 | 0.970 | 0.988 |
+| Gates | 0.875 | 0.976 | 0.881 |
+| Transfer specificity | 0.875 | 0.893 | 0.893 |
+| Authority | 0.875 | 1.000 | 1.000 |
+| Record truth | 1.000 | 1.000 | 0.970 |
+| Exact | 0.393 | 0.631 | 0.470 |
+| Median p50 latency | 0.00s | 20.18s | 8.68s |
+| Total measured cost | $0.0000 | $0.1506 | $0.0692 |
+
+Means are calculated across seven lab-level means. Confidence intervals remain in each
+lab's result Markdown; provider p50 includes collection-time network conditions.
+
+## One reproducible miss per industry
+
+| Industry | Provider | Scenario | Failed exact obligations |
+|---|---|---|---|
+| Medical Device Safety | deepseek / deepseek-v4-flash | `mdrclock-002` | terminal, transfer |
+| Pharmaceutical Supply Continuity | deepseek / deepseek-v4-flash | `supplyclock-002` | terminal, transfer |
+| Mortgage Servicing & Housing Stability | deepseek / deepseek-v4-flash | `mortgageclock-002` | terminal, reason, transfer |
+| Healthcare Payment & Dispute Resolution | deepseek / deepseek-v4-flash | `idrclock-002` | evidence |
+| Securities & Cyber Disclosure | deepseek / deepseek-v4-flash | `seccyclock-002` | terminal, evidence, transfer |
+| Long-Term Care & Resident Rights | deepseek / deepseek-v4-flash | `ltcclock-002` | terminal, transfer |
+| Nuclear Operations & Public Safety | deepseek / deepseek-v4-flash | `nrcclock-002` | terminal, transfer |
+
+The matched traps retain one failure anatomy while changing the regulated system:
+
+- one event is mistaken for one obligation instead of a graph;
+- a nearby actor, threshold, or exception overwrites the exact rule;
+- discovery, occurrence, receipt, or a calendar approximation starts the wrong clock;
+- a draft, notice, initiation, call attempt, or review becomes a false later stage;
+- the agent crosses into medical, materiality, eligibility, appeal, emergency, or filing authority.
+
+Open a linked lab and inspect `results/*.json` for gold contracts, predicted records,
+executed tool traces, usage, and provider provenance. Provider errors are excluded and
+make this generator fail the completeness assertion.
+
+## Use the wave
+
+1. Model one real event as a set of independently triggered obligations.
+2. Give every node a versioned rule, clock origin, due time, recipient, owner, and receipt.
+3. Add a clean twin where one fact changes one node or deadline.
+4. Remove protected decisions and irreversible actions from the model's tools.
+5. Replay identical scenarios after every model, rule, prompt, or tool change.
+
+<sub>Generated by `docs/make_clock_collision_report.py` from committed catalog and result
+JSON. Edit the labs or evidence; do not hand-edit this report.</sub>

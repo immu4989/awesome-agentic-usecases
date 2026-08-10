@@ -116,6 +116,23 @@ proof-before-action waves are complete. The public-protection wave below is also
 New candidates remain below so domain owners can
 see the next service gaps.
 
+## Regulatory Clock Collision wave — shipped
+
+Seven industries now share one [Obligation Graph Contract](OBLIGATION_GRAPH_CONTRACT.md)
+and matched [real-model report](CLOCK_COLLISION_REPORT.md). Instead of predicting one
+status, each lab reconstructs every applicable duty, trigger, clock origin, deadline,
+recipient/channel, protected owner, and executed receipt.
+
+| New industry | Flagship lab | Collision the benchmark exposes | Protected boundary |
+|---|---|---|---|
+| Medical Device Safety | **[Adverse-Event Reporting Gate](medical-device-safety/adverse-event-reporting-gate/)** | Reporter role changes the FDA/manufacturer recipient graph and 5-workday versus 30-calendar-day path | Qualified medical and regulatory judgment |
+| Pharmaceutical Supply Continuity | **[Drug Shortage Notification](pharmaceutical-supply/drug-shortage-notification-coordinator/)** | A five-business-day backstop is misused to delay a foreseeable advance notice | Manufacturer filing and FDA shortage status |
+| Mortgage Servicing & Housing Stability | **[Loss-Mitigation Foreclosure Gate](mortgage-servicing/loss-mitigation-foreclosure-gate/)** | 45 days, more than 37 days, exactly 37 days, and a 30-day evaluation collapse | Eligibility, counsel, courts, and foreclosure action |
+| Healthcare Payment | **[No Surprises Act IDR Navigator](healthcare-payment/no-surprises-idr-deadline-navigator/)** | 30 calendar days is substituted for 30 business days, or initiation becomes determination | Parties and certified IDR entity |
+| Securities & Cyber Disclosure | **[Material Cyber Disclosure Gate](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/)** | Discovery replaces the human materiality determination as the four-business-day clock origin | Disclosure committee and authorized filer |
+| Long-Term Care & Resident Rights | **[Transfer and Discharge Navigator](long-term-care/nursing-home-transfer-discharge-navigator/)** | A changed destination reuses an old notice and erases appeal rights | Resident, facility, clinician, and appeal body |
+| Nuclear Operations & Public Safety | **[Reactor Event Notification Gate](nuclear-operations/reactor-event-notification-gate/)** | Overlapping one-, four-, and eight-hour categories select the slower plausible route | Licensed operators, emergency director, and NRC caller |
+
 ## Public Protection wave — shipped
 
 Seven new industries share one [Protection Receipt Contract](PROTECTION_RECEIPT_CONTRACT.md)

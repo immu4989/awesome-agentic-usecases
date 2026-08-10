@@ -319,11 +319,12 @@ PATTERNS = [
             "rule. These matched cases differ by a narrow fact—sterility path, clearance "
             "owner, consumer-report reliance, aircraft identity, aggregate ownership, filing-year "
             "dependency, claim entailment, emergency evidence, award version, recall identity, "
-            "billing clock, rule status, special-facility path, or medical outcome. The remedy is not more general knowledge; it is an "
+            "billing clock, rule status, special-facility path, medical outcome, reporter role, "
+            "clock origin, time semantics, destination, or overlapping duty. The remedy is not more general knowledge; it is an "
             "exact rule code, evidence set, and counterexample at the decision boundary."
         ),
         "numbers": [
-            ("sixteen deterministic baselines", "the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy"),
+            ("twenty-three deterministic baselines", "the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy"),
             ("pharmaceutical transfer test", "an inconclusive sterility-positive investigation is routed through the more permissive chemical OOS path"),
             ("approved-data transfer", "a prior aircraft deferral or prior-year tax dependency is treated as authority for the current record"),
         ],
@@ -344,6 +345,40 @@ PATTERNS = [
             ("consumer-finance-debt/debt-validation-dispute-navigator", "Prior silence erases a timely dispute"),
             ("telecommunications-emergency/communications-outage-reporting-gate", "Volume threshold hides life-safety impact"),
             ("workplace-safety/severe-incident-reporting-navigator", "Hospital becomes inpatient"),
+            ("medical-device-safety/adverse-event-reporting-gate", "Reporter identity disappears"),
+            ("pharmaceutical-supply/drug-shortage-notification-coordinator", "backstop becomes a waiting period"),
+            ("mortgage-servicing/loss-mitigation-foreclosure-gate", "Thirty-seven becomes"),
+            ("healthcare-payment/no-surprises-idr-deadline-navigator", "Calendar time opens"),
+            ("securities-cyber-disclosure/material-cyber-incident-disclosure-gate", "Discovery starts"),
+            ("long-term-care/nursing-home-transfer-discharge-navigator", "old notice follows"),
+            ("nuclear-operations/reactor-event-notification-gate", "slowest plausible clock"),
+        ],
+    },
+    {
+        "id": "obligation-graph-collapse",
+        "name": "One event becomes one obligation",
+        "one_liner": "A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection.",
+        "why": (
+            "Operational systems often model a case as a status, but regulated events fan out. "
+            "The same facts can create several independently owned duties with different clock "
+            "origins and receipt stages. A single predicted label cannot show what was dropped "
+            "or invented. Represent each obligation as a node with trigger facts, clock origin, "
+            "deadline, recipient, human owner, and executed receipt; then score graph recall and "
+            "false-node precision together."
+        ),
+        "numbers": [
+            ("seven-industry clock-collision suite", "224 committed scenarios hold the eight archetypes constant while changing actor, trigger, time semantics, recipient, and protected authority"),
+            ("strict clock traps", "five workdays, 30 calendar days, 30 business days, four business days, 45 days, more than 37 days, and one/four/eight hours remain distinct"),
+            ("receipt boundary", "every obligation node must terminate at the stage supported by its executed tool receipt—never the hoped-for later outcome"),
+        ],
+        "cites": [
+            ("medical-device-safety/adverse-event-reporting-gate", "Reporter identity disappears"),
+            ("pharmaceutical-supply/drug-shortage-notification-coordinator", "backstop becomes a waiting period"),
+            ("mortgage-servicing/loss-mitigation-foreclosure-gate", "Thirty-seven becomes"),
+            ("healthcare-payment/no-surprises-idr-deadline-navigator", "Calendar time opens"),
+            ("securities-cyber-disclosure/material-cyber-incident-disclosure-gate", "Discovery starts"),
+            ("long-term-care/nursing-home-transfer-discharge-navigator", "old notice follows"),
+            ("nuclear-operations/reactor-event-notification-gate", "slowest plausible clock"),
         ],
     },
     {
@@ -370,6 +405,13 @@ PATTERNS = [
             ("consumer-finance-debt/debt-validation-dispute-navigator", "Delivery becomes verification"),
             ("telecommunications-emergency/communications-outage-reporting-gate", "Draft becomes certified final"),
             ("workplace-safety/severe-incident-reporting-navigator", "Draft or omission becomes report"),
+            ("medical-device-safety/adverse-event-reporting-gate", "Prepared becomes accepted"),
+            ("pharmaceutical-supply/drug-shortage-notification-coordinator", "Manufacturer notice becomes FDA status"),
+            ("mortgage-servicing/loss-mitigation-foreclosure-gate", "Submission becomes protected outcome"),
+            ("healthcare-payment/no-surprises-idr-deadline-navigator", "Initiation becomes determination"),
+            ("securities-cyber-disclosure/material-cyber-incident-disclosure-gate", "Prepared becomes filed"),
+            ("long-term-care/nursing-home-transfer-discharge-navigator", "Notice becomes discharge"),
+            ("nuclear-operations/reactor-event-notification-gate", "Call attempt becomes notification"),
         ],
     },
     {

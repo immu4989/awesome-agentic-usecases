@@ -1,6 +1,6 @@
 # The Agent Failure Taxonomy
 
-**236 failure modes, observed across 57 use cases, 15 recurring patterns.**
+**257 failure modes, observed across 64 use cases, 16 recurring patterns.**
 
 Every entry below was *measured*, not hypothesised — each links to the run that
 produced it, with a reproducing input. Read individually the failures look
@@ -27,10 +27,11 @@ reappearing in industries that share nothing but the shape of the agent.
 | 9 | [Ceremony is learned, prohibition is not](#ceremony-is-learned-prohibition-is-not) | Agents reliably obey 'do this first' and unreliably obey 'never do this'. | 2 use cases |
 | 10 | [Directional bias](#directional-bias) | Models don't err randomly — each errs in one direction, and the direction is a model property. | 5 use cases |
 | 11 | [The outcome can be right while the service fails](#the-outcome-can-be-right-while-the-service-fails) | Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse. | 19 use cases |
-| 12 | [Similarity erases the exception](#similarity-erases-the-exception) | A valid rule from the clean twin is confidently reused where one deciding fact reverses it. | 16 use cases |
-| 13 | [Stage collapse](#stage-collapse) | A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen. | 7 use cases |
-| 14 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
-| 15 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
+| 12 | [Similarity erases the exception](#similarity-erases-the-exception) | A valid rule from the clean twin is confidently reused where one deciding fact reverses it. | 23 use cases |
+| 13 | [One event becomes one obligation](#one-event-becomes-one-obligation) | A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection. | 7 use cases |
+| 14 | [Stage collapse](#stage-collapse) | A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen. | 14 use cases |
+| 15 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
+| 16 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
 
 ---
 
@@ -324,11 +325,11 @@ Outcome metrics see where a case landed, not what the person had to surrender or
 
 *A valid rule from the clean twin is confidently reused where one deciding fact reverses it.*
 
-Retrieval can be accurate and the recommendation can still inherit the wrong rule. These matched cases differ by a narrow fact—sterility path, clearance owner, consumer-report reliance, aircraft identity, aggregate ownership, filing-year dependency, claim entailment, emergency evidence, award version, recall identity, billing clock, rule status, special-facility path, or medical outcome. The remedy is not more general knowledge; it is an exact rule code, evidence set, and counterexample at the decision boundary.
+Retrieval can be accurate and the recommendation can still inherit the wrong rule. These matched cases differ by a narrow fact—sterility path, clearance owner, consumer-report reliance, aircraft identity, aggregate ownership, filing-year dependency, claim entailment, emergency evidence, award version, recall identity, billing clock, rule status, special-facility path, medical outcome, reporter role, clock origin, time semantics, destination, or overlapping duty. The remedy is not more general knowledge; it is an exact rule code, evidence set, and counterexample at the decision boundary.
 
 **Measured**
 
-- **sixteen deterministic baselines** — the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy
+- **twenty-three deterministic baselines** — the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy
 - **pharmaceutical transfer test** — an inconclusive sterility-positive investigation is routed through the more permissive chemical OOS path
 - **approved-data transfer** — a prior aircraft deferral or prior-year tax dependency is treated as authority for the current record
 
@@ -350,6 +351,39 @@ Retrieval can be accurate and the recommendation can still inherit the wrong rul
 - [`debt-validation-dispute-navigator` — Prior silence erases a timely dispute](consumer-finance-debt/debt-validation-dispute-navigator/FAILURE_MODES.md#1-prior-silence-erases-a-timely-dispute)
 - [`communications-outage-reporting-gate` — Volume threshold hides life-safety impact](telecommunications-emergency/communications-outage-reporting-gate/FAILURE_MODES.md#1-volume-threshold-hides-life-safety-impact)
 - [`severe-incident-reporting-navigator` — Hospital becomes inpatient](workplace-safety/severe-incident-reporting-navigator/FAILURE_MODES.md#1-hospital-becomes-inpatient)
+- [`adverse-event-reporting-gate` — Reporter identity disappears](medical-device-safety/adverse-event-reporting-gate/FAILURE_MODES.md#1-reporter-identity-disappears)
+- [`drug-shortage-notification-coordinator` — The backstop becomes a waiting period](pharmaceutical-supply/drug-shortage-notification-coordinator/FAILURE_MODES.md#1-the-backstop-becomes-a-waiting-period)
+- [`loss-mitigation-foreclosure-gate` — Thirty-seven becomes more than thirty-seven](mortgage-servicing/loss-mitigation-foreclosure-gate/FAILURE_MODES.md#1-thirty-seven-becomes-more-than-thirty-seven)
+- [`no-surprises-idr-deadline-navigator` — Calendar time opens the wrong window](healthcare-payment/no-surprises-idr-deadline-navigator/FAILURE_MODES.md#1-calendar-time-opens-the-wrong-window)
+- [`material-cyber-incident-disclosure-gate` — Discovery starts the disclosure clock](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/FAILURE_MODES.md#1-discovery-starts-the-disclosure-clock)
+- [`nursing-home-transfer-discharge-navigator` — An old notice follows a new destination](long-term-care/nursing-home-transfer-discharge-navigator/FAILURE_MODES.md#1-an-old-notice-follows-a-new-destination)
+- [`reactor-event-notification-gate` — The slowest plausible clock wins](nuclear-operations/reactor-event-notification-gate/FAILURE_MODES.md#1-the-slowest-plausible-clock-wins)
+
+</details>
+
+---
+
+## One event becomes one obligation
+
+*A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection.*
+
+Operational systems often model a case as a status, but regulated events fan out. The same facts can create several independently owned duties with different clock origins and receipt stages. A single predicted label cannot show what was dropped or invented. Represent each obligation as a node with trigger facts, clock origin, deadline, recipient, human owner, and executed receipt; then score graph recall and false-node precision together.
+
+**Measured**
+
+- **seven-industry clock-collision suite** — 224 committed scenarios hold the eight archetypes constant while changing actor, trigger, time semantics, recipient, and protected authority
+- **strict clock traps** — five workdays, 30 calendar days, 30 business days, four business days, 45 days, more than 37 days, and one/four/eight hours remain distinct
+- **receipt boundary** — every obligation node must terminate at the stage supported by its executed tool receipt—never the hoped-for later outcome
+
+<details><summary><b>Where it was observed</b></summary>
+
+- [`adverse-event-reporting-gate` — Reporter identity disappears](medical-device-safety/adverse-event-reporting-gate/FAILURE_MODES.md#1-reporter-identity-disappears)
+- [`drug-shortage-notification-coordinator` — The backstop becomes a waiting period](pharmaceutical-supply/drug-shortage-notification-coordinator/FAILURE_MODES.md#1-the-backstop-becomes-a-waiting-period)
+- [`loss-mitigation-foreclosure-gate` — Thirty-seven becomes more than thirty-seven](mortgage-servicing/loss-mitigation-foreclosure-gate/FAILURE_MODES.md#1-thirty-seven-becomes-more-than-thirty-seven)
+- [`no-surprises-idr-deadline-navigator` — Calendar time opens the wrong window](healthcare-payment/no-surprises-idr-deadline-navigator/FAILURE_MODES.md#1-calendar-time-opens-the-wrong-window)
+- [`material-cyber-incident-disclosure-gate` — Discovery starts the disclosure clock](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/FAILURE_MODES.md#1-discovery-starts-the-disclosure-clock)
+- [`nursing-home-transfer-discharge-navigator` — An old notice follows a new destination](long-term-care/nursing-home-transfer-discharge-navigator/FAILURE_MODES.md#1-an-old-notice-follows-a-new-destination)
+- [`reactor-event-notification-gate` — The slowest plausible clock wins](nuclear-operations/reactor-event-notification-gate/FAILURE_MODES.md#1-the-slowest-plausible-clock-wins)
 
 </details>
 
@@ -376,6 +410,13 @@ Agent workflows often end with a durable record used by another team or system. 
 - [`debt-validation-dispute-navigator` — Delivery becomes verification](consumer-finance-debt/debt-validation-dispute-navigator/FAILURE_MODES.md#3-delivery-becomes-verification)
 - [`communications-outage-reporting-gate` — Draft becomes certified final](telecommunications-emergency/communications-outage-reporting-gate/FAILURE_MODES.md#3-draft-becomes-certified-final)
 - [`severe-incident-reporting-navigator` — Draft or omission becomes report](workplace-safety/severe-incident-reporting-navigator/FAILURE_MODES.md#3-draft-or-omission-becomes-report)
+- [`adverse-event-reporting-gate` — Prepared becomes accepted](medical-device-safety/adverse-event-reporting-gate/FAILURE_MODES.md#3-prepared-becomes-accepted)
+- [`drug-shortage-notification-coordinator` — Manufacturer notice becomes FDA status](pharmaceutical-supply/drug-shortage-notification-coordinator/FAILURE_MODES.md#3-manufacturer-notice-becomes-fda-status)
+- [`loss-mitigation-foreclosure-gate` — Submission becomes protected outcome](mortgage-servicing/loss-mitigation-foreclosure-gate/FAILURE_MODES.md#3-submission-becomes-protected-outcome)
+- [`no-surprises-idr-deadline-navigator` — Initiation becomes determination](healthcare-payment/no-surprises-idr-deadline-navigator/FAILURE_MODES.md#3-initiation-becomes-determination)
+- [`material-cyber-incident-disclosure-gate` — Prepared becomes filed](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/FAILURE_MODES.md#3-prepared-becomes-filed)
+- [`nursing-home-transfer-discharge-navigator` — Notice becomes discharge](long-term-care/nursing-home-transfer-discharge-navigator/FAILURE_MODES.md#3-notice-becomes-discharge)
+- [`reactor-event-notification-gate` — Call attempt becomes notification](nuclear-operations/reactor-event-notification-gate/FAILURE_MODES.md#3-call-attempt-becomes-notification)
 
 </details>
 

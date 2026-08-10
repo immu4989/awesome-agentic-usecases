@@ -22,6 +22,8 @@ A new use case PR needs:
   `docs/make_readme_experiences.py`, with all generated visual-case-file assets committed
 - [ ] For protective workflows, an exact receipt vocabulary that distinguishes draft,
   attempt, accepted handoff, accountable decision, and completed action
+- [ ] For multi-obligation workflows, a versioned graph of every trigger, clock origin,
+  deadline semantic, recipient/channel, protected owner, and executed receipt
 
 ## What doesn't
 

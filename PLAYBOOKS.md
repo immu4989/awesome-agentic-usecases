@@ -103,6 +103,20 @@ metrics = fidelity.as_metrics()
 Track overclaims and omissions separately. An agent that says nothing should not dilute the
 omission rate, and an agent that took no action should not be able to claim success.
 
+### One event creates several independently clocked duties
+
+1. Write an [Obligation Graph Contract](OBLIGATION_GRAPH_CONTRACT.md) instead of one terminal label.
+2. Give every node exact trigger facts, a rule version, clock origin, time semantics,
+   recipient/channel, protected owner, and finite receipt stage.
+3. Score missing nodes and invented nodes separately; high recall alone rewards over-filing.
+4. Add a clean twin where one fact changes exactly one obligation, deadline, or recipient.
+5. Derive receipt stage from executed tools and forbid the model from making the protected
+   medical, materiality, eligibility, appeal, emergency, or filing decision.
+
+Evidence: the [Regulatory Clock Collision report](CLOCK_COLLISION_REPORT.md) holds eight
+archetypes constant across medical devices, drug supply, mortgage servicing, healthcare
+payment, cyber disclosure, resident rights, and nuclear event reporting.
+
 ### Untrusted content changes where money or access goes
 
 1. Treat the message as the requested change, never as proof that the change is authorized.

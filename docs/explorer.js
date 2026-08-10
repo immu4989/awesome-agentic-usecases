@@ -26,6 +26,7 @@ function filteredCases() {
 
 function cardAccent(item) {
   const terms = `${item.kind} ${item.industry} ${item.capabilities.join(" ")}`.toLocaleLowerCase();
+  if (/clock-collision|obligation-graph|deadline collision|multi-obligation/.test(terms)) return "#57c7ff";
   if (/public-protection|public-safety|recall-remedy|worker safety|consumer rights/.test(terms)) return "#ff6b4a";
   if (/security|adversarial|injection|exfil|poison/.test(terms)) return "var(--red)";
   if (/guardrail|environment|tool enforcement|approval/.test(terms)) return "var(--green)";
@@ -117,7 +118,7 @@ function syncUrl() {
 }
 
 async function init() {
-  const response = await fetch("use-cases.json?v=3");
+  const response = await fetch("use-cases.json?v=4");
   if (!response.ok) throw new Error(`Catalog failed to load (${response.status})`);
   state.cases = await response.json();
 

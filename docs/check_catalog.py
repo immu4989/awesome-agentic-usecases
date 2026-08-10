@@ -112,6 +112,15 @@ def main() -> None:
     for asset in ("hero-v4.png", "hero-v4.webp"):
         assert (ROOT / "docs" / "assets" / asset).is_file(), f"missing visual asset: {asset}"
 
+    schema = json.loads((ROOT / "docs" / "obligation-graph.schema.json").read_text())
+    example = json.loads((ROOT / "docs" / "obligation-graph.example.json").read_text())
+    assert schema["$id"].endswith("obligation-graph.schema.json")
+    assert example["contract_version"] == "aau-obligation-graph/1.0"
+    assert len(example["obligations"]) >= 2, "worked graph must prove one event can fan out"
+    assert len({item["obligation_id"] for item in example["obligations"]}) == len(
+        example["obligations"]
+    ), "obligation ids must be unique"
+
     taxonomy_heading = f"## {taxonomy['failure_modes']} failures, {taxonomy['patterns']} patterns"
     assert taxonomy_heading in readme, f"README taxonomy heading is stale: {taxonomy_heading!r}"
     assert f"Read all {taxonomy['patterns']} patterns" in readme, "README taxonomy link is stale"

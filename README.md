@@ -16,6 +16,8 @@
   <a href="#run-one-now">Run one</a> ·
   <a href="PLAYBOOKS.md">Playbooks</a> ·
   <a href="USE_CASE_RADAR.md">Use-case radar</a> ·
+  <a href="OBLIGATION_GRAPH_CONTRACT.md">Obligation Graph Contract</a> ·
+  <a href="CLOCK_COLLISION_REPORT.md">Clock Collision report</a> ·
   <a href="PROTECTION_RECEIPT_CONTRACT.md">Protection Receipt Contract</a> ·
   <a href="PUBLIC_PROTECTION_REPORT.md">Public Protection report</a> ·
   <a href="DECISION_GATE_CONTRACT.md">Decision Gate Contract</a> ·
@@ -45,7 +47,30 @@ real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
 
-## New release: public protection needs a receipt
+## New release: one event can start several clocks
+
+<img src="docs/assets/obligation-graph.svg" width="100%" alt="Obligation Graph Contract: one event fans out into applicable obligations, exact clock origins, deadlines, recipients, protected human owners, and truthful executed receipts">
+
+Most workflow agents predict one answer. Real public-protection events can create several
+simultaneous duties—each with a different trigger, clock, recipient, owner, and proof of
+completion. A fluent single route can therefore be locally correct and globally incomplete.
+
+The new **[Obligation Graph Contract](OBLIGATION_GRAPH_CONTRACT.md)** scores the complete
+fan-out: event facts, applicable obligation set, exact clock origin, business/calendar-time
+semantics, recipient and channel, protected human authority, and truthful executed receipt.
+Forks can start from the vendor-neutral [JSON Schema](docs/obligation-graph.schema.json)
+and its [two-recipient worked example](docs/obligation-graph.example.json).
+
+| Health and continuity | People and economic rights | Critical public systems |
+|---|---|---|
+| **[Medical Device Adverse-Event Reporting](medical-device-safety/adverse-event-reporting-gate/)** · **[Drug Shortage Notification](pharmaceutical-supply/drug-shortage-notification-coordinator/)** | **[Mortgage Loss-Mitigation Protection](mortgage-servicing/loss-mitigation-foreclosure-gate/)** · **[No Surprises Act IDR](healthcare-payment/no-surprises-idr-deadline-navigator/)** · **[Nursing-Home Transfer Rights](long-term-care/nursing-home-transfer-discharge-navigator/)** | **[Material Cyber Disclosure](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/)** · **[Nuclear Event Notification](nuclear-operations/reactor-event-notification-gate/)** |
+
+Each lab ships 32 balanced scenarios, strict tools, a deterministic baseline, repeated
+real-model evidence, official-source grounding, observed failures, and seven themed
+visuals. The **[matched report](CLOCK_COLLISION_REPORT.md)** compares identical failure
+shapes across all seven industries; the dated **[research ledger](docs/CLOCK_COLLISION_RESEARCH_NOTES.md)** records the source-derived rules and premise corrections.
+
+## Previous release: public protection needs a receipt
 
 <img src="docs/assets/protection-receipt.svg" width="100%" alt="Protection Receipt Contract: exact subject, current rule, complete gates, live clock and channel, protected human owner, and truthful executed receipt">
 
@@ -166,7 +191,7 @@ accessible mobility, transparency, trade, nutrition, elections, care transitions
 | I want to… | Start here | What you get |
 |---|---|---|
 | **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Four short paths through routing, irreversible action, tool poisoning, and public-value failures |
-| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 57 verified use cases by industry, capability, or failure shape |
+| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 64 verified use cases by industry, capability, or failure shape |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
@@ -233,7 +258,7 @@ aau doctor                             # validate your checkout or fork
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="48 industries shipping, 180 verified model-evals, 236 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="55 industries shipping, 194 verified model-evals, 257 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -284,7 +309,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 236 failures, 15 patterns
+## 257 failures, 16 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -299,7 +324,7 @@ reappearing across industries that share nothing but the shape of the agent.
 | [Prior over policy](FAILURE_TAXONOMY.md#prior-over-policy) | Models cite the rule in their reasoning, then violate it in the same breath | 4 use cases |
 | [Similarity erases the exception](FAILURE_TAXONOMY.md#similarity-erases-the-exception) | A valid rule from the clean twin is reused where one deciding fact reverses it | 9 matched decision-gate labs |
 
-<a href="FAILURE_TAXONOMY.md"><b>→ Read all 15 patterns</b></a>, each with measured incidence and
+<a href="FAILURE_TAXONOMY.md"><b>→ Read all 16 patterns</b></a>, each with measured incidence and
 a link to the run that produced it.
 
 ## Four models, one agent — one row, up close
@@ -396,6 +421,13 @@ by industry, capability, or failure shape.
 | [📨 Debt Validation & Dispute Navigator](consumer-finance-debt/debt-validation-dispute-navigator/) | Consumer Finance & Debt Collection | `consumer rights` `evidence minimization` `deadline protection` `receipt fidelity` `human review` | Can an agent reconstruct the validation period, request only the missing debt evidence, preserve dispute rights, and stop short of legal conclusions? |
 | [📡 911 & 988 Outage Reporting Gate](telecommunications-emergency/communications-outage-reporting-gate/) | Telecommunications & Emergency Communications | `public-safety` `special-facility detection` `deadline protection` `record fidelity` `human review` | Can an agent detect 911/988 special-facility impact, preserve the 4-hour or 24-hour NORS path, notify the right official, and keep the final report true? |
 | [🦺 Workplace Severe Incident Reporting Navigator](workplace-safety/severe-incident-reporting-navigator/) | Workplace Safety & Injury Reporting | `worker safety` `outcome classification` `deadline protection` `record fidelity` `human review` | Can an agent classify a fatality, inpatient hospitalization, amputation, or eye loss; start the correct OSHA clock; and keep follow-up records faithful? |
+| [🩺 Medical Device Adverse-Event Reporting Gate](medical-device-safety/adverse-event-reporting-gate/) | Medical Device Safety | `obligation-graph` `reporter classification` `deadline protection` `receipt fidelity` `human review` | Can an agent identify the reporter, event, 5-workday or 30-calendar-day path, recipient set, and actual FDA receipt without making the medical judgment itself? |
+| [💊 Drug Shortage Notification Coordinator](pharmaceutical-supply/drug-shortage-notification-coordinator/) | Pharmaceutical Supply Continuity | `obligation-graph` `supply continuity` `clock origin` `deadline protection` `human review` | Can an agent recognize a covered manufacturing interruption, start the advance or five-business-day clock, and prove FDA notification without declaring a shortage? |
+| [🏡 Mortgage Loss-Mitigation and Foreclosure Protection Gate](mortgage-servicing/loss-mitigation-foreclosure-gate/) | Mortgage Servicing & Housing Stability | `obligation-graph` `housing stability` `milestone calculation` `rights protection` `human review` | Can an agent reconstruct application completeness, the 45-day and 37-day milestones, evaluation timing, and foreclosure holds without deciding eligibility? |
+| [🧮 No Surprises Act IDR Deadline Navigator](healthcare-payment/no-surprises-idr-deadline-navigator/) | Healthcare Payment & Dispute Resolution | `obligation-graph` `business-day calculation` `claim verification` `deadline protection` `human review` | Can an agent verify an eligible item, exhaust 30 business days of negotiation, preserve the four-business-day initiation window, and distinguish initiation from determination? |
+| [📈 Material Cyber Incident Disclosure Gate](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/) | Securities & Cyber Disclosure | `obligation-graph` `cyber disclosure` `clock origin` `confidentiality` `human review` | Can an agent separate discovery from the human materiality determination, calculate four business days, protect response details, and prove a Form 8-K filing? |
+| [🤝 Nursing Home Transfer and Discharge Rights Navigator](long-term-care/nursing-home-transfer-discharge-navigator/) | Long-Term Care & Resident Rights | `obligation-graph` `resident rights` `notice verification` `appeal protection` `human review` | Can an agent verify an allowed transfer basis, preserve the ordinary 30-day notice or exception path, include appeal rights, and avoid treating notice as discharge? |
+| [⚛️ Nuclear Reactor Event Notification Gate](nuclear-operations/reactor-event-notification-gate/) | Nuclear Operations & Public Safety | `obligation-graph` `public safety` `multi-clock classification` `receipt fidelity` `human review` | Can an agent classify overlapping one-hour, four-hour, and eight-hour NRC notification paths while preserving emergency authority and truthful call receipts? |
 
 <!-- USE_CASES:END -->
 
@@ -469,7 +501,7 @@ only a per-use-case harness surfaces:
 
 ## Industries
 
-The catalog now spans **48 distinct industries**. Use the
+The catalog now spans **55 distinct industries**. Use the
 [interactive explorer](https://immu4989.github.io/awesome-agentic-usecases/) to filter the
 full verified set; these are the major reusable families:
 

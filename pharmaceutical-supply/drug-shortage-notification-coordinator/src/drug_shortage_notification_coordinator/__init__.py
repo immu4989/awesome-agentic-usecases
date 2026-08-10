@@ -1,0 +1,1 @@
+"""Drug Shortage Notification Coordinator."""

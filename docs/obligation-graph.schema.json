@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/obligation-graph.schema.json",
+  "title": "Awesome Agentic Use Cases Obligation Graph",
+  "description": "A machine-readable event-to-obligation graph. The producer must prove the complete applicable set; every downstream state must match executed receipts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "event_id",
+    "event_facts",
+    "applicability_proof",
+    "obligations",
+    "protected_decisions"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "aau-obligation-graph/1.0"
+    },
+    "event_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "event_facts": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "applicability_proof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_snapshot", "evaluated_rule_ids", "inapplicable_rule_ids"],
+      "properties": {
+        "rule_snapshot": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evaluated_rule_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "inapplicable_rule_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "obligations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/obligation"}
+    },
+    "protected_decisions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "$defs": {
+    "obligation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "obligation_id",
+        "rule_id",
+        "rule_version",
+        "trigger_facts",
+        "clock_origin",
+        "deadline",
+        "recipient",
+        "human_owner",
+        "receipt"
+      ],
+      "properties": {
+        "obligation_id": {"type": "string", "minLength": 1},
+        "rule_id": {"type": "string", "minLength": 1},
+        "rule_version": {"type": "string", "minLength": 1},
+        "trigger_facts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "clock_origin": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["fact", "occurred_at", "source_record"],
+          "properties": {
+            "fact": {"type": "string", "minLength": 1},
+            "occurred_at": {"type": "string", "format": "date-time"},
+            "source_record": {"type": "string", "minLength": 1}
+          }
+        },
+        "deadline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["due_at", "time_semantics", "calculation_basis"],
+          "properties": {
+            "due_at": {"type": "string", "format": "date-time"},
+            "time_semantics": {
+              "enum": ["hours", "calendar_days", "business_days", "months", "as_soon_as_practicable"]
+            },
+            "calculation_basis": {"type": "string", "minLength": 1}
+          }
+        },
+        "recipient": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["organization", "channel"],
+          "properties": {
+            "organization": {"type": "string", "minLength": 1},
+            "channel": {"type": "string", "minLength": 1}
+          }
+        },
+        "human_owner": {"type": "string", "minLength": 1},
+        "depends_on": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "receipt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["stage"],
+          "properties": {
+            "stage": {
+              "enum": ["not_started", "prepared", "delivered", "accepted", "decided", "paid_or_completed"]
+            },
+            "receipt_id": {"type": ["string", "null"]},
+            "occurred_at": {"type": ["string", "null"], "format": "date-time"},
+            "source_record": {"type": ["string", "null"]}
+          }
+        }
+      }
+    }
+  }
+}
