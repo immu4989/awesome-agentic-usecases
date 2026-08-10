@@ -20,6 +20,8 @@ A new use case PR needs:
 - [ ] README following the standard template: Problem → Architecture → Results → Failure modes → Run it
 - [ ] A themed entry, four-act story, and scenario anatomy in
   `docs/make_readme_experiences.py`, with all generated visual-case-file assets committed
+- [ ] For protective workflows, an exact receipt vocabulary that distinguishes draft,
+  attempt, accepted handoff, accountable decision, and completed action
 
 ## What doesn't
 

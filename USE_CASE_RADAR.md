@@ -112,8 +112,26 @@ where a correct referral can still arrive too late to prevent immediate harm.
 | Licensed workers, employers, and state mobility teams | [Occupational License Mobility Navigator](workforce-mobility/occupational-license-mobility-navigator/) | A compact or endorsement path is confused with licensure and current authority provenance is lost |
 
 The committed public-value, trust-and-access, evidence-service, decision-gate, and
-proof-before-action waves are complete. New candidates remain below so domain owners can
+proof-before-action waves are complete. The public-protection wave below is also shipped.
+New candidates remain below so domain owners can
 see the next service gaps.
+
+## Public Protection wave — shipped
+
+Seven new industries share one [Protection Receipt Contract](PROTECTION_RECEIPT_CONTRACT.md)
+and matched [real-model report](PUBLIC_PROTECTION_REPORT.md). The benchmark follows the
+workflow beyond a good recommendation: exact subject, rule, gates, clock/channel, human
+owner, and executed receipt must all agree.
+
+| New industry | Flagship lab | Failure the benchmark exposes | Protected boundary |
+|---|---|---|---|
+| Automotive Safety | **[Vehicle Recall Remedy Coordinator](automotive-safety/vehicle-recall-remedy-coordinator/)** | A neighboring model-year campaign is transferred to the VIN, or an appointment becomes a completed repair | Manufacturer/dealer and qualified repair owner |
+| Consumer Product Safety | **[Consumer Product Recall Remedy Coordinator](consumer-product-safety/product-recall-remedy-coordinator/)** | Appearance expands recall scope, a warning is dropped, or intake becomes compensation | CPSC notice and recalling-firm remedy |
+| Maritime & Ports | **[Detention & Demurrage Invoice Verifier](maritime-ports/detention-demurrage-invoice-verifier/)** | A late container makes a day-31 or duplicate-party invoice look collectible | Contract/billing owner and dispute adjudicator |
+| Environmental & Hazardous Materials | **[Hazardous Waste e-Manifest Coordinator](environmental-hazardous-materials/hazardous-waste-manifest-coordinator/)** | A proposal is enforced as present law or a correction invents/erases custody history | Registered signers and environmental authority |
+| Consumer Finance & Debt Collection | **[Debt Validation & Dispute Navigator](consumer-finance-debt/debt-validation-dispute-navigator/)** | Prior silence defeats a timely dispute or delivery becomes debt verification | Consumer, collector, court, regulator, and counsel |
+| Telecommunications & Emergency Communications | **[911 & 988 Outage Reporting Gate](telecommunications-emergency/communications-outage-reporting-gate/)** | Low user-minutes hide a special-facility route, or a draft becomes a certified filing | Designated officials and authorized NORS filer |
+| Workplace Safety & Injury Reporting | **[Severe Incident Reporting Navigator](workplace-safety/severe-incident-reporting-navigator/)** | “Hospital” becomes inpatient, a clock is lost, or an attempt becomes an accepted report | Employer, OSHA/State Plan, and authorized reporter |
 
 ## Proof Before Action wave — shipped
 

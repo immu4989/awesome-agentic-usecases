@@ -31,6 +31,7 @@ yours, even if its industry does not.
 | Must coordinate exact evidence and protect access, clocks, recourse, and human authority | Any lab in the [12-industry Evidence Service Contract wave](USE_CASE_RADAR.md#evidence-service-expansion-wave--shipped) |
 | Prepares evidence immediately before a protected high-stakes decision | Any lab in the [six-industry Decision Gate Contract](DECISION_GATE_CONTRACT.md) wave |
 | Must prove a source, safety state, or current record before a helpful action | Any lab in the [Proof Before Action report](PROOF_ACTION_REPORT.md) |
+| Must prove that a protective action actually reached the right stage and owner | Any lab in the [seven-industry Protection Receipt Contract](PROTECTION_RECEIPT_CONTRACT.md) wave |
 
 Use `aau show <name>` to inspect an entry and `aau start <name>` for its exact local
 installation order.
@@ -74,6 +75,7 @@ Fill this contract before changing code:
 | What burden, accessibility, deadline, recourse, or rights obligations apply? | |
 | Which nearby valid rule must never transfer to this case? | |
 | Which gates are conjunctive, and who owns the protected final action? | |
+| Which receipt proves each real stage—and which later stage must never be inferred? | |
 
 If the first two answers are vague, stop. A precise scorer cannot be built from an
 undefined operational decision.

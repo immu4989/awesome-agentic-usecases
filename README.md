@@ -16,6 +16,8 @@
   <a href="#run-one-now">Run one</a> ·
   <a href="PLAYBOOKS.md">Playbooks</a> ·
   <a href="USE_CASE_RADAR.md">Use-case radar</a> ·
+  <a href="PROTECTION_RECEIPT_CONTRACT.md">Protection Receipt Contract</a> ·
+  <a href="PUBLIC_PROTECTION_REPORT.md">Public Protection report</a> ·
   <a href="DECISION_GATE_CONTRACT.md">Decision Gate Contract</a> ·
   <a href="DECISION_GATE_REPORT.md">Decision Gate report</a> ·
   <a href="PROOF_ACTION_REPORT.md">Proof Before Action report</a> ·
@@ -43,7 +45,30 @@ real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
 
-## New release: proof before action
+## New release: public protection needs a receipt
+
+<img src="docs/assets/protection-receipt.svg" width="100%" alt="Protection Receipt Contract: exact subject, current rule, complete gates, live clock and channel, protected human owner, and truthful executed receipt">
+
+Seven new industries test a failure most agent demos never follow far enough to see: the
+recommendation is plausible, but the person or organization is not actually protected—or
+the ledger claims a remedy, filing, repair, payment, or dispute outcome that never happened.
+
+The new **[Protection Receipt Contract](PROTECTION_RECEIPT_CONTRACT.md)** holds six facts
+together: exact subject, current rule, every required gate, live clock and channel,
+protected human authority, and a truthful executed receipt.
+
+| Protect people | Protect the economy | Protect public systems |
+|---|---|---|
+| **[Vehicle Recall Remedy](automotive-safety/vehicle-recall-remedy-coordinator/)** · **[Consumer Product Recall](consumer-product-safety/product-recall-remedy-coordinator/)** · **[Debt Validation & Dispute](consumer-finance-debt/debt-validation-dispute-navigator/)** | **[Detention & Demurrage Invoice Verification](maritime-ports/detention-demurrage-invoice-verifier/)** · **[Workplace Severe Incident Reporting](workplace-safety/severe-incident-reporting-navigator/)** | **[Hazardous Waste e-Manifest](environmental-hazardous-materials/hazardous-waste-manifest-coordinator/)** · **[911/988 Outage Reporting](telecommunications-emergency/communications-outage-reporting-gate/)** |
+
+Each lab ships 32 balanced scenarios, strict tools, a $0 reproducible baseline, repeated
+real-model smoke runs, official-source grounding, observed failures, and its own seven-part
+visual case file. The **[matched report](PUBLIC_PROTECTION_REPORT.md)** compares the same
+protection-and-receipt obligations across all seven industries. The dated
+**[research ledger](docs/PUBLIC_PROTECTION_RESEARCH_NOTES.md)** records official sources and
+premise corrections—including why an EPA proposal is not treated as current law.
+
+## Previous release: proof before action
 
 Three new industries test a deceptively common failure: the agent has enough context to be
 helpful, but not enough proof to act. Each lab ships the same eight-archetype Decision Gate
@@ -141,7 +166,7 @@ accessible mobility, transparency, trade, nutrition, elections, care transitions
 | I want to… | Start here | What you get |
 |---|---|---|
 | **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Four short paths through routing, irreversible action, tool poisoning, and public-value failures |
-| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 50 verified use cases by industry, capability, or failure shape |
+| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 57 verified use cases by industry, capability, or failure shape |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
@@ -208,7 +233,7 @@ aau doctor                             # validate your checkout or fork
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="41 industries shipping, 166 verified model-evals, 215 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="48 industries shipping, 180 verified model-evals, 236 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -259,7 +284,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 215 failures, 14 patterns
+## 236 failures, 15 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -274,7 +299,7 @@ reappearing across industries that share nothing but the shape of the agent.
 | [Prior over policy](FAILURE_TAXONOMY.md#prior-over-policy) | Models cite the rule in their reasoning, then violate it in the same breath | 4 use cases |
 | [Similarity erases the exception](FAILURE_TAXONOMY.md#similarity-erases-the-exception) | A valid rule from the clean twin is reused where one deciding fact reverses it | 9 matched decision-gate labs |
 
-<a href="FAILURE_TAXONOMY.md"><b>→ Read all 14 patterns</b></a>, each with measured incidence and
+<a href="FAILURE_TAXONOMY.md"><b>→ Read all 15 patterns</b></a>, each with measured incidence and
 a link to the run that produced it.
 
 ## Four models, one agent — one row, up close
@@ -364,6 +389,13 @@ by industry, capability, or failure shape.
 | [🔎 Claim and Citation Evidence Verifier](research-knowledge-work/claim-evidence-verifier/) | Research & Knowledge Work | `verification` `citations` `source freshness` `fact checking` `human review` | Can an agent prove that every material claim is entailed by a current cited source without publishing or certifying it? |
 | [🧰 Home and Field Service Readiness Coordinator](home-field-services/service-visit-readiness-coordinator/) | Home & Field Services | `safety` `scheduling` `prerequisite verification` `service continuity` `human review` | Can an agent prepare the right visit while diverting gas or carbon-monoxide danger away from routine service? |
 | [🤝 Nonprofit Grant Obligation Evidence Navigator](nonprofit-grant-management/grant-obligation-evidence-navigator/) | Nonprofit Grant Management | `public-value` `obligation mapping` `evidence minimization` `deadline protection` `human review` | Can an agent map the current award's obligations to evidence without certifying compliance or submitting? |
+| [🚙 Vehicle Recall Remedy Coordinator](automotive-safety/vehicle-recall-remedy-coordinator/) | Automotive Safety | `public-protection` `recall-remedy` `identity matching` `receipt fidelity` `human review` | Can an agent bind a vehicle to the exact open recall, preserve the no-cost remedy path, and prove the handoff without claiming the repair happened? |
+| [🧸 Consumer Product Recall Remedy Coordinator](consumer-product-safety/product-recall-remedy-coordinator/) | Consumer Product Safety | `public-protection` `recall-remedy` `hazard notice` `receipt fidelity` `human review` | Can an agent match the exact recalled product, preserve stop-use instructions, and produce a verified refund, repair, or replacement handoff? |
+| [🚢 Detention & Demurrage Invoice Verifier](maritime-ports/detention-demurrage-invoice-verifier/) | Maritime & Ports | `economic-protection` `invoice verification` `deadline protection` `receipt fidelity` `human review` | Can an agent verify who may be billed, the 30-day invoice clock, charge dates, free time, and dispute route before money moves? |
+| [☣️ Hazardous Waste e-Manifest Coordinator](environmental-hazardous-materials/hazardous-waste-manifest-coordinator/) | Environmental & Hazardous Materials | `public-protection` `chain of custody` `rule provenance` `receipt fidelity` `human review` | Can an agent bind generator, transporter, facility, waste codes, signatures, exception clocks, and corrections without fabricating chain-of-custody? |
+| [📨 Debt Validation & Dispute Navigator](consumer-finance-debt/debt-validation-dispute-navigator/) | Consumer Finance & Debt Collection | `consumer rights` `evidence minimization` `deadline protection` `receipt fidelity` `human review` | Can an agent reconstruct the validation period, request only the missing debt evidence, preserve dispute rights, and stop short of legal conclusions? |
+| [📡 911 & 988 Outage Reporting Gate](telecommunications-emergency/communications-outage-reporting-gate/) | Telecommunications & Emergency Communications | `public-safety` `special-facility detection` `deadline protection` `record fidelity` `human review` | Can an agent detect 911/988 special-facility impact, preserve the 4-hour or 24-hour NORS path, notify the right official, and keep the final report true? |
+| [🦺 Workplace Severe Incident Reporting Navigator](workplace-safety/severe-incident-reporting-navigator/) | Workplace Safety & Injury Reporting | `worker safety` `outcome classification` `deadline protection` `record fidelity` `human review` | Can an agent classify a fatality, inpatient hospitalization, amputation, or eye loss; start the correct OSHA clock; and keep follow-up records faithful? |
 
 <!-- USE_CASES:END -->
 
@@ -437,7 +469,7 @@ only a per-use-case harness surfaces:
 
 ## Industries
 
-The catalog now spans **41 distinct industries**. Use the
+The catalog now spans **48 distinct industries**. Use the
 [interactive explorer](https://immu4989.github.io/awesome-agentic-usecases/) to filter the
 full verified set; these are the major reusable families:
 
@@ -448,6 +480,7 @@ full verified set; these are the major reusable families:
 | Evidence services | Food safety, drinking water, federal taxpayer services, veterans, transit, transparency, immigration, international trade, child nutrition, elections, care transitions, workforce mobility |
 | Decision gates | Pharmaceutical manufacturing, grid operations, hiring, aviation operations, banking compliance, tax filing services |
 | Proof before action | Research and knowledge work, home and field services, nonprofit grant management |
+| Public protection | Automotive and product safety, maritime billing, hazardous materials, consumer debt rights, emergency communications, workplace safety |
 
 The [Use-case Radar](USE_CASE_RADAR.md) records what has shipped, what needs domain review,
 and the next high-value workflow shapes. Industry count is generated from the machine-readable

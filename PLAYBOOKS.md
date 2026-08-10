@@ -83,6 +83,13 @@ Evidence: [contained is not fixed](FAILURE_TAXONOMY.md#contained-is-not-fixed).
 
 Use the harness reporting primitive to compare consequential claims with actual tool state:
 
+- If the false claim is an appointment, repair, remedy, dispute, payment, correction,
+  notification, or regulatory filing, start with the
+  [Protection Receipt Contract](PROTECTION_RECEIPT_CONTRACT.md). It separates the exact
+  subject, current rule, gates, clock/channel, protected owner, and executed receipt.
+- Replay the same transfer trap across the [matched seven-industry report](PUBLIC_PROTECTION_REPORT.md)
+  before changing prompts; this shows whether the weakness follows the model or your domain layer.
+
 ```python
 from aau_harness import ReportSpec
 

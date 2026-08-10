@@ -1,10 +1,10 @@
 """Generate FAILURE_TAXONOMY.md — the cross-cutting patterns behind every observed failure.
 
-Individually, this repo documents ~64 failure modes across 12 use cases. Read together they
-are not 64 things: they are about ten recurring patterns, several of which were found
-independently in eight different domains without anyone looking for them. That synthesis is
-the repo's most valuable artifact and the one thing a demo collection structurally cannot
-produce, because you can only find a pattern like this by measuring the same way many times.
+Individually, this repo documents hundreds of failure modes across dozens of use cases. Read
+together they are a much smaller set of recurring patterns, several of which were found
+independently in unrelated domains without anyone looking for them. That synthesis is the
+repo's most valuable artifact and the one thing a demo collection structurally cannot
+produce, because you can only find a pattern by measuring the same way many times.
 
 The *judgment* — which observation belongs to which pattern — is curated here, explicitly,
 so it can be reviewed and argued with. Everything mechanical is generated: the links, the
@@ -318,11 +318,12 @@ PATTERNS = [
             "Retrieval can be accurate and the recommendation can still inherit the wrong "
             "rule. These matched cases differ by a narrow fact—sterility path, clearance "
             "owner, consumer-report reliance, aircraft identity, aggregate ownership, filing-year "
-            "dependency, claim entailment, emergency evidence, or award version. The remedy is not more general knowledge; it is an "
+            "dependency, claim entailment, emergency evidence, award version, recall identity, "
+            "billing clock, rule status, special-facility path, or medical outcome. The remedy is not more general knowledge; it is an "
             "exact rule code, evidence set, and counterexample at the decision boundary."
         ),
         "numbers": [
-            ("nine deterministic baselines", "the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy"),
+            ("sixteen deterministic baselines", "the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy"),
             ("pharmaceutical transfer test", "an inconclusive sterility-positive investigation is routed through the more permissive chemical OOS path"),
             ("approved-data transfer", "a prior aircraft deferral or prior-year tax dependency is treated as authority for the current record"),
         ],
@@ -336,6 +337,39 @@ PATTERNS = [
             ("research-knowledge-work/claim-evidence-verifier", "Citation presence replaces entailment"),
             ("home-field-services/service-visit-readiness-coordinator", "Routine symptom hides emergency evidence"),
             ("nonprofit-grant-management/grant-obligation-evidence-navigator", "Prior acceptance becomes current authority"),
+            ("automotive-safety/vehicle-recall-remedy-coordinator", "Model-level recall becomes VIN truth"),
+            ("consumer-product-safety/product-recall-remedy-coordinator", "Appearance expands recall scope"),
+            ("maritime-ports/detention-demurrage-invoice-verifier", "Operational lateness proves collectability"),
+            ("environmental-hazardous-materials/hazardous-waste-manifest-coordinator", "proposed rule becomes today's gate"),
+            ("consumer-finance-debt/debt-validation-dispute-navigator", "Prior silence erases a timely dispute"),
+            ("telecommunications-emergency/communications-outage-reporting-gate", "Volume threshold hides life-safety impact"),
+            ("workplace-safety/severe-incident-reporting-navigator", "Hospital becomes inpatient"),
+        ],
+    },
+    {
+        "id": "receipt-stage-collapse",
+        "name": "Stage collapse",
+        "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen.",
+        "why": (
+            "Agent workflows often end with a durable record used by another team or system. "
+            "If that record jumps stages, downstream automation no longer sees uncertainty: "
+            "an appointment becomes a repair, intake becomes compensation, a dispute becomes "
+            "a win, or a draft becomes a certified filing. The fix is a finite stage vocabulary, "
+            "a receipt tied to the executed tool event, and an explicit owner for every later stage."
+        ),
+        "numbers": [
+            ("seven-industry public-protection suite", "every lab contains a reproducible receipt trap and scores the durable record against the actual tool trace"),
+            ("matched obligation", "a correct subject, rule, gate, and deadline still receives zero exact credit when the receipt claims a later stage"),
+            ("protected transitions", "repair, compensation, waiver, certification, verification, filing, and accepted reporting remain outside the agent's authority"),
+        ],
+        "cites": [
+            ("automotive-safety/vehicle-recall-remedy-coordinator", "Appointment becomes repair"),
+            ("consumer-product-safety/product-recall-remedy-coordinator", "Intake becomes compensation"),
+            ("maritime-ports/detention-demurrage-invoice-verifier", "Dispute submitted becomes dispute won"),
+            ("environmental-hazardous-materials/hazardous-waste-manifest-coordinator", "Correction erases history"),
+            ("consumer-finance-debt/debt-validation-dispute-navigator", "Delivery becomes verification"),
+            ("telecommunications-emergency/communications-outage-reporting-gate", "Draft becomes certified final"),
+            ("workplace-safety/severe-incident-reporting-navigator", "Draft or omission becomes report"),
         ],
     },
     {

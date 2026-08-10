@@ -1,6 +1,6 @@
 # The Agent Failure Taxonomy
 
-**215 failure modes, observed across 50 use cases, 14 recurring patterns.**
+**236 failure modes, observed across 57 use cases, 15 recurring patterns.**
 
 Every entry below was *measured*, not hypothesised — each links to the run that
 produced it, with a reproducing input. Read individually the failures look
@@ -27,9 +27,10 @@ reappearing in industries that share nothing but the shape of the agent.
 | 9 | [Ceremony is learned, prohibition is not](#ceremony-is-learned-prohibition-is-not) | Agents reliably obey 'do this first' and unreliably obey 'never do this'. | 2 use cases |
 | 10 | [Directional bias](#directional-bias) | Models don't err randomly — each errs in one direction, and the direction is a model property. | 5 use cases |
 | 11 | [The outcome can be right while the service fails](#the-outcome-can-be-right-while-the-service-fails) | Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse. | 19 use cases |
-| 12 | [Similarity erases the exception](#similarity-erases-the-exception) | A valid rule from the clean twin is confidently reused where one deciding fact reverses it. | 9 use cases |
-| 13 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
-| 14 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
+| 12 | [Similarity erases the exception](#similarity-erases-the-exception) | A valid rule from the clean twin is confidently reused where one deciding fact reverses it. | 16 use cases |
+| 13 | [Stage collapse](#stage-collapse) | A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen. | 7 use cases |
+| 14 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
+| 15 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
 
 ---
 
@@ -323,11 +324,11 @@ Outcome metrics see where a case landed, not what the person had to surrender or
 
 *A valid rule from the clean twin is confidently reused where one deciding fact reverses it.*
 
-Retrieval can be accurate and the recommendation can still inherit the wrong rule. These matched cases differ by a narrow fact—sterility path, clearance owner, consumer-report reliance, aircraft identity, aggregate ownership, filing-year dependency, claim entailment, emergency evidence, or award version. The remedy is not more general knowledge; it is an exact rule code, evidence set, and counterexample at the decision boundary.
+Retrieval can be accurate and the recommendation can still inherit the wrong rule. These matched cases differ by a narrow fact—sterility path, clearance owner, consumer-report reliance, aircraft identity, aggregate ownership, filing-year dependency, claim entailment, emergency evidence, award version, recall identity, billing clock, rule status, special-facility path, or medical outcome. The remedy is not more general knowledge; it is an exact rule code, evidence set, and counterexample at the decision boundary.
 
 **Measured**
 
-- **nine deterministic baselines** — the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy
+- **sixteen deterministic baselines** — the engineered shortcut fails every transfer-trap archetype, producing transfer specificity **0.875** instead of hiding the generalization inside aggregate outcome accuracy
 - **pharmaceutical transfer test** — an inconclusive sterility-positive investigation is routed through the more permissive chemical OOS path
 - **approved-data transfer** — a prior aircraft deferral or prior-year tax dependency is treated as authority for the current record
 
@@ -342,6 +343,39 @@ Retrieval can be accurate and the recommendation can still inherit the wrong rul
 - [`claim-evidence-verifier` — Citation presence replaces entailment](research-knowledge-work/claim-evidence-verifier/FAILURE_MODES.md#1-citation-presence-replaces-entailment)
 - [`service-visit-readiness-coordinator` — Routine symptom hides emergency evidence](home-field-services/service-visit-readiness-coordinator/FAILURE_MODES.md#1-routine-symptom-hides-emergency-evidence)
 - [`grant-obligation-evidence-navigator` — Prior acceptance becomes current authority](nonprofit-grant-management/grant-obligation-evidence-navigator/FAILURE_MODES.md#1-prior-acceptance-becomes-current-authority)
+- [`vehicle-recall-remedy-coordinator` — Model-level recall becomes VIN truth](automotive-safety/vehicle-recall-remedy-coordinator/FAILURE_MODES.md#1-model-level-recall-becomes-vin-truth)
+- [`product-recall-remedy-coordinator` — Appearance expands recall scope](consumer-product-safety/product-recall-remedy-coordinator/FAILURE_MODES.md#1-appearance-expands-recall-scope)
+- [`detention-demurrage-invoice-verifier` — Operational lateness proves collectability](maritime-ports/detention-demurrage-invoice-verifier/FAILURE_MODES.md#1-operational-lateness-proves-collectability)
+- [`hazardous-waste-manifest-coordinator` — A proposed rule becomes today's gate](environmental-hazardous-materials/hazardous-waste-manifest-coordinator/FAILURE_MODES.md#2-a-proposed-rule-becomes-todays-gate)
+- [`debt-validation-dispute-navigator` — Prior silence erases a timely dispute](consumer-finance-debt/debt-validation-dispute-navigator/FAILURE_MODES.md#1-prior-silence-erases-a-timely-dispute)
+- [`communications-outage-reporting-gate` — Volume threshold hides life-safety impact](telecommunications-emergency/communications-outage-reporting-gate/FAILURE_MODES.md#1-volume-threshold-hides-life-safety-impact)
+- [`severe-incident-reporting-navigator` — Hospital becomes inpatient](workplace-safety/severe-incident-reporting-navigator/FAILURE_MODES.md#1-hospital-becomes-inpatient)
+
+</details>
+
+---
+
+## Stage collapse
+
+*A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen.*
+
+Agent workflows often end with a durable record used by another team or system. If that record jumps stages, downstream automation no longer sees uncertainty: an appointment becomes a repair, intake becomes compensation, a dispute becomes a win, or a draft becomes a certified filing. The fix is a finite stage vocabulary, a receipt tied to the executed tool event, and an explicit owner for every later stage.
+
+**Measured**
+
+- **seven-industry public-protection suite** — every lab contains a reproducible receipt trap and scores the durable record against the actual tool trace
+- **matched obligation** — a correct subject, rule, gate, and deadline still receives zero exact credit when the receipt claims a later stage
+- **protected transitions** — repair, compensation, waiver, certification, verification, filing, and accepted reporting remain outside the agent's authority
+
+<details><summary><b>Where it was observed</b></summary>
+
+- [`vehicle-recall-remedy-coordinator` — Appointment becomes repair](automotive-safety/vehicle-recall-remedy-coordinator/FAILURE_MODES.md#3-appointment-becomes-repair)
+- [`product-recall-remedy-coordinator` — Intake becomes compensation](consumer-product-safety/product-recall-remedy-coordinator/FAILURE_MODES.md#3-intake-becomes-compensation)
+- [`detention-demurrage-invoice-verifier` — Dispute submitted becomes dispute won](maritime-ports/detention-demurrage-invoice-verifier/FAILURE_MODES.md#3-dispute-submitted-becomes-dispute-won)
+- [`hazardous-waste-manifest-coordinator` — Correction erases history](environmental-hazardous-materials/hazardous-waste-manifest-coordinator/FAILURE_MODES.md#3-correction-erases-history)
+- [`debt-validation-dispute-navigator` — Delivery becomes verification](consumer-finance-debt/debt-validation-dispute-navigator/FAILURE_MODES.md#3-delivery-becomes-verification)
+- [`communications-outage-reporting-gate` — Draft becomes certified final](telecommunications-emergency/communications-outage-reporting-gate/FAILURE_MODES.md#3-draft-becomes-certified-final)
+- [`severe-incident-reporting-navigator` — Draft or omission becomes report](workplace-safety/severe-incident-reporting-navigator/FAILURE_MODES.md#3-draft-or-omission-becomes-report)
 
 </details>
 
