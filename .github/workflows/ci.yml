@@ -14,12 +14,24 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - name: Install editorial linter
+        run: python -m pip install codespell==2.4.1
+      - name: Repository spelling is clean
+        run: |
+          codespell
+          python docs/check_editorial.py
       - name: Catalog, README, package, and CI coverage agree
         run: python docs/check_catalog.py
       - name: Generated catalog table is current
         run: |
           python docs/make_catalog.py
           git diff --exit-code README.md
+      - name: Generated failure taxonomy is current
+        run: |
+          python docs/make_taxonomy.py
+          git diff --exit-code README.md START_HERE.md FAILURE_TAXONOMY.md docs/assets/taxonomy.json
+      - name: Local documentation links resolve
+        run: python docs/check_links.py
       - name: Generated decision-gate labs are current
         run: |
           python docs/make_decision_gate_wave.py

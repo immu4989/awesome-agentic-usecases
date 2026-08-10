@@ -47,7 +47,7 @@ safety, legal, financial, employment, aviation, or tax system. It uses synthetic
 to test a high-stakes workflow without real people, companies, aircraft, batches, accounts,
 or filings.
 
-## The specialty: Safety-First First-Visit Gate
+## The specialty: Safety-First Visit Gate
 
 This lab implements the repository's **Decision Gate Contract**. A run passes only when the
 action, evidence used, missing evidence, satisfied gates, transfer-specific rule, procedural

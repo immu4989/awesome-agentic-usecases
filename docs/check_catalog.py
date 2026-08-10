@@ -100,6 +100,11 @@ def main() -> None:
     for text in expected:
         assert text in html, f"explorer proof point is stale: expected {text!r}"
 
+    explorer_copy = f"Search and filter all {len(cases)} verified use cases"
+    assert readme.count(explorer_copy) == 1, (
+        f"README explorer count is stale or duplicated: expected {explorer_copy!r} once"
+    )
+
     proof_copy = (
         f"{len(industries)} industries shipping, {verified_model_evals} verified model-evals, "
         f"{taxonomy['failure_modes']} failure modes observed"
@@ -124,6 +129,12 @@ def main() -> None:
     taxonomy_heading = f"## {taxonomy['failure_modes']} failures, {taxonomy['patterns']} patterns"
     assert taxonomy_heading in readme, f"README taxonomy heading is stale: {taxonomy_heading!r}"
     assert f"Read all {taxonomy['patterns']} patterns" in readme, "README taxonomy link is stale"
+    start_here = (ROOT / "START_HERE.md").read_text()
+    taxonomy_copy = (
+        f"groups {taxonomy['failure_modes']} observed failures into "
+        f"{taxonomy['patterns']} recurring patterns"
+    )
+    assert taxonomy_copy in start_here, f"START_HERE taxonomy summary is stale: {taxonomy_copy!r}"
 
     for guide in ("START_HERE.md", "PLAYBOOKS.md", "BUILD_YOUR_OWN.md", "USE_CASE_RADAR.md"):
         assert (ROOT / guide).is_file(), f"missing user journey guide: {guide}"

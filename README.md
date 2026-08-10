@@ -315,14 +315,18 @@ The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXO
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
 reappearing across industries that share nothing but the shape of the agent.
 
+<!-- TAXONOMY-SUMMARY:START -->
+
 | Pattern | In short | Found in |
 |---|---|---|
-| [Commit-stall](FAILURE_TAXONOMY.md#commit-stall) | Investigates correctly, concludes correctly, never commits — and accuracy metrics can't see it | **9 use cases** |
-| [The environment beats the prompt](FAILURE_TAXONOMY.md#the-environment-beats-the-prompt) | Changing what the agent *can* do works; telling it what it *should* do mostly doesn't | 4 controlled A/Bs |
-| [Safety by inaction](FAILURE_TAXONOMY.md#safety-by-inaction) | A "did it avoid the bad action" metric is passed perfectly by an agent that does nothing | 3 use cases |
-| [Trust follows the channel](FAILURE_TAXONOMY.md#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition | 2 use cases |
-| [Prior over policy](FAILURE_TAXONOMY.md#prior-over-policy) | Models cite the rule in their reasoning, then violate it in the same breath | 4 use cases |
-| [Similarity erases the exception](FAILURE_TAXONOMY.md#similarity-erases-the-exception) | A valid rule from the clean twin is reused where one deciding fact reverses it | 9 matched decision-gate labs |
+| [Commit-stall](FAILURE_TAXONOMY.md#commit-stall) | The agent investigates correctly, reaches the right conclusion, and never commits it. | **9 use cases** |
+| [The environment beats the prompt](FAILURE_TAXONOMY.md#the-environment-beats-the-prompt) | Changing what the agent *can* do works; telling it what it *should* do mostly doesn't. | **4 use cases** |
+| [Safety by inaction](FAILURE_TAXONOMY.md#safety-by-inaction) | A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing. | **5 use cases** |
+| [Trust follows the channel, not the content](FAILURE_TAXONOMY.md#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition. | **2 use cases** |
+| [Prior over policy](FAILURE_TAXONOMY.md#prior-over-policy) | The model's own sense of what's reasonable overrides the policy it just retrieved. | **4 use cases** |
+| [Similarity erases the exception](FAILURE_TAXONOMY.md#similarity-erases-the-exception) | A valid rule from the clean twin is confidently reused where one deciding fact reverses it. | **23 use cases** |
+
+<!-- TAXONOMY-SUMMARY:END -->
 
 <a href="FAILURE_TAXONOMY.md"><b>→ Read all 16 patterns</b></a>, each with measured incidence and
 a link to the run that produced it.
@@ -357,7 +361,7 @@ Every failure has a reproducing scenario id in
 
 ## Use cases
 
-**Not sure where to start?** [Search and filter all 41 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
+**Not sure where to start?** [Search and filter all 64 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
 by industry, capability, or failure shape.
 
 <!-- USE_CASES:START -->

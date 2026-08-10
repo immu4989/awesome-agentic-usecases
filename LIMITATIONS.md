@@ -45,9 +45,9 @@ not a fix.
 
 ## 4. Multiple comparisons are not corrected
 
-Across 50 use cases, several metrics each, and up to five models, the repository performs
-many implicit comparisons. No family-wise or false-discovery correction is applied. Some
-"findings" at the level of a single use case will be noise.
+Across the full catalog, with several metrics and multiple models per use case, the
+repository performs many implicit comparisons. No family-wise or false-discovery correction
+is applied. Some "findings" at the level of a single use case will be noise.
 
 This is why the [failure taxonomy](FAILURE_TAXONOMY.md) is organised around patterns that
 recur **independently across domains** rather than around any single result. A pattern seen
@@ -56,10 +56,10 @@ Single-use-case results should be read as observations, not established effects.
 
 ## 5. Some results ran against floating model aliases
 
-29 of the committed evaluations predate provenance capture and were run against identifiers
-such as `mistral-small-latest` and `Qwen/Qwen3.7-Plus`, which resolve to different weights
-over time. **Those numbers are point-in-time observations and cannot be exactly reproduced**,
-including by the author.
+Some of the oldest committed evaluations predate provenance capture and were run against
+identifiers such as `mistral-small-latest` and `Qwen/Qwen3.7-Plus`, which resolve to
+different weights over time. **Those numbers are point-in-time observations and cannot be
+exactly reproduced**, including by the author.
 
 Results produced after provenance capture record the model the provider actually served, and
 label themselves when the provider returns only a floating alias. This limitation shrinks

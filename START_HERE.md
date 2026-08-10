@@ -25,7 +25,7 @@ scorer—but exposes a different class of failure.
 | The recommendation is right but the gate or authority is wrong | [Batch Disposition Gate](pharmaceutical-manufacturing/batch-disposition-gate/) | Why a nearby valid rule cannot substitute for exact evidence, procedure, owner, and action trace |
 
 Every observation is cross-linked in the [Failure Taxonomy](FAILURE_TAXONOMY.md), which
-groups 215 observed failures into 14 recurring patterns.
+groups 257 observed failures into 16 recurring patterns.
 
 ## I want to run an eval without an API key
 

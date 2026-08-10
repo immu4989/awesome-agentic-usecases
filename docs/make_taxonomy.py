@@ -23,6 +23,16 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+README_START = "<!-- TAXONOMY-SUMMARY:START -->"
+README_END = "<!-- TAXONOMY-SUMMARY:END -->"
+README_PATTERN_IDS = (
+    "commit-stall",
+    "environment-beats-prompt",
+    "safety-by-inaction",
+    "channel-trust",
+    "prior-over-policy",
+    "rule-transfer",
+)
 
 # pattern -> curated definition, why it matters, and the observations that support it.
 # Each citation is (use-case path, distinctive substring of the failure-mode heading).
@@ -564,6 +574,27 @@ def render(headings: dict[str, list[str]]) -> str:
     return "\n".join(L)
 
 
+def render_readme_summary() -> str:
+    by_id = {pattern["id"]: pattern for pattern in PATTERNS}
+    rows = ["| Pattern | In short | Found in |", "|---|---|---|"]
+    for pattern_id in README_PATTERN_IDS:
+        pattern = by_id[pattern_id]
+        seen = len({path for path, _heading in pattern["cites"]})
+        rows.append(
+            f"| [{pattern['name']}](FAILURE_TAXONOMY.md#{anchor(pattern['name'])}) | "
+            f"{pattern['one_liner']} | **{seen} use case{'s' if seen != 1 else ''}** |"
+        )
+    return "\n".join(rows)
+
+
+def replace_marked(text: str, start: str, end: str, content: str) -> str:
+    if text.count(start) != 1 or text.count(end) != 1:
+        raise ValueError(f"expected one {start!r}/{end!r} block")
+    before, rest = text.split(start, 1)
+    _old, after = rest.split(end, 1)
+    return f"{before}{start}\n\n{content}\n\n{end}{after}"
+
+
 def main() -> None:
     headings = load_headings()
     problems = resolve(headings)
@@ -585,6 +616,24 @@ def main() -> None:
     with open(os.path.join(ROOT, "docs", "assets", "taxonomy.json"), "w") as f:
         json.dump(summary, f, indent=2)
     print("wrote docs/assets/taxonomy.json (machine-readable index)")
+
+    readme_path = os.path.join(ROOT, "README.md")
+    with open(readme_path) as f:
+        readme = f.read()
+    with open(readme_path, "w") as f:
+        f.write(replace_marked(readme, README_START, README_END, render_readme_summary()))
+
+    start_path = os.path.join(ROOT, "START_HERE.md")
+    with open(start_path) as f:
+        start_here = f.read()
+    current_copy = re.compile(r"groups \d+ observed failures into \d+ recurring patterns")
+    replacement = f"groups {total} observed failures into {len(PATTERNS)} recurring patterns"
+    start_here, replacements = current_copy.subn(replacement, start_here)
+    if replacements != 1:
+        raise ValueError("START_HERE.md must contain exactly one taxonomy count summary")
+    with open(start_path, "w") as f:
+        f.write(start_here)
+    print("updated README.md and START_HERE.md taxonomy summaries")
 
 
 if __name__ == "__main__":

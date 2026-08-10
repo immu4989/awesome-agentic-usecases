@@ -93,6 +93,10 @@ the harness API is what is versioned; use cases are additive.
   implement the use case themselves.
 
 ### Fixed
+- **Public counts and taxonomy summaries no longer drift.** The README now links to all 64
+  verified use cases; `START_HERE.md` reports 257 observed failures across 16 patterns; and
+  the highlighted taxonomy rows are generated from the same source as the full taxonomy.
+  CI now rejects stale catalog copy, misspellings, and broken local documentation links.
 - **Four-act stories remain readable throughout their animation.** GitHub applied the CSS
   transform animation in place of each card's SVG position, collapsing all four acts onto
   one another. Act cards are now fixed at full opacity; motion is isolated to progress and
