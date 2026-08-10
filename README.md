@@ -1,4 +1,4 @@
-<img src="docs/assets/hero-v4.webp" alt="Awesome Agentic Use Cases — an evidence trace branching through tool calls, policy gates, verified outcomes, uncertainty, and observed failures" width="100%">
+<img src="docs/assets/hero.svg" alt="Awesome Agentic Use Cases — an evidence trace branching through tool calls, policy gates, verified outcomes, uncertainty, and observed failures; live repository statistics are generated from source data" width="100%">
 
 <p align="center">
   <a href="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml"><img src="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml/badge.svg" alt="CI"></a>

@@ -22,6 +22,8 @@ import os
 import re
 import sys
 
+from make_hero import main as make_hero
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 README_START = "<!-- TAXONOMY-SUMMARY:START -->"
 README_END = "<!-- TAXONOMY-SUMMARY:END -->"
@@ -633,6 +635,7 @@ def main() -> None:
         raise ValueError("START_HERE.md must contain exactly one taxonomy count summary")
     with open(start_path, "w") as f:
         f.write(start_here)
+    make_hero()
     print("updated README.md and START_HERE.md taxonomy summaries")
 
 

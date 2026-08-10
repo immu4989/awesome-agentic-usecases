@@ -6,6 +6,8 @@ import json
 import re
 from pathlib import Path
 
+from make_hero import main as make_hero
+
 ROOT = Path(__file__).resolve().parents[1]
 START = "<!-- USE_CASES:START -->"
 END = "<!-- USE_CASES:END -->"
@@ -39,6 +41,7 @@ def main() -> None:
     before, rest = readme.split(START, 1)
     _old, after = rest.split(END, 1)
     readme_path.write_text(f"{before}{START}\n\n{table(cases)}\n\n{END}{after}")
+    make_hero()
     print(f"updated README with {len(cases)} catalog entries")
 
 

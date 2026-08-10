@@ -6,6 +6,9 @@ the harness API is what is versioned; use cases are additive.
 ## Unreleased
 
 ### Added
+- **Self-updating landing hero** — the proof strip now derives its use-case, industry,
+  real-model-evaluation, and observed-failure totals from repository data, with CI guarding
+  against stale artwork.
 - **Proof Before Action matched wave** — three new runnable labs hold eight archetypes and
   one exact Decision Gate scorecard constant across Research & Knowledge Work, Home & Field
   Services, and Nonprofit Grant Management. The committed DeepSeek and Mistral runs test

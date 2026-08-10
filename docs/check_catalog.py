@@ -114,8 +114,19 @@ def main() -> None:
         stats = (ROOT / "docs" / "assets" / f"stats-{mode}.svg").read_text()
         assert proof_copy in stats, f"stats-{mode}.svg is stale: expected {proof_copy!r}"
 
-    for asset in ("hero-v4.png", "hero-v4.webp"):
+    for asset in ("hero.svg", "hero-v4.webp"):
         assert (ROOT / "docs" / "assets" / asset).is_file(), f"missing visual asset: {asset}"
+    hero = (ROOT / "docs" / "assets" / "hero.svg").read_text()
+    hero_proof = (
+        ("VERIFIED USE CASES", len(cases)),
+        ("INDUSTRIES", len(industries)),
+        ("MODEL EVALS", verified_model_evals),
+        ("OBSERVED FAILURES", taxonomy["failure_modes"]),
+    )
+    for label, value in hero_proof:
+        assert f'>{value}</text>' in hero and f'>{label}</text>' in hero, (
+            f"landing-page hero is stale: expected {value} {label.lower()}"
+        )
 
     schema = json.loads((ROOT / "docs" / "obligation-graph.schema.json").read_text())
     example = json.loads((ROOT / "docs" / "obligation-graph.example.json").read_text())
