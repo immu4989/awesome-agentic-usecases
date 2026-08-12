@@ -110,6 +110,13 @@ def main() -> None:
         f"{taxonomy['failure_modes']} failure modes observed"
     )
     assert proof_copy in readme, f"README proof strip is stale: expected {proof_copy!r}"
+
+    studio = json.loads((ROOT / "docs" / "studio-data.json").read_text())
+    assert studio["proof"]["use_cases"] == len(cases), "AAU Studio use-case count is stale"
+    assert studio["proof"]["industries"] == len(industries), "AAU Studio industry count is stale"
+    assert {item["path"] for item in studio["cases"]} == set(paths), (
+        "AAU Studio evidence index and public catalog differ"
+    )
     for mode in ("light", "dark"):
         stats = (ROOT / "docs" / "assets" / f"stats-{mode}.svg").read_text()
         assert proof_copy in stats, f"stats-{mode}.svg is stale: expected {proof_copy!r}"

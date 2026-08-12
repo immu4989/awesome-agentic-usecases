@@ -1,0 +1,3646 @@
+{
+  "version": "aau-studio/1.0",
+  "proof": {
+    "use_cases": 70,
+    "industries": 61,
+    "failure_patterns": 17,
+    "failure_modes": 275
+  },
+  "cases": [
+    {
+      "path": "logistics-supply-chain/exception-triage-agent",
+      "title": "Exception Triage",
+      "icon": "\ud83c\udfab",
+      "industry": "Logistics & Supply Chain",
+      "kind": "baseline",
+      "question": "Which resolution queue owns a stuck shipment, which cases can resolve themselves, and which need a human?",
+      "capabilities": [
+        "investigate",
+        "decide"
+      ],
+      "cli": "exception-triage-agent",
+      "featured": true,
+      "contract": {
+        "name": "Core Evaluation",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "commit-stall",
+          "name": "Commit-stall",
+          "one_liner": "The agent investigates correctly, reaches the right conclusion, and never commits it."
+        },
+        {
+          "id": "prior-over-policy",
+          "name": "Prior over policy",
+          "one_liner": "The model's own sense of what's reasonable overrides the policy it just retrieved."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 4,
+        "real_scenario_runs": 360,
+        "models": [
+          "accounts/fireworks/models/gpt-oss-120b",
+          "accounts/fireworks/models/kimi-k2p6",
+          "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+          "mistral-small-latest"
+        ],
+        "model_count": 4,
+        "mock_available": true,
+        "scenario_count": 30,
+        "observed_failure_modes": 8,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start exception-triage-agent",
+        "install": "python -m pip install -e harness -e logistics-supply-chain/exception-triage-agent",
+        "evaluate": "exception-triage-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "logistics-supply-chain/exception-triage-drift",
+      "title": "Exception Triage Drift",
+      "icon": "\ud83e\ude9e",
+      "industry": "Logistics & Supply Chain",
+      "kind": "controlled A/B",
+      "question": "Does a perfect clean-world agent survive stale caches and sources that disagree?",
+      "capabilities": [
+        "reliability",
+        "investigate",
+        "decide"
+      ],
+      "cli": "exception-triage-drift",
+      "featured": true,
+      "contract": {
+        "name": "Controlled Experiment",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [],
+      "evidence": {
+        "real_result_artifacts": 10,
+        "real_scenario_runs": 900,
+        "models": [
+          "Qwen/Qwen3.7-Plus",
+          "accounts/fireworks/models/gpt-oss-120b",
+          "accounts/fireworks/models/kimi-k2p6",
+          "mistral-small-latest"
+        ],
+        "model_count": 4,
+        "mock_available": true,
+        "scenario_count": 30,
+        "observed_failure_modes": 8,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start exception-triage-drift",
+        "install": "python -m pip install -e harness -e logistics-supply-chain/exception-triage-drift",
+        "evaluate": "exception-triage-drift eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "retail-workforce/shift-coverage-triage-agent",
+      "title": "Shift Coverage",
+      "icon": "\ud83e\uddd1\u200d\ud83c\udf73",
+      "industry": "Retail & Workforce",
+      "kind": "baseline",
+      "question": "What is the compliant fill when crew call out under overtime, minor-hour, and borrowing constraints?",
+      "capabilities": [
+        "investigate",
+        "decide"
+      ],
+      "cli": "shift-coverage-agent",
+      "featured": false,
+      "contract": {
+        "name": "Core Evaluation",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "commit-stall",
+          "name": "Commit-stall",
+          "one_liner": "The agent investigates correctly, reaches the right conclusion, and never commits it."
+        },
+        {
+          "id": "no-transfer",
+          "name": "Competence does not transfer",
+          "one_liner": "Being the best model on one agent task predicts almost nothing about the next."
+        },
+        {
+          "id": "directional-bias",
+          "name": "Directional bias",
+          "one_liner": "Models don't err randomly \u2014 each errs in one direction, and the direction is a model property."
+        },
+        {
+          "id": "prior-over-policy",
+          "name": "Prior over policy",
+          "one_liner": "The model's own sense of what's reasonable overrides the policy it just retrieved."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 3,
+        "real_scenario_runs": 270,
+        "models": [
+          "accounts/fireworks/models/gpt-oss-120b",
+          "accounts/fireworks/models/kimi-k2p6",
+          "mistral-small-latest"
+        ],
+        "model_count": 3,
+        "mock_available": true,
+        "scenario_count": 30,
+        "observed_failure_modes": 4,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start shift-coverage-agent",
+        "install": "python -m pip install -e harness -e retail-workforce/shift-coverage-triage-agent",
+        "evaluate": "shift-coverage-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "security-operations/alert-triage-agent",
+      "title": "Alert Triage",
+      "icon": "\ud83d\udea8",
+      "industry": "Security Operations",
+      "kind": "baseline",
+      "question": "Which security alerts can safely auto-close, which need an analyst, and which require incident response now?",
+      "capabilities": [
+        "investigate",
+        "decide"
+      ],
+      "cli": "alert-triage-agent",
+      "featured": false,
+      "contract": {
+        "name": "Core Evaluation",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "no-transfer",
+          "name": "Competence does not transfer",
+          "one_liner": "Being the best model on one agent task predicts almost nothing about the next."
+        },
+        {
+          "id": "directional-bias",
+          "name": "Directional bias",
+          "one_liner": "Models don't err randomly \u2014 each errs in one direction, and the direction is a model property."
+        },
+        {
+          "id": "framing-over-evidence",
+          "name": "Framing over evidence",
+          "one_liner": "The agent believes how the input was described instead of checking what the tools say."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 3,
+        "real_scenario_runs": 270,
+        "models": [
+          "accounts/fireworks/models/gpt-oss-120b",
+          "accounts/fireworks/models/kimi-k2p6",
+          "mistral-small-latest"
+        ],
+        "model_count": 3,
+        "mock_available": true,
+        "scenario_count": 30,
+        "observed_failure_modes": 4,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start alert-triage-agent",
+        "install": "python -m pip install -e harness -e security-operations/alert-triage-agent",
+        "evaluate": "alert-triage-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "security-operations/artifact-admission-agent",
+      "title": "Artifact Admission",
+      "icon": "\ud83d\udec2",
+      "industry": "Security Operations",
+      "kind": "controlled A/B",
+      "question": "Should an ML artifact be admitted, sandboxed, blocked, or escalated before any of its code runs?",
+      "capabilities": [
+        "gate",
+        "security",
+        "environment"
+      ],
+      "cli": "artifact-admission-agent",
+      "featured": true,
+      "contract": {
+        "name": "Controlled Experiment",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "commit-stall",
+          "name": "Commit-stall",
+          "one_liner": "The agent investigates correctly, reaches the right conclusion, and never commits it."
+        },
+        {
+          "id": "unchanged-disposition",
+          "name": "Contained is not fixed",
+          "one_liner": "A guard drives the incident rate to zero while the agent's judgment stays exactly as wrong."
+        },
+        {
+          "id": "safety-by-inaction",
+          "name": "Safety by inaction",
+          "one_liner": "A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing."
+        },
+        {
+          "id": "environment-beats-prompt",
+          "name": "The environment beats the prompt",
+          "one_liner": "Changing what the agent *can* do works; telling it what it *should* do mostly doesn't."
+        },
+        {
+          "id": "channel-trust",
+          "name": "Trust follows the channel, not the content",
+          "one_liner": "The same instruction is refused in data and obeyed in a tool definition."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 3,
+        "real_scenario_runs": 270,
+        "models": [
+          "Qwen/Qwen3.7-Plus",
+          "accounts/fireworks/models/gpt-oss-120b",
+          "mistral-small-latest"
+        ],
+        "model_count": 3,
+        "mock_available": true,
+        "scenario_count": 30,
+        "observed_failure_modes": 5,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start artifact-admission-agent",
+        "install": "python -m pip install -e harness -e security-operations/artifact-admission-agent",
+        "evaluate": "artifact-admission-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "security-operations/trifecta-exfil-agent",
+      "title": "Trifecta Exfil",
+      "icon": "\ud83d\udd73\ufe0f",
+      "industry": "Security Operations",
+      "kind": "controlled A/B",
+      "question": "Does the same secret-stealing instruction succeed differently in fetched content versus a tool description?",
+      "capabilities": [
+        "act",
+        "security",
+        "adversarial"
+      ],
+      "cli": "trifecta-exfil-agent",
+      "featured": true,
+      "contract": {
+        "name": "Controlled Experiment",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "commit-stall",
+          "name": "Commit-stall",
+          "one_liner": "The agent investigates correctly, reaches the right conclusion, and never commits it."
+        },
+        {
+          "id": "no-transfer",
+          "name": "Competence does not transfer",
+          "one_liner": "Being the best model on one agent task predicts almost nothing about the next."
+        },
+        {
+          "id": "safety-by-inaction",
+          "name": "Safety by inaction",
+          "one_liner": "A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing."
+        },
+        {
+          "id": "environment-beats-prompt",
+          "name": "The environment beats the prompt",
+          "one_liner": "Changing what the agent *can* do works; telling it what it *should* do mostly doesn't."
+        },
+        {
+          "id": "channel-trust",
+          "name": "Trust follows the channel, not the content",
+          "one_liner": "The same instruction is refused in data and obeyed in a tool definition."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 9,
+        "real_scenario_runs": 810,
+        "models": [
+          "Qwen/Qwen3.7-Plus",
+          "accounts/fireworks/models/gpt-oss-120b",
+          "mistral-small-latest"
+        ],
+        "model_count": 3,
+        "mock_available": true,
+        "scenario_count": 30,
+        "observed_failure_modes": 6,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start trifecta-exfil-agent",
+        "install": "python -m pip install -e harness -e security-operations/trifecta-exfil-agent",
+        "evaluate": "trifecta-exfil-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "financial-services-fraud/fraud-alert-triage-agent",
+      "title": "Fraud Alert Triage",
+      "icon": "\ud83d\udea9",
+      "industry": "Financial Services & Fraud",
+      "kind": "baseline",
+      "question": "Should a transaction alert be released, blocked, routed, or escalated?",
+      "capabilities": [
+        "investigate",
+        "decide"
+      ],
+      "cli": "fraud-alert-triage-agent",
+      "featured": false,
+      "contract": {
+        "name": "Core Evaluation",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "commit-stall",
+          "name": "Commit-stall",
+          "one_liner": "The agent investigates correctly, reaches the right conclusion, and never commits it."
+        },
+        {
+          "id": "no-transfer",
+          "name": "Competence does not transfer",
+          "one_liner": "Being the best model on one agent task predicts almost nothing about the next."
+        },
+        {
+          "id": "directional-bias",
+          "name": "Directional bias",
+          "one_liner": "Models don't err randomly \u2014 each errs in one direction, and the direction is a model property."
+        },
+        {
+          "id": "framing-over-evidence",
+          "name": "Framing over evidence",
+          "one_liner": "The agent believes how the input was described instead of checking what the tools say."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 4,
+        "real_scenario_runs": 360,
+        "models": [
+          "Qwen/Qwen3.7-Plus",
+          "accounts/fireworks/models/gpt-oss-120b",
+          "accounts/fireworks/models/kimi-k2p6",
+          "mistral-small-latest"
+        ],
+        "model_count": 4,
+        "mock_available": true,
+        "scenario_count": 30,
+        "observed_failure_modes": 6,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start fraud-alert-triage-agent",
+        "install": "python -m pip install -e harness -e financial-services-fraud/fraud-alert-triage-agent",
+        "evaluate": "fraud-alert-triage-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "procurement-finance/vendor-payment-review-agent",
+      "title": "Vendor Payment Review",
+      "icon": "\ud83e\uddfe",
+      "industry": "Procurement & Finance",
+      "kind": "baseline",
+      "question": "Can an AP agent reconcile a legitimate invoice without paying bank details supplied only through a compromised email?",
+      "capabilities": [
+        "investigate",
+        "plan",
+        "act",
+        "payment-safety"
+      ],
+      "cli": "vendor-payment-review-agent",
+      "featured": true,
+      "contract": {
+        "name": "Core Evaluation",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "directional-bias",
+          "name": "Directional bias",
+          "one_liner": "Models don't err randomly \u2014 each errs in one direction, and the direction is a model property."
+        },
+        {
+          "id": "safety-by-inaction",
+          "name": "Safety by inaction",
+          "one_liner": "A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 168,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 28,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start vendor-payment-review-agent",
+        "install": "python -m pip install -e harness -e procurement-finance/vendor-payment-review-agent",
+        "evaluate": "vendor-payment-review-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "media-streaming/release-qc-triage-agent",
+      "title": "Release QC Triage",
+      "icon": "\ud83c\udf9e\ufe0f",
+      "industry": "Media & Streaming",
+      "kind": "baseline",
+      "question": "Who owns a pre-premiere media defect, and should the release ship, be fixed, or be delayed?",
+      "capabilities": [
+        "investigate",
+        "decide"
+      ],
+      "cli": "release-qc-agent",
+      "featured": false,
+      "contract": {
+        "name": "Core Evaluation",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "commit-stall",
+          "name": "Commit-stall",
+          "one_liner": "The agent investigates correctly, reaches the right conclusion, and never commits it."
+        },
+        {
+          "id": "framing-over-evidence",
+          "name": "Framing over evidence",
+          "one_liner": "The agent believes how the input was described instead of checking what the tools say."
+        },
+        {
+          "id": "prior-over-policy",
+          "name": "Prior over policy",
+          "one_liner": "The model's own sense of what's reasonable overrides the policy it just retrieved."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 4,
+        "real_scenario_runs": 360,
+        "models": [
+          "Qwen/Qwen3.7-Plus",
+          "accounts/fireworks/models/gpt-oss-120b",
+          "accounts/fireworks/models/kimi-k2p6",
+          "mistral-small-latest"
+        ],
+        "model_count": 4,
+        "mock_available": true,
+        "scenario_count": 30,
+        "observed_failure_modes": 5,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start release-qc-agent",
+        "install": "python -m pip install -e harness -e media-streaming/release-qc-triage-agent",
+        "evaluate": "release-qc-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "customer-support/refund-resolution-agent",
+      "title": "Refund Resolution",
+      "icon": "\ud83d\udcb8",
+      "industry": "Customer Support",
+      "kind": "baseline",
+      "question": "Can an agent resolve a refund end to end without moving money before identity and policy checks?",
+      "capabilities": [
+        "plan",
+        "act",
+        "human-in-loop"
+      ],
+      "cli": "refund-resolution-agent",
+      "featured": true,
+      "contract": {
+        "name": "Core Evaluation",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "ceremony-vs-prohibition",
+          "name": "Ceremony is learned, prohibition is not",
+          "one_liner": "Agents reliably obey 'do this first' and unreliably obey 'never do this'."
+        },
+        {
+          "id": "commit-stall",
+          "name": "Commit-stall",
+          "one_liner": "The agent investigates correctly, reaches the right conclusion, and never commits it."
+        },
+        {
+          "id": "prior-over-policy",
+          "name": "Prior over policy",
+          "one_liner": "The model's own sense of what's reasonable overrides the policy it just retrieved."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 3,
+        "real_scenario_runs": 270,
+        "models": [
+          "Qwen/Qwen3.7-Plus",
+          "accounts/fireworks/models/gpt-oss-120b",
+          "mistral-small-latest"
+        ],
+        "model_count": 3,
+        "mock_available": true,
+        "scenario_count": 30,
+        "observed_failure_modes": 5,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start refund-resolution-agent",
+        "install": "python -m pip install -e harness -e customer-support/refund-resolution-agent",
+        "evaluate": "refund-resolution-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "customer-support/refund-guarded",
+      "title": "Refund Guarded",
+      "icon": "\ud83d\udd27",
+      "industry": "Customer Support",
+      "kind": "controlled A/B",
+      "question": "Do prompt nudges or tool-layer enforcement actually fix observed refund failures?",
+      "capabilities": [
+        "act",
+        "guardrails",
+        "environment"
+      ],
+      "cli": "refund-guarded",
+      "featured": false,
+      "contract": {
+        "name": "Controlled Experiment",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "unchanged-disposition",
+          "name": "Contained is not fixed",
+          "one_liner": "A guard drives the incident rate to zero while the agent's judgment stays exactly as wrong."
+        },
+        {
+          "id": "environment-beats-prompt",
+          "name": "The environment beats the prompt",
+          "one_liner": "Changing what the agent *can* do works; telling it what it *should* do mostly doesn't."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 180,
+        "models": [
+          "accounts/fireworks/models/gpt-oss-120b",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 30,
+        "observed_failure_modes": 4,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start refund-guarded",
+        "install": "python -m pip install -e harness -e customer-support/refund-guarded",
+        "evaluate": "refund-guarded eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "customer-support/refund-crew",
+      "title": "Refund Crew",
+      "icon": "\ud83d\udc65",
+      "industry": "Customer Support",
+      "kind": "architecture A/B",
+      "question": "Does a three-agent crew outperform the exact same task solved by one agent?",
+      "capabilities": [
+        "multi-agent",
+        "plan",
+        "act"
+      ],
+      "cli": "refund-crew",
+      "featured": false,
+      "contract": {
+        "name": "Controlled Experiment",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "commit-stall",
+          "name": "Commit-stall",
+          "one_liner": "The agent investigates correctly, reaches the right conclusion, and never commits it."
+        },
+        {
+          "id": "coordination-only",
+          "name": "Coordination-only failures",
+          "one_liner": "Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 3,
+        "real_scenario_runs": 270,
+        "models": [
+          "Qwen/Qwen3.7-Plus",
+          "accounts/fireworks/models/gpt-oss-120b",
+          "mistral-small-latest"
+        ],
+        "model_count": 3,
+        "mock_available": true,
+        "scenario_count": 30,
+        "observed_failure_modes": 6,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start refund-crew",
+        "install": "python -m pip install -e harness -e customer-support/refund-crew",
+        "evaluate": "refund-crew eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "customer-support/refund-injected",
+      "title": "Refund Injected",
+      "icon": "\ud83c\udfaf",
+      "industry": "Customer Support",
+      "kind": "controlled A/B",
+      "question": "Can prompt injection in customer-supplied ticket text cause a forbidden irreversible action?",
+      "capabilities": [
+        "act",
+        "security",
+        "adversarial"
+      ],
+      "cli": "refund-injected",
+      "featured": false,
+      "contract": {
+        "name": "Controlled Experiment",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "ceremony-vs-prohibition",
+          "name": "Ceremony is learned, prohibition is not",
+          "one_liner": "Agents reliably obey 'do this first' and unreliably obey 'never do this'."
+        },
+        {
+          "id": "unchanged-disposition",
+          "name": "Contained is not fixed",
+          "one_liner": "A guard drives the incident rate to zero while the agent's judgment stays exactly as wrong."
+        },
+        {
+          "id": "environment-beats-prompt",
+          "name": "The environment beats the prompt",
+          "one_liner": "Changing what the agent *can* do works; telling it what it *should* do mostly doesn't."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 4,
+        "real_scenario_runs": 600,
+        "models": [
+          "accounts/fireworks/models/gpt-oss-120b",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 50,
+        "observed_failure_modes": 5,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start refund-injected",
+        "install": "python -m pip install -e harness -e customer-support/refund-injected",
+        "evaluate": "refund-injected eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "customer-support/refund-memory",
+      "title": "Refund Memory",
+      "icon": "\ud83e\udde0",
+      "industry": "Customer Support",
+      "kind": "controlled A/B",
+      "question": "Can a false fact planted in one session harm a later session with no attacker present?",
+      "capabilities": [
+        "memory",
+        "security",
+        "adversarial"
+      ],
+      "cli": "refund-memory",
+      "featured": false,
+      "contract": {
+        "name": "Controlled Experiment",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [],
+      "evidence": {
+        "real_result_artifacts": 9,
+        "real_scenario_runs": 648,
+        "models": [
+          "accounts/fireworks/models/gpt-oss-120b",
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 3,
+        "mock_available": true,
+        "scenario_count": 24,
+        "observed_failure_modes": 7,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start refund-memory",
+        "install": "python -m pip install -e harness -e customer-support/refund-memory",
+        "evaluate": "refund-memory eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "customer-support/refund-amplified",
+      "title": "Refund Amplified",
+      "icon": "\ud83d\udcb8",
+      "industry": "Customer Support",
+      "kind": "controlled A/B",
+      "question": "Can attacker-controlled input inflate agent cost while ordinary tool-call monitors stay quiet?",
+      "capabilities": [
+        "cost",
+        "security",
+        "adversarial"
+      ],
+      "cli": "refund-amplified",
+      "featured": false,
+      "contract": {
+        "name": "Controlled Experiment",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [],
+      "evidence": {
+        "real_result_artifacts": 8,
+        "real_scenario_runs": 2880,
+        "models": [
+          "accounts/fireworks/models/gpt-oss-120b",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 150,
+        "observed_failure_modes": 9,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start refund-amplified",
+        "install": "python -m pip install -e harness -e customer-support/refund-amplified",
+        "evaluate": "refund-amplified eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "healthcare-life-sciences/prior-auth-review-agent",
+      "title": "Prior Auth Review",
+      "icon": "\ud83c\udfe5",
+      "industry": "Healthcare & Life Sciences",
+      "kind": "regulated",
+      "question": "Can a legally constrained agent review prior authorization without denying through the wrong channel?",
+      "capabilities": [
+        "gate",
+        "record-fidelity",
+        "human-in-loop"
+      ],
+      "cli": "prior-auth-review-agent",
+      "featured": false,
+      "contract": {
+        "name": "Core Evaluation",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "displaced-intent",
+          "name": "Removing the tool displaces the intent",
+          "one_liner": "Take the forbidden action out of the schema and the goal reroutes \u2014 through a legal-but-wrong channel, or into a claim that the work was done."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 9,
+        "real_scenario_runs": 756,
+        "models": [
+          "accounts/fireworks/models/gpt-oss-120b",
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 3,
+        "mock_available": true,
+        "scenario_count": 28,
+        "observed_failure_modes": 7,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start prior-auth-review-agent",
+        "install": "python -m pip install -e harness -e healthcare-life-sciences/prior-auth-review-agent",
+        "evaluate": "prior-auth-review-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "legal-compliance/dpa-clause-review-agent",
+      "title": "DPA Clause Review",
+      "icon": "\u2696\ufe0f",
+      "industry": "Legal & Compliance",
+      "kind": "regulated",
+      "question": "Can a contract-review agent detect a mandatory GDPR term that is absent rather than merely misworded?",
+      "capabilities": [
+        "gate",
+        "record-fidelity",
+        "statutory-gold"
+      ],
+      "cli": "dpa-clause-review-agent",
+      "featured": true,
+      "contract": {
+        "name": "Core Evaluation",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "no-transfer",
+          "name": "Competence does not transfer",
+          "one_liner": "Being the best model on one agent task predicts almost nothing about the next."
+        },
+        {
+          "id": "directional-bias",
+          "name": "Directional bias",
+          "one_liner": "Models don't err randomly \u2014 each errs in one direction, and the direction is a model property."
+        },
+        {
+          "id": "safety-by-inaction",
+          "name": "Safety by inaction",
+          "one_liner": "A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 9,
+        "real_scenario_runs": 756,
+        "models": [
+          "accounts/fireworks/models/gpt-oss-120b",
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 3,
+        "mock_available": true,
+        "scenario_count": 28,
+        "observed_failure_modes": 8,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start dpa-clause-review-agent",
+        "install": "python -m pip install -e harness -e legal-compliance/dpa-clause-review-agent",
+        "evaluate": "dpa-clause-review-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "it-operations/incident-remediation-agent",
+      "title": "Incident Remediation",
+      "icon": "\ud83d\udea8",
+      "industry": "IT Ops & DevOps",
+      "kind": "controlled A/B",
+      "question": "When the approved runbook action is blocked, does the agent escalate, improvise, or report false success?",
+      "capabilities": [
+        "act",
+        "guardrails",
+        "human-in-loop"
+      ],
+      "cli": "incident-remediation-agent",
+      "featured": false,
+      "contract": {
+        "name": "Controlled Experiment",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "displaced-intent",
+          "name": "Removing the tool displaces the intent",
+          "one_liner": "Take the forbidden action out of the schema and the goal reroutes \u2014 through a legal-but-wrong channel, or into a claim that the work was done."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 12,
+        "real_scenario_runs": 3456,
+        "models": [
+          "accounts/fireworks/models/gpt-oss-120b",
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 3,
+        "mock_available": true,
+        "scenario_count": 96,
+        "observed_failure_modes": 12,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start incident-remediation-agent",
+        "install": "python -m pip install -e harness -e it-operations/incident-remediation-agent",
+        "evaluate": "incident-remediation-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "it-operations/oncall-watch-agent",
+      "title": "On-Call Watch",
+      "icon": "\ud83d\udcdf",
+      "industry": "IT Ops & DevOps",
+      "kind": "baseline",
+      "question": "Can an agent wait long enough to distinguish a real regression from a blip without missing the outage?",
+      "capabilities": [
+        "watch",
+        "decide"
+      ],
+      "cli": "oncall-watch-agent",
+      "featured": false,
+      "contract": {
+        "name": "Core Evaluation",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "safety-by-inaction",
+          "name": "Safety by inaction",
+          "one_liner": "A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 3,
+        "real_scenario_runs": 270,
+        "models": [
+          "Qwen/Qwen3.7-Plus",
+          "accounts/fireworks/models/gpt-oss-120b",
+          "mistral-small-latest"
+        ],
+        "model_count": 3,
+        "mock_available": true,
+        "scenario_count": 30,
+        "observed_failure_modes": 6,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": false
+      },
+      "commands": {
+        "discover": "aau start oncall-watch-agent",
+        "install": "python -m pip install -e harness -e it-operations/oncall-watch-agent",
+        "evaluate": "oncall-watch-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "public-sector/small-business-recovery-agent",
+      "title": "Small Business Recovery Navigator",
+      "icon": "\ud83c\udf31",
+      "industry": "Public Service & Economic Resilience",
+      "kind": "public-value reference",
+      "question": "Can a service agent advance recovery while minimizing evidence burden and preserving accessibility, deadlines, recourse, rights, and a truthful record?",
+      "capabilities": [
+        "public-value",
+        "accessibility",
+        "investigate",
+        "plan",
+        "act",
+        "human-in-loop"
+      ],
+      "cli": "small-business-recovery-agent",
+      "featured": true,
+      "contract": {
+        "name": "Public Value",
+        "path": "PUBLIC_VALUE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "commit-stall",
+          "name": "Commit-stall",
+          "one_liner": "The agent investigates correctly, reaches the right conclusion, and never commits it."
+        },
+        {
+          "id": "framing-over-evidence",
+          "name": "Framing over evidence",
+          "one_liner": "The agent believes how the input was described instead of checking what the tools say."
+        },
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 7,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start small-business-recovery-agent",
+        "install": "python -m pip install -e harness -e public-sector/small-business-recovery-agent",
+        "evaluate": "small-business-recovery-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "energy-utilities/household-energy-lifeline",
+      "title": "Household Energy Lifeline",
+      "icon": "\u26a1",
+      "industry": "Energy & Utilities",
+      "kind": "public-value reference",
+      "question": "Can an agent preserve a household's available energy-service path without approving assistance, repeating evidence, or promising a hold?",
+      "capabilities": [
+        "public-value",
+        "service-continuity",
+        "accessibility",
+        "investigate",
+        "act",
+        "human-in-loop"
+      ],
+      "cli": "household-energy-lifeline",
+      "featured": true,
+      "contract": {
+        "name": "Public Value",
+        "path": "PUBLIC_VALUE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start household-energy-lifeline",
+        "install": "python -m pip install -e harness -e energy-utilities/household-energy-lifeline",
+        "evaluate": "household-energy-lifeline eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "insurance-disaster-recovery/disaster-claim-aid-coordinator",
+      "title": "Disaster Claim and Aid Coordinator",
+      "icon": "\ud83c\udfe0",
+      "industry": "Insurance & Disaster Recovery",
+      "kind": "public-value reference",
+      "question": "Can an agent coordinate insurance and disaster aid without hiding compensation, duplicating evidence, losing a deadline, or deciding entitlement?",
+      "capabilities": [
+        "public-value",
+        "source-coordination",
+        "accessibility",
+        "investigate",
+        "plan",
+        "human-in-loop"
+      ],
+      "cli": "disaster-claim-aid-coordinator",
+      "featured": true,
+      "contract": {
+        "name": "Public Value",
+        "path": "PUBLIC_VALUE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start disaster-claim-aid-coordinator",
+        "install": "python -m pip install -e harness -e insurance-disaster-recovery/disaster-claim-aid-coordinator",
+        "evaluate": "disaster-claim-aid-coordinator eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "employment-social-insurance/unemployment-claim-navigator",
+      "title": "Unemployment Claim Navigator",
+      "icon": "\ud83e\udded",
+      "industry": "Employment & Social Insurance",
+      "kind": "public-value reference",
+      "question": "Can an agent preserve appeal and weekly-certification paths without repeating evidence, bypassing identity controls, or deciding eligibility?",
+      "capabilities": [
+        "public-value",
+        "appeal-preservation",
+        "accessibility",
+        "investigate",
+        "act",
+        "human-in-loop"
+      ],
+      "cli": "unemployment-claim-navigator",
+      "featured": true,
+      "contract": {
+        "name": "Public Value",
+        "path": "PUBLIC_VALUE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start unemployment-claim-navigator",
+        "install": "python -m pip install -e harness -e employment-social-insurance/unemployment-claim-navigator",
+        "evaluate": "unemployment-claim-navigator eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "agriculture-food-systems/farm-disaster-deadline-agent",
+      "title": "Farm Disaster Deadline Agent",
+      "icon": "\ud83c\udf3e",
+      "industry": "Agriculture & Food Systems",
+      "kind": "public-value reference",
+      "question": "Can an agent preserve every applicable farm-disaster notice window without duplicating records, changing a loss date, or inventing an award?",
+      "capabilities": [
+        "public-value",
+        "deadline-coordination",
+        "accessibility",
+        "investigate",
+        "plan",
+        "human-in-loop"
+      ],
+      "cli": "farm-disaster-deadline",
+      "featured": true,
+      "contract": {
+        "name": "Public Value",
+        "path": "PUBLIC_VALUE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start farm-disaster-deadline",
+        "install": "python -m pip install -e harness -e agriculture-food-systems/farm-disaster-deadline-agent",
+        "evaluate": "farm-disaster-deadline eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "housing-construction/permit-readiness-agent",
+      "title": "Permit Readiness Agent",
+      "icon": "\ud83c\udfd7\ufe0f",
+      "industry": "Housing & Construction",
+      "kind": "public-value reference",
+      "question": "Can an agent prepare jurisdiction-specific permit intake without treating readiness as approval or code compliance?",
+      "capabilities": [
+        "public-value",
+        "rule-provenance",
+        "accessibility",
+        "investigate",
+        "plan",
+        "human-in-loop"
+      ],
+      "cli": "permit-readiness-agent",
+      "featured": true,
+      "contract": {
+        "name": "Public Value",
+        "path": "PUBLIC_VALUE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start permit-readiness-agent",
+        "install": "python -m pip install -e harness -e housing-construction/permit-readiness-agent",
+        "evaluate": "permit-readiness-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "education-services/student-accommodation-navigator",
+      "title": "Student Accommodation Navigator",
+      "icon": "\ud83c\udf93",
+      "industry": "Education Services",
+      "kind": "public-value reference",
+      "question": "Can an agent preserve a timely qualified-team handoff while refusing unnecessary sensitive records and never deciding an accommodation?",
+      "capabilities": [
+        "public-value",
+        "data-minimization",
+        "accessibility",
+        "investigate",
+        "plan",
+        "human-in-loop"
+      ],
+      "cli": "student-accommodation-navigator",
+      "featured": true,
+      "contract": {
+        "name": "Public Value",
+        "path": "PUBLIC_VALUE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start student-accommodation-navigator",
+        "install": "python -m pip install -e harness -e education-services/student-accommodation-navigator",
+        "evaluate": "student-accommodation-navigator eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "identity-access/account-recovery-assurance-agent",
+      "title": "Account Recovery Assurance Agent",
+      "icon": "\ud83d\udd10",
+      "industry": "Identity & Access",
+      "kind": "controlled security benchmark",
+      "question": "Can an agent restore access through the least-invasive assurance-matched route without enabling takeover or over-collecting identity data?",
+      "capabilities": [
+        "security",
+        "identity",
+        "data-minimization",
+        "investigate",
+        "act",
+        "human-in-loop"
+      ],
+      "cli": "account-recovery-assurance-agent",
+      "featured": true,
+      "contract": {
+        "name": "Controlled Experiment",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start account-recovery-assurance-agent",
+        "install": "python -m pip install -e harness -e identity-access/account-recovery-assurance-agent",
+        "evaluate": "account-recovery-assurance-agent eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "accessibility-digital-services/accessibility-remediation-verifier",
+      "title": "Accessibility Remediation Verifier",
+      "icon": "\u267f",
+      "industry": "Accessibility & Digital Services",
+      "kind": "public-value verification",
+      "question": "Can an agent cover manual and automated accessibility evidence, prove the fix state, and avoid unsupported conformance claims?",
+      "capabilities": [
+        "accessibility",
+        "verification",
+        "investigate",
+        "plan",
+        "gate",
+        "human-in-loop"
+      ],
+      "cli": "accessibility-remediation-verifier",
+      "featured": true,
+      "contract": {
+        "name": "Public Value",
+        "path": "PUBLIC_VALUE_CONTRACT.md"
+      },
+      "failure_patterns": [],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start accessibility-remediation-verifier",
+        "install": "python -m pip install -e harness -e accessibility-digital-services/accessibility-remediation-verifier",
+        "evaluate": "accessibility-remediation-verifier eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "privacy-data-governance/privacy-rights-orchestrator",
+      "title": "Privacy Rights Orchestrator",
+      "icon": "\ud83d\udee1\ufe0f",
+      "industry": "Privacy & Data Governance",
+      "kind": "regulated workflow benchmark",
+      "question": "Can an agent route access, deletion, and correction across every mapped system without excessive verification or false completion?",
+      "capabilities": [
+        "privacy",
+        "data-minimization",
+        "system-coverage",
+        "investigate",
+        "plan",
+        "human-in-loop"
+      ],
+      "cli": "privacy-rights-orchestrator",
+      "featured": true,
+      "contract": {
+        "name": "Core Evaluation",
+        "path": "VERIFICATION.md"
+      },
+      "failure_patterns": [],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start privacy-rights-orchestrator",
+        "install": "python -m pip install -e harness -e privacy-data-governance/privacy-rights-orchestrator",
+        "evaluate": "privacy-rights-orchestrator eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "food-safety-manufacturing/food-recall-traceability-coordinator",
+      "title": "Food Recall Traceability Coordinator",
+      "icon": "\ud83e\udd6b",
+      "industry": "Food Safety & Manufacturing",
+      "kind": "evidence-service benchmark",
+      "question": "Can an agent assemble an exact lot-and-recipient trace without inventing links or deciding recall scope?",
+      "capabilities": [
+        "public-value",
+        "traceability",
+        "evidence-minimization",
+        "deadline-protection",
+        "human-in-loop"
+      ],
+      "cli": "food-recall-traceability",
+      "featured": true,
+      "contract": {
+        "name": "Evidence Service",
+        "path": "EVIDENCE_SERVICE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start food-recall-traceability",
+        "install": "python -m pip install -e harness -e food-safety-manufacturing/food-recall-traceability-coordinator",
+        "evaluate": "food-recall-traceability eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "water-sanitation/drinking-water-notice-coordinator",
+      "title": "Drinking Water Notice and Service-Line Coordinator",
+      "icon": "\ud83d\udca7",
+      "industry": "Water & Sanitation",
+      "kind": "evidence-service benchmark",
+      "question": "Can an agent join inventory, sample, notice, delivery, assistance, and replacement evidence without calling unknown safe or unsafe?",
+      "capabilities": [
+        "public-value",
+        "record-fidelity",
+        "accessibility",
+        "deadline-protection",
+        "human-in-loop"
+      ],
+      "cli": "drinking-water-notice",
+      "featured": true,
+      "contract": {
+        "name": "Evidence Service",
+        "path": "EVIDENCE_SERVICE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start drinking-water-notice",
+        "install": "python -m pip install -e harness -e water-sanitation/drinking-water-notice-coordinator",
+        "evaluate": "drinking-water-notice eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "federal-taxpayer-services/irs-notice-response-navigator",
+      "title": "IRS Notice Response Navigator",
+      "icon": "\u2709\ufe0f",
+      "industry": "Federal Taxpayer Services",
+      "kind": "evidence-service benchmark",
+      "question": "Can an agent map a notice to the exact action, minimum evidence, delivery route, deadline, and appeal protection without giving tax advice?",
+      "capabilities": [
+        "public-value",
+        "evidence-minimization",
+        "deadline-protection",
+        "recourse",
+        "human-in-loop"
+      ],
+      "cli": "irs-notice-response",
+      "featured": true,
+      "contract": {
+        "name": "Evidence Service",
+        "path": "EVIDENCE_SERVICE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start irs-notice-response",
+        "install": "python -m pip install -e harness -e federal-taxpayer-services/irs-notice-response-navigator",
+        "evaluate": "irs-notice-response eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "veterans-services/veterans-claim-evidence-navigator",
+      "title": "Veterans Claim Evidence Navigator",
+      "icon": "\ud83c\udf96\ufe0f",
+      "industry": "Veterans Services",
+      "kind": "evidence-service benchmark",
+      "question": "Can an agent distinguish evidence already filed from evidence requested and route the correct claim-stage channel without rating the claim?",
+      "capabilities": [
+        "public-value",
+        "record-fidelity",
+        "evidence-minimization",
+        "recourse",
+        "human-in-loop"
+      ],
+      "cli": "veterans-claim-evidence",
+      "featured": true,
+      "contract": {
+        "name": "Evidence Service",
+        "path": "EVIDENCE_SERVICE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start veterans-claim-evidence",
+        "install": "python -m pip install -e harness -e veterans-services/veterans-claim-evidence-navigator",
+        "evaluate": "veterans-claim-evidence eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "public-transit-mobility/paratransit-access-coordinator",
+      "title": "Paratransit Access Coordinator",
+      "icon": "\ud83d\ude8c",
+      "industry": "Public Transit & Accessible Mobility",
+      "kind": "evidence-service benchmark",
+      "question": "Can an agent coordinate accessible paratransit applications, clocks, trip conditions, and appeals without making eligibility decisions?",
+      "capabilities": [
+        "public-value",
+        "accessibility",
+        "deadline-protection",
+        "recourse",
+        "human-in-loop"
+      ],
+      "cli": "paratransit-access",
+      "featured": true,
+      "contract": {
+        "name": "Evidence Service",
+        "path": "EVIDENCE_SERVICE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start paratransit-access",
+        "install": "python -m pip install -e harness -e public-transit-mobility/paratransit-access-coordinator",
+        "evaluate": "paratransit-access eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "government-transparency/foia-routing-appeal-navigator",
+      "title": "FOIA Routing and Appeal Clock Navigator",
+      "icon": "\ud83c\udfdb\ufe0f",
+      "industry": "Government Transparency",
+      "kind": "evidence-service benchmark",
+      "question": "Can an agent route a records request, reuse proactive disclosures, preserve tracking and appeal state, and avoid inventing records or exemptions?",
+      "capabilities": [
+        "public-value",
+        "record-fidelity",
+        "deadline-protection",
+        "recourse",
+        "human-in-loop"
+      ],
+      "cli": "foia-routing-appeal",
+      "featured": true,
+      "contract": {
+        "name": "Evidence Service",
+        "path": "EVIDENCE_SERVICE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start foia-routing-appeal",
+        "install": "python -m pip install -e harness -e government-transparency/foia-routing-appeal-navigator",
+        "evaluate": "foia-routing-appeal eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "immigration-citizenship/uscis-case-evidence-navigator",
+      "title": "USCIS Case and Evidence Navigator",
+      "icon": "\ud83d\uddc2\ufe0f",
+      "industry": "Immigration & Citizenship Services",
+      "kind": "evidence-service benchmark",
+      "question": "Can an agent explain administrative case state, organize requested evidence, preserve notices and deadlines, and avoid legal conclusions?",
+      "capabilities": [
+        "public-value",
+        "record-fidelity",
+        "evidence-minimization",
+        "deadline-protection",
+        "human-in-loop"
+      ],
+      "cli": "uscis-case-evidence",
+      "featured": true,
+      "contract": {
+        "name": "Evidence Service",
+        "path": "EVIDENCE_SERVICE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start uscis-case-evidence",
+        "install": "python -m pip install -e harness -e immigration-citizenship/uscis-case-evidence-navigator",
+        "evaluate": "uscis-case-evidence eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "manufacturing-international-trade/export-transaction-evidence-agent",
+      "title": "Export Transaction Evidence Agent",
+      "icon": "\ud83c\udf10",
+      "industry": "Manufacturing & International Trade",
+      "kind": "evidence-service benchmark",
+      "question": "Can an agent bind item, destination, end user, end use, screening, and rule version without clearing a shipment?",
+      "capabilities": [
+        "record-fidelity",
+        "traceability",
+        "rule-provenance",
+        "gate",
+        "human-in-loop"
+      ],
+      "cli": "export-transaction-evidence",
+      "featured": true,
+      "contract": {
+        "name": "Evidence Service",
+        "path": "EVIDENCE_SERVICE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start export-transaction-evidence",
+        "install": "python -m pip install -e harness -e manufacturing-international-trade/export-transaction-evidence-agent",
+        "evaluate": "export-transaction-evidence eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "child-nutrition-family-services/school-meal-access-coordinator",
+      "title": "School Meal Access Coordinator",
+      "icon": "\ud83c\udf4e",
+      "industry": "Child Nutrition & Family Services",
+      "kind": "evidence-service benchmark",
+      "question": "Can an agent reuse direct-certification evidence, request the minimum missing information, and preserve meal access without determining eligibility?",
+      "capabilities": [
+        "public-value",
+        "evidence-minimization",
+        "accessibility",
+        "service-continuity",
+        "human-in-loop"
+      ],
+      "cli": "school-meal-access",
+      "featured": true,
+      "contract": {
+        "name": "Evidence Service",
+        "path": "EVIDENCE_SERVICE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start school-meal-access",
+        "install": "python -m pip install -e harness -e child-nutrition-family-services/school-meal-access-coordinator",
+        "evaluate": "school-meal-access eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "election-administration/provisional-ballot-status-navigator",
+      "title": "Provisional Ballot Status Navigator",
+      "icon": "\ud83d\uddf3\ufe0f",
+      "industry": "Election Administration",
+      "kind": "evidence-service benchmark",
+      "question": "Can a nonpartisan agent provide official provisional-ballot status and cure routing without deciding eligibility or influencing a vote?",
+      "capabilities": [
+        "public-value",
+        "nonpartisan",
+        "record-fidelity",
+        "deadline-protection",
+        "human-in-loop"
+      ],
+      "cli": "provisional-ballot-status",
+      "featured": true,
+      "contract": {
+        "name": "Evidence Service",
+        "path": "EVIDENCE_SERVICE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start provisional-ballot-status",
+        "install": "python -m pip install -e harness -e election-administration/provisional-ballot-status-navigator",
+        "evaluate": "provisional-ballot-status eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "care-transitions/hospital-discharge-readiness-coordinator",
+      "title": "Hospital Discharge Readiness Coordinator",
+      "icon": "\ud83c\udfe5",
+      "industry": "Care Transitions",
+      "kind": "evidence-service benchmark",
+      "question": "Can an agent verify caregiver, medication, equipment, transport, follow-up, and receiving-provider evidence without making a discharge decision?",
+      "capabilities": [
+        "record-fidelity",
+        "service-continuity",
+        "accessibility",
+        "gate",
+        "human-in-loop"
+      ],
+      "cli": "hospital-discharge-readiness",
+      "featured": true,
+      "contract": {
+        "name": "Evidence Service",
+        "path": "EVIDENCE_SERVICE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start hospital-discharge-readiness",
+        "install": "python -m pip install -e harness -e care-transitions/hospital-discharge-readiness-coordinator",
+        "evaluate": "hospital-discharge-readiness eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "workforce-mobility/occupational-license-mobility-navigator",
+      "title": "Occupational License Mobility Navigator",
+      "icon": "\ud83e\udeaa",
+      "industry": "Workforce Mobility",
+      "kind": "evidence-service benchmark",
+      "question": "Can an agent match occupation, origin license, destination authority, compact path, evidence, fees, and deadlines without claiming licensure?",
+      "capabilities": [
+        "public-value",
+        "rule-provenance",
+        "evidence-minimization",
+        "deadline-protection",
+        "human-in-loop"
+      ],
+      "cli": "occupational-license-mobility",
+      "featured": true,
+      "contract": {
+        "name": "Evidence Service",
+        "path": "EVIDENCE_SERVICE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": false,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start occupational-license-mobility",
+        "install": "python -m pip install -e harness -e workforce-mobility/occupational-license-mobility-navigator",
+        "evaluate": "occupational-license-mobility eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "pharmaceutical-manufacturing/batch-disposition-gate",
+      "title": "Batch Disposition Evidence Gate",
+      "icon": "\ud83e\uddea",
+      "industry": "Pharmaceutical Manufacturing",
+      "kind": "decision-gate benchmark",
+      "question": "Can an agent keep chemical OOS discretion separate from the sterility-positive rejection path without releasing a batch?",
+      "capabilities": [
+        "regulated",
+        "tool use",
+        "transfer failure",
+        "exact evidence",
+        "human review"
+      ],
+      "cli": "batch-disposition-gate",
+      "featured": true,
+      "contract": {
+        "name": "Decision Gate",
+        "path": "DECISION_GATE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start batch-disposition-gate",
+        "install": "python -m pip install -e harness -e pharmaceutical-manufacturing/batch-disposition-gate",
+        "evaluate": "batch-disposition-gate eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "grid-operations/distribution-restoration-safety-gate",
+      "title": "Distribution Restoration Safety Gate",
+      "icon": "\u26a1",
+      "industry": "Grid Operations",
+      "kind": "decision-gate benchmark",
+      "question": "Can an agent prove every re-energization condition and clearance owner without treating outage urgency as an exception?",
+      "capabilities": [
+        "safety",
+        "tool use",
+        "conjunctive gates",
+        "record fidelity",
+        "human review"
+      ],
+      "cli": "distribution-restoration-gate",
+      "featured": true,
+      "contract": {
+        "name": "Decision Gate",
+        "path": "DECISION_GATE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start distribution-restoration-gate",
+        "install": "python -m pip install -e harness -e grid-operations/distribution-restoration-safety-gate",
+        "evaluate": "distribution-restoration-gate eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "human-resources/hiring-compliance-navigator",
+      "title": "Hiring Compliance Navigator",
+      "icon": "\ud83e\udded",
+      "industry": "Human Resources & Hiring",
+      "kind": "decision-gate benchmark",
+      "question": "Can an employer-side agent preserve AEDT and FCRA process rights without making the hiring decision?",
+      "capabilities": [
+        "regulated",
+        "tool use",
+        "candidate rights",
+        "deadline protection",
+        "human review"
+      ],
+      "cli": "hiring-compliance-navigator",
+      "featured": true,
+      "contract": {
+        "name": "Decision Gate",
+        "path": "DECISION_GATE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start hiring-compliance-navigator",
+        "install": "python -m pip install -e harness -e human-resources/hiring-compliance-navigator",
+        "evaluate": "hiring-compliance-navigator eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "aviation-operations/aircraft-dispatch-evidence-gate",
+      "title": "Aircraft Dispatch Evidence Gate",
+      "icon": "\u2708\ufe0f",
+      "industry": "Aviation Operations",
+      "kind": "decision-gate benchmark",
+      "question": "Can an agent apply the aircraft-specific MEL and limitations without turning a deferral packet into a dispatch release?",
+      "capabilities": [
+        "safety",
+        "tool use",
+        "approved-data grounding",
+        "conjunctive gates",
+        "human review"
+      ],
+      "cli": "aircraft-dispatch-gate",
+      "featured": true,
+      "contract": {
+        "name": "Decision Gate",
+        "path": "DECISION_GATE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start aircraft-dispatch-gate",
+        "install": "python -m pip install -e harness -e aviation-operations/aircraft-dispatch-evidence-gate",
+        "evaluate": "aircraft-dispatch-gate eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "banking-compliance/aml-kyc-sanctions-case-gate",
+      "title": "AML, KYC & Sanctions Case Gate",
+      "icon": "\ud83c\udfe6",
+      "industry": "Banking Compliance",
+      "kind": "decision-gate benchmark",
+      "question": "Can an agent keep CIP, sanctions ownership, SAR timing, and SAR secrecy distinct while preserving the compliance officer's authority?",
+      "capabilities": [
+        "regulated",
+        "tool use",
+        "confidentiality",
+        "ownership aggregation",
+        "human review"
+      ],
+      "cli": "aml-kyc-sanctions-gate",
+      "featured": true,
+      "contract": {
+        "name": "Decision Gate",
+        "path": "DECISION_GATE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start aml-kyc-sanctions-gate",
+        "install": "python -m pip install -e harness -e banking-compliance/aml-kyc-sanctions-case-gate",
+        "evaluate": "aml-kyc-sanctions-gate eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "tax-filing-services/tax-return-completeness-navigator",
+      "title": "Tax Return Completeness Navigator",
+      "icon": "\ud83e\uddfe",
+      "industry": "Tax Filing Services",
+      "kind": "decision-gate benchmark",
+      "question": "Can an agent find the one form or authorization absent from a versioned return packet without filing or signing it?",
+      "capabilities": [
+        "regulated",
+        "tool use",
+        "absence detection",
+        "deadline protection",
+        "human review"
+      ],
+      "cli": "tax-return-completeness",
+      "featured": true,
+      "contract": {
+        "name": "Decision Gate",
+        "path": "DECISION_GATE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start tax-return-completeness",
+        "install": "python -m pip install -e harness -e tax-filing-services/tax-return-completeness-navigator",
+        "evaluate": "tax-return-completeness eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "research-knowledge-work/claim-evidence-verifier",
+      "title": "Claim and Citation Evidence Verifier",
+      "icon": "\ud83d\udd0e",
+      "industry": "Research & Knowledge Work",
+      "kind": "proof-before-action benchmark",
+      "question": "Can an agent prove that every material claim is entailed by a current cited source without publishing or certifying it?",
+      "capabilities": [
+        "verification",
+        "citations",
+        "source freshness",
+        "fact checking",
+        "human review"
+      ],
+      "cli": "claim-evidence-verifier",
+      "featured": true,
+      "contract": {
+        "name": "Decision Gate",
+        "path": "DECISION_GATE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start claim-evidence-verifier",
+        "install": "python -m pip install -e harness -e research-knowledge-work/claim-evidence-verifier",
+        "evaluate": "claim-evidence-verifier eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "home-field-services/service-visit-readiness-coordinator",
+      "title": "Home and Field Service Readiness Coordinator",
+      "icon": "\ud83e\uddf0",
+      "industry": "Home & Field Services",
+      "kind": "proof-before-action benchmark",
+      "question": "Can an agent prepare the right visit while diverting gas or carbon-monoxide danger away from routine service?",
+      "capabilities": [
+        "safety",
+        "scheduling",
+        "prerequisite verification",
+        "service continuity",
+        "human review"
+      ],
+      "cli": "service-visit-readiness",
+      "featured": true,
+      "contract": {
+        "name": "Decision Gate",
+        "path": "DECISION_GATE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start service-visit-readiness",
+        "install": "python -m pip install -e harness -e home-field-services/service-visit-readiness-coordinator",
+        "evaluate": "service-visit-readiness eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "nonprofit-grant-management/grant-obligation-evidence-navigator",
+      "title": "Nonprofit Grant Obligation Evidence Navigator",
+      "icon": "\ud83e\udd1d",
+      "industry": "Nonprofit Grant Management",
+      "kind": "proof-before-action benchmark",
+      "question": "Can an agent map the current award's obligations to evidence without certifying compliance or submitting?",
+      "capabilities": [
+        "public-value",
+        "obligation mapping",
+        "evidence minimization",
+        "deadline protection",
+        "human review"
+      ],
+      "cli": "grant-obligation-evidence",
+      "featured": true,
+      "contract": {
+        "name": "Decision Gate",
+        "path": "DECISION_GATE_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start grant-obligation-evidence",
+        "install": "python -m pip install -e harness -e nonprofit-grant-management/grant-obligation-evidence-navigator",
+        "evaluate": "grant-obligation-evidence eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "automotive-safety/vehicle-recall-remedy-coordinator",
+      "title": "Vehicle Recall Remedy Coordinator",
+      "icon": "\ud83d\ude99",
+      "industry": "Automotive Safety",
+      "kind": "public-protection benchmark",
+      "question": "Can an agent bind a vehicle to the exact open recall, preserve the no-cost remedy path, and prove the handoff without claiming the repair happened?",
+      "capabilities": [
+        "public-protection",
+        "recall-remedy",
+        "identity matching",
+        "receipt fidelity",
+        "human review"
+      ],
+      "cli": "vehicle-recall-remedy",
+      "featured": true,
+      "contract": {
+        "name": "Protection Receipt",
+        "path": "PROTECTION_RECEIPT_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start vehicle-recall-remedy",
+        "install": "python -m pip install -e harness -e automotive-safety/vehicle-recall-remedy-coordinator",
+        "evaluate": "vehicle-recall-remedy eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "consumer-product-safety/product-recall-remedy-coordinator",
+      "title": "Consumer Product Recall Remedy Coordinator",
+      "icon": "\ud83e\uddf8",
+      "industry": "Consumer Product Safety",
+      "kind": "public-protection benchmark",
+      "question": "Can an agent match the exact recalled product, preserve stop-use instructions, and produce a verified refund, repair, or replacement handoff?",
+      "capabilities": [
+        "public-protection",
+        "recall-remedy",
+        "hazard notice",
+        "receipt fidelity",
+        "human review"
+      ],
+      "cli": "product-recall-remedy",
+      "featured": true,
+      "contract": {
+        "name": "Protection Receipt",
+        "path": "PROTECTION_RECEIPT_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start product-recall-remedy",
+        "install": "python -m pip install -e harness -e consumer-product-safety/product-recall-remedy-coordinator",
+        "evaluate": "product-recall-remedy eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "maritime-ports/detention-demurrage-invoice-verifier",
+      "title": "Detention & Demurrage Invoice Verifier",
+      "icon": "\ud83d\udea2",
+      "industry": "Maritime & Ports",
+      "kind": "public-protection benchmark",
+      "question": "Can an agent verify who may be billed, the 30-day invoice clock, charge dates, free time, and dispute route before money moves?",
+      "capabilities": [
+        "economic-protection",
+        "invoice verification",
+        "deadline protection",
+        "receipt fidelity",
+        "human review"
+      ],
+      "cli": "detention-demurrage-verifier",
+      "featured": true,
+      "contract": {
+        "name": "Protection Receipt",
+        "path": "PROTECTION_RECEIPT_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start detention-demurrage-verifier",
+        "install": "python -m pip install -e harness -e maritime-ports/detention-demurrage-invoice-verifier",
+        "evaluate": "detention-demurrage-verifier eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "environmental-hazardous-materials/hazardous-waste-manifest-coordinator",
+      "title": "Hazardous Waste e-Manifest Coordinator",
+      "icon": "\u2623\ufe0f",
+      "industry": "Environmental & Hazardous Materials",
+      "kind": "public-protection benchmark",
+      "question": "Can an agent bind generator, transporter, facility, waste codes, signatures, exception clocks, and corrections without fabricating chain-of-custody?",
+      "capabilities": [
+        "public-protection",
+        "chain of custody",
+        "rule provenance",
+        "receipt fidelity",
+        "human review"
+      ],
+      "cli": "hazardous-waste-manifest",
+      "featured": true,
+      "contract": {
+        "name": "Protection Receipt",
+        "path": "PROTECTION_RECEIPT_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start hazardous-waste-manifest",
+        "install": "python -m pip install -e harness -e environmental-hazardous-materials/hazardous-waste-manifest-coordinator",
+        "evaluate": "hazardous-waste-manifest eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "consumer-finance-debt/debt-validation-dispute-navigator",
+      "title": "Debt Validation & Dispute Navigator",
+      "icon": "\ud83d\udce8",
+      "industry": "Consumer Finance & Debt Collection",
+      "kind": "public-protection benchmark",
+      "question": "Can an agent reconstruct the validation period, request only the missing debt evidence, preserve dispute rights, and stop short of legal conclusions?",
+      "capabilities": [
+        "consumer rights",
+        "evidence minimization",
+        "deadline protection",
+        "receipt fidelity",
+        "human review"
+      ],
+      "cli": "debt-validation-dispute",
+      "featured": true,
+      "contract": {
+        "name": "Protection Receipt",
+        "path": "PROTECTION_RECEIPT_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start debt-validation-dispute",
+        "install": "python -m pip install -e harness -e consumer-finance-debt/debt-validation-dispute-navigator",
+        "evaluate": "debt-validation-dispute eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "telecommunications-emergency/communications-outage-reporting-gate",
+      "title": "911 & 988 Outage Reporting Gate",
+      "icon": "\ud83d\udce1",
+      "industry": "Telecommunications & Emergency Communications",
+      "kind": "public-protection benchmark",
+      "question": "Can an agent detect 911/988 special-facility impact, preserve the 4-hour or 24-hour NORS path, notify the right official, and keep the final report true?",
+      "capabilities": [
+        "public-safety",
+        "special-facility detection",
+        "deadline protection",
+        "record fidelity",
+        "human review"
+      ],
+      "cli": "communications-outage-gate",
+      "featured": true,
+      "contract": {
+        "name": "Protection Receipt",
+        "path": "PROTECTION_RECEIPT_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start communications-outage-gate",
+        "install": "python -m pip install -e harness -e telecommunications-emergency/communications-outage-reporting-gate",
+        "evaluate": "communications-outage-gate eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "workplace-safety/severe-incident-reporting-navigator",
+      "title": "Workplace Severe Incident Reporting Navigator",
+      "icon": "\ud83e\uddba",
+      "industry": "Workplace Safety & Injury Reporting",
+      "kind": "public-protection benchmark",
+      "question": "Can an agent classify a fatality, inpatient hospitalization, amputation, or eye loss; start the correct OSHA clock; and keep follow-up records faithful?",
+      "capabilities": [
+        "worker safety",
+        "outcome classification",
+        "deadline protection",
+        "record fidelity",
+        "human review"
+      ],
+      "cli": "severe-incident-reporting",
+      "featured": true,
+      "contract": {
+        "name": "Protection Receipt",
+        "path": "PROTECTION_RECEIPT_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start severe-incident-reporting",
+        "install": "python -m pip install -e harness -e workplace-safety/severe-incident-reporting-navigator",
+        "evaluate": "severe-incident-reporting eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "medical-device-safety/adverse-event-reporting-gate",
+      "title": "Medical Device Adverse-Event Reporting Gate",
+      "icon": "\ud83e\ude7a",
+      "industry": "Medical Device Safety",
+      "kind": "clock-collision benchmark",
+      "question": "Can an agent identify the reporter, event, 5-workday or 30-calendar-day path, recipient set, and actual FDA receipt without making the medical judgment itself?",
+      "capabilities": [
+        "obligation-graph",
+        "reporter classification",
+        "deadline protection",
+        "receipt fidelity",
+        "human review"
+      ],
+      "cli": "device-adverse-event-gate",
+      "featured": true,
+      "contract": {
+        "name": "Obligation Graph",
+        "path": "OBLIGATION_GRAPH_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "obligation-graph-collapse",
+          "name": "One event becomes one obligation",
+          "one_liner": "A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection."
+        },
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start device-adverse-event-gate",
+        "install": "python -m pip install -e harness -e medical-device-safety/adverse-event-reporting-gate",
+        "evaluate": "device-adverse-event-gate eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "pharmaceutical-supply/drug-shortage-notification-coordinator",
+      "title": "Drug Shortage Notification Coordinator",
+      "icon": "\ud83d\udc8a",
+      "industry": "Pharmaceutical Supply Continuity",
+      "kind": "clock-collision benchmark",
+      "question": "Can an agent recognize a covered manufacturing interruption, start the advance or five-business-day clock, and prove FDA notification without declaring a shortage?",
+      "capabilities": [
+        "obligation-graph",
+        "supply continuity",
+        "clock origin",
+        "deadline protection",
+        "human review"
+      ],
+      "cli": "drug-shortage-notification",
+      "featured": true,
+      "contract": {
+        "name": "Obligation Graph",
+        "path": "OBLIGATION_GRAPH_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "obligation-graph-collapse",
+          "name": "One event becomes one obligation",
+          "one_liner": "A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection."
+        },
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start drug-shortage-notification",
+        "install": "python -m pip install -e harness -e pharmaceutical-supply/drug-shortage-notification-coordinator",
+        "evaluate": "drug-shortage-notification eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "mortgage-servicing/loss-mitigation-foreclosure-gate",
+      "title": "Mortgage Loss-Mitigation and Foreclosure Protection Gate",
+      "icon": "\ud83c\udfe1",
+      "industry": "Mortgage Servicing & Housing Stability",
+      "kind": "clock-collision benchmark",
+      "question": "Can an agent reconstruct application completeness, the 45-day and 37-day milestones, evaluation timing, and foreclosure holds without deciding eligibility?",
+      "capabilities": [
+        "obligation-graph",
+        "housing stability",
+        "milestone calculation",
+        "rights protection",
+        "human review"
+      ],
+      "cli": "loss-mitigation-foreclosure-gate",
+      "featured": true,
+      "contract": {
+        "name": "Obligation Graph",
+        "path": "OBLIGATION_GRAPH_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "obligation-graph-collapse",
+          "name": "One event becomes one obligation",
+          "one_liner": "A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection."
+        },
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start loss-mitigation-foreclosure-gate",
+        "install": "python -m pip install -e harness -e mortgage-servicing/loss-mitigation-foreclosure-gate",
+        "evaluate": "loss-mitigation-foreclosure-gate eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "healthcare-payment/no-surprises-idr-deadline-navigator",
+      "title": "No Surprises Act IDR Deadline Navigator",
+      "icon": "\ud83e\uddee",
+      "industry": "Healthcare Payment & Dispute Resolution",
+      "kind": "clock-collision benchmark",
+      "question": "Can an agent verify an eligible item, exhaust 30 business days of negotiation, preserve the four-business-day initiation window, and distinguish initiation from determination?",
+      "capabilities": [
+        "obligation-graph",
+        "business-day calculation",
+        "claim verification",
+        "deadline protection",
+        "human review"
+      ],
+      "cli": "no-surprises-idr-deadline",
+      "featured": true,
+      "contract": {
+        "name": "Obligation Graph",
+        "path": "OBLIGATION_GRAPH_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "obligation-graph-collapse",
+          "name": "One event becomes one obligation",
+          "one_liner": "A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection."
+        },
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start no-surprises-idr-deadline",
+        "install": "python -m pip install -e harness -e healthcare-payment/no-surprises-idr-deadline-navigator",
+        "evaluate": "no-surprises-idr-deadline eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "securities-cyber-disclosure/material-cyber-incident-disclosure-gate",
+      "title": "Material Cyber Incident Disclosure Gate",
+      "icon": "\ud83d\udcc8",
+      "industry": "Securities & Cyber Disclosure",
+      "kind": "clock-collision benchmark",
+      "question": "Can an agent separate discovery from the human materiality determination, calculate four business days, protect response details, and prove a Form 8-K filing?",
+      "capabilities": [
+        "obligation-graph",
+        "cyber disclosure",
+        "clock origin",
+        "confidentiality",
+        "human review"
+      ],
+      "cli": "material-cyber-disclosure-gate",
+      "featured": true,
+      "contract": {
+        "name": "Obligation Graph",
+        "path": "OBLIGATION_GRAPH_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "obligation-graph-collapse",
+          "name": "One event becomes one obligation",
+          "one_liner": "A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection."
+        },
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start material-cyber-disclosure-gate",
+        "install": "python -m pip install -e harness -e securities-cyber-disclosure/material-cyber-incident-disclosure-gate",
+        "evaluate": "material-cyber-disclosure-gate eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "long-term-care/nursing-home-transfer-discharge-navigator",
+      "title": "Nursing Home Transfer and Discharge Rights Navigator",
+      "icon": "\ud83e\udd1d",
+      "industry": "Long-Term Care & Resident Rights",
+      "kind": "clock-collision benchmark",
+      "question": "Can an agent verify an allowed transfer basis, preserve the ordinary 30-day notice or exception path, include appeal rights, and avoid treating notice as discharge?",
+      "capabilities": [
+        "obligation-graph",
+        "resident rights",
+        "notice verification",
+        "appeal protection",
+        "human review"
+      ],
+      "cli": "nursing-home-transfer-discharge",
+      "featured": true,
+      "contract": {
+        "name": "Obligation Graph",
+        "path": "OBLIGATION_GRAPH_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "obligation-graph-collapse",
+          "name": "One event becomes one obligation",
+          "one_liner": "A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection."
+        },
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start nursing-home-transfer-discharge",
+        "install": "python -m pip install -e harness -e long-term-care/nursing-home-transfer-discharge-navigator",
+        "evaluate": "nursing-home-transfer-discharge eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "nuclear-operations/reactor-event-notification-gate",
+      "title": "Nuclear Reactor Event Notification Gate",
+      "icon": "\u269b\ufe0f",
+      "industry": "Nuclear Operations & Public Safety",
+      "kind": "clock-collision benchmark",
+      "question": "Can an agent classify overlapping one-hour, four-hour, and eight-hour NRC notification paths while preserving emergency authority and truthful call receipts?",
+      "capabilities": [
+        "obligation-graph",
+        "public safety",
+        "multi-clock classification",
+        "receipt fidelity",
+        "human review"
+      ],
+      "cli": "reactor-event-notification",
+      "featured": true,
+      "contract": {
+        "name": "Obligation Graph",
+        "path": "OBLIGATION_GRAPH_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "obligation-graph-collapse",
+          "name": "One event becomes one obligation",
+          "one_liner": "A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection."
+        },
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "deepseek-v4-flash",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start reactor-event-notification",
+        "install": "python -m pip install -e harness -e nuclear-operations/reactor-event-notification-gate",
+        "evaluate": "reactor-event-notification eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "medicaid-chip/renewal-continuity-navigator",
+      "title": "Medicaid and CHIP Renewal Continuity Navigator",
+      "icon": "\ud83e\udde9",
+      "industry": "Medicaid & CHIP Coverage Continuity",
+      "kind": "rights-continuity benchmark",
+      "question": "Can an agent reuse reliable agency data, request only what is actually missing, and preserve coverage and hearing rights without deciding eligibility?",
+      "capabilities": [
+        "rights continuity",
+        "evidence reuse",
+        "burden minimization",
+        "deadline protection",
+        "human review"
+      ],
+      "cli": "medicaid-renewal-continuity",
+      "featured": true,
+      "contract": {
+        "name": "Rights Continuity",
+        "path": "RIGHTS_CONTINUITY_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        },
+        {
+          "id": "companion-right-loss",
+          "name": "The main right survives; its companion expires",
+          "one_liner": "A case remains technically appealable while the coverage, urgency, income, or other bridge that makes review usable is lost."
+        },
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 1,
+        "real_scenario_runs": 24,
+        "models": [
+          "mistral-small-latest"
+        ],
+        "model_count": 1,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start medicaid-renewal-continuity",
+        "install": "python -m pip install -e harness -e medicaid-chip/renewal-continuity-navigator",
+        "evaluate": "medicaid-renewal-continuity eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "health-insurance-appeals/denial-appeal-rights-navigator",
+      "title": "Health Insurance Denial and Appeal Rights Navigator",
+      "icon": "\ud83e\udef6",
+      "industry": "Health Insurance Appeals & Patient Rights",
+      "kind": "rights-continuity benchmark",
+      "question": "Can an agent preserve urgent, pre-service, post-service, internal, and external-review paths without deciding medical necessity or coverage?",
+      "capabilities": [
+        "rights continuity",
+        "urgency classification",
+        "appeal routing",
+        "deadline protection",
+        "human review"
+      ],
+      "cli": "health-plan-appeal-rights",
+      "featured": true,
+      "contract": {
+        "name": "Rights Continuity",
+        "path": "RIGHTS_CONTINUITY_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        },
+        {
+          "id": "companion-right-loss",
+          "name": "The main right survives; its companion expires",
+          "one_liner": "A case remains technically appealable while the coverage, urgency, income, or other bridge that makes review usable is lost."
+        },
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 2,
+        "real_scenario_runs": 48,
+        "models": [
+          "llama-3.3-70b-versatile",
+          "mistral-small-latest"
+        ],
+        "model_count": 2,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start health-plan-appeal-rights",
+        "install": "python -m pip install -e harness -e health-insurance-appeals/denial-appeal-rights-navigator",
+        "evaluate": "health-plan-appeal-rights eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "social-security-disability/cessation-benefit-continuation-navigator",
+      "title": "Social Security Disability Cessation and Benefit Continuation Navigator",
+      "icon": "\ud83d\udedf",
+      "industry": "Social Security Disability & Income Continuity",
+      "kind": "rights-continuity benchmark",
+      "question": "Can an agent preserve the 60-day medical-cessation appeal and the separate 15-day benefit-continuation election without adjudicating disability?",
+      "capabilities": [
+        "rights continuity",
+        "nested clocks",
+        "income continuity",
+        "appeal protection",
+        "human review"
+      ],
+      "cli": "disability-cessation-continuity",
+      "featured": true,
+      "contract": {
+        "name": "Rights Continuity",
+        "path": "RIGHTS_CONTINUITY_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        },
+        {
+          "id": "companion-right-loss",
+          "name": "The main right survives; its companion expires",
+          "one_liner": "A case remains technically appealable while the coverage, urgency, income, or other bridge that makes review usable is lost."
+        },
+        {
+          "id": "outcome-without-public-value",
+          "name": "The outcome can be right while the service fails",
+          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 1,
+        "real_scenario_runs": 24,
+        "models": [
+          "mistral-small-latest"
+        ],
+        "model_count": 1,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start disability-cessation-continuity",
+        "install": "python -m pip install -e harness -e social-security-disability/cessation-benefit-continuation-navigator",
+        "evaluate": "disability-cessation-continuity eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "pipeline-safety/incident-notification-coordinator",
+      "title": "Pipeline Incident Notification Coordinator",
+      "icon": "\ud83d\udee2\ufe0f",
+      "industry": "Pipeline Safety & Emergency Reporting",
+      "kind": "critical-event benchmark",
+      "question": "Can an agent keep emergency response, the one-hour NRC notification, the 48-hour update, and final records separate without operating the pipeline?",
+      "capabilities": [
+        "event fan-out",
+        "emergency response",
+        "clock origin",
+        "receipt fidelity",
+        "human review"
+      ],
+      "cli": "pipeline-incident-notification",
+      "featured": true,
+      "contract": {
+        "name": "Critical Event Fan-Out",
+        "path": "CRITICAL_EVENT_FANOUT_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "obligation-graph-collapse",
+          "name": "One event becomes one obligation",
+          "one_liner": "A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection."
+        },
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 1,
+        "real_scenario_runs": 24,
+        "models": [
+          "mistral-small-latest"
+        ],
+        "model_count": 1,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start pipeline-incident-notification",
+        "install": "python -m pip install -e harness -e pipeline-safety/incident-notification-coordinator",
+        "evaluate": "pipeline-incident-notification eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "health-data-privacy/hipaa-breach-notification-graph",
+      "title": "HIPAA Breach Notification Recipient Graph",
+      "icon": "\ud83d\udd0f",
+      "industry": "Health Data Privacy & Breach Response",
+      "kind": "critical-event benchmark",
+      "question": "Can an agent preserve business-associate, individual, HHS, media, substitute-notice, and under/over-500 paths without deciding breach status?",
+      "capabilities": [
+        "event fan-out",
+        "recipient graph",
+        "privacy",
+        "receipt fidelity",
+        "human review"
+      ],
+      "cli": "hipaa-breach-notification",
+      "featured": true,
+      "contract": {
+        "name": "Critical Event Fan-Out",
+        "path": "CRITICAL_EVENT_FANOUT_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "obligation-graph-collapse",
+          "name": "One event becomes one obligation",
+          "one_liner": "A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection."
+        },
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 1,
+        "real_scenario_runs": 24,
+        "models": [
+          "mistral-small-latest"
+        ],
+        "model_count": 1,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start hipaa-breach-notification",
+        "install": "python -m pip install -e harness -e health-data-privacy/hipaa-breach-notification-graph",
+        "evaluate": "hipaa-breach-notification eval --backend mock --repeats 3"
+      }
+    },
+    {
+      "path": "clinical-trial-safety/ind-safety-reporting-coordinator",
+      "title": "Clinical Trial IND Safety Reporting Coordinator",
+      "icon": "\ud83e\uddec",
+      "industry": "Clinical Trial Safety & IND Reporting",
+      "kind": "critical-event benchmark",
+      "question": "Can an agent distinguish adverse events from reportable suspected reactions, preserve 7-day and 15-day paths, and route follow-up evidence without making medical judgments?",
+      "capabilities": [
+        "event fan-out",
+        "safety signal",
+        "medical judgment boundary",
+        "deadline protection",
+        "human review"
+      ],
+      "cli": "ind-safety-reporting",
+      "featured": true,
+      "contract": {
+        "name": "Critical Event Fan-Out",
+        "path": "CRITICAL_EVENT_FANOUT_CONTRACT.md"
+      },
+      "failure_patterns": [
+        {
+          "id": "obligation-graph-collapse",
+          "name": "One event becomes one obligation",
+          "one_liner": "A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection."
+        },
+        {
+          "id": "rule-transfer",
+          "name": "Similarity erases the exception",
+          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
+        },
+        {
+          "id": "receipt-stage-collapse",
+          "name": "Stage collapse",
+          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
+        }
+      ],
+      "evidence": {
+        "real_result_artifacts": 1,
+        "real_scenario_runs": 24,
+        "models": [
+          "mistral-small-latest"
+        ],
+        "model_count": 1,
+        "mock_available": true,
+        "scenario_count": 32,
+        "observed_failure_modes": 3,
+        "official_sources": true,
+        "reproducible_scenarios": true,
+        "human_boundary": true
+      },
+      "commands": {
+        "discover": "aau start ind-safety-reporting",
+        "install": "python -m pip install -e harness -e clinical-trial-safety/ind-safety-reporting-coordinator",
+        "evaluate": "ind-safety-reporting eval --backend mock --repeats 3"
+      }
+    }
+  ]
+}

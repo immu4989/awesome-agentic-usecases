@@ -8,6 +8,12 @@ agent do this?”:
 
 You do not need an API key to begin. Pick the route that matches the job you are doing.
 
+If you have a workflow but do not know which lab fits, start with
+**[AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio)**. It matches
+your description to the full verified catalog, explains the evidence behind each result,
+compares up to three architectures, and creates a fork-ready evaluation brief locally in
+your browser. No workflow text is uploaded.
+
 ## I want to see a real agent failure
 
 Start with one of these ten. Each takes the same shape—scenario, tools, agent, exact

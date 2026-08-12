@@ -13,6 +13,7 @@
 <p align="center">
   <a href="START_HERE.md">Start here</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/">Use-case explorer</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
   <a href="#run-one-now">Run one</a> ·
   <a href="PLAYBOOKS.md">Playbooks</a> ·
   <a href="USE_CASE_RADAR.md">Use-case radar</a> ·
@@ -48,6 +49,21 @@ domain-specific map of the hidden trap, responsive charts generated from committ
 real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff profile,
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
+
+## New: bring a workflow, leave with an evaluation
+
+**[AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio)** turns the
+catalog into a practical starting point. Describe a workflow, select the agent shape and
+consequences that matter, and Studio returns evidence-backed lab matches with an explicit
+fit explanation. Compare up to three use cases by contract, scenario volume, committed
+model evidence, observed failures, and zero-cost entry path—without pretending unrelated
+headline metrics belong on one leaderboard.
+
+The strongest match becomes a fork-ready kit: copy the exact local run, download a
+vendor-neutral evaluation brief, or open a prefilled request when the closest verified lab
+does not cover the deciding facts. Matching runs entirely in the browser: **no account, no
+workflow upload, no tracking, and no API key**. See [how Studio works](AAU_STUDIO.md) and
+the [evaluation-brief schema](docs/studio-spec.schema.json).
 
 ## New release: preserve the right that makes the main right usable
 
@@ -238,12 +254,13 @@ accessible mobility, transparency, trade, nutrition, elections, care transitions
 | I want to… | Start here | What you get |
 |---|---|---|
 | **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Four short paths through routing, irreversible action, tool poisoning, and public-value failures |
-| **Find an example for my industry** | [Interactive Explorer](https://immu4989.github.io/awesome-agentic-usecases/) | Search 64 verified use cases by industry, capability, or failure shape |
+| **Find an example for my workflow** | [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) | Describe the work, compare evidence-backed matches, and download a fork-ready evaluation brief |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
 | **See what the community should solve next** | [Real-world Use-case Radar](USE_CASE_RADAR.md) | Prioritized workflows, safety boundaries, closest templates, and places where a domain partner is needed |
 | **Contribute a use case** | [Contribution guide](CONTRIBUTING.md) | A clear verification bar, proposal template, and CI-enforced checklist |
+| **Share an adaptation or ask a question** | [Community discussions](https://github.com/immu4989/awesome-agentic-usecases/discussions) | Reproducible fork showcases, evaluation questions, and contract feedback |
 
 ## Run one now
 

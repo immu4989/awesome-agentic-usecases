@@ -22,6 +22,11 @@ jobs:
           python docs/check_editorial.py
       - name: Catalog, README, package, and CI coverage agree
         run: python docs/check_catalog.py
+      - name: AAU Studio evidence and interactions are current
+        run: |
+          python docs/make_studio_data.py
+          python docs/check_studio.py
+          git diff --exit-code docs/studio-data.json
       - name: Generated catalog table is current
         run: |
           python docs/make_catalog.py

@@ -6,6 +6,16 @@ the harness API is what is versioned; use cases are additive.
 ## Unreleased
 
 ### Added
+- **AAU Studio** — a local-first workflow matcher that ranks all verified labs by explicit
+  industry, agent-shape, consequence, contract, and observed-failure evidence. Users can
+  inspect why each case matched, compare up to three labs without conflating unlike
+  metrics, copy a zero-cost run, download a schema-bound evaluation brief, or open a
+  prefilled request when the repository has a genuine coverage gap.
+- **Generated Studio evidence index** — model-result counts, scenario volume, observed
+  failures, primary-source grounding, human authority boundaries, contracts, and commands
+  are derived from committed repository artifacts and protected against drift in CI.
+- **Contributor discussion paths** — structured templates for adaptation show-and-tell and
+  evaluation questions make forks easier to share without using private or regulated data.
 - **Rights Continuity Contract and matched three-industry wave** — 96 committed synthetic
   scenarios across Medicaid/CHIP renewal, health-plan appeal rights, and Social Security
   disability cessation. Primary and companion rights now retain independent triggers,

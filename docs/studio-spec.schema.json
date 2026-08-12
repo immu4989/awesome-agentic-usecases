@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/studio-spec.schema.json",
+  "title": "AAU Studio evaluation brief",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "workflow", "recommended_case", "verification_plan", "commands"],
+  "properties": {
+    "contract_version": {"const": "aau-studio/1.0"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "industry", "agent_shape", "risks"],
+      "properties": {
+        "description": {"type": "string", "minLength": 1},
+        "industry": {"type": "string", "minLength": 1},
+        "agent_shape": {"type": "string", "minLength": 1},
+        "risks": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "recommended_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "title", "cli", "contract", "fit_score"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"},
+        "title": {"type": "string"},
+        "cli": {"type": "string"},
+        "contract": {"type": "string"},
+        "fit_score": {"type": "integer", "minimum": 0, "maximum": 100}
+      }
+    },
+    "verification_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum_scenarios", "minimum_repeats", "required_proofs"],
+      "properties": {
+        "minimum_scenarios": {"type": "integer", "minimum": 20},
+        "minimum_repeats": {"type": "integer", "minimum": 3},
+        "required_proofs": {"type": "array", "minItems": 4, "items": {"type": "string"}}
+      }
+    },
+    "commands": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["discover", "install", "evaluate"],
+      "properties": {
+        "discover": {"type": "string"},
+        "install": {"type": "string"},
+        "evaluate": {"type": "string"}
+      }
+    }
+  }
+}
