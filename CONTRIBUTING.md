@@ -58,6 +58,19 @@ download its evaluation brief and run `aau forge <brief.json> --name <your-eval>
 [AAU Forge](AAU_FORGE.md) preserves the matched architecture, generates a runnable lab,
 and adds an explicit domain-review checklist and dedicated CI workflow.
 
+## Share an adaptation in the Community Forge Gallery
+
+Useful forks deserve attribution and a route for others to reproduce them. Copy
+[`gallery/gallery-entry.example.json`](gallery/gallery-entry.example.json), commit it as
+`gallery/entries/<id>.json`, and run `aau gallery validate <id>`. The public level is
+derived from evidence; do not add a trust label to the entry.
+
+Community adaptations must use `origin: "forge-adaptation"` and commit Forge provenance
+plus the contract blueprint. The included
+[Codespaces environment](https://codespaces.new/immu4989/awesome-agentic-usecases?quickstart=1)
+installs the contributor tools automatically. Read the
+[Gallery standard](gallery/README.md) and use the dedicated Gallery PR template.
+
 ## Development
 
 ```bash

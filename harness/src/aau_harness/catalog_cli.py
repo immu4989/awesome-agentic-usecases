@@ -222,6 +222,16 @@ def build_parser() -> argparse.ArgumentParser:
     forging.add_argument("--no-verify", action="store_true", help="skip install, tests, and mock run")
     forging.add_argument("--json", action="store_true", help="with 'doctor PATH', emit JSON")
 
+    gallery = sub.add_parser("gallery", help="inspect community adaptations and evidence levels")
+    gallery.add_argument("action", nargs="?", choices=("list", "validate"), default="list")
+    gallery.add_argument("target", nargs="?", help="entry id or lab path to validate")
+    gallery.add_argument(
+        "--trust",
+        choices=("Generated", "Domain reviewed", "Reproduced", "Verified"),
+        help="filter the list by exact evidence level",
+    )
+    gallery.add_argument("--json", action="store_true", help="emit machine-readable JSON")
+
     sub.add_parser("doctor", help="check that every catalog entry is runnable and documented")
     return parser
 
@@ -264,6 +274,17 @@ def main(argv: list[str] | None = None) -> int:
         if args.no_verify:
             forge_args.append("--no-verify")
         return forge_main(forge_args)
+    if args.command == "gallery":
+        from .gallery import main as gallery_main
+
+        gallery_args = [args.action, "--root", str(root)]
+        if args.target:
+            gallery_args.append(args.target)
+        if args.trust:
+            gallery_args.extend(["--trust", args.trust])
+        if args.json:
+            gallery_args.append("--json")
+        return gallery_main(gallery_args)
 
     problems = doctor(root, cases)
     if problems:

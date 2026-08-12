@@ -36,6 +36,11 @@ jobs:
               --root "$RUNNER_TEMP/forge-$spec" \
               --source-root .
           done
+      - name: Community Forge Gallery derives trust from evidence
+        run: |
+          python docs/make_gallery_data.py
+          python docs/check_gallery.py
+          git diff --exit-code docs/gallery-data.json
       - name: Generated catalog table is current
         run: |
           python docs/make_catalog.py

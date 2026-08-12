@@ -81,3 +81,19 @@ aau-forge brief.json --name claims-eval
 
 Complete `ADAPTATION_CHECKLIST.md`, replace every `TODO(domain)`, run real models, commit
 scenario-linked failures, and make Forge Doctor green before proposing the lab as verified evidence.
+
+## Publish the evidence, not a self-selected badge
+
+The [AAU Community Forge Gallery](gallery/README.md) is the public path for useful
+adaptations. Add a `gallery/entries/<id>.json` record and run:
+
+```bash
+aau gallery validate <id>
+```
+
+The validator derives `Generated`, `Domain reviewed`, `Reproduced`, or `Verified` from the
+lab's committed provenance, blueprint, source review, scenarios, repeated model results,
+observed failures, human boundary, and CI coverage. Contributors cannot set the level in
+their entry. Open the
+[ready-to-use workspace](https://codespaces.new/immu4989/awesome-agentic-usecases?quickstart=1)
+or browse the [live Gallery](https://immu4989.github.io/awesome-agentic-usecases/#gallery).

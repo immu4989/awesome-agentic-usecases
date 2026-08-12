@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/gallery/gallery-entry.schema.json",
+  "title": "AAU Forge Gallery entry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "origin", "lab_path", "contributor", "summary", "why_fork", "tags", "review"],
+  "properties": {
+    "schema_version": {"const": "aau-gallery/1.0"},
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "origin": {"enum": ["forge-adaptation", "maintainer-reference"]},
+    "lab_path": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "contributor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "github"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "github": {"type": "string", "pattern": "^@?[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$"}
+      }
+    },
+    "summary": {"type": "string", "minLength": 1, "maxLength": 240},
+    "why_fork": {"type": "string", "minLength": 1, "maxLength": 240},
+    "tags": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reviewer": {"type": "string"},
+        "reviewer_role": {"type": "string"},
+        "scope": {"type": "string"},
+        "reviewed_at": {"type": "string"},
+        "source_ledger": {"type": "string", "pattern": "^(?:[A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\\.md$|^$"}
+      }
+    }
+  }
+}

@@ -6,6 +6,13 @@ const state = {
   compare: [],
   studioInput: null,
   studioMatches: [],
+  gallery: [],
+  galleryQuery: "",
+  galleryTrust: "all",
+  galleryContract: "all",
+  galleryIndustry: "all",
+  galleryModel: "all",
+  galleryFailure: "all",
 };
 
 const els = {
@@ -33,6 +40,18 @@ const els = {
   forgeCommand: document.querySelector("#forge-command"),
   copyForgeCommand: document.querySelector("#copy-forge-command"),
   studioRequest: document.querySelector("#studio-request"),
+  galleryGrid: document.querySelector("#gallery-grid"),
+  galleryCount: document.querySelector("#gallery-count"),
+  gallerySearch: document.querySelector("#gallery-search"),
+  galleryTrust: document.querySelector("#gallery-trust"),
+  galleryContract: document.querySelector("#gallery-contract"),
+  galleryIndustry: document.querySelector("#gallery-industry"),
+  galleryModel: document.querySelector("#gallery-model"),
+  galleryFailure: document.querySelector("#gallery-failure"),
+  galleryTrustLadder: document.querySelector("#gallery-trust-ladder"),
+  galleryAdaptations: document.querySelector("#gallery-adaptations"),
+  galleryContributors: document.querySelector("#gallery-contributors"),
+  galleryContracts: document.querySelector("#gallery-contracts"),
   compareTray: document.querySelector("#compare-tray"),
   compareCount: document.querySelector("#compare-count"),
   compareNames: document.querySelector("#compare-names"),
@@ -116,6 +135,189 @@ function makeBadge(label, className = "proof-badge") {
   badge.className = className;
   badge.textContent = label;
   return badge;
+}
+
+function renderTrustLadder(levels) {
+  const descriptions = {
+    "Generated": "Runnable package + provenance",
+    "Domain reviewed": "Named scope + source ledger",
+    "Reproduced": "Scenarios + repeated model run + failures",
+    "Verified": "Independent models + boundary + CI",
+  };
+  els.galleryTrustLadder.replaceChildren(...levels.map((level, index) => {
+    const item = document.createElement("div");
+    item.className = `trust-step trust-${normalize(level).replaceAll(" ", "-")}`;
+    item.innerHTML = `<span>0${index + 1}</span><div><b>${level}</b><small>${descriptions[level]}</small></div>${index < levels.length - 1 ? "<i>→</i>" : ""}`;
+    return item;
+  }));
+}
+
+function galleryHaystack(item) {
+  return normalize([
+    item.title,
+    item.industry,
+    item.contract.name,
+    item.summary,
+    item.why_fork,
+    item.contributor.name,
+    item.contributor.github,
+    ...item.tags,
+    ...item.evidence.models,
+    ...(item.failure_patterns || []).flatMap((pattern) => [pattern.name, pattern.one_liner]),
+  ].join(" "));
+}
+
+function filteredGallery() {
+  const queryTerms = terms(state.galleryQuery);
+  return state.gallery.filter((item) => (
+    queryTerms.every((term) => galleryHaystack(item).includes(term))
+    && (state.galleryTrust === "all" || item.trust.level === state.galleryTrust)
+    && (state.galleryContract === "all" || item.contract.name === state.galleryContract)
+    && (state.galleryIndustry === "all" || item.industry === state.galleryIndustry)
+    && (state.galleryModel === "all" || item.evidence.models.includes(state.galleryModel))
+    && (state.galleryFailure === "all" || (item.failure_patterns || []).some((pattern) => pattern.id === state.galleryFailure))
+  ));
+}
+
+function trustClass(level) {
+  return `trust-${normalize(level).replaceAll(" ", "-")}`;
+}
+
+function galleryCard(item, index) {
+  const article = document.createElement("article");
+  article.className = "gallery-card";
+  article.style.setProperty("--gallery-accent", cardAccent({
+    ...item,
+    kind: `${item.contract.name} ${item.tags.join(" ")}`,
+    capabilities: item.tags,
+  }));
+
+  const top = document.createElement("div");
+  top.className = "gallery-card-top";
+  const number = document.createElement("span");
+  number.textContent = `ADAPTATION ${String(index + 1).padStart(2, "0")}`;
+  const trust = document.createElement("b");
+  trust.className = `gallery-trust-badge ${trustClass(item.trust.level)}`;
+  trust.textContent = `${item.trust.level} · ${item.trust.score.passed}/${item.trust.score.total}`;
+  trust.title = "Computed from committed Gallery evidence checks";
+  top.append(number, trust);
+
+  const heading = document.createElement("h3");
+  heading.textContent = `${item.icon} ${item.title}`;
+  const meta = document.createElement("p");
+  meta.className = "gallery-card-meta";
+  meta.textContent = `${item.industry} · ${item.contract.name}`;
+  const summary = document.createElement("p");
+  summary.className = "gallery-card-summary";
+  summary.textContent = item.summary;
+
+  const fork = document.createElement("div");
+  fork.className = "gallery-fork-note";
+  const forkLabel = document.createElement("span");
+  forkLabel.textContent = "WHY FORK THIS";
+  const forkCopy = document.createElement("p");
+  forkCopy.textContent = item.why_fork;
+  fork.append(forkLabel, forkCopy);
+
+  const evidence = document.createElement("div");
+  evidence.className = "gallery-evidence";
+  const evidenceItems = [
+    [String(item.evidence.scenario_count), "scenarios"],
+    [String(item.evidence.model_count), "models"],
+    [String(item.evidence.observed_failure_modes), "failures"],
+    [`n≥${item.evidence.minimum_repeats}`, "repeats"],
+  ];
+  for (const [value, label] of evidenceItems) {
+    const cell = document.createElement("span");
+    cell.innerHTML = `<b>${value}</b><small>${label}</small>`;
+    evidence.append(cell);
+  }
+
+  const tags = document.createElement("div");
+  tags.className = "gallery-tags";
+  for (const label of item.tags) tags.append(makeBadge(label, "gallery-tag"));
+
+  const contributor = document.createElement("div");
+  contributor.className = "gallery-contributor";
+  const origin = document.createElement("span");
+  origin.textContent = item.origin === "maintainer-reference" ? "MAINTAINER REFERENCE" : "COMMUNITY ADAPTATION";
+  const profile = document.createElement("a");
+  profile.href = item.contributor.profile_url;
+  profile.textContent = `@${item.contributor.github} ↗`;
+  contributor.append(origin, profile);
+
+  const actions = document.createElement("div");
+  actions.className = "gallery-card-actions";
+  const open = document.createElement("a");
+  open.className = "button primary";
+  open.href = `${REPO}/tree/main/${item.lab_path}`;
+  open.textContent = "Inspect evidence ↗";
+  const copy = document.createElement("button");
+  copy.className = "button secondary";
+  copy.type = "button";
+  copy.textContent = "Copy $0 run";
+  copy.addEventListener("click", () => copyText(item.commands.run, copy, "Copy $0 run"));
+  const checks = document.createElement("a");
+  checks.className = "gallery-check-link";
+  checks.href = `${REPO}/blob/main/gallery/entries/${item.id}.json`;
+  checks.textContent = "Audit trust record ↗";
+  actions.append(open, copy, checks);
+  article.append(top, heading, meta, summary, fork, evidence, tags, contributor, actions);
+  return article;
+}
+
+function renderGallery() {
+  const entries = filteredGallery();
+  els.galleryGrid.replaceChildren();
+  els.galleryCount.textContent = `${entries.length} of ${state.gallery.length} evidence-scored adaptations`;
+  if (!entries.length) {
+    const empty = document.createElement("div");
+    empty.className = "gallery-empty";
+    empty.textContent = "No adaptation matches those filters. Clear a filter—or become the contributor who adds it.";
+    els.galleryGrid.append(empty);
+    return;
+  }
+  els.galleryGrid.append(...entries.map(galleryCard));
+}
+
+function addGalleryOptions(select, values) {
+  for (const value of values) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    select.append(option);
+  }
+}
+
+async function loadGallery() {
+  const response = await fetch("gallery-data.json?v=2");
+  if (!response.ok) throw new Error(`Gallery evidence failed to load (${response.status})`);
+  const data = await response.json();
+  state.gallery = data.entries;
+  els.galleryAdaptations.textContent = data.stats.adaptations;
+  els.galleryContributors.textContent = data.stats.contributors;
+  els.galleryContracts.textContent = data.stats.contracts;
+  renderTrustLadder(data.trust_model.levels);
+  addGalleryOptions(els.galleryTrust, data.trust_model.levels);
+  addGalleryOptions(els.galleryContract, [...new Set(state.gallery.map((item) => item.contract.name))].sort());
+  addGalleryOptions(els.galleryIndustry, [...new Set(state.gallery.map((item) => item.industry))].sort());
+  addGalleryOptions(els.galleryModel, [...new Set(state.gallery.flatMap((item) => item.evidence.models))].sort());
+  const patterns = new Map(state.gallery.flatMap((item) => (item.failure_patterns || []).map((pattern) => [pattern.id, pattern.name])));
+  for (const [id, label] of [...patterns.entries()].sort((a, b) => a[1].localeCompare(b[1]))) {
+    const option = document.createElement("option");
+    option.value = id;
+    option.textContent = label;
+    els.galleryFailure.append(option);
+  }
+  els.gallerySearch.addEventListener("input", () => { state.galleryQuery = els.gallerySearch.value; renderGallery(); });
+  for (const [control, key] of [
+    [els.galleryTrust, "galleryTrust"],
+    [els.galleryContract, "galleryContract"],
+    [els.galleryIndustry, "galleryIndustry"],
+    [els.galleryModel, "galleryModel"],
+    [els.galleryFailure, "galleryFailure"],
+  ]) control.addEventListener("change", () => { state[key] = control.value; renderGallery(); });
+  renderGallery();
 }
 
 async function copyText(text, control, defaultLabel) {
@@ -548,6 +750,13 @@ async function init() {
   });
   els.openCompare.addEventListener("click", renderComparison);
   render();
+  loadGallery().catch((error) => {
+    els.galleryCount.textContent = "Gallery evidence unavailable";
+    const empty = document.createElement("div");
+    empty.className = "gallery-empty";
+    empty.textContent = `${error.message}. Inspect gallery/README.md on GitHub instead.`;
+    els.galleryGrid.replaceChildren(empty);
+  });
 }
 
 init().catch((error) => {

@@ -9,6 +9,7 @@
 - [ ] New use case
 - [ ] Fix / improvement to an existing use case or the harness
 - [ ] Docs only
+- [ ] Community Forge Gallery adaptation
 
 ## For a new use case, the verification bar ([VERIFICATION.md](../VERIFICATION.md))
 
@@ -26,6 +27,7 @@
 - [ ] `pytest <industry>/<use-case>/tests harness/tests` passes
 - [ ] `ruff check .` is clean
 - [ ] I opened an issue describing this use case first (per CONTRIBUTING.md)
+- [ ] For a Gallery entry, `aau gallery validate <entry-id>` reports the evidence level claimed by the public card
 
 ## Notes
 

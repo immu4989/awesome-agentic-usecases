@@ -15,6 +15,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/">Use-case explorer</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
   <a href="AAU_FORGE.md">AAU Forge</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#gallery">Community Gallery</a> ·
   <a href="#run-one-now">Run one</a> ·
   <a href="PLAYBOOKS.md">Playbooks</a> ·
   <a href="USE_CASE_RADAR.md">Use-case radar</a> ·
@@ -68,6 +69,33 @@ Fan-Out now compile to different graphs, tools, exact scores, tests, and mock fa
 `aau forge doctor` shows what remains before publication. Matching runs entirely in the
 browser: **no account, no workflow upload, no tracking, and no API key**. See [how Studio works](AAU_STUDIO.md) and the
 [evaluation-brief schema](docs/studio-spec.schema.json).
+
+## New: forks can now earn trust in public
+
+The **[AAU Community Forge Gallery](https://immu4989.github.io/awesome-agentic-usecases/#gallery)**
+turns adaptations into discoverable, auditable contributions. It does not let authors
+self-select a “verified” badge. A local validator derives one progressive evidence level
+from committed artifacts:
+
+`Generated → Domain reviewed → Reproduced → Verified`
+
+Each card shows its exact check score, contract, scenarios, measured models, observed
+failures, contributor, and evidence directory. Filters cover industry, contract, level,
+model, and failure pattern. The first three cards are clearly marked maintainer references
+for Decision Gate, Rights Continuity, and Critical Event Fan-Out—not disguised community
+submissions.
+
+```bash
+python -m pip install -e harness
+aau gallery list
+aau gallery validate batch-disposition-reference
+```
+
+Open the [ready-to-use contributor workspace](https://codespaces.new/immu4989/awesome-agentic-usecases?quickstart=1),
+read the [four-level evidence standard](gallery/README.md), and submit an adaptation with
+the [machine-readable schema](gallery/gallery-entry.schema.json). Every accepted card
+credits its contributor; CI recalculates its level so the public claim cannot drift from
+the evidence.
 
 ## New release: preserve the right that makes the main right usable
 

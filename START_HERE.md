@@ -21,6 +21,13 @@ generated rules. For Decision Gate, Rights Continuity, and Critical Event Fan-Ou
 builds a contract-specific graph and scorecard. See [AAU Forge](AAU_FORGE.md), then run
 `aau forge doctor <generated-lab>` to inspect the publication gaps.
 
+If you have adapted a lab, visit the
+**[Community Forge Gallery](https://immu4989.github.io/awesome-agentic-usecases/#gallery)**.
+It makes useful forks discoverable and derives their public evidence level from committed
+artifacts. Run `aau gallery list` to inspect the references or
+`aau gallery validate <entry-id>` before submitting yours. See the
+[Gallery contribution guide](gallery/README.md).
+
 ## I want to see a real agent failure
 
 Start with one of these ten. Each takes the same shape—scenario, tools, agent, exact
