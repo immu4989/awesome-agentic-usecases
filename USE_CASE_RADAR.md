@@ -74,6 +74,37 @@ The dated [research notes](docs/DECISION_GATE_RESEARCH_NOTES.md) record the prim
 and three premise corrections made before implementation, including that a draft EU GMP
 Annex 22 was not treated as an operative final annex.
 
+### Rights Continuity wave — shipped
+
+Three person-centered services now share the
+[Rights Continuity Contract](RIGHTS_CONTINUITY_CONTRACT.md) and matched
+[real-model report](RIGHTS_CONTINUITY_REPORT.md). Each case keeps primary and companion
+rights, evidence burden, accessible channels, recourse, protected authority, and receipts
+independently true.
+
+| Industry | Flagship lab | Distinctive proof | Review required |
+|---|---|---|---|
+| Medicaid & CHIP Coverage Continuity | **[Renewal Continuity Navigator](medicaid-chip/renewal-continuity-navigator/)** | Reliable agency data is used before a form; only unresolved evidence is requested | State eligibility/program owner and beneficiary advocates |
+| Health Insurance Appeals | **[Denial & Appeal Rights Navigator](health-insurance-appeals/denial-appeal-rights-navigator/)** | Urgent, pre-service, post-service, internal, and external paths remain distinct | Plan, clinician, consumer-assistance, and legal owners |
+| Social Security Disability | **[Cessation & Benefit Continuation](social-security-disability/cessation-benefit-continuation-navigator/)** | The 60-day appeal and shorter benefit-continuation election remain separate | SSA program owner and claimant representatives |
+
+### Critical Event Fan-Out wave — shipped
+
+Three critical systems now share the
+[Critical Event Fan-Out Contract](CRITICAL_EVENT_FANOUT_CONTRACT.md) and matched
+[real-model report](CRITICAL_EVENT_FANOUT_REPORT.md). A successful response or initial
+notification never closes another live recipient, clock, update, follow-up, or receipt.
+
+| Industry | Flagship lab | Distinctive proof | Review required |
+|---|---|---|---|
+| Pipeline Safety | **[Incident Notification Coordinator](pipeline-safety/incident-notification-coordinator/)** | Emergency response, one-hour NRC path, 48-hour update, and receipts remain separate | Qualified operator, emergency, and regulatory owners |
+| Health Data Privacy | **[HIPAA Breach Notification Graph](health-data-privacy/hipaa-breach-notification-graph/)** | Actor, population, geography, contact state, people, HHS, and media shape the recipient graph | Privacy officer, counsel, affected-person review |
+| Clinical Trial Safety | **[IND Safety Reporting Coordinator](clinical-trial-safety/ind-safety-reporting-coordinator/)** | Seriousness, expectedness, suspected relationship, seven-/15-day routes, and follow-up stay distinct | Sponsor medical, investigator, IRB, and regulatory owners |
+
+The [dated research ledger](docs/NEXT_IMPACT_RESEARCH_NOTES.md) records official sources
+and eight premise corrections. Both contracts also ship vendor-neutral JSON Schemas and
+worked examples for teams that want the data model without this repository's harness.
+
 The first lab also extends the [Public Value Contract](PUBLIC_VALUE_CONTRACT.md) with an
 optional, exact **essential-service continuity** obligation. That reusable specialty is
 intended for energy, water, communications, housing, healthcare access, and other services

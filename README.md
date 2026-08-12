@@ -16,6 +16,8 @@
   <a href="#run-one-now">Run one</a> ·
   <a href="PLAYBOOKS.md">Playbooks</a> ·
   <a href="USE_CASE_RADAR.md">Use-case radar</a> ·
+  <a href="RIGHTS_CONTINUITY_CONTRACT.md">Rights Continuity</a> ·
+  <a href="CRITICAL_EVENT_FANOUT_CONTRACT.md">Critical Event Fan-Out</a> ·
   <a href="OBLIGATION_GRAPH_CONTRACT.md">Obligation Graph Contract</a> ·
   <a href="CLOCK_COLLISION_REPORT.md">Clock Collision report</a> ·
   <a href="PROTECTION_RECEIPT_CONTRACT.md">Protection Receipt Contract</a> ·
@@ -47,7 +49,52 @@ real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
 
-## New release: one event can start several clocks
+## New release: preserve the right that makes the main right usable
+
+<img src="docs/assets/rights-continuity.svg" width="100%" alt="Rights Continuity Contract: one service case carries independently triggered primary and companion rights, clocks, evidence, channels, owners, and truthful receipts">
+
+A case can remain technically appealable while the protection that makes review usable has
+already disappeared: health coverage, expedited review, income, or Medicare continuity.
+Most service systems store one deadline and one reassuring status, so that loss is invisible.
+
+The new **[Rights Continuity Contract](RIGHTS_CONTINUITY_CONTRACT.md)** represents every
+primary and companion right independently—trigger, clock, minimum evidence, accessible
+channel, recourse, human owner, and executed receipt. Its vendor-neutral
+[JSON Schema](docs/rights-continuity.schema.json) and
+[worked two-clock example](docs/rights-continuity.example.json) are ready to fork.
+
+| Reduce administrative burden | Preserve usable healthcare review | Protect income continuity |
+|---|---|---|
+| **[Medicaid & CHIP Renewal](medicaid-chip/renewal-continuity-navigator/)** tests ex-parte-first review, minimum missing evidence, coverage, and hearing rights. | **[Health Insurance Appeal Rights](health-insurance-appeals/denial-appeal-rights-navigator/)** separates urgent, pre-service, post-service, internal, and external paths. | **[Disability Cessation Continuity](social-security-disability/cessation-benefit-continuation-navigator/)** separates the 60-day appeal from the shorter benefit-continuation election. |
+
+The **[matched report](RIGHTS_CONTINUITY_REPORT.md)** compares identical failure shapes,
+and the **[dated source ledger](docs/NEXT_IMPACT_RESEARCH_NOTES.md)** records the official
+grounding and premise corrections. The new taxonomy pattern is explicit: **the main right
+survives while its companion expires**.
+
+## Also new: response succeeds while obligations stay open
+
+<img src="docs/assets/critical-event-fanout.svg" width="100%" alt="Critical Event Fan-Out Contract: emergency response, reports, recipients, updates, follow-ups, owners, and receipts remain independently true">
+
+Critical incidents do not move through one funnel. Containment, initial notification,
+recipient-specific notice, regulatory update, and follow-up can all be necessary, live at
+the same time, and owned by different people.
+
+The **[Critical Event Fan-Out Contract](CRITICAL_EVENT_FANOUT_CONTRACT.md)** makes “we
+handled it” falsifiable. It checks the complete branch set, exact actor and trigger, clock,
+recipient/channel, protected authority, follow-up state, and executed receipt. Fork the
+[JSON Schema](docs/critical-event-fanout.schema.json) and
+[worked three-branch example](docs/critical-event-fanout.example.json).
+
+| Protect communities and infrastructure | Protect people whose health data was exposed | Protect clinical-trial participants |
+|---|---|---|
+| **[Pipeline Incident Notification](pipeline-safety/incident-notification-coordinator/)** keeps field response, the one-hour NRC route, 48-hour update, and receipts separate. | **[HIPAA Breach Recipient Graph](health-data-privacy/hipaa-breach-notification-graph/)** separates business associate, covered entity, individual, HHS, media, and substitute-notice paths. | **[IND Safety Reporting](clinical-trial-safety/ind-safety-reporting-coordinator/)** separates seven-day, 15-day, recipient, qualified-judgment, and follow-up paths. |
+
+See the **[matched report](CRITICAL_EVENT_FANOUT_REPORT.md)** for reproducible misses. All
+six labs use fictional records and keep eligibility, medical judgment, operations, legal
+determinations, payments, filings, and regulatory certification with accountable people.
+
+## Previous release: one event can start several clocks
 
 <img src="docs/assets/obligation-graph.svg" width="100%" alt="Obligation Graph Contract: one event fans out into applicable obligations, exact clock origins, deadlines, recipients, protected human owners, and truthful executed receipts">
 
@@ -258,7 +305,7 @@ aau doctor                             # validate your checkout or fork
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="55 industries shipping, 194 verified model-evals, 257 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="61 industries shipping, 201 verified model-evals, 275 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -309,7 +356,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 257 failures, 16 patterns
+## 275 failures, 17 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -324,11 +371,12 @@ reappearing across industries that share nothing but the shape of the agent.
 | [Safety by inaction](FAILURE_TAXONOMY.md#safety-by-inaction) | A 'did it avoid the bad action' metric is passed perfectly by an agent that does nothing. | **5 use cases** |
 | [Trust follows the channel, not the content](FAILURE_TAXONOMY.md#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition. | **2 use cases** |
 | [Prior over policy](FAILURE_TAXONOMY.md#prior-over-policy) | The model's own sense of what's reasonable overrides the policy it just retrieved. | **4 use cases** |
-| [Similarity erases the exception](FAILURE_TAXONOMY.md#similarity-erases-the-exception) | A valid rule from the clean twin is confidently reused where one deciding fact reverses it. | **23 use cases** |
+| [Similarity erases the exception](FAILURE_TAXONOMY.md#similarity-erases-the-exception) | A valid rule from the clean twin is confidently reused where one deciding fact reverses it. | **29 use cases** |
+| [The main right survives; its companion expires](FAILURE_TAXONOMY.md#the-main-right-survives-its-companion-expires) | A case remains technically appealable while the coverage, urgency, income, or other bridge that makes review usable is lost. | **3 use cases** |
 
 <!-- TAXONOMY-SUMMARY:END -->
 
-<a href="FAILURE_TAXONOMY.md"><b>→ Read all 16 patterns</b></a>, each with measured incidence and
+<a href="FAILURE_TAXONOMY.md"><b>→ Read all 17 patterns</b></a>, each with measured incidence and
 a link to the run that produced it.
 
 ## Four models, one agent — one row, up close
@@ -361,7 +409,7 @@ Every failure has a reproducing scenario id in
 
 ## Use cases
 
-**Not sure where to start?** [Search and filter all 64 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
+**Not sure where to start?** [Search and filter all 70 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
 by industry, capability, or failure shape.
 
 <!-- USE_CASES:START -->
@@ -432,6 +480,12 @@ by industry, capability, or failure shape.
 | [📈 Material Cyber Incident Disclosure Gate](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/) | Securities & Cyber Disclosure | `obligation-graph` `cyber disclosure` `clock origin` `confidentiality` `human review` | Can an agent separate discovery from the human materiality determination, calculate four business days, protect response details, and prove a Form 8-K filing? |
 | [🤝 Nursing Home Transfer and Discharge Rights Navigator](long-term-care/nursing-home-transfer-discharge-navigator/) | Long-Term Care & Resident Rights | `obligation-graph` `resident rights` `notice verification` `appeal protection` `human review` | Can an agent verify an allowed transfer basis, preserve the ordinary 30-day notice or exception path, include appeal rights, and avoid treating notice as discharge? |
 | [⚛️ Nuclear Reactor Event Notification Gate](nuclear-operations/reactor-event-notification-gate/) | Nuclear Operations & Public Safety | `obligation-graph` `public safety` `multi-clock classification` `receipt fidelity` `human review` | Can an agent classify overlapping one-hour, four-hour, and eight-hour NRC notification paths while preserving emergency authority and truthful call receipts? |
+| [🧩 Medicaid and CHIP Renewal Continuity Navigator](medicaid-chip/renewal-continuity-navigator/) | Medicaid & CHIP Coverage Continuity | `rights continuity` `evidence reuse` `burden minimization` `deadline protection` `human review` | Can an agent reuse reliable agency data, request only what is actually missing, and preserve coverage and hearing rights without deciding eligibility? |
+| [🫶 Health Insurance Denial and Appeal Rights Navigator](health-insurance-appeals/denial-appeal-rights-navigator/) | Health Insurance Appeals & Patient Rights | `rights continuity` `urgency classification` `appeal routing` `deadline protection` `human review` | Can an agent preserve urgent, pre-service, post-service, internal, and external-review paths without deciding medical necessity or coverage? |
+| [🛟 Social Security Disability Cessation and Benefit Continuation Navigator](social-security-disability/cessation-benefit-continuation-navigator/) | Social Security Disability & Income Continuity | `rights continuity` `nested clocks` `income continuity` `appeal protection` `human review` | Can an agent preserve the 60-day medical-cessation appeal and the separate 15-day benefit-continuation election without adjudicating disability? |
+| [🛢️ Pipeline Incident Notification Coordinator](pipeline-safety/incident-notification-coordinator/) | Pipeline Safety & Emergency Reporting | `event fan-out` `emergency response` `clock origin` `receipt fidelity` `human review` | Can an agent keep emergency response, the one-hour NRC notification, the 48-hour update, and final records separate without operating the pipeline? |
+| [🔏 HIPAA Breach Notification Recipient Graph](health-data-privacy/hipaa-breach-notification-graph/) | Health Data Privacy & Breach Response | `event fan-out` `recipient graph` `privacy` `receipt fidelity` `human review` | Can an agent preserve business-associate, individual, HHS, media, substitute-notice, and under/over-500 paths without deciding breach status? |
+| [🧬 Clinical Trial IND Safety Reporting Coordinator](clinical-trial-safety/ind-safety-reporting-coordinator/) | Clinical Trial Safety & IND Reporting | `event fan-out` `safety signal` `medical judgment boundary` `deadline protection` `human review` | Can an agent distinguish adverse events from reportable suspected reactions, preserve 7-day and 15-day paths, and route follow-up evidence without making medical judgments? |
 
 <!-- USE_CASES:END -->
 

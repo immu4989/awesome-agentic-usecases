@@ -137,6 +137,24 @@ def main() -> None:
         example["obligations"]
     ), "obligation ids must be unique"
 
+    rights_schema = json.loads((ROOT / "docs" / "rights-continuity.schema.json").read_text())
+    rights_example = json.loads((ROOT / "docs" / "rights-continuity.example.json").read_text())
+    assert rights_schema["$id"].endswith("rights-continuity.schema.json")
+    assert rights_example["contract_version"] == "aau-rights-continuity/1.0"
+    assert {right["kind"] for right in rights_example["rights"]} == {"primary", "companion"}
+    assert len({right["deadline"]["due_at"] for right in rights_example["rights"]}) > 1, (
+        "worked rights graph must preserve independent clocks"
+    )
+
+    event_schema = json.loads((ROOT / "docs" / "critical-event-fanout.schema.json").read_text())
+    event_example = json.loads((ROOT / "docs" / "critical-event-fanout.example.json").read_text())
+    assert event_schema["$id"].endswith("critical-event-fanout.schema.json")
+    assert event_example["contract_version"] == "aau-critical-event-fanout/1.0"
+    assert len(event_example["branches"]) >= 3, "worked critical event must prove fan-out"
+    assert len({branch["branch_id"] for branch in event_example["branches"]}) == len(
+        event_example["branches"]
+    ), "critical-event branch ids must be unique"
+
     taxonomy_heading = f"## {taxonomy['failure_modes']} failures, {taxonomy['patterns']} patterns"
     assert taxonomy_heading in readme, f"README taxonomy heading is stale: {taxonomy_heading!r}"
     assert f"Read all {taxonomy['patterns']} patterns" in readme, "README taxonomy link is stale"

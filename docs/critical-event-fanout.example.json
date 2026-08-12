@@ -1,0 +1,36 @@
+{
+  "contract_version": "aau-critical-event-fanout/1.0",
+  "event_id": "PIPE-SYNTHETIC-812",
+  "rule_snapshot": "SYN-PHMSA-2026.08",
+  "event_facts": {"release_recognized_at": "2026-08-11T14:00:00Z", "reportable_path": true, "release_isolated": true},
+  "branches": [
+    {
+      "branch_id": "protect-scene", "branch_type": "emergency_response", "rule_id": "SYN-PHMSA-RESPONSE",
+      "trigger_facts": ["hazardous release"],
+      "clock_origin": {"fact": "release recognized", "occurred_at": "2026-08-11T14:00:00Z", "source_record": "synthetic-controller-log-812"},
+      "deadline": {"due_at": "2026-08-11T14:00:00Z", "time_semantics": "minutes", "calculation_basis": "immediate emergency route"},
+      "recipient": {"organization": "operator incident command", "channel": "approved emergency channel"},
+      "depends_on": [], "human_owner": "qualified pipeline controller",
+      "receipt": {"stage": "closed", "receipt_id": "SYN-ISO-812", "occurred_at": "2026-08-11T14:18:00Z", "source_record": "synthetic-response-log-812"}
+    },
+    {
+      "branch_id": "initial-nrc-notification", "branch_type": "initial_notification", "rule_id": "SYN-PHMSA-1H",
+      "trigger_facts": ["reportable path confirmed"],
+      "clock_origin": {"fact": "reportable release recognized", "occurred_at": "2026-08-11T14:00:00Z", "source_record": "synthetic-controller-log-812"},
+      "deadline": {"due_at": "2026-08-11T15:00:00Z", "time_semantics": "hours", "calculation_basis": "synthetic one-hour notification path"},
+      "recipient": {"organization": "National Response Center", "channel": "authorized operator call"},
+      "depends_on": [], "human_owner": "authorized operator notifier",
+      "receipt": {"stage": "accepted", "receipt_id": "SYN-NRC-812", "occurred_at": "2026-08-11T14:42:00Z", "source_record": "synthetic-nrc-log-812"}
+    },
+    {
+      "branch_id": "nrc-update", "branch_type": "regulatory_update", "rule_id": "SYN-PHMSA-48H",
+      "trigger_facts": ["initial NRC notification accepted"],
+      "clock_origin": {"fact": "initial notification accepted", "occurred_at": "2026-08-11T14:42:00Z", "source_record": "synthetic-nrc-log-812"},
+      "deadline": {"due_at": "2026-08-13T14:42:00Z", "time_semantics": "hours", "calculation_basis": "synthetic 48-hour update path"},
+      "recipient": {"organization": "National Response Center", "channel": "authorized operator update"},
+      "depends_on": ["initial-nrc-notification"], "human_owner": "authorized operator notifier",
+      "receipt": {"stage": "not_started", "receipt_id": null, "occurred_at": null, "source_record": null}
+    }
+  ],
+  "protected_decisions": ["pipeline operation", "final incident classification", "regulatory certification"]
+}

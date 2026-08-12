@@ -1,6 +1,6 @@
 # The Agent Failure Taxonomy
 
-**257 failure modes, observed across 64 use cases, 16 recurring patterns.**
+**275 failure modes, observed across 70 use cases, 17 recurring patterns.**
 
 Every entry below was *measured*, not hypothesised — each links to the run that
 produced it, with a reproducing input. Read individually the failures look
@@ -26,12 +26,13 @@ reappearing in industries that share nothing but the shape of the agent.
 | 8 | [Trust follows the channel, not the content](#trust-follows-the-channel-not-the-content) | The same instruction is refused in data and obeyed in a tool definition. | 2 use cases |
 | 9 | [Ceremony is learned, prohibition is not](#ceremony-is-learned-prohibition-is-not) | Agents reliably obey 'do this first' and unreliably obey 'never do this'. | 2 use cases |
 | 10 | [Directional bias](#directional-bias) | Models don't err randomly — each errs in one direction, and the direction is a model property. | 5 use cases |
-| 11 | [The outcome can be right while the service fails](#the-outcome-can-be-right-while-the-service-fails) | Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse. | 19 use cases |
-| 12 | [Similarity erases the exception](#similarity-erases-the-exception) | A valid rule from the clean twin is confidently reused where one deciding fact reverses it. | 23 use cases |
-| 13 | [One event becomes one obligation](#one-event-becomes-one-obligation) | A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection. | 7 use cases |
-| 14 | [Stage collapse](#stage-collapse) | A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen. | 14 use cases |
-| 15 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
-| 16 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
+| 11 | [The outcome can be right while the service fails](#the-outcome-can-be-right-while-the-service-fails) | Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse. | 22 use cases |
+| 12 | [Similarity erases the exception](#similarity-erases-the-exception) | A valid rule from the clean twin is confidently reused where one deciding fact reverses it. | 29 use cases |
+| 13 | [The main right survives; its companion expires](#the-main-right-survives-its-companion-expires) | A case remains technically appealable while the coverage, urgency, income, or other bridge that makes review usable is lost. | 3 use cases |
+| 14 | [One event becomes one obligation](#one-event-becomes-one-obligation) | A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection. | 10 use cases |
+| 15 | [Stage collapse](#stage-collapse) | A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen. | 20 use cases |
+| 16 | [Competence does not transfer](#competence-does-not-transfer) | Being the best model on one agent task predicts almost nothing about the next. | 5 use cases |
+| 17 | [Coordination-only failures](#coordination-only-failures) | Multi-agent systems fail in ways a single agent cannot, and orchestration amplifies rather than fixes. | 1 use case |
 
 ---
 
@@ -316,6 +317,9 @@ Outcome metrics see where a case landed, not what the person had to surrender or
 - [`provisional-ballot-status-navigator` — Registration facts become ballot status](election-administration/provisional-ballot-status-navigator/FAILURE_MODES.md#1-registration-facts-become-ballot-status)
 - [`hospital-discharge-readiness-coordinator` — Paper completeness becomes readiness](care-transitions/hospital-discharge-readiness-coordinator/FAILURE_MODES.md#1-paper-completeness-becomes-readiness)
 - [`occupational-license-mobility-navigator` — Reciprocity becomes a promise](workforce-mobility/occupational-license-mobility-navigator/FAILURE_MODES.md#1-reciprocity-becomes-a-promise)
+- [`renewal-continuity-navigator` — One missing fact becomes the whole application](medicaid-chip/renewal-continuity-navigator/FAILURE_MODES.md#2-one-missing-fact-becomes-the-whole-application)
+- [`denial-appeal-rights-navigator` — Urgency inherits the routine sequence](health-insurance-appeals/denial-appeal-rights-navigator/FAILURE_MODES.md#1-urgency-inherits-the-routine-sequence)
+- [`cessation-benefit-continuation-navigator` — Sixty days overwrites fifteen](social-security-disability/cessation-benefit-continuation-navigator/FAILURE_MODES.md#1-sixty-days-overwrites-fifteen)
 
 </details>
 
@@ -358,6 +362,34 @@ Retrieval can be accurate and the recommendation can still inherit the wrong rul
 - [`material-cyber-incident-disclosure-gate` — Discovery starts the disclosure clock](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/FAILURE_MODES.md#1-discovery-starts-the-disclosure-clock)
 - [`nursing-home-transfer-discharge-navigator` — An old notice follows a new destination](long-term-care/nursing-home-transfer-discharge-navigator/FAILURE_MODES.md#1-an-old-notice-follows-a-new-destination)
 - [`reactor-event-notification-gate` — The slowest plausible clock wins](nuclear-operations/reactor-event-notification-gate/FAILURE_MODES.md#1-the-slowest-plausible-clock-wins)
+- [`renewal-continuity-navigator` — Ex parte becomes an optional shortcut](medicaid-chip/renewal-continuity-navigator/FAILURE_MODES.md#1-ex-parte-becomes-an-optional-shortcut)
+- [`denial-appeal-rights-navigator` — Urgency inherits the routine sequence](health-insurance-appeals/denial-appeal-rights-navigator/FAILURE_MODES.md#1-urgency-inherits-the-routine-sequence)
+- [`cessation-benefit-continuation-navigator` — Sixty days overwrites fifteen](social-security-disability/cessation-benefit-continuation-navigator/FAILURE_MODES.md#1-sixty-days-overwrites-fifteen)
+- [`incident-notification-coordinator` — Containment closes reporting](pipeline-safety/incident-notification-coordinator/FAILURE_MODES.md#1-containment-closes-reporting)
+- [`hipaa-breach-notification-graph` — Actor role disappears](health-data-privacy/hipaa-breach-notification-graph/FAILURE_MODES.md#1-actor-role-disappears)
+- [`ind-safety-reporting-coordinator` — Fifteen days overwrites seven](clinical-trial-safety/ind-safety-reporting-coordinator/FAILURE_MODES.md#2-fifteen-days-overwrites-seven)
+
+</details>
+
+---
+
+## The main right survives; its companion expires
+
+*A case remains technically appealable while the coverage, urgency, income, or other bridge that makes review usable is lost.*
+
+Service systems often store one deadline and one reassuring status. These cases show why that is not enough: ex-parte renewal, urgent concurrent review, and benefit-continuation elections attach through different facts and clocks. A rights graph must preserve each protection independently, request only unresolved evidence, and stop each node at its executed receipt.
+
+**Measured**
+
+- **three-industry rights suite** — 96 committed scenarios keep eight archetypes constant while changing the person, evidence burden, primary right, companion protection, and accountable owner
+- **independent-clock trap** — a valid main filing receives zero exact credit when the shorter urgency or continuity protection is late, missing, or silently merged
+- **burden boundary** — held agency or plan evidence remains distinct from the exact unresolved set, so a whole-file request is measurable harm rather than harmless caution
+
+<details><summary><b>Where it was observed</b></summary>
+
+- [`renewal-continuity-navigator` — Ex parte becomes an optional shortcut](medicaid-chip/renewal-continuity-navigator/FAILURE_MODES.md#1-ex-parte-becomes-an-optional-shortcut)
+- [`denial-appeal-rights-navigator` — Internal review erases external review](health-insurance-appeals/denial-appeal-rights-navigator/FAILURE_MODES.md#2-internal-review-erases-external-review)
+- [`cessation-benefit-continuation-navigator` — Sixty days overwrites fifteen](social-security-disability/cessation-benefit-continuation-navigator/FAILURE_MODES.md#1-sixty-days-overwrites-fifteen)
 
 </details>
 
@@ -384,6 +416,9 @@ Operational systems often model a case as a status, but regulated events fan out
 - [`material-cyber-incident-disclosure-gate` — Discovery starts the disclosure clock](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/FAILURE_MODES.md#1-discovery-starts-the-disclosure-clock)
 - [`nursing-home-transfer-discharge-navigator` — An old notice follows a new destination](long-term-care/nursing-home-transfer-discharge-navigator/FAILURE_MODES.md#1-an-old-notice-follows-a-new-destination)
 - [`reactor-event-notification-gate` — The slowest plausible clock wins](nuclear-operations/reactor-event-notification-gate/FAILURE_MODES.md#1-the-slowest-plausible-clock-wins)
+- [`incident-notification-coordinator` — Containment closes reporting](pipeline-safety/incident-notification-coordinator/FAILURE_MODES.md#1-containment-closes-reporting)
+- [`hipaa-breach-notification-graph` — Actor role disappears](health-data-privacy/hipaa-breach-notification-graph/FAILURE_MODES.md#1-actor-role-disappears)
+- [`ind-safety-reporting-coordinator` — Initial report closes follow-up](clinical-trial-safety/ind-safety-reporting-coordinator/FAILURE_MODES.md#3-initial-report-closes-follow-up)
 
 </details>
 
@@ -417,6 +452,12 @@ Agent workflows often end with a durable record used by another team or system. 
 - [`material-cyber-incident-disclosure-gate` — Prepared becomes filed](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/FAILURE_MODES.md#3-prepared-becomes-filed)
 - [`nursing-home-transfer-discharge-navigator` — Notice becomes discharge](long-term-care/nursing-home-transfer-discharge-navigator/FAILURE_MODES.md#3-notice-becomes-discharge)
 - [`reactor-event-notification-gate` — Call attempt becomes notification](nuclear-operations/reactor-event-notification-gate/FAILURE_MODES.md#3-call-attempt-becomes-notification)
+- [`renewal-continuity-navigator` — Procedural closure becomes eligibility](medicaid-chip/renewal-continuity-navigator/FAILURE_MODES.md#3-procedural-closure-becomes-eligibility)
+- [`denial-appeal-rights-navigator` — Submitted becomes overturned](health-insurance-appeals/denial-appeal-rights-navigator/FAILURE_MODES.md#3-submitted-becomes-overturned)
+- [`cessation-benefit-continuation-navigator` — Election becomes payment](social-security-disability/cessation-benefit-continuation-navigator/FAILURE_MODES.md#3-election-becomes-payment)
+- [`incident-notification-coordinator` — Prepared script becomes accepted call](pipeline-safety/incident-notification-coordinator/FAILURE_MODES.md#3-prepared-script-becomes-accepted-call)
+- [`hipaa-breach-notification-graph` — Approval becomes notification](health-data-privacy/hipaa-breach-notification-graph/FAILURE_MODES.md#3-approval-becomes-notification)
+- [`ind-safety-reporting-coordinator` — Initial report closes follow-up](clinical-trial-safety/ind-safety-reporting-coordinator/FAILURE_MODES.md#3-initial-report-closes-follow-up)
 
 </details>
 

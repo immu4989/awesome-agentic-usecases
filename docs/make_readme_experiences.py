@@ -669,10 +669,9 @@ def short_model(model: str) -> str:
 
 def load_benchmark_rows(directory: Path, briefing: Briefing) -> list[dict]:
     rows: list[dict] = []
+    mock_rows: list[dict] = []
     for path in sorted((directory / "results").glob("eval_*.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
-        if data.get("backend") == "mock":
-            continue
         means = data.get("metric_means", {})
         if briefing.metric not in means:
             continue
@@ -683,14 +682,20 @@ def load_benchmark_rows(directory: Path, briefing: Briefing) -> list[dict]:
         value = 1 - raw_value if briefing.invert else raw_value
         if briefing.invert:
             lo, hi = 1 - hi, 1 - lo
-        model = short_model(str(data.get("model", data.get("backend", "model"))))
+        is_mock = data.get("backend") == "mock"
+        model = (
+            "Deterministic baseline"
+            if is_mock
+            else short_model(str(data.get("model", data.get("backend", "model"))))
+        )
         label = model
         if arm:
             label += f" · {ARM_NAMES.get(str(arm), str(arm).replace('_', ' '))}"
-        rows.append({
+        row = {
             "label": label,
             "model": model,
             "arm": str(arm or ""),
+            "deterministic": is_mock,
             "value": value,
             "lo": lo,
             "hi": hi,
@@ -698,7 +703,13 @@ def load_benchmark_rows(directory: Path, briefing: Briefing) -> list[dict]:
             "means": means,
             "cost": float(data.get("mean_cost_per_scenario_usd", 0)),
             "latency": float(data.get("p50_latency_s", 0)),
-        })
+        }
+        (mock_rows if is_mock else rows).append(row)
+    # A new lab may initially have one clean provider arm. Keep its visual contrast
+    # honest by adding the explicitly labelled scripted baseline; never present it as
+    # a second model.
+    if len(rows) < 2 and mock_rows:
+        rows.append(mock_rows[0])
     if any(row["arm"] for row in rows):
         arm_rank = {name: index for index, name in enumerate(ARM_NAMES)}
         rows.sort(key=lambda row: (row["model"], arm_rank.get(row["arm"], 99), row["arm"]))
@@ -719,6 +730,20 @@ def compact_number(value: float) -> str:
 
 def render_benchmark(item: Experience, briefing: Briefing, directory: Path) -> str:
     rows = load_benchmark_rows(directory, briefing)
+    has_deterministic = any(row.get("deterministic") for row in rows)
+    benchmark_desc = (
+        f"{briefing.metric_label} across committed evaluation results. Deterministic "
+        "scripted baselines are explicitly labelled; error bars show committed 95 percent "
+        "confidence intervals."
+        if has_deterministic
+        else f"{briefing.metric_label} across committed non-mock model evaluation results. "
+        "Error bars show committed 95 percent confidence intervals."
+    )
+    benchmark_kicker = (
+        "VERIFIED BENCHMARK · COMMITTED RESULTS · BASELINE LABELLED"
+        if has_deterministic
+        else "VERIFIED BENCHMARK · COMMITTED RESULTS ONLY"
+    )
     row_height = 46
     plot_top = 146
     height = plot_top + max(len(rows), 1) * row_height + 72
@@ -756,7 +781,7 @@ def render_benchmark(item: Experience, briefing: Briefing, directory: Path) -> s
     evidence = f"{len(rows)} MODEL/ARM RESULTS · {sample_count:,} RUNS"
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 {height}" width="1200" height="{height}" role="img" aria-labelledby="title desc">
   <title id="title">{escape(item.title)} verified benchmark</title>
-  <desc id="desc">{escape(briefing.metric_label)} across committed non-mock model evaluation results. Error bars show committed 95 percent confidence intervals.</desc>
+  <desc id="desc">{escape(benchmark_desc)}</desc>
   <style>
     :root {{ color-scheme:light dark; }}
     .surface {{ fill:#f7faf8; }} .ink {{ fill:#10231d; }} .muted {{ fill:#52645e; }}
@@ -771,7 +796,7 @@ def render_benchmark(item: Experience, briefing: Briefing, directory: Path) -> s
     }}
   </style>
   <rect width="1200" height="{height}" rx="20" class="surface"/>
-  <text x="42" y="42" class="kicker" fill="{item.accent}">VERIFIED BENCHMARK · COMMITTED RESULTS ONLY</text>
+  <text x="42" y="42" class="kicker" fill="{item.accent}">{escape(benchmark_kicker)}</text>
   <text x="42" y="84" class="title ink">{escape(briefing.metric_label)}</text>
   <g transform="translate(840 35)"><rect width="318" height="30" rx="15" fill="{item.accent}" opacity=".13"/><circle cx="17" cy="15" r="5" fill="{item.accent}"/><text x="30" y="19" class="pill muted">{evidence}</text></g>
   <text x="42" y="116" class="axis muted">MODEL · EXPERIMENT ARM</text>
@@ -795,7 +820,7 @@ def strongest_row(rows: list[dict], briefing: Briefing) -> dict:
 def render_contrast(item: Experience, briefing: Briefing, directory: Path) -> str:
     rows = load_benchmark_rows(directory, briefing)
     if len(rows) < 2:
-        raise ValueError(f"{item.path} needs at least two real result rows for a contrast")
+        raise ValueError(f"{item.path} needs at least two committed result rows for a contrast")
     strong = strongest_row(rows, briefing)
     weak = max(rows, key=lambda row: row["value"]) if briefing.raw else min(rows, key=lambda row: row["value"])
     scale_max = max(row["hi"] for row in rows) * 1.06 if briefing.raw else 1.0

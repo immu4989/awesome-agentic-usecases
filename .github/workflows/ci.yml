@@ -25,11 +25,11 @@ jobs:
       - name: Generated catalog table is current
         run: |
           python docs/make_catalog.py
-          git diff --exit-code README.md docs/assets/hero.svg
+          git diff --exit-code README.md docs/index.html docs/assets/hero.svg docs/assets/stats-light.svg docs/assets/stats-dark.svg
       - name: Generated failure taxonomy is current
         run: |
           python docs/make_taxonomy.py
-          git diff --exit-code README.md START_HERE.md FAILURE_TAXONOMY.md docs/assets/taxonomy.json docs/assets/hero.svg
+          git diff --exit-code README.md START_HERE.md FAILURE_TAXONOMY.md docs/index.html docs/assets/taxonomy.json docs/assets/hero.svg docs/assets/stats-light.svg docs/assets/stats-dark.svg
       - name: Local documentation links resolve
         run: python docs/check_links.py
       - name: Generated decision-gate labs are current
@@ -52,6 +52,15 @@ jobs:
           python docs/make_clock_collision_wave.py
           python docs/make_readme_experiences.py
           git diff --exit-code medical-device-safety pharmaceutical-supply mortgage-servicing healthcare-payment securities-cyber-disclosure long-term-care nuclear-operations
+      - name: Generated rights-continuity and critical-event labs are current
+        run: |
+          python docs/make_next_impact_wave.py
+          python docs/make_readme_experiences.py
+          git diff --exit-code medicaid-chip health-insurance-appeals social-security-disability pipeline-safety health-data-privacy clinical-trial-safety
+      - name: Generated next-impact contract visuals are current
+        run: |
+          python docs/make_next_impact_assets.py
+          git diff --exit-code docs/assets/rights-continuity.svg docs/assets/critical-event-fanout.svg
       - name: Generated README visual system is current
         run: |
           python docs/make_readme_experiences.py
@@ -76,6 +85,10 @@ jobs:
         run: |
           python docs/make_clock_collision_report.py
           git diff --exit-code CLOCK_COLLISION_REPORT.md
+      - name: Rights-continuity and critical-event reports are current
+        run: |
+          python docs/make_next_impact_reports.py
+          git diff --exit-code RIGHTS_CONTINUITY_REPORT.md CRITICAL_EVENT_FANOUT_REPORT.md
 
   use-case:
     runs-on: ubuntu-latest
@@ -330,6 +343,30 @@ jobs:
           - dir: nuclear-operations/reactor-event-notification-gate
             cli: reactor-event-notification
             seed: 419
+            n: 32
+          - dir: medicaid-chip/renewal-continuity-navigator
+            cli: medicaid-renewal-continuity
+            seed: 431
+            n: 32
+          - dir: health-insurance-appeals/denial-appeal-rights-navigator
+            cli: health-plan-appeal-rights
+            seed: 433
+            n: 32
+          - dir: social-security-disability/cessation-benefit-continuation-navigator
+            cli: disability-cessation-continuity
+            seed: 439
+            n: 32
+          - dir: pipeline-safety/incident-notification-coordinator
+            cli: pipeline-incident-notification
+            seed: 443
+            n: 32
+          - dir: health-data-privacy/hipaa-breach-notification-graph
+            cli: hipaa-breach-notification
+            seed: 449
+            n: 32
+          - dir: clinical-trial-safety/ind-safety-reporting-coordinator
+            cli: ind-safety-reporting
+            seed: 457
             n: 32
     name: ${{ matrix.cli }}
     steps:

@@ -34,6 +34,7 @@ README_PATTERN_IDS = (
     "channel-trust",
     "prior-over-policy",
     "rule-transfer",
+    "companion-right-loss",
 )
 
 # pattern -> curated definition, why it matters, and the observations that support it.
@@ -320,6 +321,9 @@ PATTERNS = [
             ("election-administration/provisional-ballot-status-navigator", "Registration facts become"),
             ("care-transitions/hospital-discharge-readiness-coordinator", "Paper completeness becomes"),
             ("workforce-mobility/occupational-license-mobility-navigator", "Reciprocity becomes"),
+            ("medicaid-chip/renewal-continuity-navigator", "One missing fact becomes"),
+            ("health-insurance-appeals/denial-appeal-rights-navigator", "Urgency inherits"),
+            ("social-security-disability/cessation-benefit-continuation-navigator", "Sixty days overwrites"),
         ],
     },
     {
@@ -364,6 +368,34 @@ PATTERNS = [
             ("securities-cyber-disclosure/material-cyber-incident-disclosure-gate", "Discovery starts"),
             ("long-term-care/nursing-home-transfer-discharge-navigator", "old notice follows"),
             ("nuclear-operations/reactor-event-notification-gate", "slowest plausible clock"),
+            ("medicaid-chip/renewal-continuity-navigator", "Ex parte becomes"),
+            ("health-insurance-appeals/denial-appeal-rights-navigator", "Urgency inherits"),
+            ("social-security-disability/cessation-benefit-continuation-navigator", "Sixty days overwrites"),
+            ("pipeline-safety/incident-notification-coordinator", "Containment closes"),
+            ("health-data-privacy/hipaa-breach-notification-graph", "Actor role disappears"),
+            ("clinical-trial-safety/ind-safety-reporting-coordinator", "Fifteen days overwrites"),
+        ],
+    },
+    {
+        "id": "companion-right-loss",
+        "name": "The main right survives; its companion expires",
+        "one_liner": "A case remains technically appealable while the coverage, urgency, income, or other bridge that makes review usable is lost.",
+        "why": (
+            "Service systems often store one deadline and one reassuring status. These cases "
+            "show why that is not enough: ex-parte renewal, urgent concurrent review, and "
+            "benefit-continuation elections attach through different facts and clocks. A "
+            "rights graph must preserve each protection independently, request only unresolved "
+            "evidence, and stop each node at its executed receipt."
+        ),
+        "numbers": [
+            ("three-industry rights suite", "96 committed scenarios keep eight archetypes constant while changing the person, evidence burden, primary right, companion protection, and accountable owner"),
+            ("independent-clock trap", "a valid main filing receives zero exact credit when the shorter urgency or continuity protection is late, missing, or silently merged"),
+            ("burden boundary", "held agency or plan evidence remains distinct from the exact unresolved set, so a whole-file request is measurable harm rather than harmless caution"),
+        ],
+        "cites": [
+            ("medicaid-chip/renewal-continuity-navigator", "Ex parte becomes an optional shortcut"),
+            ("health-insurance-appeals/denial-appeal-rights-navigator", "Internal review erases external review"),
+            ("social-security-disability/cessation-benefit-continuation-navigator", "Sixty days overwrites fifteen"),
         ],
     },
     {
@@ -391,6 +423,9 @@ PATTERNS = [
             ("securities-cyber-disclosure/material-cyber-incident-disclosure-gate", "Discovery starts"),
             ("long-term-care/nursing-home-transfer-discharge-navigator", "old notice follows"),
             ("nuclear-operations/reactor-event-notification-gate", "slowest plausible clock"),
+            ("pipeline-safety/incident-notification-coordinator", "Containment closes"),
+            ("health-data-privacy/hipaa-breach-notification-graph", "Actor role disappears"),
+            ("clinical-trial-safety/ind-safety-reporting-coordinator", "Initial report closes"),
         ],
     },
     {
@@ -424,6 +459,12 @@ PATTERNS = [
             ("securities-cyber-disclosure/material-cyber-incident-disclosure-gate", "Prepared becomes filed"),
             ("long-term-care/nursing-home-transfer-discharge-navigator", "Notice becomes discharge"),
             ("nuclear-operations/reactor-event-notification-gate", "Call attempt becomes notification"),
+            ("medicaid-chip/renewal-continuity-navigator", "Procedural closure becomes"),
+            ("health-insurance-appeals/denial-appeal-rights-navigator", "Submitted becomes overturned"),
+            ("social-security-disability/cessation-benefit-continuation-navigator", "Election becomes payment"),
+            ("pipeline-safety/incident-notification-coordinator", "Prepared script becomes accepted"),
+            ("health-data-privacy/hipaa-breach-notification-graph", "Approval becomes notification"),
+            ("clinical-trial-safety/ind-safety-reporting-coordinator", "Initial report closes"),
         ],
     },
     {
@@ -622,6 +663,13 @@ def main() -> None:
     readme_path = os.path.join(ROOT, "README.md")
     with open(readme_path) as f:
         readme = f.read()
+    readme, link_replacements = re.subn(
+        r"Read all \d+ patterns",
+        f"Read all {len(PATTERNS)} patterns",
+        readme,
+    )
+    if link_replacements != 1:
+        raise ValueError("README.md must contain exactly one full-taxonomy link count")
     with open(readme_path, "w") as f:
         f.write(replace_marked(readme, README_START, README_END, render_readme_summary()))
 

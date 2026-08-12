@@ -10,7 +10,7 @@ You do not need an API key to begin. Pick the route that matches the job you are
 
 ## I want to see a real agent failure
 
-Start with one of these eight. Each takes the same shape—scenario, tools, agent, exact
+Start with one of these ten. Each takes the same shape—scenario, tools, agent, exact
 scorer—but exposes a different class of failure.
 
 | Failure you want to understand | Start here | What it demonstrates |
@@ -23,9 +23,11 @@ scorer—but exposes a different class of failure.
 | The scanner is green but the service is unusable | [Accessibility Remediation Verifier](accessibility-digital-services/accessibility-remediation-verifier/) | Why automated coverage and proof of fix are different claims |
 | The request is routed but an archive survives | [Privacy Rights Orchestrator](privacy-data-governance/privacy-rights-orchestrator/) | Why exact system coverage and truthful completion need receipts |
 | The recommendation is right but the gate or authority is wrong | [Batch Disposition Gate](pharmaceutical-manufacturing/batch-disposition-gate/) | Why a nearby valid rule cannot substitute for exact evidence, procedure, owner, and action trace |
+| The main appeal survives but its companion protection expires | [Disability Cessation Continuity](social-security-disability/cessation-benefit-continuation-navigator/) | Why primary and companion rights need independent triggers, clocks, owners, and receipts |
+| Emergency response succeeds but another duty stays open | [Pipeline Incident Notification](pipeline-safety/incident-notification-coordinator/) | Why containment, initial notification, update, follow-up, and receipts cannot share one status |
 
 Every observation is cross-linked in the [Failure Taxonomy](FAILURE_TAXONOMY.md), which
-groups 257 observed failures into 16 recurring patterns.
+groups 275 observed failures into 17 recurring patterns.
 
 ## I want to run an eval without an API key
 

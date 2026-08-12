@@ -6,6 +6,25 @@ the harness API is what is versioned; use cases are additive.
 ## Unreleased
 
 ### Added
+- **Rights Continuity Contract and matched three-industry wave** — 96 committed synthetic
+  scenarios across Medicaid/CHIP renewal, health-plan appeal rights, and Social Security
+  disability cessation. Primary and companion rights now retain independent triggers,
+  clocks, evidence burden, accessible channels, recourse, human owners, and receipts.
+- **Critical Event Fan-Out Contract and matched three-industry wave** — 96 committed
+  scenarios across pipeline incident reporting, HIPAA breach recipients, and IND safety
+  reporting. Response, initial notice, recipient branches, updates, follow-up, authority,
+  and executed receipts remain independently measurable.
+- **Two portable machine contracts** — vendor-neutral JSON Schemas and worked examples for
+  a two-clock rights graph and a three-branch critical event graph.
+- **New failure-taxonomy pattern: companion-right loss** — the taxonomy now names and links
+  the failure where the main review survives while coverage, urgency, income, or another
+  protection expires.
+- **Dramatic landing experiences for both specialties** — new generated contract artwork,
+  six themed case-file READMEs, and two prominent explorer sections lead users directly to
+  the problem, labs, reports, sources, and forkable schemas.
+- **Fully dynamic public proof points** — the landing hero, light/dark proof strips, README
+  heading and alt text, explorer CTA, proof row, and trace ID now derive from catalog,
+  result, and taxonomy data and are enforced in CI.
 - **Self-updating landing hero** — the proof strip now derives its use-case, industry,
   real-model-evaluation, and observed-failure totals from repository data, with CI guarding
   against stale artwork.
