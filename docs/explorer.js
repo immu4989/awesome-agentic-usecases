@@ -360,7 +360,7 @@ function selectStudioStarter(match) {
   els.studioKit.dataset.path = item.path;
   els.studioKit.dataset.score = String(score);
   const forgeName = `${slugifyStudio(item.title.replace(/coordinator|navigator|agent|gate/gi, "")) || "my-workflow"}-eval`;
-  els.forgeCommand.textContent = `aau forge <downloaded-brief.json> --name ${forgeName}`;
+  els.forgeCommand.textContent = `aau forge <downloaded-brief.json> --name ${forgeName}\naau forge doctor <generated-lab>`;
 }
 
 function slugifyStudio(text) {

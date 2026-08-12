@@ -5,6 +5,12 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **AAU Forge 2 — contract-aware generation** — Studio briefs selecting Decision Gate,
+  Rights Continuity, or Critical Event Fan-Out now compile into distinct executable worlds,
+  node graphs, strict tools, conjunctive metrics, tests, README diagrams, and blueprint
+  manifests. `aau forge doctor` explains the exact remaining path from runnable scaffold to
+  publication-ready evidence.
+
 ### Added
 - **AAU Forge** — a Studio-brief compiler that generates a runnable adaptation lab with a
   seeded world, shared exact scorer, deterministic mock gap, tests, committed scenarios,

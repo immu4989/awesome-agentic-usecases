@@ -56,6 +56,10 @@ python -m pip install -e harness[dev]
 aau forge aau-evaluation-brief.json --name my-workflow-eval
 ```
 
+Forge 2 reads the selected contract—not just the closest folder. Decision Gate, Rights
+Continuity, and Critical Event Fan-Out briefs compile to distinct executable graphs and
+exact metrics. Use `aau forge doctor <generated-lab>` to see what remains before publication.
+
 The command generates and verifies the package, scenarios, tests, mock run, provenance manifest,
 domain checklist, and standalone CI workflow. Its output is explicitly marked as an
 unvalidated adaptation until qualified owners replace the generic domain rules.

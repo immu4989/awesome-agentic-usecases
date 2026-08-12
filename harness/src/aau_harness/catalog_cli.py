@@ -215,10 +215,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     forging = sub.add_parser("forge", help="turn a Studio brief into a runnable adaptation lab")
     forging.add_argument("brief", help="evaluation brief downloaded from AAU Studio")
-    forging.add_argument("--name", required=True, help="new package and CLI name")
+    forging.add_argument("doctor_path", nargs="?", help="lab path when brief is 'doctor'")
+    forging.add_argument("--name", help="new package and CLI name (required unless running doctor)")
     forging.add_argument("--title", help="human-readable lab title")
     forging.add_argument("--seed", type=int, help="override the brief-derived seed")
     forging.add_argument("--no-verify", action="store_true", help="skip install, tests, and mock run")
+    forging.add_argument("--json", action="store_true", help="with 'doctor PATH', emit JSON")
 
     sub.add_parser("doctor", help="check that every catalog entry is runnable and documented")
     return parser
@@ -246,6 +248,14 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "forge":
         from .forge import main as forge_main
 
+        if args.brief == "doctor":
+            forge_args = ["doctor", args.doctor_path or "."]
+            if args.json:
+                forge_args.append("--json")
+            return forge_main(forge_args)
+        if not args.name:
+            print("aau forge: --name is required when generating a lab", file=sys.stderr)
+            return 2
         forge_args = [args.brief, "--name", args.name, "--root", str(root)]
         if args.title:
             forge_args.extend(["--title", args.title])

@@ -17,7 +17,9 @@ your browser. No workflow text is uploaded.
 Once Studio gives you a match, download the evaluation brief and run
 `aau forge <brief.json> --name <your-eval>` to generate and verify a runnable adaptation.
 Forge keeps domain truth explicitly unvalidated until a qualified owner replaces the
-generic rules. See [AAU Forge](AAU_FORGE.md).
+generated rules. For Decision Gate, Rights Continuity, and Critical Event Fan-Out it also
+builds a contract-specific graph and scorecard. See [AAU Forge](AAU_FORGE.md), then run
+`aau forge doctor <generated-lab>` to inspect the publication gaps.
 
 ## I want to see a real agent failure
 

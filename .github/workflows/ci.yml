@@ -30,10 +30,12 @@ jobs:
       - name: AAU Forge creates and verifies a runnable lab
         run: |
           python -m pip install -e harness[dev]
-          python -m aau_harness.forge docs/studio-spec.example.json \
-            --name regional-emergency-notice-lab \
-            --root "$RUNNER_TEMP/forge-output" \
-            --source-root .
+          for spec in decision-gate rights-continuity critical-event-fanout; do
+            python -m aau_harness.forge "docs/forge-examples/studio-spec.$spec.json" \
+              --name "$spec-forge-lab" \
+              --root "$RUNNER_TEMP/forge-$spec" \
+              --source-root .
+          done
       - name: Generated catalog table is current
         run: |
           python docs/make_catalog.py

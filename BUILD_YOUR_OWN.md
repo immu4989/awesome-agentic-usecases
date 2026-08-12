@@ -53,6 +53,13 @@ scenario minimum, repeats, and required proofs into the generated package. It al
 an adaptation checklist, provenance manifest, and standalone CI workflow, then executes the
 generated lab before handoff. See [AAU_FORGE.md](AAU_FORGE.md).
 
+For Decision Gate, Rights Continuity, and Critical Event Fan-Out, Forge compiles different
+contract topologies, tools, exact metrics, tests, and README diagrams. Inspect the result:
+
+```bash
+aau forge doctor path/to/generated-lab
+```
+
 ### Generate a new shape manually
 
 ```bash

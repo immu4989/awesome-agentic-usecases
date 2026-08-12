@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from .forge_contracts import resolve_blueprint, specialize_lab, supported_contracts
 from .scaffold import build, slugify
 
 
@@ -140,13 +141,21 @@ The complete machine-readable handoff is committed as
 """
 
 
-def _adaptation_checklist(brief: dict[str, Any]) -> str:
+def _adaptation_checklist(
+    brief: dict[str, Any], contract_name: str, exact_metric: str | None
+) -> str:
     source = brief["recommended_case"]
     proofs = "\n".join(f"- [ ] {item}" for item in brief["verification_plan"]["required_proofs"])
+    contract_proof = (
+        f"- [ ] Verify every {contract_name} node and publish `{exact_metric}` with its components."
+        if exact_metric
+        else "- [ ] Replace the generic queue contract with the deciding domain state transition."
+    )
     return f"""# Forge Adaptation Checklist
 
 This lab inherits evaluation structure from
 [`{source['path']}`](../../{source['path']}/), not its domain rules or production validity.
+Forge selected **{contract_name}** as the executable evaluation architecture.
 
 ## 1. Domain truth
 
@@ -159,6 +168,7 @@ This lab inherits evaluation structure from
 ## 2. Measurement
 
 {proofs}
+{contract_proof}
 - [ ] Add a clean twin where the risky capability is legitimately required.
 - [ ] Add a deceptive or transfer case whose answer cannot be inferred from wording.
 - [ ] Regenerate scenarios byte-for-byte from the committed seed.
@@ -177,6 +187,121 @@ This lab inherits evaluation structure from
 - [ ] Generate the standard visual case file and verify accessible alt text.
 - [ ] State synthetic-world limitations prominently.
 """
+
+
+def _todo_locations(dest: Path) -> list[str]:
+    locations: list[str] = []
+    source_root = dest / "src"
+    for path in sorted(source_root.rglob("*")) if source_root.is_dir() else []:
+        if not path.is_file() or path.suffix not in {".py", ".md", ".json"}:
+            continue
+        try:
+            lines = path.read_text().splitlines()
+        except UnicodeDecodeError:
+            continue
+        for line_number, line in enumerate(lines, 1):
+            if "TODO(domain)" in line or "TODO-DOMAIN" in line or "TODO_DOMAIN" in line:
+                locations.append(f"{path.relative_to(dest)}:{line_number}")
+    return locations
+
+
+def diagnose_forged_lab(path: str | Path) -> dict[str, Any]:
+    """Return a machine-readable readiness report for one Forge output."""
+
+    dest = Path(path).resolve()
+    checks: list[dict[str, Any]] = []
+
+    def add(check: str, passed: bool, detail: str) -> None:
+        checks.append({"check": check, "passed": passed, "detail": detail})
+
+    manifest_path = dest / "aau-forge.json"
+    blueprint_path = dest / "contract-blueprint.json"
+    manifest: dict[str, Any] = {}
+    if manifest_path.is_file():
+        try:
+            manifest = json.loads(manifest_path.read_text())
+            add("forge manifest", True, manifest.get("forge_version", "version missing"))
+        except json.JSONDecodeError as exc:
+            add("forge manifest", False, f"invalid JSON: {exc}")
+    else:
+        add("forge manifest", False, "aau-forge.json is missing")
+
+    blueprint: dict[str, Any] = {}
+    if blueprint_path.is_file():
+        try:
+            blueprint = json.loads(blueprint_path.read_text())
+            add("contract blueprint", True, blueprint.get("contract", "contract missing"))
+        except json.JSONDecodeError as exc:
+            add("contract blueprint", False, f"invalid JSON: {exc}")
+    elif manifest.get("generator", {}).get("mode") == "generic-fallback":
+        add("contract blueprint", True, "generic fallback declared in manifest")
+    else:
+        add("contract blueprint", False, "contract-blueprint.json is missing")
+
+    required = (
+        "README.md", "FAILURE_MODES.md", "ADAPTATION_CHECKLIST.md",
+        "evaluation-brief.json", "pyproject.toml", "tests", "evals/scenarios.jsonl",
+    )
+    absent = [name for name in required if not (dest / name).exists()]
+    add("required artifacts", not absent, "complete" if not absent else f"missing: {', '.join(absent)}")
+
+    todos = _todo_locations(dest)
+    add(
+        "domain truth replaced", not todos,
+        "no generated domain placeholders remain" if not todos else f"{len(todos)} placeholder(s); first: {', '.join(todos[:5])}",
+    )
+
+    scenarios_path = dest / "evals" / "scenarios.jsonl"
+    scenario_count = 0
+    if scenarios_path.is_file():
+        scenario_count = sum(bool(line.strip()) for line in scenarios_path.read_text().splitlines())
+    minimum = manifest.get("verification", {}).get("minimum_scenarios", 20)
+    add("scenario volume", scenario_count >= minimum, f"{scenario_count}/{minimum} committed scenarios")
+
+    result_files = [
+        path for path in (dest / "results").glob("eval_*.json")
+        if path.name != "eval_mock.json"
+    ] if (dest / "results").is_dir() else []
+    add(
+        "real-model evidence", len(result_files) >= 2,
+        f"{len(result_files)}/2 non-mock JSON result artifacts",
+    )
+    failure_text = (dest / "FAILURE_MODES.md").read_text() if (dest / "FAILURE_MODES.md").is_file() else ""
+    observed = "generated hypotheses" not in failure_text.lower() and "TODO(domain)" not in failure_text
+    add(
+        "observed failures", observed,
+        "failure evidence appears adapted" if observed else "replace generated hypotheses with scenario-linked observations",
+    )
+    verified = manifest.get("verification", {}).get("status") == "passed"
+    add("generated verification", verified, manifest.get("verification", {}).get("status", "missing"))
+
+    passed = sum(item["passed"] for item in checks)
+    return {
+        "doctor_version": "aau-forge-doctor/1.0",
+        "path": str(dest),
+        "contract": blueprint.get("contract") or manifest.get("generator", {}).get("contract"),
+        "publication_ready": passed == len(checks),
+        "score": {"passed": passed, "total": len(checks)},
+        "checks": checks,
+    }
+
+
+def render_diagnosis(report: dict[str, Any]) -> str:
+    lines = [
+        f"AAU Forge Doctor · {report.get('contract') or 'generic adaptation'}",
+        f"Readiness: {report['score']['passed']}/{report['score']['total']}",
+        "",
+    ]
+    for check in report["checks"]:
+        mark = "PASS" if check["passed"] else "TODO"
+        lines.append(f"[{mark}] {check['check']}: {check['detail']}")
+    lines.extend(
+        [
+            "",
+            "PUBLICATION READY" if report["publication_ready"] else "ADAPTATION REQUIRED",
+        ]
+    )
+    return "\n".join(lines)
 
 
 def _workflow_yaml(title: str, rel: str, cli: str, seed: int, scenarios: int, repeats: int) -> str:
@@ -321,11 +446,26 @@ def forge(
         raise BriefError(f"refusing to overwrite existing {workflow_path}")
 
     dest = Path(build(industry, slug, resolved_seed, str(output_root), nice_title))
+    blueprint = resolve_blueprint(source["contract"])
+    blueprint_record = None
+    if blueprint:
+        blueprint_record = specialize_lab(
+            dest,
+            blueprint,
+            title=nice_title,
+            cli=slug,
+            seed=resolved_seed,
+            workflow=brief["workflow"],
+        )
     readme = dest / "README.md"
     body = readme.read_text()
     marker = f"# {nice_title}\n"
     readme.write_text(body.replace(marker, marker + _origin_section(brief, resolved_seed), 1))
-    (dest / "ADAPTATION_CHECKLIST.md").write_text(_adaptation_checklist(brief))
+    contract_name = blueprint.name if blueprint else source["contract"]
+    exact_metric = blueprint.exact_metric if blueprint else None
+    (dest / "ADAPTATION_CHECKLIST.md").write_text(
+        _adaptation_checklist(brief, contract_name, exact_metric)
+    )
     shutil.copyfile(brief_path, dest / "evaluation-brief.json")
     schema = source_root / "docs" / "studio-spec.schema.json"
     if schema.is_file():
@@ -334,7 +474,7 @@ def forge(
     scenarios = brief["verification_plan"]["minimum_scenarios"]
     repeats = brief["verification_plan"]["minimum_repeats"]
     manifest = {
-        "forge_version": "aau-forge/1.0",
+        "forge_version": "aau-forge/2.0",
         "status": "adaptation_required",
         "forged_at": datetime.now(timezone.utc).isoformat(),
         "generated_path": rel,
@@ -345,6 +485,12 @@ def forge(
             "case": source,
         },
         "workflow": brief["workflow"],
+        "generator": {
+            "mode": "contract-aware" if blueprint else "generic-fallback",
+            "contract": contract_name,
+            "blueprint": blueprint_record,
+            "supported_contracts": list(supported_contracts()),
+        },
         "verification": {
             "status": "pending" if verify else "not_run",
             "minimum_scenarios": scenarios,
@@ -376,9 +522,25 @@ def forge(
 
 
 def main(argv: list[str] | None = None) -> int:
+    if argv is None:
+        argv = sys.argv[1:]
+    if argv and argv[0] == "doctor":
+        doctor_parser = argparse.ArgumentParser(
+            prog="aau-forge doctor",
+            description="Explain what remains before a forged lab is publication-ready.",
+        )
+        doctor_parser.add_argument("path", nargs="?", default=".", help="forged lab path")
+        doctor_parser.add_argument("--json", action="store_true", help="emit JSON")
+        doctor_args = doctor_parser.parse_args(argv[1:])
+        report = diagnose_forged_lab(doctor_args.path)
+        print(json.dumps(report, indent=2) if doctor_args.json else render_diagnosis(report))
+        return 0 if report["publication_ready"] else 1
     parser = argparse.ArgumentParser(
         prog="aau-forge",
-        description="Turn an AAU Studio evaluation brief into a runnable adaptation lab.",
+        description=(
+            "Turn an AAU Studio brief into a contract-aware runnable lab. "
+            "Use 'aau-forge doctor PATH' to inspect publication readiness."
+        ),
     )
     parser.add_argument("brief", help="evaluation brief downloaded from AAU Studio")
     parser.add_argument("--name", required=True, help="new package and CLI name")
@@ -405,7 +567,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"AAU Forge stopped: {exc}", file=sys.stderr)
         return 2
     print(f"\nforged {os.path.relpath(dest, Path(args.root).resolve())}")
-    print("next: replace TODO(domain), complete ADAPTATION_CHECKLIST.md, then open a pull request")
+    print("next: replace TODO(domain), then run: aau-forge doctor " + str(dest))
     return 0
 
 

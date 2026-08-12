@@ -255,6 +255,22 @@ assert 0 < aggregate.metric_means["decision_gate_exact"] < 1
 The complete contract, authority rules, and six domain configurations live in the
 [Decision Gate Contract](../DECISION_GATE_CONTRACT.md) specialty.
 
+### Contract-aware Forge runtime
+
+`CompiledContract(...)` and `ContractScenario(...)` represent the contract family, exact
+outcome and reason, evidence sets, structured nodes, safeguards, and forbidden events.
+`generate_contract_scenarios(...)` creates the eight balanced archetypes used by Forge 2.
+
+`build_contract_policy(...)`, `build_contract_tool_schemas(...)`, and
+`build_contract_system_prompt(...)` create a contract-shaped agent environment.
+`ContractToolSession(...)` captures executed outcomes, evidence, structured nodes, receipts,
+and protected-action attempts. `score_contract_run(...)` emits family-specific components
+and one conjunctive headline; `evaluate_contract(...)` runs the compiled lab with any harness
+backend.
+
+The generator registry currently compiles Decision Gate, Rights Continuity, and Critical
+Event Fan-Out. See [AAU Forge](../AAU_FORGE.md) for the end-to-end workflow and Doctor gate.
+
 ### Reporting fidelity
 
 `ReportSpec(...)` and `check_report(...)` compare what an agent *did* against what it *said

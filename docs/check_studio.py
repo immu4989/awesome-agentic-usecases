@@ -72,6 +72,13 @@ def main() -> None:
     assert 'aau-forge = "aau_harness.forge:main"' in (
         ROOT / "harness" / "pyproject.toml"
     ).read_text()
+    forge_source = (
+        ROOT / "harness" / "src" / "aau_harness" / "forge_contracts.py"
+    ).read_text()
+    for contract in ("Decision Gate", "Rights Continuity", "Critical Event Fan-Out"):
+        assert contract in forge_source
+    assert "aau forge doctor" in (ROOT / "AAU_FORGE.md").read_text()
+    assert "contract-shaped runnable lab" in html
 
     print(f"AAU Studio integrity OK: {len(catalog)} indexed use cases")
 

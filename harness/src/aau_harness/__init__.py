@@ -47,6 +47,17 @@ from .decision_gate import (
     generate_gate_scenarios,
     score_gate_run,
 )
+from .contract_runtime import (
+    CompiledContract,
+    ContractScenario,
+    ContractToolSession,
+    build_contract_policy,
+    build_contract_system_prompt,
+    build_contract_tool_schemas,
+    evaluate_contract,
+    generate_contract_scenarios,
+    score_contract_run,
+)
 
 __all__ = [
     "CostTracker",
@@ -87,4 +98,13 @@ __all__ = [
     "evaluate_gate",
     "generate_gate_scenarios",
     "score_gate_run",
+    "CompiledContract",
+    "ContractScenario",
+    "ContractToolSession",
+    "build_contract_policy",
+    "build_contract_system_prompt",
+    "build_contract_tool_schemas",
+    "evaluate_contract",
+    "generate_contract_scenarios",
+    "score_contract_run",
 ]

@@ -63,9 +63,10 @@ headline metrics belong on one leaderboard.
 The strongest match becomes a fork-ready kit: copy the exact local run, download a
 vendor-neutral evaluation brief, or open a prefilled request when the closest verified lab
 does not cover the deciding facts. Then **[AAU Forge](AAU_FORGE.md)** turns that brief into
-a runnable package with scenarios, exact scoring, tests, a mock result, adaptation controls,
-and its own CI workflow. Matching runs entirely in the browser: **no account, no workflow
-upload, no tracking, and no API key**. See [how Studio works](AAU_STUDIO.md) and the
+a contract-shaped runnable package. Decision Gate, Rights Continuity, and Critical Event
+Fan-Out now compile to different graphs, tools, exact scores, tests, and mock failures;
+`aau forge doctor` shows what remains before publication. Matching runs entirely in the
+browser: **no account, no workflow upload, no tracking, and no API key**. See [how Studio works](AAU_STUDIO.md) and the
 [evaluation-brief schema](docs/studio-spec.schema.json).
 
 ## New release: preserve the right that makes the main right usable
@@ -694,7 +695,9 @@ aau forge aau-evaluation-brief.json --name my-workflow-eval
 ```
 
 Forge preserves the closest verified evaluation contract and produces a runnable,
-CI-protected adaptation without claiming that its generic domain rules are production truth.
+CI-protected adaptation without claiming that generated domain rules are production truth.
+For the three compiled contracts, the graph and scorecard change with the brief; run
+`aau forge doctor <generated-lab>` to see the remaining domain and evidence gaps.
 
 New use cases are welcome if they clear the [verification bar](VERIFICATION.md) —
 see [CONTRIBUTING.md](CONTRIBUTING.md). Link-list additions aren't a fit; this isn't
