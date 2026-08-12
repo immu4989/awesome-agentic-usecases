@@ -13,6 +13,7 @@
 <p align="center">
   <a href="START_HERE.md">Start here</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/">Use-case explorer</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#reliability">State of Agent Reliability 2026</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
   <a href="AAU_FORGE.md">AAU Forge</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#gallery">Community Gallery</a> ·
@@ -51,6 +52,36 @@ domain-specific map of the hidden trap, responsive charts generated from committ
 real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff profile,
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
+
+<!-- RELIABILITY-SNAPSHOT:START -->
+
+## New: State of Agent Reliability 2026
+
+**[Open the interactive report](https://immu4989.github.io/awesome-agentic-usecases/#reliability)** to inspect every committed real-model result
+through the question that matters: exact task success, completion, safety boundaries, cost,
+latency, or uncertainty. Every bar names its source metric, shows its 95% interval when
+available, and opens the exact result artifact.
+
+| Model evals | Scenario trials | Verified labs | Observed failures | Recorded spend |
+|---:|---:|---:|---:|---:|
+| **201** | **16,182** | **70** | **275** | **$22.80** |
+
+The headline finding is difficult to hide in a benchmark table: across
+197 artifacts with both endpoints, **completion runs
+26.5 points above exact task success on average**.
+73 artifacts complete at least 95% of runs while exact
+success remains below 70%; 17 finish every run while
+solving fewer than half exactly.
+
+This is a research snapshot, not a manufactured universal leaderboard. Model coverage is
+shown beside every median, unlike metrics stay separate, inverted safety rates remain
+explicit, and failure incidence is clearly bounded to this repository. Read the
+**[citable report](STATE_OF_AGENT_RELIABILITY_2026.md)**, download the generated
+**[JSON](docs/reliability-data.json)** or **[CSV](docs/reliability-data.csv)**, and audit the
+**[generator](docs/make_reliability_report.py)**. Any new committed result regenerates the
+release, so its claims cannot silently drift from the evidence.
+
+<!-- RELIABILITY-SNAPSHOT:END -->
 
 ## New: bring a workflow, leave with a runnable evaluation
 
@@ -288,6 +319,7 @@ accessible mobility, transparency, trade, nutrition, elections, care transitions
 | **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Four short paths through routing, irreversible action, tool poisoning, and public-value failures |
 | **Find an example for my workflow** | [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) | Describe the work, compare evidence-backed matches, and download a fork-ready evaluation brief |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
+| **Understand the evidence across every lab** | [State of Agent Reliability 2026](https://immu4989.github.io/awesome-agentic-usecases/#reliability) | Filterable source-linked results, coverage-aware model cards, failure terrain, and downloadable data |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
 | **Turn my Studio brief into code** | [AAU Forge](AAU_FORGE.md) | A verified starter package, provenance manifest, adaptation checklist, and dedicated CI workflow |

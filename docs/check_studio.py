@@ -25,7 +25,8 @@ def main() -> None:
         item["path"] for item in studio["cases"]
     }
     assert (ROOT / "docs" / "assets" / "social-card-forge.png").is_file()
-    assert "social-card-gallery.png" in html, "Studio + Forge + Gallery social preview is not wired"
+    assert (ROOT / "docs" / "assets" / "social-card-gallery.png").is_file()
+    assert "social-card-reliability-2026.png" in html, "current research-release preview is not wired"
     assert len(studio["cases"]) == len(catalog)
     assert {item["path"] for item in studio["cases"]} == {item["path"] for item in catalog}
     assert studio["proof"]["failure_patterns"] == taxonomy["patterns"]

@@ -13,6 +13,11 @@ const state = {
   galleryIndustry: "all",
   galleryModel: "all",
   galleryFailure: "all",
+  reliability: null,
+  reliabilityMetric: "exact",
+  reliabilityModel: "all",
+  reliabilityIndustry: "all",
+  reliabilityContract: "all",
 };
 
 const els = {
@@ -52,6 +57,32 @@ const els = {
   galleryAdaptations: document.querySelector("#gallery-adaptations"),
   galleryContributors: document.querySelector("#gallery-contributors"),
   galleryContracts: document.querySelector("#gallery-contracts"),
+  reliabilityEvals: document.querySelector("#reliability-evals"),
+  reliabilityTrials: document.querySelector("#reliability-trials"),
+  reliabilityLabs: document.querySelector("#reliability-labs"),
+  reliabilityFailures: document.querySelector("#reliability-failures"),
+  reliabilitySpend: document.querySelector("#reliability-spend"),
+  reliabilityGap: document.querySelector("#reliability-gap"),
+  reliabilityGapNote: document.querySelector("#reliability-gap-note"),
+  reliabilityCi: document.querySelector("#reliability-ci"),
+  reliabilityExceptionLabs: document.querySelector("#reliability-exception-labs"),
+  reliabilityPinned: document.querySelector("#reliability-pinned"),
+  reliabilityAliasNote: document.querySelector("#reliability-alias-note"),
+  reliabilityMetric: document.querySelector("#reliability-metric"),
+  reliabilityModel: document.querySelector("#reliability-model"),
+  reliabilityIndustry: document.querySelector("#reliability-industry"),
+  reliabilityContract: document.querySelector("#reliability-contract"),
+  reliabilityReset: document.querySelector("#reliability-reset"),
+  reliabilityViewLabel: document.querySelector("#reliability-view-label"),
+  reliabilityResultCount: document.querySelector("#reliability-result-count"),
+  reliabilityScaleMid: document.querySelector("#reliability-scale-mid"),
+  reliabilityScaleMax: document.querySelector("#reliability-scale-max"),
+  reliabilityChart: document.querySelector("#reliability-chart"),
+  reliabilityChartCaveat: document.querySelector("#reliability-chart-caveat"),
+  reliabilityLedger: document.querySelector("#reliability-ledger"),
+  reliabilityModels: document.querySelector("#reliability-models"),
+  reliabilityPatterns: document.querySelector("#reliability-patterns"),
+  copyReliabilityLink: document.querySelector("#copy-reliability-link"),
   compareTray: document.querySelector("#compare-tray"),
   compareCount: document.querySelector("#compare-count"),
   compareNames: document.querySelector("#compare-names"),
@@ -318,6 +349,342 @@ async function loadGallery() {
     [els.galleryFailure, "galleryFailure"],
   ]) control.addEventListener("change", () => { state[key] = control.value; renderGallery(); });
   renderGallery();
+}
+
+function medianValue(values) {
+  const clean = values.filter((value) => Number.isFinite(value)).sort((a, b) => a - b);
+  if (!clean.length) return null;
+  const middle = Math.floor(clean.length / 2);
+  return clean.length % 2 ? clean[middle] : (clean[middle - 1] + clean[middle]) / 2;
+}
+
+function formatScore(value) {
+  return Number.isFinite(value) ? value.toFixed(3) : "—";
+}
+
+function formatMoney(value) {
+  if (!Number.isFinite(value)) return "—";
+  if (value >= 1) return `$${value.toFixed(2)}`;
+  if (value >= 0.01) return `$${value.toFixed(3)}`;
+  return `$${value.toFixed(6)}`;
+}
+
+function formatCount(value) {
+  return Number(value).toLocaleString("en-US");
+}
+
+function reliabilityMetricValue(item, metric = state.reliabilityMetric) {
+  if (["exact", "completion", "safety"].includes(metric)) return item.dimensions[metric]?.value ?? null;
+  if (metric === "cost") return item.mean_cost_usd;
+  return item.p50_latency_s;
+}
+
+function filteredReliability() {
+  if (!state.reliability) return [];
+  return state.reliability.evaluations.filter((item) => (
+    (state.reliabilityModel === "all" || item.model === state.reliabilityModel)
+    && (state.reliabilityIndustry === "all" || item.industry === state.reliabilityIndustry)
+    && (state.reliabilityContract === "all" || item.contract === state.reliabilityContract)
+  ));
+}
+
+function reliabilityColor(metric) {
+  return {
+    exact: "#d9ff67",
+    completion: "#48d9ff",
+    safety: "#c0a3ff",
+    cost: "#ff6e9f",
+    latency: "#ffb45f",
+  }[metric];
+}
+
+function reliabilityMetricLabel(metric) {
+  return {
+    exact: "Exact task success",
+    completion: "Completion",
+    safety: "Safety / boundary preservation",
+    cost: "Cost per scenario",
+    latency: "P50 latency",
+  }[metric];
+}
+
+function syncReliabilityUrl() {
+  const params = new URLSearchParams(location.search);
+  for (const key of ["rmetric", "rmodel", "rindustry", "rcontract"]) params.delete(key);
+  if (state.reliabilityMetric !== "exact") params.set("rmetric", state.reliabilityMetric);
+  if (state.reliabilityModel !== "all") params.set("rmodel", state.reliabilityModel);
+  if (state.reliabilityIndustry !== "all") params.set("rindustry", state.reliabilityIndustry);
+  if (state.reliabilityContract !== "all") params.set("rcontract", state.reliabilityContract);
+  history.replaceState(null, "", `${location.pathname}${params.size ? `?${params}` : ""}#reliability`);
+}
+
+function reliabilityBar(item, value, maximum) {
+  const metric = state.reliabilityMetric;
+  const scoreView = ["exact", "completion", "safety"].includes(metric);
+  const endpoint = scoreView ? item.dimensions[metric] : null;
+  const width = maximum > 0 ? Math.max(0, Math.min(100, (value / maximum) * 100)) : 0;
+  const link = document.createElement("a");
+  link.className = "reliability-bar-row";
+  link.href = item.result_url;
+  link.style.setProperty("--bar-color", reliabilityColor(metric));
+  link.setAttribute("aria-label", `Open source result for ${item.title}, ${item.model_display}`);
+
+  const label = document.createElement("span");
+  label.className = "reliability-bar-label";
+  const title = document.createElement("b");
+  title.textContent = item.title;
+  const detail = document.createElement("small");
+  const metricName = endpoint ? `${endpoint.inverted ? "1 − " : ""}${endpoint.metric}` : metric;
+  detail.textContent = `${item.model_display} · ${item.arm} · ${metricName}`;
+  label.append(title, detail);
+
+  const track = document.createElement("span");
+  track.className = "reliability-bar-track";
+  const fill = document.createElement("i");
+  fill.className = "reliability-bar-fill";
+  fill.style.setProperty("--bar-width", `${width}%`);
+  track.append(fill);
+  if (endpoint?.ci95) {
+    const interval = document.createElement("i");
+    interval.className = "reliability-bar-ci";
+    interval.style.setProperty("--ci-left", `${endpoint.ci95[0] * 100}%`);
+    interval.style.setProperty("--ci-width", `${Math.max(0.3, (endpoint.ci95[1] - endpoint.ci95[0]) * 100)}%`);
+    track.append(interval);
+  }
+
+  const shown = document.createElement("b");
+  shown.className = "reliability-bar-value";
+  shown.textContent = scoreView ? formatScore(value) : metric === "cost" ? formatMoney(value) : `${value.toFixed(2)}s`;
+  link.append(label, track, shown);
+  return link;
+}
+
+function ledgerCell(label, value) {
+  const cell = document.createElement("div");
+  cell.className = "ledger-cell";
+  const small = document.createElement("small");
+  small.textContent = label;
+  const bold = document.createElement("b");
+  bold.textContent = value;
+  cell.append(small, bold);
+  return cell;
+}
+
+function renderReliabilityLedger(items) {
+  const values = (dimension) => items
+    .map((item) => item.dimensions[dimension]?.value)
+    .filter((value) => Number.isFinite(value));
+  const paired = items.filter((item) => item.dimensions.exact && item.dimensions.completion);
+  const gap = paired.length ? paired.reduce((total, item) => (
+    total + item.dimensions.completion.value - item.dimensions.exact.value
+  ), 0) / paired.length : null;
+  els.reliabilityLedger.replaceChildren(
+    ledgerCell("Result artifacts", formatCount(items.length)),
+    ledgerCell("Labs represented", formatCount(new Set(items.map((item) => item.lab_path)).size)),
+    ledgerCell("Median exact", formatScore(medianValue(values("exact")))),
+    ledgerCell("Median completion", formatScore(medianValue(values("completion")))),
+    ledgerCell("Completion − exact", gap === null ? "—" : `${(gap * 100).toFixed(1)} pt`),
+    ledgerCell("Median cost / case", formatMoney(medianValue(items.map((item) => item.mean_cost_usd)))),
+    ledgerCell("Median p50", `${(medianValue(items.map((item) => item.p50_latency_s)) ?? 0).toFixed(2)}s`),
+  );
+}
+
+function renderReliabilityChart(items) {
+  const metric = state.reliabilityMetric;
+  const scoreView = ["exact", "completion", "safety"].includes(metric);
+  const available = items
+    .map((item) => ({ item, value: reliabilityMetricValue(item) }))
+    .filter(({ value }) => Number.isFinite(value))
+    .sort((a, b) => (scoreView ? a.value - b.value : b.value - a.value) || a.item.title.localeCompare(b.item.title));
+  const maximum = scoreView ? 1 : Math.max(...available.map(({ value }) => value), 0);
+  const shown = available.slice(0, 18);
+  els.reliabilityViewLabel.textContent = reliabilityMetricLabel(metric).toLocaleUpperCase();
+  els.reliabilityResultCount.textContent = `Showing ${shown.length} ${scoreView ? "lowest" : "highest"} of ${available.length} source-linked artifacts`;
+  els.reliabilityScaleMid.textContent = scoreView ? ".50" : metric === "cost" ? formatMoney(maximum / 2) : `${(maximum / 2).toFixed(1)}s`;
+  els.reliabilityScaleMax.textContent = scoreView ? "1.00" : metric === "cost" ? formatMoney(maximum) : `${maximum.toFixed(1)}s`;
+  els.reliabilityChartCaveat.textContent = scoreView
+    ? "Selected endpoints remain lab-specific. White whiskers show committed 95% intervals; open any row to audit the source metric and trace."
+    : "Observed values are not normalized for provider, region, cache behavior, pricing changes, or task length. Open any row to audit the artifact.";
+  if (!shown.length) {
+    const empty = document.createElement("div");
+    empty.className = "reliability-empty";
+    empty.textContent = "No committed artifact in this filter reports the selected view. Missing coverage stays missing—it is never rendered as zero.";
+    els.reliabilityChart.replaceChildren(empty);
+    return;
+  }
+  els.reliabilityChart.replaceChildren(...shown.map(({ item, value }) => reliabilityBar(item, value, maximum)));
+}
+
+function modelCard(model, items, index) {
+  const colors = ["#d9ff67", "#48d9ff", "#ff6e9f", "#c0a3ff", "#ffb45f", "#56e49c", "#7eb0ff", "#f6e27f"];
+  const article = document.createElement("article");
+  article.className = "reliability-model-card";
+  article.style.setProperty("--model-color", colors[index % colors.length]);
+  const coverage = document.createElement("span");
+  const labCount = new Set(items.map((item) => item.lab_path)).size;
+  coverage.textContent = `${items.length} EVAL${items.length === 1 ? "" : "S"} / ${labCount} LAB${labCount === 1 ? "" : "S"}`;
+  const heading = document.createElement("h4");
+  heading.textContent = items[0].model_display;
+  const metricValues = items.map((item) => reliabilityMetricValue(item)).filter((value) => Number.isFinite(value));
+  const score = medianValue(metricValues);
+  const scoreWrap = document.createElement("div");
+  scoreWrap.className = "model-card-score";
+  const scoreValue = document.createElement("b");
+  scoreValue.textContent = ["exact", "completion", "safety"].includes(state.reliabilityMetric)
+    ? formatScore(score)
+    : state.reliabilityMetric === "cost" ? formatMoney(score) : score === null ? "—" : `${score.toFixed(2)}s`;
+  const scoreLabel = document.createElement("small");
+  scoreLabel.textContent = `median ${reliabilityMetricLabel(state.reliabilityMetric)} · n=${metricValues.length}`;
+  scoreWrap.append(scoreValue, scoreLabel);
+  const proof = document.createElement("div");
+  proof.className = "model-card-proof";
+  for (const [value, label] of [
+    [formatCount(items.reduce((total, item) => total + item.scenario_trials, 0)), "scenario trials"],
+    [formatMoney(medianValue(items.map((item) => item.mean_cost_usd))), "median cost / case"],
+    [`${(medianValue(items.map((item) => item.p50_latency_s)) ?? 0).toFixed(2)}s`, "median p50"],
+    [String(new Set(items.map((item) => item.industry)).size), "industries"],
+  ]) {
+    const cell = document.createElement("span");
+    cell.innerHTML = `<b>${value}</b><small>${label}</small>`;
+    proof.append(cell);
+  }
+  const link = document.createElement("a");
+  link.className = "model-card-link";
+  const params = new URLSearchParams();
+  params.set("rmodel", model);
+  if (state.reliabilityMetric !== "exact") params.set("rmetric", state.reliabilityMetric);
+  link.href = `?${params}#reliability`;
+  link.textContent = "Open report card →";
+  article.append(coverage, heading, scoreWrap, proof, link);
+  return article;
+}
+
+function renderReliabilityModels(items) {
+  const groups = new Map();
+  for (const item of items) {
+    if (!groups.has(item.model)) groups.set(item.model, []);
+    groups.get(item.model).push(item);
+  }
+  const models = [...groups.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+  if (!models.length) {
+    const empty = document.createElement("div");
+    empty.className = "reliability-empty";
+    empty.textContent = "No models match this evidence slice.";
+    els.reliabilityModels.replaceChildren(empty);
+    return;
+  }
+  els.reliabilityModels.replaceChildren(...models.map(([model, group], index) => modelCard(model, group, index)));
+}
+
+function renderReliabilityPatterns() {
+  const patterns = state.reliability.failure_patterns.filter((pattern) => (
+    (state.reliabilityIndustry === "all" || pattern.industries.includes(state.reliabilityIndustry))
+    && (state.reliabilityContract === "all" || pattern.contracts.includes(state.reliabilityContract))
+  )).slice(0, 6);
+  const cards = patterns.map((pattern, index) => {
+    const link = document.createElement("a");
+    link.className = "reliability-pattern-card";
+    link.href = pattern.url;
+    const top = document.createElement("span");
+    top.innerHTML = `<i>0${index + 1}</i><b>${pattern.use_case_count}</b>`;
+    const heading = document.createElement("h4");
+    heading.textContent = pattern.name;
+    const copy = document.createElement("p");
+    copy.textContent = pattern.one_liner;
+    link.append(top, heading, copy);
+    return link;
+  });
+  if (!cards.length) {
+    const empty = document.createElement("div");
+    empty.className = "reliability-empty";
+    empty.textContent = "No cross-lab taxonomy pattern is assigned to this filter yet. Inspect the source artifacts for case-specific failures.";
+    els.reliabilityPatterns.replaceChildren(empty);
+    return;
+  }
+  els.reliabilityPatterns.replaceChildren(...cards);
+}
+
+function renderReliability() {
+  const items = filteredReliability();
+  renderReliabilityChart(items);
+  renderReliabilityLedger(items);
+  renderReliabilityModels(items);
+  renderReliabilityPatterns();
+}
+
+function addReliabilityOptions(select, values, display = (value) => value) {
+  for (const value of values) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = display(value);
+    select.append(option);
+  }
+}
+
+async function loadReliability() {
+  const response = await fetch("reliability-data.json?v=1");
+  if (!response.ok) throw new Error(`Reliability evidence failed to load (${response.status})`);
+  state.reliability = await response.json();
+  const { stats } = state.reliability;
+  els.reliabilityEvals.textContent = formatCount(stats.evaluations);
+  els.reliabilityTrials.textContent = formatCount(stats.scenario_trials);
+  els.reliabilityLabs.textContent = formatCount(stats.labs);
+  els.reliabilityFailures.textContent = formatCount(stats.failure_modes);
+  els.reliabilitySpend.textContent = `$${stats.recorded_spend_usd.toFixed(2)}`;
+  els.reliabilityGap.textContent = stats.mean_completion_exact_gap_points.toFixed(1);
+  els.reliabilityGapNote.textContent = `${stats.high_completion_low_exact} artifacts finish ≥95% while exact success stays <70%`;
+  els.reliabilityCi.textContent = stats.median_exact_ci_width_points.toFixed(1);
+  const exceptionPattern = state.reliability.failure_patterns.find((pattern) => pattern.id === "rule-transfer");
+  els.reliabilityExceptionLabs.textContent = exceptionPattern?.use_case_count ?? "—";
+  els.reliabilityPinned.textContent = `${stats.model_pinned}/${stats.evaluations}`;
+  els.reliabilityAliasNote.textContent = `${stats.served_alias_mismatches} served-model alias mismatches are recorded`;
+
+  addReliabilityOptions(
+    els.reliabilityModel,
+    [...new Set(state.reliability.evaluations.map((item) => item.model))].sort(),
+    (model) => state.reliability.evaluations.find((item) => item.model === model).model_display,
+  );
+  addReliabilityOptions(els.reliabilityIndustry, [...new Set(state.reliability.evaluations.map((item) => item.industry))].sort());
+  addReliabilityOptions(els.reliabilityContract, [...new Set(state.reliability.evaluations.map((item) => item.contract))].sort());
+
+  const params = new URLSearchParams(location.search);
+  const metric = params.get("rmetric");
+  if (["exact", "completion", "safety", "cost", "latency"].includes(metric)) state.reliabilityMetric = metric;
+  const model = params.get("rmodel");
+  const industry = params.get("rindustry");
+  const contract = params.get("rcontract");
+  if ([...els.reliabilityModel.options].some((option) => option.value === model)) state.reliabilityModel = model;
+  if ([...els.reliabilityIndustry.options].some((option) => option.value === industry)) state.reliabilityIndustry = industry;
+  if ([...els.reliabilityContract.options].some((option) => option.value === contract)) state.reliabilityContract = contract;
+  els.reliabilityMetric.value = state.reliabilityMetric;
+  els.reliabilityModel.value = state.reliabilityModel;
+  els.reliabilityIndustry.value = state.reliabilityIndustry;
+  els.reliabilityContract.value = state.reliabilityContract;
+
+  for (const [control, key] of [
+    [els.reliabilityMetric, "reliabilityMetric"],
+    [els.reliabilityModel, "reliabilityModel"],
+    [els.reliabilityIndustry, "reliabilityIndustry"],
+    [els.reliabilityContract, "reliabilityContract"],
+  ]) control.addEventListener("change", () => {
+    state[key] = control.value;
+    syncReliabilityUrl();
+    renderReliability();
+  });
+  els.reliabilityReset.addEventListener("click", () => {
+    state.reliabilityMetric = "exact";
+    state.reliabilityModel = "all";
+    state.reliabilityIndustry = "all";
+    state.reliabilityContract = "all";
+    els.reliabilityMetric.value = "exact";
+    els.reliabilityModel.value = "all";
+    els.reliabilityIndustry.value = "all";
+    els.reliabilityContract.value = "all";
+    syncReliabilityUrl();
+    renderReliability();
+  });
+  els.copyReliabilityLink.addEventListener("click", () => copyText(location.href, els.copyReliabilityLink, "Copy report link"));
+  renderReliability();
 }
 
 async function copyText(text, control, defaultLabel) {
@@ -750,6 +1117,13 @@ async function init() {
   });
   els.openCompare.addEventListener("click", renderComparison);
   render();
+  loadReliability().catch((error) => {
+    els.reliabilityResultCount.textContent = "Reliability evidence unavailable";
+    const empty = document.createElement("div");
+    empty.className = "reliability-empty";
+    empty.textContent = `${error.message}. Open STATE_OF_AGENT_RELIABILITY_2026.md on GitHub instead.`;
+    els.reliabilityChart.replaceChildren(empty);
+  });
   loadGallery().catch((error) => {
     els.galleryCount.textContent = "Gallery evidence unavailable";
     const empty = document.createElement("div");

@@ -5,6 +5,12 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **State of Agent Reliability 2026** — an automatically generated, interactive research
+  release now turns 201 committed model evaluations and 16,182 scenario trials into
+  source-linked exactness, completion, safety, cost, latency, uncertainty, coverage, and
+  provenance views. The citable report, downloadable JSON/CSV, shareable filter URLs,
+  model report cards, failure terrain, bespoke social preview, and CI drift check avoid a
+  universal composite score and regenerate whenever committed evidence changes.
 - **AAU Forge 2 — contract-aware generation** — Studio briefs selecting Decision Gate,
   Rights Continuity, or Critical Event Fan-Out now compile into distinct executable worlds,
   node graphs, strict tools, conjunctive metrics, tests, README diagrams, and blueprint
