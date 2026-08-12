@@ -96,8 +96,8 @@ owners and counsel or safety authorities.
 
 | Model / evidence | Scenarios × repeats | Outcome | Evidence | Gates | Transfer | Authority | Record | **Exact** | p50 | Mean cost / scenario |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| [mistral / mistral-small-latest](results/eval_mistral-small-latest.md) | 8 × 3 | 0.625 | 1.000 | 0.875 | 1.000 | 1.000 | 0.917 | 0.583 | 8.17s | $0.0004 |
-| [deterministic baseline](results/eval_mock.md) | 32 × 3 | 0.875 | 0.750 | 0.875 | 1.000 | 0.875 | 1.000 | 0.500 | 0.00s | $0.0000 |
+| [mistral / mistral-small-latest](results/eval_mistral-small-latest.md) | 8 × 3 | 0.708 | 0.958 | 0.875 | 1.000 | 1.000 | 0.875 | 0.500 | 7.99s | $0.0003 |
+| [deterministic baseline](results/eval_mock.md) | 32 × 3 | 0.750 | 0.750 | 0.875 | 0.875 | 0.875 | 1.000 | 0.375 | 0.00s | $0.0000 |
 
 These are synthetic smoke suites—not rankings, eligibility or medical decisions, legal
 conclusions, regulatory filings, or claims about live people, organizations, or deployed
