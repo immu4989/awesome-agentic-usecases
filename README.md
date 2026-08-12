@@ -14,6 +14,7 @@
   <a href="START_HERE.md">Start here</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/">Use-case explorer</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
+  <a href="AAU_FORGE.md">AAU Forge</a> ·
   <a href="#run-one-now">Run one</a> ·
   <a href="PLAYBOOKS.md">Playbooks</a> ·
   <a href="USE_CASE_RADAR.md">Use-case radar</a> ·
@@ -50,7 +51,7 @@ real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
 
-## New: bring a workflow, leave with an evaluation
+## New: bring a workflow, leave with a runnable evaluation
 
 **[AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio)** turns the
 catalog into a practical starting point. Describe a workflow, select the agent shape and
@@ -61,9 +62,11 @@ headline metrics belong on one leaderboard.
 
 The strongest match becomes a fork-ready kit: copy the exact local run, download a
 vendor-neutral evaluation brief, or open a prefilled request when the closest verified lab
-does not cover the deciding facts. Matching runs entirely in the browser: **no account, no
-workflow upload, no tracking, and no API key**. See [how Studio works](AAU_STUDIO.md) and
-the [evaluation-brief schema](docs/studio-spec.schema.json).
+does not cover the deciding facts. Then **[AAU Forge](AAU_FORGE.md)** turns that brief into
+a runnable package with scenarios, exact scoring, tests, a mock result, adaptation controls,
+and its own CI workflow. Matching runs entirely in the browser: **no account, no workflow
+upload, no tracking, and no API key**. See [how Studio works](AAU_STUDIO.md) and the
+[evaluation-brief schema](docs/studio-spec.schema.json).
 
 ## New release: preserve the right that makes the main right usable
 
@@ -258,6 +261,7 @@ accessible mobility, transparency, trade, nutrition, elections, care transitions
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
+| **Turn my Studio brief into code** | [AAU Forge](AAU_FORGE.md) | A verified starter package, provenance manifest, adaptation checklist, and dedicated CI workflow |
 | **See what the community should solve next** | [Real-world Use-case Radar](USE_CASE_RADAR.md) | Prioritized workflows, safety boundaries, closest templates, and places where a domain partner is needed |
 | **Contribute a use case** | [Contribution guide](CONTRIBUTING.md) | A clear verification bar, proposal template, and CI-enforced checklist |
 | **Share an adaptation or ask a question** | [Community discussions](https://github.com/immu4989/awesome-agentic-usecases/discussions) | Reproducible fork showcases, evaluation questions, and contract feedback |
@@ -682,6 +686,15 @@ That scaffolds a complete use case — seeded world, shared gold function, deter
 with an engineered gap, and the tests that hold the bar in place — then installs it,
 generates the scenarios, runs the tests and a mock eval, and only then prints your next
 steps. Replace the placeholder domain; the rigor is already installed.
+
+Starting from Studio instead? Download its evaluation brief and run:
+
+```bash
+aau forge aau-evaluation-brief.json --name my-workflow-eval
+```
+
+Forge preserves the closest verified evaluation contract and produces a runnable,
+CI-protected adaptation without claiming that its generic domain rules are production truth.
 
 New use cases are welcome if they clear the [verification bar](VERIFICATION.md) —
 see [CONTRIBUTING.md](CONTRIBUTING.md). Link-list additions aren't a fit; this isn't

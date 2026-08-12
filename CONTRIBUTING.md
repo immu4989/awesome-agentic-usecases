@@ -53,6 +53,11 @@ translate a production workflow into programmatic gold, and preserve the invaria
 make the result trustworthy. Use `aau find`, `aau show`, and `aau start` to explore before
 you scaffold.
 
+If you began in [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio),
+download its evaluation brief and run `aau forge <brief.json> --name <your-eval>`.
+[AAU Forge](AAU_FORGE.md) preserves the matched architecture, generates a runnable lab,
+and adds an explicit domain-review checklist and dedicated CI workflow.
+
 ## Development
 
 ```bash

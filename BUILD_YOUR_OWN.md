@@ -37,7 +37,23 @@ yours, even if its industry does not.
 Use `aau show <name>` to inspect an entry and `aau start <name>` for its exact local
 installation order.
 
-### Generate a new shape
+### Forge from a Studio brief
+
+Use [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) when you
+already know the workflow but not the closest evaluation architecture. Download the brief,
+then run:
+
+```bash
+python -m pip install -e harness[dev]
+aau forge aau-evaluation-brief.json --name claim-escalation-agent
+```
+
+Forge carries the workflow, consequence profile, closest verified case, reusable contract,
+scenario minimum, repeats, and required proofs into the generated package. It also creates
+an adaptation checklist, provenance manifest, and standalone CI workflow, then executes the
+generated lab before handoff. See [AAU_FORGE.md](AAU_FORGE.md).
+
+### Generate a new shape manually
 
 ```bash
 python -m pip install -e harness

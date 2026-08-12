@@ -213,6 +213,13 @@ def build_parser() -> argparse.ArgumentParser:
     starting = sub.add_parser("start", help="print exact install and mock-eval commands")
     starting.add_argument("name", help="title, path, or CLI name")
 
+    forging = sub.add_parser("forge", help="turn a Studio brief into a runnable adaptation lab")
+    forging.add_argument("brief", help="evaluation brief downloaded from AAU Studio")
+    forging.add_argument("--name", required=True, help="new package and CLI name")
+    forging.add_argument("--title", help="human-readable lab title")
+    forging.add_argument("--seed", type=int, help="override the brief-derived seed")
+    forging.add_argument("--no-verify", action="store_true", help="skip install, tests, and mock run")
+
     sub.add_parser("doctor", help="check that every catalog entry is runnable and documented")
     return parser
 
@@ -236,6 +243,17 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "start":
         print(render_start(root, resolve_case(cases, args.name)))
         return 0
+    if args.command == "forge":
+        from .forge import main as forge_main
+
+        forge_args = [args.brief, "--name", args.name, "--root", str(root)]
+        if args.title:
+            forge_args.extend(["--title", args.title])
+        if args.seed is not None:
+            forge_args.extend(["--seed", str(args.seed)])
+        if args.no_verify:
+            forge_args.append("--no-verify")
+        return forge_main(forge_args)
 
     problems = doctor(root, cases)
     if problems:

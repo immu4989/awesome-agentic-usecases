@@ -289,6 +289,20 @@ those results are point-in-time observations, not exactly reproducible.
 
 ## Scaffolding a use case
 
+When you have downloaded an AAU Studio brief, Forge is the shortest path:
+
+```bash
+aau forge aau-evaluation-brief.json --name my-workflow-eval
+```
+
+It validates the brief, generates the standard scaffold, preserves source-case provenance,
+adds an adaptation checklist and dedicated CI workflow, and runs offline-friendly imports,
+scenarios, tests, and a three-repeat mock evaluation. Generated rules remain explicitly
+unvalidated until a domain owner replaces every adaptation marker. See
+[AAU Forge](../AAU_FORGE.md).
+
+For a new shape without a Studio brief:
+
 ```bash
 aau-new-use-case --industry healthcare --name prior-auth-triage-agent --seed 41
 ```

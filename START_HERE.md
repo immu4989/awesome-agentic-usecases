@@ -14,6 +14,11 @@ your description to the full verified catalog, explains the evidence behind each
 compares up to three architectures, and creates a fork-ready evaluation brief locally in
 your browser. No workflow text is uploaded.
 
+Once Studio gives you a match, download the evaluation brief and run
+`aau forge <brief.json> --name <your-eval>` to generate and verify a runnable adaptation.
+Forge keeps domain truth explicitly unvalidated until a qualified owner replaces the
+generic rules. See [AAU Forge](AAU_FORGE.md).
+
 ## I want to see a real agent failure
 
 Start with one of these ten. Each takes the same shape—scenario, tools, agent, exact

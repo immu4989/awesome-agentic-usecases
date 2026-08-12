@@ -14,13 +14,18 @@ def main() -> None:
     taxonomy = json.loads((ROOT / "docs" / "assets" / "taxonomy.json").read_text())
     studio = json.loads((ROOT / "docs" / "studio-data.json").read_text())
     schema = json.loads((ROOT / "docs" / "studio-spec.schema.json").read_text())
+    example = json.loads((ROOT / "docs" / "studio-spec.example.json").read_text())
     html = (ROOT / "docs" / "index.html").read_text()
     script = (ROOT / "docs" / "explorer.js").read_text()
 
     assert studio["version"] == "aau-studio/1.0"
     assert schema["$id"].endswith("studio-spec.schema.json")
-    assert (ROOT / "docs" / "assets" / "social-card-studio.png").is_file()
-    assert "social-card-studio.png" in html, "Studio social preview is not wired"
+    assert example["contract_version"] == studio["version"]
+    assert example["recommended_case"]["path"] in {
+        item["path"] for item in studio["cases"]
+    }
+    assert (ROOT / "docs" / "assets" / "social-card-forge.png").is_file()
+    assert "social-card-forge.png" in html, "Studio + Forge social preview is not wired"
     assert len(studio["cases"]) == len(catalog)
     assert {item["path"] for item in studio["cases"]} == {item["path"] for item in catalog}
     assert studio["proof"]["failure_patterns"] == taxonomy["patterns"]
@@ -46,6 +51,8 @@ def main() -> None:
         "studio-kit",
         "compare-tray",
         "compare-dialog",
+        "forge-command",
+        "copy-forge-command",
     )
     for element_id in required_ids:
         assert f'id="{element_id}"' in html, f"Studio is missing #{element_id}"
@@ -55,11 +62,16 @@ def main() -> None:
         "downloadStudioSpec",
         "renderComparison",
         "buildIssueUrl",
+        "slugifyStudio",
     ):
         assert behavior in script, f"Studio script is missing {behavior}"
 
     for discussion_form in ("show-and-tell.yml", "q-and-a.yml"):
         assert (ROOT / ".github" / "DISCUSSION_TEMPLATE" / discussion_form).is_file()
+    assert (ROOT / "AAU_FORGE.md").is_file()
+    assert 'aau-forge = "aau_harness.forge:main"' in (
+        ROOT / "harness" / "pyproject.toml"
+    ).read_text()
 
     print(f"AAU Studio integrity OK: {len(catalog)} indexed use cases")
 

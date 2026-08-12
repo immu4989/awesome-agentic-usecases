@@ -30,6 +30,8 @@ const els = {
   studioCommand: document.querySelector("#studio-command"),
   copyStudioCommand: document.querySelector("#copy-studio-command"),
   downloadStudioSpec: document.querySelector("#download-studio-spec"),
+  forgeCommand: document.querySelector("#forge-command"),
+  copyForgeCommand: document.querySelector("#copy-forge-command"),
   studioRequest: document.querySelector("#studio-request"),
   compareTray: document.querySelector("#compare-tray"),
   compareCount: document.querySelector("#compare-count"),
@@ -357,6 +359,12 @@ function selectStudioStarter(match) {
   els.studioRequest.href = buildIssueUrl(match);
   els.studioKit.dataset.path = item.path;
   els.studioKit.dataset.score = String(score);
+  const forgeName = `${slugifyStudio(item.title.replace(/coordinator|navigator|agent|gate/gi, "")) || "my-workflow"}-eval`;
+  els.forgeCommand.textContent = `aau forge <downloaded-brief.json> --name ${forgeName}`;
+}
+
+function slugifyStudio(text) {
+  return normalize(text).replace(/\s+/g, "-").replace(/^-|-$/g, "");
 }
 
 function studioSpec() {
@@ -531,6 +539,7 @@ async function init() {
   });
   els.copyStudioCommand.addEventListener("click", () => copyText(els.studioCommand.textContent, els.copyStudioCommand, "Copy zero-cost run"));
   els.downloadStudioSpec.addEventListener("click", downloadStudioSpec);
+  els.copyForgeCommand.addEventListener("click", () => copyText(els.forgeCommand.textContent, els.copyForgeCommand, "Copy Forge command"));
   els.clearCompare.addEventListener("click", () => {
     state.compare = [];
     renderCompareTray();

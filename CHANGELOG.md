@@ -6,6 +6,11 @@ the harness API is what is versioned; use cases are additive.
 ## Unreleased
 
 ### Added
+- **AAU Forge** — a Studio-brief compiler that generates a runnable adaptation lab with a
+  seeded world, shared exact scorer, deterministic mock gap, tests, committed scenarios,
+  provenance manifest, domain-review checklist, and dedicated GitHub Actions workflow. It
+  verifies the package by default while explicitly refusing to call generic rules
+  domain-validated.
 - **AAU Studio** — a local-first workflow matcher that ranks all verified labs by explicit
   industry, agent-shape, consequence, contract, and observed-failure evidence. Users can
   inspect why each case matched, compare up to three labs without conflating unlike
