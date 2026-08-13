@@ -5,6 +5,13 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Can You Trust This Agent?** — a zero-install interactive evidence playground now turns
+  five committed real-model traces into Trust, Verify, or Block decisions across grid
+  operations, hiring, pharmaceutical manufacturing, health-insurance appeals, and security.
+  Every reveal links the exact scenario, result, runnable lab, and Reliability Challenge;
+  stable case URLs are shareable, progress remains local, and CI regenerates public data from
+  source artifacts with hashes and secret-redaction checks.
+
 ## 1.0.0 - 2026-08-12
 
 - **AAU Reliability Challenge** — five bounded missions across Reproduce, Break, and Adapt

@@ -32,7 +32,7 @@ def main() -> None:
         assert behavior in script, f"Challenge script is missing {behavior}"
     assert "challenge-data.json" in script
     assert "Bring the receipt" in html
-    assert "social-card-challenge.png" in html
+    assert "social-card-playground.png" in html
     assert (ROOT / "docs" / "assets" / "social-card-challenge.png").is_file()
     assert (ROOT / ".github" / "PULL_REQUEST_TEMPLATE" / "reliability-challenge.md").is_file()
     assert (ROOT / "challenge" / "challenge-entry.schema.json").is_file()

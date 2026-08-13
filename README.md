@@ -13,6 +13,7 @@
 <p align="center">
   <a href="START_HERE.md">Start here</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/">Use-case explorer</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/?case=grid-restoration-ready#playground">Interactive playground</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#reliability">State of Agent Reliability 2026</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#challenge">AAU Reliability Challenge</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
@@ -53,6 +54,30 @@ domain-specific map of the hidden trap, responsive charts generated from committ
 real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff profile,
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
+
+## New: Can you trust this agent?
+
+**[Enter the zero-install evidence playground](https://immu4989.github.io/awesome-agentic-usecases/?case=grid-restoration-ready#playground)**
+and review five real model traces before seeing the committed ground truth. Each case asks
+for one operational decision—**Trust**, **Verify**, or **Block**—across grid restoration,
+hiring, pharmaceutical batch disposition, urgent health-plan appeals, and poisoned tools.
+
+This is not a trivia quiz. The visitor sees the scenario facts, evidence ledger, gate states,
+model action, reason code, provenance, measured cost, and latency. Some answers look correct
+until the receipt is inspected: a model can choose the right batch hold while falsely claiming
+the failed sterility gate was confirmed, or route an urgent appeal as an ordinary complete packet
+while its 72-hour protection expires.
+
+- No API key, account, model call, backend, or payment.
+- Stable URLs share any individual case.
+- Progress stays in the browser; no identity, answer, or telemetry is sent.
+- Every reveal opens the exact scenario, model result, runnable lab, and related Challenge.
+- [`playground/scenarios.json`](playground/scenarios.json) selects cases; CI derives the public
+  traces from committed evidence and fails on source drift.
+
+Audit the [playground evidence contract](playground/README.md), the
+[generator](docs/make_playground_data.py), or the generated
+[machine-readable cases](docs/playground-data.json).
 
 <!-- RELIABILITY-SNAPSHOT:START -->
 
@@ -349,6 +374,7 @@ accessible mobility, transparency, trade, nutrition, elections, care transitions
 
 | I want to… | Start here | What you get |
 |---|---|---|
+| **Test my own agent judgment** | [Can You Trust This Agent?](https://immu4989.github.io/awesome-agentic-usecases/?case=grid-restoration-ready#playground) | Five source-linked model traces with Trust, Verify, or Block decisions and committed ground truth |
 | **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Four short paths through routing, irreversible action, tool poisoning, and public-value failures |
 | **Find an example for my workflow** | [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) | Describe the work, compare evidence-backed matches, and download a fork-ready evaluation brief |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |

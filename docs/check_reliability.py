@@ -58,7 +58,7 @@ def main() -> None:
         assert behavior in script, f"reliability script is missing {behavior}"
     assert "No universal reliability score" in html
     assert "reliability-data.csv" in html and "reliability-data.json" in html
-    assert "social-card-challenge.png" in html
+    assert "social-card-playground.png" in html
     assert (ROOT / "docs" / "assets" / "social-card-reliability-2026.png").is_file()
     assert f"**{stats['scenario_trials']:,}**" in report
     assert f"**{stats['failure_modes']}**" in report
