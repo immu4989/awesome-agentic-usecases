@@ -20,6 +20,9 @@ Open the [live mission board](https://immu4989.github.io/awesome-agentic-usecase
 to filter the five starter challenges, download a ready-to-edit submission record, see
 evidence-derived achievements, and inspect the public scoreboard.
 
+Claim one of the five [`good first issue` missions](https://github.com/immu4989/awesome-agentic-usecases/issues?q=is%3Aissue%20state%3Aopen%20label%3Achallenge),
+or introduce yourself in the [Challenge announcement](https://github.com/immu4989/awesome-agentic-usecases/discussions/6).
+
 ## The 30-minute path
 
 1. Open the repository in [Codespaces](https://codespaces.new/immu4989/awesome-agentic-usecases?quickstart=1)

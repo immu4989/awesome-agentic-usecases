@@ -113,6 +113,9 @@ CI checks the mission, declared track, Gallery evidence level, observed failures
 sources, repeated runs, model coverage, and protected human authority. There are no
 self-awarded points or badges.
 
+See the complete [v1.0.0 release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/v1.0.0)
+or introduce yourself in the [Challenge announcement](https://github.com/immu4989/awesome-agentic-usecases/discussions/6).
+
 ## New: bring a workflow, leave with a runnable evaluation
 
 **[AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio)** turns the
