@@ -5,6 +5,13 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+## 1.0.0 - 2026-08-12
+
+- **AAU Reliability Challenge** — five bounded missions across Reproduce, Break, and Adapt
+  tracks now provide a 30-minute contribution path, exact zero-cost commands, machine-valid
+  Gallery submissions, CI-derived achievements, an honest public scoreboard that separates
+  references from community finishes, a local-only submission builder, and five claimable
+  `good first issue` entry points.
 - **State of Agent Reliability 2026** — an automatically generated, interactive research
   release now turns 201 committed model evaluations and 16,182 scenario trials into
   source-linked exactness, completion, safety, cost, latency, uncertainty, coverage, and

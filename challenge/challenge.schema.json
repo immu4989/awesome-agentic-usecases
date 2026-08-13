@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/challenge/challenge.schema.json",
+  "title": "AAU Reliability Challenge catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "tracks", "achievements", "challenges"],
+  "properties": {
+    "version": {"const": "aau-challenge/1.0"},
+    "tracks": {"type": "array", "minItems": 3},
+    "achievements": {"type": "array", "minItems": 6},
+    "challenges": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "number", "track", "title", "difficulty", "minutes", "beneficiary", "mission", "trap", "starter_lab", "command", "success", "artifact", "issue_url", "tags"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+          "number": {"type": "string", "pattern": "^C[0-9]{2}$"},
+          "track": {"enum": ["Reproduce", "Break", "Adapt"]},
+          "title": {"type": "string", "minLength": 1},
+          "difficulty": {"type": "string", "minLength": 1},
+          "minutes": {"type": "integer", "minimum": 15, "maximum": 120},
+          "beneficiary": {"type": "string", "minLength": 1},
+          "mission": {"type": "string", "minLength": 1},
+          "trap": {"type": "string", "minLength": 1},
+          "starter_lab": {"type": "string", "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"},
+          "command": {"type": "string", "minLength": 1},
+          "success": {"type": "string", "minLength": 1},
+          "artifact": {"type": "string", "minLength": 1},
+          "issue_url": {"type": "string"},
+          "tags": {"type": "array", "minItems": 2, "maxItems": 5, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  }
+}

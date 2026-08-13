@@ -14,6 +14,7 @@
   <a href="START_HERE.md">Start here</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/">Use-case explorer</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#reliability">State of Agent Reliability 2026</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#challenge">AAU Reliability Challenge</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
   <a href="AAU_FORGE.md">AAU Forge</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#gallery">Community Gallery</a> ·
@@ -82,6 +83,35 @@ explicit, and failure incidence is clearly bounded to this repository. Read the
 release, so its claims cannot silently drift from the evidence.
 
 <!-- RELIABILITY-SNAPSHOT:END -->
+
+## New: 30 minutes, one claim, bring the receipt
+
+The **[AAU Reliability Challenge](https://immu4989.github.io/awesome-agentic-usecases/#challenge)**
+turns this repository from something people read into something they can test. Five bounded
+starter missions span three tracks:
+
+| Reproduce | Break | Adapt |
+|---|---|---|
+| Run a published claim again and trace the divergent scenario. | Add a seeded edge case that exposes a missing failure. | Move a proven contract into a workflow that helps different people. |
+
+Every mission starts from a runnable lab, includes a copyable `$0` command, names the exact
+artifact to return, and has a ready-to-claim public issue. The browser-only submission
+builder downloads a Challenge receipt—or an Adapt Gallery record—without sending or storing personal data. A public
+scoreboard separates maintainer references from community finishes and awards six
+achievements only when committed evidence earns them.
+
+```bash
+python -m pip install -e harness
+aau challenge list
+aau challenge show completion-is-not-correctness
+aau challenge validate <your-gallery-id>
+```
+
+Start in the [one-click contributor workspace](https://codespaces.new/immu4989/awesome-agentic-usecases?quickstart=1),
+read the [Challenge field guide](challenge/README.md), and use the dedicated PR checklist.
+CI checks the mission, declared track, Gallery evidence level, observed failures, review,
+sources, repeated runs, model coverage, and protected human authority. There are no
+self-awarded points or badges.
 
 ## New: bring a workflow, leave with a runnable evaluation
 

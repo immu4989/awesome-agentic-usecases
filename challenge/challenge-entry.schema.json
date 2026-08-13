@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/challenge/challenge-entry.schema.json",
+  "title": "AAU Reliability Challenge receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "challenge_id", "track", "contributor", "lab_path", "claim", "evidence"],
+  "properties": {
+    "schema_version": {"const": "aau-challenge-entry/1.0"},
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "challenge_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "track": {"enum": ["Reproduce", "Break"]},
+    "contributor": {"type": "object", "additionalProperties": false, "required": ["name", "github"], "properties": {"name": {"type": "string", "minLength": 1}, "github": {"type": "string", "pattern": "^@?[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$"}}},
+    "lab_path": {"type": "string", "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"},
+    "claim": {"type": "string", "minLength": 1, "maxLength": 240},
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result_path", "note_path", "scenario_ids"],
+      "properties": {
+        "result_path": {"type": "string", "pattern": "^[A-Za-z0-9_./-]+\\.json$"},
+        "note_path": {"type": "string", "pattern": "^challenge/receipts/[A-Za-z0-9_./-]+\\.md$"},
+        "scenario_ids": {"type": "array", "minItems": 1, "maxItems": 10, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Za-z0-9_-]+$"}}
+      }
+    }
+  }
+}

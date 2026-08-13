@@ -37,12 +37,18 @@ aau list --industry healthcare
 aau find "security adversarial"
 aau show refund-memory
 aau start refund-injected
+aau challenge list
+aau challenge show completion-is-not-correctness
 aau doctor
 ```
 
 `aau start` understands local package dependencies, so controlled comparisons that reuse a
 baseline are installed in the correct order. It prints commands; it never changes your
 environment by itself.
+
+`aau challenge` adds the community Reliability Challenge: list bounded Reproduce, Break,
+and Adapt missions, print their exact zero-cost commands, or validate a Challenge-enabled
+Gallery entry and derive its achievements from committed evidence.
 
 ## Quickstart
 

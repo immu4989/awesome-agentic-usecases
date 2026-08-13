@@ -32,6 +32,7 @@ ENTRY_REQUIRED = {
     "tags",
     "review",
 }
+ENTRY_OPTIONAL = {"challenge"}
 ORIGINS = {"forge-adaptation", "maintainer-reference"}
 MAINTAINER_REFERENCES = {
     ("batch-disposition-reference", "pharmaceutical-manufacturing/batch-disposition-gate"),
@@ -63,7 +64,7 @@ def validate_entry_shape(entry: Any, source: str = "gallery entry") -> None:
     missing = ENTRY_REQUIRED - entry.keys()
     if missing:
         raise GalleryError(f"{source} is missing {', '.join(sorted(missing))}")
-    unexpected = entry.keys() - ENTRY_REQUIRED
+    unexpected = entry.keys() - ENTRY_REQUIRED - ENTRY_OPTIONAL
     if unexpected:
         raise GalleryError(f"{source} has unsupported fields: {', '.join(sorted(unexpected))}")
     if entry["schema_version"] != GALLERY_VERSION:
@@ -109,6 +110,18 @@ def validate_entry_shape(entry: Any, source: str = "gallery entry") -> None:
         or not re.fullmatch(r"[A-Za-z0-9_./-]+\.md", ledger)
     ):
         raise GalleryError(f"{source}.review.source_ledger must be a repository-relative Markdown path")
+    challenge = entry.get("challenge")
+    if challenge is not None:
+        if not isinstance(challenge, dict) or set(challenge) != {"id", "track", "claim"}:
+            raise GalleryError(f"{source}.challenge must contain exactly id, track, and claim")
+        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", str(challenge.get("id", ""))):
+            raise GalleryError(f"{source}.challenge.id must be a lowercase hyphenated slug")
+        if challenge.get("track") not in {"Reproduce", "Break", "Adapt"}:
+            raise GalleryError(f"{source}.challenge.track must be Reproduce, Break, or Adapt")
+        if not _nonempty(challenge.get("claim")) or len(challenge["claim"]) > 240:
+            raise GalleryError(f"{source}.challenge.claim must contain 1 to 240 characters")
+        if entry["origin"] != "forge-adaptation":
+            raise GalleryError(f"{source}: maintainer references cannot claim a Challenge finish")
 
 
 def load_entries(root: Path) -> list[tuple[Path, dict[str, Any]]]:
@@ -312,6 +325,7 @@ def evaluate_entry(root: Path, entry: dict[str, Any]) -> dict[str, Any]:
             "profile_url": f"https://github.com/{github}",
         },
         "review": entry["review"],
+        "challenge": entry.get("challenge"),
         "trust": {
             "level": level,
             "score": {"passed": passed, "total": len(checks)},

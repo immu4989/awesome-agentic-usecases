@@ -18,6 +18,8 @@ const state = {
   reliabilityModel: "all",
   reliabilityIndustry: "all",
   reliabilityContract: "all",
+  challenge: null,
+  challengeTrack: "all",
 };
 
 const els = {
@@ -83,6 +85,23 @@ const els = {
   reliabilityModels: document.querySelector("#reliability-models"),
   reliabilityPatterns: document.querySelector("#reliability-patterns"),
   copyReliabilityLink: document.querySelector("#copy-reliability-link"),
+  challengeLive: document.querySelector("#challenge-live"),
+  challengeParticipants: document.querySelector("#challenge-participants"),
+  challengeFinishes: document.querySelector("#challenge-finishes"),
+  challengeReferences: document.querySelector("#challenge-references"),
+  challengeAchievementCount: document.querySelector("#challenge-achievement-count"),
+  challengeTracks: document.querySelector("#challenge-tracks"),
+  challengeTrack: document.querySelector("#challenge-track"),
+  challengeGrid: document.querySelector("#challenge-grid"),
+  challengeScoreboard: document.querySelector("#challenge-scoreboard"),
+  challengeAchievements: document.querySelector("#challenge-achievements"),
+  challengeBuilder: document.querySelector("#challenge-builder"),
+  challengeGithub: document.querySelector("#challenge-github"),
+  challengeName: document.querySelector("#challenge-name"),
+  challengeBuilderMission: document.querySelector("#challenge-builder-mission"),
+  challengeLabPath: document.querySelector("#challenge-lab-path"),
+  challengeClaim: document.querySelector("#challenge-claim"),
+  challengeBuilderStatus: document.querySelector("#challenge-builder-status"),
   compareTray: document.querySelector("#compare-tray"),
   compareCount: document.querySelector("#compare-count"),
   compareNames: document.querySelector("#compare-names"),
@@ -349,6 +368,242 @@ async function loadGallery() {
     [els.galleryFailure, "galleryFailure"],
   ]) control.addEventListener("change", () => { state[key] = control.value; renderGallery(); });
   renderGallery();
+}
+
+function challengeIssueUrl(item) {
+  if (item.issue_url) return item.issue_url;
+  const params = new URLSearchParams({
+    title: `[challenge] ${item.number}: ${item.title}`,
+    body: `I would like to claim **${item.id}** on the **${item.track}** track.\n\nStarter lab: \`${item.starter_lab}\`\n\nClaim I will test:\n`,
+    labels: "challenge,good first issue",
+  });
+  return `${REPO}/issues/new?${params}`;
+}
+
+function renderChallengeTracks() {
+  els.challengeTracks.replaceChildren(...state.challenge.tracks.map((track) => {
+    const article = document.createElement("article");
+    article.className = "challenge-track-card";
+    article.style.setProperty("--track", track.color);
+    const number = document.createElement("span");
+    number.textContent = `${track.number} / TRACK`;
+    const heading = document.createElement("h3");
+    heading.textContent = track.id;
+    const copy = document.createElement("p");
+    copy.textContent = track.promise;
+    const minimum = document.createElement("small");
+    minimum.textContent = `MINIMUM FINISH · ${track.minimum_level}`;
+    article.append(number, heading, copy, minimum);
+    return article;
+  }));
+}
+
+function challengeCard(item) {
+  const track = state.challenge.tracks.find((candidate) => candidate.id === item.track);
+  const article = document.createElement("article");
+  article.className = "challenge-card";
+  article.style.setProperty("--track", track.color);
+
+  const top = document.createElement("div");
+  top.className = "challenge-card-top";
+  const number = document.createElement("span");
+  number.textContent = `${item.number} / ${item.track.toLocaleUpperCase()}`;
+  const time = document.createElement("b");
+  time.textContent = `~${item.minutes} MIN`;
+  top.append(number, time);
+
+  const heading = document.createElement("h3");
+  heading.textContent = item.title;
+  const beneficiary = document.createElement("p");
+  beneficiary.className = "challenge-beneficiary";
+  beneficiary.textContent = item.beneficiary;
+  const mission = document.createElement("p");
+  mission.className = "challenge-mission";
+  mission.textContent = item.mission;
+
+  const trap = document.createElement("div");
+  trap.className = "challenge-trap";
+  const trapLabel = document.createElement("span");
+  trapLabel.textContent = "HIDDEN TRAP";
+  const trapCopy = document.createElement("p");
+  trapCopy.textContent = item.trap;
+  trap.append(trapLabel, trapCopy);
+
+  const proof = document.createElement("div");
+  proof.className = "challenge-proof";
+  const proofLabel = document.createElement("span");
+  proofLabel.textContent = "RETURN WITH";
+  const proofCopy = document.createElement("b");
+  proofCopy.textContent = item.artifact;
+  proof.append(proofLabel, proofCopy);
+
+  const tags = document.createElement("div");
+  tags.className = "challenge-tags";
+  item.tags.forEach((tag) => tags.append(makeBadge(tag, "challenge-tag")));
+
+  const actions = document.createElement("div");
+  actions.className = "challenge-card-actions";
+  const claim = document.createElement("a");
+  claim.className = "button challenge-primary";
+  claim.href = challengeIssueUrl(item);
+  claim.textContent = "Claim mission ↗";
+  const run = document.createElement("button");
+  run.className = "button challenge-secondary";
+  run.type = "button";
+  run.textContent = "Copy $0 run";
+  run.addEventListener("click", () => copyText(item.command, run, "Copy $0 run"));
+  const lab = document.createElement("a");
+  lab.className = "challenge-lab-link";
+  lab.href = `${REPO}/tree/main/${item.starter_lab}`;
+  lab.textContent = "Inspect starter evidence ↗";
+  actions.append(claim, run, lab);
+  article.append(top, heading, beneficiary, mission, trap, proof, tags, actions);
+  return article;
+}
+
+function renderChallenges() {
+  const missions = state.challenge.challenges.filter((item) => (
+    state.challengeTrack === "all" || item.track === state.challengeTrack
+  ));
+  els.challengeGrid.replaceChildren(...missions.map(challengeCard));
+}
+
+function renderChallengeScoreboard() {
+  const community = state.challenge.scoreboard.filter((item) => item.type === "community");
+  const rows = [...community, ...state.challenge.scoreboard.filter((item) => item.type === "reference")];
+  const fragment = document.createDocumentFragment();
+  if (!community.length) {
+    const open = document.createElement("a");
+    open.className = "challenge-first-finish";
+    open.href = challengeIssueUrl(state.challenge.challenges[0]);
+    open.innerHTML = "<span>POSITION 001 / OPEN</span><b>Be the first independent finisher.</b><small>Choose a mission → return a reproducible receipt</small>";
+    fragment.append(open);
+  }
+  rows.forEach((item, index) => {
+    const row = document.createElement("article");
+    row.className = `challenge-score-row ${item.type}`;
+    const rank = document.createElement("span");
+    rank.textContent = item.type === "reference" ? "REF" : String(index + 1).padStart(3, "0");
+    const identity = document.createElement("div");
+    const title = document.createElement("b");
+    title.textContent = item.title;
+    const contributor = document.createElement("a");
+    contributor.href = item.contributor.profile_url;
+    contributor.textContent = `@${item.contributor.github} · ${item.track}`;
+    identity.append(title, contributor);
+    const achievements = document.createElement("div");
+    achievements.className = "challenge-score-marks";
+    item.achievements.forEach((id) => {
+      const definition = state.challenge.achievements.find((candidate) => candidate.id === id);
+      const mark = document.createElement("i");
+      mark.textContent = definition.mark;
+      mark.title = `${definition.name}: ${definition.rule}`;
+      achievements.append(mark);
+    });
+    const status = document.createElement("a");
+    status.href = `${REPO}/blob/main/${item.record_path}`;
+    status.textContent = `${item.trust.level} · ${item.trust.score.passed}/${item.trust.score.total} ↗`;
+    row.append(rank, identity, achievements, status);
+    fragment.append(row);
+  });
+  els.challengeScoreboard.replaceChildren(fragment);
+}
+
+function renderChallengeAchievements() {
+  els.challengeAchievements.replaceChildren(...state.challenge.achievements.map((item) => {
+    const article = document.createElement("article");
+    const mark = document.createElement("b");
+    mark.textContent = item.mark;
+    const text = document.createElement("div");
+    const name = document.createElement("strong");
+    name.textContent = item.name;
+    const rule = document.createElement("span");
+    rule.textContent = item.rule;
+    text.append(name, rule);
+    article.append(mark, text);
+    return article;
+  }));
+}
+
+function downloadChallengeSubmission(event) {
+  event.preventDefault();
+  const mission = state.challenge.challenges.find((item) => item.id === els.challengeBuilderMission.value);
+  const handle = els.challengeGithub.value.trim().replace(/^@/, "");
+  const id = `${handle.toLocaleLowerCase()}-${mission.id}`.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const labPath = els.challengeLabPath.value.trim();
+  const entry = mission.track === "Adapt" ? {
+    schema_version: "aau-gallery/1.0",
+    id,
+    origin: "forge-adaptation",
+    lab_path: labPath,
+    contributor: { name: els.challengeName.value.trim(), github: handle },
+    summary: `An Adapt finish for ${mission.title}, built from ${mission.starter_lab}.`,
+    why_fork: mission.beneficiary,
+    tags: [...new Set([mission.track.toLocaleLowerCase(), ...mission.tags])].slice(0, 6),
+    challenge: { id: mission.id, track: mission.track, claim: els.challengeClaim.value.trim() },
+    review: { reviewer: "", reviewer_role: "", scope: "", reviewed_at: "", source_ledger: "" },
+  } : {
+    schema_version: "aau-challenge-entry/1.0",
+    id,
+    challenge_id: mission.id,
+    track: mission.track,
+    contributor: { name: els.challengeName.value.trim(), github: handle },
+    lab_path: mission.starter_lab,
+    claim: els.challengeClaim.value.trim(),
+    evidence: {
+      result_path: `${mission.starter_lab}/results/eval_${mission.track.toLocaleLowerCase()}_${handle.toLocaleLowerCase()}.json`,
+      note_path: `challenge/receipts/${id}.md`,
+      scenario_ids: ["replace-with-scenario-id"],
+    },
+  };
+  const blob = new Blob([`${JSON.stringify(entry, null, 2)}\n`], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${entry.id}.json`;
+  const destination = mission.track === "Adapt" ? "gallery/entries/" : "challenge/entries/";
+  els.challengeBuilderStatus.textContent = `Prepared ${entry.id}.json · move it to ${destination}, then run aau challenge validate ${entry.id}`;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 0);
+}
+
+async function loadChallenge() {
+  const response = await fetch("challenge-data.json?v=1");
+  if (!response.ok) throw new Error(`Challenge board failed to load (${response.status})`);
+  state.challenge = await response.json();
+  const { stats } = state.challenge;
+  els.challengeLive.textContent = stats.live_challenges;
+  els.challengeParticipants.textContent = stats.community_participants;
+  els.challengeFinishes.textContent = stats.community_finishes;
+  els.challengeReferences.textContent = stats.reference_finishes;
+  els.challengeAchievementCount.textContent = stats.achievements;
+  state.challenge.tracks.forEach((track) => {
+    const option = document.createElement("option");
+    option.value = track.id;
+    option.textContent = track.id;
+    els.challengeTrack.append(option);
+  });
+  state.challenge.challenges.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item.id;
+    option.textContent = `${item.number} · ${item.title}`;
+    els.challengeBuilderMission.append(option);
+  });
+  const syncChallengeLabPath = () => {
+    const mission = state.challenge.challenges.find((item) => item.id === els.challengeBuilderMission.value);
+    els.challengeLabPath.value = mission?.track === "Adapt" ? "" : mission?.starter_lab || "";
+    els.challengeLabPath.readOnly = mission?.track !== "Adapt";
+  };
+  syncChallengeLabPath();
+  els.challengeBuilderMission.addEventListener("change", syncChallengeLabPath);
+  els.challengeTrack.addEventListener("change", () => {
+    state.challengeTrack = els.challengeTrack.value;
+    renderChallenges();
+  });
+  els.challengeBuilder.addEventListener("submit", downloadChallengeSubmission);
+  renderChallengeTracks();
+  renderChallenges();
+  renderChallengeScoreboard();
+  renderChallengeAchievements();
 }
 
 function medianValue(values) {
@@ -1130,6 +1385,12 @@ async function init() {
     empty.className = "gallery-empty";
     empty.textContent = `${error.message}. Inspect gallery/README.md on GitHub instead.`;
     els.galleryGrid.replaceChildren(empty);
+  });
+  loadChallenge().catch((error) => {
+    const empty = document.createElement("div");
+    empty.className = "challenge-empty";
+    empty.textContent = `${error.message}. Open challenge/README.md on GitHub instead.`;
+    els.challengeGrid.replaceChildren(empty);
   });
 }
 

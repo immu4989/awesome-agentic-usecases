@@ -1,0 +1,121 @@
+{
+  "version": "aau-challenge/1.0",
+  "tracks": [
+    {
+      "id": "Reproduce",
+      "number": "01",
+      "promise": "Run a published claim again and return the receipt.",
+      "minimum_level": "Reproduced",
+      "color": "#d9ff67"
+    },
+    {
+      "id": "Break",
+      "number": "02",
+      "promise": "Find a scenario-linked failure the current evidence misses.",
+      "minimum_level": "Reproduced",
+      "color": "#ff6e9f"
+    },
+    {
+      "id": "Adapt",
+      "number": "03",
+      "promise": "Move a proven contract into a workflow that helps different people.",
+      "minimum_level": "Generated",
+      "color": "#48d9ff"
+    }
+  ],
+  "achievements": [
+    {"id": "receipt-ready", "name": "Receipt Ready", "mark": "RR", "rule": "A Gallery entry clears the Generated evidence level."},
+    {"id": "failure-hunter", "name": "Failure Hunter", "mark": "FH", "rule": "At least three scenario-linked observed failures are committed."},
+    {"id": "repeat-runner", "name": "Repeat Runner", "mark": "N3", "rule": "A real-model result uses at least three repeated runs."},
+    {"id": "cross-model-witness", "name": "Cross-model Witness", "mark": "2M", "rule": "Evidence covers at least two independent model IDs."},
+    {"id": "domain-grounder", "name": "Domain Grounder", "mark": "DG", "rule": "A named review and a ledger with at least two source links are committed."},
+    {"id": "boundary-keeper", "name": "Boundary Keeper", "mark": "BK", "rule": "The protected human authority check passes."}
+  ],
+  "challenges": [
+    {
+      "id": "completion-is-not-correctness",
+      "number": "C01",
+      "track": "Reproduce",
+      "title": "Completion is not correctness",
+      "difficulty": "First run",
+      "minutes": 30,
+      "beneficiary": "Teams choosing an agent from a polished demo",
+      "mission": "Reproduce a committed run where the workflow finishes but the exact answer is wrong, then trace one miss to its scenario.",
+      "trap": "A completion metric rewards a plausible terminal state even when a deciding fact, deadline, or recipient is wrong.",
+      "starter_lab": "privacy-data-governance/privacy-rights-orchestrator",
+      "command": "python -m pip install -e harness -e privacy-data-governance/privacy-rights-orchestrator && privacy-rights-orchestrator eval --backend mock --repeats 3",
+      "success": "Commit the result, name the exactness and completion metrics, and link one divergent scenario.",
+      "artifact": "a repeated result, one scenario id, and a short reproduction note",
+      "issue_url": "",
+      "tags": ["metrics", "reproduction", "privacy rights"]
+    },
+    {
+      "id": "tool-guard-beats-prompt",
+      "number": "C02",
+      "track": "Reproduce",
+      "title": "Put the boundary in the tool",
+      "difficulty": "First run",
+      "minutes": 30,
+      "beneficiary": "Support teams automating customer remedies",
+      "mission": "Reproduce the guarded refund experiment and show whether the tool-layer boundary blocks an action the prompt-only path permits.",
+      "trap": "A model can ignore or misapply a prose policy; a stateful tool can make the unsafe transition impossible.",
+      "starter_lab": "customer-support/refund-guarded",
+      "command": "python -m pip install -e harness -e customer-support/refund-resolution-agent -e customer-support/refund-guarded && refund-guarded eval --backend mock --repeats 3",
+      "success": "Commit the result and identify the scenario where enforcement location changes the outcome.",
+      "artifact": "a repeated result, one scenario id, and a tool-trace comparison",
+      "issue_url": "",
+      "tags": ["tool safety", "intervention", "customer support"]
+    },
+    {
+      "id": "break-the-clean-twin",
+      "number": "C03",
+      "track": "Break",
+      "title": "Break the clean twin",
+      "difficulty": "Failure hunt",
+      "minutes": 45,
+      "beneficiary": "Quality teams protecting patients and regulated supply",
+      "mission": "Add a nearby pharmaceutical scenario where one deciding fact reverses the permitted batch disposition.",
+      "trap": "A rule that is correct for a chemical OOS investigation can become unsafe when transferred to a sterility-positive exception.",
+      "starter_lab": "pharmaceutical-manufacturing/batch-disposition-gate",
+      "command": "python -m pip install -e harness -e pharmaceutical-manufacturing/batch-disposition-gate && batch-disposition-gate eval --backend mock --repeats 3",
+      "success": "Add a seeded clean-twin pair, preserve programmatic ground truth, and document the observed transfer failure.",
+      "artifact": "scenario pair, gold assertion, result, and FAILURE_MODES.md entry",
+      "issue_url": "",
+      "tags": ["rule transfer", "pharma", "decision gate"]
+    },
+    {
+      "id": "break-the-false-receipt",
+      "number": "C04",
+      "track": "Break",
+      "title": "Break the false receipt",
+      "difficulty": "Failure hunt",
+      "minutes": 45,
+      "beneficiary": "Communities relying on time-critical safety reporting",
+      "mission": "Create a pipeline incident where a drafted or attempted notice looks complete but one required recipient or receipt remains open.",
+      "trap": "The response succeeds locally while the obligation graph still contains an unexecuted branch.",
+      "starter_lab": "pipeline-safety/incident-notification-coordinator",
+      "command": "python -m pip install -e harness -e pipeline-safety/incident-notification-coordinator && pipeline-incident-notification eval --backend mock --repeats 3",
+      "success": "Commit a scenario that distinguishes drafted, attempted, accepted, and completed states and link the resulting miss.",
+      "artifact": "scenario, branch-set assertion, result, and receipt-state trace",
+      "issue_url": "",
+      "tags": ["false completion", "public safety", "event fan-out"]
+    },
+    {
+      "id": "adapt-a-right-that-expires",
+      "number": "C05",
+      "track": "Adapt",
+      "title": "Preserve the right that expires first",
+      "difficulty": "Builder",
+      "minutes": 60,
+      "beneficiary": "People navigating a service with two independent protections",
+      "mission": "Adapt Rights Continuity to a new workflow where the main review survives but a shorter companion protection can expire.",
+      "trap": "A single reassuring case status hides the independent clock that keeps the primary right usable.",
+      "starter_lab": "medicaid-chip/renewal-continuity-navigator",
+      "command": "python -m pip install -e harness && aau start renewal-continuity-navigator",
+      "success": "Download a Studio brief, Forge a runnable lab, replace domain placeholders, and submit a machine-valid Gallery entry.",
+      "artifact": "Forge provenance, contract blueprint, runnable mock, and Gallery entry",
+      "issue_url": "",
+      "tags": ["rights continuity", "adaptation", "public service"]
+    }
+  ]
+}

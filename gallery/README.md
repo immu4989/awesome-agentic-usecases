@@ -51,6 +51,14 @@ Community entries use `origin: "forge-adaptation"` and must commit both `aau-for
 and `contract-blueprint.json`. `maintainer-reference` exists only for canonical labs that
 predate Forge and is not accepted as a shortcut for new submissions.
 
+### Optional: connect the entry to a Reliability Challenge
+
+Adapt contributors can choose a [Challenge mission](../challenge/README.md), then add
+`challenge.id`, `track`, and a narrow `claim` to the Gallery entry. Reproduce and Break use
+the lighter Challenge receipt instead. Run `aau challenge validate <entry-id>` after the
+normal Gallery check. Finishes and achievements are derived from evidence; maintainers
+cannot manually grant them.
+
 ## Recognition
 
 Every accepted card links the contributor's GitHub profile and the exact evidence directory.

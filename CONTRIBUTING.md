@@ -71,6 +71,24 @@ plus the contract blueprint. The included
 installs the contributor tools automatically. Read the
 [Gallery standard](gallery/README.md) and use the dedicated Gallery PR template.
 
+## Finish a Reliability Challenge
+
+If a full new lab is too large for a first contribution, choose one of the five bounded
+[Reliability Challenge missions](challenge/README.md). The **Reproduce**, **Break**, and
+**Adapt** tracks start from existing runnable evidence and state the exact receipt to return.
+
+```bash
+aau challenge list
+aau challenge show <challenge-id>
+aau challenge validate <gallery-id>
+```
+
+For Reproduce/Break, add a lightweight `challenge/entries/<id>.json` receipt plus its
+Markdown note. For Adapt, add the optional `challenge` object to the Gallery entry. Do not
+add achievements or a finish status; CI derives both. Open the PR with
+`.github/PULL_REQUEST_TEMPLATE/reliability-challenge.md` so reviewers can inspect the
+claim, scenario, result, and safety boundary without reconstructing the contribution.
+
 ## Development
 
 ```bash

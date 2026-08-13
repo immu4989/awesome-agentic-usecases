@@ -232,6 +232,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     gallery.add_argument("--json", action="store_true", help="emit machine-readable JSON")
 
+    challenge = sub.add_parser("challenge", help="run and validate Reliability Challenge missions")
+    challenge.add_argument("action", nargs="?", choices=("list", "show", "validate"), default="list")
+    challenge.add_argument("target", nargs="?", help="challenge id/number, or Gallery id for validate")
+    challenge.add_argument("--track", choices=("Reproduce", "Break", "Adapt"), help="filter the mission list")
+    challenge.add_argument("--json", action="store_true", help="emit machine-readable JSON")
+
     sub.add_parser("doctor", help="check that every catalog entry is runnable and documented")
     return parser
 
@@ -285,6 +291,17 @@ def main(argv: list[str] | None = None) -> int:
         if args.json:
             gallery_args.append("--json")
         return gallery_main(gallery_args)
+    if args.command == "challenge":
+        from .challenge import main as challenge_main
+
+        challenge_args = [args.action, "--root", str(root)]
+        if args.target:
+            challenge_args.append(args.target)
+        if args.track:
+            challenge_args.extend(["--track", args.track])
+        if args.json:
+            challenge_args.append("--json")
+        return challenge_main(challenge_args)
 
     problems = doctor(root, cases)
     if problems:

@@ -50,7 +50,7 @@ def main() -> None:
     assert "gallery-data.json" in script
     assert (ROOT / ".devcontainer" / "devcontainer.json").is_file()
     assert (ROOT / "docs" / "assets" / "social-card-gallery.png").is_file()
-    assert "social-card-reliability-2026.png" in html, "current research-release preview is not wired"
+    assert "social-card-challenge.png" in html, "current Challenge preview is not wired"
     assert (ROOT / ".github" / "PULL_REQUEST_TEMPLATE" / "gallery-adaptation.md").is_file()
     assert "aau-gallery = \"aau_harness.gallery:main\"" in (
         ROOT / "harness" / "pyproject.toml"

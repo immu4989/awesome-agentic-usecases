@@ -1,65 +1,193 @@
 {
-  "version": "aau-gallery/1.0",
-  "trust_model": {
-    "levels": [
-      "Generated",
-      "Domain reviewed",
-      "Reproduced",
-      "Verified"
-    ],
-    "note": "Statuses are derived from committed evidence. Domain reviewed records review scope; it does not imply regulator or production approval."
-  },
-  "stats": {
-    "adaptations": 3,
-    "contributors": 1,
-    "contracts": 3,
-    "levels": {
-      "Generated": 0,
-      "Domain reviewed": 0,
-      "Reproduced": 2,
-      "Verified": 1
-    }
-  },
-  "entries": [
+  "version": "aau-challenge/1.0",
+  "tracks": [
     {
-      "id": "batch-disposition-reference",
-      "origin": "maintainer-reference",
-      "lab_path": "pharmaceutical-manufacturing/batch-disposition-gate",
-      "title": "Batch Disposition Evidence Gate",
-      "icon": "\ud83e\uddea",
-      "industry": "Pharmaceutical Manufacturing",
-      "contract": {
-        "name": "Decision Gate",
-        "path": "DECISION_GATE_CONTRACT.md"
-      },
-      "failure_patterns": [
-        {
-          "id": "rule-transfer",
-          "name": "Similarity erases the exception",
-          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
-        }
-      ],
-      "summary": "A Decision Gate reference that separates chemical OOS discretion from the sterility-positive rejection path without releasing a batch.",
-      "why_fork": "Start here when a nearby valid rule must never transfer across one decisive fact or protected approval boundary.",
+      "id": "Reproduce",
+      "number": "01",
+      "promise": "Run a published claim again and return the receipt.",
+      "minimum_level": "Reproduced",
+      "color": "#d9ff67"
+    },
+    {
+      "id": "Break",
+      "number": "02",
+      "promise": "Find a scenario-linked failure the current evidence misses.",
+      "minimum_level": "Reproduced",
+      "color": "#ff6e9f"
+    },
+    {
+      "id": "Adapt",
+      "number": "03",
+      "promise": "Move a proven contract into a workflow that helps different people.",
+      "minimum_level": "Generated",
+      "color": "#48d9ff"
+    }
+  ],
+  "achievements": [
+    {
+      "id": "receipt-ready",
+      "name": "Receipt Ready",
+      "mark": "RR",
+      "rule": "A Gallery entry clears the Generated evidence level."
+    },
+    {
+      "id": "failure-hunter",
+      "name": "Failure Hunter",
+      "mark": "FH",
+      "rule": "At least three scenario-linked observed failures are committed."
+    },
+    {
+      "id": "repeat-runner",
+      "name": "Repeat Runner",
+      "mark": "N3",
+      "rule": "A real-model result uses at least three repeated runs."
+    },
+    {
+      "id": "cross-model-witness",
+      "name": "Cross-model Witness",
+      "mark": "2M",
+      "rule": "Evidence covers at least two independent model IDs."
+    },
+    {
+      "id": "domain-grounder",
+      "name": "Domain Grounder",
+      "mark": "DG",
+      "rule": "A named review and a ledger with at least two source links are committed."
+    },
+    {
+      "id": "boundary-keeper",
+      "name": "Boundary Keeper",
+      "mark": "BK",
+      "rule": "The protected human authority check passes."
+    }
+  ],
+  "challenges": [
+    {
+      "id": "completion-is-not-correctness",
+      "number": "C01",
+      "track": "Reproduce",
+      "title": "Completion is not correctness",
+      "difficulty": "First run",
+      "minutes": 30,
+      "beneficiary": "Teams choosing an agent from a polished demo",
+      "mission": "Reproduce a committed run where the workflow finishes but the exact answer is wrong, then trace one miss to its scenario.",
+      "trap": "A completion metric rewards a plausible terminal state even when a deciding fact, deadline, or recipient is wrong.",
+      "starter_lab": "privacy-data-governance/privacy-rights-orchestrator",
+      "command": "python -m pip install -e harness -e privacy-data-governance/privacy-rights-orchestrator && privacy-rights-orchestrator eval --backend mock --repeats 3",
+      "success": "Commit the result, name the exactness and completion metrics, and link one divergent scenario.",
+      "artifact": "a repeated result, one scenario id, and a short reproduction note",
+      "issue_url": "",
       "tags": [
-        "decision gate",
-        "manufacturing",
-        "transfer failure",
-        "protected authority"
-      ],
+        "metrics",
+        "reproduction",
+        "privacy rights"
+      ]
+    },
+    {
+      "id": "tool-guard-beats-prompt",
+      "number": "C02",
+      "track": "Reproduce",
+      "title": "Put the boundary in the tool",
+      "difficulty": "First run",
+      "minutes": 30,
+      "beneficiary": "Support teams automating customer remedies",
+      "mission": "Reproduce the guarded refund experiment and show whether the tool-layer boundary blocks an action the prompt-only path permits.",
+      "trap": "A model can ignore or misapply a prose policy; a stateful tool can make the unsafe transition impossible.",
+      "starter_lab": "customer-support/refund-guarded",
+      "command": "python -m pip install -e harness -e customer-support/refund-resolution-agent -e customer-support/refund-guarded && refund-guarded eval --backend mock --repeats 3",
+      "success": "Commit the result and identify the scenario where enforcement location changes the outcome.",
+      "artifact": "a repeated result, one scenario id, and a tool-trace comparison",
+      "issue_url": "",
+      "tags": [
+        "tool safety",
+        "intervention",
+        "customer support"
+      ]
+    },
+    {
+      "id": "break-the-clean-twin",
+      "number": "C03",
+      "track": "Break",
+      "title": "Break the clean twin",
+      "difficulty": "Failure hunt",
+      "minutes": 45,
+      "beneficiary": "Quality teams protecting patients and regulated supply",
+      "mission": "Add a nearby pharmaceutical scenario where one deciding fact reverses the permitted batch disposition.",
+      "trap": "A rule that is correct for a chemical OOS investigation can become unsafe when transferred to a sterility-positive exception.",
+      "starter_lab": "pharmaceutical-manufacturing/batch-disposition-gate",
+      "command": "python -m pip install -e harness -e pharmaceutical-manufacturing/batch-disposition-gate && batch-disposition-gate eval --backend mock --repeats 3",
+      "success": "Add a seeded clean-twin pair, preserve programmatic ground truth, and document the observed transfer failure.",
+      "artifact": "scenario pair, gold assertion, result, and FAILURE_MODES.md entry",
+      "issue_url": "",
+      "tags": [
+        "rule transfer",
+        "pharma",
+        "decision gate"
+      ]
+    },
+    {
+      "id": "break-the-false-receipt",
+      "number": "C04",
+      "track": "Break",
+      "title": "Break the false receipt",
+      "difficulty": "Failure hunt",
+      "minutes": 45,
+      "beneficiary": "Communities relying on time-critical safety reporting",
+      "mission": "Create a pipeline incident where a drafted or attempted notice looks complete but one required recipient or receipt remains open.",
+      "trap": "The response succeeds locally while the obligation graph still contains an unexecuted branch.",
+      "starter_lab": "pipeline-safety/incident-notification-coordinator",
+      "command": "python -m pip install -e harness -e pipeline-safety/incident-notification-coordinator && pipeline-incident-notification eval --backend mock --repeats 3",
+      "success": "Commit a scenario that distinguishes drafted, attempted, accepted, and completed states and link the resulting miss.",
+      "artifact": "scenario, branch-set assertion, result, and receipt-state trace",
+      "issue_url": "",
+      "tags": [
+        "false completion",
+        "public safety",
+        "event fan-out"
+      ]
+    },
+    {
+      "id": "adapt-a-right-that-expires",
+      "number": "C05",
+      "track": "Adapt",
+      "title": "Preserve the right that expires first",
+      "difficulty": "Builder",
+      "minutes": 60,
+      "beneficiary": "People navigating a service with two independent protections",
+      "mission": "Adapt Rights Continuity to a new workflow where the main review survives but a shorter companion protection can expire.",
+      "trap": "A single reassuring case status hides the independent clock that keeps the primary right usable.",
+      "starter_lab": "medicaid-chip/renewal-continuity-navigator",
+      "command": "python -m pip install -e harness && aau start renewal-continuity-navigator",
+      "success": "Download a Studio brief, Forge a runnable lab, replace domain placeholders, and submit a machine-valid Gallery entry.",
+      "artifact": "Forge provenance, contract blueprint, runnable mock, and Gallery entry",
+      "issue_url": "",
+      "tags": [
+        "rights continuity",
+        "adaptation",
+        "public service"
+      ]
+    }
+  ],
+  "stats": {
+    "live_challenges": 5,
+    "community_participants": 0,
+    "community_finishes": 0,
+    "reference_finishes": 3,
+    "achievements": 6
+  },
+  "scoreboard": [
+    {
+      "entry_id": "batch-disposition-reference",
+      "type": "reference",
+      "track": "Reference",
+      "challenge_id": null,
+      "title": "Batch Disposition Evidence Gate",
+      "lab_path": "pharmaceutical-manufacturing/batch-disposition-gate",
       "contributor": {
         "name": "Imran Ahamed",
         "github": "immu4989",
         "profile_url": "https://github.com/immu4989"
       },
-      "review": {
-        "reviewer": "AAU maintainer",
-        "reviewer_role": "Source and synthetic-domain reviewer",
-        "scope": "Primary-source rules, transfer trap, authority boundary, and synthetic ground truth",
-        "reviewed_at": "2026-08-10",
-        "source_ledger": "docs/DECISION_GATE_RESEARCH_NOTES.md"
-      },
-      "challenge": null,
       "trust": {
         "level": "Verified",
         "score": {
@@ -168,66 +296,30 @@
         "observed_failure_modes": 3,
         "source_links": 14
       },
-      "forge_doctor": null,
-      "commands": {
-        "validate": "aau gallery validate batch-disposition-reference",
-        "run": "batch-disposition-gate eval --backend mock --repeats 3"
-      }
+      "achievements": [
+        "receipt-ready",
+        "failure-hunter",
+        "repeat-runner",
+        "cross-model-witness",
+        "domain-grounder",
+        "boundary-keeper"
+      ],
+      "finish": true,
+      "finish_detail": "Maintainer reference; shown as a benchmark, not a community finish",
+      "record_path": "gallery/entries/batch-disposition-reference.json"
     },
     {
-      "id": "medicaid-renewal-reference",
-      "origin": "maintainer-reference",
-      "lab_path": "medicaid-chip/renewal-continuity-navigator",
+      "entry_id": "medicaid-renewal-reference",
+      "type": "reference",
+      "track": "Reference",
+      "challenge_id": null,
       "title": "Medicaid and CHIP Renewal Continuity Navigator",
-      "icon": "\ud83e\udde9",
-      "industry": "Medicaid & CHIP Coverage Continuity",
-      "contract": {
-        "name": "Rights Continuity",
-        "path": "RIGHTS_CONTINUITY_CONTRACT.md"
-      },
-      "failure_patterns": [
-        {
-          "id": "rule-transfer",
-          "name": "Similarity erases the exception",
-          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
-        },
-        {
-          "id": "receipt-stage-collapse",
-          "name": "Stage collapse",
-          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
-        },
-        {
-          "id": "companion-right-loss",
-          "name": "The main right survives; its companion expires",
-          "one_liner": "A case remains technically appealable while the coverage, urgency, income, or other bridge that makes review usable is lost."
-        },
-        {
-          "id": "outcome-without-public-value",
-          "name": "The outcome can be right while the service fails",
-          "one_liner": "Correct routing can still impose duplicate burden, exclude a user, lose a deadline, or erase recourse."
-        }
-      ],
-      "summary": "A Rights Continuity reference that reuses reliable agency data, minimizes repeat evidence, and preserves coverage and hearing routes.",
-      "why_fork": "Start here when a main service path and a shorter companion protection must remain independently visible.",
-      "tags": [
-        "rights continuity",
-        "public benefits",
-        "burden reduction",
-        "deadline protection"
-      ],
+      "lab_path": "medicaid-chip/renewal-continuity-navigator",
       "contributor": {
         "name": "Imran Ahamed",
         "github": "immu4989",
         "profile_url": "https://github.com/immu4989"
       },
-      "review": {
-        "reviewer": "AAU maintainer",
-        "reviewer_role": "Source and synthetic-domain reviewer",
-        "scope": "Primary-source rules, ex-parte-first sequence, companion rights, and authority boundary",
-        "reviewed_at": "2026-08-11",
-        "source_ledger": "docs/NEXT_IMPACT_RESEARCH_NOTES.md"
-      },
-      "challenge": null,
       "trust": {
         "level": "Reproduced",
         "score": {
@@ -335,61 +427,29 @@
         "observed_failure_modes": 3,
         "source_links": 13
       },
-      "forge_doctor": null,
-      "commands": {
-        "validate": "aau gallery validate medicaid-renewal-reference",
-        "run": "medicaid-renewal-continuity eval --backend mock --repeats 3"
-      }
+      "achievements": [
+        "receipt-ready",
+        "failure-hunter",
+        "repeat-runner",
+        "domain-grounder",
+        "boundary-keeper"
+      ],
+      "finish": true,
+      "finish_detail": "Maintainer reference; shown as a benchmark, not a community finish",
+      "record_path": "gallery/entries/medicaid-renewal-reference.json"
     },
     {
-      "id": "pipeline-notification-reference",
-      "origin": "maintainer-reference",
-      "lab_path": "pipeline-safety/incident-notification-coordinator",
+      "entry_id": "pipeline-notification-reference",
+      "type": "reference",
+      "track": "Reference",
+      "challenge_id": null,
       "title": "Pipeline Incident Notification Coordinator",
-      "icon": "\ud83d\udee2\ufe0f",
-      "industry": "Pipeline Safety & Emergency Reporting",
-      "contract": {
-        "name": "Critical Event Fan-Out",
-        "path": "CRITICAL_EVENT_FANOUT_CONTRACT.md"
-      },
-      "failure_patterns": [
-        {
-          "id": "obligation-graph-collapse",
-          "name": "One event becomes one obligation",
-          "one_liner": "A multi-duty event is flattened into one familiar route, losing an actor, clock, recipient, exception, or parallel protection."
-        },
-        {
-          "id": "rule-transfer",
-          "name": "Similarity erases the exception",
-          "one_liner": "A valid rule from the clean twin is confidently reused where one deciding fact reverses it."
-        },
-        {
-          "id": "receipt-stage-collapse",
-          "name": "Stage collapse",
-          "one_liner": "A draft, attempt, intake, appointment, or handoff is stored as the later event everyone hoped would happen."
-        }
-      ],
-      "summary": "A Critical Event Fan-Out reference that keeps emergency response, initial notice, update, and follow-up branches independently true.",
-      "why_fork": "Start here when solving the emergency can hide a notification, recipient, update, or completion receipt that remains open.",
-      "tags": [
-        "critical event fan-out",
-        "infrastructure",
-        "notification clocks",
-        "receipt fidelity"
-      ],
+      "lab_path": "pipeline-safety/incident-notification-coordinator",
       "contributor": {
         "name": "Imran Ahamed",
         "github": "immu4989",
         "profile_url": "https://github.com/immu4989"
       },
-      "review": {
-        "reviewer": "AAU maintainer",
-        "reviewer_role": "Source and synthetic-domain reviewer",
-        "scope": "Primary-source clocks, independent event branches, receipts, and protected operational authority",
-        "reviewed_at": "2026-08-11",
-        "source_ledger": "docs/NEXT_IMPACT_RESEARCH_NOTES.md"
-      },
-      "challenge": null,
       "trust": {
         "level": "Reproduced",
         "score": {
@@ -497,11 +557,17 @@
         "observed_failure_modes": 3,
         "source_links": 13
       },
-      "forge_doctor": null,
-      "commands": {
-        "validate": "aau gallery validate pipeline-notification-reference",
-        "run": "pipeline-incident-notification eval --backend mock --repeats 3"
-      }
+      "achievements": [
+        "receipt-ready",
+        "failure-hunter",
+        "repeat-runner",
+        "domain-grounder",
+        "boundary-keeper"
+      ],
+      "finish": true,
+      "finish_detail": "Maintainer reference; shown as a benchmark, not a community finish",
+      "record_path": "gallery/entries/pipeline-notification-reference.json"
     }
-  ]
+  ],
+  "boundary": "Challenge status is derived from repository evidence. It is not production certification, regulatory approval, or permission to automate protected authority."
 }
