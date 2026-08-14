@@ -68,16 +68,24 @@ until the receipt is inspected: a model can choose the right batch hold while fa
 the failed sterility gate was confirmed, or route an urgent appeal as an ordinary complete packet
 while its 72-hour protection expires.
 
+![Animated five-step evidence review](docs/assets/playground-review-walkthrough.gif)
+
 - No API key, account, model call, backend, or payment.
 - Stable URLs share any individual case.
 - Progress stays in the browser; no identity, answer, or telemetry is sent.
 - Every reveal opens the exact scenario, model result, runnable lab, and related Challenge.
+- Completing all five generates a downloadable review card locally, plus honest X and
+  LinkedIn challenge links that share only the self-reported score.
+- Every ground truth has a prefilled evidence-dispute route; disagreement can become a
+  source-linked issue and regression test instead of a buried comment.
 - [`playground/scenarios.json`](playground/scenarios.json) selects cases; CI derives the public
   traces from committed evidence and fails on source drift.
 
 Audit the [playground evidence contract](playground/README.md), the
 [generator](docs/make_playground_data.py), or the generated
-[machine-readable cases](docs/playground-data.json).
+[machine-readable cases](docs/playground-data.json). Maintainers can use the reproducible
+[launch kit](playground/LAUNCH_KIT.md) for the main announcement, five-day case campaign,
+domain-review outreach, and generated social assets.
 
 <!-- RELIABILITY-SNAPSHOT:START -->
 

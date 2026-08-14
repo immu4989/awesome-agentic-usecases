@@ -11,6 +11,13 @@ the harness API is what is versioned; use cases are additive.
   Every reveal links the exact scenario, result, runnable lab, and Reliability Challenge;
   stable case URLs are shareable, progress remains local, and CI regenerates public data from
   source artifacts with hashes and secret-redaction checks.
+- **Local reviewer receipts and evidence disputes** — completing all five playground cases now
+  produces a browser-generated 1200×630 result card, a clearly self-reported score challenge,
+  X and LinkedIn share actions, caught/revisit failure-shape summaries, and a prefilled route to
+  challenge any committed ground truth with primary evidence and a proposed regression test.
+- **Reproducible launch campaign** — five scenario-specific SVG/PNG cards, an animated
+  five-step walkthrough, source-checked social copy, domain-review outreach, and honest
+  seven-day learning goals now ship from one campaign manifest.
 
 ## 1.0.0 - 2026-08-12
 
