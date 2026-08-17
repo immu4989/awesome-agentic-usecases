@@ -98,6 +98,7 @@ def main() -> None:
             'id="boundary-download-json"',
             'id="boundary-challenge-link"',
             'id="boundary-copy-status"',
+            "Can You Trust This Agent? Change One Fact.",
             "One deciding fact",
         ),
     )
