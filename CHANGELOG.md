@@ -5,6 +5,13 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Boundary Lab** — eight source-derived scenario twins now expose the smallest declared
+  semantic fact that changes a required Trust, Verify, or Block action across eight industries.
+  The zero-install split-room experience hides the oracle until both sides are reviewed,
+  alternates presentation to prevent positional guessing, keeps progress local, and creates
+  portable regression JSON, pytest assertions, visual cards, stable share routes, and
+  evidence-challenge issues. CI verifies source selectors, changed oracles, source hashes,
+  secret redaction, responsive interactions, and generated-data drift.
 - **Can You Trust This Agent?** — a zero-install interactive evidence playground now turns
   five committed real-model traces into Trust, Verify, or Block decisions across grid
   operations, hiring, pharmaceutical manufacturing, health-insurance appeals, and security.

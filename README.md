@@ -14,6 +14,7 @@
   <a href="START_HERE.md">Start here</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/">Use-case explorer</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/?case=grid-restoration-ready#playground">Interactive playground</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/?boundary=sterility-is-not-chemical-oos#boundary-lab">Boundary Lab</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#reliability">State of Agent Reliability 2026</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#challenge">AAU Reliability Challenge</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
@@ -86,6 +87,28 @@ Audit the [playground evidence contract](playground/README.md), the
 [machine-readable cases](docs/playground-data.json). Maintainers can use the reproducible
 [launch kit](playground/LAUNCH_KIT.md) for the main announcement, five-day case campaign,
 domain-review outreach, and generated social assets.
+
+## New: Change one fact. Watch the contract move.
+
+<a href="https://immu4989.github.io/awesome-agentic-usecases/?boundary=sterility-is-not-chemical-oos#boundary-lab"><img src="docs/assets/boundary-lab.svg" alt="AAU Boundary Lab: eight source-locked counterfactual pairs across eight public-interest industries" width="100%"></a>
+
+**[Enter Boundary Lab](https://immu4989.github.io/awesome-agentic-usecases/?boundary=sterility-is-not-chemical-oos#boundary-lab)**
+to review eight source-locked scenario twins across pharmaceutical manufacturing, health
+appeals, hiring, grid restoration, home safety, Social Security, medical-device reporting,
+and poisoned tools. Each pair changes one declared semantic boundary and requires a different
+**Trust**, **Verify**, or **Block** action.
+
+The two sides alternate, the committed oracle stays hidden until both decisions are made,
+and every reveal explains the causal boundary and what is at stake. Visitors can download the
+exact pair as a regression JSON fixture, a pytest assertion, or a visual card; open the
+runnable source lab; fork it in Codespaces; or challenge the ground truth with primary
+evidence. Stable URLs share a boundary without sharing a visitor's answer.
+
+The public data is generated from committed scenario contracts—not hand-maintained display
+copy. CI verifies every scenario ID, boundary selector, action change, source hash, share
+route, and secret-redaction rule. Read the [Boundary Lab evidence contract](boundary-lab/README.md),
+[pair manifest](boundary-lab/pairs.json), [generator](docs/make_boundary_lab_data.py), or
+[machine-readable release](docs/boundary-data.json).
 
 <!-- RELIABILITY-SNAPSHOT:START -->
 
