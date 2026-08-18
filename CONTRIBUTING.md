@@ -8,6 +8,12 @@ If you have a real workflow but do not plan to implement it yourself, use the
 instead. Describe the decision, evidence, and costly failure; no eval-design experience is
 required.
 
+If you plan to implement it, start with the zero-install
+[Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder).
+It converts one declared semantic boundary into an eight-file, Forge-compatible draft while
+keeping source URLs, evidence, and scenario text in your browser. Review the generated ZIP for
+sensitive information and complete every `TODO(domain)` before opening an issue or PR.
+
 ## What gets merged
 
 A new use case PR needs:

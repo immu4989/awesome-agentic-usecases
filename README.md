@@ -15,6 +15,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/">Use-case explorer</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/?case=grid-restoration-ready#playground">Interactive playground</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/?boundary=sterility-is-not-chemical-oos#boundary-lab">Boundary Lab</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder">Build a boundary</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#reliability">State of Agent Reliability 2026</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#challenge">AAU Reliability Challenge</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
@@ -109,6 +110,31 @@ copy. CI verifies every scenario ID, boundary selector, action change, source ha
 route, and secret-redaction rule. Read the [Boundary Lab evidence contract](boundary-lab/README.md),
 [pair manifest](boundary-lab/pairs.json), [generator](docs/make_boundary_lab_data.py), or
 [machine-readable release](docs/boundary-data.json).
+
+## New: Bring a workflow. Leave with a fork.
+
+<a href="https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder"><img src="docs/assets/boundary-builder.svg" alt="AAU Boundary Builder: six evaluation shapes, twelve local validation gates, and an eight-file contribution bundle" width="100%"></a>
+
+**[Open Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder)**
+to turn one real workflow boundary into a portable evaluation draft without an account, API
+key, model call, installation, or upload. Name the protected work, choose one of six
+repository-backed evaluation shapes, make one semantic fact move the required **Trust**,
+**Verify**, or **Block** action, declare evidence and source routes, then pass twelve local
+structure and sensitive-data checks.
+
+The browser produces an eight-file ZIP with a counterfactual pair, two synthetic scenario
+shells, pytest assertions, a source-review ledger, a Forge-compatible evaluation brief, a
+contribution checklist, a visual card, and a README that keeps human authority explicit. The
+bundle is deliberately marked `adaptation_required`: source URLs are declared, not verified,
+and no qualified domain judgment is manufactured by the interface.
+
+Three templates use Forge's specialized contract compilers—Decision Gate, Rights
+Continuity, and Critical Event Fan-Out. Proof Before Action, Obligation Graph, and Taint and
+Egress Gate use an honestly labeled generic fallback. The worked example is generated from
+Boundary Lab's committed grid-restoration pair, and CI locks every template to its source
+contract, catalog entry, and hash. Audit the [builder contract](boundary-builder/README.md),
+[template manifest](boundary-builder/contracts.json), [generator](docs/make_boundary_builder_data.py),
+or [machine-readable library](docs/boundary-builder-data.json).
 
 <!-- RELIABILITY-SNAPSHOT:START -->
 

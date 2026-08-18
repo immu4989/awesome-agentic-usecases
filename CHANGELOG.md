@@ -5,6 +5,14 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Boundary Builder** — a zero-install, local-first fork generator now turns one real workflow
+  into a source-declared counterfactual pair, synthetic scenario shells, structural pytest,
+  Forge-compatible brief, review ledger, contribution checklist, README, and original visual
+  card. Six repository-backed evaluation shapes, twelve release gates, a narrow sensitive-data
+  screen, explicit human-authority protection, safe proposal links, and honest contract-aware
+  versus generic Forge labels keep every eight-file export marked `adaptation_required`. CI
+  source-locks the templates, worked example, catalog routes, provenance hashes, privacy
+  promise, ZIP contract, and responsive interface.
 - **Boundary Lab** — eight source-derived scenario twins now expose the smallest declared
   semantic fact that changes a required Trust, Verify, or Block action across eight industries.
   The zero-install split-room experience hides the oracle until both sides are reviewed,

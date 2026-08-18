@@ -4,6 +4,19 @@ Fork this repository when you want a private evaluation lab with the same guaran
 when you merely need a folder of prompts. The goal is to preserve the measurement shape
 while replacing the synthetic domain with yours.
 
+## Start in the browser
+
+Use the zero-install [Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder)
+when you know a real workflow but have not yet designed its evaluation. It guides you through
+one semantic before/after boundary, protected human authority, evidence ledgers, primary-source
+declarations, and twelve local structure and sensitive-data checks. The browser exports a
+Forge-compatible brief plus the boundary pair, scenario shells, regression tests, evidence
+ledger, contribution checklist, README, and visual card as one ZIP.
+
+The export is intentionally marked `adaptation_required`. It is the fastest route to a useful
+fork, not a claim that the deciding rules or sources have been verified. Read the
+[Boundary Builder contract](boundary-builder/README.md) before adapting the generated files.
+
 ## Choose the fastest starting point
 
 ### Adapt a nearby use case
