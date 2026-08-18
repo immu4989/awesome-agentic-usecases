@@ -427,7 +427,7 @@ def write_csv(evaluations: list[dict[str, Any]]) -> None:
         "served_alias_mismatch",
     ]
     with (DOCS / "reliability-data.csv").open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
         for item in evaluations:
             exact = item["dimensions"]["exact"] or {}
@@ -484,7 +484,8 @@ def report_markdown(payload: dict[str, Any]) -> str:
 |---:|---:|---:|---:|---:|---:|
 | **{stats['evaluations']}** | **{stats['scenario_trials']:,}** | **{stats['labs']}** | **{stats['industries']}** | **${stats['recorded_spend_usd']:.2f}** | **{stats['failure_modes']}** |
 
-The snapshot reads every committed, non-mock `eval_*.json` artifact in the 70 public labs.
+The snapshot reads every committed, non-mock `eval_*.json` artifact across
+{stats['labs']} evidence-backed public labs.
 It keeps each lab's metric name and 95% interval visible, and links every plotted value to
 the exact source result. Download the same evidence as
 [JSON](docs/reliability-data.json) or [CSV](docs/reliability-data.csv).

@@ -68,6 +68,14 @@ jobs:
           python docs/check_receipt_lab.py
           node --check docs/receipt-lab.js
           git diff --exit-code docs/receipt-lab-data.json docs/assets/receipt-lab.svg
+      - name: Federal Mission Assurance profile, pack, and local Studio are current
+        run: |
+          python docs/make_federal_mission_data.py
+          python docs/check_federal_mission.py
+          python federal-mission-assurance/aau_federal.py validate federal-mission-assurance/example-acquisition-profile.json
+          pytest federal-mission-assurance/tests -q
+          node --check docs/federal-mission.js
+          git diff --exit-code docs/federal-mission-data.json docs/federal-profile.schema.json docs/assets/federal-mission.svg
       - name: State of Agent Reliability is derived from committed evidence
         run: |
           python docs/make_reliability_report.py
@@ -112,6 +120,11 @@ jobs:
         run: |
           python docs/make_next_impact_assets.py
           git diff --exit-code docs/assets/rights-continuity.svg docs/assets/critical-event-fanout.svg
+      - name: Generated Federal AI acquisition lab is current
+        run: |
+          python docs/make_federal_mission_wave.py
+          python docs/make_readme_experiences.py
+          git diff --exit-code federal-ai-acquisition
       - name: Generated README visual system is current
         run: |
           python docs/make_readme_experiences.py
@@ -418,6 +431,10 @@ jobs:
           - dir: clinical-trial-safety/ind-safety-reporting-coordinator
             cli: ind-safety-reporting
             seed: 457
+            n: 32
+          - dir: federal-ai-acquisition/acquisition-performance-gate
+            cli: federal-ai-acquisition-gate
+            seed: 461
             n: 32
     name: ${{ matrix.cli }}
     steps:

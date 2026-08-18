@@ -33,6 +33,23 @@ Sources: [OpenAI enterprise AI report](https://openai.com/business/guides-and-re
 These sources identify demand, not ground truth. Each lab still needs a domain owner to
 define the actual policy and decide which decisions must remain human.
 
+## Federal Mission Assurance release — shipped
+
+Public teams can now turn an AI proposal into an inspectable, non-certifying evidence
+handoff before procurement or deployment authority is exercised:
+
+| Release | What it gives users | Trust boundary |
+|---|---|---|
+| **[Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission)** | A browser-local intake, 17-practice OMB/NIST/GAO crosswalk, visible gaps, and a hashed 12-file assurance pack | Zero uploads; browser-entered plans are never labeled as evidence |
+| **[Federal Mission Assurance Profile](federal-mission-assurance/)** | An open JSON Schema, dated source ledger, worked acquisition profile, validator, packager, verifier, and semantic diff | Not an ATO, FedRAMP authorization, FISMA determination, certification, legal conclusion, or approval |
+| **[Federal AI Acquisition Performance Gate](federal-ai-acquisition/acquisition-performance-gate/)** | A 32-scenario benchmark for intended-environment tests, data rights, training-use conflicts, portability, pricing, monitoring, and award authority | The agent may assemble and test evidence; accountable officials rank, select, accept risk, obligate funds, and award |
+
+The profile is designed as a versioned interoperability layer, not a static checklist.
+Teams can generate the same pack in the public site or command line, verify its byte-level
+manifest, and review a semantic profile diff without sending mission information to this
+repository. The [dated research ledger](docs/FEDERAL_MISSION_RESEARCH_NOTES.md) records the
+scope decisions and primary-source checks behind the map.
+
 ## Committed industry expansion queue
 
 This is the repository's recorded build order. Research may refine a lab's synthetic

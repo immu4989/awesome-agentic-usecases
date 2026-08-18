@@ -64,6 +64,26 @@ The [Proof Before Action report](PROOF_ACTION_REPORT.md) provides three lower-au
 still consequential examples: claim publication, home-service routing, and nonprofit grant
 evidence. They use the same extension because “helpful” is not a waiver for exact proof.
 
+## Federal mission extension: evidence before authority
+
+For a U.S. public-sector AI acquisition or deployment, use the
+[Federal Mission Assurance Profile](federal-mission-assurance/) in addition to the lab bar.
+The profile must make these states independently inspectable:
+
+- mission outcome, affected groups, baseline, measurable benefit, and high-impact determination;
+- accountable owner, protected decisions, intervention point, and prohibited agent actions;
+- data classification, provenance, minimization, retention, training use, and rights;
+- intended-environment tests, acceptance criteria, independent review, and unresolved failures;
+- monitoring signals, reassessment triggers, appeal or remedy, incident path, and cease-use condition;
+- acquisition performance terms, lifecycle cost, portability, transition assistance, and exit; and
+- dated source versions plus artifacts referenced by stable identifiers and integrity hashes.
+
+A complete profile is not a compliance score. A SHA-256 manifest proves only that exported
+bytes have not changed. A control is `evidenced` only when a reviewer links an actual artifact;
+browser-created plans remain `planned`. The agent must never turn a complete form or valid
+manifest into an ATO, certification, approval, risk acceptance, source selection, obligation,
+or award.
+
 ---
 
 ## Why this bar exists

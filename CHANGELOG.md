@@ -5,6 +5,16 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Federal Mission Assurance Profile v0.1** — a browser-local Federal Mission Studio now
+  maps public-sector AI missions to 17 dated OMB M-25-21, OMB M-25-22, NIST AI RMF, and GAO
+  acquisition practices; preserves human decision and risk-acceptance authority; exposes
+  gap/planned/evidenced/not-applicable states without a compliance percentage; blocks likely
+  secrets, PII, and non-public drafts; and exports a 12-file pack with a SHA-256 manifest.
+  The dependency-free `aau_federal.py` CLI validates, packages, diffs, and verifies the same
+  contract. A new 32-scenario Federal AI Acquisition Performance Gate tests realistic
+  performance evidence, government data terms, portability, pricing, exit, monitoring,
+  deadlines, record conflicts, and protected award authority. CI locks the official-source
+  snapshot, schema, example, browser/CLI pack parity, privacy boundary, visuals, and lab.
 - **Receipt Lab** — a zero-upload, browser-local evidence inspector now recomputes ten hard
   integrity checks and seven disclosure checks from any AAU-style `eval_*.json`, separates
   exactness, completion, safety, cost, latency, uncertainty, and provenance without a

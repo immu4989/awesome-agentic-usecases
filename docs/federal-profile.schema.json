@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/federal-profile.schema.json",
+  "title": "AAU Federal Mission Assurance Profile",
+  "description": "A non-certifying, machine-readable evidence handoff for a public-sector AI use case.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_version",
+    "profile_id",
+    "created_at",
+    "status",
+    "mission",
+    "impact",
+    "authority",
+    "data",
+    "acquisition",
+    "testing",
+    "oversight",
+    "monitoring",
+    "controls",
+    "sources",
+    "artifacts",
+    "disclaimers"
+  ],
+  "$defs": {
+    "nonEmpty": {"type": "string", "minLength": 1},
+    "stringList": {"type": "array", "items": {"$ref": "#/$defs/nonEmpty"}, "uniqueItems": true},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "title", "authority", "url", "jurisdiction", "last_verified", "review_due"],
+      "properties": {
+        "source_id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+        "title": {"$ref": "#/$defs/nonEmpty"},
+        "authority": {"$ref": "#/$defs/nonEmpty"},
+        "url": {"type": "string", "pattern": "^https://"},
+        "jurisdiction": {"$ref": "#/$defs/nonEmpty"},
+        "published_at": {"type": ["string", "null"], "format": "date"},
+        "last_verified": {"type": "string", "format": "date"},
+        "review_due": {"type": "string", "format": "date"}
+      }
+    }
+  },
+  "properties": {
+    "profile_version": {"const": "aau-federal-mission-assurance/0.1"},
+    "profile_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "status": {"enum": ["draft", "domain_review", "evidence_ready", "retired"]},
+    "mission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "agency_context", "problem", "affected_groups", "baseline", "expected_benefits"],
+      "properties": {
+        "title": {"$ref": "#/$defs/nonEmpty"},
+        "agency_context": {"enum": ["federal_civilian", "defense_or_intelligence", "state_local_tribal_territorial", "public_vendor", "other"]},
+        "problem": {"type": "string", "minLength": 20},
+        "affected_groups": {"$ref": "#/$defs/stringList"},
+        "baseline": {"type": "string", "minLength": 10},
+        "expected_benefits": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["metric", "target", "measurement"],
+            "properties": {
+              "metric": {"$ref": "#/$defs/nonEmpty"},
+              "target": {"$ref": "#/$defs/nonEmpty"},
+              "measurement": {"$ref": "#/$defs/nonEmpty"}
+            }
+          }
+        }
+      }
+    },
+    "impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["high_impact_determination", "rationale", "decision_effects", "rights_safety_impacts"],
+      "properties": {
+        "high_impact_determination": {"enum": ["yes", "no", "uncertain"]},
+        "rationale": {"type": "string", "minLength": 20},
+        "decision_effects": {"$ref": "#/$defs/stringList"},
+        "rights_safety_impacts": {"$ref": "#/$defs/stringList"}
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accountable_owner", "human_decision_owner", "prohibited_agent_actions", "risk_acceptance_owner"],
+      "properties": {
+        "accountable_owner": {"$ref": "#/$defs/nonEmpty"},
+        "human_decision_owner": {"$ref": "#/$defs/nonEmpty"},
+        "risk_acceptance_owner": {"$ref": "#/$defs/nonEmpty"},
+        "prohibited_agent_actions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonEmpty"}, "uniqueItems": true}
+      }
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification", "contains_pii", "synthetic_or_public_only", "training_use", "retention", "provenance"],
+      "properties": {
+        "classification": {"enum": ["public", "controlled_unclassified", "sensitive_unclassified", "classified", "mixed", "unknown"]},
+        "contains_pii": {"type": "boolean"},
+        "synthetic_or_public_only": {"type": "boolean"},
+        "training_use": {"$ref": "#/$defs/nonEmpty"},
+        "retention": {"$ref": "#/$defs/nonEmpty"},
+        "provenance": {"$ref": "#/$defs/stringList"}
+      }
+    },
+    "acquisition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vendor_involved", "performance_metrics", "data_rights", "portability", "pricing", "exit_plan"],
+      "properties": {
+        "vendor_involved": {"type": "boolean"},
+        "performance_metrics": {"$ref": "#/$defs/stringList"},
+        "data_rights": {"$ref": "#/$defs/nonEmpty"},
+        "portability": {"$ref": "#/$defs/nonEmpty"},
+        "pricing": {"$ref": "#/$defs/nonEmpty"},
+        "exit_plan": {"$ref": "#/$defs/nonEmpty"}
+      }
+    },
+    "testing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intended_environment", "minimum_scenarios", "minimum_repeats", "acceptance_thresholds", "independent_reviewer", "transfer_traps"],
+      "properties": {
+        "intended_environment": {"type": "string", "minLength": 10},
+        "minimum_scenarios": {"type": "integer", "minimum": 20},
+        "minimum_repeats": {"type": "integer", "minimum": 3},
+        "acceptance_thresholds": {"$ref": "#/$defs/stringList"},
+        "independent_reviewer": {"$ref": "#/$defs/nonEmpty"},
+        "transfer_traps": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonEmpty"}, "uniqueItems": true}
+      }
+    },
+    "oversight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["review_point", "intervention", "failsafe", "appeal_or_remedy", "operator_training"],
+      "properties": {
+        "review_point": {"$ref": "#/$defs/nonEmpty"},
+        "intervention": {"$ref": "#/$defs/nonEmpty"},
+        "failsafe": {"$ref": "#/$defs/nonEmpty"},
+        "appeal_or_remedy": {"$ref": "#/$defs/nonEmpty"},
+        "operator_training": {"$ref": "#/$defs/nonEmpty"}
+      }
+    },
+    "monitoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metrics", "cadence", "feedback_channel", "incident_route", "cease_use_trigger", "reassessment_trigger"],
+      "properties": {
+        "metrics": {"$ref": "#/$defs/stringList"},
+        "cadence": {"$ref": "#/$defs/nonEmpty"},
+        "feedback_channel": {"$ref": "#/$defs/nonEmpty"},
+        "incident_route": {"$ref": "#/$defs/nonEmpty"},
+        "cease_use_trigger": {"$ref": "#/$defs/nonEmpty"},
+        "reassessment_trigger": {"$ref": "#/$defs/nonEmpty"}
+      }
+    },
+    "controls": {
+      "type": "array",
+      "minItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["control_id", "framework", "title", "applicability", "status", "owner", "evidence_refs", "source_ids"],
+        "properties": {
+          "control_id": {"type": "string", "pattern": "^[A-Z0-9-]+$"},
+          "framework": {"enum": ["OMB-M-25-21", "OMB-M-25-22", "NIST-AI-RMF", "GAO-HIGH-RISK"]},
+          "title": {"$ref": "#/$defs/nonEmpty"},
+          "applicability": {"enum": ["required", "recommended", "not_applicable"]},
+          "status": {"enum": ["gap", "planned", "evidenced", "not_applicable"]},
+          "owner": {"$ref": "#/$defs/nonEmpty"},
+          "evidence_refs": {"type": "array", "items": {"$ref": "#/$defs/nonEmpty"}, "uniqueItems": true},
+          "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-z0-9-]+$"}, "uniqueItems": true}
+        }
+      }
+    },
+    "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact_id", "path", "status"],
+        "properties": {
+          "artifact_id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "path": {"$ref": "#/$defs/nonEmpty"},
+          "status": {"enum": ["missing", "planned", "present", "independently_reproduced"]},
+          "sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    },
+    "disclaimers": {
+      "type": "array",
+      "minItems": 3,
+      "items": {"$ref": "#/$defs/nonEmpty"},
+      "uniqueItems": true
+    }
+  }
+}

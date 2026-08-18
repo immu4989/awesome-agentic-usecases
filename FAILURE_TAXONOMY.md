@@ -1,6 +1,6 @@
 # The Agent Failure Taxonomy
 
-**275 failure modes, observed across 70 use cases, 17 recurring patterns.**
+**278 failure modes, observed across 71 use cases, 17 recurring patterns.**
 
 Every entry below was *measured*, not hypothesised — each links to the run that
 produced it, with a reproducing input. Read individually the failures look

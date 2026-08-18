@@ -18,6 +18,7 @@ TAXONOMY = ROOT / "docs" / "assets" / "taxonomy.json"
 OUTPUT = ROOT / "docs" / "studio-data.json"
 
 CONTRACTS = (
+    ("federal-assurance", "Federal Mission Assurance", "federal-mission-assurance/README.md"),
     ("rights-continuity", "Rights Continuity", "RIGHTS_CONTINUITY_CONTRACT.md"),
     ("critical-event", "Critical Event Fan-Out", "CRITICAL_EVENT_FANOUT_CONTRACT.md"),
     ("clock-collision", "Obligation Graph", "OBLIGATION_GRAPH_CONTRACT.md"),

@@ -8,6 +8,13 @@ agent do this?”:
 
 You do not need an API key to begin. Pick the route that matches the job you are doing.
 
+If you are shaping or acquiring AI for a public-sector mission, start with
+**[Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission)**.
+It keeps your draft in the browser, maps mission impact, testing, human authority,
+acquisition terms, monitoring, remedy, and cease-use evidence to a dated OMB/NIST/GAO
+crosswalk, and exports a non-certifying 12-file pack with a SHA-256 manifest. Use only
+synthetic or public information on the public site.
+
 If you already have an `eval_*.json`, start with
 **[Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab)**. It opens
 the artifact locally, recomputes its structural evidence, keeps interval and provenance gaps
@@ -51,9 +58,10 @@ scorer—but exposes a different class of failure.
 | The recommendation is right but the gate or authority is wrong | [Batch Disposition Gate](pharmaceutical-manufacturing/batch-disposition-gate/) | Why a nearby valid rule cannot substitute for exact evidence, procedure, owner, and action trace |
 | The main appeal survives but its companion protection expires | [Disability Cessation Continuity](social-security-disability/cessation-benefit-continuation-navigator/) | Why primary and companion rights need independent triggers, clocks, owners, and receipts |
 | Emergency response succeeds but another duty stays open | [Pipeline Incident Notification](pipeline-safety/incident-notification-coordinator/) | Why containment, initial notification, update, follow-up, and receipts cannot share one status |
+| A polished AI proposal is treated as mission-ready evidence | [Federal AI Acquisition Performance Gate](federal-ai-acquisition/acquisition-performance-gate/) | Why intended-environment testing, data rights, portability, pricing, monitoring, and warranted award authority must remain distinct |
 
 Every observation is cross-linked in the [Failure Taxonomy](FAILURE_TAXONOMY.md), which
-groups 275 observed failures into 17 recurring patterns.
+groups 278 observed failures into 17 recurring patterns.
 
 ## I want to run an eval without an API key
 
@@ -163,6 +171,7 @@ engineered gap, tests, result folders, and documentation templates. Continue wit
 | `public-value` | outcome, minimum evidence, accessibility, deadline, recourse, rights, continuity, record truth, and domain-specific fidelity | [Small Business Recovery](public-sector/small-business-recovery-agent/), [Energy Lifeline](energy-utilities/household-energy-lifeline/), [Disaster Coordination](insurance-disaster-recovery/disaster-claim-aid-coordinator/), [Unemployment](employment-social-insurance/unemployment-claim-navigator/), [Farm Disaster](agriculture-food-systems/farm-disaster-deadline-agent/), [Permits](housing-construction/permit-readiness-agent/), [Student Accommodation](education-services/student-accommodation-navigator/) |
 | `evidence-service` | exact terminal, missing-set evidence, accessible channel, deadline, recourse, protected authority, and executed record together | [Food Recall](food-safety-manufacturing/food-recall-traceability-coordinator/), [Water Notice](water-sanitation/drinking-water-notice-coordinator/), [IRS Notice](federal-taxpayer-services/irs-notice-response-navigator/), or any lab in the [matched 12-industry wave](USE_CASE_RADAR.md#evidence-service-expansion-wave--shipped) |
 | `decision-gate` | exact outcome, rule-specific reason, held/missing evidence, satisfied conjuncts, procedure, protected authority, and executed record | [Pharma](pharmaceutical-manufacturing/batch-disposition-gate/), [Grid](grid-operations/distribution-restoration-safety-gate/), [Hiring](human-resources/hiring-compliance-navigator/), [Aviation](aviation-operations/aircraft-dispatch-evidence-gate/), [Banking](banking-compliance/aml-kyc-sanctions-case-gate/), [Tax](tax-filing-services/tax-return-completeness-navigator/) |
+| `federal-mission-assurance` | impact determination, intended-environment tests, acquisition terms, human authority, monitoring, remedy, cease use, and evidence manifest | [Federal AI Acquisition Performance Gate](federal-ai-acquisition/acquisition-performance-gate/) and [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) |
 | `proof-before-action` | exact outcome, source- or record-specific proof, transfer specificity, protected authority, and truthful executed record | [Claims](research-knowledge-work/claim-evidence-verifier/), [Field service](home-field-services/service-visit-readiness-coordinator/), [Grants](nonprofit-grant-management/grant-obligation-evidence-navigator/) |
 | `public-protection` | exact subject, current rule, complete gates, live clock/channel, protected authority, and truthful receipt | [Vehicle recalls](automotive-safety/vehicle-recall-remedy-coordinator/), [911/988 outages](telecommunications-emergency/communications-outage-reporting-gate/), [Worker incidents](workplace-safety/severe-incident-reporting-navigator/) |
 | `obligation-graph` | complete obligation set, exact trigger and clock origin, deadline semantics, recipient/channel, protected owner, and truthful receipt | [Medical devices](medical-device-safety/adverse-event-reporting-gate/), [Mortgage protection](mortgage-servicing/loss-mitigation-foreclosure-gate/), [Cyber disclosure](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/), or any lab in the [matched report](CLOCK_COLLISION_REPORT.md) |

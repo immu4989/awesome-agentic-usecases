@@ -567,6 +567,7 @@ def readme(config: dict) -> str:
     evidence = ", ".join(f"`{item}`" for item in config["evidence"])
     gates = ", ".join(f"`{item}`" for item in config["gates"])
     terminals = ", ".join(f"`{value}`" for value in config["terminals"].values())
+    companion = f"\n{config['companion_note']}\n" if config.get("companion_note") else ""
     return f'''<p align="center">
   <a href="../../START_HERE.md">Start here</a> · <a href="../../DECISION_GATE_CONTRACT.md">Decision Gate Contract</a> · <a href="../../BUILD_YOUR_OWN.md">Fork this lab</a>
 </p>
@@ -587,7 +588,7 @@ or filings.
 This lab implements the repository's **Decision Gate Contract**. A run passes only when the
 action, evidence used, missing evidence, satisfied gates, transfer-specific rule, procedural
 protections, protected authority, and executed record are all right together.
-
+{companion}
 ## Human-owned boundary
 
 {config['authority']}

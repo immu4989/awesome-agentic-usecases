@@ -819,8 +819,47 @@ def strongest_row(rows: list[dict], briefing: Briefing) -> dict:
 
 def render_contrast(item: Experience, briefing: Briefing, directory: Path) -> str:
     rows = load_benchmark_rows(directory, briefing)
-    if len(rows) < 2:
-        raise ValueError(f"{item.path} needs at least two committed result rows for a contrast")
+    if len(rows) == 1:
+        row = rows[0]
+        value = format_primary(row["value"], briefing.raw)
+        return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 410" width="1200" height="410" role="img" aria-labelledby="title desc">
+  <title id="title">{escape(item.title)} comparison readiness</title>
+  <desc id="desc">One committed deterministic pipeline result is available; independent real-model comparison evidence is still pending.</desc>
+  <style>
+    :root {{ color-scheme:light dark; }}
+    .surface {{ fill:#f7faf8; }} .card {{ fill:#fff;stroke:#d9e2dd;stroke-width:1.5; }}
+    .ink {{ fill:#10231d; }} .muted {{ fill:#52645e; }}
+    .kicker {{ font:750 13px system-ui,sans-serif;letter-spacing:1.6px; }} .title {{ font:760 28px system-ui,sans-serif; }}
+    .value {{ font:820 42px ui-monospace,SFMono-Regular,monospace; }} .label {{ font:700 15px system-ui,sans-serif; }}
+    .body {{ font:520 14px system-ui,sans-serif; }} .pill {{ font:750 11px system-ui,sans-serif;letter-spacing:.8px; }}
+    @media (prefers-color-scheme:dark) {{
+      .surface {{ fill:#101916; }} .card {{ fill:#17231f;stroke:#30433c; }}
+      .ink {{ fill:#f4faf7; }} .muted {{ fill:#b2c3bc; }}
+    }}
+  </style>
+  <rect width="1200" height="410" rx="20" class="surface"/>
+  <text x="42" y="42" class="kicker" fill="{item.accent}">COMPARISON READINESS · EVIDENCE GAPS STAY VISIBLE</text>
+  <text x="42" y="84" class="title ink">One pipeline proof is not a model comparison</text>
+  <g transform="translate(42 126)"><rect width="470" height="224" rx="20" class="card"/>
+    <text x="28" y="43" class="pill" fill="{item.accent}">COMMITTED DETERMINISTIC MOCK</text>
+    <text x="28" y="105" class="value ink">{escape(value)}</text>
+    <text x="28" y="138" class="label ink">{escape(briefing.metric_label)}</text>
+    <text x="28" y="177" class="body muted">{escape(row['label'])} · {row['n']:,} runs</text>
+    <text x="28" y="203" class="body muted">Proves the scenario → tools → scoring → receipt pipeline.</text>
+  </g>
+  <g transform="translate(548 126)"><rect width="610" height="224" rx="20" class="card"/>
+    <text x="28" y="43" class="pill" fill="{item.accent}">OPEN EVIDENCE GATE</text>
+    <text x="28" y="86" class="title ink">Real-model contrast pending</text>
+    <text x="28" y="124" class="body muted">Run the same 32 committed scenarios with at least three repeats.</text>
+    <text x="28" y="151" class="body muted">Keep provider errors, served-model identity, cost, and latency visible.</text>
+    <text x="28" y="178" class="body muted">Do not infer model quality from the deterministic teaching backend.</text>
+    <text x="28" y="205" class="body muted">The next receipt must remain independently inspectable.</text>
+  </g>
+  <text x="42" y="387" class="body muted">No strongest-vs-weakest claim is shown until at least two committed result rows exist.</text>
+</svg>
+'''
+    if not rows:
+        raise ValueError(f"{item.path} needs at least one committed result row")
     strong = strongest_row(rows, briefing)
     weak = max(rows, key=lambda row: row["value"]) if briefing.raw else min(rows, key=lambda row: row["value"])
     scale_max = max(row["hi"] for row in rows) * 1.06 if briefing.raw else 1.0
@@ -1037,6 +1076,16 @@ def install(item: Experience) -> None:
     (docs / "result-profile.svg").write_text(render_profile(item, briefing, directory), encoding="utf-8")
     (docs / "failure-cards.svg").write_text(render_failure_cards(item, directory), encoding="utf-8")
 
+    result_count = len(load_benchmark_rows(directory, briefing))
+    if result_count >= 2:
+        benchmark_alt = f"{item.title} benchmark chart generated from committed real-model evaluations"
+        contrast_alt = (
+            f"Strongest and weakest verified {item.title} result contrasted on the headline metric"
+        )
+    else:
+        benchmark_alt = f"{item.title} benchmark chart generated from committed evaluation results"
+        contrast_alt = f"{item.title} comparison-readiness status"
+
     text = readme.read_text(encoding="utf-8")
     text = strip_old_banner(text)
     text = remove_block(text, START, END)
@@ -1061,9 +1110,9 @@ def install(item: Experience) -> None:
 
 ### Read the complete evidence
 
-<img src="docs/benchmark.svg" width="100%" alt="{escape(item.title)} benchmark chart generated from committed real-model evaluations">
+<img src="docs/benchmark.svg" width="100%" alt="{escape(benchmark_alt)}">
 
-<img src="docs/contrast.svg" width="100%" alt="Strongest and weakest verified {escape(item.title)} result contrasted on the headline metric">
+<img src="docs/contrast.svg" width="100%" alt="{escape(contrast_alt)}">
 
 <img src="docs/result-profile.svg" width="100%" alt="Outcome, completion, latency, and cost profile for the strongest headline {escape(item.title)} result">
 

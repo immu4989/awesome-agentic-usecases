@@ -7,30 +7,31 @@
 
 | Committed model evals | Scenario trials | Labs | Industries | Recorded spend | Observed failures |
 |---:|---:|---:|---:|---:|---:|
-| **201** | **16,182** | **70** | **61** | **$22.80** | **275** |
+| **202** | **16,278** | **71** | **62** | **$22.84** | **278** |
 
-The snapshot reads every committed, non-mock `eval_*.json` artifact in the 70 public labs.
+The snapshot reads every committed, non-mock `eval_*.json` artifact across
+71 evidence-backed public labs.
 It keeps each lab's metric name and 95% interval visible, and links every plotted value to
 the exact source result. Download the same evidence as
 [JSON](docs/reliability-data.json) or [CSV](docs/reliability-data.csv).
 
 ## Five findings worth acting on
 
-1. **Completion is not correctness.** Across 197 artifacts
-   with both endpoints, completion ran **26.5
+1. **Completion is not correctness.** Across 198 artifacts
+   with both endpoints, completion ran **26.6
    points above exact task success** on average. 73 artifacts
    completed at least 95% of runs while exact success remained below 70%.
 2. **A perfect finish can still hide a failed task.**
    17 artifacts reached 100% completion with less than
    50% exact success. Status alone is not an outcome metric.
 3. **Uncertainty is part of the result.** The median width of the committed 95% interval on
-   the selected exact endpoint is **30.0 points**.
+   the selected exact endpoint is **29.9 points**.
    A three-decimal score without its interval overstates what these smoke runs know.
 4. **Exceptions dominate the observed cross-industry failures.** “Similarity erases the
    exception” appears in **29 labs**. A rule that works on a
    clean twin is not evidence that it transfers to the nearby exception.
-5. **Reproducibility needs an identity check.** 146 of
-   201 artifacts carry a provenance stamp; only 74
+5. **Reproducibility needs an identity check.** 147 of
+   202 artifacts carry a provenance stamp; only 74
    record a pinned model snapshot, and 3 record that the
    served model differed from the requested alias.
 
@@ -42,7 +43,7 @@ A head-to-head field exists only where two or more models ran the same lab, arm,
 
 | Model | Evals | Labs | Median exact (n) | Median completion (n) | Median cost/scenario | Median p50 | Head-to-head wins/fields |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| mistral-small-latest | 87 | 70 | 0.589 (84) | 1.000 (87) | $0.000390 | 7.88s | 14/78 |
+| mistral-small-latest | 88 | 71 | 0.583 (85) | 1.000 (88) | $0.000391 | 7.93s | 14/78 |
 | deepseek-v4-flash | 56 | 49 | 0.795 (56) | 1.000 (56) | $0.000713 | 14.97s | 47/56 |
 | gpt-oss-120b | 35 | 18 | 0.574 (34) | 0.678 (35) | $0.001341 | 10.97s | 9/31 |
 | Qwen/Qwen3.7-Plus | 11 | 8 | 0.967 (11) | 1.000 (11) | $0.003185 | 29.77s | 8/11 |

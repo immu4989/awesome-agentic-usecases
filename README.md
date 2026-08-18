@@ -17,6 +17,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/?boundary=sterility-is-not-chemical-oos#boundary-lab">Boundary Lab</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder">Build a boundary</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab">Inspect a receipt</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-mission">Federal Mission Studio</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#reliability">State of Agent Reliability 2026</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#challenge">AAU Reliability Challenge</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
@@ -57,6 +58,39 @@ domain-specific map of the hidden trap, responsive charts generated from committ
 real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff profile,
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
+
+## New: Federal missions need evidence before authority
+
+<a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-mission"><img src="docs/assets/federal-mission.svg" alt="AAU Federal Mission Assurance Profile: seventeen mapped practices, five official sources, twelve exported files, and zero uploads" width="100%"></a>
+
+**[Open Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission)**
+to turn a public-sector AI idea into a versioned, inspectable assurance draft. The
+browser-local desk maps mission impact, protected human authority, intended-environment
+testing, acquisition terms, data rights, portability, pricing, monitoring, appeals, and
+cease-use triggers to a dated crosswalk of OMB M-25-21, OMB M-25-22, NIST AI RMF, and GAO
+acquisition evidence.
+
+The download is a **12-file assurance pack**: use-case inventory, high-impact determination,
+impact assessment, TEVV plan, risk register, human-oversight and remedy plan, provenance card,
+acquisition acceptance plan, monitoring and public-feedback plan, machine-readable profile,
+guide, and SHA-256 manifest. It exposes `gap`, `planned`, `evidenced`, and `not_applicable`
+states without collapsing them into a misleading compliance percentage.
+
+- No account, model call, API key, upload, storage, or telemetry.
+- A local scan blocks likely credentials, PII, and non-public data from export.
+- Every source includes a verification and review-due date.
+- The matching [`aau_federal.py`](federal-mission-assurance/aau_federal.py) CLI validates,
+  packages, diffs, and verifies the same contract without third-party dependencies.
+- The runnable [Federal AI Acquisition Performance Gate](federal-ai-acquisition/acquisition-performance-gate/)
+  tests 32 synthetic cases across vendor claims, realistic testing, data-use conflicts,
+  lifecycle cost, exit, monitoring, deadlines, and protected award authority.
+
+This independent project is not an official U.S. Government standard, endorsement,
+certification, FedRAMP authorization, FISMA determination, Authority to Operate,
+source-selection decision, or legal conclusion. It prepares evidence; accountable officials
+retain every protected decision. Read the [profile contract](federal-mission-assurance/README.md),
+[JSON Schema](federal-mission-assurance/federal-profile.schema.json), [worked profile](federal-mission-assurance/example-acquisition-profile.json),
+or [dated source snapshot](federal-mission-assurance/policy-sources.json).
 
 ## New: Can you trust this agent?
 
@@ -170,11 +204,11 @@ available, and opens the exact result artifact.
 
 | Model evals | Scenario trials | Verified labs | Observed failures | Recorded spend |
 |---:|---:|---:|---:|---:|
-| **201** | **16,182** | **70** | **275** | **$22.80** |
+| **202** | **16,278** | **71** | **278** | **$22.84** |
 
 The headline finding is difficult to hide in a benchmark table: across
-197 artifacts with both endpoints, **completion runs
-26.5 points above exact task success on average**.
+198 artifacts with both endpoints, **completion runs
+26.6 points above exact task success on average**.
 73 artifacts complete at least 95% of runs while exact
 success remains below 70%; 17 finish every run while
 solving fewer than half exactly.
@@ -459,6 +493,7 @@ accessible mobility, transparency, trade, nutrition, elections, care transitions
 | **Find an example for my workflow** | [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) | Describe the work, compare evidence-backed matches, and download a fork-ready evaluation brief |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Inspect an evaluation result** | [Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab) | Ten recomputed integrity checks, seven open disclosures, source binding, and aggregate-only exports without uploading the file |
+| **Prepare a public-sector AI assurance pack** | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A browser-local OMB/NIST/GAO crosswalk, visible evidence gaps, protected authority, and a hashed 12-file handoff |
 | **Understand the evidence across every lab** | [State of Agent Reliability 2026](https://immu4989.github.io/awesome-agentic-usecases/#reliability) | Filterable source-linked results, coverage-aware model cards, failure terrain, and downloadable data |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
@@ -527,7 +562,7 @@ aau doctor                             # validate your checkout or fork
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/stats-dark.svg">
-  <img alt="61 industries shipping, 201 verified model-evals, 275 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
+  <img alt="62 industries shipping, 202 verified model-evals, 278 failure modes observed, at least 3 repeats per scenario, $0 to reproduce on free tiers" src="docs/assets/stats-light.svg" width="100%">
 </picture>
 
 <img alt="Animated terminal: install, run the eval on the deterministic mock with no API key, then the same eval on a real model with measured accuracy and cost per scenario" src="docs/assets/demo.svg" width="100%">
@@ -578,7 +613,7 @@ the cheapest, free-tier model — wins the on-call watch task outright**, where 
 models stop looking before the incident arrives. Picking a model without a per-use-case
 number is guessing.
 
-## 275 failures, 17 patterns
+## 278 failures, 17 patterns
 
 The per-use-case numbers are the evidence. **The [Failure Taxonomy](FAILURE_TAXONOMY.md) is
 the product** — every failure this repo has observed, cross-cut into the patterns that keep
@@ -631,7 +666,7 @@ Every failure has a reproducing scenario id in
 
 ## Use cases
 
-**Not sure where to start?** [Search and filter all 70 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
+**Not sure where to start?** [Search and filter all 71 verified use cases](https://immu4989.github.io/awesome-agentic-usecases/)
 by industry, capability, or failure shape.
 
 <!-- USE_CASES:START -->
@@ -708,6 +743,7 @@ by industry, capability, or failure shape.
 | [🛢️ Pipeline Incident Notification Coordinator](pipeline-safety/incident-notification-coordinator/) | Pipeline Safety & Emergency Reporting | `event fan-out` `emergency response` `clock origin` `receipt fidelity` `human review` | Can an agent keep emergency response, the one-hour NRC notification, the 48-hour update, and final records separate without operating the pipeline? |
 | [🔏 HIPAA Breach Notification Recipient Graph](health-data-privacy/hipaa-breach-notification-graph/) | Health Data Privacy & Breach Response | `event fan-out` `recipient graph` `privacy` `receipt fidelity` `human review` | Can an agent preserve business-associate, individual, HHS, media, substitute-notice, and under/over-500 paths without deciding breach status? |
 | [🧬 Clinical Trial IND Safety Reporting Coordinator](clinical-trial-safety/ind-safety-reporting-coordinator/) | Clinical Trial Safety & IND Reporting | `event fan-out` `safety signal` `medical judgment boundary` `deadline protection` `human review` | Can an agent distinguish adverse events from reportable suspected reactions, preserve 7-day and 15-day paths, and route follow-up evidence without making medical judgments? |
+| [🏛️ Federal AI Acquisition Performance Gate](federal-ai-acquisition/acquisition-performance-gate/) | Federal AI Acquisition & Oversight | `decision gate` `AI acquisition` `intended-environment testing` `data rights` `vendor exit` `human authority` | Can an acquisition-support agent test vendor claims, data rights, portability, pricing, and monitoring evidence without selecting an offeror or awarding a contract? |
 
 <!-- USE_CASES:END -->
 
