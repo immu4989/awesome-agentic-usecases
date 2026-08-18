@@ -351,7 +351,9 @@
     renderNav();
     updateSummary();
     setStatus("");
-    syncUrl(pair, push ? "push" : "replace");
+    if (push || location.hash === "#boundary-lab") {
+      syncUrl(pair, push ? "push" : "replace");
+    }
   }
 
   function choose(sideName, action) {

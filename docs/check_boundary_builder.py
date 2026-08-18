@@ -148,9 +148,28 @@ def main() -> None:
     )
     require_text(
         ROOT / "boundary-builder" / "README.md",
-        ("Twelve local gates", "eight-file contribution ZIP", "python docs/make_boundary_builder_data.py", "adaptation_required"),
+        (
+            "Twelve local gates",
+            "eight-file contribution ZIP",
+            "python docs/make_boundary_builder_data.py",
+            "adaptation_required",
+            "LAUNCH_KIT.md",
+        ),
     )
-    print("Boundary Builder integrity: 6 templates, 12 local gates, 8-file export, provenance, and privacy verified")
+    require_text(
+        ROOT / "boundary-builder" / "LAUNCH_KIT.md",
+        ("launch-hero.gif", "boundary-proof.gif", "export-bundle-square.gif", "production-ready"),
+    )
+    require_text(
+        ROOT / "docs" / "make_boundary_builder_social_gifs.py",
+        ("add_readable_intro", "add_loop_reset", 'save("launch-hero"', 'save("boundary-proof"', 'save("export-bundle-square"'),
+    )
+    for stem in ("launch-hero", "boundary-proof", "export-bundle-square"):
+        for suffix, signature in (("svg", b"<svg"), ("png", b"\x89PNG"), ("gif", b"GIF8")):
+            asset = ROOT / "docs" / "assets" / "boundary-builder-social" / f"{stem}.{suffix}"
+            if not asset.is_file() or signature not in asset.read_bytes()[:200]:
+                raise SystemExit(f"Boundary Builder launch asset is missing or invalid: {asset.relative_to(ROOT)}")
+    print("Boundary Builder integrity: 6 templates, 12 local gates, 8-file export, provenance, privacy, and launch kit verified")
 
 
 if __name__ == "__main__":

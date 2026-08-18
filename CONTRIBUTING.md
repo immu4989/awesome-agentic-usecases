@@ -14,6 +14,12 @@ It converts one declared semantic boundary into an eight-file, Forge-compatible 
 keeping source URLs, evidence, and scenario text in your browser. Review the generated ZIP for
 sensitive information and complete every `TODO(domain)` before opening an issue or PR.
 
+After generating or rerunning evidence, open the result in
+[Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab). Resolve hard
+integrity gaps before submission and explain any open disclosure finding in the PR. A green
+local receipt checks structure only; reviewers still evaluate scenario truth, sources,
+metrics, model provenance, and the protected human boundary.
+
 ## What gets merged
 
 A new use case PR needs:
@@ -22,6 +28,8 @@ A new use case PR needs:
 - [ ] `eval --backend mock` runs green from a clean clone (this is what CI runs)
 - [ ] ≥20 scenarios with programmatic ground truth, committed
 - [ ] Real-model eval results committed under `results/` — n≥3 repeats, cost per run in dollars
+- [ ] Each committed result passes Receipt Lab's hard integrity checks; disclosure warnings
+  are explained rather than hidden
 - [ ] `FAILURE_MODES.md` with ≥3 observed failures, each with a reproducing input
 - [ ] README following the standard template: Problem → Architecture → Results → Failure modes → Run it
 - [ ] A themed entry, four-act story, and scenario anatomy in

@@ -8,6 +8,12 @@ agent do this?”:
 
 You do not need an API key to begin. Pick the route that matches the job you are doing.
 
+If you already have an `eval_*.json`, start with
+**[Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab)**. It opens
+the artifact locally, recomputes its structural evidence, keeps interval and provenance gaps
+visible, and exports an aggregate-only inspection receipt. Nothing is uploaded. A passing
+inspection means structurally coherent—not independently reproduced or domain validated.
+
 If you have a workflow but do not know which lab fits, start with
 **[AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio)**. It matches
 your description to the full verified catalog, explains the evidence behind each result,

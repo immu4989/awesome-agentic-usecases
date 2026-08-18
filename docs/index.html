@@ -18,11 +18,13 @@
     <link rel="stylesheet" href="playground.css?v=1">
     <link rel="stylesheet" href="boundary-lab.css?v=1">
     <link rel="stylesheet" href="boundary-builder.css?v=1">
+    <link rel="stylesheet" href="receipt-lab.css?v=1">
     <script src="explorer.js?v=14" defer></script>
     <script src="playground.js?v=1" defer></script>
-    <script src="boundary-lab.js?v=1" defer></script>
+    <script src="boundary-lab.js?v=2" defer></script>
     <script src="boundary-builder-zip.js?v=1" defer></script>
     <script src="boundary-builder.js?v=1" defer></script>
+    <script src="receipt-lab.js?v=1" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -32,6 +34,7 @@
           <a href="#playground">Playground</a>
           <a href="#boundary-lab">Boundary Lab</a>
           <a href="#boundary-builder">Build one</a>
+          <a href="#receipt-lab">Inspect receipt</a>
           <a href="#reliability">2026 report</a>
           <a href="#challenge">Challenge</a>
           <a href="#studio">Studio</a>
@@ -54,6 +57,7 @@
             <a class="button primary" href="#playground">Try the 60-second lab</a>
             <a class="button secondary" href="#boundary-lab">Flip one deciding fact</a>
             <a class="button secondary" href="#boundary-builder">Build my boundary</a>
+            <a class="button secondary" href="#receipt-lab">Inspect an eval receipt</a>
             <a class="button secondary" href="#reliability">Read the 2026 report</a>
             <a class="button secondary" href="#challenge">Take the Challenge</a>
             <a class="button secondary" href="#studio">Match my workflow</a>
@@ -528,6 +532,130 @@
         </div>
 
         <p class="builder-boundary"><b>Boundary:</b> this tool generates evaluation infrastructure from information you enter locally. It does not verify sources, determine policy, replace qualified review, inspect private systems, submit to GitHub, or make the resulting workflow safe for production.</p>
+      </section>
+
+      <section id="receipt-lab" class="receipt-lab" aria-labelledby="receipt-title">
+        <div class="receipt-gridwash" aria-hidden="true"></div>
+
+        <header class="receipt-masthead">
+          <div class="receipt-stamp" aria-hidden="true">
+            <span>AAU / FIELD TOOL 04</span>
+            <b>R</b>
+            <strong>RECEIPT<br>OF PROOF</strong>
+            <i>LOCAL / PRIVATE</i>
+          </div>
+          <div class="receipt-intro">
+            <span class="receipt-kicker">EVALUATION EVIDENCE INSPECTOR / ZERO UPLOAD</span>
+            <h2 id="receipt-title">Bring the receipt.<br><em>See what it proves.</em></h2>
+            <p>Open an <code>eval_*.json</code> in your browser, recompute its trial grid, metrics, cost, latency, confidence-interval declarations, and model provenance, then export an aggregate-only receipt. No model call, account, or file upload.</p>
+            <div class="receipt-intro-actions">
+              <button id="receipt-file-button" class="button receipt-primary" type="button">Inspect a local result ↓</button>
+              <a class="button receipt-secondary" href="#receipt-samples">Open a teaching receipt</a>
+              <a class="receipt-method-link" href="https://github.com/immu4989/awesome-agentic-usecases/tree/main/receipt-lab">Audit the evidence contract ↗</a>
+            </div>
+          </div>
+        </header>
+
+        <div class="receipt-stats" aria-label="Receipt Lab evidence scope">
+          <span><b id="receipt-artifact-count">—</b><small>committed result artifacts</small></span>
+          <span><b id="receipt-hard-count">—</b><small>hard integrity checks</small></span>
+          <span><b id="receipt-disclosure-count">—</b><small>disclosure checks</small></span>
+          <span><b>0</b><small>local files uploaded</small></span>
+        </div>
+
+        <div class="receipt-intake">
+          <div class="receipt-workbench-head">
+            <div><span>PRIVATE INPUT DESK / NOTHING LEAVES THIS TAB</span><h3>Inspect structure before believing the headline.</h3></div>
+            <p>Use synthetic, public, or safely redacted results. The browser reads locally and deliberately excludes trial details from every exported receipt.</p>
+          </div>
+
+          <div class="receipt-input-grid">
+            <div id="receipt-drop" class="receipt-drop" role="button" tabindex="0" aria-label="Choose or drop one evaluation JSON file">
+              <div>
+                <span class="receipt-drop-mark">↧</span>
+                <b>Drop one eval JSON here</b>
+                <p>Or choose a local <code>eval_*.json</code> up to 12 MB.</p>
+                <span class="button receipt-primary">Choose local JSON</span>
+                <small>READ IN MEMORY · NOT SAVED · NOT SENT</small>
+                <span id="receipt-file-name" class="receipt-file-name">No artifact selected</span>
+              </div>
+            </div>
+            <input id="receipt-file-input" type="file" accept=".json,application/json" hidden>
+
+            <div class="receipt-paste-wrap">
+              <label class="receipt-input-label" for="receipt-paste">Or paste an evaluation object</label>
+              <textarea id="receipt-paste" rows="8" spellcheck="false" placeholder='{"backend":"...","model":"...","n_scenarios":8,"n_repeats":3,...}'></textarea>
+              <div class="receipt-paste-actions">
+                <button id="receipt-inspect-paste" class="button receipt-secondary" type="button">Inspect pasted JSON</button>
+                <button id="receipt-clear" class="receipt-clear" type="button" hidden>Clear local input</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="receipt-example-wrap">
+            <span>TEACHING RECEIPTS / SOURCE-BOUND TO COMMITTED ARTIFACTS</span>
+            <div id="receipt-samples" class="receipt-samples" aria-live="polite"></div>
+          </div>
+          <output id="receipt-action-status" class="receipt-action-status" aria-live="polite">Loading the evidence contract…</output>
+        </div>
+
+        <article id="receipt-dashboard" class="receipt-dashboard" aria-labelledby="receipt-status-title" hidden>
+          <header id="receipt-status" class="receipt-status">
+            <span>EVIDENCE LEVEL / NOT A CERTIFICATION</span>
+            <h3 id="receipt-status-title">—</h3>
+            <p id="receipt-status-copy" class="receipt-status-copy">—</p>
+            <p id="receipt-binding" class="receipt-status-binding">—</p>
+          </header>
+
+          <div id="receipt-summary" class="receipt-summary" aria-label="Aggregate result summary"></div>
+
+          <div class="receipt-columns">
+            <section class="receipt-column" aria-labelledby="receipt-hard-title">
+              <span>HARD GATE / STRUCTURAL COHERENCE</span>
+              <h4 id="receipt-hard-title">Counts and aggregates must reconcile.</h4>
+              <ol id="receipt-hard-list" class="receipt-check-list"></ol>
+            </section>
+            <section class="receipt-column" aria-labelledby="receipt-disclosure-title">
+              <span>DISCLOSURE DESK / OPEN LIMITATIONS</span>
+              <h4 id="receipt-disclosure-title">Warnings stay visible without rewriting history.</h4>
+              <ol id="receipt-disclosure-list" class="receipt-check-list"></ol>
+            </section>
+          </div>
+
+          <div class="receipt-evidence">
+            <section aria-labelledby="receipt-metrics-title">
+              <div class="receipt-section-heading"><div><span>DIMENSION LEDGER</span><h4 id="receipt-metrics-title">Separate answers, never one score.</h4></div><p>Exactness, completion, and safety are selected by a published metric priority. Inverted risk values are labeled.</p></div>
+              <div id="receipt-metrics" class="receipt-metrics"></div>
+              <p id="receipt-gap" class="receipt-gap" hidden></p>
+            </section>
+            <section aria-labelledby="receipt-worst-title">
+              <div class="receipt-section-heading"><div><span>FAILURE FINDER</span><h4 id="receipt-worst-title">Lowest five trials.</h4></div><p>Only identifiers and operational aggregates appear. Scenario content stays out of the dashboard and exports.</p></div>
+              <div id="receipt-worst" class="receipt-worst"></div>
+            </section>
+          </div>
+
+          <div class="receipt-ledger">
+            <section aria-labelledby="receipt-provenance-title">
+              <div class="receipt-section-heading"><div><span>PROVENANCE STAMP</span><h4 id="receipt-provenance-title">Which model was actually served?</h4></div></div>
+              <div id="receipt-provenance" class="receipt-provenance"></div>
+            </section>
+            <section aria-labelledby="receipt-privacy-title">
+              <div class="receipt-section-heading"><div><span>LOCAL PRIVACY SCAN</span><h4 id="receipt-privacy-title">Warnings without transmission.</h4></div></div>
+              <p id="receipt-privacy" class="receipt-privacy">—</p>
+            </section>
+          </div>
+
+          <footer class="receipt-release">
+            <button id="receipt-download-json" class="button receipt-primary" type="button" disabled>Download aggregate receipt ↓</button>
+            <button id="receipt-download-card" class="button receipt-secondary" type="button" disabled>Download visual card ↓</button>
+            <button id="receipt-copy-summary" class="button receipt-secondary" type="button" disabled>Copy inspection summary</button>
+            <a id="receipt-source-link" href="https://github.com/immu4989/awesome-agentic-usecases" hidden>Open committed source ↗</a>
+            <a id="receipt-lab-link" href="https://github.com/immu4989/awesome-agentic-usecases" hidden>Fork the runnable lab ↗</a>
+            <p class="receipt-release-note">Every export is aggregate-only. It includes hashes, counts, metrics, checks, and limitations—not scenario text, tool payloads, reasoning, or per-trial records.</p>
+          </footer>
+        </article>
+
+        <p class="receipt-boundary"><b>Boundary:</b> Receipt Lab checks a narrow JSON contract and recomputes declared aggregates. It does not validate domain truth, evaluate source quality, certify a system, approve a protected decision, establish regulatory compliance, or independently reproduce a run.</p>
       </section>
 
       <section id="reliability" class="reliability-report" aria-labelledby="reliability-title">
@@ -1179,7 +1307,7 @@
     <footer>
       <div class="shell footer-inner">
         <div><b>AWESOME AGENTIC USE CASES</b><span>Verified, not just runnable.</span></div>
-        <div><a href="#playground">Playground</a><a href="#boundary-lab">Boundary Lab</a><a href="#boundary-builder">Boundary Builder</a><a href="#challenge">Challenge</a><a href="#studio">Studio</a><a href="#gallery">Gallery</a><a href="https://github.com/immu4989/awesome-agentic-usecases/blob/main/AAU_FORGE.md">Forge</a><a href="https://github.com/immu4989/awesome-agentic-usecases">GitHub</a><a href="https://github.com/immu4989/awesome-agentic-usecases/blob/main/USE_CASE_RADAR.md">Radar</a><a href="https://github.com/immu4989/awesome-agentic-usecases/blob/main/BUILD_YOUR_OWN.md">Build your own</a><a href="https://github.com/immu4989/awesome-agentic-usecases/discussions">Discuss</a><a href="https://github.com/immu4989/awesome-agentic-usecases/blob/main/CONTRIBUTING.md">Contribute</a></div>
+        <div><a href="#playground">Playground</a><a href="#boundary-lab">Boundary Lab</a><a href="#boundary-builder">Boundary Builder</a><a href="#receipt-lab">Receipt Lab</a><a href="#challenge">Challenge</a><a href="#studio">Studio</a><a href="#gallery">Gallery</a><a href="https://github.com/immu4989/awesome-agentic-usecases/blob/main/AAU_FORGE.md">Forge</a><a href="https://github.com/immu4989/awesome-agentic-usecases">GitHub</a><a href="https://github.com/immu4989/awesome-agentic-usecases/blob/main/USE_CASE_RADAR.md">Radar</a><a href="https://github.com/immu4989/awesome-agentic-usecases/blob/main/BUILD_YOUR_OWN.md">Build your own</a><a href="https://github.com/immu4989/awesome-agentic-usecases/discussions">Discuss</a><a href="https://github.com/immu4989/awesome-agentic-usecases/blob/main/CONTRIBUTING.md">Contribute</a></div>
         <small>Apache-2.0 · machine-readable catalog · no tracking</small>
       </div>
     </footer>

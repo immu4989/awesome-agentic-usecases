@@ -89,3 +89,6 @@ aau forge doctor my-boundary
 
 Then complete every `TODO(domain)` and contribution checklist item before treating the
 result as anything more than evaluation infrastructure.
+
+The reproducible [launch kit](LAUNCH_KIT.md) contains the social images and animated GIFs
+for introducing the builder without overstating what its exports prove.

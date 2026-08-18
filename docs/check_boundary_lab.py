@@ -93,7 +93,7 @@ def main() -> None:
         (
             'id="boundary-lab"',
             'href="boundary-lab.css?v=1"',
-            'src="boundary-lab.js?v=1"',
+            'src="boundary-lab.js?v=2"',
             'id="boundary-reveal-button"',
             'id="boundary-download-json"',
             'id="boundary-challenge-link"',
@@ -113,6 +113,7 @@ def main() -> None:
             "x.com/intent/post",
             "/issues/new?title=",
             "aau-boundary-regression/1.0",
+            'if (push || location.hash === "#boundary-lab")',
         ),
     )
     require_text(

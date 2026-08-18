@@ -5,6 +5,13 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Receipt Lab** — a zero-upload, browser-local evidence inspector now recomputes ten hard
+  integrity checks and seven disclosure checks from any AAU-style `eval_*.json`, separates
+  exactness, completion, safety, cost, latency, uncertainty, and provenance without a
+  universal score, and exports aggregate-only JSON and SVG receipts. Three source-bound
+  teaching artifacts preserve a coherent floating-alias result, an older provenance gap with
+  provider errors, and confidence-interval declaration drift. CI locks source hashes, privacy
+  exclusions, generated data, responsive behavior, and the honest evidence ladder.
 - **Boundary Builder** — a zero-install, local-first fork generator now turns one real workflow
   into a source-declared counterfactual pair, synthetic scenario shells, structural pytest,
   Forge-compatible brief, review ledger, contribution checklist, README, and original visual

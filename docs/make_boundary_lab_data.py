@@ -238,7 +238,7 @@ def main() -> None:
                     "lab": f"{REPO}/tree/main/{item['source_path']}",
                     "scenario": f"{REPO}/blob/main/{item['source_path']}/evals/scenarios.jsonl",
                     "fork": f"{REPO}/fork",
-                    "codespace": f"https://codespaces.new/immu4989/awesome-agentic-usecases?quickstart=1",
+                    "codespace": "https://codespaces.new/immu4989/awesome-agentic-usecases?quickstart=1",
                 },
             }
         )

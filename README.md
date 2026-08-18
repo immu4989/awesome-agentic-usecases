@@ -16,6 +16,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/?case=grid-restoration-ready#playground">Interactive playground</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/?boundary=sterility-is-not-chemical-oos#boundary-lab">Boundary Lab</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder">Build a boundary</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab">Inspect a receipt</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#reliability">State of Agent Reliability 2026</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#challenge">AAU Reliability Challenge</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
@@ -135,6 +136,28 @@ Boundary Lab's committed grid-restoration pair, and CI locks every template to i
 contract, catalog entry, and hash. Audit the [builder contract](boundary-builder/README.md),
 [template manifest](boundary-builder/contracts.json), [generator](docs/make_boundary_builder_data.py),
 or [machine-readable library](docs/boundary-builder-data.json).
+
+## New: Bring the receipt. See what it proves.
+
+<a href="https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab"><img src="docs/assets/receipt-lab.svg" alt="AAU Receipt Lab: ten hard integrity checks, seven disclosure checks, source binding, and zero file uploads" width="100%"></a>
+
+**[Open Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab)**
+to inspect an AAU-style `eval_*.json` without uploading it. The browser recomputes trial
+coverage, repeat grids, metric means, total cost, and median latency; checks confidence-
+interval declarations and provider provenance; separates exactness, completion, and safety;
+and keeps provider-error trials visible.
+
+The output is an evidence ladder, not a manufactured verification badge. A local artifact
+may be unreadable, have integrity gaps, or be structurally coherent. Three teaching receipts
+add a committed source path and SHA-256, but source binding is explicitly not independent
+reproduction. The inspector never calculates a universal score and never claims domain
+truth, compliance, certification, or deployment safety.
+
+Visitors can export an aggregate-only JSON receipt or shareable SVG card. Both deliberately
+exclude scenario text, tool payloads, reasoning, and per-trial details. Audit the
+[Receipt Lab contract](receipt-lab/README.md), [sample manifest](receipt-lab/samples.json),
+[generator](docs/make_receipt_lab_data.py), or
+[machine-readable release](docs/receipt-lab-data.json).
 
 <!-- RELIABILITY-SNAPSHOT:START -->
 
@@ -435,6 +458,7 @@ accessible mobility, transparency, trade, nutrition, elections, care transitions
 | **See a real agent fail** | [Start Here](START_HERE.md#i-want-to-see-a-real-agent-failure) | Four short paths through routing, irreversible action, tool poisoning, and public-value failures |
 | **Find an example for my workflow** | [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) | Describe the work, compare evidence-backed matches, and download a fork-ready evaluation brief |
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
+| **Inspect an evaluation result** | [Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab) | Ten recomputed integrity checks, seven open disclosures, source binding, and aggregate-only exports without uploading the file |
 | **Understand the evidence across every lab** | [State of Agent Reliability 2026](https://immu4989.github.io/awesome-agentic-usecases/#reliability) | Filterable source-linked results, coverage-aware model cards, failure terrain, and downloadable data |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |
