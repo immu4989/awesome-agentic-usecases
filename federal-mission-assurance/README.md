@@ -17,6 +17,7 @@ every approval, acquisition, operational, rights, safety, and risk-acceptance de
 - [`aau_federal.py`](aau_federal.py): dependency-free validation, pack, diff, and manifest verification.
 - [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission): browser-local guided builder and 12-file pack exporter.
 - [Federal AI Acquisition Performance Gate](../federal-ai-acquisition/acquisition-performance-gate/): runnable, synthetic benchmark.
+- [Federal Pilot Kit](../federal-pilot-kit/): the next-stage agency → responder → reviewer evidence exchange once the mission profile is defined.
 
 ## Use it locally
 

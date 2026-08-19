@@ -8,6 +8,12 @@ If you have a real workflow but do not plan to implement it yourself, use the
 instead. Describe the decision, evidence, and costly failure; no eval-design experience is
 required.
 
+For a public-sector agency → responder pilot, use the dedicated
+[Federal Pilot proposal](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=federal-pilot.yml)
+and start from the [Federal Pilot Kit](federal-pilot-kit/). Submit only public or synthetic
+details. Never post proposal contents, source-selection information, personal records,
+credentials, controlled information, classified information, or other non-public agency data.
+
 If you plan to implement it, start with the zero-install
 [Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder).
 It converts one declared semantic boundary into an eight-file, Forge-compatible draft while

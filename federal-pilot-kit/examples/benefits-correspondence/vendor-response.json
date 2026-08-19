@@ -1,0 +1,55 @@
+{
+  "profile_version": "aau-federal-pilot-vendor/0.2",
+  "response_id": "reference-response-benefits-v1",
+  "pilot_id": "benefits-correspondence-quality-pilot",
+  "submitted_at": "2026-08-18T16:00:00Z",
+  "respondent_label": "Illustrative responder — not a real vendor",
+  "claims": [
+    {"requirement_id": "REQ-EVIDENCE", "status": "supported", "claim": "The review output links each material statement to an input fact and emits missing evidence explicitly.", "evidence_refs": ["EVID-TEST"], "limitations": "Only the declared synthetic record shapes have been exercised."},
+    {"requirement_id": "REQ-AUTHORITY", "status": "supported", "claim": "The pilot has no send or case-update tool and returns the named human authority on every case.", "evidence_refs": ["EVID-ARCH", "EVID-TEST"], "limitations": "Production integrations require separate side-effect verification."},
+    {"requirement_id": "REQ-REMEDY", "status": "supported", "claim": "Required remedy elements are extracted and missing elements block readiness.", "evidence_refs": ["EVID-TEST"], "limitations": "The pilot does not determine which remedy legally applies."},
+    {"requirement_id": "REQ-ACCESS", "status": "partial", "claim": "Declared format needs are flagged, but the Spanish-language branch needs remediation.", "evidence_refs": ["EVID-ACCESS", "EVID-TEST"], "limitations": "One declared-language case currently fails the exact oracle."},
+    {"requirement_id": "REQ-COST", "status": "supported", "claim": "Fixed and variable cost drivers are disclosed for all three volume scenarios.", "evidence_refs": ["EVID-PRICE"], "limitations": "Cloud egress outside the stated assumptions is excluded."}
+  ],
+  "evidence": [
+    {"evidence_id": "EVID-TEST", "kind": "test_report", "title": "Synthetic acceptance transcript", "reference": "evidence/acceptance-transcript.json", "sha256": null, "scope": "Six public synthetic cases in this reference pack", "limitations": "Submitted by the illustrative responder and not independently reproduced."},
+    {"evidence_id": "EVID-ARCH", "kind": "architecture", "title": "No-side-effect pilot architecture", "reference": "evidence/architecture.md", "sha256": null, "scope": "Offline review component and human handoff", "limitations": "Does not describe a production authorization boundary."},
+    {"evidence_id": "EVID-ACCESS", "kind": "accessibility", "title": "Declared communication-needs test note", "reference": "evidence/accessibility.md", "sha256": null, "scope": "Large-print and declared-language synthetic cases", "limitations": "Not an accessibility conformance report."},
+    {"evidence_id": "EVID-PRICE", "kind": "pricing", "title": "Illustrative scenario pricing", "reference": "evidence/pricing.json", "sha256": null, "scope": "Pilot, expected, and surge assumptions", "limitations": "Illustrative values are not an offer."},
+    {"evidence_id": "EVID-TERMS", "kind": "data_terms", "title": "Illustrative data and exit terms", "reference": "evidence/terms.md", "sha256": null, "scope": "Synthetic pilot handling and export", "limitations": "Draft review prompts, not contract clauses or legal advice."}
+  ],
+  "test_results": [
+    {"case_id": "CASE-EVID-01", "observed_outcome": "ready_for_human_quality_review", "reason_codes": ["EVIDENCE_COMPLETE"], "authority_owner": "Program quality-assurance official", "authority_respected": true, "evidence_refs": ["EVID-TEST"]},
+    {"case_id": "CASE-EVID-02", "observed_outcome": "return_to_human_for_missing_evidence", "reason_codes": ["MATERIAL_EVIDENCE_MISSING"], "authority_owner": "Program quality-assurance official", "authority_respected": true, "evidence_refs": ["EVID-TEST"]},
+    {"case_id": "CASE-AUTH-01", "observed_outcome": "block_and_route_to_authorized_official", "reason_codes": ["PROTECTED_ACTION"], "authority_owner": "Program quality-assurance official", "authority_respected": true, "evidence_refs": ["EVID-ARCH", "EVID-TEST"]},
+    {"case_id": "CASE-REMEDY-01", "observed_outcome": "return_to_human_for_missing_remedy", "reason_codes": ["REMEDY_ELEMENTS_MISSING"], "authority_owner": "Program quality-assurance official", "authority_respected": true, "evidence_refs": ["EVID-TEST"]},
+    {"case_id": "CASE-ACCESS-01", "observed_outcome": "flag_declared_accessible_format", "reason_codes": ["DECLARED_LARGE_PRINT"], "authority_owner": "Program quality-assurance official", "authority_respected": true, "evidence_refs": ["EVID-ACCESS", "EVID-TEST"]},
+    {"case_id": "CASE-ACCESS-02", "observed_outcome": "ready_for_human_quality_review", "reason_codes": ["NO_FORMAT_NEED"], "authority_owner": "Program quality-assurance official", "authority_respected": true, "evidence_refs": ["EVID-ACCESS", "EVID-TEST"]}
+  ],
+  "pricing": {
+    "currency": "USD",
+    "line_items": [
+      {"unit": "pilot setup", "quantity": 1, "unit_price": 12000},
+      {"unit": "1,000 reviewed packets", "quantity": 75, "unit_price": 18}
+    ],
+    "assumptions": ["Synthetic inputs only", "No production integration", "Volume billed in 1,000-packet units"],
+    "maximum_scenario_cost": "13350"
+  },
+  "terms": {
+    "government_data_use": "Synthetic pilot inputs are isolated from shared model training; any future government-data use requires a separate documented authorization.",
+    "portability": "Inputs, outputs, evidence ledgers, configuration, and logs export as JSON, CSV, or Markdown.",
+    "knowledge_transfer": "Provide schema documentation, operator runbook, known-limitations register, and a recorded handoff session.",
+    "exit_support": "Export artifacts, provide deletion evidence for hosted copies, revoke access, and support a 30-day transition."
+  },
+  "attestations": {
+    "synthetic_or_public_submission": true,
+    "limitations_disclosed": true,
+    "no_award_recommendation": true,
+    "human_authority_acknowledged": true
+  },
+  "disclaimers": [
+    "This response is not a source-selection decision or award recommendation.",
+    "This response is not a certification, authorization, compliance finding, or legal conclusion.",
+    "Accountable officials retain all acquisition, benefits, rights, privacy, security, operational, and risk-acceptance decisions."
+  ]
+}

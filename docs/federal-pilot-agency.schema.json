@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/federal-pilot-agency.schema.json",
+  "title": "AAU Federal Pilot Agency Intake",
+  "description": "A non-solicitation, non-award mission and evidence request for a synthetic or public-data federal AI pilot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile_version", "pilot_id", "created_at", "status", "mission", "authority", "data", "requirements", "commercial", "monitoring", "disclaimers"],
+  "$defs": {
+    "text": {"type": "string", "minLength": 1},
+    "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"},
+    "id": {"type": "string", "pattern": "^[A-Z][A-Z0-9-]{2,39}$"},
+    "strings": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/text"}}
+  },
+  "properties": {
+    "profile_version": {"const": "aau-federal-pilot-agency/0.2"},
+    "pilot_id": {"$ref": "#/$defs/slug"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "status": {"enum": ["draft", "request_for_comment", "pilot_authorized", "closed"]},
+    "mission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "problem", "affected_groups", "current_baseline", "intended_environment", "out_of_scope"],
+      "properties": {
+        "title": {"$ref": "#/$defs/text"},
+        "problem": {"type": "string", "minLength": 20},
+        "affected_groups": {"$ref": "#/$defs/strings"},
+        "current_baseline": {"type": "string", "minLength": 10},
+        "intended_environment": {"type": "string", "minLength": 10},
+        "out_of_scope": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accountable_official_role", "protected_decisions", "prohibited_system_actions", "escalation_route"],
+      "properties": {
+        "accountable_official_role": {"$ref": "#/$defs/text"},
+        "protected_decisions": {"$ref": "#/$defs/strings"},
+        "prohibited_system_actions": {"$ref": "#/$defs/strings"},
+        "escalation_route": {"$ref": "#/$defs/text"}
+      }
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification", "allowed_data", "prohibited_data", "training_use", "retention"],
+      "properties": {
+        "classification": {"enum": ["public", "synthetic", "mixed_public_synthetic"]},
+        "allowed_data": {"$ref": "#/$defs/strings"},
+        "prohibited_data": {"$ref": "#/$defs/strings"},
+        "training_use": {"$ref": "#/$defs/text"},
+        "retention": {"$ref": "#/$defs/text"}
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requirement_id", "outcome", "measure", "threshold", "criticality", "evidence_required", "verification_method", "lifecycle_phase"],
+        "properties": {
+          "requirement_id": {"$ref": "#/$defs/id"},
+          "outcome": {"$ref": "#/$defs/text"},
+          "measure": {"$ref": "#/$defs/text"},
+          "threshold": {"$ref": "#/$defs/text"},
+          "criticality": {"enum": ["critical", "important", "advisory"]},
+          "evidence_required": {"$ref": "#/$defs/text"},
+          "verification_method": {"$ref": "#/$defs/text"},
+          "lifecycle_phase": {"enum": ["pre_award", "post_award", "both"]}
+        }
+      }
+    },
+    "commercial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pricing_unit", "cost_scenarios", "data_rights", "portability", "knowledge_transfer", "exit_plan"],
+      "properties": {
+        "pricing_unit": {"$ref": "#/$defs/text"},
+        "cost_scenarios": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "volume"],
+            "properties": {"name": {"$ref": "#/$defs/text"}, "volume": {"$ref": "#/$defs/text"}}
+          }
+        },
+        "data_rights": {"$ref": "#/$defs/text"},
+        "portability": {"$ref": "#/$defs/text"},
+        "knowledge_transfer": {"$ref": "#/$defs/text"},
+        "exit_plan": {"$ref": "#/$defs/text"}
+      }
+    },
+    "monitoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metrics", "cadence", "incident_route", "reassessment_trigger", "cease_use_trigger"],
+      "properties": {
+        "metrics": {"$ref": "#/$defs/strings"},
+        "cadence": {"$ref": "#/$defs/text"},
+        "incident_route": {"$ref": "#/$defs/text"},
+        "reassessment_trigger": {"$ref": "#/$defs/text"},
+        "cease_use_trigger": {"$ref": "#/$defs/text"}
+      }
+    },
+    "disclaimers": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"$ref": "#/$defs/text"}}
+  }
+}

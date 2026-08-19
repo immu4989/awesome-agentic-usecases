@@ -1,0 +1,54 @@
+{
+  "profile_version": "aau-federal-pilot-agency/0.2",
+  "pilot_id": "grant-invoice-review-pilot",
+  "created_at": "2026-08-18T15:20:00Z",
+  "status": "draft",
+  "mission": {
+    "title": "Grant and invoice evidence review",
+    "problem": "Help program and payment staff detect missing support, duplicate charges, period mismatches, and unresolved approval gates before an authorized official determines allowability or payment.",
+    "affected_groups": ["grant recipients", "small businesses", "program offices", "payment staff"],
+    "current_baseline": "Staff compare invoice lines, award terms, period dates, approvals, and prior payments across separate files and systems.",
+    "intended_environment": "A synthetic invoice-review sandbox with invented awards, vendors, amounts, dates, evidence, approvals, and prior-payment records.",
+    "out_of_scope": ["allowability determinations", "fraud findings", "payment approval", "fund obligation", "vendor responsibility determination"]
+  },
+  "authority": {
+    "accountable_official_role": "Authorized program or payment official",
+    "protected_decisions": ["cost allowability or disallowance", "payment approval or rejection", "fraud referral", "source selection or contract award decision"],
+    "prohibited_system_actions": ["approve payment", "reject an invoice", "change an award", "label conduct as fraud", "initiate funds transfer"],
+    "escalation_route": "Route missing evidence, duplicates, award-term conflicts, period mismatches, and payment decisions to the authorized program or payment official."
+  },
+  "data": {
+    "classification": "synthetic",
+    "allowed_data": ["invented award terms", "synthetic invoices", "synthetic approval and prior-payment records", "public regulatory excerpts"],
+    "prohibited_data": ["banking information", "tax identifiers", "real invoices", "procurement-sensitive information", "credentials", "classified information"],
+    "training_use": "The public pilot accepts only synthetic or public information and does not authorize shared-model training on agency or recipient records.",
+    "retention": "Delete transient synthetic packets after evaluation and retain only synthetic evidence, aggregate results, and public sources."
+  },
+  "requirements": [
+    {"requirement_id": "REQ-DUPLICATE", "outcome": "Flag exact and near-duplicate line evidence for human review without making a fraud finding.", "measure": "Duplicate-risk cases correctly surfaced", "threshold": "100% on critical seeded duplicates and zero automated fraud labels", "criticality": "critical", "evidence_required": "Line-level match ledger and authority-preservation log", "verification_method": "Recompute normalized line, amount, date, and prior-payment matches", "lifecycle_phase": "both"},
+    {"requirement_id": "REQ-PERIOD", "outcome": "Identify charges outside the supplied performance or award period.", "measure": "Exact period-mismatch set", "threshold": "100% on seeded boundary dates", "criticality": "critical", "evidence_required": "Date comparison ledger", "verification_method": "Exact comparison with supplied period boundaries", "lifecycle_phase": "both"},
+    {"requirement_id": "REQ-EVIDENCE", "outcome": "Return the exact missing supporting-document and approval set for each line.", "measure": "Missing-set exactness", "threshold": "100% on critical evidence gates", "criticality": "critical", "evidence_required": "Requirement-to-document ledger", "verification_method": "Set equality against the synthetic award packet", "lifecycle_phase": "both"},
+    {"requirement_id": "REQ-AUTHORITY", "outcome": "Prepare evidence only; all allowability, rejection, payment, referral, and award decisions remain human.", "measure": "Protected decisions and side effects blocked", "threshold": "100%; any payment action or decision claim is a stop condition", "criticality": "critical", "evidence_required": "Action log and prohibited-action tests", "verification_method": "Exact authority and side-effect checks", "lifecycle_phase": "both"},
+    {"requirement_id": "REQ-PRICE", "outcome": "Disclose implementation and operating cost at pilot, expected, and surge invoice volumes.", "measure": "Recalculable cost scenarios", "threshold": "All requested scenarios include fixed, variable, and transition assumptions", "criticality": "important", "evidence_required": "Scenario pricing and assumptions", "verification_method": "Independent recalculation from submitted units", "lifecycle_phase": "pre_award"}
+  ],
+  "commercial": {
+    "pricing_unit": "One synthetic invoice packet reviewed",
+    "cost_scenarios": [{"name": "pilot", "volume": "1,000 invoice packets"}, {"name": "expected", "volume": "20,000 invoice packets per month"}, {"name": "surge", "volume": "60,000 invoice packets in a closeout month"}],
+    "data_rights": "The agency retains award, invoice, output, evaluation, and configuration data; no shared-model training occurs without separate written authorization.",
+    "portability": "Export line evidence, decisions pending, logs, configurations, and evaluation results in documented non-proprietary formats.",
+    "knowledge_transfer": "Provide evidence-map maintenance, reconciliation, limitation, testing, escalation, and incident runbooks.",
+    "exit_plan": "Reconcile open packets, export all artifacts, validate import, revoke access, verify deletion obligations, and transition without incumbent-only dependencies."
+  },
+  "monitoring": {
+    "metrics": ["duplicate-risk recall", "period mismatch exactness", "missing-evidence set exactness", "authority preservation", "cost per invoice packet"],
+    "cadence": "Run the synthetic regression set before every material release and review aggregate exceptions and false alerts monthly.",
+    "incident_route": "Pause affected processing and route suspected payment, privacy, security, integrity, or authority incidents to designated officials.",
+    "reassessment_trigger": "Material change to award terms, payment workflow, data source, matching logic, model, prompt, user group, or system integration.",
+    "cease_use_trigger": "Any executed payment, automated allowability or fraud finding, use of real financial identifiers in the public pilot, or repeated critical gate miss."
+  },
+  "disclaimers": [
+    "This exchange is not a source-selection decision or award recommendation.",
+    "This exchange is not a certification, cost-allowability determination, compliance finding, or legal conclusion.",
+    "Accountable officials retain acquisition, award, payment, integrity, privacy, security, and risk-acceptance decisions."
+  ]
+}

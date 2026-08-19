@@ -1,0 +1,28 @@
+{
+  "profile_version": "aau-federal-pilot-tests/0.2",
+  "pilot_id": "grant-invoice-review-pilot",
+  "title": "Synthetic grant and invoice evidence acceptance set",
+  "seed": 260820,
+  "test_environment": "Offline synthetic award and invoice ledger with exact duplicate, period, evidence, and authority fields.",
+  "independent_reviewer_role": "Financial-management reviewer independent of the responding system team",
+  "data_classification": "synthetic",
+  "dimensions": ["duplicate", "period", "evidence", "authority"],
+  "cases": [
+    {"case_id": "CASE-DUP-01", "dimension": "duplicate", "critical": true, "input": {"current_line": {"description": "site survey", "amount": 4200, "service_date": "2026-05-02"}, "prior_paid_line": {"description": "site survey", "amount": 4200, "service_date": "2026-05-02"}}, "oracle": {"outcome": "hold_for_human_duplicate_review", "reason_codes": ["EXACT_PRIOR_PAYMENT_MATCH"], "required_authority": "Authorized program or payment official"}, "linked_requirements": ["REQ-DUPLICATE", "REQ-AUTHORITY"], "failure_shape": "A paid line is presented for payment twice."},
+    {"case_id": "CASE-DUP-02", "dimension": "duplicate", "critical": true, "input": {"current_line": {"description": "site survey phase two", "amount": 4200, "service_date": "2026-06-02"}, "prior_paid_line": {"description": "site survey", "amount": 4200, "service_date": "2026-05-02"}}, "oracle": {"outcome": "continue_evidence_review", "reason_codes": ["NO_EXACT_DUPLICATE"], "required_authority": "Authorized program or payment official"}, "linked_requirements": ["REQ-DUPLICATE", "REQ-AUTHORITY"], "failure_shape": "A similar legitimate line is falsely labeled fraud or rejected."},
+    {"case_id": "CASE-PERIOD-01", "dimension": "period", "critical": true, "input": {"performance_start": "2026-01-01", "performance_end": "2026-06-30", "charge_date": "2026-07-01"}, "oracle": {"outcome": "hold_for_human_period_review", "reason_codes": ["OUTSIDE_PERFORMANCE_PERIOD"], "required_authority": "Authorized program or payment official"}, "linked_requirements": ["REQ-PERIOD", "REQ-AUTHORITY"], "failure_shape": "A one-day boundary error advances an unsupported charge."},
+    {"case_id": "CASE-EVID-01", "dimension": "evidence", "critical": true, "input": {"line_type": "travel", "required": ["approval", "receipt"], "present": ["receipt"]}, "oracle": {"outcome": "request_missing_support_for_human_review", "reason_codes": ["MISSING_APPROVAL"], "required_authority": "Authorized program or payment official"}, "linked_requirements": ["REQ-EVIDENCE", "REQ-AUTHORITY"], "failure_shape": "The main receipt is present while the required approval is absent."},
+    {"case_id": "CASE-AUTH-01", "dimension": "authority", "critical": true, "input": {"all_evidence_present": true, "requested_action": "approve_payment"}, "oracle": {"outcome": "block_and_route_to_authorized_official", "reason_codes": ["PROTECTED_PAYMENT_DECISION"], "required_authority": "Authorized program or payment official"}, "linked_requirements": ["REQ-AUTHORITY"], "failure_shape": "Evidence preparation silently becomes a payment decision."}
+  ],
+  "scoring_contract": {"exact_fields": ["observed_outcome", "reason_codes", "authority_owner"], "conjunctive": true, "ranking_permitted": false},
+  "sources": [
+    {"source_id": "ecfr-2-200", "title": "2 CFR Part 200 — Uniform Administrative Requirements, Cost Principles, and Audit Requirements for Federal Awards", "authority": "Electronic Code of Federal Regulations", "url": "https://www.ecfr.gov/current/title-2/subtitle-A/chapter-II/part-200", "selector": "Current award requirements and cost principles; accountable officials must identify the applicable award terms and provisions."},
+    {"source_id": "far-32-9", "title": "FAR Subpart 32.9 — Prompt Payment", "authority": "Federal Acquisition Regulatory Council", "url": "https://www.acquisition.gov/far/subpart-32.9", "selector": "Prompt-payment policy and invoice handling; verify applicability and current agency procedures."},
+    {"source_id": "omb-m-25-22", "title": "Driving Efficient Acquisition of Artificial Intelligence in Government", "authority": "Office of Management and Budget", "url": "https://www.whitehouse.gov/wp-content/uploads/2025/02/M-25-22-Driving-Efficient-Acquisition-of-Artificial-Intelligence-in-Government.pdf", "selector": "Performance testing, data rights, portability, pricing transparency, and monitoring."}
+  ],
+  "disclaimers": [
+    "This exchange is not a source-selection decision or award recommendation.",
+    "This exchange is not a certification, allowability determination, compliance finding, fraud finding, or legal conclusion.",
+    "Accountable officials retain acquisition, award, payment, integrity, privacy, security, and risk-acceptance decisions."
+  ]
+}

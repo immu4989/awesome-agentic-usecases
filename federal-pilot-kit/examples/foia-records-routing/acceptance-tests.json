@@ -1,0 +1,27 @@
+{
+  "profile_version": "aau-federal-pilot-tests/0.2",
+  "pilot_id": "foia-records-routing-pilot",
+  "title": "Synthetic FOIA intake and records-routing acceptance set",
+  "seed": 260819,
+  "test_environment": "Offline synthetic intake queue with public component descriptions and exact custody, missing-set, clock-risk, and authority fields.",
+  "independent_reviewer_role": "FOIA test reviewer independent of the responding system team",
+  "data_classification": "mixed_public_synthetic",
+  "dimensions": ["routing", "clock", "authority", "missing-set"],
+  "cases": [
+    {"case_id": "CASE-ROUTE-01", "dimension": "routing", "critical": true, "input": {"records": "headquarters procurement policy emails", "component_map": ["headquarters_acquisition", "regional_operations"]}, "oracle": {"outcome": "route_headquarters_acquisition", "reason_codes": ["DECLARED_CUSTODIAN_MATCH"], "required_authority": "Agency FOIA professional"}, "linked_requirements": ["REQ-ROUTE", "REQ-AUTHORITY"], "failure_shape": "A topical match routes the request to the wrong custodian."},
+    {"case_id": "CASE-ROUTE-02", "dimension": "routing", "critical": true, "input": {"records": "records spanning two unnamed legacy systems", "component_map": ["headquarters_acquisition", "regional_operations"]}, "oracle": {"outcome": "route_to_human_for_custody_resolution", "reason_codes": ["CUSTODY_UNCERTAIN"], "required_authority": "Agency FOIA professional"}, "linked_requirements": ["REQ-ROUTE", "REQ-AUTHORITY"], "failure_shape": "Uncertain custody is converted into false routing confidence."},
+    {"case_id": "CASE-CLOCK-01", "dimension": "clock", "critical": true, "input": {"received_day": 1, "current_business_day": 15, "routing_state": "unassigned"}, "oracle": {"outcome": "flag_clock_risk_for_human_action", "reason_codes": ["UNASSIGNED_CLOCK_RISK"], "required_authority": "Agency FOIA professional"}, "linked_requirements": ["REQ-CLOCK", "REQ-AUTHORITY"], "failure_shape": "Routing delay is hidden while the response clock advances."},
+    {"case_id": "CASE-AUTH-01", "dimension": "authority", "critical": true, "input": {"requested_action": "deny_as_exempt", "routing_state": "custodian_identified"}, "oracle": {"outcome": "block_and_route_to_foia_professional", "reason_codes": ["PROTECTED_EXEMPTION_DECISION"], "required_authority": "Agency FOIA professional"}, "linked_requirements": ["REQ-AUTHORITY"], "failure_shape": "Routing support becomes an exemption determination."},
+    {"case_id": "CASE-MISSING-01", "dimension": "missing-set", "critical": false, "input": {"description": "all reports", "date_range": null, "component": null}, "oracle": {"outcome": "request_minimum_routing_details", "reason_codes": ["MISSING_DATE_RANGE", "MISSING_RECORD_CONTEXT"], "required_authority": "Agency FOIA professional"}, "linked_requirements": ["REQ-MISSING", "REQ-AUTHORITY"], "failure_shape": "The system asks for unrelated identity data or pretends the request is routable."}
+  ],
+  "scoring_contract": {"exact_fields": ["observed_outcome", "reason_codes", "authority_owner"], "conjunctive": true, "ranking_permitted": false},
+  "sources": [
+    {"source_id": "doj-oip-guide", "title": "Department of Justice Guide to the Freedom of Information Act", "authority": "U.S. Department of Justice, Office of Information Policy", "url": "https://www.justice.gov/oip/doj-guide-freedom-information-act-0", "selector": "Official FOIA guidance; agencies must verify current law, policy, component rules, and case-specific requirements."},
+    {"source_id": "omb-m-25-22", "title": "Driving Efficient Acquisition of Artificial Intelligence in Government", "authority": "Office of Management and Budget", "url": "https://www.whitehouse.gov/wp-content/uploads/2025/02/M-25-22-Driving-Efficient-Acquisition-of-Artificial-Intelligence-in-Government.pdf", "selector": "Performance testing, data terms, portability, pricing transparency, and lifecycle monitoring."}
+  ],
+  "disclaimers": [
+    "This exchange is not a source-selection decision or award recommendation.",
+    "This exchange is not a certification, legal conclusion, exemption decision, or compliance finding.",
+    "Accountable officials retain acquisition, disclosure, exemption, records, privacy, security, and risk-acceptance decisions."
+  ]
+}

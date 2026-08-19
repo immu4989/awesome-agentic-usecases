@@ -18,6 +18,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder">Build a boundary</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab">Inspect a receipt</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-mission">Federal Mission Studio</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot">Federal Pilot Desk</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#reliability">State of Agent Reliability 2026</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#challenge">AAU Reliability Challenge</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
@@ -58,6 +59,40 @@ domain-specific map of the hidden trap, responsive charts generated from committ
 real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff profile,
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
+
+## New: Fork a federal AI pilot. Inspect every claim.
+
+<a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot"><img src="docs/assets/federal-pilot.svg" alt="AAU Federal Pilot Kit: three reference pilots, fifteen measurable gates, sixteen synthetic cases, and four deliberately visible evidence gaps" width="100%"></a>
+
+**[Open the Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot)**
+to inspect the handoff federal AI work is usually missing: an agency publishes measurable mission
+gates, a responder binds every claim to evidence and limitations, an exact synthetic test manifest
+checks outcome, reasons, and human authority, and a reviewer receives a visible gap ledger—without
+the tool ranking vendors or recommending an award.
+
+The new [`federal-pilot-kit/`](federal-pilot-kit/) ships as a complete, forkable implementation:
+
+- Three versioned JSON Schemas keep the agency intake, responder evidence, and independent test
+  manifest separate and machine-readable.
+- The dependency-free [`aau_pilot.py`](federal-pilot-kit/aau_pilot.py) CLI validates, cross-checks,
+  assesses, diffs, packages, and verifies the exchange without a network call.
+- Three public synthetic pilots cover [benefits correspondence](federal-pilot-kit/examples/benefits-correspondence/),
+  [FOIA and records routing](federal-pilot-kit/examples/foia-records-routing/), and
+  [grant and invoice review](federal-pilot-kit/examples/grant-invoice-review/).
+- The browser-local desk can open your three JSON files, recompute claim → evidence → test states,
+  expose exact-field and authority failures, and export an aggregate assessment with no upload,
+  account, storage, telemetry, model call, or payment.
+- An 11-file evidence pack adds commercial/data/exit review, post-award monitoring, a reusable
+  lessons-learned record, and SHA-256 byte-integrity verification.
+- Eight [source-linked acquisition review topics](federal-pilot-kit/acquisition-review-prompts.json)
+  surface mission, testing, data-rights, portability, pricing, authority, exit, and lessons questions;
+  they are explicitly not clauses, boilerplate, or legal advice.
+
+This is an independent evidence aid—not an official standard, solicitation, contract, endorsement,
+certification, Authority to Operate, compliance finding, source-selection decision, award
+recommendation, or legal conclusion. Accountable officials retain every protected decision. Read
+the [Pilot Kit contract](federal-pilot-kit/README.md), [research and premise notes](docs/FEDERAL_PILOT_RESEARCH_NOTES.md),
+or [propose a public synthetic mission](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=federal-pilot.yml).
 
 ## New: Federal missions need evidence before authority
 
@@ -494,6 +529,7 @@ accessible mobility, transparency, trade, nutrition, elections, care transitions
 | **Evaluate or compare models** | [Model-selection path](START_HERE.md#i-want-to-compare-models-on-my-task) | Same scenarios, repeated runs, cost, latency, uncertainty, and directional errors |
 | **Inspect an evaluation result** | [Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab) | Ten recomputed integrity checks, seven open disclosures, source binding, and aggregate-only exports without uploading the file |
 | **Prepare a public-sector AI assurance pack** | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A browser-local OMB/NIST/GAO crosswalk, visible evidence gaps, protected authority, and a hashed 12-file handoff |
+| **Run a public-sector agency–responder pilot** | [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) | Separate agency, responder, and test contracts; local claim-to-evidence assessment; commercial and exit review; no vendor ranking or award recommendation |
 | **Understand the evidence across every lab** | [State of Agent Reliability 2026](https://immu4989.github.io/awesome-agentic-usecases/#reliability) | Filterable source-linked results, coverage-aware model cards, failure terrain, and downloadable data |
 | **Harden an agent** | [Practical Playbooks](PLAYBOOKS.md) | Symptom → metric → controlled intervention → reproducing use case |
 | **Build my own eval** | [Build Your Own](BUILD_YOUR_OWN.md) | A fork/adaptation guide plus a generator that creates the tested boilerplate |

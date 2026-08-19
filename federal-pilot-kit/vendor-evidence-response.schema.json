@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/federal-pilot-vendor.schema.json",
+  "title": "AAU Federal Pilot Vendor Evidence Response",
+  "description": "A claim-to-evidence response for a public or synthetic pilot; never a vendor ranking or award recommendation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile_version", "response_id", "pilot_id", "submitted_at", "respondent_label", "claims", "evidence", "test_results", "pricing", "terms", "attestations", "disclaimers"],
+  "$defs": {
+    "text": {"type": "string", "minLength": 1},
+    "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"},
+    "id": {"type": "string", "pattern": "^[A-Z][A-Z0-9-]{2,39}$"},
+    "strings": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/text"}}
+  },
+  "properties": {
+    "profile_version": {"const": "aau-federal-pilot-vendor/0.2"},
+    "response_id": {"$ref": "#/$defs/slug"},
+    "pilot_id": {"$ref": "#/$defs/slug"},
+    "submitted_at": {"type": "string", "format": "date-time"},
+    "respondent_label": {"$ref": "#/$defs/text"},
+    "claims": {
+      "type": "array", "minItems": 3,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["requirement_id", "status", "claim", "evidence_refs", "limitations"],
+        "properties": {
+          "requirement_id": {"$ref": "#/$defs/id"},
+          "status": {"enum": ["supported", "partial", "not_supported"]},
+          "claim": {"$ref": "#/$defs/text"},
+          "evidence_refs": {"$ref": "#/$defs/strings"},
+          "limitations": {"$ref": "#/$defs/text"}
+        }
+      }
+    },
+    "evidence": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["evidence_id", "kind", "title", "reference", "sha256", "scope", "limitations"],
+        "properties": {
+          "evidence_id": {"$ref": "#/$defs/id"},
+          "kind": {"enum": ["test_report", "architecture", "policy", "pricing", "data_terms", "operations", "accessibility", "other"]},
+          "title": {"$ref": "#/$defs/text"},
+          "reference": {"$ref": "#/$defs/text"},
+          "sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "scope": {"$ref": "#/$defs/text"},
+          "limitations": {"$ref": "#/$defs/text"}
+        }
+      }
+    },
+    "test_results": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["case_id", "observed_outcome", "reason_codes", "authority_owner", "authority_respected", "evidence_refs"],
+        "properties": {
+          "case_id": {"$ref": "#/$defs/id"},
+          "observed_outcome": {"$ref": "#/$defs/text"},
+          "reason_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/text"}},
+          "authority_owner": {"$ref": "#/$defs/text"},
+          "authority_respected": {"type": "boolean"},
+          "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+        }
+      }
+    },
+    "pricing": {
+      "type": "object", "additionalProperties": false,
+      "required": ["currency", "line_items", "assumptions", "maximum_scenario_cost"],
+      "properties": {
+        "currency": {"const": "USD"},
+        "line_items": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+        "assumptions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/text"}},
+        "maximum_scenario_cost": {"$ref": "#/$defs/text"}
+      }
+    },
+    "terms": {
+      "type": "object", "additionalProperties": false,
+      "required": ["government_data_use", "portability", "knowledge_transfer", "exit_support"],
+      "properties": {
+        "government_data_use": {"$ref": "#/$defs/text"},
+        "portability": {"$ref": "#/$defs/text"},
+        "knowledge_transfer": {"$ref": "#/$defs/text"},
+        "exit_support": {"$ref": "#/$defs/text"}
+      }
+    },
+    "attestations": {
+      "type": "object", "additionalProperties": false,
+      "required": ["synthetic_or_public_submission", "limitations_disclosed", "no_award_recommendation", "human_authority_acknowledged"],
+      "properties": {
+        "synthetic_or_public_submission": {"const": true},
+        "limitations_disclosed": {"const": true},
+        "no_award_recommendation": {"const": true},
+        "human_authority_acknowledged": {"const": true}
+      }
+    },
+    "disclaimers": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"$ref": "#/$defs/text"}}
+  }
+}

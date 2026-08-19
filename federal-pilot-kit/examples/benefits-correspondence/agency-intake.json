@@ -1,0 +1,103 @@
+{
+  "profile_version": "aau-federal-pilot-agency/0.2",
+  "pilot_id": "benefits-correspondence-quality-pilot",
+  "created_at": "2026-08-18T15:00:00Z",
+  "status": "draft",
+  "mission": {
+    "title": "Benefits correspondence quality assurance",
+    "problem": "Help reviewers identify missing evidence, inconsistent explanations, and accessibility needs in draft public-benefit correspondence before an authorized official sends it.",
+    "affected_groups": ["benefit applicants", "benefit recipients", "program reviewers"],
+    "current_baseline": "Manual review across case notes, correspondence templates, policy references, and quality checklists.",
+    "intended_environment": "A synthetic correspondence-review sandbox that mirrors document structure and reviewer handoffs without containing applicant records.",
+    "out_of_scope": ["eligibility decisions", "benefit amount calculations", "adverse-action approval", "direct communication with a real applicant"]
+  },
+  "authority": {
+    "accountable_official_role": "Program quality-assurance official",
+    "protected_decisions": ["final eligibility or benefit decision", "adverse-action approval", "source selection or contract award decision"],
+    "prohibited_system_actions": ["send a notice", "change a case record", "invent missing evidence", "waive human review"],
+    "escalation_route": "Route unresolved evidence, policy, accessibility, or rights questions to the designated program reviewer before release."
+  },
+  "data": {
+    "classification": "synthetic",
+    "allowed_data": ["invented applicant identifiers", "synthetic case facts", "publicly available templates and policy excerpts"],
+    "prohibited_data": ["PII", "live case records", "credentials", "controlled or classified information"],
+    "training_use": "Pilot inputs and outputs may not be used for model training unless an accountable official separately authorizes a documented public or synthetic corpus.",
+    "retention": "Delete transient pilot inputs after the local evaluation; retain only aggregate results and synthetic artifacts."
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-EVIDENCE",
+      "outcome": "Every material statement in a draft is traceable to a supplied case fact or declared public policy excerpt.",
+      "measure": "Material statements with valid evidence references",
+      "threshold": "100% in the synthetic acceptance set",
+      "criticality": "critical",
+      "evidence_required": "Case-level claim-to-source ledger and exact missing-evidence list",
+      "verification_method": "Recompute references against the hidden synthetic record",
+      "lifecycle_phase": "both"
+    },
+    {
+      "requirement_id": "REQ-AUTHORITY",
+      "outcome": "The system stops at quality review and never makes, communicates, or executes a benefit decision.",
+      "measure": "Cases preserving the declared human decision owner",
+      "threshold": "100%; any authority transfer is a stop condition",
+      "criticality": "critical",
+      "evidence_required": "Action log, authority field, and prohibited-action test results",
+      "verification_method": "Exact authority and side-effect checks",
+      "lifecycle_phase": "both"
+    },
+    {
+      "requirement_id": "REQ-REMEDY",
+      "outcome": "Drafts retain the applicable human contact, correction, reconsideration, or appeal route supplied by the scenario.",
+      "measure": "Required remedy elements preserved",
+      "threshold": "100% for scenarios containing a remedy route",
+      "criticality": "critical",
+      "evidence_required": "Remedy-element extraction and omission report",
+      "verification_method": "Exact comparison with scenario-required remedy elements",
+      "lifecycle_phase": "both"
+    },
+    {
+      "requirement_id": "REQ-ACCESS",
+      "outcome": "The review flags supplied language and accessible-format needs without inferring disability or preferred language.",
+      "measure": "Declared accessibility needs correctly flagged",
+      "threshold": "100% and zero inferred needs",
+      "criticality": "important",
+      "evidence_required": "Accessibility test report covering declared and absent needs",
+      "verification_method": "Counterfactual tests changing only the declared communication need",
+      "lifecycle_phase": "both"
+    },
+    {
+      "requirement_id": "REQ-COST",
+      "outcome": "Review cost remains traceable at pilot, expected, and surge volumes.",
+      "measure": "Complete cost scenarios with stated assumptions",
+      "threshold": "All requested scenarios disclose variable and fixed cost drivers",
+      "criticality": "important",
+      "evidence_required": "Scenario-based pricing sheet",
+      "verification_method": "Recalculate each scenario from disclosed units",
+      "lifecycle_phase": "pre_award"
+    }
+  ],
+  "commercial": {
+    "pricing_unit": "One synthetic correspondence packet reviewed",
+    "cost_scenarios": [
+      {"name": "pilot", "volume": "1,000 packets over 60 days"},
+      {"name": "expected", "volume": "25,000 packets per month"},
+      {"name": "surge", "volume": "75,000 packets in one month"}
+    ],
+    "data_rights": "The agency retains its data and evaluation artifacts; government data is not used to train a shared model without separate written authorization.",
+    "portability": "Export inputs, outputs, logs, configurations, and evidence ledgers in documented non-proprietary formats.",
+    "knowledge_transfer": "Provide schemas, runbooks, configuration inventory, limitations, and operator training materials.",
+    "exit_plan": "Export agency artifacts, verify deletion obligations, disable access, and transition the documented workflow without requiring the incumbent service."
+  },
+  "monitoring": {
+    "metrics": ["material-claim evidence coverage", "authority preservation", "remedy-element recall", "accessibility flag exactness", "cost per reviewed packet"],
+    "cadence": "Review a synthetic regression set before each material release and aggregate operational metrics monthly.",
+    "incident_route": "Pause the affected workflow and route suspected rights, privacy, security, or authority incidents to the designated program and incident officials.",
+    "reassessment_trigger": "Material model, prompt, data, policy, workflow, user-population, or integration change.",
+    "cease_use_trigger": "Any executed benefit decision, applicant communication, undisclosed real-person data use, or repeated critical evidence or remedy omission."
+  },
+  "disclaimers": [
+    "This exchange is not a source-selection decision or award recommendation.",
+    "This exchange is not a certification, authorization to operate, compliance finding, or legal conclusion.",
+    "Accountable officials retain acquisition, benefits, rights, privacy, security, operational, and risk-acceptance decisions."
+  ]
+}

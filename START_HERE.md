@@ -15,6 +15,13 @@ acquisition terms, monitoring, remedy, and cease-use evidence to a dated OMB/NIS
 crosswalk, and exports a non-certifying 12-file pack with a SHA-256 manifest. Use only
 synthetic or public information on the public site.
 
+If the mission is already defined and you need a reproducible agency–responder handoff, use the
+**[Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot)**.
+It keeps the agency intake, responder claims and evidence, and exact synthetic test manifest
+separate; recomputes visible gaps locally; and exports an aggregate assessment without ranking a
+vendor or recommending an award. Start from one of three complete public synthetic exchanges in
+the [Federal Pilot Kit](federal-pilot-kit/).
+
 If you already have an `eval_*.json`, start with
 **[Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab)**. It opens
 the artifact locally, recomputes its structural evidence, keeps interval and provenance gaps
@@ -172,6 +179,7 @@ engineered gap, tests, result folders, and documentation templates. Continue wit
 | `evidence-service` | exact terminal, missing-set evidence, accessible channel, deadline, recourse, protected authority, and executed record together | [Food Recall](food-safety-manufacturing/food-recall-traceability-coordinator/), [Water Notice](water-sanitation/drinking-water-notice-coordinator/), [IRS Notice](federal-taxpayer-services/irs-notice-response-navigator/), or any lab in the [matched 12-industry wave](USE_CASE_RADAR.md#evidence-service-expansion-wave--shipped) |
 | `decision-gate` | exact outcome, rule-specific reason, held/missing evidence, satisfied conjuncts, procedure, protected authority, and executed record | [Pharma](pharmaceutical-manufacturing/batch-disposition-gate/), [Grid](grid-operations/distribution-restoration-safety-gate/), [Hiring](human-resources/hiring-compliance-navigator/), [Aviation](aviation-operations/aircraft-dispatch-evidence-gate/), [Banking](banking-compliance/aml-kyc-sanctions-case-gate/), [Tax](tax-filing-services/tax-return-completeness-navigator/) |
 | `federal-mission-assurance` | impact determination, intended-environment tests, acquisition terms, human authority, monitoring, remedy, cease use, and evidence manifest | [Federal AI Acquisition Performance Gate](federal-ai-acquisition/acquisition-performance-gate/) and [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) |
+| `federal-pilot-exchange` | agency outcome, responder claim, declared evidence, exact synthetic test, critical gap, pricing, portability, exit, monitoring, and protected award authority | [Federal Pilot Kit](federal-pilot-kit/) and [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) |
 | `proof-before-action` | exact outcome, source- or record-specific proof, transfer specificity, protected authority, and truthful executed record | [Claims](research-knowledge-work/claim-evidence-verifier/), [Field service](home-field-services/service-visit-readiness-coordinator/), [Grants](nonprofit-grant-management/grant-obligation-evidence-navigator/) |
 | `public-protection` | exact subject, current rule, complete gates, live clock/channel, protected authority, and truthful receipt | [Vehicle recalls](automotive-safety/vehicle-recall-remedy-coordinator/), [911/988 outages](telecommunications-emergency/communications-outage-reporting-gate/), [Worker incidents](workplace-safety/severe-incident-reporting-navigator/) |
 | `obligation-graph` | complete obligation set, exact trigger and clock origin, deadline semantics, recipient/channel, protected owner, and truthful receipt | [Medical devices](medical-device-safety/adverse-event-reporting-gate/), [Mortgage protection](mortgage-servicing/loss-mitigation-foreclosure-gate/), [Cyber disclosure](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/), or any lab in the [matched report](CLOCK_COLLISION_REPORT.md) |

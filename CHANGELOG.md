@@ -5,6 +5,18 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Federal Pilot Kit v0.2** — a forkable agency → responder → reviewer evidence exchange now
+  separates mission requirements, protected decisions, public/synthetic data boundaries, claims,
+  artifacts, limitations, pricing, terms, and exact acceptance outputs across three versioned JSON
+  Schemas. The dependency-free `aau_pilot.py` CLI validates, cross-checks, assesses, diffs,
+  packages, and verifies exchanges without ranking vendors or recommending awards. Three complete
+  public synthetic reference pilots cover benefits correspondence, FOIA/records routing, and
+  grant/invoice review. A new zero-upload Federal Pilot Desk recomputes claim → evidence → test
+  states, exact-field failures, and critical authority gaps locally; exports aggregate-only
+  assessments; and blocks common secret, PII, and non-public-data signals. An 11-file hashed pack,
+  source-linked acquisition review prompts, post-award monitoring, reusable lessons record,
+  dedicated proposal form, generated visual, research notes, and CI drift checks complete the
+  non-certifying, non-source-selection handoff.
 - **Federal Mission Assurance Profile v0.1** — a browser-local Federal Mission Studio now
   maps public-sector AI missions to 17 dated OMB M-25-21, OMB M-25-22, NIST AI RMF, and GAO
   acquisition practices; preserves human decision and risk-acceptance authority; exposes

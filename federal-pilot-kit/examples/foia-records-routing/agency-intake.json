@@ -1,0 +1,54 @@
+{
+  "profile_version": "aau-federal-pilot-agency/0.2",
+  "pilot_id": "foia-records-routing-pilot",
+  "created_at": "2026-08-18T15:10:00Z",
+  "status": "draft",
+  "mission": {
+    "title": "FOIA and records routing assistant",
+    "problem": "Help intake staff identify the likely records custodian, missing request details, referral needs, and response-clock risks without deciding exemptions or issuing a legal determination.",
+    "affected_groups": ["FOIA requesters", "FOIA professionals", "records custodians"],
+    "current_baseline": "Staff review free-text requests, organizational directories, tracking records, and referral guidance manually.",
+    "intended_environment": "An offline sandbox containing invented requests, public component descriptions, synthetic routing state, and no responsive agency records.",
+    "out_of_scope": ["exemption determinations", "record redaction", "final adequacy searches", "legal advice", "sending official correspondence"]
+  },
+  "authority": {
+    "accountable_official_role": "Agency FOIA professional",
+    "protected_decisions": ["exemption or disclosure determination", "adequacy-of-search determination", "source selection or contract award decision"],
+    "prohibited_system_actions": ["deny a request", "apply an exemption", "release or redact a record", "send an official response", "close a request"],
+    "escalation_route": "Route uncertain custody, complex referrals, expedited-processing questions, and all disclosure or exemption questions to an agency FOIA professional."
+  },
+  "data": {
+    "classification": "mixed_public_synthetic",
+    "allowed_data": ["invented request text", "public component descriptions", "synthetic intake timestamps and routing state"],
+    "prohibited_data": ["real requester PII", "responsive agency records", "law-enforcement-sensitive data", "credentials", "classified information"],
+    "training_use": "No submitted request or agency record may be used for model training in this public pilot.",
+    "retention": "Delete local synthetic test inputs after the run; retain aggregate metrics, public sources, and synthetic failures."
+  },
+  "requirements": [
+    {"requirement_id": "REQ-ROUTE", "outcome": "Suggest the declared component or return an explicit custody uncertainty for human resolution.", "measure": "Exact component route or uncertainty state", "threshold": "100% on critical custody cases", "criticality": "critical", "evidence_required": "Routing transcript linked to the public component map", "verification_method": "Exact comparison with the seeded custodian oracle", "lifecycle_phase": "both"},
+    {"requirement_id": "REQ-CLOCK", "outcome": "Preserve intake and referral timestamps and flag the declared clock-risk condition without inventing a deadline.", "measure": "Clock-risk flags with traceable timestamps", "threshold": "100% on cases containing a clock-risk trigger", "criticality": "critical", "evidence_required": "Timestamp ledger and clock-risk test report", "verification_method": "Recompute the seeded timing state", "lifecycle_phase": "both"},
+    {"requirement_id": "REQ-AUTHORITY", "outcome": "Keep exemption, disclosure, adequacy, and official response decisions with the designated FOIA professional.", "measure": "Protected decisions and side effects blocked", "threshold": "100%; any automated denial, disclosure, or closure is a stop condition", "criticality": "critical", "evidence_required": "Authority field, action log, and prohibited-action tests", "verification_method": "Exact authority and side-effect checks", "lifecycle_phase": "both"},
+    {"requirement_id": "REQ-MISSING", "outcome": "Return the minimum missing-detail checklist needed for a human to continue routing.", "measure": "Exact missing-detail set", "threshold": "100% without requesting unrelated personal data", "criticality": "important", "evidence_required": "Missing-set evaluation by request shape", "verification_method": "Set equality against the synthetic oracle", "lifecycle_phase": "both"},
+    {"requirement_id": "REQ-EXIT", "outcome": "Export routing maps, prompts, logs, schemas, and open cases in documented formats at exit.", "measure": "Exit rehearsal artifacts present and readable", "threshold": "Complete export and restoration rehearsal before pilot close", "criticality": "important", "evidence_required": "Portability inventory and exit rehearsal report", "verification_method": "Independent import into a clean local environment", "lifecycle_phase": "both"}
+  ],
+  "commercial": {
+    "pricing_unit": "One synthetic request routed and checked",
+    "cost_scenarios": [{"name": "pilot", "volume": "500 synthetic requests"}, {"name": "expected", "volume": "10,000 requests per month"}, {"name": "backlog", "volume": "50,000 requests over 90 days"}],
+    "data_rights": "The agency retains request data, derived metadata, routing artifacts, evaluations, and configurations; none may train a shared model without separate written authorization.",
+    "portability": "Export requests, routing state, evidence, configuration, logs, and open work in documented non-proprietary formats.",
+    "knowledge_transfer": "Provide component-map maintenance, limitation, escalation, testing, and incident runbooks.",
+    "exit_plan": "Rehearse export and import, preserve open-request state, revoke access, verify deletion duties, and transition without the incumbent service."
+  },
+  "monitoring": {
+    "metrics": ["exact custodian route", "custody uncertainty recall", "clock-risk recall", "minimum missing-set exactness", "protected-authority preservation"],
+    "cadence": "Run the synthetic regression set for each routing-map or model change and review aggregate outcomes monthly.",
+    "incident_route": "Pause affected routing and notify designated FOIA, privacy, records, security, and program officials as applicable.",
+    "reassessment_trigger": "Material change to components, routing guidance, records systems, request intake, model, prompt, or integration.",
+    "cease_use_trigger": "Any automated exemption, denial, disclosure, closure, or use of real responsive records in the public pilot."
+  },
+  "disclaimers": [
+    "This exchange is not a source-selection decision or award recommendation.",
+    "This exchange is not a certification, legal determination, compliance finding, or authorization to operate.",
+    "Accountable officials retain acquisition, disclosure, exemption, records, privacy, security, and risk-acceptance decisions."
+  ]
+}

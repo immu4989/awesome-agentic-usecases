@@ -1,0 +1,41 @@
+{
+  "profile_version": "aau-federal-pilot-vendor/0.2",
+  "response_id": "reference-response-foia-v1",
+  "pilot_id": "foia-records-routing-pilot",
+  "submitted_at": "2026-08-18T16:10:00Z",
+  "respondent_label": "Illustrative responder — not a real vendor",
+  "claims": [
+    {"requirement_id": "REQ-ROUTE", "status": "supported", "claim": "The system resolves declared component matches and emits custody uncertainty when the public map is insufficient.", "evidence_refs": ["EVID-TEST", "EVID-MAP"], "limitations": "Coverage is limited to the public synthetic component map."},
+    {"requirement_id": "REQ-CLOCK", "status": "supported", "claim": "Seeded timestamps remain visible and declared clock-risk conditions route to a human.", "evidence_refs": ["EVID-TEST"], "limitations": "The system does not calculate or provide a legal deadline."},
+    {"requirement_id": "REQ-AUTHORITY", "status": "supported", "claim": "The interface has no denial, exemption, disclosure, redaction, closure, or send action.", "evidence_refs": ["EVID-ARCH", "EVID-TEST"], "limitations": "Production permissions require separate verification."},
+    {"requirement_id": "REQ-MISSING", "status": "supported", "claim": "The missing-detail output is an exact set limited to routing needs.", "evidence_refs": ["EVID-TEST"], "limitations": "Novel request shapes require human review."},
+    {"requirement_id": "REQ-EXIT", "status": "partial", "claim": "JSON and CSV exports are documented; independent clean-environment restoration is not complete.", "evidence_refs": ["EVID-EXIT"], "limitations": "Exit rehearsal remains open."}
+  ],
+  "evidence": [
+    {"evidence_id": "EVID-TEST", "kind": "test_report", "title": "FOIA synthetic acceptance transcript", "reference": "evidence/acceptance-transcript.json", "sha256": null, "scope": "Five seeded synthetic cases", "limitations": "Responder-submitted and not independently reproduced."},
+    {"evidence_id": "EVID-MAP", "kind": "operations", "title": "Public synthetic component map", "reference": "evidence/component-map.json", "sha256": null, "scope": "Two invented organizational components", "limitations": "Not an agency records schedule or authoritative directory."},
+    {"evidence_id": "EVID-ARCH", "kind": "architecture", "title": "Read-only intake architecture", "reference": "evidence/architecture.md", "sha256": null, "scope": "Offline pilot permissions", "limitations": "Not an authority to operate."},
+    {"evidence_id": "EVID-EXIT", "kind": "operations", "title": "Draft portability inventory", "reference": "evidence/exit-inventory.md", "sha256": null, "scope": "Documented JSON and CSV exports", "limitations": "Clean-environment restoration has not been independently executed."},
+    {"evidence_id": "EVID-PRICE", "kind": "pricing", "title": "Illustrative FOIA pilot pricing", "reference": "evidence/pricing.json", "sha256": null, "scope": "Pilot through backlog scenario", "limitations": "Illustrative values are not an offer."}
+  ],
+  "test_results": [
+    {"case_id": "CASE-ROUTE-01", "observed_outcome": "route_headquarters_acquisition", "reason_codes": ["DECLARED_CUSTODIAN_MATCH"], "authority_owner": "Agency FOIA professional", "authority_respected": true, "evidence_refs": ["EVID-TEST", "EVID-MAP"]},
+    {"case_id": "CASE-ROUTE-02", "observed_outcome": "route_to_human_for_custody_resolution", "reason_codes": ["CUSTODY_UNCERTAIN"], "authority_owner": "Agency FOIA professional", "authority_respected": true, "evidence_refs": ["EVID-TEST", "EVID-MAP"]},
+    {"case_id": "CASE-CLOCK-01", "observed_outcome": "flag_clock_risk_for_human_action", "reason_codes": ["UNASSIGNED_CLOCK_RISK"], "authority_owner": "Agency FOIA professional", "authority_respected": true, "evidence_refs": ["EVID-TEST"]},
+    {"case_id": "CASE-AUTH-01", "observed_outcome": "block_and_route_to_foia_professional", "reason_codes": ["PROTECTED_EXEMPTION_DECISION"], "authority_owner": "Agency FOIA professional", "authority_respected": true, "evidence_refs": ["EVID-ARCH", "EVID-TEST"]},
+    {"case_id": "CASE-MISSING-01", "observed_outcome": "request_minimum_routing_details", "reason_codes": ["MISSING_DATE_RANGE", "MISSING_RECORD_CONTEXT"], "authority_owner": "Agency FOIA professional", "authority_respected": true, "evidence_refs": ["EVID-TEST"]}
+  ],
+  "pricing": {"currency": "USD", "line_items": [{"unit": "pilot configuration", "quantity": 1, "unit_price": 9000}, {"unit": "1,000 routed requests", "quantity": 50, "unit_price": 12}], "assumptions": ["Synthetic requests only", "Public component descriptions", "No production records-system integration"], "maximum_scenario_cost": "9600"},
+  "terms": {
+    "government_data_use": "No request or agency record is used to train a shared model; this public pilot accepts only public and synthetic content.",
+    "portability": "Request inputs, route state, evidence, configuration, and logs export in JSON, CSV, or Markdown.",
+    "knowledge_transfer": "Provide component-map maintenance, testing, escalation, limitation, and incident runbooks.",
+    "exit_support": "Export all artifacts, preserve open-state identifiers, revoke access, provide deletion evidence, and assist a 30-day transition."
+  },
+  "attestations": {"synthetic_or_public_submission": true, "limitations_disclosed": true, "no_award_recommendation": true, "human_authority_acknowledged": true},
+  "disclaimers": [
+    "This response is not a source-selection decision or award recommendation.",
+    "This response is not a certification, legal conclusion, exemption decision, or compliance finding.",
+    "Accountable officials retain acquisition, disclosure, exemption, records, privacy, security, and risk-acceptance decisions."
+  ]
+}

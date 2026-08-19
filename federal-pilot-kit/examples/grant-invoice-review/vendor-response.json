@@ -1,0 +1,41 @@
+{
+  "profile_version": "aau-federal-pilot-vendor/0.2",
+  "response_id": "reference-response-invoice-v1",
+  "pilot_id": "grant-invoice-review-pilot",
+  "submitted_at": "2026-08-18T16:20:00Z",
+  "respondent_label": "Illustrative responder — not a real vendor",
+  "claims": [
+    {"requirement_id": "REQ-DUPLICATE", "status": "supported", "claim": "Exact prior-payment matches are held for review and similar nonmatches continue without a fraud label.", "evidence_refs": ["EVID-TEST", "EVID-LEDGER"], "limitations": "The public pilot does not evaluate fuzzy matching on real vendor data."},
+    {"requirement_id": "REQ-PERIOD", "status": "supported", "claim": "Charge dates are compared to supplied inclusive performance boundaries.", "evidence_refs": ["EVID-TEST"], "limitations": "Extensions and amendments must be supplied explicitly."},
+    {"requirement_id": "REQ-EVIDENCE", "status": "supported", "claim": "The output contains the exact missing support set for declared line types.", "evidence_refs": ["EVID-TEST", "EVID-LEDGER"], "limitations": "The pilot does not infer undocumented award terms."},
+    {"requirement_id": "REQ-AUTHORITY", "status": "supported", "claim": "No payment, allowability, fraud-referral, award-change, or rejection action exists in the pilot.", "evidence_refs": ["EVID-ARCH", "EVID-TEST"], "limitations": "Production integration permissions need independent verification."},
+    {"requirement_id": "REQ-PRICE", "status": "supported", "claim": "All three volume scenarios expose fixed, variable, and transition assumptions.", "evidence_refs": ["EVID-PRICE"], "limitations": "Document-storage egress outside the assumptions is excluded."}
+  ],
+  "evidence": [
+    {"evidence_id": "EVID-TEST", "kind": "test_report", "title": "Invoice synthetic acceptance transcript", "reference": "evidence/acceptance-transcript.json", "sha256": null, "scope": "Five seeded public synthetic cases", "limitations": "Responder-submitted and not independently reproduced."},
+    {"evidence_id": "EVID-LEDGER", "kind": "operations", "title": "Line evidence ledger specification", "reference": "evidence/line-ledger.md", "sha256": null, "scope": "Duplicate, period, document, and approval references", "limitations": "Synthetic shapes only."},
+    {"evidence_id": "EVID-ARCH", "kind": "architecture", "title": "Read-only payment-review boundary", "reference": "evidence/architecture.md", "sha256": null, "scope": "Offline pilot with no payment tool", "limitations": "Not a production authorization boundary."},
+    {"evidence_id": "EVID-PRICE", "kind": "pricing", "title": "Illustrative volume pricing", "reference": "evidence/pricing.json", "sha256": null, "scope": "Pilot, expected, and surge assumptions", "limitations": "Illustrative values are not an offer."},
+    {"evidence_id": "EVID-TERMS", "kind": "data_terms", "title": "Illustrative data, portability, and exit response", "reference": "evidence/terms.md", "sha256": null, "scope": "Synthetic pilot and transition", "limitations": "Review prompts, not clauses or legal advice."}
+  ],
+  "test_results": [
+    {"case_id": "CASE-DUP-01", "observed_outcome": "hold_for_human_duplicate_review", "reason_codes": ["EXACT_PRIOR_PAYMENT_MATCH"], "authority_owner": "Authorized program or payment official", "authority_respected": true, "evidence_refs": ["EVID-TEST", "EVID-LEDGER"]},
+    {"case_id": "CASE-DUP-02", "observed_outcome": "continue_evidence_review", "reason_codes": ["NO_EXACT_DUPLICATE"], "authority_owner": "Authorized program or payment official", "authority_respected": true, "evidence_refs": ["EVID-TEST", "EVID-LEDGER"]},
+    {"case_id": "CASE-PERIOD-01", "observed_outcome": "hold_for_human_period_review", "reason_codes": ["OUTSIDE_PERFORMANCE_PERIOD"], "authority_owner": "Authorized program or payment official", "authority_respected": true, "evidence_refs": ["EVID-TEST"]},
+    {"case_id": "CASE-EVID-01", "observed_outcome": "request_missing_support_for_human_review", "reason_codes": ["MISSING_APPROVAL"], "authority_owner": "Authorized program or payment official", "authority_respected": true, "evidence_refs": ["EVID-TEST", "EVID-LEDGER"]},
+    {"case_id": "CASE-AUTH-01", "observed_outcome": "block_and_route_to_authorized_official", "reason_codes": ["PROTECTED_PAYMENT_DECISION"], "authority_owner": "Authorized program or payment official", "authority_respected": true, "evidence_refs": ["EVID-ARCH", "EVID-TEST"]}
+  ],
+  "pricing": {"currency": "USD", "line_items": [{"unit": "pilot setup", "quantity": 1, "unit_price": 15000}, {"unit": "1,000 reviewed packets", "quantity": 60, "unit_price": 20}], "assumptions": ["Synthetic packets only", "No payment-system integration", "Volume billed in 1,000-packet units"], "maximum_scenario_cost": "16200"},
+  "terms": {
+    "government_data_use": "Synthetic pilot data is excluded from shared-model training; future government-data use requires separate written authorization and technical enforcement.",
+    "portability": "Packets, line evidence, outputs, logs, configurations, and results export as JSON, CSV, or Markdown.",
+    "knowledge_transfer": "Provide evidence-map, reconciliation, testing, escalation, limitation, and incident runbooks.",
+    "exit_support": "Export and reconcile open packets, validate import, revoke access, provide deletion evidence, and assist a 45-day transition."
+  },
+  "attestations": {"synthetic_or_public_submission": true, "limitations_disclosed": true, "no_award_recommendation": true, "human_authority_acknowledged": true},
+  "disclaimers": [
+    "This response is not a source-selection decision or award recommendation.",
+    "This response is not a certification, allowability determination, compliance finding, fraud finding, or legal conclusion.",
+    "Accountable officials retain acquisition, award, payment, integrity, privacy, security, and risk-acceptance decisions."
+  ]
+}

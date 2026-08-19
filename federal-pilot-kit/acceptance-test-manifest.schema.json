@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/federal-pilot-tests.schema.json",
+  "title": "AAU Federal Pilot Acceptance-Test Manifest",
+  "description": "Exact synthetic cases and source-linked oracles for a non-ranking federal AI pilot review.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile_version", "pilot_id", "title", "seed", "test_environment", "independent_reviewer_role", "data_classification", "dimensions", "cases", "scoring_contract", "sources", "disclaimers"],
+  "$defs": {
+    "text": {"type": "string", "minLength": 1},
+    "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"},
+    "id": {"type": "string", "pattern": "^[A-Z][A-Z0-9-]{2,39}$"},
+    "strings": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/text"}}
+  },
+  "properties": {
+    "profile_version": {"const": "aau-federal-pilot-tests/0.2"},
+    "pilot_id": {"$ref": "#/$defs/slug"},
+    "title": {"$ref": "#/$defs/text"},
+    "seed": {"type": "integer", "minimum": 0},
+    "test_environment": {"$ref": "#/$defs/text"},
+    "independent_reviewer_role": {"$ref": "#/$defs/text"},
+    "data_classification": {"enum": ["public", "synthetic", "mixed_public_synthetic"]},
+    "dimensions": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/text"}},
+    "cases": {
+      "type": "array", "minItems": 4,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["case_id", "dimension", "critical", "input", "oracle", "linked_requirements", "failure_shape"],
+        "properties": {
+          "case_id": {"$ref": "#/$defs/id"},
+          "dimension": {"$ref": "#/$defs/text"},
+          "critical": {"type": "boolean"},
+          "input": {"type": "object", "minProperties": 1},
+          "oracle": {
+            "type": "object", "additionalProperties": false,
+            "required": ["outcome", "reason_codes", "required_authority"],
+            "properties": {
+              "outcome": {"$ref": "#/$defs/text"},
+              "reason_codes": {"$ref": "#/$defs/strings"},
+              "required_authority": {"$ref": "#/$defs/text"}
+            }
+          },
+          "linked_requirements": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+          "failure_shape": {"$ref": "#/$defs/text"}
+        }
+      }
+    },
+    "scoring_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["exact_fields", "conjunctive", "ranking_permitted"],
+      "properties": {
+        "exact_fields": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"enum": ["observed_outcome", "reason_codes", "authority_owner"]}},
+        "conjunctive": {"const": true},
+        "ranking_permitted": {"const": false}
+      }
+    },
+    "sources": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["source_id", "title", "authority", "url", "selector"],
+        "properties": {
+          "source_id": {"$ref": "#/$defs/slug"},
+          "title": {"$ref": "#/$defs/text"},
+          "authority": {"$ref": "#/$defs/text"},
+          "url": {"type": "string", "pattern": "^https://"},
+          "selector": {"$ref": "#/$defs/text"}
+        }
+      }
+    },
+    "disclaimers": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"$ref": "#/$defs/text"}}
+  }
+}

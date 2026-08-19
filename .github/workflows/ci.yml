@@ -76,6 +76,14 @@ jobs:
           pytest federal-mission-assurance/tests -q
           node --check docs/federal-mission.js
           git diff --exit-code docs/federal-mission-data.json docs/federal-profile.schema.json docs/assets/federal-mission.svg
+      - name: Federal Pilot Kit exchanges and local inspection desk are current
+        run: |
+          python docs/make_federal_pilot_data.py
+          python docs/check_federal_pilot.py
+          python federal-pilot-kit/aau_pilot.py assess federal-pilot-kit/examples/benefits-correspondence/agency-intake.json federal-pilot-kit/examples/benefits-correspondence/vendor-response.json federal-pilot-kit/examples/benefits-correspondence/acceptance-tests.json
+          pytest federal-pilot-kit/tests -q
+          node --check docs/federal-pilot.js
+          git diff --exit-code docs/federal-pilot-data.json docs/federal-pilot-agency.schema.json docs/federal-pilot-vendor.schema.json docs/federal-pilot-tests.schema.json docs/assets/federal-pilot.svg
       - name: State of Agent Reliability is derived from committed evidence
         run: |
           python docs/make_reliability_report.py
