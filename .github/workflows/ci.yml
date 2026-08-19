@@ -5,13 +5,18 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   catalog:
     name: Public catalog integrity
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
       - name: Install editorial linter
@@ -20,6 +25,8 @@ jobs:
         run: |
           codespell
           python docs/check_editorial.py
+      - name: Workflow supply chain is immutable and least privilege
+        run: python docs/check_supply_chain.py
       - name: Catalog, README, package, and CI coverage agree
         run: python docs/check_catalog.py
       - name: AAU Studio evidence and interactions are current
@@ -82,6 +89,8 @@ jobs:
           python docs/check_federal_pilot.py
           python federal-pilot-kit/aau_pilot.py assess federal-pilot-kit/examples/benefits-correspondence/agency-intake.json federal-pilot-kit/examples/benefits-correspondence/vendor-response.json federal-pilot-kit/examples/benefits-correspondence/acceptance-tests.json
           pytest federal-pilot-kit/tests -q
+          python federal-pilot-kit/tools/build_release.py --version 0.3.0 --source-revision 0000000000000000000000000000000000000000 --source-date 2026-08-19T00:00:00Z --output "$RUNNER_TEMP/federal-pilot-release"
+          python federal-pilot-kit/verify_release.py "$RUNNER_TEMP/federal-pilot-release"
           node --check docs/federal-pilot.js
           git diff --exit-code docs/federal-pilot-data.json docs/federal-pilot-agency.schema.json docs/federal-pilot-vendor.schema.json docs/federal-pilot-tests.schema.json docs/assets/federal-pilot.svg
       - name: State of Agent Reliability is derived from committed evidence
@@ -446,8 +455,10 @@ jobs:
             n: 32
     name: ${{ matrix.cli }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
       - name: Install

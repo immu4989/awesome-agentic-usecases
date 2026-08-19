@@ -21,7 +21,7 @@ def prose(text: str) -> str:
 def main() -> None:
     problems = []
     for path in ROOT.rglob("*.md"):
-        if any(part in {".git", ".venv", "results", "evals"} for part in path.parts):
+        if any(part in {".git", ".venv", "results", "evals", "output", "tmp"} for part in path.parts):
             continue
         text = prose(path.read_text(errors="replace"))
         for match in DUPLICATE_WORD.finditer(text):

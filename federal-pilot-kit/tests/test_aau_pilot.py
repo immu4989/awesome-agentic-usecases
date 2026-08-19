@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import zipfile
 from pathlib import Path
+
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -11,6 +14,16 @@ SPEC = importlib.util.spec_from_file_location("aau_pilot", KIT / "aau_pilot.py")
 assert SPEC and SPEC.loader
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
+BUILD_SPEC = importlib.util.spec_from_file_location(
+    "build_release", KIT / "tools" / "build_release.py"
+)
+assert BUILD_SPEC and BUILD_SPEC.loader
+BUILD = importlib.util.module_from_spec(BUILD_SPEC)
+BUILD_SPEC.loader.exec_module(BUILD)
+VERIFY_SPEC = importlib.util.spec_from_file_location("verify_release", KIT / "verify_release.py")
+assert VERIFY_SPEC and VERIFY_SPEC.loader
+VERIFY = importlib.util.module_from_spec(VERIFY_SPEC)
+VERIFY_SPEC.loader.exec_module(VERIFY)
 EXAMPLES = tuple(sorted((KIT / "examples").iterdir()))
 
 
@@ -130,3 +143,72 @@ def test_manifest_cannot_reference_parent_path(tmp_path):
     (tmp_path / "manifest.json").write_text(json.dumps(manifest))
     args = type("Args", (), {"directory": tmp_path})()
     assert MODULE.command_verify_pack(args) == 1
+
+
+def test_json_loader_rejects_oversized_input(tmp_path):
+    path = tmp_path / "large.json"
+    path.write_text('{"value":"' + ("x" * MODULE.MAX_JSON_BYTES) + '"}')
+    with pytest.raises(ValueError, match="byte limit"):
+        MODULE.load_json(path)
+
+
+def test_json_loader_rejects_deep_nesting_and_nonfinite_numbers(tmp_path):
+    nested = tmp_path / "nested.json"
+    nested.write_text('{"root":' + ('{"child":' * 40) + "null" + ("}" * 40) + "}")
+    with pytest.raises(ValueError, match="nesting limit"):
+        MODULE.load_json(nested)
+    nonfinite = tmp_path / "nonfinite.json"
+    nonfinite.write_text('{"value":NaN}')
+    with pytest.raises(ValueError, match="non-finite"):
+        MODULE.load_json(nonfinite)
+
+
+def test_windows_style_evidence_path_escape_is_rejected():
+    _, vendor, _ = documents(KIT / "examples" / "benefits-correspondence")
+    vendor["evidence"][0]["reference"] = "..\\outside.json"
+    assert any("must not escape" in error for error in MODULE.validate_vendor(vendor))
+
+
+def test_pack_verifier_rejects_symbolic_link_payload(tmp_path):
+    agency, vendor, tests = documents(KIT / "examples" / "foia-records-routing")
+    assessment = MODULE.assess_exchange(agency, vendor, tests)
+    files = MODULE.render_pack_files(agency, vendor, tests, assessment)
+    manifest = MODULE.build_manifest(agency, vendor, files)
+    outside = tmp_path.parent / "outside-readme.md"
+    outside.write_text(files["README.md"])
+    for name, contents in files.items():
+        if name != "README.md":
+            (tmp_path / name).write_text(contents)
+    (tmp_path / "README.md").symlink_to(outside)
+    (tmp_path / "manifest.json").write_text(json.dumps(manifest))
+    args = type("Args", (), {"directory": tmp_path})()
+    assert MODULE.command_verify_pack(args) == 1
+
+
+def test_cross_validation_handles_malformed_nested_types_without_crashing():
+    agency, vendor, tests = documents(KIT / "examples" / "grant-invoice-review")
+    tests["cases"][0]["linked_requirements"] = None
+    errors = MODULE.cross_validate(agency, vendor, tests)
+    assert any("linked_requirements must be an array" in error for error in errors)
+
+
+def test_release_build_is_reproducible_and_fully_verifiable(tmp_path):
+    first, second = tmp_path / "first", tmp_path / "second"
+    args = ("0.3.0", "a" * 40, "2026-08-19T12:00:00Z")
+    BUILD.build(*args, first)
+    BUILD.build(*args, second)
+    first_files = {path.name: path.read_bytes() for path in first.iterdir()}
+    second_files = {path.name: path.read_bytes() for path in second.iterdir()}
+    assert first_files == second_files
+    result = VERIFY.verify(first)
+    assert result["verified"] is True
+    assert result["version"] == "0.3.0"
+    assert result["sbom_format"] == "SPDX-2.3"
+
+
+def test_release_verifier_rejects_archive_path_escape(tmp_path):
+    path = tmp_path / "unsafe.zip"
+    with zipfile.ZipFile(path, "w") as archive:
+        archive.writestr("release/../outside.txt", "unsafe")
+    with zipfile.ZipFile(path) as archive, pytest.raises(ValueError, match="unsafe"):
+        VERIFY.safe_members(archive)

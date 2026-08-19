@@ -42,7 +42,7 @@ def main() -> None:
             fail(f"{directory.name} violates non-award boundary")
         examples.append((directory, agency, vendor, tests, assessment))
     if len(examples) != 3:
-        fail("exactly three reference exchanges must ship in v0.2")
+        fail("exactly three reference exchanges must ship in v0.3")
     if len(data["examples"]) != len(examples):
         fail("browser data and canonical reference exchange counts differ")
     for generated, canonical in zip(data["examples"], examples, strict=True):
@@ -102,18 +102,21 @@ def main() -> None:
         'id="federal-pilot"', 'id="pilot-desk"', 'id="pilot-example-cards"',
         'data-pilot-file="agency"', 'data-pilot-file="vendor"',
         'data-pilot-file="tests"', 'id="pilot-download-assessment"',
-        "Files stay in this browser tab",
+        "Files stay in this browser tab", 'class="pilot-trust"',
+        "Verify the tool before it verifies a claim",
     ):
         if token not in html and token not in js:
             fail(f"public interface is missing {token!r}")
     for token in (
-        "federal-pilot-data.json", "aau-federal-pilot-assessment/0.2",
+        "federal-pilot-data.json", "aau-federal-pilot-assessment/0.2", "JSON_LIMITS",
         "vendor_ranked: false", "award_recommendation_made: false", "URL.createObjectURL",
     ):
         if token not in js:
             fail(f"browser inspector is missing {token!r}")
     if "localStorage" in js or "sessionStorage" in js:
         fail("Federal Pilot Desk must not persist exchange contents")
+    if "innerHTML" in js or "insertAdjacentHTML" in js:
+        fail("Federal Pilot Desk must render uploaded values as text, never HTML")
     if "http://" in js or "https://" in js:
         fail("Federal Pilot Desk JavaScript must not call a remote endpoint")
     if "fetch(" not in js or js.count("fetch(") != 1:

@@ -60,7 +60,7 @@ real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
 
-## New: Fork a federal AI pilot. Inspect every claim.
+## New: Fork a federal AI pilot. Verify the evidence—and the kit.
 
 <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot"><img src="docs/assets/federal-pilot.svg" alt="AAU Federal Pilot Kit: three reference pilots, fifteen measurable gates, sixteen synthetic cases, and four deliberately visible evidence gaps" width="100%"></a>
 
@@ -87,11 +87,20 @@ The new [`federal-pilot-kit/`](federal-pilot-kit/) ships as a complete, forkable
 - Eight [source-linked acquisition review topics](federal-pilot-kit/acquisition-review-prompts.json)
   surface mission, testing, data-rights, portability, pricing, authority, exit, and lessons questions;
   they are explicitly not clauses, boilerplate, or legal advice.
+- A [30-Day Agency Pilot Launch Pack](federal-pilot-kit/pilot-launch/) gives program, acquisition,
+  security, privacy, test, operations, and continuity owners an evidence-first route from mission
+  brief to a human continue/revise/stop decision.
+- The [threat model](federal-pilot-kit/THREAT_MODEL.md) and adversarial suite cover malformed and
+  oversized inputs, traversal, symlinks, manifest/SBOM tampering, injected IDs, browser markup, and
+  privacy regressions.
+- Tagged releases are deterministic and ship with an exact manifest, SPDX 2.3 SBOM, SHA-256
+  checksums, GitHub build/SBOM attestations, and a [local verifier](federal-pilot-kit/RELEASE_VERIFICATION.md).
 
 This is an independent evidence aid—not an official standard, solicitation, contract, endorsement,
 certification, Authority to Operate, compliance finding, source-selection decision, award
 recommendation, or legal conclusion. Accountable officials retain every protected decision. Read
-the [Pilot Kit contract](federal-pilot-kit/README.md), [research and premise notes](docs/FEDERAL_PILOT_RESEARCH_NOTES.md),
+the [Pilot Kit contract](federal-pilot-kit/README.md), [30-day launch pack](federal-pilot-kit/pilot-launch/),
+[research and premise notes](docs/FEDERAL_PILOT_RESEARCH_NOTES.md),
 or [propose a public synthetic mission](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=federal-pilot.yml).
 
 ## New: Federal missions need evidence before authority

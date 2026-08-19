@@ -1,0 +1,98 @@
+name: Federal Pilot Kit release
+
+on:
+  push:
+    tags:
+      - "federal-pilot-v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: SemVer without the leading v
+        required: true
+        default: "0.3.0"
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  build-and-attest:
+    name: Build, inventory, and attest
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Resolve and validate release version
+        id: release
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/federal-pilot-v* ]]; then
+            version="${GITHUB_REF_NAME#federal-pilot-v}"
+          else
+            version="$REQUESTED_VERSION"
+          fi
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.-]+)?$ ]]; then
+            echo "Invalid release version: $version" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Run dependency-free pre-release checks
+        run: |
+          python -m py_compile federal-pilot-kit/aau_pilot.py federal-pilot-kit/verify_release.py federal-pilot-kit/tools/build_release.py
+          python docs/check_supply_chain.py
+          python docs/check_federal_pilot.py
+      - name: Build deterministic release and SPDX SBOM
+        run: |
+          python federal-pilot-kit/tools/build_release.py \
+            --version "${{ steps.release.outputs.version }}" \
+            --source-revision "$GITHUB_SHA" \
+            --source-date "$(git show -s --format=%cI "$GITHUB_SHA")" \
+            --output federal-pilot-kit/dist
+          cd federal-pilot-kit/dist
+          sha256sum --check SHA256SUMS
+      - name: Upload release bundle
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: federal-pilot-kit-v${{ steps.release.outputs.version }}
+          path: federal-pilot-kit/dist/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Attest release provenance
+        uses: actions/attest-build-provenance@43d14bc2b83dec42d39ecae14e916627a18bb661 # v3
+        with:
+          subject-path: federal-pilot-kit/dist/*
+      - name: Attest archive SBOM
+        uses: actions/attest-sbom@51e74621a501c89df81fc1391c5a8f4cfc9fab2f # v3
+        with:
+          subject-path: federal-pilot-kit/dist/aau-federal-pilot-kit-v${{ steps.release.outputs.version }}.zip
+          sbom-path: federal-pilot-kit/dist/aau-federal-pilot-kit-v${{ steps.release.outputs.version }}.spdx.json
+
+  publish-tagged-release:
+    name: Publish tagged GitHub release
+    if: startsWith(github.ref, 'refs/tags/federal-pilot-v')
+    needs: build-and-attest
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: federal-pilot-kit-v${{ needs.build-and-attest.outputs.version }}
+          path: federal-pilot-kit/dist
+      - name: Publish release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" federal-pilot-kit/dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Federal Pilot Kit ${GITHUB_REF_NAME#federal-pilot-v}" \
+            --generate-notes \
+            --verify-tag

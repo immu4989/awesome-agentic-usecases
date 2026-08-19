@@ -5,6 +5,7 @@
   if (!section) return;
 
   const byId = (id) => document.querySelector(`#${id}`);
+  const JSON_LIMITS = { bytes: 2_000_000, depth: 32, nodes: 50_000, stringLength: 256_000 };
   const state = { data: null, selected: null, local: { agency: null, vendor: null, tests: null } };
   const els = {
     open: byId("pilot-open-desk"),
@@ -55,6 +56,22 @@
   function safeArray(value) { return Array.isArray(value) ? value : []; }
   function escapeSlug(value) {
     return text(value).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 72) || "federal-pilot";
+  }
+
+  function enforceJsonLimits(value) {
+    const stack = [[value, 1]];
+    let nodes = 0;
+    while (stack.length) {
+      const [item, depth] = stack.pop();
+      nodes += 1;
+      if (nodes > JSON_LIMITS.nodes) throw new Error(`JSON exceeds the ${JSON_LIMITS.nodes.toLocaleString()}-node local limit.`);
+      if (depth > JSON_LIMITS.depth) throw new Error(`JSON exceeds the ${JSON_LIMITS.depth}-level nesting limit.`);
+      if (typeof item === "string" && item.length > JSON_LIMITS.stringLength) throw new Error("JSON contains an excessively long string.");
+      if (Array.isArray(item)) item.forEach((child) => stack.push([child, depth + 1]));
+      else if (item && typeof item === "object") Object.entries(item).forEach(([key, child]) => {
+        stack.push([key, depth + 1], [child, depth + 1]);
+      });
+    }
   }
 
   function sensitiveFindings(value) {
@@ -277,11 +294,12 @@
 
   async function readFile(kind, file) {
     if (!file) return;
-    if (file.size > 2_000_000) throw new Error(`${kind} file exceeds the 2 MB local limit.`);
+    if (file.size > JSON_LIMITS.bytes) throw new Error(`${kind} file exceeds the 2 MB local limit.`);
     let value;
     try { value = JSON.parse(await file.text()); }
     catch { throw new Error(`${kind} file is not valid JSON.`); }
     if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${kind} root must be an object.`);
+    enforceJsonLimits(value);
     state.local[kind] = value;
     const ready = Object.values(state.local).every(Boolean);
     els.status.textContent = ready ? "Three local files loaded. Recomputing the exchange…" : `${kind} file loaded locally. Add the other ${Object.values(state.local).filter(Boolean).length === 1 ? "two files" : "file"}.`;

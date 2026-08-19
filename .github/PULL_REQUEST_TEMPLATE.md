@@ -10,6 +10,7 @@
 - [ ] Fix / improvement to an existing use case or the harness
 - [ ] Docs only
 - [ ] Community Forge Gallery adaptation
+- [ ] Federal Pilot Kit exchange or readiness improvement
 
 ## For a new use case, the verification bar ([VERIFICATION.md](../VERIFICATION.md))
 
@@ -28,6 +29,15 @@
 - [ ] `ruff check .` is clean
 - [ ] I opened an issue describing this use case first (per CONTRIBUTING.md)
 - [ ] For a Gallery entry, `aau gallery validate <entry-id>` reports the evidence level claimed by the public card
+
+## For a Federal Pilot Kit change
+
+- [ ] Uses public or synthetic information only
+- [ ] Preserves protected human decisions and the non-ranking/non-award boundary
+- [ ] Updates the threat model when a parser, workflow, data flow, or trust boundary changes
+- [ ] Adds hostile-input or privacy regression tests for a changed attack surface
+- [ ] Keeps release manifest, SPDX SBOM, checksums, and attestation workflow reproducible
+- [ ] Uses the 30-day launch pack for roles, success/stop gates, and exit evidence
 
 ## Notes
 

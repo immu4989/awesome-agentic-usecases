@@ -1,4 +1,4 @@
-# Federal Pilot Kit v0.2
+# Federal Pilot Kit v0.3
 
 The **AAU Federal Pilot Kit** is an open, forkable evidence exchange for public-sector AI
 pilots. An agency describes a mission and measurable gates, a responder binds each claim to
@@ -7,6 +7,10 @@ ranking vendors or making an award recommendation.
 
 **[Open the browser-local Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot)**
 or run the complete reference exchange locally in under a minute.
+
+Version 0.3 adds the **Trust & Pilot Readiness layer**: a 30-day agency launch pack, explicit
+threat model, hostile-input limits and tests, immutable CI dependencies, and deterministic
+release bundles with SPDX inventory, checksums, and GitHub attestations.
 
 > Independent evidence aid. This is not an official U.S. Government standard, solicitation,
 > contract clause, endorsement, certification, Authority to Operate, compliance finding,
@@ -37,7 +41,8 @@ A passing synthetic test is not deployment proof. None of those artifacts is an 
 - [`acceptance-test-manifest.schema.json`](acceptance-test-manifest.schema.json) — public or
   synthetic cases with exact outcomes, reason codes, human owners, and non-ranking scoring.
 - [`aau_pilot.py`](aau_pilot.py) — dependency-free validation, assessment, packaging, semantic
-  diff, and SHA-256 verification. It makes no network calls.
+  diff, and SHA-256 verification with bounded JSON parsing and safe-path checks. It makes no
+  network calls.
 - [`acquisition-review-prompts.json`](acquisition-review-prompts.json) — source-linked review
   questions, explicitly not boilerplate clauses or legal advice.
 - Three complete reference exchanges: [benefits correspondence](examples/benefits-correspondence/),
@@ -45,6 +50,14 @@ A passing synthetic test is not deployment proof. None of those artifacts is an 
   [grant and invoice review](examples/grant-invoice-review/).
 - [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) — a
   browser-local, zero-upload inspector for the same artifacts.
+- [30-Day Agency Pilot Launch Pack](pilot-launch/) — executive brief, decision rights, security
+  and privacy intake, weekly evidence plan, success gates, acquisition review, feedback, and an
+  exit rehearsal.
+- [`THREAT_MODEL.md`](THREAT_MODEL.md) — assets, trust boundaries, abuse cases, controls,
+  residual risks, and machine-tested invariants.
+- [`tools/build_release.py`](tools/build_release.py) and [`verify_release.py`](verify_release.py)
+  — deterministic ZIP, exact release manifest, SPDX 2.3 SBOM, SHA-256 checks, archive-safety
+  verification, and a workflow that adds build and SBOM attestations.
 
 ## Run the reference pilot
 
@@ -82,17 +95,35 @@ python federal-pilot-kit/aau_pilot.py validate tests path/to/acceptance-tests.js
 python federal-pilot-kit/aau_pilot.py diff old-response.json new-response.json
 ```
 
+## Verify the software you run
+
+Tagged releases contain a ZIP, an external SPDX 2.3 SBOM, and `SHA256SUMS`. The release workflow
+attests the build provenance and the archive-to-SBOM binding. After downloading all release
+assets, run:
+
+```bash
+python verify_release.py .
+gh attestation verify aau-federal-pilot-kit-v0.3.0.zip \
+  --repo immu4989/awesome-agentic-usecases
+```
+
+See the full [release verification procedure](RELEASE_VERIFICATION.md). Local verification proves
+the shipped byte set and inventory; the GitHub check proves workflow provenance. Neither proves
+that a mission should use the software.
+
 ## Fork it for a real mission
 
-1. Copy the nearest reference directory and change its `pilot_id` everywhere.
-2. Replace the mission with measurable outcomes and name every protected human decision.
-3. Define public or synthetic intended-environment cases before collecting responder outputs.
-4. Keep an independent reviewer’s test data unavailable to the responding system team where
+1. Complete the [30-Day Agency Pilot Launch Pack](pilot-launch/) with the authorized agency roles.
+2. Copy the nearest reference directory and change its `pilot_id` everywhere.
+3. Replace the mission with measurable outcomes and name every protected human decision.
+4. Define public or synthetic intended-environment cases before collecting responder outputs.
+5. Keep an independent reviewer’s test data unavailable to the responding system team where
    appropriate and authorized.
-5. Require one response for every requirement, with limitations and declared evidence.
-6. Run `assess`; investigate every visible gap and every mismatched exact field.
-7. Use `pack` for an inspectable handoff and complete the lessons-learned record after each phase.
-8. Keep protected, procurement-sensitive, controlled, classified, and personal information in
+6. Require one response for every requirement, with limitations and declared evidence.
+7. Run `assess`; investigate every visible gap and every mismatched exact field.
+8. Use `pack` for an inspectable handoff and complete the lessons-learned record after each phase.
+9. Rehearse exit and rollback before the Day-30 human decision.
+10. Keep protected, procurement-sensitive, controlled, classified, and personal information in
    approved systems—not this public repository or website.
 
 Use the [Federal Mission Assurance Profile](../federal-mission-assurance/) first when the mission,
@@ -119,6 +150,12 @@ The public examples use synthetic or public information. The CLI is dependency-f
 network request. The browser desk processes files only in the tab, sends no telemetry, uses no
 storage, and blocks common secret, PII, and non-public-data signals before exporting an assessment.
 That narrow scan is a backstop—not a data-loss-prevention system.
+
+Both parsers enforce byte and structure limits. Pack and release verification reject path escapes,
+symbolic links, duplicate or unexpected files, digest/size mismatches, unsafe ZIP entries, and
+manifest/SBOM drift. Repository workflows use immutable Action commit SHAs, explicit permissions,
+CodeQL, dependency review, Scorecard, and reviewed Dependabot updates. Read the
+[threat model](THREAT_MODEL.md) for residual risks and deployment responsibilities.
 
 For feedback, use the repository’s **Propose a Federal Pilot** issue form with public or synthetic
 details only. Do not post proposal contents, source-selection information, credentials, personal

@@ -14,7 +14,7 @@ import json
 import re
 import sys
 from datetime import datetime
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 
@@ -41,19 +41,56 @@ PACK_NAMES = (
 SLUG = re.compile(r"^[a-z0-9][a-z0-9-]{2,79}$")
 ITEM_ID = re.compile(r"^[A-Z][A-Z0-9-]{2,39}$")
 SHA256 = re.compile(r"^[a-f0-9]{64}$")
+MAX_JSON_BYTES = 2_000_000
+MAX_JSON_DEPTH = 32
+MAX_JSON_NODES = 50_000
+MAX_STRING_BYTES = 256_000
+MAX_PACK_FILE_BYTES = 5_000_000
+
+
+def reject_json_constant(value: str) -> None:
+    raise ValueError(f"non-finite JSON number is not permitted: {value}")
+
+
+def enforce_json_limits(value: Any) -> None:
+    stack: list[tuple[Any, int]] = [(value, 1)]
+    nodes = 0
+    while stack:
+        item, depth = stack.pop()
+        nodes += 1
+        if nodes > MAX_JSON_NODES:
+            raise ValueError(f"JSON document exceeds the {MAX_JSON_NODES}-node limit")
+        if depth > MAX_JSON_DEPTH:
+            raise ValueError(f"JSON document exceeds the {MAX_JSON_DEPTH}-level nesting limit")
+        if isinstance(item, str) and len(item.encode("utf-8")) > MAX_STRING_BYTES:
+            raise ValueError(f"JSON string exceeds the {MAX_STRING_BYTES}-byte limit")
+        if isinstance(item, dict):
+            stack.extend((key, depth + 1) for key in item)
+            stack.extend((child, depth + 1) for child in item.values())
+        elif isinstance(item, list):
+            stack.extend((child, depth + 1) for child in item)
 
 
 def load_json(path: Path) -> dict[str, Any]:
     try:
-        value = json.loads(path.read_text(encoding="utf-8"))
+        if path.is_symlink() or not path.is_file():
+            raise ValueError(f"JSON input must be a regular file: {path}")
+        if path.stat().st_size > MAX_JSON_BYTES:
+            raise ValueError(f"JSON input exceeds the {MAX_JSON_BYTES}-byte limit: {path}")
+        value = json.loads(path.read_bytes(), parse_constant=reject_json_constant)
     except FileNotFoundError as exc:
         raise ValueError(f"file not found: {path}") from exc
+    except UnicodeDecodeError as exc:
+        raise ValueError(f"JSON input is not valid UTF-8: {path}") from exc
     except json.JSONDecodeError as exc:
         raise ValueError(
             f"invalid JSON at line {exc.lineno}, column {exc.colno}: {exc.msg}"
         ) from exc
+    except RecursionError as exc:
+        raise ValueError("JSON document nesting exceeds the parser safety limit") from exc
     if not isinstance(value, dict):
         raise ValueError("document root must be a JSON object")
+    enforce_json_limits(value)
     return value
 
 
@@ -248,7 +285,8 @@ def validate_vendor(vendor: dict[str, Any]) -> list[str]:
             errors.append(f"{path}.kind has an invalid value")
         require_strings(item, ("title", "reference", "scope", "limitations"), f"{path}.", errors)
         reference = str(item.get("reference", ""))
-        if reference.startswith("/") or ".." in Path(reference).parts:
+        reference_path = PurePosixPath(reference)
+        if reference_path.is_absolute() or ".." in reference_path.parts or "\\" in reference:
             errors.append(f"{path}.reference must not escape the exchange directory")
         digest = item.get("sha256")
         if digest is not None and not SHA256.fullmatch(str(digest)):
@@ -397,12 +435,18 @@ def cross_validate(
     pilot_ids = {agency.get("pilot_id"), vendor.get("pilot_id"), tests.get("pilot_id")}
     if len(pilot_ids) != 1:
         errors.append("agency, vendor, and tests pilot_id values must match")
+    agency_requirements = agency.get("requirements")
+    vendor_claims = vendor.get("claims")
+    test_cases = tests.get("cases")
+    vendor_results = vendor.get("test_results")
     requirement_ids = {
-        item.get("requirement_id") for item in agency.get("requirements", []) if isinstance(item, dict)
-    }
+        item.get("requirement_id")
+        for item in agency_requirements if isinstance(item, dict)
+    } if isinstance(agency_requirements, list) else set()
     claim_ids = {
-        item.get("requirement_id") for item in vendor.get("claims", []) if isinstance(item, dict)
-    }
+        item.get("requirement_id")
+        for item in vendor_claims if isinstance(item, dict)
+    } if isinstance(vendor_claims, list) else set()
     missing_claims = requirement_ids - claim_ids
     unknown_claims = claim_ids - requirement_ids
     if missing_claims:
@@ -411,16 +455,22 @@ def cross_validate(
         errors.append(f"vendor response claims unknown requirements: {sorted(unknown_claims)}")
     test_requirement_ids = {
         requirement_id
-        for case in tests.get("cases", []) if isinstance(case, dict)
-        for requirement_id in case.get("linked_requirements", [])
-    }
+        for case in test_cases if isinstance(case, dict)
+        for requirement_id in (
+            case.get("linked_requirements")
+            if isinstance(case.get("linked_requirements"), list)
+            else []
+        )
+    } if isinstance(test_cases, list) else set()
     unknown_test_requirements = test_requirement_ids - requirement_ids
     if unknown_test_requirements:
         errors.append(f"tests reference unknown requirements: {sorted(unknown_test_requirements)}")
-    case_ids = {item.get("case_id") for item in tests.get("cases", []) if isinstance(item, dict)}
+    case_ids = {
+        item.get("case_id") for item in test_cases if isinstance(item, dict)
+    } if isinstance(test_cases, list) else set()
     result_ids = {
-        item.get("case_id") for item in vendor.get("test_results", []) if isinstance(item, dict)
-    }
+        item.get("case_id") for item in vendor_results if isinstance(item, dict)
+    } if isinstance(vendor_results, list) else set()
     missing_results = case_ids - result_ids
     unknown_results = result_ids - case_ids
     if missing_results:
@@ -716,6 +766,8 @@ def command_pack(args: argparse.Namespace) -> int:
     agency, vendor, tests = load_json(args.agency), load_json(args.vendor), load_json(args.tests)
     assessment = assess_exchange(agency, vendor, tests)
     output: Path = args.out
+    if output.is_symlink():
+        raise ValueError(f"refusing symbolic-link output path: {output}")
     if output.exists() and (not output.is_dir() or any(output.iterdir())):
         raise ValueError(f"refusing to overwrite non-empty output path: {output}")
     output.mkdir(parents=True, exist_ok=True)
@@ -729,6 +781,8 @@ def command_pack(args: argparse.Namespace) -> int:
 
 
 def command_verify_pack(args: argparse.Namespace) -> int:
+    if args.directory.is_symlink() or not args.directory.is_dir():
+        raise ValueError("pack path must be a regular directory")
     manifest = load_json(args.directory / "manifest.json")
     errors: list[str] = []
     if manifest.get("manifest_version") != PACK_VERSION:
@@ -751,13 +805,18 @@ def command_verify_pack(args: argparse.Namespace) -> int:
         if name not in expected:
             continue
         path = args.directory / name
-        if not path.is_file():
+        if path.is_symlink() or not path.is_file():
             errors.append(f"missing {name}")
             continue
+        if path.stat().st_size > MAX_PACK_FILE_BYTES:
+            errors.append(f"file exceeds {MAX_PACK_FILE_BYTES} bytes: {name}")
+            continue
         contents = path.read_bytes()
+        if not SHA256.fullmatch(str(item.get("sha256", ""))):
+            errors.append(f"invalid digest: {name}")
         if sha256_bytes(contents) != item.get("sha256"):
             errors.append(f"digest mismatch: {name}")
-        if len(contents) != item.get("bytes"):
+        if not isinstance(item.get("bytes"), int) or len(contents) != item.get("bytes"):
             errors.append(f"byte-count mismatch: {name}")
     if args.directory.is_dir():
         extra = {path.name for path in args.directory.iterdir()} - set(PACK_NAMES)

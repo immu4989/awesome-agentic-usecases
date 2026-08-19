@@ -5,6 +5,17 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Federal Pilot Kit v0.3 — Trust & Pilot Readiness** — the public agency–responder exchange now
+  adds an eight-part 30-day launch pack spanning executive scope, decision rights, security/privacy
+  intake, weekly evidence gates, success and stop metrics, commercial review, safely reusable
+  lessons, and a measured exit rehearsal. A dedicated threat model makes assets, boundaries, abuse
+  cases, controls, residual risk, and non-approval invariants explicit. CLI and browser inputs now
+  have byte, depth, node, and string limits; pack and release verifiers reject traversal, symlinks,
+  duplicate or unexpected files, unsafe ZIPs, non-finite JSON, and manifest/SBOM drift. Every GitHub
+  Action is commit-SHA pinned with least-privilege permissions; CodeQL, dependency review, OpenSSF
+  Scorecard, and Dependabot guard changes. A deterministic release builder produces a ZIP, exact
+  manifest, SPDX 2.3 SBOM, and `SHA256SUMS`; tagged releases receive GitHub build-provenance and SBOM
+  attestations plus a one-command local verifier.
 - **Federal Pilot Kit v0.2** — a forkable agency → responder → reviewer evidence exchange now
   separates mission requirements, protected decisions, public/synthetic data boundaries, claims,
   artifacts, limitations, pricing, terms, and exact acceptance outputs across three versioned JSON

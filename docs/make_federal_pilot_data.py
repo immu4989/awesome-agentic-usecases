@@ -43,7 +43,7 @@ def render_svg(pilots: int, requirements: int, cases: int, visible_gaps: int) ->
   </defs>
   <rect width="1280" height="560" rx="25" fill="url(#bg)"/><rect width="1280" height="560" rx="25" fill="url(#grid)"/>
   <path d="M0 3H1280" stroke="url(#line)" stroke-width="6"/>
-  <text x="58" y="59" class="k" fill="#66efc0">AAU / FEDERAL PILOT KIT 0.2 / FORK THE MISSION · VERIFY THE EVIDENCE</text>
+  <text x="58" y="59" class="k" fill="#66efc0">AAU / FEDERAL PILOT KIT 0.3 / FORK THE MISSION · VERIFY THE EVIDENCE</text>
   <text x="58" y="119" class="h sans" fill="#f4fff9">Claims enter.</text><text x="58" y="168" class="h sans" fill="#ffd166">Gaps stay visible.</text>
   <text x="58" y="205" class="sub sans">One open handoff for agency outcomes, responder evidence, exact tests, and accountable review.</text>
   <g transform="translate(876 36)"><path d="M48 80h230v128H48z" fill="#071b1b" stroke="#39e6ad" stroke-width="2"/><path d="M72 109h92M72 134h164M72 159h130" stroke="#7bdabe" stroke-width="7" stroke-linecap="round" opacity=".62"/><path d="M197 91l67 67-67 67" fill="#0b2527" stroke="#ffd166" stroke-width="3" filter="url(#glow)"/><path d="M213 155l15 15 28-35" fill="none" stroke="#ffd166" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><text x="163" y="248" text-anchor="middle" class="k" fill="#7ebcff">NON-RANKING / LOCAL / INSPECTABLE</text></g>
@@ -93,7 +93,7 @@ def main() -> None:
         visible_gaps += assessment["summary"]["visible_gaps"]
     review_prompts = json.loads((KIT / "acquisition-review-prompts.json").read_text())
     output = {
-        "version": "aau-federal-pilot-desk/0.2",
+        "version": "aau-federal-pilot-desk/0.3",
         "privacy": "Files stay in this browser tab. The Pilot Desk does not upload, persist, or transmit them.",
         "boundary": "No vendor ranking, award recommendation, certification, compliance finding, or government approval is produced.",
         "schema_paths": {

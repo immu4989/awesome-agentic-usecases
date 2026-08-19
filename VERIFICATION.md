@@ -84,6 +84,12 @@ browser-created plans remain `planned`. The agent must never turn a complete for
 manifest into an ATO, certification, approval, risk acceptance, source selection, obligation,
 or award.
 
+For a forked Federal Pilot Kit, also require the
+[30-Day Agency Pilot Launch Pack](federal-pilot-kit/pilot-launch/), documented decision rights,
+the [kit threat model](federal-pilot-kit/THREAT_MODEL.md), adversarial input and privacy regression
+tests, an exact software inventory, and verified release provenance. These are pilot-readiness
+receipts, not a security authorization or permission to place protected data in the public kit.
+
 ---
 
 ## Why this bar exists

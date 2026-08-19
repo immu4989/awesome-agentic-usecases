@@ -40,3 +40,23 @@ is an open, non-commercial project, and fixes are made on a best-effort basis.
   to use.
 - The mock backend (`--backend mock`) needs no key and makes no network calls — use it to
   exercise the full pipeline at zero risk and zero cost.
+
+## Federal Pilot Kit boundary
+
+The Federal Pilot Kit accepts untrusted JSON and creates review artifacts, so it has a dedicated
+[threat model](federal-pilot-kit/THREAT_MODEL.md), byte and structure limits, path and symlink
+checks, exact manifests, hostile-input tests, and a zero-upload browser boundary. Use only public
+or synthetic information in the repository, website, examples, issues, and public forks. Its
+sensitive-data scan is a narrow backstop, not a data-loss-prevention system or permission to use
+an unapproved environment.
+
+## Repository and release supply chain
+
+- GitHub Actions are pinned to immutable commit SHAs and checkout credentials are not persisted.
+- Workflow permissions are declared explicitly; CodeQL, dependency review, OpenSSF Scorecard, and
+  Dependabot provide independent change signals.
+- Tagged Federal Pilot Kit releases include a deterministic ZIP, SHA-256 checksums, an SPDX 2.3
+  SBOM, build-provenance attestation, and SBOM attestation.
+- Follow the [release verification procedure](federal-pilot-kit/RELEASE_VERIFICATION.md) before
+  running a downloaded bundle. Checksums prove bytes; the GitHub attestation binds those bytes to
+  a workflow and repository. Neither proves mission fitness, compliance, or authorization.

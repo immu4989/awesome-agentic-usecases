@@ -20,7 +20,10 @@ If the mission is already defined and you need a reproducible agency–responder
 It keeps the agency intake, responder claims and evidence, and exact synthetic test manifest
 separate; recomputes visible gaps locally; and exports an aggregate assessment without ranking a
 vendor or recommending an award. Start from one of three complete public synthetic exchanges in
-the [Federal Pilot Kit](federal-pilot-kit/).
+the [Federal Pilot Kit](federal-pilot-kit/), then use its
+[30-Day Agency Pilot Launch Pack](federal-pilot-kit/pilot-launch/) to assign decision rights,
+security/privacy intake, weekly evidence gates, success metrics, and an exit rehearsal. Before
+running a tagged bundle, follow the [release verification procedure](federal-pilot-kit/RELEASE_VERIFICATION.md).
 
 If you already have an `eval_*.json`, start with
 **[Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab)**. It opens
