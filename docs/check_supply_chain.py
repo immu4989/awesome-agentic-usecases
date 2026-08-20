@@ -52,6 +52,8 @@ def main() -> None:
         ROOT / "federal-pilot-kit" / "THREAT_MODEL.md": ("## Security invariants",),
         ROOT / "federal-pilot-kit" / "RELEASE_VERIFICATION.md": ("gh attestation verify",),
         ROOT / "federal-pilot-kit" / "pilot-launch" / "README.md": ("30-Day",),
+        ROOT / "federal-pilot-kit" / "lesson-record.schema.json": ("aau-federal-ai-lesson/0.4",),
+        ROOT / "federal-pilot-kit" / "lessons" / "source-ledger.json": ("aau-federal-ai-lesson-sources/0.4",),
     }
     for path, tokens in required.items():
         if not path.is_file():

@@ -128,7 +128,7 @@ def verify(directory: Path) -> dict[str, Any]:
 
         version = manifest.get("version")
         expected_root = f"aau-federal-pilot-kit-v{version}"
-        if manifest.get("release_manifest_version") != "aau-federal-pilot-release/0.3":
+        if manifest.get("release_manifest_version") != "aau-federal-pilot-release/0.4":
             raise ValueError("release manifest contract version is not supported")
         if root != expected_root or archive_path.name != f"{expected_root}.zip":
             raise ValueError("archive name, root, and manifest version do not agree")

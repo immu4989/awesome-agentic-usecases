@@ -13,7 +13,7 @@ import hashlib
 import json
 import re
 import sys
-from datetime import datetime
+from datetime import date, datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -23,6 +23,10 @@ VENDOR_VERSION = "aau-federal-pilot-vendor/0.2"
 TEST_VERSION = "aau-federal-pilot-tests/0.2"
 ASSESSMENT_VERSION = "aau-federal-pilot-assessment/0.2"
 PACK_VERSION = "aau-federal-pilot-pack/0.2"
+LESSON_VERSION = "aau-federal-ai-lesson/0.4"
+LESSON_SCAN_VERSION = "aau-public-redaction-scan/0.4"
+LESSON_CLOSEOUT_VERSION = "aau-federal-ai-lesson-closeout/0.4"
+SOURCE_LEDGER_VERSION = "aau-federal-ai-lesson-sources/0.4"
 
 PACK_NAMES = (
     "README.md",
@@ -38,6 +42,33 @@ PACK_NAMES = (
     "manifest.json",
 )
 
+CLOSEOUT_NAMES = (
+    "README.md",
+    "lesson.json",
+    "assessment-summary.json",
+    "evidence-index.json",
+    "privacy-scan.json",
+    "source-snapshot.json",
+    "manifest.json",
+)
+
+LESSON_RESULTS = {"succeeded", "changed", "stopped", "mixed"}
+LESSON_STATUSES = {"public_synthetic", "public_record", "revalidation_due", "retired"}
+LIFECYCLE_STAGES = {"pre_award", "award", "post_award", "closeout", "cross_lifecycle"}
+CHALLENGE_CATEGORIES = {
+    "technical_expertise",
+    "requirements_and_contract_terms",
+    "government_data_and_ip",
+    "early_testing_and_continuous_evaluation",
+    "pricing_and_total_cost",
+    "portability_and_exit",
+    "privacy_and_data_handling",
+    "human_authority",
+    "accessibility_and_public_service",
+    "program_management",
+}
+REUSE_STATES = {"promising", "evidence_backed", "needs_revalidation", "retired"}
+
 SLUG = re.compile(r"^[a-z0-9][a-z0-9-]{2,79}$")
 ITEM_ID = re.compile(r"^[A-Z][A-Z0-9-]{2,39}$")
 SHA256 = re.compile(r"^[a-f0-9]{64}$")
@@ -46,6 +77,26 @@ MAX_JSON_DEPTH = 32
 MAX_JSON_NODES = 50_000
 MAX_STRING_BYTES = 256_000
 MAX_PACK_FILE_BYTES = 5_000_000
+
+SENSITIVE_PATTERNS = (
+    ("EMAIL", re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.I)),
+    ("SSN", re.compile(r"\b\d{3}-\d{2}-\d{4}\b")),
+    ("PHONE", re.compile(r"(?<!\d)(?:\+?1[-. ]?)?\(?\d{3}\)?[-. ]\d{3}[-. ]\d{4}(?!\d)")),
+    ("PRIVATE_KEY", re.compile(r"BEGIN [A-Z ]*PRIVATE KEY")),
+    ("GITHUB_TOKEN", re.compile(r"\bgh[pousr]_[A-Za-z0-9]{20,}\b")),
+    ("AWS_ACCESS_KEY", re.compile(r"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b")),
+    ("BEARER_TOKEN", re.compile(r"\bBearer\s+[A-Za-z0-9._~+/=-]{16,}", re.I)),
+)
+SENSITIVE_FIELD_NAMES = {
+    "account_number",
+    "address",
+    "date_of_birth",
+    "dob",
+    "full_name",
+    "home_address",
+    "person_name",
+    "social_security_number",
+}
 
 
 def reject_json_constant(value: str) -> None:
@@ -108,6 +159,97 @@ def iso_datetime(value: Any) -> bool:
     return True
 
 
+def iso_date(value: Any) -> bool:
+    if not isinstance(value, str):
+        return False
+    try:
+        date.fromisoformat(value)
+    except ValueError:
+        return False
+    return True
+
+
+def safe_relative_path(value: Any) -> bool:
+    if not nonempty(value) or "\\" in value:
+        return False
+    path = PurePosixPath(value)
+    return not path.is_absolute() and ".." not in path.parts
+
+
+def walk_strings(value: Any, prefix: str = "") -> list[tuple[str, str]]:
+    output: list[tuple[str, str]] = []
+    if isinstance(value, dict):
+        for key, child in value.items():
+            child_path = f"{prefix}.{key}" if prefix else str(key)
+            output.extend(walk_strings(child, child_path))
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            output.extend(walk_strings(child, f"{prefix}[{index}]"))
+    elif isinstance(value, str):
+        output.append((prefix, value))
+    return output
+
+
+def scan_sensitive(value: dict[str, Any]) -> dict[str, Any]:
+    """Run a narrow deterministic pre-publication scan without echoing matched values."""
+    findings: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for path, content in walk_strings(value):
+        leaf = re.sub(r"\[\d+\]$", "", path.rsplit(".", 1)[-1]).lower()
+        if leaf in SENSITIVE_FIELD_NAMES and content.strip():
+            key = ("SENSITIVE_FIELD", path)
+            if key not in seen:
+                seen.add(key)
+                findings.append(
+                    {
+                        "code": "SENSITIVE_FIELD",
+                        "path": path,
+                        "fingerprint": sha256_bytes(content.encode("utf-8"))[:16],
+                    }
+                )
+        for code, pattern in SENSITIVE_PATTERNS:
+            match = pattern.search(content)
+            if not match:
+                continue
+            key = (code, path)
+            if key in seen:
+                continue
+            seen.add(key)
+            findings.append(
+                {
+                    "code": code,
+                    "path": path,
+                    "fingerprint": sha256_bytes(match.group(0).encode("utf-8"))[:16],
+                }
+            )
+    sharing = value.get("sharing") if isinstance(value.get("sharing"), dict) else {}
+    for field in (
+        "contains_personally_identifiable_information",
+        "contains_procurement_sensitive_information",
+        "contains_controlled_unclassified_information",
+        "contains_classified_information",
+        "contains_secrets_or_credentials",
+    ):
+        if sharing.get(field) is not False:
+            findings.append(
+                {
+                    "code": "PUBLICATION_ATTESTATION_MISSING",
+                    "path": f"sharing.{field}",
+                    "fingerprint": sha256_bytes(f"{field}:{sharing.get(field)!r}".encode())[:16],
+                }
+            )
+    return {
+        "scan_version": LESSON_SCAN_VERSION,
+        "finding_count": len(findings),
+        "safe_to_package": not findings,
+        "findings": findings,
+        "boundary": (
+            "A zero-finding scan is not a privacy, records, classification, export-control, "
+            "procurement-sensitivity, or disclosure determination. Authorized human review remains required."
+        ),
+    }
+
+
 def object_at(value: dict[str, Any], key: str, errors: list[str]) -> dict[str, Any]:
     child = value.get(key)
     if not isinstance(child, dict):
@@ -154,6 +296,297 @@ def validate_disclaimers(value: Any, path: str, errors: list[str]) -> None:
     for phrase in ("not a source-selection", "not a certification", "accountable"):
         if phrase not in joined:
             errors.append(f"{path} must state {phrase!r}")
+
+
+def validate_source_ledger(ledger: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    if ledger.get("ledger_version") != SOURCE_LEDGER_VERSION:
+        errors.append(f"ledger_version must equal {SOURCE_LEDGER_VERSION!r}")
+    sources = object_list(ledger.get("sources"), "sources", errors, minimum=3)
+    source_ids: set[str] = set()
+    for index, item in enumerate(sources):
+        path = f"sources[{index}]"
+        source_id = item.get("source_id")
+        if not SLUG.fullmatch(str(source_id or "")):
+            errors.append(f"{path}.source_id must be a lowercase slug")
+        elif source_id in source_ids:
+            errors.append(f"duplicate source_id: {source_id}")
+        else:
+            source_ids.add(source_id)
+        require_strings(
+            item,
+            ("title", "authority", "url", "selector"),
+            f"{path}.",
+            errors,
+        )
+        if not str(item.get("url", "")).startswith("https://"):
+            errors.append(f"{path}.url must use HTTPS")
+        for field in ("published_at", "last_verified", "review_due"):
+            if not iso_date(item.get(field)):
+                errors.append(f"{path}.{field} must be an ISO 8601 date")
+        if iso_date(item.get("last_verified")) and iso_date(item.get("review_due")):
+            if item["review_due"] <= item["last_verified"]:
+                errors.append(f"{path}.review_due must follow last_verified")
+    require_strings(ledger, ("boundary",), "", errors)
+    return errors
+
+
+def validate_lesson(lesson: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    if lesson.get("profile_version") != LESSON_VERSION:
+        errors.append(f"profile_version must equal {LESSON_VERSION!r}")
+    for field in ("lesson_id", "pilot_id"):
+        if not SLUG.fullmatch(str(lesson.get(field, ""))):
+            errors.append(f"{field} must be a 3-80 character lowercase slug")
+    if not iso_datetime(lesson.get("published_at")):
+        errors.append("published_at must be an ISO 8601 date-time")
+    if not iso_date(lesson.get("review_due")):
+        errors.append("review_due must be an ISO 8601 date")
+    if lesson.get("status") not in LESSON_STATUSES:
+        errors.append(f"status must be one of {sorted(LESSON_STATUSES)}")
+
+    origin = object_at(lesson, "origin", errors)
+    if origin.get("kind") not in {"reference_exchange", "standalone_synthetic_exercise"}:
+        errors.append("origin.kind must be reference_exchange or standalone_synthetic_exercise")
+    require_strings(origin, ("summary",), "origin.", errors)
+    exchange_path = origin.get("exchange_path")
+    if exchange_path is not None and not safe_relative_path(exchange_path):
+        errors.append("origin.exchange_path must be a safe relative path or null")
+    response_id = origin.get("response_id")
+    if response_id is not None and not SLUG.fullmatch(str(response_id)):
+        errors.append("origin.response_id must be a lowercase slug or null")
+
+    sharing = object_at(lesson, "sharing", errors)
+    if sharing.get("classification") not in {"public_synthetic", "public_record"}:
+        errors.append("sharing.classification must be public_synthetic or public_record")
+    require_strings(
+        sharing,
+        ("human_redaction_review_role", "publication_authority_role", "public_release_basis"),
+        "sharing.",
+        errors,
+    )
+    for field in (
+        "contains_personally_identifiable_information",
+        "contains_procurement_sensitive_information",
+        "contains_controlled_unclassified_information",
+        "contains_classified_information",
+        "contains_secrets_or_credentials",
+    ):
+        if sharing.get(field) is not False:
+            errors.append(f"sharing.{field} must be false for a public lesson")
+    if sharing.get("human_review_complete") is not True:
+        errors.append("sharing.human_review_complete must be true")
+
+    mission = object_at(lesson, "mission", errors)
+    require_strings(
+        mission,
+        ("title", "archetype", "beneficiary", "baseline", "intended_outcome"),
+        "mission.",
+        errors,
+    )
+    stages = string_list(lesson.get("lifecycle_stages"), "lifecycle_stages", errors)
+    unknown_stages = set(stages) - LIFECYCLE_STAGES
+    if unknown_stages:
+        errors.append(f"lifecycle_stages contain invalid values: {sorted(unknown_stages)}")
+
+    challenge = object_at(lesson, "challenge", errors)
+    categories = string_list(challenge.get("categories"), "challenge.categories", errors)
+    unknown_categories = set(categories) - CHALLENGE_CATEGORIES
+    if unknown_categories:
+        errors.append(f"challenge.categories contain invalid values: {sorted(unknown_categories)}")
+    require_strings(challenge, ("failure_shape", "decision_point"), "challenge.", errors)
+
+    trace = object_at(lesson, "trace", errors)
+    string_list(trace.get("requirement_ids"), "trace.requirement_ids", errors, minimum=0)
+    string_list(trace.get("case_ids"), "trace.case_ids", errors, minimum=0)
+    string_list(trace.get("evidence_ids"), "trace.evidence_ids", errors)
+
+    evidence = object_list(lesson.get("evidence"), "evidence", errors)
+    evidence_ids: set[str] = set()
+    for index, item in enumerate(evidence):
+        path = f"evidence[{index}]"
+        evidence_id = item.get("evidence_id")
+        if not ITEM_ID.fullmatch(str(evidence_id or "")):
+            errors.append(f"{path}.evidence_id must be an uppercase identifier")
+        elif evidence_id in evidence_ids:
+            errors.append(f"duplicate evidence_id: {evidence_id}")
+        else:
+            evidence_ids.add(evidence_id)
+        if item.get("kind") not in {
+            "test_report", "architecture", "policy", "pricing", "data_terms",
+            "operations", "accessibility", "decision_record", "synthetic_trace", "other",
+        }:
+            errors.append(f"{path}.kind has an invalid value")
+        require_strings(
+            item,
+            ("title", "reference", "scope", "limitations", "verification"),
+            f"{path}.",
+            errors,
+        )
+        if not safe_relative_path(item.get("reference")):
+            errors.append(f"{path}.reference must be a safe relative path")
+        digest = item.get("sha256")
+        if digest is not None and not SHA256.fullmatch(str(digest)):
+            errors.append(f"{path}.sha256 must be a lowercase SHA-256 digest or null")
+        if item.get("public_or_synthetic") is not True:
+            errors.append(f"{path}.public_or_synthetic must be true")
+    trace_evidence = trace.get("evidence_ids") if isinstance(trace.get("evidence_ids"), list) else []
+    unknown_evidence = set(trace_evidence) - evidence_ids
+    if unknown_evidence:
+        errors.append(f"trace references undeclared evidence: {sorted(unknown_evidence)}")
+
+    outcome = object_at(lesson, "outcome", errors)
+    if outcome.get("result") not in LESSON_RESULTS:
+        errors.append(f"outcome.result must be one of {sorted(LESSON_RESULTS)}")
+    require_strings(
+        outcome,
+        ("summary", "observed_change", "human_decision"),
+        "outcome.",
+        errors,
+    )
+    metrics = object_list(outcome.get("metrics"), "outcome.metrics", errors)
+    metric_ids: set[str] = set()
+    for index, item in enumerate(metrics):
+        metric_id = item.get("metric_id")
+        if not ITEM_ID.fullmatch(str(metric_id or "")) or metric_id in metric_ids:
+            errors.append(f"outcome.metrics[{index}].metric_id must be a unique uppercase identifier")
+        else:
+            metric_ids.add(metric_id)
+        require_strings(
+            item,
+            ("measure", "before", "after", "interpretation"),
+            f"outcome.metrics[{index}].",
+            errors,
+        )
+
+    practice = object_at(lesson, "reusable_practice", errors)
+    require_strings(practice, ("title", "action", "rationale"), "reusable_practice.", errors)
+    if practice.get("reuse_state") not in REUSE_STATES:
+        errors.append(f"reusable_practice.reuse_state must be one of {sorted(REUSE_STATES)}")
+    string_list(practice.get("artifact_refs"), "reusable_practice.artifact_refs", errors)
+    string_list(
+        practice.get("contract_considerations"),
+        "reusable_practice.contract_considerations",
+        errors,
+    )
+    if practice.get("not_universal") is not True:
+        errors.append("reusable_practice.not_universal must be true")
+
+    applicability = object_at(lesson, "applicability", errors)
+    for field in ("contexts", "does_not_transfer_to", "prerequisites", "limitations"):
+        string_list(applicability.get(field), f"applicability.{field}", errors)
+    if applicability.get("transfer_test_required") is not True:
+        errors.append("applicability.transfer_test_required must be true")
+
+    commercial = object_at(lesson, "commercial", errors)
+    require_strings(
+        commercial,
+        ("pricing_insight", "government_data_and_ip", "portability", "exit_insight"),
+        "commercial.",
+        errors,
+    )
+    if commercial.get("vendor_identified") is not False:
+        errors.append("commercial.vendor_identified must be false")
+
+    privacy = object_at(lesson, "privacy", errors)
+    require_strings(
+        privacy,
+        ("data_used", "data_minimization", "retention", "privacy_performance_tradeoff"),
+        "privacy.",
+        errors,
+    )
+    if privacy.get("data_classification") not in {"synthetic", "public", "mixed_public_synthetic"}:
+        errors.append("privacy.data_classification has an invalid value")
+
+    authority = object_at(lesson, "authority", errors)
+    require_strings(
+        authority,
+        ("accountable_official_role", "stop_or_change_decision"),
+        "authority.",
+        errors,
+    )
+    string_list(authority.get("protected_decisions"), "authority.protected_decisions", errors)
+    string_list(
+        authority.get("prohibited_system_actions"),
+        "authority.prohibited_system_actions",
+        errors,
+    )
+    if authority.get("system_made_protected_decision") is not False:
+        errors.append("authority.system_made_protected_decision must be false")
+
+    dependencies = object_list(lesson.get("policy_dependencies"), "policy_dependencies", errors)
+    source_ids: set[str] = set()
+    for index, item in enumerate(dependencies):
+        path = f"policy_dependencies[{index}]"
+        source_id = item.get("source_id")
+        if not SLUG.fullmatch(str(source_id or "")):
+            errors.append(f"{path}.source_id must be a lowercase slug")
+        elif source_id in source_ids:
+            errors.append(f"duplicate policy dependency: {source_id}")
+        else:
+            source_ids.add(source_id)
+        require_strings(item, ("dependency",), f"{path}.", errors)
+        string_list(item.get("revalidate_on"), f"{path}.revalidate_on", errors)
+
+    attestations = object_at(lesson, "attestations", errors)
+    for field in (
+        "public_or_synthetic_only",
+        "human_redaction_review_complete",
+        "limitations_disclosed",
+        "no_vendor_ranking",
+        "no_award_recommendation",
+        "accountable_authority_preserved",
+    ):
+        if attestations.get(field) is not True:
+            errors.append(f"attestations.{field} must be true")
+    validate_disclaimers(lesson.get("disclaimers"), "disclaimers", errors)
+    return errors
+
+
+def cross_validate_lesson(
+    lesson: dict[str, Any],
+    agency: dict[str, Any],
+    vendor: dict[str, Any],
+    tests: dict[str, Any],
+    ledger: dict[str, Any],
+) -> list[str]:
+    errors = validate_lesson(lesson) + cross_validate(agency, vendor, tests) + validate_source_ledger(ledger)
+    if lesson.get("pilot_id") != agency.get("pilot_id"):
+        errors.append("lesson pilot_id must match the source exchange")
+    origin = lesson.get("origin") if isinstance(lesson.get("origin"), dict) else {}
+    if origin.get("kind") != "reference_exchange":
+        errors.append("closeout requires origin.kind to be reference_exchange")
+    if origin.get("response_id") != vendor.get("response_id"):
+        errors.append("lesson origin.response_id must match the source response")
+    trace = lesson.get("trace") if isinstance(lesson.get("trace"), dict) else {}
+    known_requirements = {
+        item.get("requirement_id") for item in agency.get("requirements", []) if isinstance(item, dict)
+    }
+    known_cases = {item.get("case_id") for item in tests.get("cases", []) if isinstance(item, dict)}
+    known_evidence = {
+        item.get("evidence_id") for item in vendor.get("evidence", []) if isinstance(item, dict)
+    }
+    for key, known in (
+        ("requirement_ids", known_requirements),
+        ("case_ids", known_cases),
+        ("evidence_ids", known_evidence),
+    ):
+        submitted = trace.get(key) if isinstance(trace.get(key), list) else []
+        unknown = set(submitted) - known
+        if unknown:
+            errors.append(f"lesson trace.{key} references unknown values: {sorted(unknown)}")
+    ledger_ids = {
+        item.get("source_id") for item in ledger.get("sources", []) if isinstance(item, dict)
+    }
+    lesson_source_ids = {
+        item.get("source_id")
+        for item in lesson.get("policy_dependencies", [])
+        if isinstance(item, dict)
+    }
+    unknown_sources = lesson_source_ids - ledger_ids
+    if unknown_sources:
+        errors.append(f"lesson references unknown policy sources: {sorted(unknown_sources)}")
+    return errors
 
 
 def validate_agency(agency: dict[str, Any]) -> list[str]:
@@ -423,6 +856,7 @@ def validate_tests(tests: dict[str, Any]) -> list[str]:
 
 VALIDATORS = {
     "agency": validate_agency,
+    "lesson": validate_lesson,
     "vendor": validate_vendor,
     "tests": validate_tests,
 }
@@ -835,6 +1269,296 @@ def command_verify_pack(args: argparse.Namespace) -> int:
     return 0
 
 
+def canonical_json_bytes(value: Any) -> bytes:
+    return (json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode(
+        "utf-8"
+    )
+
+
+def build_closeout_files(
+    agency: dict[str, Any],
+    vendor: dict[str, Any],
+    tests: dict[str, Any],
+    lesson: dict[str, Any],
+    ledger: dict[str, Any],
+) -> dict[str, str]:
+    assessment = assess_exchange(agency, vendor, tests)
+    scan = scan_sensitive(lesson)
+    referenced_evidence = set(lesson["trace"]["evidence_ids"])
+    evidence = [
+        item for item in vendor["evidence"] if item["evidence_id"] in referenced_evidence
+    ]
+    source_ids = {item["source_id"] for item in lesson["policy_dependencies"]}
+    sources = [item for item in ledger["sources"] if item["source_id"] in source_ids]
+    evidence_index = {
+        "index_version": LESSON_CLOSEOUT_VERSION,
+        "lesson_id": lesson["lesson_id"],
+        "source_document_digests": {
+            "agency-intake.json": sha256_bytes(canonical_json_bytes(agency)),
+            "vendor-response.json": sha256_bytes(canonical_json_bytes(vendor)),
+            "acceptance-tests.json": sha256_bytes(canonical_json_bytes(tests)),
+        },
+        "public_evidence": evidence,
+        "boundary": (
+            "Digests identify the reviewed source documents but do not publish them. Evidence entries "
+            "remain responder declarations unless their verification field states otherwise."
+        ),
+    }
+    assessment_summary = {
+        "assessment_version": assessment["assessment_version"],
+        "pilot_id": assessment["pilot_id"],
+        "response_id": assessment["response_id"],
+        "boundary": assessment["boundary"],
+        "summary": assessment["summary"],
+        "dimensions": assessment["dimensions"],
+    }
+    source_snapshot = {
+        "ledger_version": ledger["ledger_version"],
+        "captured_for_lesson": lesson["lesson_id"],
+        "boundary": ledger["boundary"],
+        "sources": sources,
+    }
+    files = {
+        "lesson.json": json.dumps(lesson, indent=2) + "\n",
+        "assessment-summary.json": json.dumps(assessment_summary, indent=2) + "\n",
+        "evidence-index.json": json.dumps(evidence_index, indent=2) + "\n",
+        "privacy-scan.json": json.dumps(scan, indent=2) + "\n",
+        "source-snapshot.json": json.dumps(source_snapshot, indent=2) + "\n",
+    }
+    files["README.md"] = (
+        f"# Federal AI acquisition lesson — {lesson['mission']['title']}\n\n"
+        "> Public evidence handoff. This bundle does not rank vendors, recommend an award, "
+        "certify a system, determine compliance, or replace an accountable official.\n\n"
+        f"Lesson: `{lesson['lesson_id']}` · Pilot: `{lesson['pilot_id']}` · "
+        f"Observed result: **{lesson['outcome']['result']}**\n\n"
+        "## What changed\n\n"
+        f"{lesson['outcome']['observed_change']}\n\n"
+        "## Reusable practice\n\n"
+        f"**{lesson['reusable_practice']['title']}** — {lesson['reusable_practice']['action']}\n\n"
+        "This practice is intentionally bounded. Read `lesson.json` for prerequisites, "
+        "non-transfer conditions, limitations, source dependencies, and revalidation triggers.\n\n"
+        "## Verify first\n\n"
+        f"- Privacy scan findings: {scan['finding_count']}\n"
+        f"- Source dependencies captured: {len(sources)}\n"
+        f"- Source exchange requirements: {assessment['summary']['requirements']}\n"
+        f"- Exact submitted synthetic cases: {assessment['summary']['exact_cases']}/{assessment['summary']['cases']}\n\n"
+        "A zero-finding scanner result is not a disclosure authorization. The named human "
+        "redaction and publication roles remain responsible for public release.\n"
+    )
+    return files
+
+
+def build_closeout_manifest(lesson: dict[str, Any], files: dict[str, str]) -> dict[str, Any]:
+    return {
+        "manifest_version": LESSON_CLOSEOUT_VERSION,
+        "lesson_id": lesson["lesson_id"],
+        "pilot_id": lesson["pilot_id"],
+        "hash_algorithm": "sha256",
+        "files": [
+            {
+                "path": name,
+                "sha256": sha256_bytes(contents.encode("utf-8")),
+                "bytes": len(contents.encode("utf-8")),
+            }
+            for name, contents in sorted(files.items())
+        ],
+        "claims": {
+            "byte_integrity_only": True,
+            "public_release_authorized_by_tool": False,
+            "vendor_ranked": False,
+            "award_recommendation_made": False,
+            "certification_made": False,
+            "practice_is_universal": False,
+        },
+    }
+
+
+def command_scan_lesson(args: argparse.Namespace) -> int:
+    lesson = load_json(args.lesson)
+    errors = validate_lesson(lesson)
+    scan = scan_sensitive(lesson)
+    result = {"valid": not errors, "validation_errors": errors, **scan}
+    if args.json:
+        print(json.dumps(result, indent=2))
+    else:
+        print(
+            f"LESSON PUBLICATION SCAN — {scan['finding_count']} finding(s); "
+            f"structurally {'valid' if not errors else 'invalid'}"
+        )
+        for error in errors:
+            print(f"- VALIDATION: {error}")
+        for finding in scan["findings"]:
+            print(f"- {finding['code']} at {finding['path']} [{finding['fingerprint']}]")
+        print(scan["boundary"])
+    return 0 if not errors and scan["safe_to_package"] else 1
+
+
+def command_closeout(args: argparse.Namespace) -> int:
+    agency = load_json(args.agency)
+    vendor = load_json(args.vendor)
+    tests = load_json(args.tests)
+    lesson = load_json(args.lesson)
+    ledger = load_json(args.sources)
+    errors = cross_validate_lesson(lesson, agency, vendor, tests, ledger)
+    scan = scan_sensitive(lesson)
+    if errors:
+        raise ValueError("lesson closeout is invalid: " + "; ".join(errors))
+    if not scan["safe_to_package"]:
+        codes = sorted({item["code"] for item in scan["findings"]})
+        raise ValueError(f"lesson closeout is blocked by the publication scan: {codes}")
+    output: Path = args.out
+    if output.is_symlink():
+        raise ValueError(f"refusing symbolic-link output path: {output}")
+    if output.exists() and (not output.is_dir() or any(output.iterdir())):
+        raise ValueError(f"refusing to overwrite non-empty output path: {output}")
+    output.mkdir(parents=True, exist_ok=True)
+    files = build_closeout_files(agency, vendor, tests, lesson, ledger)
+    files["manifest.json"] = json.dumps(build_closeout_manifest(lesson, files), indent=2) + "\n"
+    for name, contents in files.items():
+        (output / name).write_text(contents, encoding="utf-8")
+    print(f"wrote {len(files)} files to {output}")
+    print("The lesson remains bounded, non-comparative, and subject to authorized human review.")
+    return 0
+
+
+def command_verify_closeout(args: argparse.Namespace) -> int:
+    directory: Path = args.directory
+    if directory.is_symlink() or not directory.is_dir():
+        raise ValueError("closeout path must be a regular directory")
+    manifest = load_json(directory / "manifest.json")
+    errors: list[str] = []
+    if manifest.get("manifest_version") != LESSON_CLOSEOUT_VERSION:
+        errors.append(f"manifest_version must equal {LESSON_CLOSEOUT_VERSION!r}")
+    entries = manifest.get("files")
+    if not isinstance(entries, list):
+        entries = []
+        errors.append("manifest.files must be an array")
+    expected = set(CLOSEOUT_NAMES) - {"manifest.json"}
+    names = [item.get("path") for item in entries if isinstance(item, dict)]
+    if len(names) != len(set(names)):
+        errors.append("manifest contains duplicate paths")
+    if set(names) != expected:
+        errors.append(f"manifest file set must equal the 6-file payload: {sorted(expected)}")
+    for item in entries:
+        if not isinstance(item, dict):
+            errors.append("manifest entries must be objects")
+            continue
+        name = item.get("path")
+        if name not in expected:
+            continue
+        path = directory / name
+        if path.is_symlink() or not path.is_file():
+            errors.append(f"missing {name}")
+            continue
+        if path.stat().st_size > MAX_PACK_FILE_BYTES:
+            errors.append(f"file exceeds {MAX_PACK_FILE_BYTES} bytes: {name}")
+            continue
+        contents = path.read_bytes()
+        if not SHA256.fullmatch(str(item.get("sha256", ""))):
+            errors.append(f"invalid digest: {name}")
+        if sha256_bytes(contents) != item.get("sha256"):
+            errors.append(f"digest mismatch: {name}")
+        if not isinstance(item.get("bytes"), int) or len(contents) != item.get("bytes"):
+            errors.append(f"byte-count mismatch: {name}")
+    extra = {path.name for path in directory.iterdir()} - set(CLOSEOUT_NAMES)
+    if extra:
+        errors.append(f"unlisted files: {sorted(extra)}")
+    claims = manifest.get("claims") if isinstance(manifest.get("claims"), dict) else {}
+    if (
+        claims.get("vendor_ranked") is not False
+        or claims.get("award_recommendation_made") is not False
+        or claims.get("practice_is_universal") is not False
+    ):
+        errors.append("manifest must preserve non-ranking, non-award, and non-universal boundaries")
+    try:
+        lesson = load_json(directory / "lesson.json")
+        scan = load_json(directory / "privacy-scan.json")
+        errors.extend(validate_lesson(lesson))
+        if scan != scan_sensitive(lesson):
+            errors.append("privacy scan does not match the packaged lesson")
+    except ValueError as exc:
+        errors.append(str(exc))
+    if errors:
+        print("LESSON CLOSEOUT INVALID")
+        for error in errors:
+            print(f"- {error}")
+        return 1
+    print(f"LESSON CLOSEOUT VERIFIED — {manifest['lesson_id']} · {len(entries)} hashed files")
+    print("Integrity and scanning do not authorize disclosure or prove universal applicability.")
+    return 0
+
+
+def policy_drift_report(
+    lesson: dict[str, Any], ledger: dict[str, Any], as_of: date
+) -> dict[str, Any]:
+    errors = validate_lesson(lesson) + validate_source_ledger(ledger)
+    if errors:
+        raise ValueError("cannot check policy drift: " + "; ".join(errors))
+    sources = {item["source_id"]: item for item in ledger["sources"]}
+    rows = []
+    for dependency in lesson["policy_dependencies"]:
+        source = sources.get(dependency["source_id"])
+        if not source:
+            rows.append(
+                {
+                    "source_id": dependency["source_id"],
+                    "state": "missing",
+                    "review_due": None,
+                    "dependency": dependency["dependency"],
+                }
+            )
+            continue
+        due = date.fromisoformat(source["review_due"])
+        rows.append(
+            {
+                "source_id": source["source_id"],
+                "title": source["title"],
+                "state": "review_due" if due <= as_of else "current",
+                "last_verified": source["last_verified"],
+                "review_due": source["review_due"],
+                "dependency": dependency["dependency"],
+                "revalidate_on": dependency["revalidate_on"],
+            }
+        )
+    lesson_due = date.fromisoformat(lesson["review_due"]) <= as_of
+    return {
+        "lesson_id": lesson["lesson_id"],
+        "as_of": as_of.isoformat(),
+        "lesson_review": "review_due" if lesson_due else "current",
+        "sources": rows,
+        "summary": {
+            "dependencies": len(rows),
+            "current": sum(item["state"] == "current" for item in rows),
+            "review_due": sum(item["state"] == "review_due" for item in rows),
+            "missing": sum(item["state"] == "missing" for item in rows),
+        },
+        "boundary": "A current source ledger does not establish legal applicability or approve reuse.",
+    }
+
+
+def command_policy_drift(args: argparse.Namespace) -> int:
+    lesson = load_json(args.lesson)
+    ledger = load_json(args.sources)
+    as_of = date.fromisoformat(args.as_of) if args.as_of else datetime.now(timezone.utc).date()
+    result = policy_drift_report(lesson, ledger, as_of)
+    if args.json:
+        print(json.dumps(result, indent=2))
+    else:
+        summary = result["summary"]
+        print(
+            f"POLICY DEPENDENCY CHECK — {result['lesson_id']} · "
+            f"{summary['current']} current · {summary['review_due']} review due · "
+            f"{summary['missing']} missing"
+        )
+        for item in result["sources"]:
+            print(f"- {item['source_id']}: {item['state']} ({item.get('review_due') or 'no review date'})")
+        print(result["boundary"])
+    stale = result["lesson_review"] == "review_due" or any(
+        item["state"] != "current" for item in result["sources"]
+    )
+    return 1 if stale else 0
+
+
 def flatten(value: Any, prefix: str = "") -> dict[str, Any]:
     if isinstance(value, dict):
         output: dict[str, Any] = {}
@@ -892,6 +1616,47 @@ def parser() -> argparse.ArgumentParser:
     diff.add_argument("after", type=Path)
     diff.add_argument("--json", action="store_true")
     diff.set_defaults(func=command_diff)
+    scan = sub.add_parser(
+        "scan-lesson",
+        help="run structural and narrow sensitive-data checks before public packaging",
+    )
+    scan.add_argument("lesson", type=Path)
+    scan.add_argument("--json", action="store_true")
+    scan.set_defaults(func=command_scan_lesson)
+    closeout = sub.add_parser(
+        "closeout",
+        help="turn a completed public or synthetic pilot into a verifiable lesson bundle",
+    )
+    closeout.add_argument("agency", type=Path)
+    closeout.add_argument("vendor", type=Path)
+    closeout.add_argument("tests", type=Path)
+    closeout.add_argument("lesson", type=Path)
+    closeout.add_argument(
+        "--sources",
+        type=Path,
+        default=Path(__file__).resolve().parent / "lessons" / "source-ledger.json",
+    )
+    closeout.add_argument("--out", type=Path, required=True)
+    closeout.set_defaults(func=command_closeout)
+    verify_closeout = sub.add_parser(
+        "verify-closeout",
+        help="recompute a lesson closeout's digests and publication scan",
+    )
+    verify_closeout.add_argument("directory", type=Path)
+    verify_closeout.set_defaults(func=command_verify_closeout)
+    drift = sub.add_parser(
+        "policy-drift",
+        help="show source dependencies that are missing or due for revalidation",
+    )
+    drift.add_argument("lesson", type=Path)
+    drift.add_argument(
+        "--sources",
+        type=Path,
+        default=Path(__file__).resolve().parent / "lessons" / "source-ledger.json",
+    )
+    drift.add_argument("--as-of", help="ISO date; defaults to today")
+    drift.add_argument("--json", action="store_true")
+    drift.set_defaults(func=command_policy_drift)
     return value
 
 

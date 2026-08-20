@@ -14,7 +14,7 @@ from pathlib import Path
 
 KIT = Path(__file__).resolve().parents[1]
 REPOSITORY = "https://github.com/immu4989/awesome-agentic-usecases"
-BUILDER_VERSION = "0.3"
+BUILDER_VERSION = "0.4"
 VERSION = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:-[a-z0-9.-]+)?$")
 REVISION = re.compile(r"^[a-f0-9]{40}$")
 FIXED_ZIP_MODE = 0o100644 << 16
@@ -26,6 +26,7 @@ ROOT_FILES = (
     "agency-intake.schema.json",
     "vendor-evidence-response.schema.json",
     "acceptance-test-manifest.schema.json",
+    "lesson-record.schema.json",
     "acquisition-review-prompts.json",
     "THREAT_MODEL.md",
     "RELEASE_VERIFICATION.md",
@@ -40,6 +41,9 @@ def source_paths() -> list[Path]:
     paths = [KIT / name for name in ROOT_FILES]
     paths.extend(sorted((KIT / "examples").glob("*/*.json")))
     paths.extend(sorted((KIT / "pilot-launch").glob("*.md")))
+    paths.extend(sorted((KIT / "lessons").glob("*.json")))
+    paths.extend(sorted((KIT / "lessons").glob("*.md")))
+    paths.extend(sorted((KIT / "lessons" / "examples").glob("*.json")))
     missing = [path for path in paths if not path.is_file()]
     if missing:
         raise ValueError(f"release source is missing: {missing[0].relative_to(KIT)}")
@@ -154,7 +158,7 @@ def write_zip(path: Path, root_name: str, payload: dict[str, bytes], timestamp: 
 
 def build(version: str, revision: str, source_date: str | None, output: Path) -> list[Path]:
     if not VERSION.fullmatch(version):
-        raise ValueError("version must look like 0.3.0 or 0.3.0-rc.1")
+        raise ValueError("version must look like 0.4.0 or 0.4.0-rc.1")
     if revision != "local-uncommitted" and not REVISION.fullmatch(revision):
         raise ValueError("source revision must be a 40-character lowercase Git commit")
     if output.exists() and (not output.is_dir() or any(output.iterdir())):
@@ -166,7 +170,7 @@ def build(version: str, revision: str, source_date: str | None, output: Path) ->
         for path in source_paths()
     }
     manifest = {
-        "release_manifest_version": "aau-federal-pilot-release/0.3",
+        "release_manifest_version": "aau-federal-pilot-release/0.4",
         "name": "AAU Federal Pilot Kit",
         "version": version,
         "source_repository": REPOSITORY,
@@ -206,7 +210,7 @@ def build(version: str, revision: str, source_date: str | None, output: Path) ->
 
 def parser() -> argparse.ArgumentParser:
     value = argparse.ArgumentParser(description=__doc__)
-    value.add_argument("--version", default="0.3.0")
+    value.add_argument("--version", default="0.4.0")
     value.add_argument("--source-revision", default="local-uncommitted")
     value.add_argument("--source-date")
     value.add_argument("--output", type=Path, required=True)

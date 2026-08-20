@@ -6,7 +6,13 @@
 
   const byId = (id) => document.querySelector(`#${id}`);
   const JSON_LIMITS = { bytes: 2_000_000, depth: 32, nodes: 50_000, stringLength: 256_000 };
-  const state = { data: null, selected: null, local: { agency: null, vendor: null, tests: null } };
+  const state = {
+    data: null,
+    selected: null,
+    selectedLesson: null,
+    local: { agency: null, vendor: null, tests: null },
+    localLessonReceipt: null,
+  };
   const els = {
     open: byId("pilot-open-desk"),
     desk: byId("pilot-desk"),
@@ -32,6 +38,31 @@
     gateCount: byId("pilot-gate-total"),
     caseCount: byId("pilot-case-total"),
     visibleCount: byId("pilot-visible-total"),
+    lessonCount: byId("lesson-count"),
+    lessonStopCount: byId("lesson-stop-count"),
+    lessonPolicyCount: byId("lesson-policy-count"),
+    lessonPracticeCount: byId("lesson-practice-count"),
+    lessonSearch: byId("lesson-search"),
+    lessonResultFilter: byId("lesson-result-filter"),
+    lessonCategoryFilter: byId("lesson-category-filter"),
+    lessonReset: byId("lesson-reset"),
+    lessonResults: byId("lesson-results"),
+    lessonMatchCount: byId("lesson-match-count"),
+    lessonSelectedResult: byId("lesson-selected-result"),
+    lessonSelectedReview: byId("lesson-selected-review"),
+    lessonSelectedTitle: byId("lesson-selected-title"),
+    lessonSelectedSummary: byId("lesson-selected-summary"),
+    lessonSelectedDecision: byId("lesson-selected-decision"),
+    lessonSelectedMetrics: byId("lesson-selected-metrics"),
+    lessonSelectedPractice: byId("lesson-selected-practice"),
+    lessonSelectedAction: byId("lesson-selected-action"),
+    lessonSelectedContexts: byId("lesson-selected-contexts"),
+    lessonSelectedNontransfer: byId("lesson-selected-nontransfer"),
+    lessonSelectedSources: byId("lesson-selected-sources"),
+    lessonSourceList: byId("lesson-source-list"),
+    lessonLocalFile: byId("lesson-local-file"),
+    lessonLocalStatus: byId("lesson-local-status"),
+    lessonDownloadScan: byId("lesson-download-scan"),
   };
 
   const roles = {
@@ -80,13 +111,30 @@
     const patterns = [
       ["email address", /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i],
       ["U.S. Social Security number pattern", /\b\d{3}-\d{2}-\d{4}\b/],
+      ["telephone number pattern", /(?<!\d)(?:\+?1[-. ]?)?\(?\d{3}\)?[-. ]\d{3}[-. ]\d{4}(?!\d)/],
       ["secret or credential label", /\b(api[_ -]?key|secret|password|bearer|private[_ -]?key)\b\s*[:=]/i],
       ["private key block", /BEGIN [A-Z ]*PRIVATE KEY/],
+      ["GitHub token pattern", /\bgh[pousr]_[A-Za-z0-9]{20,}\b/],
+      ["AWS access-key pattern", /\b(?:AKIA|ASIA)[A-Z0-9]{16}\b/],
+      ["bearer-token pattern", /\bBearer\s+[A-Za-z0-9._~+/=-]{16,}/i],
+      ["sensitive field name", /"(?:account_number|address|date_of_birth|dob|full_name|home_address|person_name|social_security_number)"\s*:\s*"[^"\s]+/i],
     ];
     patterns.forEach(([label, pattern]) => { if (pattern.test(raw)) findings.push(label); });
     const classification = text(value?.data?.classification || value?.data_classification).toLowerCase();
     if (classification && !["public", "synthetic", "mixed_public_synthetic"].includes(classification)) {
       findings.push(`non-public classification: ${classification}`);
+    }
+    if (value?.profile_version === "aau-federal-ai-lesson/0.4") {
+      const sharing = value?.sharing || {};
+      [
+        "contains_personally_identifiable_information",
+        "contains_procurement_sensitive_information",
+        "contains_controlled_unclassified_information",
+        "contains_classified_information",
+        "contains_secrets_or_credentials",
+      ].forEach((field) => { if (sharing[field] !== false) findings.push(`publication attestation: ${field}`); });
+      if (sharing.human_review_complete !== true) findings.push("human redaction review is incomplete");
+      if (!["public_synthetic", "public_record"].includes(sharing.classification)) findings.push("lesson sharing classification");
     }
     return [...new Set(findings)];
   }
@@ -279,6 +327,212 @@
     }));
   }
 
+  function pretty(value) { return text(value).replaceAll("_", " "); }
+
+  function replaceList(element, values) {
+    element.replaceChildren(...safeArray(values).map((value) => {
+      const item = document.createElement("li");
+      item.textContent = value;
+      return item;
+    }));
+  }
+
+  function renderLessonDetail(item) {
+    const lesson = item.record;
+    state.selectedLesson = item;
+    els.lessonSelectedResult.textContent = lesson.outcome.result;
+    els.lessonSelectedResult.dataset.result = lesson.outcome.result;
+    els.lessonSelectedReview.textContent = `Review by ${lesson.review_due} · ${item.drift.summary.current}/${item.drift.summary.dependencies} sources current`;
+    els.lessonSelectedTitle.textContent = lesson.mission.title;
+    els.lessonSelectedSummary.textContent = lesson.outcome.summary;
+    els.lessonSelectedDecision.textContent = lesson.outcome.human_decision;
+    els.lessonSelectedPractice.textContent = lesson.reusable_practice.title;
+    els.lessonSelectedAction.textContent = lesson.reusable_practice.action;
+    replaceList(els.lessonSelectedContexts, lesson.applicability.contexts);
+    replaceList(els.lessonSelectedNontransfer, lesson.applicability.does_not_transfer_to);
+    els.lessonSelectedMetrics.replaceChildren(...lesson.outcome.metrics.map((metric) => {
+      const card = document.createElement("article");
+      card.className = "lesson-metric";
+      const id = document.createElement("span");
+      id.textContent = metric.metric_id;
+      const title = document.createElement("b");
+      title.textContent = metric.measure;
+      const change = document.createElement("p");
+      change.textContent = `${metric.before} → ${metric.after}. ${metric.interpretation}`;
+      card.append(id, title, change);
+      return card;
+    }));
+    const sourceMap = new Map(state.data.lesson_exchange.source_ledger.sources.map((source) => [source.source_id, source]));
+    els.lessonSelectedSources.replaceChildren(...lesson.policy_dependencies.map((dependency) => {
+      const source = sourceMap.get(dependency.source_id);
+      const link = document.createElement("a");
+      link.href = source?.url || "#";
+      link.target = "_blank";
+      link.rel = "noreferrer";
+      link.textContent = `${dependency.source_id} · ${source?.review_due || "source missing"} ↗`;
+      link.title = dependency.dependency;
+      return link;
+    }));
+    document.querySelectorAll("[data-lesson-id]").forEach((card) => {
+      const active = card.dataset.lessonId === lesson.lesson_id;
+      card.classList.toggle("is-active", active);
+      card.setAttribute("aria-pressed", String(active));
+    });
+  }
+
+  function filteredLessons() {
+    const query = text(els.lessonSearch.value).toLowerCase();
+    const result = els.lessonResultFilter.value || "all";
+    const category = els.lessonCategoryFilter.value || "all";
+    return state.data.lesson_exchange.lessons.filter((item) => {
+      const lesson = item.record;
+      const searchText = [
+        lesson.lesson_id,
+        lesson.mission.title,
+        lesson.mission.archetype,
+        lesson.mission.beneficiary,
+        lesson.mission.intended_outcome,
+        lesson.outcome.result,
+        lesson.outcome.summary,
+        lesson.outcome.human_decision,
+        lesson.challenge.failure_shape,
+        ...lesson.challenge.categories,
+        lesson.reusable_practice.title,
+        lesson.reusable_practice.action,
+        ...lesson.applicability.contexts,
+        ...lesson.applicability.does_not_transfer_to,
+        ...lesson.applicability.prerequisites,
+        ...lesson.applicability.limitations,
+      ].map(text).join(" ").toLowerCase();
+      const matchesQuery = !query || searchText.includes(query);
+      const matchesResult = result === "all" || lesson.outcome.result === result;
+      const matchesCategory = category === "all" || lesson.challenge.categories.includes(category);
+      return matchesQuery && matchesResult && matchesCategory;
+    });
+  }
+
+  function renderLessons() {
+    const matches = filteredLessons();
+    els.lessonMatchCount.textContent = `${matches.length} of ${state.data.lesson_exchange.lessons.length} lessons`;
+    if (!matches.length) {
+      const empty = document.createElement("p");
+      empty.className = "lesson-empty";
+      empty.textContent = "No lesson matches these filters. Reset the exchange or try a broader failure shape.";
+      els.lessonResults.replaceChildren(empty);
+      return;
+    }
+    els.lessonResults.replaceChildren(...matches.map((item) => {
+      const lesson = item.record;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `lesson-result-card is-${lesson.outcome.result}`;
+      button.dataset.lessonId = lesson.lesson_id;
+      button.setAttribute("aria-pressed", "false");
+      const outcome = document.createElement("span");
+      outcome.textContent = lesson.outcome.result;
+      const body = document.createElement("div");
+      const title = document.createElement("b");
+      title.textContent = lesson.mission.title;
+      const summary = document.createElement("p");
+      summary.textContent = lesson.challenge.failure_shape;
+      const meta = document.createElement("small");
+      meta.textContent = `${lesson.challenge.categories.map(pretty).join(" · ")} →`;
+      body.append(title, summary, meta);
+      button.append(outcome, body);
+      button.addEventListener("click", () => renderLessonDetail(item));
+      return button;
+    }));
+    const selectedStillVisible = matches.find((item) => item.record.lesson_id === state.selectedLesson?.record?.lesson_id);
+    renderLessonDetail(selectedStillVisible || matches[0]);
+  }
+
+  function renderLessonSources() {
+    const sources = state.data.lesson_exchange.source_ledger.sources;
+    els.lessonSourceList.replaceChildren(...sources.map((source) => {
+      const card = document.createElement("article");
+      card.className = "lesson-source-card";
+      const dates = document.createElement("span");
+      dates.textContent = `VERIFIED ${source.last_verified} / REVIEW ${source.review_due}`;
+      const title = document.createElement("b");
+      title.textContent = source.title;
+      const selector = document.createElement("p");
+      selector.textContent = source.selector;
+      const link = document.createElement("a");
+      link.href = source.url;
+      link.target = "_blank";
+      link.rel = "noreferrer";
+      link.textContent = `${source.authority} ↗`;
+      card.append(dates, title, selector, link);
+      return card;
+    }));
+  }
+
+  function populateLessonFilters() {
+    const exchange = state.data.lesson_exchange;
+    exchange.taxonomy.results.forEach((value) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = pretty(value);
+      els.lessonResultFilter.append(option);
+    });
+    exchange.taxonomy.challenge_categories.forEach((value) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = pretty(value);
+      els.lessonCategoryFilter.append(option);
+    });
+  }
+
+  async function readLocalLesson(file) {
+    if (!file) return;
+    if (file.size > JSON_LIMITS.bytes) throw new Error("Lesson file exceeds the 2 MB local limit.");
+    let lesson;
+    try { lesson = JSON.parse(await file.text()); }
+    catch { throw new Error("Lesson file is not valid JSON."); }
+    if (!lesson || typeof lesson !== "object" || Array.isArray(lesson)) throw new Error("Lesson root must be an object.");
+    enforceJsonLimits(lesson);
+    const structural = [];
+    if (lesson.profile_version !== "aau-federal-ai-lesson/0.4") structural.push("lesson profile version");
+    if (!text(lesson.lesson_id)) structural.push("lesson id");
+    if (!text(lesson.pilot_id)) structural.push("pilot id");
+    if (!safeArray(lesson.applicability?.does_not_transfer_to).length) structural.push("non-transfer conditions");
+    if (lesson.applicability?.transfer_test_required !== true) structural.push("transfer-test requirement");
+    if (!safeArray(lesson.policy_dependencies).length) structural.push("policy dependencies");
+    if (!safeArray(lesson.disclaimers).length) structural.push("disclaimers");
+    const findings = sensitiveFindings(lesson);
+    const safe = !structural.length && !findings.length;
+    state.localLessonReceipt = {
+      scan_version: "aau-browser-publication-preflight/0.4",
+      lesson_id: text(lesson.lesson_id) || "unknown-lesson",
+      scanned_at: new Date().toISOString(),
+      structurally_ready: !structural.length,
+      safe_to_package: safe,
+      structural_gaps: structural,
+      finding_count: findings.length,
+      findings,
+      boundary: "This narrow local scan is not disclosure authorization, DLP, classification review, legal advice, certification, or government approval.",
+    };
+    const details = [...structural.map((item) => `missing ${item}`), ...findings];
+    els.lessonLocalStatus.textContent = safe
+      ? "No narrow scan findings. Authorized human redaction and publication review are still required."
+      : `Publication preflight blocked: ${details.join(", ")}.`;
+    els.lessonLocalStatus.className = `lesson-local-status ${safe ? "is-ready" : "is-blocked"}`;
+    els.lessonDownloadScan.disabled = false;
+  }
+
+  function downloadLessonScan() {
+    if (!state.localLessonReceipt) return;
+    const blob = new Blob([`${JSON.stringify(state.localLessonReceipt, null, 2)}\n`], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${escapeSlug(state.localLessonReceipt.lesson_id)}-publication-scan.json`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
   function setRole(name) {
     const role = roles[name];
     els.roleTabs.forEach((button) => {
@@ -346,8 +600,16 @@
       els.gateCount.textContent = summaries.reduce((total, item) => total + item.requirements, 0);
       els.caseCount.textContent = summaries.reduce((total, item) => total + item.cases, 0);
       els.visibleCount.textContent = summaries.reduce((total, item) => total + item.visible_gaps, 0);
+      const lessonStats = state.data.lesson_exchange.stats;
+      els.lessonCount.textContent = lessonStats.lessons;
+      els.lessonStopCount.textContent = lessonStats.stopped;
+      els.lessonPolicyCount.textContent = lessonStats.policy_dependencies;
+      els.lessonPracticeCount.textContent = lessonStats.bounded_practices;
       renderExamples();
       renderPrompts();
+      populateLessonFilters();
+      renderLessons();
+      renderLessonSources();
       renderAssessment(state.data.examples[0]);
       document.querySelector("[data-pilot-example]")?.classList.add("is-active");
       setRole("agency");
@@ -369,5 +631,24 @@
   }));
   els.download?.addEventListener("click", downloadAssessment);
   els.reset?.addEventListener("click", resetLocal);
+  els.lessonSearch?.addEventListener("input", renderLessons);
+  els.lessonResultFilter?.addEventListener("change", renderLessons);
+  els.lessonCategoryFilter?.addEventListener("change", renderLessons);
+  els.lessonReset?.addEventListener("click", () => {
+    els.lessonSearch.value = "";
+    els.lessonResultFilter.value = "all";
+    els.lessonCategoryFilter.value = "all";
+    renderLessons();
+  });
+  els.lessonLocalFile?.addEventListener("change", async () => {
+    try { await readLocalLesson(els.lessonLocalFile.files?.[0]); }
+    catch (error) {
+      state.localLessonReceipt = null;
+      els.lessonLocalStatus.textContent = error.message;
+      els.lessonLocalStatus.className = "lesson-local-status is-blocked";
+      els.lessonDownloadScan.disabled = true;
+    }
+  });
+  els.lessonDownloadScan?.addEventListener("click", downloadLessonScan);
   init();
 })();

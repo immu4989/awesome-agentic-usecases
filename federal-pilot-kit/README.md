@@ -1,4 +1,4 @@
-# Federal Pilot Kit v0.3
+# Federal Pilot Kit v0.4
 
 The **AAU Federal Pilot Kit** is an open, forkable evidence exchange for public-sector AI
 pilots. An agency describes a mission and measurable gates, a responder binds each claim to
@@ -8,9 +8,11 @@ ranking vendors or making an award recommendation.
 **[Open the browser-local Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot)**
 or run the complete reference exchange locally in under a minute.
 
-Version 0.3 adds the **Trust & Pilot Readiness layer**: a 30-day agency launch pack, explicit
-threat model, hostile-input limits and tests, immutable CI dependencies, and deterministic
-release bundles with SPDX inventory, checksums, and GitHub attestations.
+Version 0.4 adds the **Federal AI Lessons Exchange**: a machine-readable public lesson schema,
+evidence-linked closeout bundles, a narrow publication scanner, dated policy-dependency checks,
+four synthetic examples—including a stopped pilot—and a searchable browser-local exchange. It
+builds on v0.3's 30-day launch pack, threat model, hostile-input tests, immutable CI dependencies,
+and attested deterministic releases.
 
 > Independent evidence aid. This is not an official U.S. Government standard, solicitation,
 > contract clause, endorsement, certification, Authority to Operate, compliance finding,
@@ -40,6 +42,9 @@ A passing synthetic test is not deployment proof. None of those artifacts is an 
   requirement, evidence references, disclosed limitations, exact test outputs, price, and terms.
 - [`acceptance-test-manifest.schema.json`](acceptance-test-manifest.schema.json) — public or
   synthetic cases with exact outcomes, reason codes, human owners, and non-ranking scoring.
+- [`lesson-record.schema.json`](lesson-record.schema.json) — public closeout observations with
+  evidence, human decisions, privacy review, non-transfer conditions, commercial lessons, and
+  dated policy dependencies.
 - [`aau_pilot.py`](aau_pilot.py) — dependency-free validation, assessment, packaging, semantic
   diff, and SHA-256 verification with bounded JSON parsing and safe-path checks. It makes no
   network calls.
@@ -50,6 +55,8 @@ A passing synthetic test is not deployment proof. None of those artifacts is an 
   [grant and invoice review](examples/grant-invoice-review/).
 - [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) — a
   browser-local, zero-upload inspector for the same artifacts.
+- [Federal AI Lessons Exchange](lessons/) — four public synthetic lessons, a dated official-source
+  ledger, deterministic redaction preflight, closeout packager, verifier, and policy-drift check.
 - [30-Day Agency Pilot Launch Pack](pilot-launch/) — executive brief, decision rights, security
   and privacy intake, weekly evidence plan, success gates, acquisition review, feedback, and an
   exit rehearsal.
@@ -92,8 +99,26 @@ Validate artifacts independently:
 python federal-pilot-kit/aau_pilot.py validate agency path/to/agency-intake.json
 python federal-pilot-kit/aau_pilot.py validate vendor path/to/vendor-response.json
 python federal-pilot-kit/aau_pilot.py validate tests path/to/acceptance-tests.json
+python federal-pilot-kit/aau_pilot.py validate lesson path/to/lesson.json
 python federal-pilot-kit/aau_pilot.py diff old-response.json new-response.json
 ```
+
+Close the pilot with a public lesson:
+
+```bash
+python federal-pilot-kit/aau_pilot.py scan-lesson path/to/lesson.json
+python federal-pilot-kit/aau_pilot.py closeout \
+  path/to/agency-intake.json path/to/vendor-response.json \
+  path/to/acceptance-tests.json path/to/lesson.json \
+  --out /tmp/aau-public-lesson
+python federal-pilot-kit/aau_pilot.py verify-closeout /tmp/aau-public-lesson
+python federal-pilot-kit/aau_pilot.py policy-drift path/to/lesson.json
+```
+
+The closeout contains no source exchange documents. It carries their canonical SHA-256 digests,
+an aggregate assessment, only the declared public evidence index, a source snapshot, and the
+lesson. A zero-finding scan does not authorize disclosure; the named human redaction reviewer and
+publication authority remain responsible.
 
 ## Verify the software you run
 
@@ -103,7 +128,7 @@ assets, run:
 
 ```bash
 python verify_release.py .
-gh attestation verify aau-federal-pilot-kit-v0.3.0.zip \
+gh attestation verify aau-federal-pilot-kit-v0.4.0.zip \
   --repo immu4989/awesome-agentic-usecases
 ```
 
@@ -122,8 +147,10 @@ that a mission should use the software.
 6. Require one response for every requirement, with limitations and declared evidence.
 7. Run `assess`; investigate every visible gap and every mismatched exact field.
 8. Use `pack` for an inspectable handoff and complete the lessons-learned record after each phase.
-9. Rehearse exit and rollback before the Day-30 human decision.
-10. Keep protected, procurement-sensitive, controlled, classified, and personal information in
+9. Run `scan-lesson`, obtain authorized human redaction/publication review, and use `closeout` for
+   a bounded public lesson when sharing is permitted.
+10. Rehearse exit and rollback before the Day-30 human decision.
+11. Keep protected, procurement-sensitive, controlled, classified, and personal information in
    approved systems—not this public repository or website.
 
 Use the [Federal Mission Assurance Profile](../federal-mission-assurance/) first when the mission,

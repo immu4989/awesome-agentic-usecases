@@ -1,0 +1,302 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/federal-ai-lesson.schema.json",
+  "title": "AAU Federal AI Acquisition Lesson Record",
+  "description": "A public, evidence-linked, non-comparative lesson from a synthetic or authorized public AI pilot closeout.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_version",
+    "lesson_id",
+    "pilot_id",
+    "published_at",
+    "review_due",
+    "status",
+    "origin",
+    "sharing",
+    "mission",
+    "lifecycle_stages",
+    "challenge",
+    "trace",
+    "evidence",
+    "outcome",
+    "reusable_practice",
+    "applicability",
+    "commercial",
+    "privacy",
+    "authority",
+    "policy_dependencies",
+    "attestations",
+    "disclaimers"
+  ],
+  "properties": {
+    "profile_version": {"const": "aau-federal-ai-lesson/0.4"},
+    "lesson_id": {"$ref": "#/$defs/slug"},
+    "pilot_id": {"$ref": "#/$defs/slug"},
+    "published_at": {"type": "string", "format": "date-time"},
+    "review_due": {"type": "string", "format": "date"},
+    "status": {"enum": ["public_synthetic", "public_record", "revalidation_due", "retired"]},
+    "origin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "exchange_path", "response_id", "summary"],
+      "properties": {
+        "kind": {"enum": ["reference_exchange", "standalone_synthetic_exercise"]},
+        "exchange_path": {"type": ["string", "null"]},
+        "response_id": {"anyOf": [{"$ref": "#/$defs/slug"}, {"type": "null"}]},
+        "summary": {"$ref": "#/$defs/text"}
+      }
+    },
+    "sharing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "human_redaction_review_role",
+        "publication_authority_role",
+        "public_release_basis",
+        "human_review_complete",
+        "contains_personally_identifiable_information",
+        "contains_procurement_sensitive_information",
+        "contains_controlled_unclassified_information",
+        "contains_classified_information",
+        "contains_secrets_or_credentials"
+      ],
+      "properties": {
+        "classification": {"enum": ["public_synthetic", "public_record"]},
+        "human_redaction_review_role": {"$ref": "#/$defs/text"},
+        "publication_authority_role": {"$ref": "#/$defs/text"},
+        "public_release_basis": {"$ref": "#/$defs/text"},
+        "human_review_complete": {"const": true},
+        "contains_personally_identifiable_information": {"const": false},
+        "contains_procurement_sensitive_information": {"const": false},
+        "contains_controlled_unclassified_information": {"const": false},
+        "contains_classified_information": {"const": false},
+        "contains_secrets_or_credentials": {"const": false}
+      }
+    },
+    "mission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "archetype", "beneficiary", "baseline", "intended_outcome"],
+      "properties": {
+        "title": {"$ref": "#/$defs/text"},
+        "archetype": {"$ref": "#/$defs/text"},
+        "beneficiary": {"$ref": "#/$defs/text"},
+        "baseline": {"$ref": "#/$defs/text"},
+        "intended_outcome": {"$ref": "#/$defs/text"}
+      }
+    },
+    "lifecycle_stages": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"enum": ["pre_award", "award", "post_award", "closeout", "cross_lifecycle"]}
+    },
+    "challenge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["categories", "failure_shape", "decision_point"],
+      "properties": {
+        "categories": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "technical_expertise",
+              "requirements_and_contract_terms",
+              "government_data_and_ip",
+              "early_testing_and_continuous_evaluation",
+              "pricing_and_total_cost",
+              "portability_and_exit",
+              "privacy_and_data_handling",
+              "human_authority",
+              "accessibility_and_public_service",
+              "program_management"
+            ]
+          }
+        },
+        "failure_shape": {"$ref": "#/$defs/text"},
+        "decision_point": {"$ref": "#/$defs/text"}
+      }
+    },
+    "trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requirement_ids", "case_ids", "evidence_ids"],
+      "properties": {
+        "requirement_ids": {"$ref": "#/$defs/idList"},
+        "case_ids": {"$ref": "#/$defs/idList"},
+        "evidence_ids": {"$ref": "#/$defs/nonEmptyIdList"}
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/evidence"}
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result", "summary", "observed_change", "human_decision", "metrics"],
+      "properties": {
+        "result": {"enum": ["succeeded", "changed", "stopped", "mixed"]},
+        "summary": {"$ref": "#/$defs/text"},
+        "observed_change": {"$ref": "#/$defs/text"},
+        "human_decision": {"$ref": "#/$defs/text"},
+        "metrics": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/metric"}
+        }
+      }
+    },
+    "reusable_practice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "action", "rationale", "reuse_state", "artifact_refs", "contract_considerations", "not_universal"],
+      "properties": {
+        "title": {"$ref": "#/$defs/text"},
+        "action": {"$ref": "#/$defs/text"},
+        "rationale": {"$ref": "#/$defs/text"},
+        "reuse_state": {"enum": ["promising", "evidence_backed", "needs_revalidation", "retired"]},
+        "artifact_refs": {"$ref": "#/$defs/textList"},
+        "contract_considerations": {"$ref": "#/$defs/textList"},
+        "not_universal": {"const": true}
+      }
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contexts", "does_not_transfer_to", "prerequisites", "limitations", "transfer_test_required"],
+      "properties": {
+        "contexts": {"$ref": "#/$defs/textList"},
+        "does_not_transfer_to": {"$ref": "#/$defs/textList"},
+        "prerequisites": {"$ref": "#/$defs/textList"},
+        "limitations": {"$ref": "#/$defs/textList"},
+        "transfer_test_required": {"const": true}
+      }
+    },
+    "commercial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pricing_insight", "government_data_and_ip", "portability", "exit_insight", "vendor_identified"],
+      "properties": {
+        "pricing_insight": {"$ref": "#/$defs/text"},
+        "government_data_and_ip": {"$ref": "#/$defs/text"},
+        "portability": {"$ref": "#/$defs/text"},
+        "exit_insight": {"$ref": "#/$defs/text"},
+        "vendor_identified": {"const": false}
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data_classification", "data_used", "data_minimization", "retention", "privacy_performance_tradeoff"],
+      "properties": {
+        "data_classification": {"enum": ["synthetic", "public", "mixed_public_synthetic"]},
+        "data_used": {"$ref": "#/$defs/text"},
+        "data_minimization": {"$ref": "#/$defs/text"},
+        "retention": {"$ref": "#/$defs/text"},
+        "privacy_performance_tradeoff": {"$ref": "#/$defs/text"}
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accountable_official_role", "protected_decisions", "prohibited_system_actions", "stop_or_change_decision", "system_made_protected_decision"],
+      "properties": {
+        "accountable_official_role": {"$ref": "#/$defs/text"},
+        "protected_decisions": {"$ref": "#/$defs/textList"},
+        "prohibited_system_actions": {"$ref": "#/$defs/textList"},
+        "stop_or_change_decision": {"$ref": "#/$defs/text"},
+        "system_made_protected_decision": {"const": false}
+      }
+    },
+    "policy_dependencies": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/policyDependency"}
+    },
+    "attestations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["public_or_synthetic_only", "human_redaction_review_complete", "limitations_disclosed", "no_vendor_ranking", "no_award_recommendation", "accountable_authority_preserved"],
+      "properties": {
+        "public_or_synthetic_only": {"const": true},
+        "human_redaction_review_complete": {"const": true},
+        "limitations_disclosed": {"const": true},
+        "no_vendor_ranking": {"const": true},
+        "no_award_recommendation": {"const": true},
+        "accountable_authority_preserved": {"const": true}
+      }
+    },
+    "disclaimers": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/text"}
+    }
+  },
+  "$defs": {
+    "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"},
+    "itemId": {"type": "string", "pattern": "^[A-Z][A-Z0-9-]{2,39}$"},
+    "text": {"type": "string", "minLength": 1, "maxLength": 8000},
+    "textList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/text"}
+    },
+    "idList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/itemId"}
+    },
+    "nonEmptyIdList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/itemId"}
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "kind", "title", "reference", "sha256", "scope", "limitations", "verification", "public_or_synthetic"],
+      "properties": {
+        "evidence_id": {"$ref": "#/$defs/itemId"},
+        "kind": {"enum": ["test_report", "architecture", "policy", "pricing", "data_terms", "operations", "accessibility", "decision_record", "synthetic_trace", "other"]},
+        "title": {"$ref": "#/$defs/text"},
+        "reference": {"type": "string", "minLength": 1},
+        "sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "scope": {"$ref": "#/$defs/text"},
+        "limitations": {"$ref": "#/$defs/text"},
+        "verification": {"$ref": "#/$defs/text"},
+        "public_or_synthetic": {"const": true}
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric_id", "measure", "before", "after", "interpretation"],
+      "properties": {
+        "metric_id": {"$ref": "#/$defs/itemId"},
+        "measure": {"$ref": "#/$defs/text"},
+        "before": {"$ref": "#/$defs/text"},
+        "after": {"$ref": "#/$defs/text"},
+        "interpretation": {"$ref": "#/$defs/text"}
+      }
+    },
+    "policyDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "dependency", "revalidate_on"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/slug"},
+        "dependency": {"$ref": "#/$defs/text"},
+        "revalidate_on": {"$ref": "#/$defs/textList"}
+      }
+    }
+  }
+}

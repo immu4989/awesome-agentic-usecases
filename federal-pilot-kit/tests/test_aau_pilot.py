@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import zipfile
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -25,6 +26,8 @@ assert VERIFY_SPEC and VERIFY_SPEC.loader
 VERIFY = importlib.util.module_from_spec(VERIFY_SPEC)
 VERIFY_SPEC.loader.exec_module(VERIFY)
 EXAMPLES = tuple(sorted((KIT / "examples").iterdir()))
+LESSONS = tuple(sorted((KIT / "lessons" / "examples").glob("*.json")))
+SOURCE_LEDGER = json.loads((KIT / "lessons" / "source-ledger.json").read_text())
 
 
 def documents(example: Path) -> tuple[dict, dict, dict]:
@@ -46,10 +49,98 @@ def test_schema_and_validator_versions_match():
         ("agency-intake.schema.json", MODULE.AGENCY_VERSION),
         ("vendor-evidence-response.schema.json", MODULE.VENDOR_VERSION),
         ("acceptance-test-manifest.schema.json", MODULE.TEST_VERSION),
+        ("lesson-record.schema.json", MODULE.LESSON_VERSION),
     )
     for name, version in expected:
         schema = json.loads((KIT / name).read_text())
         assert schema["properties"]["profile_version"]["const"] == version
+
+
+def test_public_lessons_are_valid_scan_clean_and_include_a_stopped_pilot():
+    assert len(LESSONS) == 4
+    records = [json.loads(path.read_text()) for path in LESSONS]
+    assert all(MODULE.validate_lesson(record) == [] for record in records)
+    assert all(MODULE.scan_sensitive(record)["safe_to_package"] for record in records)
+    assert [record["outcome"]["result"] for record in records].count("stopped") == 1
+    assert MODULE.validate_source_ledger(SOURCE_LEDGER) == []
+
+
+def test_reference_lessons_cross_validate_with_their_source_exchanges():
+    records = [json.loads(path.read_text()) for path in LESSONS]
+    for record in records:
+        if record["origin"]["kind"] != "reference_exchange":
+            continue
+        example = KIT.parent / record["origin"]["exchange_path"]
+        agency, vendor, tests = documents(example)
+        assert MODULE.cross_validate_lesson(record, agency, vendor, tests, SOURCE_LEDGER) == []
+
+
+def test_sensitive_scan_reports_only_fingerprints_not_matched_values():
+    record = json.loads(LESSONS[0].read_text())
+    record["mission"]["beneficiary"] = "Contact reviewer@example.test with token ghp_12345678901234567890"
+    scan = MODULE.scan_sensitive(record)
+    assert scan["safe_to_package"] is False
+    assert {item["code"] for item in scan["findings"]} == {"EMAIL", "GITHUB_TOKEN"}
+    serialized = json.dumps(scan)
+    assert "reviewer@example.test" not in serialized
+    assert "ghp_12345678901234567890" not in serialized
+
+
+def test_lesson_evidence_parent_path_is_rejected():
+    record = json.loads(LESSONS[0].read_text())
+    record["evidence"][0]["reference"] = "../private.json"
+    assert any("safe relative path" in error for error in MODULE.validate_lesson(record))
+
+
+def test_reference_lesson_closeout_is_verifiable_and_tamper_evident(tmp_path):
+    record = json.loads(
+        (KIT / "lessons" / "examples" / "benefits-accessibility-change.json").read_text()
+    )
+    example = KIT / "examples" / "benefits-correspondence"
+    agency, vendor, tests = documents(example)
+    files = MODULE.build_closeout_files(agency, vendor, tests, record, SOURCE_LEDGER)
+    manifest = MODULE.build_closeout_manifest(record, files)
+    assert set(files) == set(MODULE.CLOSEOUT_NAMES) - {"manifest.json"}
+    assert manifest["claims"]["practice_is_universal"] is False
+    for name, contents in files.items():
+        (tmp_path / name).write_text(contents)
+    (tmp_path / "manifest.json").write_text(json.dumps(manifest))
+    args = type("Args", (), {"directory": tmp_path})()
+    assert MODULE.command_verify_closeout(args) == 0
+    (tmp_path / "lesson.json").write_text("{}")
+    assert MODULE.command_verify_closeout(args) == 1
+
+
+def test_closeout_blocks_a_sensitive_lesson(tmp_path):
+    record = json.loads(
+        (KIT / "lessons" / "examples" / "benefits-accessibility-change.json").read_text()
+    )
+    record["mission"]["beneficiary"] = "Synthetic contact reviewer@example.test"
+    lesson_path = tmp_path / "lesson.json"
+    lesson_path.write_text(json.dumps(record))
+    example = KIT / "examples" / "benefits-correspondence"
+    args = type(
+        "Args",
+        (),
+        {
+            "agency": example / "agency-intake.json",
+            "vendor": example / "vendor-response.json",
+            "tests": example / "acceptance-tests.json",
+            "lesson": lesson_path,
+            "sources": KIT / "lessons" / "source-ledger.json",
+            "out": tmp_path / "out",
+        },
+    )()
+    with pytest.raises(ValueError, match="publication scan"):
+        MODULE.command_closeout(args)
+
+
+def test_policy_drift_exposes_review_due_and_missing_sources():
+    record = json.loads(LESSONS[0].read_text())
+    current = MODULE.policy_drift_report(record, SOURCE_LEDGER, date(2026, 8, 19))
+    assert current["summary"]["review_due"] == 0
+    stale = MODULE.policy_drift_report(record, SOURCE_LEDGER, date(2026, 11, 20))
+    assert stale["summary"]["review_due"] == len(record["policy_dependencies"])
 
 
 def test_benefits_example_preserves_one_visible_noncritical_gap():
@@ -194,7 +285,7 @@ def test_cross_validation_handles_malformed_nested_types_without_crashing():
 
 def test_release_build_is_reproducible_and_fully_verifiable(tmp_path):
     first, second = tmp_path / "first", tmp_path / "second"
-    args = ("0.3.0", "a" * 40, "2026-08-19T12:00:00Z")
+    args = ("0.4.0", "a" * 40, "2026-08-19T12:00:00Z")
     BUILD.build(*args, first)
     BUILD.build(*args, second)
     first_files = {path.name: path.read_bytes() for path in first.iterdir()}
@@ -202,7 +293,7 @@ def test_release_build_is_reproducible_and_fully_verifiable(tmp_path):
     assert first_files == second_files
     result = VERIFY.verify(first)
     assert result["verified"] is True
-    assert result["version"] == "0.3.0"
+    assert result["version"] == "0.4.0"
     assert result["sbom_format"] == "SPDX-2.3"
 
 

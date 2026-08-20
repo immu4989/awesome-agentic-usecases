@@ -43,12 +43,18 @@ handoff before procurement or deployment authority is exercised:
 | **[Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission)** | A browser-local intake, 17-practice OMB/NIST/GAO crosswalk, visible gaps, and a hashed 12-file assurance pack | Zero uploads; browser-entered plans are never labeled as evidence |
 | **[Federal Mission Assurance Profile](federal-mission-assurance/)** | An open JSON Schema, dated source ledger, worked acquisition profile, validator, packager, verifier, and semantic diff | Not an ATO, FedRAMP authorization, FISMA determination, certification, legal conclusion, or approval |
 | **[Federal AI Acquisition Performance Gate](federal-ai-acquisition/acquisition-performance-gate/)** | A 32-scenario benchmark for intended-environment tests, data rights, training-use conflicts, portability, pricing, monitoring, and award authority | The agent may assemble and test evidence; accountable officials rank, select, accept risk, obligate funds, and award |
+| **[Federal AI Lessons Exchange](https://immu4989.github.io/awesome-agentic-usecases/#lessons-exchange)** | Searchable success, change, and stop closeouts with bounded practices, non-transfer conditions, privacy preflight, policy drift, and deterministic manifests | Public synthetic memory—not vendor ranking, award recommendation, certification, universal best practice, or permission to disclose |
 
 The profile is designed as a versioned interoperability layer, not a static checklist.
 Teams can generate the same pack in the public site or command line, verify its byte-level
 manifest, and review a semantic profile diff without sending mission information to this
 repository. The [dated research ledger](docs/FEDERAL_MISSION_RESEARCH_NOTES.md) records the
 scope decisions and primary-source checks behind the map.
+
+The [Federal Pilot Kit](federal-pilot-kit/) now closes the loop: a seven-file closeout turns
+the assessment into a signed-scope lesson while retaining canonical evidence hashes instead of
+republishing source records. Four public synthetic lessons demonstrate succeeded, changed, and
+stopped outcomes so teams can learn from a stop—not quietly delete it.
 
 ## Committed industry expansion queue
 

@@ -1,0 +1,161 @@
+{
+  "profile_version": "aau-federal-ai-lesson/0.4",
+  "lesson_id": "foia-exit-rehearsal-change",
+  "pilot_id": "foia-records-routing-pilot",
+  "published_at": "2026-08-19T12:10:00Z",
+  "review_due": "2026-11-19",
+  "status": "public_synthetic",
+  "origin": {
+    "kind": "reference_exchange",
+    "exchange_path": "federal-pilot-kit/examples/foia-records-routing",
+    "response_id": "reference-response-foia-v1",
+    "summary": "Closeout observation from the repository's public synthetic records-routing exchange."
+  },
+  "sharing": {
+    "classification": "public_synthetic",
+    "human_redaction_review_role": "Synthetic records steward",
+    "publication_authority_role": "Repository maintainer",
+    "public_release_basis": "Invented requests, public component descriptions, and synthetic routing state only.",
+    "human_review_complete": true,
+    "contains_personally_identifiable_information": false,
+    "contains_procurement_sensitive_information": false,
+    "contains_controlled_unclassified_information": false,
+    "contains_classified_information": false,
+    "contains_secrets_or_credentials": false
+  },
+  "mission": {
+    "title": "Require an exit rehearsal before calling portability complete",
+    "archetype": "Public-records intake and routing support",
+    "beneficiary": "Requesters, records professionals, and future service operators",
+    "baseline": "A documented export list can look complete without proving that open request state can be restored elsewhere.",
+    "intended_outcome": "Routing support remains portable while exemption, disclosure, adequacy, and official response decisions remain human."
+  },
+  "lifecycle_stages": ["pre_award", "post_award", "closeout"],
+  "challenge": {
+    "categories": ["portability_and_exit", "requirements_and_contract_terms", "program_management"],
+    "failure_shape": "All five routing cases pass while the clean-environment restoration evidence remains incomplete.",
+    "decision_point": "Whether documented exports alone satisfy the exit gate or an independent import must occur first."
+  },
+  "trace": {
+    "requirement_ids": ["REQ-EXIT", "REQ-AUTHORITY"],
+    "case_ids": ["CASE-AUTH-01"],
+    "evidence_ids": ["EVID-EXIT", "EVID-TEST"]
+  },
+  "evidence": [
+    {
+      "evidence_id": "EVID-EXIT",
+      "kind": "operations",
+      "title": "Draft portability inventory",
+      "reference": "evidence/foia-exit-inventory.md",
+      "sha256": null,
+      "scope": "Documented JSON and CSV exports for the public synthetic pilot.",
+      "limitations": "A clean-environment restoration was not independently executed.",
+      "verification": "The local assessment preserved the response as partial rather than tested.",
+      "public_or_synthetic": true
+    },
+    {
+      "evidence_id": "EVID-TEST",
+      "kind": "test_report",
+      "title": "FOIA synthetic acceptance transcript",
+      "reference": "evidence/foia-acceptance-transcript.json",
+      "sha256": null,
+      "scope": "Five seeded routing, clock, authority, and missing-set cases.",
+      "limitations": "Responder-submitted and not independently reproduced.",
+      "verification": "The local assessor recomputed the exact submitted case fields.",
+      "public_or_synthetic": true
+    }
+  ],
+  "outcome": {
+    "result": "changed",
+    "summary": "Functional synthetic tests passed, but the exit requirement remained visibly partial because export documentation was not restoration evidence.",
+    "observed_change": "The pilot closeout added a clean-environment import, open-state reconciliation, and operator handoff as prerequisites for the portability gate.",
+    "human_decision": "The program owner kept the exit requirement open instead of accepting a documentation-only completion claim.",
+    "metrics": [
+      {
+        "metric_id": "METRIC-ROUTES",
+        "measure": "Exact submitted synthetic cases",
+        "before": "No recomputed case ledger",
+        "after": "5 of 5 cases exact",
+        "interpretation": "Functional success did not close the independent portability obligation."
+      },
+      {
+        "metric_id": "METRIC-EXIT",
+        "measure": "Exit restoration rehearsal",
+        "before": "Documented exports only",
+        "after": "Still open pending clean-environment import",
+        "interpretation": "Portability remains partial until a receiving environment restores the declared state."
+      }
+    ]
+  },
+  "reusable_practice": {
+    "title": "Portability is an observed restoration",
+    "action": "Require a clean-environment import, state reconciliation, access revocation, and receiving-operator handoff before an exit requirement reaches tested status.",
+    "rationale": "A file list does not demonstrate that another operator can continue the public mission without the incumbent service.",
+    "reuse_state": "evidence_backed",
+    "artifact_refs": ["lesson.json", "assessment-summary.json", "evidence-index.json", "source-snapshot.json"],
+    "contract_considerations": [
+      "Which state, configuration, logs, schemas, and open work must transfer?",
+      "What clean environment will receive the export and who verifies reconciliation?",
+      "Which knowledge-transfer and deletion evidence are due at exit?"
+    ],
+    "not_universal": true
+  },
+  "applicability": {
+    "contexts": ["Service acquisitions with open work or stateful routing", "Pilots evaluating portability and vendor-lock-in risk"],
+    "does_not_transfer_to": ["FOIA exemption decisions", "Records-retention determinations", "Production authorization"],
+    "prerequisites": ["Documented export format", "Clean receiving environment", "Named sending and receiving operators"],
+    "limitations": ["The reference exchange contains invented requests", "No authoritative records system was connected"],
+    "transfer_test_required": true
+  },
+  "commercial": {
+    "pricing_insight": "Exit rehearsal labor, conversion, reconciliation, and transition support should be visible beside usage pricing.",
+    "government_data_and_ip": "Request state, routing artifacts, evaluations, and configurations remain agency-controlled in the reference requirement.",
+    "portability": "Export claims become evidence only after a receiving environment imports and reconciles them.",
+    "exit_insight": "Open request state and component-map knowledge are as important as file format availability.",
+    "vendor_identified": false
+  },
+  "privacy": {
+    "data_classification": "mixed_public_synthetic",
+    "data_used": "Public component descriptions and invented request text.",
+    "data_minimization": "The exercise excludes responsive agency records and unrelated requester identity fields.",
+    "retention": "Only synthetic artifacts, source references, and aggregate results are published.",
+    "privacy_performance_tradeoff": "Excluding real requests limits coverage but allows the restoration workflow to be shared safely."
+  },
+  "authority": {
+    "accountable_official_role": "Designated public-records program official",
+    "protected_decisions": ["Exemption", "Disclosure", "Search adequacy", "Official response", "Exit acceptance"],
+    "prohibited_system_actions": ["Deny a request", "Release a record", "Close a request", "Approve an exit gate"],
+    "stop_or_change_decision": "A human kept the exit gate open and required restoration evidence.",
+    "system_made_protected_decision": false
+  },
+  "policy_dependencies": [
+    {
+      "source_id": "omb-m-25-22",
+      "dependency": "Data and model portability, knowledge transfer, pricing transparency, monitoring, and exit terms.",
+      "revalidate_on": ["Memorandum revision or rescission", "Agency acquisition policy change"]
+    },
+    {
+      "source_id": "gao-ai-acquisition-lessons-2026",
+      "dependency": "Reuse of lessons about contract terms, testing, cost, data rights, and vendor lock-in.",
+      "revalidate_on": ["Recommendation status change", "GSA repository format publication"]
+    },
+    {
+      "source_id": "gsa-buy-ai",
+      "dependency": "Current federal acquisition and solution-testing routes.",
+      "revalidate_on": ["Page or acquisition vehicle update", "Authorization reuse guidance change"]
+    }
+  ],
+  "attestations": {
+    "public_or_synthetic_only": true,
+    "human_redaction_review_complete": true,
+    "limitations_disclosed": true,
+    "no_vendor_ranking": true,
+    "no_award_recommendation": true,
+    "accountable_authority_preserved": true
+  },
+  "disclaimers": [
+    "This lesson is not a source-selection decision, vendor comparison, or contract clause.",
+    "This lesson is not a certification, records determination, authorization, or government approval.",
+    "An accountable official must determine applicability, disclosure, reuse, and every protected action."
+  ]
+}

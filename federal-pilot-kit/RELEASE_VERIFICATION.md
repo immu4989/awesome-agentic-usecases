@@ -12,7 +12,7 @@ bytes and their build provenance before extracting anything:
 
 ```bash
 sha256sum --check SHA256SUMS
-gh attestation verify aau-federal-pilot-kit-v0.3.0.zip \
+gh attestation verify aau-federal-pilot-kit-v0.4.0.zip \
   --repo immu4989/awesome-agentic-usecases
 ```
 
@@ -20,15 +20,15 @@ On macOS, use `shasum -a 256 --check SHA256SUMS`. Then extract the verified ZIP 
 included structural verifier against the download directory:
 
 ```bash
-unzip aau-federal-pilot-kit-v0.3.0.zip
-python aau-federal-pilot-kit-v0.3.0/verify_release.py .
+unzip aau-federal-pilot-kit-v0.4.0.zip
+python aau-federal-pilot-kit-v0.4.0/verify_release.py .
 ```
 
 For a local source build:
 
 ```bash
 python federal-pilot-kit/tools/build_release.py \
-  --version 0.3.0 \
+  --version 0.4.0 \
   --source-revision "$(git rev-parse HEAD)" \
   --source-date "$(git show -s --format=%cI HEAD)" \
   --output /tmp/aau-federal-pilot-release

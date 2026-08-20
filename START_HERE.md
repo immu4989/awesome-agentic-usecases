@@ -25,6 +25,13 @@ the [Federal Pilot Kit](federal-pilot-kit/), then use its
 security/privacy intake, weekly evidence gates, success metrics, and an exit rehearsal. Before
 running a tagged bundle, follow the [release verification procedure](federal-pilot-kit/RELEASE_VERIFICATION.md).
 
+If a pilot is ending and the next team needs to learn from it, open the
+**[Federal AI Lessons Exchange](https://immu4989.github.io/awesome-agentic-usecases/#lessons-exchange)**.
+Search public closeouts across success, change, and stop outcomes; inspect the exact scope,
+human decision, non-transfer conditions, and dated policy dependencies; then scan a forked
+lesson locally before publication. The browser sends nothing, and the exchange never ranks
+vendors, recommends awards, or turns one pilot's result into a universal practice.
+
 If you already have an `eval_*.json`, start with
 **[Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab)**. It opens
 the artifact locally, recomputes its structural evidence, keeps interval and provenance gaps
@@ -183,6 +190,7 @@ engineered gap, tests, result folders, and documentation templates. Continue wit
 | `decision-gate` | exact outcome, rule-specific reason, held/missing evidence, satisfied conjuncts, procedure, protected authority, and executed record | [Pharma](pharmaceutical-manufacturing/batch-disposition-gate/), [Grid](grid-operations/distribution-restoration-safety-gate/), [Hiring](human-resources/hiring-compliance-navigator/), [Aviation](aviation-operations/aircraft-dispatch-evidence-gate/), [Banking](banking-compliance/aml-kyc-sanctions-case-gate/), [Tax](tax-filing-services/tax-return-completeness-navigator/) |
 | `federal-mission-assurance` | impact determination, intended-environment tests, acquisition terms, human authority, monitoring, remedy, cease use, and evidence manifest | [Federal AI Acquisition Performance Gate](federal-ai-acquisition/acquisition-performance-gate/) and [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) |
 | `federal-pilot-exchange` | agency outcome, responder claim, declared evidence, exact synthetic test, critical gap, pricing, portability, exit, monitoring, and protected award authority | [Federal Pilot Kit](federal-pilot-kit/) and [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) |
+| `federal-ai-lesson` | evidence-linked outcome, human closeout decision, public-sharing attestations, policy dependencies, bounded reuse, non-transfer conditions, revalidation triggers, and a deterministic manifest | [Federal AI Lessons Exchange](https://immu4989.github.io/awesome-agentic-usecases/#lessons-exchange) and [lesson schema](federal-pilot-kit/lesson-record.schema.json) |
 | `proof-before-action` | exact outcome, source- or record-specific proof, transfer specificity, protected authority, and truthful executed record | [Claims](research-knowledge-work/claim-evidence-verifier/), [Field service](home-field-services/service-visit-readiness-coordinator/), [Grants](nonprofit-grant-management/grant-obligation-evidence-navigator/) |
 | `public-protection` | exact subject, current rule, complete gates, live clock/channel, protected authority, and truthful receipt | [Vehicle recalls](automotive-safety/vehicle-recall-remedy-coordinator/), [911/988 outages](telecommunications-emergency/communications-outage-reporting-gate/), [Worker incidents](workplace-safety/severe-incident-reporting-navigator/) |
 | `obligation-graph` | complete obligation set, exact trigger and clock origin, deadline semantics, recipient/channel, protected owner, and truthful receipt | [Medical devices](medical-device-safety/adverse-event-reporting-gate/), [Mortgage protection](mortgage-servicing/loss-mitigation-foreclosure-gate/), [Cyber disclosure](securities-cyber-disclosure/material-cyber-incident-disclosure-gate/), or any lab in the [matched report](CLOCK_COLLISION_REPORT.md) |

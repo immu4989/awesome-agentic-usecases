@@ -5,6 +5,17 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Federal Pilot Kit v0.4 — Federal AI Lessons Exchange** — completed public or synthetic pilots
+  can now close with a versioned, evidence-linked lesson that records success, change, or stop;
+  preserves the accountable human decision; exposes applicability and non-transfer conditions;
+  captures pricing, data-rights, portability, exit, and privacy insights; and binds each practice
+  to dated policy dependencies. A dependency-free publication scanner reports only finding labels
+  and fingerprints, a seven-file closeout omits source documents while retaining their canonical
+  digests, and a local verifier recomputes every byte and scan result. Four public examples include
+  one deliberately stopped pilot. The browser-local exchange adds outcome/category search, bounded
+  practice details, source-review signals, and a zero-upload lesson preflight. The deterministic
+  v0.4 release includes the lesson schema, source ledger, and examples in its SPDX inventory and
+  signed provenance.
 - **Federal Pilot Kit v0.3 — Trust & Pilot Readiness** — the public agency–responder exchange now
   adds an eight-part 30-day launch pack spanning executive scope, decision rights, security/privacy
   intake, weekly evidence gates, success and stop metrics, commercial review, safely reusable

@@ -60,7 +60,7 @@ real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
 
-## New: Fork a federal AI pilot. Verify the evidence—and the kit.
+## New: Fork a federal AI pilot. Close it with a lesson the next team can verify.
 
 <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot"><img src="docs/assets/federal-pilot.svg" alt="AAU Federal Pilot Kit: three reference pilots, fifteen measurable gates, sixteen synthetic cases, and four deliberately visible evidence gaps" width="100%"></a>
 
@@ -68,22 +68,38 @@ and observed failure cards with a direct path to reproduction. Start with
 to inspect the handoff federal AI work is usually missing: an agency publishes measurable mission
 gates, a responder binds every claim to evidence and limitations, an exact synthetic test manifest
 checks outcome, reasons, and human authority, and a reviewer receives a visible gap ledger—without
-the tool ranking vendors or recommending an award.
+the tool ranking vendors or recommending an award. Version 0.4 adds a second missing handoff:
+an evidence-linked, privacy-reviewed lesson that records success, change, or stop decisions without
+turning one pilot into a universal practice.
+
+<a href="https://immu4989.github.io/awesome-agentic-usecases/#lessons-exchange"><img src="docs/assets/lessons-exchange.svg" alt="AAU Federal AI Lessons Exchange: four public lessons including one deliberately stopped pilot, linked to dated policy sources and bounded reusable practices" width="100%"></a>
+
+**[Explore the Federal AI Lessons Exchange](https://immu4989.github.io/awesome-agentic-usecases/#lessons-exchange)**
+to search public synthetic closeouts by outcome and acquisition challenge, inspect the exact human
+decision and non-transfer conditions, check dated source dependencies, and locally preflight a
+lesson before publication. A stopped pilot is treated as valuable public learning—not hidden as a
+failed demo.
 
 The new [`federal-pilot-kit/`](federal-pilot-kit/) ships as a complete, forkable implementation:
 
-- Three versioned JSON Schemas keep the agency intake, responder evidence, and independent test
-  manifest separate and machine-readable.
+- Four versioned JSON Schemas keep the agency intake, responder evidence, independent test
+  manifest, and public lesson record separate and machine-readable.
 - The dependency-free [`aau_pilot.py`](federal-pilot-kit/aau_pilot.py) CLI validates, cross-checks,
-  assesses, diffs, packages, and verifies the exchange without a network call.
+  assesses, diffs, packages, closes out, scans, verifies, and checks policy dependencies without a
+  network call.
 - Three public synthetic pilots cover [benefits correspondence](federal-pilot-kit/examples/benefits-correspondence/),
   [FOIA and records routing](federal-pilot-kit/examples/foia-records-routing/), and
   [grant and invoice review](federal-pilot-kit/examples/grant-invoice-review/).
 - The browser-local desk can open your three JSON files, recompute claim → evidence → test states,
   expose exact-field and authority failures, and export an aggregate assessment with no upload,
   account, storage, telemetry, model call, or payment.
+- Four public synthetic lessons cover accessibility remediation, exit rehearsal, a bounded
+  financial-review success, and a deliberately stopped protected-action failure. The local
+  publication preflight emits only finding labels—never matched values.
 - An 11-file evidence pack adds commercial/data/exit review, post-award monitoring, a reusable
   lessons-learned record, and SHA-256 byte-integrity verification.
+- A seven-file [Lessons Exchange](federal-pilot-kit/lessons/) closeout carries the lesson,
+  aggregate assessment, evidence index, privacy scan, source snapshot, guide, and exact manifest.
 - Eight [source-linked acquisition review topics](federal-pilot-kit/acquisition-review-prompts.json)
   surface mission, testing, data-rights, portability, pricing, authority, exit, and lessons questions;
   they are explicitly not clauses, boilerplate, or legal advice.

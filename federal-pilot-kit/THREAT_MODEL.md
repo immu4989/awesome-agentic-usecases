@@ -1,6 +1,6 @@
 # Federal Pilot Kit threat model
 
-Status: maintained for the public `v0.3` kit. Review after a trust boundary, parser, workflow,
+Status: maintained for the public `v0.4` kit. Review after a trust boundary, parser, workflow,
 release process, or data-handling promise changes.
 
 > This model describes the open-source kit, not an agency deployment. It is not a FISMA
@@ -19,6 +19,8 @@ flowchart LR
     R --> W
     T --> W
     W -->|aggregate assessment only| D[Reviewer download]
+    D -->|human-authored public lesson| P[Local publication scan]
+    P -->|7-file hashed closeout| X[Authorized public exchange]
     G[GitHub Actions] -->|ZIP + SPDX SBOM + checksums| L[Attested release]
 ```
 
@@ -35,6 +37,7 @@ synthetic case from deployment proof, and repository output from an official dec
 | Local files → CLI or browser | Inputs may be malformed or hostile. | Use only public or synthetic content in this public kit. Apply agency controls before handling other data. |
 | Responder → reviewer | Claims, evidence labels, prices, and submitted results may be incomplete or adversarial. | Independently reproduce important evidence and protect holdout tests. |
 | Browser tab → downloaded assessment | The assessment is derived output, not an approval record. | Move it only through an approved records and access-control process. |
+| Closeout source → public lesson | A scanner cannot determine disclosure, classification, procurement sensitivity, or records obligations. | Require authorized human redaction and publication review; publish only public or synthetic evidence. |
 | GitHub-hosted workflow → release | Workflow dependencies and permissions affect provenance. | Inspect pinned actions and verify GitHub attestations against this repository. |
 
 The browser desk intentionally has no backend, account, analytics, remote model call, or browser
@@ -52,6 +55,9 @@ environment.
 | Result or requirement ID injection | An omitted or fabricated gate disappears in aggregation | Unique IDs, exact cross-document set equality, no average vendor score | Independent reviewer still decides whether test coverage is sufficient. |
 | HTML/script content in uploaded JSON | Stored or reflected script execution | DOM construction uses `textContent`/`replaceChildren`; no uploaded value is assigned to `innerHTML` | Browser extensions and compromised origins remain outside this control. |
 | Secret, PII, controlled-data, or procurement-data submission | Disclosure through a public issue, fork, or exported file | Public/synthetic-only contract, narrow local scan, blocked assessment export, issue warnings | The scan is not DLP. Users and agency data owners retain responsibility. |
+| Scanner receipt repeats a suspected sensitive value | The safety tool causes a second disclosure | CLI receipts emit a finding code, JSON field path, and short digest only; browser receipts emit labels only | Field paths can still reveal document structure; handle receipts through an approved process. |
+| One lesson is reused as universal guidance | A bounded result is applied in the wrong mission, policy, data, or authority context | Required prerequisites, limitations, non-transfer conditions, policy dependencies, review dates, and transfer test | Accountable domain and acquisition owners must validate every reuse. |
+| Failed or discontinued pilot is hidden | Other teams repeat a known unsafe design | `stopped` is a first-class lesson outcome; the reference exchange publishes an exact protected-action stop | Real sharing still depends on authorization and safe redaction. |
 | Poisoned workflow dependency | Release or CI compromise | Every Action is commit-SHA pinned; Dependabot proposes reviewed updates; least-privilege permissions | GitHub and action maintainers remain upstream dependencies. |
 | Forged or replayed release | Consumer runs untrusted bytes | Deterministic ZIP, SPDX SBOM, SHA256SUMS, GitHub build and SBOM attestations, local verifier | Consumers must bind verification to this repository and intended tag/revision. |
 | Passing synthetic cases treated as authorization | Unsafe automation or procurement decision | Non-ranking/non-certifying claims are machine-checked and repeated in every artifact | Accountable officials must enforce operational and acquisition authority. |
@@ -65,6 +71,10 @@ environment.
 - A pack or release verifier rejects unexpected files, duplicates, path escapes, symlinks, and
   byte mismatches.
 - Uploaded browser values are rendered as text, never executable markup.
+- A public lesson must pass structural checks, explicit negative sharing attestations, and the
+  narrow scanner before the CLI packages it; this never substitutes for human release authority.
+- Lesson closeouts omit source exchange documents, retain their canonical digests, and preserve
+  non-ranking, non-award, non-certification, and non-universal claims in the manifest.
 - Workflow credentials are not persisted by checkout, and jobs receive only stated permissions.
 
 CI tests these invariants in `federal-pilot-kit/tests/`, `docs/check_federal_pilot.py`, the
