@@ -25,7 +25,7 @@ from .evaluate import command_adapter, evaluate_suite, load_suite, mock_adapter
 
 
 STARTER_VERSION = "aau-agent-evidence-starter/1.0"
-PACKAGE_VERSION = "1.2.0"
+PACKAGE_VERSION = "1.3.0"
 NAME_PATTERN = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$")
 ACTION_PINS = {
     "checkout": "3d3c42e5aac5ba805825da76410c181273ba90b1",  # v7
@@ -510,6 +510,13 @@ commands above execute it by design.
    forbidden executions, and latency.
 4. **Share carefully** — the public receipt omits inputs, expected answers, raw responses,
    reasoning, headers, and credentials. Read [RECEIPT_POLICY.md](RECEIPT_POLICY.md).
+
+## Publish a reusable evidence pack
+
+After replacing the reference adapter and producing a real command or endpoint receipt, run
+`aau submit --help` or open the [browser-local Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop).
+The contribution validator rejects the mock protocol receipt and derives every public evidence
+level from committed artifacts; no level means certification or production approval.
 
 ## Files
 

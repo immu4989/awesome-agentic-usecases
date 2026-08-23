@@ -234,6 +234,12 @@ def build_parser() -> argparse.ArgumentParser:
     initializing.add_argument("--stop-outcome")
     initializing.add_argument("--json", action="store_true")
 
+    sub.add_parser(
+        "submit",
+        add_help=False,
+        help="build or validate a privacy-bounded community evidence bundle",
+    )
+
     forging = sub.add_parser("forge", help="turn a Studio brief into a runnable adaptation lab")
     forging.add_argument("brief", help="evaluation brief downloaded from AAU Studio")
     forging.add_argument("doctor_path", nargs="?", help="lab path when brief is 'doctor'")
@@ -291,7 +297,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+    raw_args = list(sys.argv[1:] if argv is None else argv)
+    if raw_args and raw_args[0] == "submit":
+        from .submission import main as submission_main
+
+        return submission_main(raw_args[1:])
+    args = build_parser().parse_args(raw_args)
     if args.command == "init":
         from .starter import main as starter_main
 

@@ -114,7 +114,7 @@ jobs:
         run: |
           aau evaluate harness/examples/byo-agent-suite.json --command "python harness/examples/byo_agent_adapter.py" --out "$RUNNER_TEMP/aau-agent-receipt.json"
           pytest harness/tests/test_evaluate.py -q
-          python harness/tools/check_release_version.py harness-v1.2.0
+          python harness/tools/check_release_version.py harness-v1.3.0
       - name: Agent Evidence Starter is runnable, private by default, and browser-synchronized
         run: |
           python docs/make_agent_starter_data.py
@@ -123,6 +123,13 @@ jobs:
           pytest harness/tests/test_starter.py -q
           node --check docs/agent-starter.js
           git diff --exit-code docs/agent-starter-data.json docs/assets/agent-starter.svg agent-evidence-starter/examples
+      - name: Community evidence levels are derived, privacy-bounded, and browser-synchronized
+        run: |
+          python docs/make_community_evidence_data.py
+          python docs/check_community_evidence.py
+          pytest harness/tests/test_submission.py -q
+          node --check docs/community-evidence.js
+          git diff --exit-code docs/community-evidence-data.json docs/assets/community-evidence-loop.svg
       - name: State of Agent Reliability is derived from committed evidence
         run: |
           python docs/make_reliability_report.py

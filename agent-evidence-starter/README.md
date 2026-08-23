@@ -39,6 +39,24 @@ The [Bring Your Agent wizard](https://immu4989.github.io/awesome-agentic-usecase
 builds the same contract in the browser and downloads an eleven-file ZIP. Form values remain in the
 tab: there is no account, persistence, telemetry, model call, or form-data upload.
 
+## Publish what you learned
+
+Once your real command or endpoint produces a public aggregate receipt, build a privacy-bounded
+community contribution and validate it before opening a pull request:
+
+```bash
+aau submit ./my-agent-eval --receipt ./artifacts/public-receipt.json \
+  --id my-agent-evidence --contributor-name "Your name" --github your-handle \
+  --summary "What it helps with" --why-fork "What another team can adapt" \
+  --beneficiaries "Who benefits" --industry "Your industry" \
+  --failure-shape "The failure boundary" --tag routing --tag human-authority
+aau submit --validate ./my-agent-evidence-aau-submission
+```
+
+The [Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop)
+offers the same local handoff in a browser. Evidence levels summarize submitted public artifacts;
+they do not certify the agent, verify identity, prove production safety, or authorize deployment.
+
 ## Integrity contract
 
 `aau doctor` checks the starter version, required files, suite sharing declarations, human

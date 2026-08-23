@@ -3,6 +3,23 @@
 Notable changes to the repository. Versions follow [semantic versioning](https://semver.org/):
 the harness API is what is versioned; use cases are additive.
 
+## 1.3.0 - 2026-08-23
+
+- **Starter → Verified Community Evidence Loop** — `aau submit` builds a non-overwriting public
+  contribution pack from an Agent Evidence Starter and real command/endpoint receipts. It emits a
+  strict metadata record, reviewed synthetic suite, aggregate receipts, deterministic evidence
+  checks, sensitive-data scan, source ledger, checklist, original SVG share card, and SHA-256 byte
+  manifest; `aau submit --validate` recomputes the entire public claim.
+- **Artifact-derived trust without badge inflation** — cumulative Generated, Domain reviewed,
+  Reproduced, and Verified levels require progressively stronger committed artifacts. Mock
+  receipts, extra/private fields, inconsistent metrics, unsafe paths, symlinks, manifest drift,
+  stale checks, and common sensitive-data patterns fail closed. The boundary explicitly excludes
+  identity verification, certification, endorsement, production approval, and deploy authority.
+- **Zero-upload Contribution Desk and showcase** — the homepage now inspects Starter files and up
+  to twelve receipts locally, runs twelve sharing gates, derives the same evidence ladder, exports
+  a contribution ZIP, and displays three clearly labeled maintainer reference packs. Dedicated
+  contribution docs, schema, pull-request template, tests, and CI drift checks complete the loop.
+
 ## 1.2.0 - 2026-08-23
 
 - **Agent Evidence Starter** — `aau init` now atomically generates an eleven-file, provider-neutral

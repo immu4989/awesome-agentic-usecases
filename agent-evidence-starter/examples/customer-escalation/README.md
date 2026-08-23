@@ -14,7 +14,7 @@ Passing this synthetic suite does not transfer that authority or establish produ
 ## Five-minute path
 
 ```bash
-python -m pip install aau-harness==1.2.0
+python -m pip install aau-harness==1.3.0
 aau doctor .
 aau evaluate suite.json --mock --out artifacts/protocol-receipt.json
 aau evaluate suite.json --command "python adapter_command.py" --out artifacts/local-receipt.json
@@ -38,6 +38,13 @@ commands above execute it by design.
    forbidden executions, and latency.
 4. **Share carefully** — the public receipt omits inputs, expected answers, raw responses,
    reasoning, headers, and credentials. Read [RECEIPT_POLICY.md](RECEIPT_POLICY.md).
+
+## Publish a reusable evidence pack
+
+After replacing the reference adapter and producing a real command or endpoint receipt, run
+`aau submit --help` or open the [browser-local Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop).
+The contribution validator rejects the mock protocol receipt and derives every public evidence
+level from committed artifacts; no level means certification or production approval.
 
 ## Files
 

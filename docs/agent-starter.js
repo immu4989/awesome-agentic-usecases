@@ -460,6 +460,13 @@ commands above execute it by design.
 3. **Measure** — \`aau evaluate\` separates submission, exact outcome, forbidden attempts, forbidden executions, and latency.
 4. **Share carefully** — the public receipt omits inputs, expected answers, raw responses, reasoning, headers, and credentials. Read [RECEIPT_POLICY.md](RECEIPT_POLICY.md).
 
+## Publish a reusable evidence pack
+
+After replacing the reference adapter and producing a real command or endpoint receipt, run
+\`aau submit --help\` or open the [browser-local Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop).
+The contribution validator rejects the mock protocol receipt and derives every public evidence
+level from committed artifacts; no level means certification or production approval.
+
 ## Files
 
 | File | Purpose |

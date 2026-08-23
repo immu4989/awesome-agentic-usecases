@@ -71,6 +71,36 @@ validation, certification, legal advice, or authority to deploy.
 See the [complete examples](https://github.com/immu4989/awesome-agentic-usecases/tree/main/agent-evidence-starter/examples)
 or use the [zero-upload browser wizard](https://immu4989.github.io/awesome-agentic-usecases/#agent-starter).
 
+## Publish a privacy-bounded community evidence pack
+
+After connecting a real command or endpoint adapter, `aau submit` turns the Starter and one or
+more public aggregate receipts into a non-overwriting contribution directory:
+
+```bash
+aau submit ./my-agent-eval \
+  --receipt ./artifacts/public-receipt.json \
+  --id my-agent-evidence \
+  --contributor-name "Your name" --github your-handle \
+  --summary "What it helps with" --why-fork "What another team can adapt" \
+  --beneficiaries "Who benefits" --industry "Your industry" \
+  --failure-shape "The failure boundary" --tag routing --tag human-authority
+
+aau submit --validate ./my-agent-evidence-aau-submission
+```
+
+The command rejects mock receipts, private or extra receipt fields, inconsistent aggregate
+metrics, unsafe paths and symlinks, common sensitive-data patterns, stale checks, manifest drift,
+and unsupported public files. It never executes the Starter adapter, uploads data, opens a pull
+request, or overwrites an existing path.
+
+Evidence levels are cumulative and artifact-derived: **Generated** requires a connected-agent
+receipt and protected human authority; **Domain reviewed** adds an adapted 10-case suite, named
+review scope, and sources; **Reproduced** adds three distinct run receipts; **Verified** adds a
+named different reproducer linked to a receipt. These levels are not identity verification,
+certification, endorsement, production validation, or authority to deploy. See the
+[public contract and reference packs](https://github.com/immu4989/awesome-agentic-usecases/tree/main/community-evidence)
+or use the [browser-local Contribution Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop).
+
 ## Evaluate an existing agent
 
 You do not need to rebuild an application around the harness. `aau evaluate` sends each case to

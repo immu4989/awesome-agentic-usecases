@@ -19,6 +19,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder">Build a boundary</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab">Inspect a receipt</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-starter">Agent Evidence Starter</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop">Publish community evidence</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-mission">Federal Mission Studio</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot">Federal Pilot Desk</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory">Portfolio Observatory</a> ·
@@ -68,6 +69,7 @@ and observed failure cards with a direct path to reproduction. Start with
 | I already have… | Start here | Leave with… |
 |---|---|---|
 | An AI agent or endpoint | [Agent Evidence Starter](https://immu4989.github.io/awesome-agentic-usecases/#agent-starter) | A runnable synthetic suite, adapters, tests, CI, visual, manifest, and privacy-bounded receipt |
+| A connected Starter + public receipt | [Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop) | A privacy-checked contribution pack, derived evidence level, share card, and credited PR path |
 | A public or synthetic AI inventory | [Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory) | Quality gaps, possible-overlap questions, bounded value measurements, TEV&V and clause coverage |
 | A public-sector AI mission | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A non-certifying 12-file assurance draft |
 | An agency pilot ready to test | [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) | A claim → evidence → exact-test exchange and closeout lesson |
@@ -123,8 +125,40 @@ expected answers, raw responses, reasoning, headers, and credentials. Copy the
 [three-case suite](harness/examples/byo-agent-suite.json), inspect the
 [command adapter](harness/examples/byo_agent_adapter.py), or add the
 [reusable GitHub Action](.github/actions/aau-evaluate/action.yml). The
-[v1.2.0 release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.2.0)
+[v1.3.0 release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.3.0)
 ships a wheel and source archive with verified build provenance.
+
+## New: turn your fork into inspectable community evidence
+
+<a href="https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop"><img src="docs/assets/community-evidence-loop.svg" alt="AAU Community Evidence Loop: connect an agent, review the boundary, repeat runs, and publish a privacy-bounded evidence pack" width="100%"></a>
+
+The **[Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop)**
+closes the gap between downloading a Starter and contributing something other teams can trust and
+fork. Load the public Starter manifest, reviewed synthetic suite, and aggregate agent receipts in
+your browser; twelve local gates derive the evidence level and unlock a contribution ZIP. No file
+or form value is uploaded or persisted.
+
+The same contract is enforced by `aau-harness==1.3.0`:
+
+```bash
+aau submit ./my-agent-eval \
+  --receipt ./artifacts/public-receipt.json \
+  --id my-agent-evidence \
+  --contributor-name "Your name" --github your-handle \
+  --summary "What it helps with" --why-fork "What another team can adapt" \
+  --beneficiaries "Who benefits" --industry "Your industry" \
+  --failure-shape "The failure boundary" --tag routing --tag human-authority
+
+aau submit --validate ./my-agent-evidence-aau-submission
+```
+
+Every pack contains only the declared public evidence spine, privacy scan, deterministic checks,
+SHA-256 byte manifest, contribution checklist, source ledger, and an original share card. Levels
+progress from **Generated → Domain reviewed → Reproduced → Verified** only when the required
+artifacts are present. They never mean identity verification, certification, production approval,
+legal compliance, government endorsement, or authority to deploy. Inspect the three explicitly
+labeled [maintainer reference packs](community-evidence/entries/) or submit yours with the
+[dedicated pull-request template](.github/PULL_REQUEST_TEMPLATE/community-evidence.md).
 
 ## New: interrogate a federal AI portfolio without ranking it
 
