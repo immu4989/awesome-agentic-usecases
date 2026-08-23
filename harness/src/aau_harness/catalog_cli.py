@@ -1,7 +1,7 @@
 """Repository navigator for finding, running, and adapting verified use cases.
 
 The catalog deliberately stays stdlib-only. It is useful immediately after
-``pip install -e harness`` and never needs an API key or a network connection.
+``pip install aau-harness`` and never needs an API key or a network connection.
 """
 
 from __future__ import annotations
@@ -213,6 +213,27 @@ def build_parser() -> argparse.ArgumentParser:
     starting = sub.add_parser("start", help="print exact install and mock-eval commands")
     starting.add_argument("name", help="title, path, or CLI name")
 
+    initializing = sub.add_parser(
+        "init",
+        help="generate a five-minute Agent Evidence Starter",
+    )
+    initializing.add_argument("name", help="project directory name")
+    initializing.add_argument("--output", type=Path, help="output directory; defaults to NAME")
+    initializing.add_argument(
+        "--template",
+        choices=("public-service-routing", "customer-escalation", "incident-triage"),
+        default="public-service-routing",
+    )
+    initializing.add_argument("--title")
+    initializing.add_argument("--mission")
+    initializing.add_argument("--adapter", choices=("command", "http"), default="command")
+    initializing.add_argument("--human-role")
+    initializing.add_argument("--protected-action")
+    initializing.add_argument("--routine-outcome")
+    initializing.add_argument("--human-outcome")
+    initializing.add_argument("--stop-outcome")
+    initializing.add_argument("--json", action="store_true")
+
     forging = sub.add_parser("forge", help="turn a Studio brief into a runnable adaptation lab")
     forging.add_argument("brief", help="evaluation brief downloaded from AAU Studio")
     forging.add_argument("doctor_path", nargs="?", help="lab path when brief is 'doctor'")
@@ -255,12 +276,46 @@ def build_parser() -> argparse.ArgumentParser:
     evaluating.add_argument("--out", help="aggregate public receipt path")
     evaluating.add_argument("--private-out", help="unredacted local detail path")
 
-    sub.add_parser("doctor", help="check that every catalog entry is runnable and documented")
+    checking = sub.add_parser(
+        "doctor",
+        help="check an Agent Evidence Starter or the repository catalog",
+    )
+    checking.add_argument("path", nargs="?", type=Path, help="starter directory; defaults to cwd")
+    checking.add_argument(
+        "--run-adapter",
+        action="store_true",
+        help="execute the starter adapter during doctor (only for code you trust)",
+    )
+    checking.add_argument("--json", action="store_true", help="emit machine-readable JSON")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.command == "init":
+        from .starter import main as starter_main
+
+        starter_args = [args.name]
+        if args.output:
+            starter_args.extend(["--output", str(args.output)])
+        starter_args.extend(["--template", args.template, "--adapter", args.adapter])
+        if args.title:
+            starter_args.extend(["--title", args.title])
+        if args.mission:
+            starter_args.extend(["--mission", args.mission])
+        if args.human_role:
+            starter_args.extend(["--human-role", args.human_role])
+        if args.protected_action:
+            starter_args.extend(["--protected-action", args.protected_action])
+        if args.routine_outcome:
+            starter_args.extend(["--routine-outcome", args.routine_outcome])
+        if args.human_outcome:
+            starter_args.extend(["--human-outcome", args.human_outcome])
+        if args.stop_outcome:
+            starter_args.extend(["--stop-outcome", args.stop_outcome])
+        if args.json:
+            starter_args.append("--json")
+        return starter_main(starter_args)
     if args.command == "evaluate":
         from .evaluate import main as evaluate_main
 
@@ -277,6 +332,14 @@ def main(argv: list[str] | None = None) -> int:
         if args.private_out:
             evaluate_args.extend(["--private-out", args.private_out])
         return evaluate_main(evaluate_args)
+    if args.command == "doctor":
+        from .starter import doctor_project, render_report
+
+        target = (args.path or Path.cwd()).resolve()
+        if args.path is not None or (target / "aau-starter.json").is_file():
+            report = doctor_project(target, run_adapter=args.run_adapter)
+            print(json.dumps(report.to_dict(), indent=2) if args.json else render_report(report))
+            return 0 if report.ready else 1
     root = find_root(args.root) if args.root else find_root()
     cases = load_catalog(root)
 
@@ -337,6 +400,19 @@ def main(argv: list[str] | None = None) -> int:
         return challenge_main(challenge_args)
 
     problems = doctor(root, cases)
+    if args.json:
+        print(
+            json.dumps(
+                {
+                    "doctor_version": "aau-catalog-doctor/1.0",
+                    "ready": not problems,
+                    "case_count": len(cases),
+                    "problems": problems,
+                },
+                indent=2,
+            )
+        )
+        return 1 if problems else 0
     if problems:
         print("Catalog doctor found problems:", file=sys.stderr)
         for problem in problems:

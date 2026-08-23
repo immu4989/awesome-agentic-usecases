@@ -18,6 +18,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/?boundary=sterility-is-not-chemical-oos#boundary-lab">Boundary Lab</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder">Build a boundary</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab">Inspect a receipt</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-starter">Agent Evidence Starter</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-mission">Federal Mission Studio</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot">Federal Pilot Desk</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory">Portfolio Observatory</a> ·
@@ -66,23 +67,46 @@ and observed failure cards with a direct path to reproduction. Start with
 
 | I already have… | Start here | Leave with… |
 |---|---|---|
-| An AI agent or endpoint | [`aau evaluate`](harness/examples/byo-agent-suite.json) | A privacy-bounded public receipt, without changing frameworks |
+| An AI agent or endpoint | [Agent Evidence Starter](https://immu4989.github.io/awesome-agentic-usecases/#agent-starter) | A runnable synthetic suite, adapters, tests, CI, visual, manifest, and privacy-bounded receipt |
 | A public or synthetic AI inventory | [Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory) | Quality gaps, possible-overlap questions, bounded value measurements, TEV&V and clause coverage |
 | A public-sector AI mission | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A non-certifying 12-file assurance draft |
 | An agency pilot ready to test | [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) | A claim → evidence → exact-test exchange and closeout lesson |
 | One risky decision boundary | [Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder) | A fork-ready counterfactual evaluation lab |
 | Nothing but a workflow description | [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) | A matched lab and Forge-compatible brief |
 
-## New: evaluate the agent you already have
+## New: bring the agent you already have—leave with a runnable evidence project
+
+<a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-starter"><img src="docs/assets/agent-starter.svg" alt="AAU Agent Evidence Starter: synthetic cases flow through your agent adapter, exact and safe scoring, a public receipt, and protected human authority with zero accounts" width="100%"></a>
 
 [`aau-harness`](https://pypi.org/project/aau-harness/) is now a public, provider-neutral
-Python package. Point one declared suite at an existing command or JSON endpoint; the evaluator
-sends only the case request, measures exact outcome and forbidden actions, and emits a
-privacy-bounded aggregate receipt. Your application does not need to adopt this repository's
-framework or agent loop.
+Python package. Its new Agent Evidence Starter turns the gap between “I have an agent” and “I have
+a trustworthy first test” into one command:
 
 ```bash
 python -m pip install aau-harness
+aau init my-agent-eval
+cd my-agent-eval
+aau doctor .
+aau evaluate suite.json --mock --out artifacts/protocol-receipt.json
+```
+
+The generated eleven-file project includes three synthetic deciding-fact cases, command and HTTP
+adapters, exact outcomes, forbidden-action checks, protected human authority, a deterministic
+first receipt, a standard-library regression test, least-privilege immutable CI, receipt policy,
+an evidence-flow visual, and SHA-256 origin fingerprints. Choose public-service routing, customer
+escalation, or incident triage; then adapt the facts and connect your application.
+
+Prefer no install? **[Build the same contract in the browser](https://immu4989.github.io/awesome-agentic-usecases/#agent-starter).**
+The zero-upload wizard runs ten local safety gates and creates the ZIP entirely in the tab—no
+account, persistence, telemetry, model call, hosted dataset, or form-data upload. Three complete
+[reference starters](agent-evidence-starter/examples/) are committed for inspection and forking.
+
+Already have a suite? Point it at an existing command or JSON endpoint; the evaluator sends only
+the case request, measures exact outcome and forbidden actions, and emits a privacy-bounded
+aggregate receipt. Your application does not need to adopt this repository's framework or agent
+loop.
+
+```bash
 
 # Start safely against the deterministic protocol mock.
 aau evaluate evals/public-suite.json --mock --out artifacts/aau-receipt.json
@@ -99,7 +123,7 @@ expected answers, raw responses, reasoning, headers, and credentials. Copy the
 [three-case suite](harness/examples/byo-agent-suite.json), inspect the
 [command adapter](harness/examples/byo_agent_adapter.py), or add the
 [reusable GitHub Action](.github/actions/aau-evaluate/action.yml). The
-[v1.1.1 release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.1.1)
+[v1.2.0 release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.2.0)
 ships a wheel and source archive with verified build provenance.
 
 ## New: interrogate a federal AI portfolio without ranking it

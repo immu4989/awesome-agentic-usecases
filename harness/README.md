@@ -36,6 +36,41 @@ aau --help
 pytest harness/tests -q
 ```
 
+## Start an evidence project in five minutes
+
+`aau init` generates a complete, non-overwriting evaluation project around an agent you already
+have. It needs no AAU account, hosted dataset, model key, or upload.
+
+```bash
+aau init my-agent-eval
+cd my-agent-eval
+aau doctor .
+aau evaluate suite.json --mock --out artifacts/protocol-receipt.json
+aau evaluate suite.json --command "python adapter_command.py" --out artifacts/local-receipt.json
+```
+
+Every starter contains an explicitly synthetic three-case suite, command and local HTTP adapters,
+exact outcome and forbidden-action checks, accountable human authority, a deterministic public
+receipt, a standard-library test, immutable least-privilege CI, a receipt-sharing policy, an
+evidence-flow visual, and a SHA-256 manifest. Generation is atomic and refuses to overwrite an
+existing path.
+
+Choose a transferable failure shape or an HTTP-first integration:
+
+```bash
+aau init service-eval --template public-service-routing
+aau init support-eval --template customer-escalation
+aau init incident-eval --template incident-triage --adapter http
+```
+
+`aau doctor` fails on unsafe sharing declarations, an invalid adapter contract, a drifted receipt,
+unsafe manifest paths or symlinks, or weakened CI. It parses but does not execute project code by
+default; use `aau doctor . --run-adapter` only for code you trust. Legitimate customization is
+reported as a warning. Structural readiness remains an onboarding signal—not production
+validation, certification, legal advice, or authority to deploy.
+See the [complete examples](https://github.com/immu4989/awesome-agentic-usecases/tree/main/agent-evidence-starter/examples)
+or use the [zero-upload browser wizard](https://immu4989.github.io/awesome-agentic-usecases/#agent-starter).
+
 ## Evaluate an existing agent
 
 You do not need to rebuild an application around the harness. `aau evaluate` sends each case to

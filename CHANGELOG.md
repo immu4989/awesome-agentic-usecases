@@ -3,6 +3,24 @@
 Notable changes to the repository. Versions follow [semantic versioning](https://semver.org/):
 the harness API is what is versioned; use cases are additive.
 
+## 1.2.0 - 2026-08-23
+
+- **Agent Evidence Starter** — `aau init` now atomically generates an eleven-file, provider-neutral
+  evaluation project around an existing command or local HTTP agent: reviewed synthetic cases,
+  exact outcomes, forbidden-action scoring, protected human authority, two adapters, a regression
+  test, a privacy-bounded first receipt, immutable least-privilege CI, receipt policy, original
+  evidence visual, and SHA-256 origin manifest.
+- **Fail-closed starter doctor** — `aau doctor PATH` validates the suite's sharing declarations,
+  accountable boundary, adapter structure, aggregate receipt, pinned package/actions, required
+  files, safe manifest paths, symlink boundaries, and template drift. It never executes project
+  code unless the user explicitly adds `--run-adapter`. Legitimate customization warns; weakened
+  safety contracts fail. Starter commands work from a public package install outside a checkout.
+- **Zero-upload browser builder** — the repository homepage now offers the same three starter
+  shapes through a four-step local wizard with ten safety gates, a common-sensitive-data scan,
+  live evidence circuit, local SHA-256 manifesting, and an in-tab ZIP export. Form data is not
+  uploaded, persisted, or transmitted. Three complete generated examples and CI parity checks
+  keep the Python and browser contracts synchronized.
+
 ## 1.1.1 - 2026-08-23
 
 - **Public package onboarding** — the PyPI-rendered package guide now leads with
