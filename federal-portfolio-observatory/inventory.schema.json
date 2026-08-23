@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/federal-ai-portfolio.schema.json",
+  "title": "AAU Federal AI Portfolio Inventory",
+  "description": "A public or synthetic inventory contract for surfacing documentation gaps and possible overlap without making investment decisions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_version",
+    "portfolio_id",
+    "agency_context",
+    "as_of",
+    "sharing",
+    "strategic_goals",
+    "use_cases"
+  ],
+  "properties": {
+    "profile_version": {"const": "aau-federal-ai-portfolio/0.5"},
+    "portfolio_id": {"$ref": "#/$defs/slug"},
+    "agency_context": {"$ref": "#/$defs/text"},
+    "as_of": {"type": "string", "format": "date"},
+    "sharing": {"$ref": "#/$defs/sharing"},
+    "strategic_goals": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["goal_id", "title", "outcome_metric"],
+        "properties": {
+          "goal_id": {"$ref": "#/$defs/slug"},
+          "title": {"$ref": "#/$defs/text"},
+          "outcome_metric": {"$ref": "#/$defs/text"}
+        }
+      }
+    },
+    "use_cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "use_case_id",
+          "title",
+          "mission",
+          "beneficiary",
+          "owner_role",
+          "lifecycle",
+          "capabilities",
+          "data_classes",
+          "expected_benefit",
+          "strategic_goal_ids",
+          "performance_metrics",
+          "high_impact_status",
+          "system_boundary",
+          "human_authority",
+          "estimated_annual_cost_usd",
+          "source"
+        ],
+        "properties": {
+          "use_case_id": {"$ref": "#/$defs/slug"},
+          "title": {"$ref": "#/$defs/text"},
+          "mission": {"$ref": "#/$defs/text"},
+          "beneficiary": {"$ref": "#/$defs/text"},
+          "owner_role": {"type": "string"},
+          "lifecycle": {"enum": ["proposed", "piloting", "operational", "paused", "retired"]},
+          "capabilities": {"$ref": "#/$defs/textList"},
+          "data_classes": {"$ref": "#/$defs/textList"},
+          "expected_benefit": {"type": "string"},
+          "strategic_goal_ids": {"type": "array", "items": {"$ref": "#/$defs/slug"}, "uniqueItems": true},
+          "performance_metrics": {"type": "array", "items": {"$ref": "#/$defs/text"}, "uniqueItems": true},
+          "high_impact_status": {"enum": ["yes", "no", "uncertain_requires_review"]},
+          "system_boundary": {"type": "string"},
+          "human_authority": {"type": "string"},
+          "estimated_annual_cost_usd": {"type": ["number", "null"], "minimum": 0},
+          "source": {"enum": ["synthetic", "public_record"]}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "text": {"type": "string", "minLength": 1},
+    "textList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/text"}
+    },
+    "sharing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "human_review_complete",
+        "contains_personally_identifiable_information",
+        "contains_procurement_sensitive_information",
+        "contains_controlled_unclassified_information",
+        "contains_classified_information",
+        "contains_secrets_or_credentials"
+      ],
+      "properties": {
+        "classification": {"enum": ["public", "synthetic", "public_synthetic"]},
+        "human_review_complete": {"const": true},
+        "contains_personally_identifiable_information": {"const": false},
+        "contains_procurement_sensitive_information": {"const": false},
+        "contains_controlled_unclassified_information": {"const": false},
+        "contains_classified_information": {"const": false},
+        "contains_secrets_or_credentials": {"const": false}
+      }
+    }
+  }
+}

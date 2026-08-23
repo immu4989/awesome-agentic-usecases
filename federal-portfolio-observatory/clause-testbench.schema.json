@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/clause-testbench.schema.json",
+  "title": "AAU AI Clause Testbench",
+  "description": "Machine-testable acquisition obligations; not approved contract language or legal advice.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile_version", "library_id", "sharing", "clauses"],
+  "properties": {
+    "profile_version": {"const": "aau-ai-clause-testbench/0.5"},
+    "library_id": {"$ref": "#/$defs/slug"},
+    "sharing": {"$ref": "federal-ai-portfolio.schema.json#/$defs/sharing"},
+    "clauses": {
+      "type": "array",
+      "minItems": 7,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["clause_id", "area", "obligation", "human_owner_role", "tests", "required_evidence", "failure_actions", "legal_conclusion"],
+        "properties": {
+          "clause_id": {"$ref": "#/$defs/slug"},
+          "area": {
+            "enum": [
+              "government_data_and_ip",
+              "privacy_and_training_use",
+              "portability_and_exit",
+              "pricing_and_total_cost",
+              "continuous_evaluation",
+              "accessibility_and_service_delivery",
+              "incident_and_change_notification"
+            ]
+          },
+          "obligation": {"type": "string", "minLength": 1},
+          "human_owner_role": {"type": "string", "minLength": 1},
+          "tests": {"$ref": "#/$defs/textList"},
+          "required_evidence": {"$ref": "#/$defs/textList"},
+          "failure_actions": {"$ref": "#/$defs/textList"},
+          "legal_conclusion": {"const": false}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "textList": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

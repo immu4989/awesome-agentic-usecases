@@ -8,6 +8,26 @@ agent do this?”:
 
 You do not need an API key to begin. Pick the route that matches the job you are doing.
 
+If you already operate an agent, connect it without rewriting the application:
+
+```bash
+pip install -e harness
+aau evaluate harness/examples/byo-agent-suite.json \
+  --command "python harness/examples/byo_agent_adapter.py" \
+  --out aau-agent-receipt.json
+```
+
+The command/HTTP adapter protocol is provider-neutral. Its public receipt contains aggregate
+measurements and scenario IDs—not prompts, expected answers, agent responses, reasoning, headers,
+or credentials. See the [BYO-agent guide](harness/README.md#evaluate-an-existing-agent).
+
+If you have a public or synthetic AI inventory, open the
+**[Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory)**.
+It surfaces documentation gaps and possible-overlap questions, binds before/after public-value
+measurements to limitations and cost, checks three independent TEV&V layers, and maps acquisition
+obligations to tests and evidence. It does not rank investments, recommend budgets or awards,
+claim savings, certify compliance, or make a protected decision.
+
 If you are shaping or acquiring AI for a public-sector mission, start with
 **[Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission)**.
 It keeps your draft in the browser, maps mission impact, testing, human authority,

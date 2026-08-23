@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/three-layer-tev-v.schema.json",
+  "title": "AAU Three-Layer TEV&V Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile_version", "plan_id", "use_case_id", "sharing", "accountable_decision_role", "protected_decisions", "layers"],
+  "properties": {
+    "profile_version": {"const": "aau-three-layer-tev-v/0.5"},
+    "plan_id": {"$ref": "#/$defs/slug"},
+    "use_case_id": {"$ref": "#/$defs/slug"},
+    "sharing": {"$ref": "federal-ai-portfolio.schema.json#/$defs/sharing"},
+    "accountable_decision_role": {"type": "string", "minLength": 1},
+    "protected_decisions": {"$ref": "#/$defs/textList"},
+    "layers": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["layer", "objective", "methods", "success_measures", "stop_conditions", "evidence_outputs"],
+        "properties": {
+          "layer": {"enum": ["model_testing", "red_teaming", "field_simulation"]},
+          "objective": {"type": "string", "minLength": 1},
+          "methods": {"$ref": "#/$defs/textList"},
+          "success_measures": {"$ref": "#/$defs/textList"},
+          "stop_conditions": {"$ref": "#/$defs/textList"},
+          "evidence_outputs": {"$ref": "#/$defs/textList"},
+          "participant_roles": {"$ref": "#/$defs/textList"},
+          "consent_and_privacy": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "textList": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

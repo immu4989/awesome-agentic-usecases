@@ -1,0 +1,101 @@
+name: Federal AI Portfolio Observatory release
+
+on:
+  push:
+    tags:
+      - "federal-portfolio-v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: SemVer without the leading v
+        required: true
+        default: "0.5.0"
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  build-and-attest:
+    name: Build, inventory, verify, and attest
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Install the pinned test runner
+        run: python -m pip install pytest==8.4.2
+      - name: Resolve and validate release version
+        id: release
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/federal-portfolio-v* ]]; then
+            version="${GITHUB_REF_NAME#federal-portfolio-v}"
+          else
+            version="$REQUESTED_VERSION"
+          fi
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9.-]+)?$ ]]; then
+            echo "Invalid release version: $version" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Run contract and release checks
+        run: |
+          python -m py_compile federal-portfolio-observatory/aau_portfolio.py federal-portfolio-observatory/verify_release.py federal-portfolio-observatory/tools/build_release.py
+          python docs/check_federal_portfolio.py
+          pytest federal-portfolio-observatory/tests -q
+      - name: Build deterministic release and SPDX inventory
+        run: |
+          python federal-portfolio-observatory/tools/build_release.py \
+            --version "${{ steps.release.outputs.version }}" \
+            --source-revision "$GITHUB_SHA" \
+            --source-date "$(git show -s --format=%cI "$GITHUB_SHA")" \
+            --output federal-portfolio-observatory/dist
+          python federal-portfolio-observatory/verify_release.py federal-portfolio-observatory/dist
+          cd federal-portfolio-observatory/dist
+          sha256sum --check SHA256SUMS
+      - name: Upload release bundle
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: federal-portfolio-observatory-v${{ steps.release.outputs.version }}
+          path: federal-portfolio-observatory/dist/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Attest release provenance
+        uses: actions/attest-build-provenance@43d14bc2b83dec42d39ecae14e916627a18bb661 # v3
+        with:
+          subject-path: federal-portfolio-observatory/dist/*
+      - name: Attest archive SBOM
+        uses: actions/attest-sbom@51e74621a501c89df81fc1391c5a8f4cfc9fab2f # v3
+        with:
+          subject-path: federal-portfolio-observatory/dist/aau-federal-portfolio-observatory-v${{ steps.release.outputs.version }}.zip
+          sbom-path: federal-portfolio-observatory/dist/aau-federal-portfolio-observatory-v${{ steps.release.outputs.version }}.spdx.json
+
+  publish-tagged-release:
+    name: Publish tagged GitHub release
+    if: startsWith(github.ref, 'refs/tags/federal-portfolio-v')
+    needs: build-and-attest
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: federal-portfolio-observatory-v${{ needs.build-and-attest.outputs.version }}
+          path: federal-portfolio-observatory/dist
+      - name: Publish release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" federal-portfolio-observatory/dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Federal AI Portfolio Observatory ${GITHUB_REF_NAME#federal-portfolio-v}" \
+            --generate-notes \
+            --verify-tag

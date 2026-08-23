@@ -1,0 +1,44 @@
+name: AAU BYO-agent evaluation
+description: Run a provider-neutral agent against a public AAU suite and emit a privacy-bounded receipt.
+branding:
+  icon: check-circle
+  color: blue
+inputs:
+  suite:
+    description: Path to an aau-byo-agent-suite/1.0 JSON file.
+    required: true
+  adapter-command:
+    description: Command that accepts one JSON request on stdin and returns one JSON response on stdout.
+    required: true
+  timeout:
+    description: Per-case timeout in seconds.
+    required: false
+    default: "30"
+  receipt:
+    description: Output path for the public aggregate receipt.
+    required: false
+    default: aau-agent-receipt.json
+outputs:
+  receipt:
+    description: Path to the generated public receipt.
+    value: ${{ steps.evaluate.outputs.receipt }}
+runs:
+  using: composite
+  steps:
+    - name: Install the repository-pinned AAU harness
+      shell: bash
+      run: python -m pip install "$GITHUB_ACTION_PATH/../../../harness"
+    - name: Evaluate the connected agent
+      id: evaluate
+      shell: bash
+      env:
+        AAU_ADAPTER_COMMAND: ${{ inputs.adapter-command }}
+        AAU_RECEIPT: ${{ inputs.receipt }}
+        AAU_SUITE: ${{ inputs.suite }}
+        AAU_TIMEOUT: ${{ inputs.timeout }}
+      run: |
+        aau evaluate "$AAU_SUITE" \
+          --command "$AAU_ADAPTER_COMMAND" \
+          --timeout "$AAU_TIMEOUT" \
+          --out "$AAU_RECEIPT"
+        echo "receipt=$AAU_RECEIPT" >> "$GITHUB_OUTPUT"

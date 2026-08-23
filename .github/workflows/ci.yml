@@ -97,6 +97,24 @@ jobs:
           python federal-pilot-kit/verify_release.py "$RUNNER_TEMP/federal-pilot-release"
           node --check docs/federal-pilot.js
           git diff --exit-code docs/federal-pilot-data.json docs/federal-pilot-agency.schema.json docs/federal-pilot-vendor.schema.json docs/federal-pilot-tests.schema.json docs/federal-ai-lesson.schema.json docs/assets/federal-pilot.svg docs/assets/lessons-exchange.svg
+      - name: Federal AI Portfolio contracts, pack, and local Observatory are current
+        run: |
+          python docs/make_federal_portfolio_data.py
+          python docs/check_federal_portfolio.py
+          python federal-portfolio-observatory/aau_portfolio.py validate inventory federal-portfolio-observatory/examples/synthetic-agency-inventory.json
+          python federal-portfolio-observatory/aau_portfolio.py policy-drift --as-of 2026-08-23
+          python federal-portfolio-observatory/aau_portfolio.py pack federal-portfolio-observatory/examples/synthetic-agency-inventory.json federal-portfolio-observatory/examples/public-value-ledger.json federal-portfolio-observatory/examples/three-layer-tev-v-plan.json federal-portfolio-observatory/examples/clause-testbench.json --out "$RUNNER_TEMP/federal-portfolio-pack"
+          python federal-portfolio-observatory/aau_portfolio.py verify-pack "$RUNNER_TEMP/federal-portfolio-pack"
+          pytest federal-portfolio-observatory/tests -q
+          python federal-portfolio-observatory/tools/build_release.py --version 0.5.0 --source-revision 0000000000000000000000000000000000000000 --source-date 2026-08-23T00:00:00Z --output "$RUNNER_TEMP/federal-portfolio-release"
+          python federal-portfolio-observatory/verify_release.py "$RUNNER_TEMP/federal-portfolio-release"
+          node --check docs/federal-portfolio.js
+          git diff --exit-code docs/federal-portfolio-data.json docs/federal-ai-portfolio.schema.json docs/public-value-ledger.schema.json docs/three-layer-tev-v.schema.json docs/clause-testbench.schema.json docs/assets/federal-portfolio.svg
+      - name: Existing agents connect through the provider-neutral gateway
+        run: |
+          aau evaluate harness/examples/byo-agent-suite.json --command "python harness/examples/byo_agent_adapter.py" --out "$RUNNER_TEMP/aau-agent-receipt.json"
+          pytest harness/tests/test_evaluate.py -q
+          python harness/tools/check_release_version.py harness-v1.1.0
       - name: State of Agent Reliability is derived from committed evidence
         run: |
           python docs/make_reliability_report.py

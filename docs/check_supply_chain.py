@@ -49,6 +49,30 @@ def main() -> None:
             "SHA256SUMS",
             "build_release.py",
         ),
+        WORKFLOWS / "harness-release.yml": (
+            "pypa/gh-action-pypi-publish@",
+            "actions/attest-build-provenance@",
+            "check_release_version.py",
+        ),
+        WORKFLOWS / "federal-portfolio-release.yml": (
+            "actions/attest-build-provenance@",
+            "actions/attest-sbom@",
+            "SHA256SUMS",
+            "build_release.py",
+        ),
+        ROOT / ".github" / "actions" / "aau-evaluate" / "action.yml": (
+            "aau evaluate",
+            "GITHUB_ACTION_PATH",
+            "shell: bash",
+        ),
+        ROOT / "federal-portfolio-observatory" / "README.md": (
+            "AAU Federal AI Portfolio Observatory",
+            "does not",
+        ),
+        ROOT / "federal-portfolio-observatory" / "RELEASE_VERIFICATION.md": (
+            "gh attestation verify",
+            "SHA256SUMS",
+        ),
         ROOT / "federal-pilot-kit" / "THREAT_MODEL.md": ("## Security invariants",),
         ROOT / "federal-pilot-kit" / "RELEASE_VERIFICATION.md": ("gh attestation verify",),
         ROOT / "federal-pilot-kit" / "pilot-launch" / "README.md": ("30-Day",),

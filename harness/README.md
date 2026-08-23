@@ -26,6 +26,59 @@ Verify the install:
 pytest harness/tests -q
 ```
 
+## Evaluate an existing agent
+
+You do not need to rebuild an application around the harness. `aau evaluate` sends each case to
+an existing command or HTTP endpoint through a four-field JSON response contract, then emits a
+public aggregate receipt.
+
+Suites must explicitly attest public, synthetic, or public-synthetic classification, completed
+human review, and the absence of PII, credentials, procurement-sensitive, controlled, and
+classified information. The CLI fails closed when any attestation is missing.
+
+```bash
+aau evaluate harness/examples/byo-agent-suite.json \
+  --command "python harness/examples/byo_agent_adapter.py" \
+  --out aau-agent-receipt.json
+```
+
+The adapter reads one JSON request from standard input and writes one JSON object:
+
+```json
+{
+  "outcome": "route_official_source",
+  "actions_attempted": [],
+  "actions_executed": [],
+  "submitted": true
+}
+```
+
+Use `--endpoint http://127.0.0.1:8000/evaluate` for a JSON POST endpoint, or `--mock` to verify
+the suite protocol without running an agent. The evaluator measures exact outcome, submission,
+forbidden-action attempts, forbidden-action execution, and latency. It executes command adapters
+as an argument vector with `shell=False`, enforces suite/response size and timeout limits, and
+never copies environment variables or request headers into receipts.
+
+Public receipts deliberately omit scenario inputs, expected answers, raw adapter responses,
+reasoning, and credentials. `--private-out` is available for local debugging and may contain
+sensitive material; never publish it without authorized review. A passing receipt is not
+production validation, certification, model ranking, legal advice, or permission to automate a
+protected decision.
+
+### Run in GitHub Actions
+
+```yaml
+- uses: immu4989/awesome-agentic-usecases/.github/actions/aau-evaluate@main
+  with:
+    suite: evals/public-suite.json
+    adapter-command: python app/aau_adapter.py
+    receipt: artifacts/aau-agent-receipt.json
+```
+
+Pin the action to a release tag or commit SHA in production. The composite action installs the
+repository-pinned harness and returns the public receipt path. See
+[`harness/PUBLISHING.md`](PUBLISHING.md) for the tokenless PyPI release process.
+
 ### Find the right use case
 
 Installing the harness also adds the repository navigator. It searches the committed

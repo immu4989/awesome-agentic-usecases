@@ -11,6 +11,7 @@
 - [ ] Docs only
 - [ ] Community Forge Gallery adaptation
 - [ ] Federal Pilot Kit exchange or readiness improvement
+- [ ] Federal AI Portfolio Observatory contract, example, or adapter
 
 ## For a new use case, the verification bar ([VERIFICATION.md](../VERIFICATION.md))
 

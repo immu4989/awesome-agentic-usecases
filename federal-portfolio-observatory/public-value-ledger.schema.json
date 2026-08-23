@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/public-value-ledger.schema.json",
+  "title": "AAU Public Value Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile_version", "ledger_id", "sharing", "records"],
+  "properties": {
+    "profile_version": {"const": "aau-public-value-ledger/0.5"},
+    "ledger_id": {"$ref": "#/$defs/slug"},
+    "sharing": {"$ref": "federal-ai-portfolio.schema.json#/$defs/sharing"},
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["record_id", "use_case_id", "status", "baseline", "observed", "costs", "measurement", "claims_verified_savings"],
+        "properties": {
+          "record_id": {"$ref": "#/$defs/slug"},
+          "use_case_id": {"$ref": "#/$defs/slug"},
+          "status": {"enum": ["baseline_only", "measured", "revalidation_due"]},
+          "baseline": {"$ref": "#/$defs/measurement"},
+          "observed": {"$ref": "#/$defs/measurement"},
+          "costs": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["pilot_cost_usd", "annual_operating_cost_usd"],
+            "properties": {
+              "pilot_cost_usd": {"type": "number", "minimum": 0},
+              "annual_operating_cost_usd": {"type": "number", "minimum": 0}
+            }
+          },
+          "measurement": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["method", "limitations"],
+            "properties": {
+              "method": {"type": "string", "minLength": 1},
+              "limitations": {"type": "string", "minLength": 1}
+            }
+          },
+          "claims_verified_savings": {"const": false}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "measurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cases", "minutes_per_case", "error_rate", "human_review_minutes_per_case"],
+      "properties": {
+        "cases": {"type": ["integer", "null"], "minimum": 0},
+        "minutes_per_case": {"type": ["number", "null"], "minimum": 0},
+        "error_rate": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "human_review_minutes_per_case": {"type": ["number", "null"], "minimum": 0}
+      }
+    }
+  }
+}

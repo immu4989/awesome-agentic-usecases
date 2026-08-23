@@ -238,12 +238,45 @@ def build_parser() -> argparse.ArgumentParser:
     challenge.add_argument("--track", choices=("Reproduce", "Break", "Adapt"), help="filter the mission list")
     challenge.add_argument("--json", action="store_true", help="emit machine-readable JSON")
 
+    evaluating = sub.add_parser(
+        "evaluate",
+        help="evaluate an existing agent through a command or HTTP endpoint",
+    )
+    evaluating.add_argument("suite", help="AAU BYO-agent suite JSON")
+    adapter = evaluating.add_mutually_exclusive_group(required=True)
+    adapter.add_argument(
+        "--command",
+        dest="adapter_command",
+        help="adapter argv; JSON stdin/stdout protocol",
+    )
+    adapter.add_argument("--endpoint", help="adapter HTTP endpoint")
+    adapter.add_argument("--mock", action="store_true", help="protocol self-test")
+    evaluating.add_argument("--timeout", type=float, default=30.0)
+    evaluating.add_argument("--out", help="aggregate public receipt path")
+    evaluating.add_argument("--private-out", help="unredacted local detail path")
+
     sub.add_parser("doctor", help="check that every catalog entry is runnable and documented")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.command == "evaluate":
+        from .evaluate import main as evaluate_main
+
+        evaluate_args = [args.suite]
+        if args.adapter_command:
+            evaluate_args.extend(["--command", args.adapter_command])
+        elif args.endpoint:
+            evaluate_args.extend(["--endpoint", args.endpoint])
+        else:
+            evaluate_args.append("--mock")
+        evaluate_args.extend(["--timeout", str(args.timeout)])
+        if args.out:
+            evaluate_args.extend(["--out", args.out])
+        if args.private_out:
+            evaluate_args.extend(["--private-out", args.private_out])
+        return evaluate_main(evaluate_args)
     root = find_root(args.root) if args.root else find_root()
     cases = load_catalog(root)
 

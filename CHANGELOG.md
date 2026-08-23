@@ -5,6 +5,23 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Federal AI Portfolio Observatory v0.5** — a public/synthetic, browser-local and
+  dependency-free portfolio evidence desk now detects missing inventory evidence, surfaces
+  similarity only as possible overlap requiring human review, matches candidate AAU evaluation
+  contracts, records bounded before/after public value without savings claims, checks independent
+  model/red-team/field-simulation TEV&V layers, and maps seven AI acquisition obligation areas to
+  tests, evidence, owners, and failure actions. Four strict JSON Schemas, eight dated official
+  sources, a narrow no-values sensitive scan, deterministic eight-file evidence packs, a generated
+  visual, and CI parity checks preserve the non-ranking and non-decision boundary. Tagged releases
+  add a deterministic source ZIP, exact manifest, SPDX 2.3 file inventory, checksums, build
+  provenance, SBOM attestation, and a hostile-archive verifier.
+- **BYO-agent gateway and harness 1.1** — existing command-line or HTTP agents can now run a
+  provider-neutral public suite through `aau evaluate` and receive an aggregate receipt that omits
+  inputs, expected answers, raw responses, reasoning, headers, and credentials. A reusable
+  composite GitHub Action, command adapter example, protocol tests, build-provenance attestation,
+  PyPI Trusted Publishing workflow, immutable PyPA action pin, and fail-closed tag/version check
+  make adoption possible without changing frameworks or storing a PyPI token.
+
 - **Federal Pilot Kit v0.4 — Federal AI Lessons Exchange** — completed public or synthetic pilots
   can now close with a versioned, evidence-linked lesson that records success, change, or stop;
   preserves the accountable human decision; exposes applicability and non-transfer conditions;

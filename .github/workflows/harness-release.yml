@@ -1,0 +1,87 @@
+name: AAU harness release
+
+on:
+  push:
+    tags:
+      - "harness-v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  build:
+    name: Test, build, and attest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Install isolated build and test tools
+        run: python -m pip install build==1.3.0 pytest==8.4.2 ruff==0.12.10 twine==6.1.0
+      - name: Verify package version matches a release tag
+        if: startsWith(github.ref, 'refs/tags/harness-v')
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: python harness/tools/check_release_version.py "$RELEASE_TAG"
+      - name: Run the full harness suite and BYO-agent smoke test
+        run: |
+          python -m pip install -e harness
+          pytest harness/tests -q
+          ruff check harness
+          aau evaluate harness/examples/byo-agent-suite.json --mock --out harness/byo-agent-receipt.json
+      - name: Build and inspect distributions
+        run: |
+          python -m build harness
+          python -m twine check harness/dist/*
+      - name: Upload package distributions
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: aau-harness-distributions
+          path: harness/dist/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Attest package provenance
+        uses: actions/attest-build-provenance@43d14bc2b83dec42d39ecae14e916627a18bb661 # v3
+        with:
+          subject-path: harness/dist/*
+
+  publish-pypi:
+    name: Publish to PyPI with trusted identity
+    if: startsWith(github.ref, 'refs/tags/harness-v')
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/aau-harness
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: aau-harness-distributions
+          path: dist
+      - name: Publish distributions
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+
+  publish-github:
+    name: Attach distributions to the tagged release
+    if: startsWith(github.ref, 'refs/tags/harness-v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: aau-harness-distributions
+          path: dist
+      - name: Publish release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "AAU Harness ${GITHUB_REF_NAME#harness-v}" --generate-notes --verify-tag

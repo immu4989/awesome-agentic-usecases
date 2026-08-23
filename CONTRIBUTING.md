@@ -14,6 +14,13 @@ and start from the [Federal Pilot Kit](federal-pilot-kit/). Submit only public o
 details. Never post proposal contents, source-selection information, personal records,
 credentials, controlled information, classified information, or other non-public agency data.
 
+For a public or synthetic AI portfolio adaptation, use the
+[Federal Portfolio proposal](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=federal-portfolio.yml)
+and start from the [Portfolio Observatory contracts](federal-portfolio-observatory/). Proposed
+examples must complete the public-sharing attestation and human review. Similarity output is a
+review prompt only; submissions must not rank agencies or vendors, recommend budgets, awards,
+deployment, consolidation, or cancellation, or claim audited savings.
+
 If you plan to implement it, start with the zero-install
 [Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder).
 It converts one declared semantic boundary into an eight-file, Forge-compatible draft while

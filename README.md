@@ -19,6 +19,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab">Inspect a receipt</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-mission">Federal Mission Studio</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot">Federal Pilot Desk</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory">Portfolio Observatory</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#reliability">State of Agent Reliability 2026</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#challenge">AAU Reliability Challenge</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
@@ -59,6 +60,43 @@ domain-specific map of the hidden trap, responsive charts generated from committ
 real-model runs, a strongest-vs-weakest contrast, an exact cost/latency tradeoff profile,
 and observed failure cards with a direct path to reproduction. Start with
 [Exception Triage](logistics-supply-chain/exception-triage-agent/) to see the format.
+
+### Choose the fastest path
+
+| I already have… | Start here | Leave with… |
+|---|---|---|
+| An AI agent or endpoint | [`aau evaluate`](harness/examples/byo-agent-suite.json) | A privacy-bounded public receipt, without changing frameworks |
+| A public or synthetic AI inventory | [Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory) | Quality gaps, possible-overlap questions, bounded value measurements, TEV&V and clause coverage |
+| A public-sector AI mission | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A non-certifying 12-file assurance draft |
+| An agency pilot ready to test | [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) | A claim → evidence → exact-test exchange and closeout lesson |
+| One risky decision boundary | [Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder) | A fork-ready counterfactual evaluation lab |
+| Nothing but a workflow description | [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) | A matched lab and Forge-compatible brief |
+
+## New: interrogate a federal AI portfolio without ranking it
+
+<a href="https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory"><img src="docs/assets/federal-portfolio.svg" alt="AAU Federal AI Portfolio Observatory: six synthetic entries, four documented investments, five critical evidence gaps, one bounded public-value measurement, three TEV&V layers, and seven acquisition clause areas" width="100%"></a>
+
+**[Open the Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory)**
+to turn a public or synthetic agency inventory into evidence questions an accountable team can
+inspect. The browser-local desk and dependency-free CLI share the same strict contracts for
+inventory quality, possible overlap, public-value measurement, three-layer TEV&V, AI acquisition
+obligations, privacy preflight, and dated policy review.
+
+- It finds missing owners, benefits, boundaries, outcome metrics, strategic links, costs, and
+  incomplete high-impact determinations.
+- It labels similar investments **possible overlap / human review required**—never duplication,
+  consolidation, cancellation, or a budget recommendation.
+- Its Public Value Ledger reports bounded before/after changes and limitations; it never infers
+  audited savings or causal impact.
+- Its TEV&V contract keeps model tests, adversarial tests, and human field simulation independent.
+- Its Clause Testbench maps seven acquisition obligation areas to tests, evidence, owners, and
+  failure actions without pretending to provide approved language or legal advice.
+- It exports a deterministic eight-file evidence pack with a SHA-256 manifest, and its local
+  scanner never includes matched sensitive values in the public receipt.
+
+Start with the [worked synthetic portfolio](federal-portfolio-observatory/examples/synthetic-agency-inventory.json),
+read the [open contract and CLI guide](federal-portfolio-observatory/), or
+[propose a public portfolio adaptation](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=federal-portfolio.yml).
 
 ## New: Fork a federal AI pilot. Close it with a lesson the next team can verify.
 
