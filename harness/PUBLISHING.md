@@ -4,27 +4,36 @@ The package is built, checked, attested, and published without a long-lived PyPI
 The release workflow uses PyPI Trusted Publishing and an immutable commit of the official
 PyPA publishing action.
 
-## One-time maintainer setup
+The identity is live: [`aau-harness` on PyPI](https://pypi.org/project/aau-harness/) is
+published from the `pypi` GitHub environment, and the first provenance-backed distributions
+were attached to the [1.1.0 GitHub release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.1.0).
+The [latest release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.1.1)
+adds the public-install onboarding shown on PyPI.
 
-1. Create or claim the `aau-harness` project on PyPI.
-2. In the PyPI project, add a GitHub trusted publisher with:
+## Trusted identity (completed)
+
+The PyPI project trusts exactly one repository workflow identity:
+
+1. PyPI project: `aau-harness`
+2. GitHub publisher:
    - owner: `immu4989`
    - repository: `awesome-agentic-usecases`
    - workflow: `harness-release.yml`
    - environment: `pypi`
-3. In GitHub, create the `pypi` deployment environment. Add required reviewers if desired.
+3. GitHub deployment environment: `pypi`
 
 No API token is stored in GitHub. The workflow receives a short-lived OpenID Connect token
 only in the publishing job.
 
 ## Release
 
-Update the version in `harness/pyproject.toml`, update `CHANGELOG.md`, and run:
+Update the version in `harness/pyproject.toml`, update `CHANGELOG.md`, replace `X.Y.Z` below,
+and run:
 
 ```bash
-python harness/tools/check_release_version.py harness-v1.1.0
-git tag -s harness-v1.1.0 -m "AAU Harness 1.1.0"
-git push origin harness-v1.1.0
+python harness/tools/check_release_version.py harness-vX.Y.Z
+git tag -s harness-vX.Y.Z -m "AAU Harness X.Y.Z"
+git push origin harness-vX.Y.Z
 ```
 
 The tag must exactly match the package version. GitHub Actions runs all harness tests, builds

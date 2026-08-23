@@ -11,9 +11,17 @@ the harness supplies everything around it.
 
 ## Install
 
+For evaluation in your own project:
+
 ```bash
-pip install -e harness          # from a clone of the repo
-pip install -e harness[dev]     # plus pytest and ruff
+python -m pip install aau-harness
+```
+
+For repository development:
+
+```bash
+python -m pip install -e harness
+python -m pip install -e 'harness[dev]'  # plus pytest and ruff
 ```
 
 Requires Python 3.10+. The core uses only the standard library on Python 3.11+ (Python
@@ -23,6 +31,8 @@ needed for the native Anthropic backend, and every other provider is reached ove
 Verify the install:
 
 ```bash
+aau --help
+# From a repository clone:
 pytest harness/tests -q
 ```
 

@@ -4,6 +4,7 @@
   <a href="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml"><img src="https://github.com/immu4989/awesome-agentic-usecases/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/immu4989/awesome-agentic-usecases/stargazers"><img src="https://img.shields.io/github/stars/immu4989/awesome-agentic-usecases?style=flat&color=eda100" alt="GitHub stars"></a>
   <a href="https://github.com/immu4989/awesome-agentic-usecases/forks"><img src="https://img.shields.io/github/forks/immu4989/awesome-agentic-usecases?style=flat&color=2a78d6" alt="GitHub forks"></a>
+  <a href="https://pypi.org/project/aau-harness/"><img src="https://img.shields.io/pypi/v/aau-harness?color=2a78d6" alt="aau-harness on PyPI"></a>
   <img src="https://img.shields.io/badge/python-3.10%2B-2a78d6" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/license-Apache--2.0-008300" alt="Apache-2.0 license">
   <a href="https://doi.org/10.5281/zenodo.21631852"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21631852.svg" alt="DOI"></a>
@@ -71,6 +72,35 @@ and observed failure cards with a direct path to reproduction. Start with
 | An agency pilot ready to test | [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) | A claim → evidence → exact-test exchange and closeout lesson |
 | One risky decision boundary | [Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder) | A fork-ready counterfactual evaluation lab |
 | Nothing but a workflow description | [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) | A matched lab and Forge-compatible brief |
+
+## New: evaluate the agent you already have
+
+[`aau-harness`](https://pypi.org/project/aau-harness/) is now a public, provider-neutral
+Python package. Point one declared suite at an existing command or JSON endpoint; the evaluator
+sends only the case request, measures exact outcome and forbidden actions, and emits a
+privacy-bounded aggregate receipt. Your application does not need to adopt this repository's
+framework or agent loop.
+
+```bash
+python -m pip install aau-harness
+
+# Start safely against the deterministic protocol mock.
+aau evaluate evals/public-suite.json --mock --out artifacts/aau-receipt.json
+
+# Then exercise your real adapter.
+aau evaluate evals/public-suite.json \
+  --endpoint http://127.0.0.1:8000/evaluate \
+  --out artifacts/aau-receipt.json
+```
+
+Suites fail closed unless they attest public, synthetic, or public-synthetic inputs, completed
+human review, and the absence of sensitive categories. Public receipts omit scenario inputs,
+expected answers, raw responses, reasoning, headers, and credentials. Copy the
+[three-case suite](harness/examples/byo-agent-suite.json), inspect the
+[command adapter](harness/examples/byo_agent_adapter.py), or add the
+[reusable GitHub Action](.github/actions/aau-evaluate/action.yml). The
+[v1.1.1 release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.1.1)
+ships a wheel and source archive with verified build provenance.
 
 ## New: interrogate a federal AI portfolio without ranking it
 

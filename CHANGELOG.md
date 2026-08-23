@@ -3,6 +3,14 @@
 Notable changes to the repository. Versions follow [semantic versioning](https://semver.org/):
 the harness API is what is versioned; use cases are additive.
 
+## 1.1.1 - 2026-08-23
+
+- **Public package onboarding** — the PyPI-rendered package guide now leads with
+  `python -m pip install aau-harness`, separates public use from editable repository
+  development, and links the live tokenless publishing identity and provenance-backed release.
+- The repository landing page now carries a dynamic PyPI version badge and a copyable path for
+  evaluating an existing command or HTTP agent without changing frameworks.
+
 ## Unreleased
 
 - **Federal AI Portfolio Observatory v0.5** — a public/synthetic, browser-local and
