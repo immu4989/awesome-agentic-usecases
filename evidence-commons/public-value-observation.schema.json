@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/public-value-observation.schema.json",
+  "title": "AAU Public-Value Observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["observation_version", "observation_id", "capsule_id", "method", "metric_results", "causal_claim", "decision", "privacy", "limitations", "boundary"],
+  "properties": {
+    "observation_version": {"const": "aau-public-value-observation/1.0"},
+    "observation_id": {"$ref": "#/$defs/slug"},
+    "capsule_id": {"$ref": "#/$defs/slug"},
+    "method": {"enum": ["descriptive_before_after", "descriptive_cross_sectional", "causal_evaluation"]},
+    "metric_results": {"type": "array", "minItems": 1, "maxItems": 8, "items": {"$ref": "#/$defs/metric"}},
+    "causal_claim": {"type": "boolean"},
+    "decision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["accountable_role", "outcome", "conditions"],
+      "properties": {
+        "accountable_role": {"type": "string", "minLength": 1, "maxLength": 200},
+        "outcome": {"enum": ["continue", "revise", "stop", "extend", "not_decided"]},
+        "conditions": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 300}}
+      }
+    },
+    "privacy": {"$ref": "#/$defs/privacy"},
+    "limitations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1, "maxLength": 500}},
+    "boundary": {"const": "This observation reports bounded aggregate measures under the declared method and limitations. It does not by itself prove causality, audited savings, universal transfer, program effectiveness, government endorsement, or authority to deploy AI."}
+  },
+  "$defs": {
+    "slug": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$"},
+    "metric": {
+      "type": "object", "additionalProperties": false,
+      "required": ["metric_id", "baseline_value", "observed_value", "unit", "direction", "window", "affected_group", "uncertainty", "limitation"],
+      "properties": {
+        "metric_id": {"$ref": "#/$defs/slug"},
+        "baseline_value": {"type": "number"},
+        "observed_value": {"type": "number"},
+        "unit": {"type": "string", "minLength": 1, "maxLength": 500},
+        "direction": {"enum": ["increase", "decrease", "hold_zero"]},
+        "window": {"type": "string", "minLength": 1, "maxLength": 500},
+        "affected_group": {"type": "string", "minLength": 1, "maxLength": 500},
+        "uncertainty": {"type": "string", "minLength": 1, "maxLength": 500},
+        "limitation": {"type": "string", "minLength": 1, "maxLength": 500}
+      }
+    },
+    "privacy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["participant_level_data_included", "direct_identifiers_included", "free_text_responses_included", "production_records_included", "credentials_included", "aggregate_only"],
+      "properties": {
+        "participant_level_data_included": {"const": false}, "direct_identifiers_included": {"const": false},
+        "free_text_responses_included": {"const": false}, "production_records_included": {"const": false},
+        "credentials_included": {"const": false}, "aggregate_only": {"const": true}
+      }
+    }
+  }
+}

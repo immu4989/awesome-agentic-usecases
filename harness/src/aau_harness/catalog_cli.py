@@ -246,6 +246,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="prepare and summarize a blinded human baseline",
     )
 
+    sub.add_parser(
+        "evidence",
+        add_help=False,
+        help="validate, compare, and pack public Impact Capsules",
+    )
+
     forging = sub.add_parser("forge", help="turn a Studio brief into a runnable adaptation lab")
     forging.add_argument("brief", help="evaluation brief downloaded from AAU Studio")
     forging.add_argument("doctor_path", nargs="?", help="lab path when brief is 'doctor'")
@@ -312,6 +318,10 @@ def main(argv: list[str] | None = None) -> int:
         from .human_baseline import main as baseline_main
 
         return baseline_main(raw_args[1:])
+    if raw_args and raw_args[0] == "evidence":
+        from .evidence_commons import main as evidence_main
+
+        return evidence_main(raw_args[1:])
     args = build_parser().parse_args(raw_args)
     if args.command == "init":
         from .starter import main as starter_main

@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/impact-capsule.schema.json",
+  "title": "AAU Impact Capsule",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["capsule_version", "capsule_id", "title", "mission", "service_area", "status", "origin", "beneficiaries", "artifacts", "measurement_plan", "partner_call", "human_authority", "evidence_quality", "privacy", "transfer", "sources", "limitations", "boundary"],
+  "properties": {
+    "capsule_version": {"const": "aau-impact-capsule/1.0"},
+    "capsule_id": {"$ref": "#/$defs/slug"},
+    "title": {"type": "string", "minLength": 1, "maxLength": 140},
+    "mission": {"type": "string", "minLength": 1, "maxLength": 700},
+    "service_area": {"type": "string", "minLength": 1, "maxLength": 120},
+    "status": {"enum": ["synthetic_reference", "partner_sought", "study_reviewed", "aggregate_published", "independently_reproduced"]},
+    "origin": {"type": "string", "minLength": 1, "maxLength": 80},
+    "beneficiaries": {"type": "array", "minItems": 1, "maxItems": 8, "items": {"type": "string", "minLength": 1, "maxLength": 160}},
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["suite", "agent_receipt", "human_study", "human_baseline", "public_value_observation", "reproduction"],
+      "properties": {
+        "suite": {"$ref": "#/$defs/suite"},
+        "agent_receipt": {"$ref": "#/$defs/agentReceipt"},
+        "human_study": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/artifact"}]},
+        "human_baseline": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/humanBaseline"}]},
+        "public_value_observation": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/valueObservation"}]},
+        "reproduction": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/reproduction"}]}
+      }
+    },
+    "measurement_plan": {"type": "array", "minItems": 2, "maxItems": 8, "items": {"$ref": "#/$defs/measure"}},
+    "partner_call": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["open", "role", "contribution", "contact_url", "prohibited_data"],
+      "properties": {
+        "open": {"type": "boolean"},
+        "role": {"type": "string", "minLength": 1, "maxLength": 200},
+        "contribution": {"type": "string", "minLength": 1, "maxLength": 500},
+        "contact_url": {"type": "string", "pattern": "^https://"},
+        "prohibited_data": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1, "maxLength": 120}}
+      }
+    },
+    "human_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accountable_role", "protected_decisions", "agent_may", "agent_must_not"],
+      "properties": {
+        "accountable_role": {"type": "string", "minLength": 1, "maxLength": 200},
+        "protected_decisions": {"$ref": "#/$defs/textList"},
+        "agent_may": {"$ref": "#/$defs/textList"},
+        "agent_must_not": {"$ref": "#/$defs/textList"}
+      }
+    },
+    "evidence_quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relevance_and_utility", "rigor", "independence", "transparency", "ethics"],
+      "properties": {
+        "relevance_and_utility": {"enum": ["declared", "domain_reviewed"]},
+        "rigor": {"enum": ["synthetic_scenarios", "reviewed_protocol", "observed_aggregate"]},
+        "independence": {"enum": ["maintainer_reference", "organization_review", "independent_reproduction_attested"]},
+        "transparency": {"const": "artifact_bound"},
+        "ethics": {"enum": ["institutional_determination_required_before_human_observation", "institutional_basis_attested_not_verified"]}
+      }
+    },
+    "privacy": {"$ref": "#/$defs/privacy"},
+    "transfer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["holds_when", "fails_when", "revalidate_on"],
+      "properties": {"holds_when": {"$ref": "#/$defs/textList"}, "fails_when": {"$ref": "#/$defs/textList"}, "revalidate_on": {"$ref": "#/$defs/textList"}}
+    },
+    "sources": {"type": "array", "minItems": 2, "maxItems": 12, "items": {"$ref": "#/$defs/source"}},
+    "limitations": {"type": "array", "minItems": 2, "maxItems": 12, "items": {"type": "string", "minLength": 1, "maxLength": 500}},
+    "boundary": {"const": "This capsule binds declared public artifacts and visible gaps. It does not verify identity, institutional review, causal impact, production fitness, certification, government endorsement, workforce performance, or authority to deploy or automate a protected decision."}
+  },
+  "$defs": {
+    "slug": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$"},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "rate": {"type": "number", "minimum": 0, "maximum": 1},
+    "textList": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1, "maxLength": 300}},
+    "privacy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["participant_level_data_included", "direct_identifiers_included", "free_text_responses_included", "production_records_included", "credentials_included", "aggregate_only"],
+      "properties": {"participant_level_data_included": {"const": false}, "direct_identifiers_included": {"const": false}, "free_text_responses_included": {"const": false}, "production_records_included": {"const": false}, "credentials_included": {"const": false}, "aggregate_only": {"const": true}}
+    },
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "kind", "path", "sha256", "classification"],
+      "properties": {"artifact_id": {"$ref": "#/$defs/slug"}, "kind": {"type": "string", "minLength": 1, "maxLength": 60}, "path": {"type": "string", "minLength": 1, "maxLength": 300}, "sha256": {"$ref": "#/$defs/sha256"}, "classification": {"enum": ["synthetic", "public", "aggregate_public"]}}
+    },
+    "suite": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "kind", "path", "sha256", "classification", "suite_id", "suite_kind", "scenario_count", "provenance_note"],
+      "properties": {"artifact_id": {"$ref": "#/$defs/slug"}, "kind": {"type": "string"}, "path": {"type": "string"}, "sha256": {"$ref": "#/$defs/sha256"}, "classification": {"enum": ["synthetic", "public"]}, "suite_id": {"type": "string", "minLength": 1, "maxLength": 120}, "suite_kind": {"enum": ["domain_scenario_jsonl", "aau_byo_suite"]}, "scenario_count": {"type": "integer", "minimum": 1, "maximum": 500}, "provenance_note": {"type": "string", "minLength": 1, "maxLength": 500}}
+    },
+    "agentReceipt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "kind", "path", "sha256", "classification", "receipt_kind", "model", "suite_binding", "scenario_ids_sha256", "primary_metric"],
+      "properties": {"artifact_id": {"$ref": "#/$defs/slug"}, "kind": {"type": "string"}, "path": {"type": "string"}, "sha256": {"$ref": "#/$defs/sha256"}, "classification": {"const": "aggregate_public"}, "receipt_kind": {"enum": ["aau_domain_eval", "aau_byo_agent_receipt"]}, "model": {"type": "string", "minLength": 1, "maxLength": 120}, "suite_binding": {"enum": ["hash_bound", "scenario_ids_only"]}, "scenario_ids_sha256": {"$ref": "#/$defs/sha256"}, "primary_metric": {"$ref": "#/$defs/primaryMetric"}}
+    },
+    "primaryMetric": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "value", "interval_95", "scenario_count", "repeats", "observation_count", "mean_cost_per_scenario_usd", "p50_latency_s"],
+      "properties": {"name": {"type": "string", "minLength": 1}, "value": {"$ref": "#/$defs/rate"}, "interval_95": {"type": "array", "prefixItems": [{"$ref": "#/$defs/rate"}, {"$ref": "#/$defs/rate"}], "minItems": 2, "maxItems": 2}, "scenario_count": {"type": "integer", "minimum": 1}, "repeats": {"type": "integer", "minimum": 1}, "observation_count": {"type": "integer", "minimum": 1}, "mean_cost_per_scenario_usd": {"type": "number", "minimum": 0}, "p50_latency_s": {"type": "number", "minimum": 0}}
+    },
+    "humanBaseline": {"type": "object"},
+    "valueObservation": {"type": "object"},
+    "reproduction": {"type": "object"},
+    "measure": {
+      "type": "object", "additionalProperties": false,
+      "required": ["metric_id", "name", "unit", "direction", "affected_group", "baseline_source", "measurement_window", "method", "limitation"],
+      "properties": {"metric_id": {"$ref": "#/$defs/slug"}, "name": {"type": "string", "minLength": 1}, "unit": {"type": "string", "minLength": 1}, "direction": {"enum": ["increase", "decrease", "hold_zero"]}, "affected_group": {"type": "string", "minLength": 1}, "baseline_source": {"type": "string", "minLength": 1}, "measurement_window": {"type": "string", "minLength": 1}, "method": {"type": "string", "minLength": 1}, "limitation": {"type": "string", "minLength": 1}}
+    },
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["title", "publisher", "url", "reviewed_at", "supports"],
+      "properties": {"title": {"type": "string", "minLength": 1}, "publisher": {"type": "string", "minLength": 1}, "url": {"type": "string", "pattern": "^https://"}, "reviewed_at": {"type": "string", "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}$"}, "supports": {"type": "string", "minLength": 1}}
+    }
+  }
+}

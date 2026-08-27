@@ -31,6 +31,15 @@ institution's own human-protection determination; the Lab does not rank workers,
 employment actions, prove causal benefit, or authorize replacement or deployment. See the
 [complete study kit](human-baseline-lab/).
 
+If the agent and human process are measured but you still cannot answer whether the service became
+better, open the **[Evidence Commons](https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons)**.
+Its Impact Capsule binds the reviewed suite, aggregate agent receipt, human comparator,
+predeclared public-value measures, bounded observation, and independent reproduction. Missing
+links remain visible; status is derived without a trust score. Start with one of three open partner
+pilots in [FOIA routing, accessible digital services, or nonprofit grants](evidence-commons/).
+Use only public synthetic and aggregate artifacts, and obtain the responsible organization's
+determinations before observing people or using operational records.
+
 If you have a public or synthetic AI inventory, open the
 **[Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory)**.
 It surfaces documentation gaps and possible-overlap questions, binds before/after public-value

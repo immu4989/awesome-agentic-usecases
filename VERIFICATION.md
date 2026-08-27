@@ -109,6 +109,22 @@ to the current process, use the [Human Baseline Lab](human-baseline-lab/) and re
 The five committed Human Baseline reference sessions are generated fixtures. They prove that the
 schemas, aggregation, privacy boundary, and browser/CLI parity work; they do not measure people.
 
+## Public-value extension: bind the whole evidence chain
+
+To move beyond a model/process comparison toward public-value evidence, use an
+[Impact Capsule](evidence-commons/) and require all five links to remain separately inspectable:
+
+1. a reviewed suite with a byte hash and declared provenance;
+2. an aggregate agent receipt bound to that suite—not scenario identifiers alone;
+3. a blinded, privacy-bounded aggregate human comparator after the responsible institution's determination;
+4. predeclared service, burden, rights, or safety measures plus a method-bounded observation; and
+5. an organization-attested independent reproduction with divergences and transfer conditions.
+
+Run `aau evidence validate`, inspect `aau evidence compare`, then build and verify a portable pack
+with `aau evidence pack` and `aau evidence verify`. The manifest proves byte integrity only; it
+does not verify identity, institutional review, independence, causality, certification,
+government endorsement, or deployment authority.
+
 ---
 
 ## Why this bar exists

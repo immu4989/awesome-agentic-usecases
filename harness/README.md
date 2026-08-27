@@ -135,6 +135,27 @@ causal-benefit, certification, or deployment claims. See the
 [complete kit and synthetic references](../human-baseline-lab/) or try the
 [zero-upload practice](https://immu4989.github.io/awesome-agentic-usecases/#human-baseline-lab).
 
+## Bind an inspectable public-value evidence chain
+
+`aau evidence` validates an Impact Capsule connecting the reviewed suite and agent receipt to an
+aggregate human comparator, predeclared public-value measures, a bounded observation, and an
+independent reproduction. Missing artifacts remain explicit and status is derived—not selected.
+
+```bash
+aau evidence validate evidence-commons/capsules/foia-routing-impact-pilot.json
+aau evidence compare evidence-commons/capsules/foia-routing-impact-pilot.json --json
+aau evidence pack evidence-commons/capsules/foia-routing-impact-pilot.json --out /tmp/foia-impact-pack
+aau evidence verify /tmp/foia-impact-pack
+```
+
+The non-overwriting pack includes the capsule, derived comparison, referenced public artifacts,
+README, and SHA-256 manifest. Validation rejects traversal, symlinks, hash drift, private-data
+claims, status inflation, inconsistent metrics, causal-label inflation, and false AAU verification
+claims. It does not verify contributor identity, institutional review, reproducer independence,
+causal impact, certification, government endorsement, or authority to deploy. See the
+[three open partner capsules and schemas](../evidence-commons/) or the
+[live evidence-chain inspector](https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons).
+
 ## Evaluate an existing agent
 
 You do not need to rebuild an application around the harness. `aau evaluate` sends each case to

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/reproduction.schema.json",
+  "title": "AAU Independent Reproduction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reproduction_version", "reproduction_id", "source_capsule_id", "source_capsule_version", "source_artifacts", "organization_id", "independence_attested", "scope", "environment", "outcome", "metric_checks", "divergences", "limitations", "privacy", "boundary"],
+  "properties": {
+    "reproduction_version": {"const": "aau-impact-reproduction/1.0"},
+    "reproduction_id": {"$ref": "#/$defs/slug"},
+    "source_capsule_id": {"$ref": "#/$defs/slug"},
+    "source_capsule_version": {"const": "aau-impact-capsule/1.0"},
+    "source_artifacts": {
+      "type": "array", "minItems": 1, "maxItems": 6,
+      "items": {"type": "object", "additionalProperties": false, "required": ["artifact_id", "sha256"], "properties": {"artifact_id": {"$ref": "#/$defs/slug"}, "sha256": {"$ref": "#/$defs/sha256"}}}
+    },
+    "organization_id": {"$ref": "#/$defs/slug"},
+    "independence_attested": {"const": true},
+    "scope": {"type": "string", "minLength": 1, "maxLength": 700},
+    "environment": {"type": "string", "minLength": 1, "maxLength": 700},
+    "outcome": {"enum": ["reproduced", "diverged", "inconclusive"]},
+    "metric_checks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/check"}},
+    "divergences": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 500}},
+    "limitations": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 500}},
+    "privacy": {"$ref": "#/$defs/privacy"},
+    "boundary": {"const": "This reproduction reports an organization-attested rerun of declared public artifacts. AAU does not verify identity or independence, certify the result, resolve divergences, or authorize transfer or deployment."}
+  },
+  "$defs": {
+    "slug": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$"},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "check": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "source_value", "reproduced_value", "tolerance", "within_tolerance"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 100},
+        "source_value": {"type": "number"}, "reproduced_value": {"type": "number"},
+        "tolerance": {"type": "number", "minimum": 0}, "within_tolerance": {"type": "boolean"}
+      }
+    },
+    "privacy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["participant_level_data_included", "direct_identifiers_included", "free_text_responses_included", "production_records_included", "credentials_included", "aggregate_only"],
+      "properties": {
+        "participant_level_data_included": {"const": false}, "direct_identifiers_included": {"const": false},
+        "free_text_responses_included": {"const": false}, "production_records_included": {"const": false},
+        "credentials_included": {"const": false}, "aggregate_only": {"const": true}
+      }
+    }
+  }
+}

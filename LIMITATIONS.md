@@ -103,6 +103,15 @@ benefit, or production claim. Organizations must establish their own review basi
 protections, task validity, sampling plan, accessibility, labor safeguards, and uncertainty before
 interpreting a human/agent comparison.
 
+The [Evidence Commons](evidence-commons/) provides the missing contribution route, but it does not
+create external validity. Its three initial Impact Capsules contain historical eight-case
+synthetic model receipts whose scenario identifiers match preserved snapshots; the receipts do
+not contain suite hashes, so identical evaluated bytes are not proven. No observed human baseline,
+operational public-value observation, audited saving, causal effect, or independent reproduction
+is committed. Contributor identity, institutional review, and reproducer independence are
+attested—not verified by AAU. A derived status is an artifact-presence label, never a quality
+score, certification, government endorsement, legal conclusion, or deployment authorization.
+
 ## 10. Single author, and the author chose the deceptions
 
 Every use case, rule set, and adversarial case was designed by one person, who also

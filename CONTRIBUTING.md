@@ -21,6 +21,15 @@ examples must complete the public-sharing attestation and human review. Similari
 review prompt only; submissions must not rank agencies or vendors, recommend budgets, awards,
 deployment, consolidation, or cancellation, or claim audited savings.
 
+To help close a real-world evidence gap, use the
+[Evidence Commons partner form](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=evidence-partner.yml)
+and start from the [Impact Capsule contract](evidence-commons/). Contribute one bounded layer:
+domain review, a reviewed human-comparator protocol, an aggregate public-value observation, or an
+independent reproduction. Status is validator-derived. Public issues and pull requests must never
+contain participant-level data, direct identifiers, free-text responses, production case records,
+credentials, controlled information, worker rankings, or employment decisions. Use the dedicated
+Impact Capsule PR template and run `aau evidence validate`, `pack`, and `verify` before submission.
+
 If you plan to implement it, start with the zero-install
 [Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder).
 It converts one declared semantic boundary into an eight-file, Forge-compatible draft while

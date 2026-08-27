@@ -20,6 +20,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab">Inspect a receipt</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-starter">Agent Evidence Starter</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop">Publish community evidence</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons">Evidence Commons</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-mission">Federal Mission Studio</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot">Federal Pilot Desk</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory">Portfolio Observatory</a> ·
@@ -72,6 +73,7 @@ and observed failure cards with a direct path to reproduction. Start with
 | An AI agent or endpoint | [Agent Evidence Starter](https://immu4989.github.io/awesome-agentic-usecases/#agent-starter) | A runnable synthetic suite, adapters, tests, CI, visual, manifest, and privacy-bounded receipt |
 | A connected Starter + public receipt | [Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop) | A privacy-checked contribution pack, derived evidence level, share card, and credited PR path |
 | A reviewed task but no human comparator | [Human Baseline Lab](https://immu4989.github.io/awesome-agentic-usecases/#human-baseline-lab) | A blinded study pack, aggregate human-process measures, and same-suite agent comparison |
+| A model score but no evidence of public benefit | [Evidence Commons](https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons) | A hash-bound Impact Capsule with visible human, outcome, and reproduction gaps plus a safe partner path |
 | A public or synthetic AI inventory | [Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory) | Quality gaps, possible-overlap questions, bounded value measurements, TEV&V and clause coverage |
 | A public-sector AI mission | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A non-certifying 12-file assurance draft |
 | An agency pilot ready to test | [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) | A claim → evidence → exact-test exchange and closeout lesson |
@@ -127,7 +129,7 @@ expected answers, raw responses, reasoning, headers, and credentials. Copy the
 [three-case suite](harness/examples/byo-agent-suite.json), inspect the
 [command adapter](harness/examples/byo_agent_adapter.py), or add the
 [reusable GitHub Action](.github/actions/aau-evaluate/action.yml). The
-[v1.4.0 release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.4.0)
+[v1.5.0 release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.5.0)
 ships a wheel and source archive with verified build provenance.
 
 ## New: turn your fork into inspectable community evidence
@@ -140,7 +142,7 @@ fork. Load the public Starter manifest, reviewed synthetic suite, and aggregate 
 your browser; twelve local gates derive the evidence level and unlock a contribution ZIP. No file
 or form value is uploaded or persisted.
 
-The same contract is enforced by `aau-harness==1.4.0`:
+The same contract is enforced by `aau-harness==1.5.0`:
 
 ```bash
 aau submit ./my-agent-eval \
@@ -196,6 +198,36 @@ collection requires the responsible institution to record its own determination,
 and data controls; AAU neither makes nor verifies that decision. Read the
 [complete study kit](human-baseline-lab/) and the dated
 [NIST/OMB/HHS research ledger](docs/HUMAN_BASELINE_RESEARCH_NOTES.md).
+
+## New: move from a model score to public, inspectable impact evidence
+
+<a href="https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons"><img src="docs/assets/evidence-commons.svg" alt="AAU Evidence Commons: five artifact-bound links connect a reviewed suite, agent receipt, aggregate human comparator, public-value observation, and independent reproduction while missing evidence remains visible" width="100%"></a>
+
+The **[Evidence Commons](https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons)**
+introduces an Impact Capsule: a strict, portable contract binding a reviewed public task set, an
+aggregate agent result, a privacy-bounded human comparator, predeclared public-value measures, a
+bounded outcome observation, and an independent reproduction. Status is derived from artifact
+presence; there is no trust score, vendor ranking, or certification badge.
+
+```bash
+python -m pip install aau-harness==1.5.0
+aau evidence validate evidence-commons/capsules/foia-routing-impact-pilot.json
+aau evidence compare evidence-commons/capsules/foia-routing-impact-pilot.json
+aau evidence pack evidence-commons/capsules/foia-routing-impact-pilot.json --out /tmp/foia-impact-pack
+aau evidence verify /tmp/foia-impact-pack
+```
+
+Three initial partner calls target concrete public value: correct FOIA routing with less requester
+burden, accessible digital-service remediation with less rework, and complete grant-obligation
+evidence for small nonprofits. The committed historical receipts cover eight synthetic cases but
+do not include suite hashes, so every capsule labels the binding `scenario_ids_only` and makes a
+fresh hash-bound rerun the first gap. No human performance or field benefit is fabricated.
+
+The Commons accepts public synthetic and aggregate artifacts only. Before observing people or
+using operational records, the responsible organization must determine and document its human-
+protection, privacy, security, records, labor, accessibility, and legal path. Start with the
+[contract and partner guide](evidence-commons/) or use the
+[safe partner issue](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=evidence-partner.yml).
 
 ## New: interrogate a federal AI portfolio without ranking it
 

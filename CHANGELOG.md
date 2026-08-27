@@ -3,6 +3,24 @@
 Notable changes to the repository. Versions follow [semantic versioning](https://semver.org/):
 the harness API is what is versioned; use cases are additive.
 
+## 1.5.0 - 2026-08-27
+
+- **AAU Evidence Commons and Impact Capsules** — `aau evidence validate` binds a reviewed public
+  suite, aggregate agent receipt, privacy-bounded human comparator, predeclared public-value
+  measures, bounded outcome observation, and independent reproduction. Status is artifact-derived;
+  missing evidence, transfer conditions, human authority, sources, and limitations remain visible
+  without a trust score, leaderboard, certification, endorsement, or deployment claim.
+- **Portable, tamper-evident impact packs** — `aau evidence pack` creates a non-overwriting bundle
+  containing the capsule, derived comparison, referenced public artifacts, README, and SHA-256
+  manifest; `aau evidence verify` detects byte and manifest drift. Strict public-value and
+  reproduction records reject causal-label inflation, false independence verification, unsafe
+  paths, private-data claims, and inconsistent metrics.
+- **Three honest partner pilots and a live inspector** — FOIA routing, accessible digital-service
+  remediation, and small-nonprofit grant obligations now have source-grounded measurement plans,
+  protected human authority, safe contribution routes, and interactive evidence-chain views. Their
+  historical eight-case receipts lack suite hashes, so each is labeled `scenario_ids_only` and
+  makes a fresh hash-bound rerun the first public gap. No human or field result is fabricated.
+
 ## 1.4.0 - 2026-08-27
 
 - **Human Baseline Lab** — `aau baseline prepare` turns any reviewed public or synthetic AAU suite

@@ -24,7 +24,7 @@ automation of a protected decision.
 2. Build the local contribution bundle:
 
    ```bash
-   python -m pip install aau-harness==1.4.0
+   python -m pip install aau-harness==1.5.0
    aau submit ./my-agent-eval \
      --receipt ./public-receipt.json \
      --id my-agent-evidence \

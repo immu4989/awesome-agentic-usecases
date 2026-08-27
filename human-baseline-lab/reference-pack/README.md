@@ -23,7 +23,7 @@ the responsible institution records its own determination outside this public pa
 ## Commands
 
 ```bash
-python -m pip install aau-harness==1.4.0
+python -m pip install aau-harness==1.5.0
 aau baseline validate .
 aau baseline summarize . --session sessions/session-01.json --out report.json
 ```
