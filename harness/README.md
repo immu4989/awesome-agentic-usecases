@@ -101,6 +101,40 @@ certification, endorsement, production validation, or authority to deploy. See t
 [public contract and reference packs](https://github.com/immu4989/awesome-agentic-usecases/tree/main/community-evidence)
 or use the [browser-local Contribution Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop).
 
+## Add the missing human comparator
+
+`aau baseline` turns a reviewed public or synthetic suite into a blinded human-process study. It
+keeps participant-visible tasks and the answer key separate, prohibits direct identifiers and free
+text in session files, and starts with an explicit `not_determined` human-protection state.
+
+```bash
+aau baseline prepare suite.json \
+  --id my-human-baseline \
+  --title "My Human Baseline" \
+  --purpose "Compare the reviewed task with the existing process" \
+  --out human-baseline-pack
+
+aau baseline summarize human-baseline-pack \
+  --session private-sessions/session-01.json \
+  --agent-receipt public-agent-receipt.json \
+  --out public-human-baseline-report.json
+
+aau baseline validate public-human-baseline-report.json
+```
+
+Aggregate reports include exactness with a Wilson interval, abstention, median and p90 task time,
+confidence calibration, modal agreement, and Fleiss' kappa. Optional agent comparisons require the
+same suite hash and scenario coverage and reject protocol mock receipts. Reports exclude participant
+ids and raw outcome, confidence, and timing rows.
+
+Before collecting real participant sessions, the responsible institution must record the relevant
+human-subjects, quality-improvement, privacy, accessibility, labor, records, and consent or
+withdrawal determination. The CLI field is a fail-closed declaration—not verification or approval.
+The feature must not be used for worker ranking, employment action, staffing reduction, replacement,
+causal-benefit, certification, or deployment claims. See the
+[complete kit and synthetic references](../human-baseline-lab/) or try the
+[zero-upload practice](https://immu4989.github.io/awesome-agentic-usecases/#human-baseline-lab).
+
 ## Evaluate an existing agent
 
 You do not need to rebuild an application around the harness. `aau evaluate` sends each case to
@@ -167,6 +201,7 @@ aau show refund-memory
 aau start refund-injected
 aau challenge list
 aau challenge show completion-is-not-correctness
+aau baseline --help
 aau doctor
 ```
 

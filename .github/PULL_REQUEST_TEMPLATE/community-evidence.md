@@ -12,7 +12,7 @@
 
 ## Required boundary checks
 
-- [ ] `python -m pip install aau-harness==1.3.0` and `aau submit --validate community-evidence/entries/<id>` pass.
+- [ ] `python -m pip install aau-harness==1.4.0` and `aau submit --validate community-evidence/entries/<id>` pass.
 - [ ] Every case uses synthetic or public information and has completed authorized human review.
 - [ ] Receipts contain aggregate public fields only—no prompts, inputs, raw outputs, reasoning, credentials, headers, or private traces.
 - [ ] Reviewer and reproducer claims are accurate, permissioned, and limited to the stated scope.

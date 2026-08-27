@@ -3,6 +3,25 @@
 Notable changes to the repository. Versions follow [semantic versioning](https://semver.org/):
 the harness API is what is versioned; use cases are additive.
 
+## 1.4.0 - 2026-08-27
+
+- **Human Baseline Lab** — `aau baseline prepare` turns any reviewed public or synthetic AAU suite
+  into a non-overwriting blinded study pack with a participant-visible task file, separate local
+  answer key, identifier-free session contract, human-protection checkpoint, and SHA-256 manifest.
+  `aau baseline summarize` publishes aggregate exactness, Wilson uncertainty, abstention, median
+  and p90 task time, confidence calibration, per-scenario agreement, and Fleiss' kappa while
+  excluding participant identifiers and raw responses.
+- **Same-suite human/agent evidence without worker ranking** — an optional public agent receipt
+  adds a descriptive comparator only after suite hashes and scenario coverage match. Protocol mock
+  receipts, unreviewed human-observed sessions, duplicate session ids, missing cases, unsafe
+  fields, manifest drift, and inconsistent metrics fail closed. The contract prohibits hiring,
+  performance-management, replacement, causal-benefit, certification, and deployment claims.
+- **Zero-upload blinded browser practice** — the homepage now offers eight synthetic public-service
+  routing tasks, hides the oracle until completion, measures task time and confidence only in the
+  tab, and downloads an aggregate individual practice receipt. Five generated reference sessions
+  test the protocol but are explicitly never presented as people. Three schemas, dated NIST/OMB/
+  HHS research notes, a generated visual, focused tests, and CI parity checks complete the release.
+
 ## 1.3.0 - 2026-08-23
 
 - **Starter → Verified Community Evidence Loop** — `aau submit` builds a non-overwriting public

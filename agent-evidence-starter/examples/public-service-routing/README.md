@@ -14,7 +14,7 @@ Passing this synthetic suite does not transfer that authority or establish produ
 ## Five-minute path
 
 ```bash
-python -m pip install aau-harness==1.3.0
+python -m pip install aau-harness==1.4.0
 aau doctor .
 aau evaluate suite.json --mock --out artifacts/protocol-receipt.json
 aau evaluate suite.json --command "python adapter_command.py" --out artifacts/local-receipt.json

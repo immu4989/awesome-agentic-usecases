@@ -90,6 +90,25 @@ the [kit threat model](federal-pilot-kit/THREAT_MODEL.md), adversarial input and
 tests, an exact software inventory, and verified release provenance. These are pilot-readiness
 receipts, not a security authorization or permission to place protected data in the public kit.
 
+## Human-comparator extension: measure the existing process without ranking people
+
+When a claim says an agent improves accuracy, efficiency, workload, or service quality relative
+to the current process, use the [Human Baseline Lab](human-baseline-lab/) and require:
+
+- the same reviewed public or synthetic task contract for the human and agent evidence;
+- a blinded participant-visible study separated from its answer key;
+- an institutional determination before any human-observed session is collected;
+- voluntary participation, withdrawal, accessibility, privacy, labor, and records controls owned
+  by the responsible organization;
+- exactness with uncertainty, abstention, task-time distribution, confidence calibration, and
+  agreement reported independently rather than collapsed into one score;
+- participant-level session files kept private, with only an aggregate report published; and
+- an explicit prohibition on worker ranking, employment decisions, staffing reductions, causal
+  benefit claims, replacement conclusions, certification, or deployment authority.
+
+The five committed Human Baseline reference sessions are generated fixtures. They prove that the
+schemas, aggregation, privacy boundary, and browser/CLI parity work; they do not measure people.
+
 ---
 
 ## Why this bar exists

@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/human-baseline-report.schema.json",
+  "title": "AAU Aggregate Human Baseline Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["report_version", "study_id", "study_sha256", "source", "metrics", "per_scenario", "agent_comparison", "human_protection_summary", "privacy", "boundary"],
+  "properties": {
+    "report_version": {"const": "aau-human-baseline-report/1.0"},
+    "study_id": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$"},
+    "study_sha256": {"$ref": "#/$defs/sha256"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session_count", "session_kinds", "session_sha256"],
+      "properties": {
+        "session_count": {"type": "integer", "minimum": 1, "maximum": 250},
+        "session_kinds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["synthetic_reference", "human_observed"],
+          "properties": {
+            "synthetic_reference": {"type": "integer", "minimum": 0, "maximum": 250},
+            "human_observed": {"type": "integer", "minimum": 0, "maximum": 250}
+          }
+        },
+        "session_sha256": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 250,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["response_count", "outcome_exact_rate", "outcome_exact_wilson_95", "conditional_exact_rate", "abstain_rate", "median_task_time_ms", "p90_task_time_ms", "mean_confidence", "absolute_calibration_gap", "fleiss_kappa"],
+      "properties": {
+        "response_count": {"type": "integer", "minimum": 1},
+        "outcome_exact_rate": {"$ref": "#/$defs/rate"},
+        "outcome_exact_wilson_95": {
+          "type": "array",
+          "prefixItems": [{"$ref": "#/$defs/rate"}, {"$ref": "#/$defs/rate"}],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "conditional_exact_rate": {"$ref": "#/$defs/rate"},
+        "abstain_rate": {"$ref": "#/$defs/rate"},
+        "median_task_time_ms": {"type": "integer", "minimum": 1, "maximum": 3600000},
+        "p90_task_time_ms": {"type": "integer", "minimum": 1, "maximum": 3600000},
+        "mean_confidence": {"type": "number", "minimum": 0, "maximum": 100},
+        "absolute_calibration_gap": {"$ref": "#/$defs/rate"},
+        "fleiss_kappa": {"type": ["number", "null"], "minimum": -1, "maximum": 1}
+      }
+    },
+    "per_scenario": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scenario_id", "responses", "exact_rate", "abstain_rate", "modal_agreement_rate", "median_elapsed_ms"],
+        "properties": {
+          "scenario_id": {"type": "string", "minLength": 1, "maxLength": 120},
+          "responses": {"type": "integer", "minimum": 1, "maximum": 250},
+          "exact_rate": {"$ref": "#/$defs/rate"},
+          "abstain_rate": {"$ref": "#/$defs/rate"},
+          "modal_agreement_rate": {"$ref": "#/$defs/rate"},
+          "median_elapsed_ms": {"type": "integer", "minimum": 1, "maximum": 3600000}
+        }
+      }
+    },
+    "agent_comparison": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["receipt_sha256", "adapter_kind", "scenario_count", "agent_exact_rate", "human_exact_rate", "human_minus_agent_exact_rate", "interpretation"],
+          "properties": {
+            "receipt_sha256": {"$ref": "#/$defs/sha256"},
+            "adapter_kind": {"type": "string", "minLength": 1, "not": {"const": "mock"}},
+            "scenario_count": {"type": "integer", "minimum": 1},
+            "agent_exact_rate": {"$ref": "#/$defs/rate"},
+            "human_exact_rate": {"$ref": "#/$defs/rate"},
+            "human_minus_agent_exact_rate": {"type": "number", "minimum": -1, "maximum": 1},
+            "interpretation": {"type": "string", "minLength": 100}
+          }
+        }
+      ]
+    },
+    "human_protection_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observed_human_sessions", "synthetic_reference_sessions", "institutional_determination_verified_by_aau"],
+      "properties": {
+        "observed_human_sessions": {"type": "integer", "minimum": 0, "maximum": 250},
+        "synthetic_reference_sessions": {"type": "integer", "minimum": 0, "maximum": 250},
+        "institutional_determination_verified_by_aau": {"const": false}
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["participant_identifiers_included", "raw_responses_included", "free_text_included", "aggregate_only"],
+      "properties": {
+        "participant_identifiers_included": {"const": false},
+        "raw_responses_included": {"const": false},
+        "free_text_included": {"const": false},
+        "aggregate_only": {"const": true}
+      }
+    },
+    "boundary": {"const": "This report is descriptive evidence for the declared synthetic study. It does not prove causal benefit, production fitness, statistical superiority, certification, or authority to replace or evaluate workers."}
+  },
+  "$defs": {
+    "rate": {"type": "number", "minimum": 0, "maximum": 1},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

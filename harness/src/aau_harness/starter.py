@@ -25,7 +25,7 @@ from .evaluate import command_adapter, evaluate_suite, load_suite, mock_adapter
 
 
 STARTER_VERSION = "aau-agent-evidence-starter/1.0"
-PACKAGE_VERSION = "1.3.0"
+PACKAGE_VERSION = "1.4.0"
 NAME_PATTERN = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$")
 ACTION_PINS = {
     "checkout": "3d3c42e5aac5ba805825da76410c181273ba90b1",  # v7

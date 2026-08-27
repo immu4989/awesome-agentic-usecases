@@ -89,11 +89,19 @@ no API key at zero cost, and it is built with an engineered gap so failure-repor
 are exercised. Mock numbers appear in `results/` and in charts labelled as such. **They are
 a pipeline check, not a model evaluation**, and should never be read as a capability claim.
 
-## 9. There is no human baseline
+## 9. The catalog still has no observed production human baseline
 
-No use case measures how often a human expert performs the same task correctly. Accuracies
-therefore have no ceiling to be read against: 0.62 might be excellent or poor for a task,
-and this repository cannot tell you which.
+The [Human Baseline Lab](human-baseline-lab/) now provides a blinded protocol, strict session and
+aggregate-report contracts, a browser-local synthetic practice, uncertainty, abstention, task-time,
+calibration, agreement measures, and an optional same-suite agent comparison. This closes the
+**tooling gap**, not the empirical one.
+
+Its five committed reference sessions are generated protocol fixtures—not people. No catalog use
+case currently contains an institutionally reviewed, representative, observed human baseline, and
+none of the published agent accuracies supports a worker-ranking, staffing, replacement, causal
+benefit, or production claim. Organizations must establish their own review basis, participant
+protections, task validity, sampling plan, accessibility, labor safeguards, and uncertainty before
+interpreting a human/agent comparison.
 
 ## 10. Single author, and the author chose the deceptions
 

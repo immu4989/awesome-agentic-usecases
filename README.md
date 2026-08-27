@@ -44,6 +44,7 @@
   <a href="EVIDENCE_SERVICE_CONTRACT.md">Evidence Service Contract</a> ·
   <a href="EVIDENCE_SERVICE_REPORT.md">Matched report</a> ·
   <a href="BUILD_YOUR_OWN.md">Build your own</a> ·
+  <a href="human-baseline-lab/">Human Baseline Lab</a> ·
   <a href="FAILURE_TAXONOMY.md">Failure taxonomy</a> ·
   <a href="#there-is-no-best-model">Results</a> ·
   <a href="CONTRIBUTING.md">Contribute</a>
@@ -70,6 +71,7 @@ and observed failure cards with a direct path to reproduction. Start with
 |---|---|---|
 | An AI agent or endpoint | [Agent Evidence Starter](https://immu4989.github.io/awesome-agentic-usecases/#agent-starter) | A runnable synthetic suite, adapters, tests, CI, visual, manifest, and privacy-bounded receipt |
 | A connected Starter + public receipt | [Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop) | A privacy-checked contribution pack, derived evidence level, share card, and credited PR path |
+| A reviewed task but no human comparator | [Human Baseline Lab](https://immu4989.github.io/awesome-agentic-usecases/#human-baseline-lab) | A blinded study pack, aggregate human-process measures, and same-suite agent comparison |
 | A public or synthetic AI inventory | [Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory) | Quality gaps, possible-overlap questions, bounded value measurements, TEV&V and clause coverage |
 | A public-sector AI mission | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A non-certifying 12-file assurance draft |
 | An agency pilot ready to test | [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) | A claim → evidence → exact-test exchange and closeout lesson |
@@ -125,7 +127,7 @@ expected answers, raw responses, reasoning, headers, and credentials. Copy the
 [three-case suite](harness/examples/byo-agent-suite.json), inspect the
 [command adapter](harness/examples/byo_agent_adapter.py), or add the
 [reusable GitHub Action](.github/actions/aau-evaluate/action.yml). The
-[v1.3.0 release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.3.0)
+[v1.4.0 release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.4.0)
 ships a wheel and source archive with verified build provenance.
 
 ## New: turn your fork into inspectable community evidence
@@ -138,7 +140,7 @@ fork. Load the public Starter manifest, reviewed synthetic suite, and aggregate 
 your browser; twelve local gates derive the evidence level and unlock a contribution ZIP. No file
 or form value is uploaded or persisted.
 
-The same contract is enforced by `aau-harness==1.3.0`:
+The same contract is enforced by `aau-harness==1.4.0`:
 
 ```bash
 aau submit ./my-agent-eval \
@@ -159,6 +161,41 @@ artifacts are present. They never mean identity verification, certification, pro
 legal compliance, government endorsement, or authority to deploy. Inspect the three explicitly
 labeled [maintainer reference packs](community-evidence/entries/) or submit yours with the
 [dedicated pull-request template](.github/PULL_REQUEST_TEMPLATE/community-evidence.md).
+
+## New: compare the agent with the process people use today
+
+<a href="https://immu4989.github.io/awesome-agentic-usecases/#human-baseline-lab"><img src="docs/assets/human-baseline.svg" alt="AAU Human Baseline Lab: a blinded synthetic protocol and same-suite agent receipt remain separate, aggregate-only, and subject to a human-protection checkpoint" width="100%"></a>
+
+An agent score alone cannot show whether a system improves on the existing process, shifts burden,
+encourages overconfidence, or simply looks good beside another model. The
+**[Human Baseline Lab](https://immu4989.github.io/awesome-agentic-usecases/#human-baseline-lab)**
+adds a blinded, same-suite comparator without turning people into a leaderboard.
+
+```bash
+aau baseline prepare suite.json \
+  --id my-human-baseline \
+  --title "My Human Baseline" \
+  --purpose "Compare the reviewed task with the existing process" \
+  --out human-baseline-pack
+
+aau baseline summarize human-baseline-pack \
+  --session private-sessions/session-01.json \
+  --agent-receipt public-agent-receipt.json \
+  --out public-human-baseline-report.json
+```
+
+The preparer separates the participant-visible study from its answer key and starts with
+`review_status: not_determined`. The aggregate report measures exact outcome with a Wilson
+interval, abstention, median and p90 task time, confidence calibration, modal agreement, and
+Fleiss' kappa. It includes session hashes but excludes participant identifiers, individual
+answers, confidence rows, raw timings, demographics, and free text.
+
+The browser experience is deliberately an **individual synthetic practice**, not a human study.
+Five generated sessions test the protocol and are never described as people. Real participant
+collection requires the responsible institution to record its own determination, protections,
+and data controls; AAU neither makes nor verifies that decision. Read the
+[complete study kit](human-baseline-lab/) and the dated
+[NIST/OMB/HHS research ledger](docs/HUMAN_BASELINE_RESEARCH_NOTES.md).
 
 ## New: interrogate a federal AI portfolio without ranking it
 

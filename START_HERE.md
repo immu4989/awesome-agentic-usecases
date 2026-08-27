@@ -21,6 +21,16 @@ The command/HTTP adapter protocol is provider-neutral. Its public receipt contai
 measurements and scenario IDs—not prompts, expected answers, agent responses, reasoning, headers,
 or credentials. See the [BYO-agent guide](harness/README.md#evaluate-an-existing-agent).
 
+If you have a reviewed task but no comparator for the process people use today, open the
+**[Human Baseline Lab](https://immu4989.github.io/awesome-agentic-usecases/#human-baseline-lab)**.
+The browser runs an individual eight-task synthetic practice and keeps responses in the tab. The
+CLI splits any public/synthetic AAU suite into a blinded study and separate answer key, then
+aggregates identifier-free sessions into exactness, uncertainty, abstention, task-time,
+calibration, and agreement evidence. Real participant collection requires the responsible
+institution's own human-protection determination; the Lab does not rank workers, support
+employment actions, prove causal benefit, or authorize replacement or deployment. See the
+[complete study kit](human-baseline-lab/).
+
 If you have a public or synthetic AI inventory, open the
 **[Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory)**.
 It surfaces documentation gaps and possible-overlap questions, binds before/after public-value
