@@ -36,6 +36,16 @@ It converts one declared semantic boundary into an eight-file, Forge-compatible 
 keeping source URLs, evidence, and scenario text in your browser. Review the generated ZIP for
 sensitive information and complete every `TODO(domain)` before opening an issue or PR.
 
+To contribute an agent-identity, authority, safe-stop, multi-agent trust, egress, monitoring, or
+restart boundary, use the dedicated
+[Agent Boundary adaptation form](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=agent-boundary-adaptation.yml)
+and start from the [Agentic Cyber Resilience Commons](agentic-cyber-resilience/). Submit a paired
+synthetic case—the risky event and its closest valid twin—with a reviewed oracle and primary
+public sources. Adapters may normalize private product events, but pull requests may include only
+public aggregate receipts. Never contribute a live target, exploit chain, working credential,
+production telemetry, private model trace, personal data, controlled information, or classified
+information.
+
 After generating or rerunning evidence, open the result in
 [Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab). Resolve hard
 integrity gaps before submission and explain any open disclosure finding in the PR. A green

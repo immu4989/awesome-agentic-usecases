@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/aau-agent-boundary-receipt-0.1.json",
+  "title": "AAU Agent Boundary Receipt 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receipt_version",
+    "generated_at",
+    "profile_id",
+    "profile_sha256",
+    "scenario_set_sha256",
+    "scenario_count",
+    "summary",
+    "results",
+    "chain_head_sha256",
+    "boundary"
+  ],
+  "properties": {
+    "receipt_version": { "const": "aau-agent-boundary-receipt/0.1" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "profile_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "profile_sha256": { "$ref": "#/$defs/digest" },
+    "scenario_set_sha256": { "$ref": "#/$defs/digest" },
+    "scenario_count": { "type": "integer", "minimum": 1, "maximum": 1000 },
+    "summary": {
+      "type": "object",
+      "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 }
+    },
+    "results": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scenario_id",
+          "event_sha256",
+          "decision",
+          "violation_codes",
+          "metrics",
+          "previous_result_sha256",
+          "result_sha256"
+        ],
+        "properties": {
+          "scenario_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "event_sha256": { "$ref": "#/$defs/digest" },
+          "decision": { "enum": ["allow", "block", "safe_stop", "pause"] },
+          "violation_codes": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1, "maxLength": 120 }
+          },
+          "metrics": {
+            "type": "object",
+            "additionalProperties": { "enum": [0, 1] }
+          },
+          "previous_result_sha256": { "$ref": "#/$defs/digest" },
+          "result_sha256": { "$ref": "#/$defs/digest" }
+        }
+      }
+    },
+    "chain_head_sha256": { "$ref": "#/$defs/digest" },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["synthetic_only", "not_certification", "not_authorization_to_operate", "no_live_offensive_activity"],
+      "properties": {
+        "synthetic_only": { "const": true },
+        "not_certification": { "const": true },
+        "not_authorization_to_operate": { "const": true },
+        "no_live_offensive_activity": { "const": true }
+      }
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

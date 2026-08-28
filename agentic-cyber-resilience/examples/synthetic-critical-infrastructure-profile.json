@@ -1,0 +1,108 @@
+{
+  "profile_version": "aau-agent-boundary-profile/0.1",
+  "profile_id": "synthetic-essential-service-defender-v1",
+  "organization": {
+    "name": "Synthetic Essential Service Utility",
+    "sector": "cross-sector critical infrastructure",
+    "environment": "synthetic"
+  },
+  "authority": {
+    "lease_id": "lease:defender-2026-08-27-a",
+    "agent_id": "agent:defender-01",
+    "task_id": "task:synthetic-hardening-01",
+    "issued_by": "human:incident-commander",
+    "valid_from": "2026-08-27T14:00:00Z",
+    "valid_until": "2026-08-27T18:00:00Z",
+    "allowed_actions": [
+      {
+        "tool": "scanner",
+        "action": "inspect",
+        "resources": [
+          "staging:*"
+        ],
+        "destinations": []
+      },
+      {
+        "tool": "reporter",
+        "action": "write",
+        "resources": [
+          "report:aggregate-*"
+        ],
+        "destinations": [
+          "queue:incident"
+        ]
+      }
+    ],
+    "blocked_actions": [
+      "credential.use",
+      "monitor.disable",
+      "policy.modify",
+      "production.write",
+      "record.delete"
+    ],
+    "allowed_peers": [
+      "agent:triage-02"
+    ],
+    "allowed_egress": [
+      "queue:incident"
+    ],
+    "human_approval_actions": [
+      "credential.use",
+      "production.write",
+      "run.restart"
+    ],
+    "approvals": [
+      {
+        "approval_id": "approval:restart-001",
+        "actor": "human:incident-commander",
+        "actions": [
+          "run.restart"
+        ],
+        "issued_at": "2026-08-27T16:20:00Z",
+        "expires_at": "2026-08-27T17:00:00Z",
+        "evidence_refs": [
+          "control:monitor-online",
+          "control:network-isolation-restored"
+        ]
+      }
+    ]
+  },
+  "safe_stop": {
+    "states": [
+      "authorization_ambiguous",
+      "control_failure",
+      "task_broken",
+      "task_impossible"
+    ],
+    "report_to": "human:incident-commander"
+  },
+  "response": {
+    "critical_alert_sla_minutes": 30,
+    "pause_on_critical_alert": true,
+    "restart_requires_human": true
+  },
+  "logging": {
+    "hash_algorithm": "sha256",
+    "required_event_fields": [
+      "agent_id",
+      "authority_ref",
+      "event_id",
+      "occurred_at",
+      "task_id",
+      "type"
+    ],
+    "tamper_response": "pause"
+  },
+  "data_boundary": {
+    "classification": "synthetic",
+    "contains_real_credentials": false,
+    "contains_personal_data": false,
+    "contains_controlled_data": false,
+    "contains_classified_data": false
+  },
+  "claims": {
+    "not_certification": true,
+    "not_authorization_to_operate": true,
+    "not_compliance_finding": true
+  }
+}

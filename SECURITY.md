@@ -50,6 +50,16 @@ or synthetic information in the repository, website, examples, issues, and publi
 sensitive-data scan is a narrow backstop, not a data-loss-prevention system or permission to use
 an unapproved environment.
 
+## Agentic Cyber Resilience boundary
+
+The Agent Boundary Protocol is an offline verifier for synthetic authority profiles and defensive
+scenario events. It makes no network request, invokes no model or tool, reads no environment
+variable, executes no event content, and rejects symlink inputs. Its examples contain no live
+target, exploit chain, real credential, personal data, controlled data, or classified information.
+Receipt hashes detect byte changes and ordering; they do not establish event truth, authorship,
+identity, production fitness, compliance, certification, or an Authority to Operate. Read the
+dedicated [threat model](agentic-cyber-resilience/THREAT_MODEL.md) before adapting it.
+
 ## Repository and release supply chain
 
 - GitHub Actions are pinned to immutable commit SHAs and checkout credentials are not persisted.

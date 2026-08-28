@@ -85,6 +85,15 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Agentic Cyber Resilience Commons and Agent Boundary Protocol 0.1** — a dependency-free,
+  offline reference verifier now binds an agent identity, task, time window, tools, resources,
+  peers, egress, safe-stop states, monitoring, and human restart evidence into one temporary
+  authority lease. Fifteen synthetic cases cover impossible-task persistence, peer goal adoption,
+  discovered credentials, undeclared egress, monitor loss, critical-alert pause, record tampering,
+  lease expiry, and identity mismatch. Versioned profile, scenario, and receipt schemas,
+  machine-readable denial reasons, a deterministic SHA-256 result chain, non-overwriting evidence
+  packs, source ledger, threat model, contribution route, tests, and CI preserve a no-live-target,
+  non-certifying boundary.
 - **Federal AI Portfolio Observatory v0.5** — a public/synthetic, browser-local and
   dependency-free portfolio evidence desk now detects missing inventory evidence, surfaces
   similarity only as possible overlap requiring human review, matches candidate AAU evaluation

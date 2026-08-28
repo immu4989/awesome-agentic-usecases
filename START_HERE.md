@@ -77,6 +77,16 @@ the artifact locally, recomputes its structural evidence, keeps interval and pro
 visible, and exports an aggregate-only inspection receipt. Nothing is uploaded. A passing
 inspection means structurally coherent—not independently reproduced or domain validated.
 
+If your agent already has consequential tools and the question is whether its authority remains
+bounded over a long or multi-agent task, start with the
+**[Agentic Cyber Resilience Commons](agentic-cyber-resilience/)**. Its experimental Agent
+Boundary Protocol binds one agent, task, time window, tool set, target set, peer set, and egress
+set into a temporary human-issued lease. Fifteen synthetic cases test safe stopping, peer goal
+adoption, discovered credentials, undeclared egress, monitor loss, record tampering, and
+human-controlled restart. The reference verifier is offline and dependency-free; its receipt is
+recomputable evidence, not certification, compliance, production validation, or an Authority to
+Operate.
+
 If you have a workflow but do not know which lab fits, start with
 **[AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio)**. It matches
 your description to the full verified catalog, explains the evidence behind each result,
@@ -176,6 +186,7 @@ measure it against an unchanged baseline.
 | Forbidden irreversible action | [Refund Guarded](customer-support/refund-guarded/) | Enforce policy in the tool that performs the action |
 | Prompt injection in user content | [Refund Injected](customer-support/refund-injected/) | Score whether the forbidden consequence occurred |
 | Secret exfiltration through poisoned tooling | [Trifecta Exfil](security-operations/trifecta-exfil-agent/) | Track sensitive data to every egress |
+| Long or multi-agent work expands its own authority | [Agent Boundary Protocol](agentic-cyber-resilience/) | Bind identity, task, time, tools, targets, peers, egress, safe stopping, monitoring, and restart evidence into one lease |
 | Poisoned long-term memory | [Refund Memory](customer-support/refund-memory/) | Gate writes with source provenance |
 | Stale or conflicting context | [Exception Triage Drift](logistics-supply-chain/exception-triage-drift/) | Enforce freshness at the read boundary |
 | False success after a blocked action | [Incident Remediation](it-operations/incident-remediation-agent/) | Compare the record against actions that actually succeeded |

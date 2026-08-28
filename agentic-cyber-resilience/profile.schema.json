@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/aau-agent-boundary-profile-0.1.json",
+  "title": "AAU Agent Boundary Profile 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_version",
+    "profile_id",
+    "organization",
+    "authority",
+    "safe_stop",
+    "response",
+    "logging",
+    "data_boundary",
+    "claims"
+  ],
+  "properties": {
+    "profile_version": { "const": "aau-agent-boundary-profile/0.1" },
+    "profile_id": { "$ref": "#/$defs/text" },
+    "organization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "sector", "environment"],
+      "properties": {
+        "name": { "$ref": "#/$defs/text" },
+        "sector": { "$ref": "#/$defs/text" },
+        "environment": { "const": "synthetic" }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lease_id",
+        "agent_id",
+        "task_id",
+        "issued_by",
+        "valid_from",
+        "valid_until",
+        "allowed_actions",
+        "blocked_actions",
+        "allowed_peers",
+        "allowed_egress",
+        "human_approval_actions",
+        "approvals"
+      ],
+      "properties": {
+        "lease_id": { "$ref": "#/$defs/text" },
+        "agent_id": { "type": "string", "pattern": "^agent:", "maxLength": 120 },
+        "task_id": { "$ref": "#/$defs/text" },
+        "issued_by": { "type": "string", "pattern": "^human:", "maxLength": 120 },
+        "valid_from": { "type": "string", "format": "date-time" },
+        "valid_until": { "type": "string", "format": "date-time" },
+        "allowed_actions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/action" }
+        },
+        "blocked_actions": { "$ref": "#/$defs/nonemptyTextList" },
+        "allowed_peers": { "$ref": "#/$defs/textList" },
+        "allowed_egress": { "$ref": "#/$defs/textList" },
+        "human_approval_actions": { "$ref": "#/$defs/nonemptyTextList" },
+        "approvals": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/approval" }
+        }
+      }
+    },
+    "safe_stop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["states", "report_to"],
+      "properties": {
+        "states": { "$ref": "#/$defs/nonemptyTextList" },
+        "report_to": { "type": "string", "pattern": "^human:", "maxLength": 120 }
+      }
+    },
+    "response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["critical_alert_sla_minutes", "pause_on_critical_alert", "restart_requires_human"],
+      "properties": {
+        "critical_alert_sla_minutes": { "type": "integer", "minimum": 1, "maximum": 1440 },
+        "pause_on_critical_alert": { "const": true },
+        "restart_requires_human": { "const": true }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hash_algorithm", "required_event_fields", "tamper_response"],
+      "properties": {
+        "hash_algorithm": { "const": "sha256" },
+        "required_event_fields": { "$ref": "#/$defs/nonemptyTextList" },
+        "tamper_response": { "const": "pause" }
+      }
+    },
+    "data_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "contains_real_credentials",
+        "contains_personal_data",
+        "contains_controlled_data",
+        "contains_classified_data"
+      ],
+      "properties": {
+        "classification": { "const": "synthetic" },
+        "contains_real_credentials": { "const": false },
+        "contains_personal_data": { "const": false },
+        "contains_controlled_data": { "const": false },
+        "contains_classified_data": { "const": false }
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["not_certification", "not_authorization_to_operate", "not_compliance_finding"],
+      "properties": {
+        "not_certification": { "const": true },
+        "not_authorization_to_operate": { "const": true },
+        "not_compliance_finding": { "const": true }
+      }
+    }
+  },
+  "$defs": {
+    "text": { "type": "string", "minLength": 1, "maxLength": 240 },
+    "textList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/text" }
+    },
+    "nonemptyTextList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/text" }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "action", "resources", "destinations"],
+      "properties": {
+        "tool": { "$ref": "#/$defs/text" },
+        "action": { "$ref": "#/$defs/text" },
+        "resources": { "$ref": "#/$defs/nonemptyTextList" },
+        "destinations": { "$ref": "#/$defs/textList" }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approval_id", "actor", "actions", "issued_at", "expires_at", "evidence_refs"],
+      "properties": {
+        "approval_id": { "$ref": "#/$defs/text" },
+        "actor": { "type": "string", "pattern": "^human:", "maxLength": 120 },
+        "actions": { "$ref": "#/$defs/nonemptyTextList" },
+        "issued_at": { "type": "string", "format": "date-time" },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "evidence_refs": { "$ref": "#/$defs/nonemptyTextList" }
+      }
+    }
+  }
+}

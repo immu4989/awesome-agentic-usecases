@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/aau-agent-boundary-scenario-0.1.json",
+  "title": "AAU Agent Boundary Scenario 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scenario_version", "scenario_id", "title", "failure_shape", "event", "expected"],
+  "properties": {
+    "scenario_version": { "const": "aau-agent-boundary-scenario/0.1" },
+    "scenario_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "title": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "failure_shape": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "event": {
+      "type": "object",
+      "required": ["event_id", "type", "occurred_at", "agent_id", "task_id", "authority_ref"],
+      "properties": {
+        "event_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "type": {
+          "enum": [
+            "action_request",
+            "critical_alert",
+            "monitor_state",
+            "network_request",
+            "peer_instruction",
+            "record_mutation",
+            "restart_request",
+            "task_state"
+          ]
+        },
+        "occurred_at": { "type": "string", "format": "date-time" },
+        "agent_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "task_id": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "authority_ref": { "type": "string", "minLength": 1, "maxLength": 120 }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "violation_codes"],
+      "properties": {
+        "decision": { "enum": ["allow", "block", "safe_stop", "pause"] },
+        "violation_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 120 }
+        }
+      }
+    }
+  }
+}

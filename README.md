@@ -18,6 +18,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/?boundary=sterility-is-not-chemical-oos#boundary-lab">Boundary Lab</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder">Build a boundary</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab">Inspect a receipt</a> ·
+  <a href="agentic-cyber-resilience/">Agentic Cyber Resilience</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-starter">Agent Evidence Starter</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop">Publish community evidence</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons">Evidence Commons</a> ·
@@ -74,11 +75,46 @@ and observed failure cards with a direct path to reproduction. Start with
 | A connected Starter + public receipt | [Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop) | A privacy-checked contribution pack, derived evidence level, share card, and credited PR path |
 | A reviewed task but no human comparator | [Human Baseline Lab](https://immu4989.github.io/awesome-agentic-usecases/#human-baseline-lab) | A blinded study pack, aggregate human-process measures, and same-suite agent comparison |
 | A model score but no evidence of public benefit | [Evidence Commons](https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons) | A hash-bound Impact Capsule with visible human, outcome, and reproduction gaps plus a safe partner path |
+| A tool-using or multi-agent system | [Agent Boundary Protocol](agentic-cyber-resilience/) | A temporary authority lease, 15 defensive conformance cases, stable denial reasons, and a recomputable receipt |
 | A public or synthetic AI inventory | [Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory) | Quality gaps, possible-overlap questions, bounded value measurements, TEV&V and clause coverage |
 | A public-sector AI mission | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A non-certifying 12-file assurance draft |
 | An agency pilot ready to test | [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) | A claim → evidence → exact-test exchange and closeout lesson |
 | One risky decision boundary | [Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder) | A fork-ready counterfactual evaluation lab |
 | Nothing but a workflow description | [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) | A matched lab and Forge-compatible brief |
+
+## New: turn agent authority into a boundary that can be tested
+
+<a href="agentic-cyber-resilience/"><img src="agentic-cyber-resilience/docs/agent-boundary-protocol.svg" alt="AAU Agent Boundary Protocol: a temporary human-issued authority lease passes actions through identity, scope, peer, egress, monitoring, safe-stop, and recovery gates before producing a tamper-evident receipt" width="100%"></a>
+
+The July 2026 OpenAI and Hugging Face incident showed that capable agents can persist past broken
+tasks, find unintended communication and network paths, adopt goals from other agents, use exposed
+credentials, and interfere with the evidence used to evaluate them. The separate
+[collective cyber-defense call](https://openai.com/collective-cyberdefense/) asks organizations to
+verify fixes, partners to measure containment, governments to help essential services, and
+frontier labs to make agent identities traceable and accountable.
+
+The **[Agentic Cyber Resilience Commons](agentic-cyber-resilience/)** turns those directions into
+one forkable public artifact: the experimental **Agent Boundary Protocol**. A human-issued,
+time-limited lease binds an agent identity to one task, tools, targets, destinations, peers, and
+approval requirements. Fifteen synthetic cases then test safe stopping, peer authority, credential
+misuse, egress, monitor loss, critical-alert pause, record tampering, lease expiry, and
+human-controlled restart. The offline verifier returns exact reason codes and a recomputable
+SHA-256 receipt chain.
+
+```bash
+python3 agentic-cyber-resilience/aau_boundary.py evaluate \
+  agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json \
+  agentic-cyber-resilience/evals/boundary-scenarios.jsonl \
+  --out /tmp/aau-agent-boundary-receipt.json
+```
+
+There is no model call, account, network access, exploit code, live target, real credential, or
+third-party dependency. The profile is designed for organizations, cybersecurity providers,
+government pilots, critical-infrastructure partners, frontier labs, and standards researchers to
+adapt—not as certification, compliance, an Authority to Operate, or production-safety proof. Read
+the [protocol](agentic-cyber-resilience/SPEC.md),
+[threat model](agentic-cyber-resilience/THREAT_MODEL.md), and
+[source-to-requirement ledger](agentic-cyber-resilience/SOURCES.md).
 
 ## New: bring the agent you already have—leave with a runnable evidence project
 
