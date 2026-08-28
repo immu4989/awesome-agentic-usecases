@@ -27,13 +27,6 @@ jobs:
           python docs/check_editorial.py
       - name: Workflow supply chain is immutable and least privilege
         run: python docs/check_supply_chain.py
-      - name: Agent Boundary Protocol stays offline, deterministic, and fail closed
-        run: |
-          PYTHONPATH=agentic-cyber-resilience pytest agentic-cyber-resilience/tests -q
-          python agentic-cyber-resilience/aau_boundary.py validate agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json
-          python agentic-cyber-resilience/aau_boundary.py evaluate agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json agentic-cyber-resilience/evals/boundary-scenarios.jsonl --out "$RUNNER_TEMP/agent-boundary-receipt.json"
-          python agentic-cyber-resilience/aau_boundary.py verify "$RUNNER_TEMP/agent-boundary-receipt.json" --profile agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json --scenarios agentic-cyber-resilience/evals/boundary-scenarios.jsonl
-          ruff check agentic-cyber-resilience
       - name: Catalog, README, package, and CI coverage agree
         run: python docs/check_catalog.py
       - name: AAU Studio evidence and interactions are current
@@ -50,6 +43,13 @@ jobs:
               --root "$RUNNER_TEMP/forge-$spec" \
               --source-root .
           done
+      - name: Agent Boundary Protocol stays offline, deterministic, and fail closed
+        run: |
+          PYTHONPATH=agentic-cyber-resilience pytest agentic-cyber-resilience/tests -q
+          python agentic-cyber-resilience/aau_boundary.py validate agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json
+          python agentic-cyber-resilience/aau_boundary.py evaluate agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json agentic-cyber-resilience/evals/boundary-scenarios.jsonl --out "$RUNNER_TEMP/agent-boundary-receipt.json"
+          python agentic-cyber-resilience/aau_boundary.py verify "$RUNNER_TEMP/agent-boundary-receipt.json" --profile agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json --scenarios agentic-cyber-resilience/evals/boundary-scenarios.jsonl
+          ruff check agentic-cyber-resilience
       - name: Community Forge Gallery derives trust from evidence
         run: |
           python docs/make_gallery_data.py
