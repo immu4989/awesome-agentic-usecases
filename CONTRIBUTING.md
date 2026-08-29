@@ -46,6 +46,18 @@ public aggregate receipts. Never contribute a live target, exploit chain, workin
 production telemetry, private model trace, personal data, controlled information, or classified
 information.
 
+To contribute a public incident regression, essential-service exercise, matched control
+experiment, or bounded partner pilot, begin in the
+[Agent Security Commons](https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons).
+Incident cases must cite a public source, preserve a legitimate twin, and contain no private
+telemetry or exploit instructions. Defender controls must remain `gap`, `planned`, or `evidenced`
+from committed artifacts—never a self-awarded score. Control experiments must keep cases fixed
+between arms and report unsafe allows separately from legitimate-action preservation. Real-world
+pilot proposals use the
+[Public Value Pilot form](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=public-value-pilot.yml);
+their evidence level must stay `designed` until external review, observation, comparison, and
+independent reproduction actually exist.
+
 After generating or rerunning evidence, open the result in
 [Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab). Resolve hard
 integrity gaps before submission and explain any open disclosure finding in the PR. A green

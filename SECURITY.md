@@ -60,6 +60,17 @@ Receipt hashes detect byte changes and ordering; they do not establish event tru
 identity, production fitness, compliance, certification, or an Authority to Operate. Read the
 dedicated [threat model](agentic-cyber-resilience/THREAT_MODEL.md) before adapting it.
 
+## Agent Security Commons input boundary
+
+The Incident Regression Commons, Essential Services Defender Kits, Control Effectiveness
+Observatory, and Public Value Pilot Network accept bounded JSON, reject symbolic-link inputs, and
+refuse to overwrite receipts or packs. They do not execute input content, contact a target, call a
+model, inspect credentials, or transmit data. Their publication scanners are narrow backstops that
+report finding categories rather than matched values; they are not data-loss-prevention systems.
+Evidence packs copy the supplied public or synthetic source record, so review that record before
+sharing the pack. The homepage fetches only the aggregate JSON generated from committed examples
+and does not accept or upload operational input.
+
 ## Repository and release supply chain
 
 - GitHub Actions are pinned to immutable commit SHAs and checkout credentials are not persisted.

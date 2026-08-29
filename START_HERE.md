@@ -79,13 +79,17 @@ inspection means structurally coherent—not independently reproduced or domain 
 
 If your agent already has consequential tools and the question is whether its authority remains
 bounded over a long or multi-agent task, start with the
-**[Agentic Cyber Resilience Commons](agentic-cyber-resilience/)**. Its experimental Agent
-Boundary Protocol binds one agent, task, time window, tool set, target set, peer set, and egress
-set into a temporary human-issued lease. Fifteen synthetic cases test safe stopping, peer goal
-adoption, discovered credentials, undeclared egress, monitor loss, record tampering, and
-human-controlled restart. The reference verifier is offline and dependency-free; its receipt is
-recomputable evidence, not certification, compliance, production validation, or an Authority to
-Operate.
+**[Agent Security Commons](https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons)**.
+Its experimental Agent Boundary Protocol 0.2 binds identity, task, policy epoch, sequence, tools,
+targets, destinations, peers, delegation, monitoring, safe-stop, and human restart into a
+temporary lease. Run the 50-event runtime conformance suite, replay a public incident as exact
+regressions, compare matched control arms, or choose an essential-service defender kit. The
+reference tools are offline and dependency-free; receipts are recomputable evidence, not
+certification, compliance, production validation, or an Authority to Operate. Start with the
+[runtime](agentic-cyber-resilience/), [incident commons](agent-incident-regression-commons/),
+[defender kits](essential-services-defender-kits/),
+[control observatory](agent-control-observatory/), or
+[public-value pilot network](public-value-pilot-network/).
 
 If you have a workflow but do not know which lab fits, start with
 **[AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio)**. It matches

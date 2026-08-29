@@ -85,15 +85,36 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
-- **Agentic Cyber Resilience Commons and Agent Boundary Protocol 0.1** — a dependency-free,
-  offline reference verifier now binds an agent identity, task, time window, tools, resources,
-  peers, egress, safe-stop states, monitoring, and human restart evidence into one temporary
-  authority lease. Fifteen synthetic cases cover impossible-task persistence, peer goal adoption,
-  discovered credentials, undeclared egress, monitor loss, critical-alert pause, record tampering,
-  lease expiry, and identity mismatch. Versioned profile, scenario, and receipt schemas,
-  machine-readable denial reasons, a deterministic SHA-256 result chain, non-overwriting evidence
-  packs, source ledger, threat model, contribution route, tests, and CI preserve a no-live-target,
-  non-certifying boundary.
+- **Agent Security Commons and Agent Boundary Protocol 0.2** — the original dependency-free
+  boundary verifier now has a stateful policy decision point, runtime state machine, delegation
+  ceiling, policy-epoch and sequence checks, token-audience binding, revocation, monitor-loss
+  response, safe-stop, and human-controlled recovery. A 10-run, 50-event conformance suite passes
+  Generic JSON, MCP, OpenAI Agents, LangGraph, CrewAI, and AutoGen-shaped recordings through one
+  normalized contract without requiring those frameworks. Stable reason codes, two new schemas,
+  runtime receipts, compatibility language, threat-model updates, conformance rules, a standards
+  contribution, and an implementation report keep claims exact and replayable.
+- **Incident Regression Commons** — a public, synthetic incident record converts six lessons into
+  exact pre-fix and post-fix cases, retains the closest legitimate twin, labels sensitive-category
+  findings without echoing values, and emits a deterministic non-overwriting pack. It records five
+  unsafe pre-fix allows and a complete post-fix regression pass without presenting those synthetic
+  results as production validation.
+- **Essential Services Defender Kits** — five source-backed, four-week exercise kits now cover
+  community water, rural hospitals, electric distribution, local government, and public transit.
+  Every kit protects accountable human authority, links primary public guidance, and exposes each
+  control as a gap, plan, or evidenced artifact instead of producing a security score.
+- **Control Effectiveness Observatory** — one transparent 12-case experiment compares three
+  declared control arms over eight controls while reporting unsafe allows, exact outcomes,
+  legitimate-action preservation, and coverage separately. The tool prohibits universal scores,
+  vendor rankings, model rankings, and production-effectiveness claims.
+- **Public Value Pilot Network** — a strict pilot contract and contribution route preserve four
+  missing evidence layers in a source-bound FOIA routing example. `designed`, `review_ready`,
+  `observed`, and `independently_reproduced` are artifact-derived; causal claims, false
+  independence, suite-hash drift, and hidden exclusions fail closed. No partner or field result is
+  fabricated.
+- **Integrated public research surface** — the homepage now derives its runtime, incident,
+  defender, control, and pilot views from committed artifacts. Visitors can switch matched control
+  arms, inspect small-operator kits, and see missing pilot evidence. CI rebuilds the data, executes
+  all five tools and test suites, validates six schemas, checks JavaScript, and rejects drift.
 - **Federal AI Portfolio Observatory v0.5** — a public/synthetic, browser-local and
   dependency-free portfolio evidence desk now detects missing inventory evidence, surfaces
   similarity only as possible overlap requiring human review, matches candidate AAU evaluation

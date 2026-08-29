@@ -1,0 +1,131 @@
+"""Build the browser-safe Agent Security Commons data from committed source artifacts."""
+
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DOCS = ROOT / "docs"
+
+sys.path.insert(0, str(ROOT / "agentic-cyber-resilience"))
+sys.path.insert(0, str(ROOT / "agent-incident-regression-commons"))
+sys.path.insert(0, str(ROOT / "essential-services-defender-kits"))
+sys.path.insert(0, str(ROOT / "agent-control-observatory"))
+sys.path.insert(0, str(ROOT / "public-value-pilot-network"))
+
+from aau_boundary import load_json as load_boundary_json  # noqa: E402
+from aau_incident import evaluate_incident, load_json as load_incident_json  # noqa: E402
+from aau_observatory import evaluate_experiment, load_json as load_experiment_json  # noqa: E402
+from aau_pilot_network import assess_pilot, load_json as load_pilot_json  # noqa: E402
+from aau_runtime import evaluate_suite  # noqa: E402
+from aau_defender import assess_kit, load_json as load_kit_json  # noqa: E402
+
+
+def build() -> dict:
+    profile = load_boundary_json(
+        ROOT / "agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json"
+    )
+    suite = load_boundary_json(ROOT / "agentic-cyber-resilience/evals/runtime-conformance-suite.json")
+    runtime = evaluate_suite(profile, suite)
+
+    incident_record = load_incident_json(
+        ROOT / "agent-incident-regression-commons/examples/public-agent-boundary-incident.json"
+    )
+    incident = evaluate_incident(incident_record)
+
+    kits = []
+    for path in sorted((ROOT / "essential-services-defender-kits/kits").glob("*.json")):
+        kit = load_kit_json(path)
+        assessment = assess_kit(kit)
+        kits.append(
+            {
+                "kit_id": kit["kit_id"],
+                "title": kit["title"],
+                "sector": kit["sector"],
+                "beneficiary": kit["beneficiary"],
+                "exercise_count": assessment["exercise_count"],
+                "gap_count": len(assessment["control_states"]["gap"]),
+                "planned_count": len(assessment["control_states"]["planned"]),
+                "path": f"https://github.com/immu4989/awesome-agentic-usecases/blob/main/essential-services-defender-kits/kits/{path.name}",
+            }
+        )
+
+    experiment = load_experiment_json(
+        ROOT / "agent-control-observatory/experiments/authority-control-ladder.json"
+    )
+    control_report = evaluate_experiment(experiment)
+    arms = []
+    arm_titles = {item["arm_id"]: item["title"] for item in experiment["arms"]}
+    for arm in control_report["arms"]:
+        arms.append(
+            {
+                "arm_id": arm["arm_id"],
+                "title": arm_titles[arm["arm_id"]],
+                "active_control_count": len(arm["active_controls"]),
+                "measurements": arm["measurements"],
+                "unsafe_cases": [row["case_id"] for row in arm["cases"] if row["unsafe_allow"]],
+            }
+        )
+
+    pilot_record = load_pilot_json(
+        ROOT / "public-value-pilot-network/pilots/foia-routing-partner-call.json"
+    )
+    pilot = assess_pilot(pilot_record)
+
+    return {
+        "data_version": "aau-agent-security-commons-data/0.1",
+        "generated_on": "2026-08-29",
+        "runtime": {
+            "event_count": runtime["event_count"],
+            "run_count": runtime["run_count"],
+            "adapter_count": 6,
+            "adapters": ["Generic JSON", "MCP", "OpenAI Agents", "LangGraph", "CrewAI", "AutoGen"],
+            "summary": runtime["summary"],
+            "suite_sha256": runtime["suite_sha256"],
+        },
+        "incident": {
+            "incident_id": incident["incident_id"],
+            "regression_count": incident["summary"]["regression_count"],
+            "unsafe_allow_before_count": incident["summary"]["unsafe_allow_before_count"],
+            "post_fix_exact_rate": incident["summary"]["post_fix_exact_rate"],
+            "unresolved_question_count": incident["summary"]["unresolved_question_count"],
+        },
+        "defender_kits": kits,
+        "controls": {
+            "case_count": control_report["case_count"],
+            "control_count": control_report["control_count"],
+            "arms": arms,
+        },
+        "pilot": {
+            "pilot_id": pilot["pilot_id"],
+            "evidence_level": pilot["evidence_level"],
+            "visible_gaps": pilot["visible_gaps"],
+            "measure_count": len(pilot["measure_ids"]),
+        },
+        "routes": [
+            {"label": "Run ABP 0.2", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/agentic-cyber-resilience"},
+            {"label": "Replay incident lessons", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/agent-incident-regression-commons"},
+            {"label": "Choose a defender kit", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/essential-services-defender-kits"},
+            {"label": "Compare controls", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/agent-control-observatory"},
+            {"label": "Propose a public-value pilot", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/public-value-pilot-network"}
+        ],
+        "boundary": {
+            "zero_upload": True,
+            "no_live_targets": True,
+            "no_tool_execution": True,
+            "not_certification": True,
+        },
+    }
+
+
+def main() -> None:
+    output = DOCS / "agent-security-data.json"
+    output.write_text(json.dumps(build(), indent=2) + "\n")
+    print(f"wrote {output.relative_to(ROOT)}")
+
+
+if __name__ == "__main__":
+    main()

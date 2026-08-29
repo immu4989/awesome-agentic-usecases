@@ -24,6 +24,11 @@ third-party package, launches no subprocess, and executes no event field.
 | Peer or credential expands authority | Lateral agent behavior escapes the task | Original lease remains authoritative; explicit denial codes | Runtime enforcement remains external |
 | Agent tampers with its transcript | False evidence or hidden activity | Mutation scenario pauses; receipt rows are hash chained | Logs must live outside agent control |
 | Result is edited after evaluation | False aggregate claim | Summary, row digests, chain head, profile, and suite recompute | Digital signing and transparency are external |
+| Stale event races a policy change | Revoked or narrowed authority is reused | Strict sequence plus policy epoch; restart and revocation advance the epoch | Production adapters must make the decision atomic with execution |
+| Framework envelope changes semantics | An adapter grants more than the recorded event | Six narrow normalizers emit one ABP event contract; unknown shapes fail | Framework owners must validate their actual version and hooks |
+| Token is accepted by the wrong server | Confused-deputy or token-passthrough exposure | Recorded MCP cases require matching resource audience and forbid passthrough | Real OAuth validation and key custody remain external |
+| Child or peer widens the task | Multi-agent scope escape | Delegation is a subset of parent action keys and peers are named | Production identity and delegation issuance remain external |
+| Pause is acknowledged but in-flight work continues | Damage after containment signal | The reference state blocks later recorded events | Runtime owners must cancel queues, sessions, credentials, and side effects |
 | Synthetic pass is presented as production proof | Unsafe procurement or deployment claim | Machine-checked non-certification boundaries in profiles and receipts | Reviewer enforces claim discipline |
 | Pack contains secrets or operational traces | Public disclosure | Reference data is synthetic-only and schemas reject affirmative sensitive-data flags | Authorized human review remains required |
 | Defensive example becomes offensive guidance | Unauthorized access | No exploit code, live target, real credential, or scanning capability | Maintainers reject unsafe contributions |
@@ -38,12 +43,15 @@ third-party package, launches no subprocess, and executes no event field.
   cannot produce `allow`.
 - Monitor loss, critical alerts, and record mutation have a pause path.
 - Receipt verification detects modification, deletion, insertion, or reordering of result rows.
+- Runtime verification detects sequence gaps, stale policy epochs, post-revocation actions, and
+  incomplete recovery evidence in the supplied recorded suite.
 - Output never claims certification, compliance, authorization, government endorsement, or
   production fitness.
 
 ## Out of scope
 
-Cryptographic identity issuance, key custody, signatures, revocation infrastructure, live model
-monitoring, chain-of-thought access, exploit detection, malware analysis, network enforcement,
-endpoint isolation, vulnerability scanning, incident command, legal interpretation, classified
-processing, operational authorization, and recovery of a compromised system are out of scope.
+Cryptographic identity issuance, key custody, signatures, production revocation infrastructure,
+live model monitoring, chain-of-thought access, exploit detection, malware analysis, network
+enforcement, endpoint isolation, vulnerability scanning, incident command, legal interpretation,
+classified processing, operational authorization, cancellation of real in-flight effects, and
+recovery of a compromised system are out of scope.

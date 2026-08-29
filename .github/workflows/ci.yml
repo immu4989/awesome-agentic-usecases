@@ -50,6 +50,30 @@ jobs:
           python agentic-cyber-resilience/aau_boundary.py evaluate agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json agentic-cyber-resilience/evals/boundary-scenarios.jsonl --out "$RUNNER_TEMP/agent-boundary-receipt.json"
           python agentic-cyber-resilience/aau_boundary.py verify "$RUNNER_TEMP/agent-boundary-receipt.json" --profile agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json --scenarios agentic-cyber-resilience/evals/boundary-scenarios.jsonl
           ruff check agentic-cyber-resilience
+      - name: Agent Security Commons controls, exercises, and claims are reproducible
+        run: |
+          PYTHONPATH=agentic-cyber-resilience pytest agentic-cyber-resilience/tests/test_aau_runtime.py -q
+          PYTHONPATH=agent-incident-regression-commons pytest agent-incident-regression-commons/tests -q
+          PYTHONPATH=essential-services-defender-kits pytest essential-services-defender-kits/tests -q
+          PYTHONPATH=agent-control-observatory pytest agent-control-observatory/tests -q
+          PYTHONPATH=public-value-pilot-network pytest public-value-pilot-network/tests -q
+          python agentic-cyber-resilience/aau_runtime.py evaluate agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json agentic-cyber-resilience/evals/runtime-conformance-suite.json --out "$RUNNER_TEMP/aau-runtime-receipt.json"
+          python agentic-cyber-resilience/aau_runtime.py verify "$RUNNER_TEMP/aau-runtime-receipt.json" --profile agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json --suite agentic-cyber-resilience/evals/runtime-conformance-suite.json
+          python agent-incident-regression-commons/aau_incident.py evaluate agent-incident-regression-commons/examples/public-agent-boundary-incident.json --out "$RUNNER_TEMP/aau-incident-receipt.json"
+          python agent-incident-regression-commons/aau_incident.py verify "$RUNNER_TEMP/aau-incident-receipt.json" --incident agent-incident-regression-commons/examples/public-agent-boundary-incident.json
+          for kit in essential-services-defender-kits/kits/*.json; do
+            kit_name="$(basename "$kit" .json)"
+            python essential-services-defender-kits/aau_defender.py assess "$kit" --out "$RUNNER_TEMP/$kit_name-assessment.json"
+            python essential-services-defender-kits/aau_defender.py verify "$RUNNER_TEMP/$kit_name-assessment.json" --kit "$kit"
+          done
+          python agent-control-observatory/aau_observatory.py evaluate agent-control-observatory/experiments/authority-control-ladder.json --out "$RUNNER_TEMP/aau-control-report.json"
+          python agent-control-observatory/aau_observatory.py verify "$RUNNER_TEMP/aau-control-report.json" --experiment agent-control-observatory/experiments/authority-control-ladder.json
+          python public-value-pilot-network/aau_pilot_network.py assess public-value-pilot-network/pilots/foia-routing-partner-call.json --out "$RUNNER_TEMP/aau-pilot-assessment.json"
+          python public-value-pilot-network/aau_pilot_network.py verify "$RUNNER_TEMP/aau-pilot-assessment.json" --pilot public-value-pilot-network/pilots/foia-routing-partner-call.json
+          python docs/make_agent_security_data.py
+          python docs/check_agent_security.py
+          ruff check agentic-cyber-resilience agent-incident-regression-commons essential-services-defender-kits agent-control-observatory public-value-pilot-network docs/make_agent_security_data.py docs/check_agent_security.py
+          git diff --exit-code docs/agent-security-data.json
       - name: Community Forge Gallery derives trust from evidence
         run: |
           python docs/make_gallery_data.py

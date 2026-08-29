@@ -7,7 +7,7 @@
 > Prove that an AI agent can stay in scope, stop safely, and remain under human control
 > before connecting it to consequential tools.
 
-The **Agent Boundary Protocol (ABP)** is a small, vendor-neutral interoperability profile for
+The **Agent Boundary Protocol (ABP) 0.2** is a small, vendor-neutral interoperability profile for
 agent identity, temporary authority, safe stopping, multi-agent trust, egress, monitoring,
 containment, and human-controlled restart. It converts lessons from the July 2026 OpenAI and
 Hugging Face incident into an offline, synthetic, forkable conformance exercise.
@@ -37,6 +37,11 @@ The first reference profile makes seven invariants executable:
 
 The reference set exercises 15 defensive cases without exploit code, live targets, internet
 access, production credentials, personal data, controlled data, or classified information.
+
+ABP 0.2 adds a stateful runtime conformance gateway with **50 ordered decisions** across tool
+calls, token audience binding, token passthrough, six recorded framework shapes, delegation,
+policy epochs, monitor loss, critical alerts, safe stopping, revocation, evidence tampering, and
+human-controlled recovery. The gateway returns a decision but never executes the proposed tool.
 
 ## Who can use it
 
@@ -76,7 +81,26 @@ Or install the local command while adapting a fork:
 ```bash
 python3 -m pip install -e agentic-cyber-resilience
 aau-agent-boundary --help
+aau-agent-runtime --help
 ```
+
+Run the complete runtime suite:
+
+```bash
+python3 agentic-cyber-resilience/aau_runtime.py evaluate \
+  agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json \
+  agentic-cyber-resilience/evals/runtime-conformance-suite.json \
+  --out /tmp/aau-runtime-receipt.json
+
+python3 agentic-cyber-resilience/aau_runtime.py verify \
+  /tmp/aau-runtime-receipt.json \
+  --profile agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json \
+  --suite agentic-cyber-resilience/evals/runtime-conformance-suite.json
+```
+
+Recorded-event adapters are included for generic JSON, MCP, OpenAI Agents, LangGraph, CrewAI,
+and AutoGen. They are schema-level examples rather than official integrations and make no live
+connection.
 
 The non-overwriting `pack` command creates a four-file portable evidence bundle plus an exact
 byte manifest:
@@ -123,7 +147,21 @@ establish truth, authorship, deployment fitness, or organizational identity.
 See the [protocol specification](SPEC.md), [threat model](THREAT_MODEL.md),
 [source-to-requirement ledger](SOURCES.md), and the versioned
 [profile](profile.schema.json), [scenario](scenario.schema.json), and
-[receipt](receipt.schema.json) schemas.
+[receipt](receipt.schema.json) schemas. The 0.2 runtime contracts are the
+[suite schema](runtime-suite.schema.json), [receipt schema](runtime-receipt.schema.json),
+[conformance guide](standards/CONFORMANCE.md), and
+[standards contribution package](standards/ABP-0.2-CONTRIBUTION.md).
+
+## The wider Agent Security Commons
+
+- [Agent Incident Regression Commons](../agent-incident-regression-commons/) turns public lessons
+  into safe pre-fix/post-fix regression packs.
+- [Essential Services Defender Kits](../essential-services-defender-kits/) provide offline starting
+  points for water, hospitals, electric distribution, local government, and public transit.
+- [Agent Control Effectiveness Observatory](../agent-control-observatory/) compares matched control
+  arms without a universal score or vendor ranking.
+- [Public-Value Pilot Network](../public-value-pilot-network/) keeps human, field, and independent
+  reproduction gaps visible instead of fabricating impact.
 
 ## Safe contribution boundary
 
