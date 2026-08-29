@@ -184,6 +184,93 @@
     });
   }
 
+  function stable(value) {
+    if (Array.isArray(value)) return `[${value.map(stable).join(",")}]`;
+    if (value && typeof value === "object") {
+      return `{${Object.keys(value).sort().map((key) => `${asciiString(key)}:${stable(value[key])}`).join(",")}}`;
+    }
+    return typeof value === "string" ? asciiString(value) : JSON.stringify(value);
+  }
+
+  function asciiString(value) {
+    return JSON.stringify(value).replace(/[\u007f-\uffff]/g, (character) =>
+      `\\u${character.charCodeAt(0).toString(16).padStart(4, "0")}`);
+  }
+
+  async function sha256(value) {
+    const bytes = new TextEncoder().encode(value);
+    const result = await crypto.subtle.digest("SHA-256", bytes);
+    return Array.from(new Uint8Array(result), (byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+
+  function renderReproduction(data) {
+    const pipeline = byId("ccd-repro-pipeline");
+    pipeline.replaceChildren();
+    data.reproduction.pipeline.forEach((step, index) => {
+      const card = document.createElement("article");
+      card.append(text("span", `0${index + 1} / ${step.owner}`));
+      card.append(text("b", step.step));
+      card.append(text("p", step.artifact));
+      pipeline.append(card);
+    });
+    byId("ccd-repro-status").textContent = data.reproduction.status.replaceAll("_", " ");
+    byId("ccd-federated-count").textContent = data.federation.independently_reviewed_contribution_count;
+    const firstCell = data.federation.cells[0];
+    byId("ccd-federated-cell").textContent = !firstCell || firstCell.suppressed ? "SUPPRESSED" : "OPEN";
+    const requirements = byId("ccd-repro-requirements");
+    requirements.replaceChildren();
+    data.reproduction.unlock_requirements.forEach((requirement) => requirements.append(text("li", requirement)));
+  }
+
+  function showReproChecks(checks, message, error = false) {
+    const target = byId("ccd-repro-checks");
+    target.replaceChildren();
+    checks.forEach(([label, pass]) => {
+      const row = document.createElement("div");
+      row.className = pass ? "ccd-repro-pass" : "ccd-repro-fail";
+      row.append(text("b", pass ? "PASS" : "HOLD"));
+      row.append(text("span", label));
+      target.append(row);
+    });
+    const status = byId("ccd-repro-local-status");
+    status.textContent = message;
+    status.classList.toggle("ccd-error", error);
+  }
+
+  async function inspectAdjudication(value) {
+    if (!value || value.adjudication_version !== "aau-independent-reproduction-adjudication/0.1") {
+      throw new Error("Expected an AAU independent-reproduction adjudication 0.1 file.");
+    }
+    const unsigned = { ...value };
+    delete unsigned.adjudication_sha256;
+    const digestMatches = await sha256(stable(unsigned)) === value.adjudication_sha256;
+    const roles = value.role_commitments || {};
+    const commitments = [roles.issuer, roles.producer, roles.reviewer];
+    const validCommitments = commitments.every((item) => /^[0-9a-f]{64}$/.test(item || ""));
+    const distinctRoles = validCommitments && new Set(commitments).size === 3 && value.role_review?.commitments_distinct === true;
+    const relationships = value.role_review?.relationships_declared_independent === true;
+    const honestBoundary = value.role_review?.independence_cryptographically_proved === false;
+    const subjectBound = value.subject?.name === "receipt.json" && value.subject?.kind === "defense_benchmark" && /^[0-9a-f]{64}$/.test(value.subject?.sha256 || "");
+    const statusAligned = value.status === (distinctRoles && relationships ? "independence_reviewed" : "protocol_demonstration");
+    const levelAligned = value.evidence_level === (value.status === "independence_reviewed" ? "independently_reproduced" : "synthetic_reference");
+    const checks = [
+      ["Embedded adjudication digest matches the canonical record", digestMatches],
+      ["Issuer, producer, and reviewer commitments are valid and distinct", distinctRoles],
+      ["Relationship evidence was reviewed and declared independent", relationships],
+      ["Record does not pretend independence is cryptographic proof", honestBoundary],
+      ["Receipt subject name, kind, and digest are present", subjectBound],
+      ["Status and evidence level follow the role gate", statusAligned && levelAligned],
+    ];
+    const passed = checks.every(([, pass]) => pass);
+    showReproChecks(
+      checks,
+      passed
+        ? "Adjudication preflight passed. Run the CLI verifier against the entire pack before publication."
+        : "This adjudication remains on hold. Failed checks cannot be overridden in the browser.",
+      !passed,
+    );
+  }
+
   byId("ccd-defender-file").addEventListener("change", (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -212,7 +299,27 @@
     URL.revokeObjectURL(url);
   });
 
-  fetch("collective-cyber-defense-data.json?v=1", { cache: "no-store" })
+  byId("ccd-repro-file").addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 1_000_000) {
+      showReproChecks([], "Choose an adjudication JSON smaller than 1 MB.", true);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const value = JSON.parse(reader.result);
+        inspectAdjudication(value).catch((error) => showReproChecks([], error.message, true));
+      } catch (error) {
+        showReproChecks([], `Invalid JSON: ${error.message}`, true);
+      }
+    };
+    reader.onerror = () => showReproChecks([], "The browser could not read that local file.", true);
+    reader.readAsText(file);
+  });
+
+  fetch("collective-cyber-defense-data.json?v=2", { cache: "no-store" })
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();
@@ -224,6 +331,7 @@
       renderFixes(data);
       renderControls(data);
       renderOutcomes(data);
+      renderReproduction(data);
       root.dataset.ready = "true";
     })
     .catch(() => failPlan("The derived reference data could not load. All modules remain available in the GitHub repository."));

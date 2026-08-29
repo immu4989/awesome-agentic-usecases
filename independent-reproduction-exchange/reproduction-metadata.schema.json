@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/reproduction-metadata.schema.json",
+  "title": "AAU reproduction metadata 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["metadata_version", "submission_id", "producer_commitment_sha256", "relationship_to_issuer", "executed_on", "environment", "methodology", "sharing"],
+  "properties": {
+    "metadata_version": {"const": "aau-reproduction-metadata/0.1"},
+    "submission_id": {"type": "string", "minLength": 1, "maxLength": 120},
+    "producer_commitment_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "relationship_to_issuer": {"enum": ["none", "contractor", "affiliate", "same_organization", "unknown"]},
+    "executed_on": {"type": "string", "minLength": 1, "maxLength": 32},
+    "environment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["runtime", "runner", "network_access", "adapter_version"],
+      "properties": {
+        "runtime": {"type": "string", "minLength": 1, "maxLength": 220},
+        "runner": {"type": "string", "minLength": 1, "maxLength": 220},
+        "network_access": {"const": "none"},
+        "adapter_version": {"type": "string", "minLength": 1, "maxLength": 220}
+      }
+    },
+    "methodology": {"$ref": "#/$defs/trueObject"},
+    "sharing": {"$ref": "#/$defs/trueObject"}
+  },
+  "$defs": {
+    "trueObject": {"type": "object", "minProperties": 1, "additionalProperties": {"const": true}}
+  }
+}

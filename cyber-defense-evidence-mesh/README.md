@@ -9,6 +9,6 @@ python aau_evidence_mesh.py build examples/reference-mesh.json --out /tmp/eviden
 python aau_evidence_mesh.py verify-pack /tmp/evidence-mesh
 ```
 
-The contract refuses absolute paths, parent traversal, symlinks, oversized JSON, unlabeled evidence, and false independent-reproduction labels.
+The 0.2 contract refuses absolute paths, parent traversal, symlinks, oversized JSON, unlabeled evidence, and trust-only independent-reproduction labels. `independently_reproduced` now requires a complete, locally verified [Independent Reproduction Exchange](../independent-reproduction-exchange/) pack that recomputes its challenge, oracle, submission, review, receipt, statement, adjudication, and manifest; binds the exact artifact bytes and kind; passes the distinct-role and reviewed-relationship gate; and explicitly states that independence is not cryptographic proof.
 
 This is not a threat-intelligence feed, raw telemetry exchange, vulnerability disclosure channel, organizational score, compliance finding, safety certification, or proof of field effectiveness.

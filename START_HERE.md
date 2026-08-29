@@ -98,8 +98,12 @@ Use Verified Fix Commons to preserve the legitimate twin and service while closi
 regression; use the Containment Drill Runner to measure parent, child, and queued-work stops; use
 Defender-in-a-Box to plan locally from public, synthetic, or authorized inventory; or evaluate a
 provider-neutral response file against 20 safe defensive tasks. Publish only the aggregate receipt
-through the Evidence Mesh. The observatory keeps reference results and independent reproduction
-separate and never ranks vendors, agencies, or models.
+through the Evidence Mesh. To reproduce outside the maintainer workflow, use the
+[Independent Reproduction Exchange](independent-reproduction-exchange/): the issuer commits a
+hidden oracle, the reproducer receives only the answer-free challenge, and a separate reviewer
+reveals and adjudicates the run. The 0.2 Evidence Mesh accepts `independently_reproduced` only when
+that adjudication binds the exact artifact bytes and passes the reviewed role/relationship gate.
+The observatory keeps unlike measurements separate and never ranks vendors, agencies, or models.
 
 If you have a workflow but do not know which lab fits, start with
 **[AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio)**. It matches

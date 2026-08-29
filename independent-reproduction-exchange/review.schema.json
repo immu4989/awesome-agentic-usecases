@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/reproduction-review.schema.json",
+  "title": "AAU reproduction review 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["review_version", "reviewer_commitment_sha256", "relationship_to_issuer", "relationship_to_producer", "reviewed_on", "checks", "limitations"],
+  "properties": {
+    "review_version": {"const": "aau-reproduction-review/0.1"},
+    "reviewer_commitment_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "relationship_to_issuer": {"$ref": "#/$defs/relationship"},
+    "relationship_to_producer": {"$ref": "#/$defs/relationship"},
+    "reviewed_on": {"type": "string", "minLength": 1, "maxLength": 32},
+    "checks": {
+      "type": "object", "additionalProperties": false,
+      "required": ["role_separation_reviewed", "relationship_evidence_reviewed", "challenge_blinding_reviewed", "transcript_review_completed"],
+      "properties": {
+        "role_separation_reviewed": {"const": true},
+        "relationship_evidence_reviewed": {"const": true},
+        "challenge_blinding_reviewed": {"const": true},
+        "transcript_review_completed": {"const": true}
+      }
+    },
+    "limitations": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 400}}
+  },
+  "$defs": {"relationship": {"enum": ["none", "contractor", "affiliate", "same_organization", "unknown"]}}
+}

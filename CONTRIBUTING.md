@@ -68,6 +68,12 @@ parent, child, queued-work, and recovery behavior. Never submit a live target, e
 credential, private telemetry, inventory, incident record, personal data, controlled information,
 or classified information. `independently_reproduced` requires a producer independent of the
 original and a matching contract hash; a rerun by the original producer remains a reference run.
+Use the [Independent Reproduction Exchange](independent-reproduction-exchange/) for this path.
+Publish the challenge before receiving the hidden oracle, then submit the complete revealed pack
+after separate review. The Evidence Mesh no longer accepts a Boolean self-declaration: its 0.2
+contract requires an adjudication that binds the exact receipt bytes and kind. Distinct pseudonymous
+commitments are necessary but not sufficient—reviewers must examine relationship evidence and must
+state that organizational independence is human-reviewed rather than cryptographically proved.
 
 After generating or rerunning evidence, open the result in
 [Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab). Resolve hard

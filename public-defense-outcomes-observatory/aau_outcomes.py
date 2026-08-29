@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import Any
 
 
-INDEX_VERSION = "aau-cyber-defense-evidence-index/0.1"
-REPORT_VERSION = "aau-public-defense-outcomes-report/0.1"
+INDEX_VERSION = "aau-cyber-defense-evidence-index/0.2"
+REPORT_VERSION = "aau-public-defense-outcomes-report/0.2"
 MAX_BYTES = 2_000_000
 KINDS = {"verified_fix", "containment_drill", "defender_campaign", "defense_benchmark"}
 LEVELS = {"designed", "synthetic_reference", "reference_exact", "independently_reproduced"}
@@ -61,7 +61,7 @@ def validate_index(index: dict[str, Any]) -> None:
     for record in records:
         required = {
             "artifact_id", "kind", "artifact_version", "artifact_sha256", "evidence_level",
-            "producer", "independent_reproduction", "measurements", "control_fingerprints",
+            "producer", "reproduction", "measurements", "control_fingerprints",
         }
         if not isinstance(record, dict) or set(record) != required:
             raise OutcomesError("record fields differ from the evidence index contract")
@@ -72,10 +72,31 @@ def validate_index(index: dict[str, Any]) -> None:
             raise OutcomesError("record has unsupported kind or evidence level")
         if not isinstance(record["artifact_sha256"], str) or len(record["artifact_sha256"]) != 64:
             raise OutcomesError("record artifact_sha256 is invalid")
-        if not isinstance(record["independent_reproduction"], bool):
-            raise OutcomesError("independent_reproduction must be boolean")
-        if record["evidence_level"] == "independently_reproduced" and not record["independent_reproduction"]:
-            raise OutcomesError("independent evidence label lacks reproduction flag")
+        reproduction = record["reproduction"]
+        if reproduction is not None:
+            required_reproduction = {
+                "adjudication_sha256", "challenge_sha256", "role_commitments_distinct",
+                "relationships_declared_independent", "independence_cryptographically_proved",
+            }
+            if not isinstance(reproduction, dict) or set(reproduction) != required_reproduction:
+                raise OutcomesError("record reproduction fields differ from the 0.2 contract")
+            for key in ("adjudication_sha256", "challenge_sha256"):
+                if (
+                    not isinstance(reproduction[key], str)
+                    or len(reproduction[key]) != 64
+                    or any(character not in "0123456789abcdef" for character in reproduction[key])
+                ):
+                    raise OutcomesError("record reproduction digest is invalid")
+            if (
+                reproduction["role_commitments_distinct"] is not True
+                or reproduction["relationships_declared_independent"] is not True
+                or reproduction["independence_cryptographically_proved"] is not False
+            ):
+                raise OutcomesError("record reproduction lacks the reviewed-independence boundary")
+        if record["evidence_level"] == "independently_reproduced" and reproduction is None:
+            raise OutcomesError("independent evidence label lacks verified adjudication")
+        if record["evidence_level"] != "independently_reproduced" and reproduction is not None:
+            raise OutcomesError("non-independent evidence cannot carry a reproduction adjudication")
         if not isinstance(record["measurements"], dict) or not isinstance(record["control_fingerprints"], list):
             raise OutcomesError("record measurements and fingerprints must use bounded containers")
     boundary = index.get("claim_boundary")
@@ -121,7 +142,7 @@ def evaluate(index: dict[str, Any]) -> dict[str, Any]:
             "evidence_level_counts": levels,
             "observation_counts_by_kind": observations_by_kind,
             "control_fingerprint_count": len(fingerprints),
-            "independent_reproduction_count": sum(record["independent_reproduction"] for record in records),
+            "independent_reproduction_count": sum(record["reproduction"] is not None for record in records),
         },
         "visible_gaps": gaps,
         "claim_boundary": {

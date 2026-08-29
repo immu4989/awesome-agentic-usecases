@@ -60,6 +60,12 @@ def main() -> None:
             "SHA256SUMS",
             "build_release.py",
         ),
+        WORKFLOWS / "reproduction-bundle.yml": (
+            "aau_reproduction.py verify-pack",
+            "aau_reproduction.py bundle",
+            "actions/attest@",
+            "SHA256SUMS",
+        ),
         ROOT / ".github" / "actions" / "aau-evaluate" / "action.yml": (
             "aau evaluate",
             "GITHUB_ACTION_PATH",
@@ -75,6 +81,10 @@ def main() -> None:
         ),
         ROOT / "federal-pilot-kit" / "THREAT_MODEL.md": ("## Security invariants",),
         ROOT / "federal-pilot-kit" / "RELEASE_VERIFICATION.md": ("gh attestation verify",),
+        ROOT / "independent-reproduction-exchange" / "RELEASE_VERIFICATION.md": (
+            "gh attestation verify",
+            "protocol_demonstration",
+        ),
         ROOT / "federal-pilot-kit" / "pilot-launch" / "README.md": ("30-Day",),
         ROOT / "federal-pilot-kit" / "lesson-record.schema.json": ("aau-federal-ai-lesson/0.4",),
         ROOT / "federal-pilot-kit" / "lessons" / "source-ledger.json": ("aau-federal-ai-lesson-sources/0.4",),

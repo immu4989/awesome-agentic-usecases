@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/independent-reproduction-adjudication.schema.json",
+  "title": "AAU independent reproduction adjudication 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["adjudication_version", "challenge_id", "challenge_sha256", "oracle_sha256", "submission_sha256", "review_sha256", "subject", "role_commitments", "role_review", "status", "evidence_level", "summary", "statement_sha256", "claim_boundary", "adjudication_sha256"],
+  "properties": {
+    "adjudication_version": {"const": "aau-independent-reproduction-adjudication/0.1"},
+    "challenge_id": {"type": "string", "minLength": 1, "maxLength": 120},
+    "challenge_sha256": {"$ref": "#/$defs/sha256"},
+    "oracle_sha256": {"$ref": "#/$defs/sha256"},
+    "submission_sha256": {"$ref": "#/$defs/sha256"},
+    "review_sha256": {"$ref": "#/$defs/sha256"},
+    "subject": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "kind", "sha256"],
+      "properties": {"name": {"const": "receipt.json"}, "kind": {"const": "defense_benchmark"}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "role_commitments": {
+      "type": "object", "required": ["issuer", "producer", "reviewer"], "additionalProperties": false,
+      "properties": {"issuer": {"$ref": "#/$defs/sha256"}, "producer": {"$ref": "#/$defs/sha256"}, "reviewer": {"$ref": "#/$defs/sha256"}}
+    },
+    "role_review": {
+      "type": "object", "additionalProperties": false,
+      "required": ["commitments_distinct", "relationships_declared_independent", "relationship_evidence_human_reviewed", "independence_cryptographically_proved"],
+      "properties": {
+        "commitments_distinct": {"type": "boolean"},
+        "relationships_declared_independent": {"type": "boolean"},
+        "relationship_evidence_human_reviewed": {"const": true},
+        "independence_cryptographically_proved": {"const": false}
+      }
+    },
+    "status": {"enum": ["protocol_demonstration", "independence_reviewed"]},
+    "evidence_level": {"enum": ["synthetic_reference", "independently_reproduced"]},
+    "summary": {"type": "object"},
+    "statement_sha256": {"$ref": "#/$defs/sha256"},
+    "claim_boundary": {"type": "object"},
+    "adjudication_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

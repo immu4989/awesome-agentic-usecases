@@ -77,7 +77,7 @@ and observed failure cards with a direct path to reproduction. Start with
 | A connected Starter + public receipt | [Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop) | A privacy-checked contribution pack, derived evidence level, share card, and credited PR path |
 | A reviewed task but no human comparator | [Human Baseline Lab](https://immu4989.github.io/awesome-agentic-usecases/#human-baseline-lab) | A blinded study pack, aggregate human-process measures, and same-suite agent comparison |
 | A model score but no evidence of public benefit | [Evidence Commons](https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons) | A hash-bound Impact Capsule with visible human, outcome, and reproduction gaps plus a safe partner path |
-| A vulnerability notice, agent-security incident, or defensive AI system | [Collective Cyber Defense Lab](https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense) | A verified-fix contract, containment drill, local continuity route, safe benchmark, privacy-bounded evidence mesh, and honest public outcome report |
+| A vulnerability notice, agent-security incident, or defensive AI system | [Collective Cyber Defense Lab](https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense) | A verified-fix contract, containment drill, local continuity route, safe benchmark, blind outside-reproduction protocol, evidence mesh, and honest public outcome report |
 | A tool-using or multi-agent system | [Agent Security Commons](https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons) | A runtime authority gate, 50-event conformance suite, incident regressions, matched control experiment, and recomputable receipts |
 | A public or synthetic AI inventory | [Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory) | Quality gaps, possible-overlap questions, bounded value measurements, TEV&V and clause coverage |
 | A public-sector AI mission | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A non-certifying 12-file assurance draft |
@@ -93,7 +93,7 @@ The [collective cyber-defense call](https://openai.com/collective-cyberdefense/)
 to verify high-risk fixes, security partners to measure containment and fix effectiveness,
 governments to support essential services, and frontier labs to make agent activity traceable and
 accountable. The **[Collective Cyber Defense Lab](https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense)**
-turns that agenda into six offline, forkable public modules:
+turns that agenda into seven offline, forkable public modules:
 
 | Open module | Concrete contribution |
 |---|---|
@@ -103,11 +103,14 @@ turns that agenda into six offline, forkable public modules:
 | [Frontier Defensive Capability Benchmark](frontier-defense-benchmark/) | Provides 20 non-weaponizable tasks across vulnerability prioritization, secure code, identity, containment, and essential-service continuity |
 | [Cyber Defense Evidence Mesh](cyber-defense-evidence-mesh/) | Exchanges artifact hashes, evidence levels, bounded measurements, control fingerprints, and an experimental OpenTelemetry map instead of sensitive raw logs |
 | [Public Defense Outcomes Observatory](public-defense-outcomes-observatory/) | Counts artifacts and family-specific observations separately, prohibits vendor or agency rankings, and exposes the absence of independent reproduction |
+| [Independent Reproduction Exchange](independent-reproduction-exchange/) | Separates issuer, reproducer, and reviewer; commits a hidden oracle; recomputes a revealed receipt; emits an in-toto byte binding; and suppresses small federated cells |
 
-The live page includes a **zero-upload continuity-aware route planner**. It reads a campaign JSON
-inside the browser tab and performs no scan, model call, network request, or change. The six
-committed artifacts are synthetic/reference protocol executions; the public observatory correctly
-shows **zero independent reproductions**. Nothing here is field-effectiveness evidence,
+The live page includes a **zero-upload continuity-aware route planner** and a local reproduction-
+adjudication preflight. They read selected JSON inside the browser tab and perform no scan, model
+call, network request, or change. The six evidence-mesh artifacts and revealed reproduction
+walkthrough are synthetic/reference protocol executions; the public observatory correctly shows
+**zero independent reproductions**. The walkthrough resolves to `protocol_demonstration` because
+its simulated roles share the maintainer workflow. Nothing here is field-effectiveness evidence,
 certification, compliance, government endorsement, or operational authorization.
 
 ```bash
@@ -123,6 +126,9 @@ python3 frontier-defense-benchmark/aau_defense_benchmark.py evaluate \
   frontier-defense-benchmark/examples/collective-defense-suite.json \
   frontier-defense-benchmark/examples/reference-protocol-responses.json \
   --out /tmp/benchmark-receipt.json
+
+python3 independent-reproduction-exchange/aau_reproduction.py verify-pack \
+  independent-reproduction-exchange/examples/revealed-protocol-demo
 ```
 
 ## Foundation: an open Agent Security Commons—from incident lesson to runtime proof

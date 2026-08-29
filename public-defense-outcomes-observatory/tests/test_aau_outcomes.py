@@ -17,11 +17,11 @@ def _index():
         records.append({
             "artifact_id": f"reference-{kind}", "kind": kind, "artifact_version": "0.1",
             "artifact_sha256": "a" * 64, "evidence_level": "synthetic_reference",
-            "producer": "AAU reference", "independent_reproduction": False,
+            "producer": "AAU reference", "reproduction": None,
             "measurements": {key: count}, "control_fingerprints": [kind],
         })
     return {
-        "index_version": "aau-cyber-defense-evidence-index/0.1", "mesh_id": "reference", "record_count": 4,
+        "index_version": "aau-cyber-defense-evidence-index/0.2", "mesh_id": "reference", "record_count": 4,
         "records": records,
         "claim_boundary": {"aggregate_public_evidence_only": True, "no_raw_logs_or_personal_data": True, "no_organizational_comparison": True, "not_threat_intelligence_or_certification": True},
     }
@@ -47,7 +47,25 @@ def test_report_is_deterministic_and_verifiable():
 def test_false_independence_fails_closed():
     index = _index()
     index["records"][0]["evidence_level"] = "independently_reproduced"
-    with pytest.raises(OutcomesError, match="lacks reproduction flag"):
+    with pytest.raises(OutcomesError, match="lacks verified adjudication"):
+        evaluate(index)
+
+
+def test_verified_adjudication_is_required_and_counted():
+    index = _index()
+    record = index["records"][0]
+    record["evidence_level"] = "independently_reproduced"
+    record["reproduction"] = {
+        "adjudication_sha256": "a" * 64, "challenge_sha256": "b" * 64,
+        "role_commitments_distinct": True, "relationships_declared_independent": True,
+        "independence_cryptographically_proved": False,
+    }
+    report = evaluate(index)
+    assert report["summary"]["independent_reproduction_count"] == 1
+    assert report["visible_gaps"] == []
+
+    record["reproduction"]["independence_cryptographically_proved"] = True
+    with pytest.raises(OutcomesError, match="reviewed-independence boundary"):
         evaluate(index)
 
 

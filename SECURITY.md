@@ -77,14 +77,31 @@ Verified Fix Commons, Agent Containment Drills, Essential-Service Defender-in-a-
 Defensive Capability Benchmark, the Cyber Defense Evidence Mesh, and the Public Defense Outcomes
 Observatory are defensive, offline reference tools. They enforce bounded JSON, reject symlinks and
 oversized inputs, refuse destructive overwrites, execute no input content, and make no live target,
-model, tool, credential, or network call. The browser planner uses `FileReader`; selected inventory
-stays inside the tab and is never transmitted by repository code.
+model, tool, credential, or network call. The browser planner and reproduction-adjudication
+preflight use `FileReader`; selected files stay inside the tab and are never transmitted by
+repository code.
 
 Examples use fictional asset and vulnerability identifiers and contain no exploit payload. Do not
 put a real inventory, raw log, target, credential, private incident record, personal data,
 controlled information, or classified information in a public issue, fork, pull request, receipt,
 or mesh. Hashes prove byte integrity—not truth, authorship, independence, field effectiveness,
 compliance, certification, endorsement, operational fitness, or authorization to change a system.
+
+## Independent Reproduction Exchange boundary
+
+The Exchange accepts only public or synthetic defensive benchmark files. It does not execute a
+submitted response, call a model, contact a target, read credentials, or verify a person's or
+organization's identity. The issuer must keep the oracle outside the reproducer's workspace until
+submission is frozen. The revealed public pack excludes raw transcripts and publishes only
+pseudonymous SHA-256 role commitments; do not derive those commitments from names, emails, account
+identifiers, or other low-entropy personal values.
+
+SHA-256 commitments and the in-toto statement prove byte relationships. They cannot prove that an
+oracle stayed secret, that a transcript is complete, or that two parties are independent. Those are
+explicit human-review claims. Attach and verify a signed GitHub or Sigstore attestation if workflow
+identity matters; the included local in-toto statement is deliberately labeled unsigned. Federated
+reports suppress cells smaller than three and omit commitments, but that is a narrow publication
+guard—not a formal privacy guarantee or permission to publish sensitive operational results.
 
 ## Repository and release supply chain
 
@@ -93,6 +110,9 @@ compliance, certification, endorsement, operational fitness, or authorization to
   Dependabot provide independent change signals.
 - Tagged Federal Pilot Kit releases include a deterministic ZIP, SHA-256 checksums, an SPDX 2.3
   SBOM, build-provenance attestation, and SBOM attestation.
+- The manual Reproduction protocol bundle verifies and deterministically packages the committed
+  revealed walkthrough, records a SHA-256 checksum, and creates a GitHub Artifact Attestation. Its
+  signed workflow identity does not promote `protocol_demonstration` to independent evidence.
 - Follow the [release verification procedure](federal-pilot-kit/RELEASE_VERIFICATION.md) before
   running a downloaded bundle. Checksums prove bytes; the GitHub attestation binds those bytes to
   a workflow and repository. Neither proves mission fitness, compliance, or authorization.

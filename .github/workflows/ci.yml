@@ -80,8 +80,9 @@ jobs:
           PYTHONPATH=agent-containment-drills pytest agent-containment-drills/tests -q
           PYTHONPATH=essential-service-defender-box pytest essential-service-defender-box/tests -q
           PYTHONPATH=frontier-defense-benchmark pytest frontier-defense-benchmark/tests -q
-          PYTHONPATH=cyber-defense-evidence-mesh pytest cyber-defense-evidence-mesh/tests -q
+          PYTHONPATH=cyber-defense-evidence-mesh:independent-reproduction-exchange pytest cyber-defense-evidence-mesh/tests -q
           PYTHONPATH=public-defense-outcomes-observatory pytest public-defense-outcomes-observatory/tests -q
+          PYTHONPATH=independent-reproduction-exchange pytest independent-reproduction-exchange/tests -q
           for fix in verified-fix-commons/examples/*.json; do
             fix_name="$(basename "$fix" .json)"
             python verified-fix-commons/aau_fix.py evaluate "$fix" --out "$RUNNER_TEMP/$fix_name-receipt.json"
@@ -95,13 +96,14 @@ jobs:
           python frontier-defense-benchmark/aau_defense_benchmark.py verify "$RUNNER_TEMP/defense-benchmark-receipt.json" --suite frontier-defense-benchmark/examples/collective-defense-suite.json --responses frontier-defense-benchmark/examples/reference-protocol-responses.json
           python docs/make_collective_cyber_data.py
           python docs/check_collective_cyber.py
+          python independent-reproduction-exchange/aau_reproduction.py verify-pack independent-reproduction-exchange/examples/revealed-protocol-demo
           python cyber-defense-evidence-mesh/aau_evidence_mesh.py build cyber-defense-evidence-mesh/examples/reference-mesh.json --out "$RUNNER_TEMP/defense-mesh"
           python cyber-defense-evidence-mesh/aau_evidence_mesh.py verify-pack "$RUNNER_TEMP/defense-mesh"
           python public-defense-outcomes-observatory/aau_outcomes.py evaluate "$RUNNER_TEMP/defense-mesh/evidence-index.json" --out "$RUNNER_TEMP/defense-outcomes.json"
           python public-defense-outcomes-observatory/aau_outcomes.py verify "$RUNNER_TEMP/defense-outcomes.json" --index "$RUNNER_TEMP/defense-mesh/evidence-index.json"
           node --check docs/collective-cyber-defense.js
-          ruff check verified-fix-commons agent-containment-drills essential-service-defender-box frontier-defense-benchmark cyber-defense-evidence-mesh public-defense-outcomes-observatory docs/make_collective_cyber_data.py docs/check_collective_cyber.py
-          git diff --exit-code docs/collective-cyber-defense-data.json cyber-defense-evidence-mesh/examples
+          ruff check verified-fix-commons agent-containment-drills essential-service-defender-box frontier-defense-benchmark cyber-defense-evidence-mesh public-defense-outcomes-observatory independent-reproduction-exchange docs/make_collective_cyber_data.py docs/check_collective_cyber.py
+          git diff --exit-code docs/collective-cyber-defense-data.json cyber-defense-evidence-mesh/examples independent-reproduction-exchange/examples/revealed-protocol-demo
       - name: Community Forge Gallery derives trust from evidence
         run: |
           python docs/make_gallery_data.py

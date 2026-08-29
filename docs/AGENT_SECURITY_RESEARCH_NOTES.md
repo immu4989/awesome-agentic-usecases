@@ -44,7 +44,7 @@ compensating controls, and secure AI-generated code; cybersecurity partners shou
 test containment and fix effectiveness and share accessible playbooks; governments should support
 essential services and authorized testing; frontier labs should improve observability, traceable
 agent identities, continuous monitoring, authorized testing, private disclosure, and verified
-fixes. The six-module Collective Cyber Defense Lab maps to those requests, but this mapping is an
+fixes. The seven-module Collective Cyber Defense Lab maps to those requests, but this mapping is an
 AAU interpretation and does not imply OpenAI review or endorsement.
 
 ## Vulnerability and evidence interchange

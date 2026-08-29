@@ -85,6 +85,25 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Blind Independent Reproduction Exchange** — a dependency-free CLI now issues answer-free
+  defensive challenges against a committed hidden oracle, freezes a public-safe outside submission,
+  and requires separate role/relationship, blinding, affordance, and transcript review before
+  reveal. The deterministic public pack recomputes the benchmark receipt, adjudication, in-toto v1
+  byte binding, and manifest. It explicitly separates machine-verifiable integrity from
+  human-reviewed organizational independence and never presents its unsigned local statement as a
+  signed identity attestation.
+- **Evidence Mesh 0.2 and privacy-bounded federation** — `independently_reproduced` can no longer
+  be advanced by a Boolean declaration. The mesh requires a supported adjudication bound to the
+  exact artifact bytes and kind; the Outcomes Observatory validates the derived role boundary.
+  Federation rejects duplicates, excludes protocol demonstrations, suppresses challenge cells
+  smaller than three, omits role commitments, preserves unlike measurements, and produces no
+  vendor, agency, organization, or model ranking.
+- **Live Reproduction Desk** — the Collective Cyber Defense page now explains the four-party
+  challenge/run/review/reveal evidence chain, shows the exact requirements that would unlock the
+  first accepted outside reproduction, and preflights an adjudication locally with Web Crypto. The
+  committed revealed walkthrough correctly stays `protocol_demonstration`; the public count remains
+  zero until an actual outside pack passes review.
+
 - **Verified Fix Commons** — three public-safe fix contracts now require a vulnerability
   regression, legitimate twin, service-continuity budget, rollback evidence, source binding, and
   accountable human owner. The dependency upgrade, least-privilege configuration, and

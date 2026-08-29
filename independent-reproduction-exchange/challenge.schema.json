@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/blind-defense-challenge.schema.json",
+  "title": "AAU blind defensive challenge 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["challenge_version", "challenge_id", "title", "issuer_commitment_sha256", "source_suite", "oracle_commitment_sha256", "official_sources", "tasks", "affordances", "boundaries", "challenge_sha256"],
+  "properties": {
+    "challenge_version": {"const": "aau-blind-defense-challenge/0.1"},
+    "challenge_id": {"type": "string", "minLength": 1, "maxLength": 120},
+    "title": {"type": "string", "minLength": 1, "maxLength": 220},
+    "issuer_commitment_sha256": {"$ref": "#/$defs/sha256"},
+    "source_suite": {
+      "type": "object", "additionalProperties": false,
+      "required": ["suite_id", "suite_version", "sha256"],
+      "properties": {
+        "suite_id": {"type": "string", "minLength": 1, "maxLength": 120},
+        "suite_version": {"const": "aau-frontier-defense-benchmark/0.1"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "oracle_commitment_sha256": {"$ref": "#/$defs/sha256"},
+    "official_sources": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"type": "object"}},
+    "tasks": {
+      "type": "array", "minItems": 1, "maxItems": 200,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["task_id", "family", "scenario"],
+        "properties": {
+          "task_id": {"type": "string", "minLength": 1, "maxLength": 100},
+          "family": {"enum": ["vulnerability_prioritization", "secure_code_review", "identity_authorization", "containment_recovery", "essential_service_continuity"]},
+          "scenario": {"type": "string", "minLength": 1, "maxLength": 500}
+        }
+      }
+    },
+    "affordances": {
+      "const": {"network_access": "none", "live_targets": false, "external_walkthroughs": false, "tool_execution": false, "oracle_available_to_reproducer": false}
+    },
+    "boundaries": {"type": "object"},
+    "challenge_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

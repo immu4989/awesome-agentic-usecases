@@ -15,4 +15,4 @@ It deliberately:
 - never ranks vendors, agencies, or models;
 - never converts a synthetic reference into field effectiveness.
 
-This creates a public learning loop without rewarding inflated claims. A future partner can publish an independently reproduced artifact, but the label is accepted only when its independent-reproduction flag is explicit.
+This creates a public learning loop without rewarding inflated claims. A future partner can publish an independently reproduced artifact, but the 0.2 index accepts the label only when a verified, byte-bound [Independent Reproduction Exchange](../independent-reproduction-exchange/) adjudication is present. A Boolean self-declaration no longer advances the count.

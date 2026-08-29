@@ -1,0 +1,41 @@
+name: Reproduction protocol bundle
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  verify-bundle-attest:
+    name: Verify, bundle, and attest the revealed protocol demo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Verify the complete revealed pack
+        run: python independent-reproduction-exchange/aau_reproduction.py verify-pack independent-reproduction-exchange/examples/revealed-protocol-demo
+      - name: Build deterministic protocol bundle and checksum
+        run: |
+          mkdir -p .dist
+          python independent-reproduction-exchange/aau_reproduction.py bundle independent-reproduction-exchange/examples/revealed-protocol-demo --out .dist/independent-reproduction-protocol-demo.zip
+          cd .dist
+          sha256sum independent-reproduction-protocol-demo.zip > SHA256SUMS
+      - name: Attest exact bundle bytes
+        uses: actions/attest@c32b4b8b198b65d0bd9d63490e847ff7b53989d4 # v4.0.0
+        with:
+          subject-path: .dist/independent-reproduction-protocol-demo.zip
+      - name: Upload bundle and checksum
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: independent-reproduction-protocol-demo
+          path: |
+            .dist/independent-reproduction-protocol-demo.zip
+            .dist/SHA256SUMS
+          if-no-files-found: error
