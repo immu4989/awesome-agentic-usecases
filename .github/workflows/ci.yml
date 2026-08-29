@@ -74,6 +74,34 @@ jobs:
           python docs/check_agent_security.py
           ruff check agentic-cyber-resilience agent-incident-regression-commons essential-services-defender-kits agent-control-observatory public-value-pilot-network docs/make_agent_security_data.py docs/check_agent_security.py
           git diff --exit-code docs/agent-security-data.json
+      - name: Collective Cyber Defense fixes, containment, continuity, and public evidence are reproducible
+        run: |
+          PYTHONPATH=verified-fix-commons pytest verified-fix-commons/tests -q
+          PYTHONPATH=agent-containment-drills pytest agent-containment-drills/tests -q
+          PYTHONPATH=essential-service-defender-box pytest essential-service-defender-box/tests -q
+          PYTHONPATH=frontier-defense-benchmark pytest frontier-defense-benchmark/tests -q
+          PYTHONPATH=cyber-defense-evidence-mesh pytest cyber-defense-evidence-mesh/tests -q
+          PYTHONPATH=public-defense-outcomes-observatory pytest public-defense-outcomes-observatory/tests -q
+          for fix in verified-fix-commons/examples/*.json; do
+            fix_name="$(basename "$fix" .json)"
+            python verified-fix-commons/aau_fix.py evaluate "$fix" --out "$RUNNER_TEMP/$fix_name-receipt.json"
+            python verified-fix-commons/aau_fix.py verify "$RUNNER_TEMP/$fix_name-receipt.json" --contract "$fix"
+          done
+          python agent-containment-drills/aau_containment.py evaluate agent-containment-drills/examples/reference-containment-drill.json --out "$RUNNER_TEMP/containment-receipt.json"
+          python agent-containment-drills/aau_containment.py verify "$RUNNER_TEMP/containment-receipt.json" --drill agent-containment-drills/examples/reference-containment-drill.json
+          python essential-service-defender-box/aau_defender_box.py assess essential-service-defender-box/examples/community-water-reference-campaign.json --out "$RUNNER_TEMP/defender-assessment.json"
+          python essential-service-defender-box/aau_defender_box.py verify "$RUNNER_TEMP/defender-assessment.json" --campaign essential-service-defender-box/examples/community-water-reference-campaign.json
+          python frontier-defense-benchmark/aau_defense_benchmark.py evaluate frontier-defense-benchmark/examples/collective-defense-suite.json frontier-defense-benchmark/examples/reference-protocol-responses.json --out "$RUNNER_TEMP/defense-benchmark-receipt.json"
+          python frontier-defense-benchmark/aau_defense_benchmark.py verify "$RUNNER_TEMP/defense-benchmark-receipt.json" --suite frontier-defense-benchmark/examples/collective-defense-suite.json --responses frontier-defense-benchmark/examples/reference-protocol-responses.json
+          python docs/make_collective_cyber_data.py
+          python docs/check_collective_cyber.py
+          python cyber-defense-evidence-mesh/aau_evidence_mesh.py build cyber-defense-evidence-mesh/examples/reference-mesh.json --out "$RUNNER_TEMP/defense-mesh"
+          python cyber-defense-evidence-mesh/aau_evidence_mesh.py verify-pack "$RUNNER_TEMP/defense-mesh"
+          python public-defense-outcomes-observatory/aau_outcomes.py evaluate "$RUNNER_TEMP/defense-mesh/evidence-index.json" --out "$RUNNER_TEMP/defense-outcomes.json"
+          python public-defense-outcomes-observatory/aau_outcomes.py verify "$RUNNER_TEMP/defense-outcomes.json" --index "$RUNNER_TEMP/defense-mesh/evidence-index.json"
+          node --check docs/collective-cyber-defense.js
+          ruff check verified-fix-commons agent-containment-drills essential-service-defender-box frontier-defense-benchmark cyber-defense-evidence-mesh public-defense-outcomes-observatory docs/make_collective_cyber_data.py docs/check_collective_cyber.py
+          git diff --exit-code docs/collective-cyber-defense-data.json cyber-defense-evidence-mesh/examples
       - name: Community Forge Gallery derives trust from evidence
         run: |
           python docs/make_gallery_data.py

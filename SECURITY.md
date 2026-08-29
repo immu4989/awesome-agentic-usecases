@@ -71,6 +71,21 @@ Evidence packs copy the supplied public or synthetic source record, so review th
 sharing the pack. The homepage fetches only the aggregate JSON generated from committed examples
 and does not accept or upload operational input.
 
+## Collective Cyber Defense input boundary
+
+Verified Fix Commons, Agent Containment Drills, Essential-Service Defender-in-a-Box, the Frontier
+Defensive Capability Benchmark, the Cyber Defense Evidence Mesh, and the Public Defense Outcomes
+Observatory are defensive, offline reference tools. They enforce bounded JSON, reject symlinks and
+oversized inputs, refuse destructive overwrites, execute no input content, and make no live target,
+model, tool, credential, or network call. The browser planner uses `FileReader`; selected inventory
+stays inside the tab and is never transmitted by repository code.
+
+Examples use fictional asset and vulnerability identifiers and contain no exploit payload. Do not
+put a real inventory, raw log, target, credential, private incident record, personal data,
+controlled information, or classified information in a public issue, fork, pull request, receipt,
+or mesh. Hashes prove byte integrity—not truth, authorship, independence, field effectiveness,
+compliance, certification, endorsement, operational fitness, or authorization to change a system.
+
 ## Repository and release supply chain
 
 - GitHub Actions are pinned to immutable commit SHAs and checkout credentials are not persisted.

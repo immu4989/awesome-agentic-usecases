@@ -1,0 +1,96 @@
+{
+  "contract_version": "aau-verified-fix-contract/0.1",
+  "fix_id": "synthetic-ai-dependency-upgrade-v1",
+  "title": "AI-generated dependency change with a verified safe upgrade",
+  "vulnerability": {
+    "identifier": "AAU-SYNTH-DEPENDENCY-001",
+    "affected_component": "pkg:pypi/example-parser@1.4.0",
+    "affected_range": "Synthetic version 1.4.0 only",
+    "exploitation_basis": "Synthetic unsafe parsing behavior modeled from public vulnerability-management guidance; no exploit payload is included",
+    "fixture_scope": "Local in-memory parser fixture with no network, subprocess, or production dependency"
+  },
+  "change": {
+    "kind": "upgrade",
+    "description": "Replace the synthetic affected parser with reviewed version 1.4.1 and retain the existing valid document path",
+    "implementation_ref": "change:synthetic-parser-1.4.1",
+    "rollback_ref": "rollback:restore-reviewed-1.4.0-fixture-only",
+    "accountable_owner": "human application security owner"
+  },
+  "protected_service": {
+    "name": "Synthetic document intake service",
+    "continuity_owner": "human service continuity owner",
+    "maximum_interruption_ms": 100,
+    "prohibited_actions": [
+      "Do not fetch or execute an untrusted document",
+      "Do not publish a production exploitability claim",
+      "Do not deploy a dependency without human approval"
+    ]
+  },
+  "public_sources": [
+    {
+      "source_id": "cisa-kev",
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "role": "Authoritative public prioritization input and machine-readable catalog pattern",
+      "reviewed_on": "2026-08-29"
+    },
+    {
+      "source_id": "cisa-vex",
+      "url": "https://www.cisa.gov/resources-tools/resources/minimum-requirements-vulnerability-exploitability-exchange-vex",
+      "role": "Minimum vulnerability exploitability exchange elements",
+      "reviewed_on": "2026-08-29"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "dep-001",
+      "title": "Affected synthetic parser remains detectable before the upgrade",
+      "case_kind": "vulnerability_regression",
+      "source_refs": ["cisa-kev"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 20, "rollback_ready": true, "control_active": false, "evidence_present": true},
+      "expected": {"before": "fail", "after": "pass"}
+    },
+    {
+      "case_id": "dep-002",
+      "title": "Reviewed ordinary document remains accepted",
+      "case_kind": "legitimate_twin",
+      "source_refs": ["cisa-vex"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 20, "rollback_ready": true, "control_active": false, "evidence_present": true},
+      "expected": {"before": "pass", "after": "pass"}
+    },
+    {
+      "case_id": "dep-003",
+      "title": "Service stays inside its declared interruption budget",
+      "case_kind": "service_continuity",
+      "source_refs": ["cisa-kev"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 20, "rollback_ready": true, "control_active": false, "evidence_present": true},
+      "expected": {"before": "pass", "after": "pass"}
+    },
+    {
+      "case_id": "dep-004",
+      "title": "Reviewed rollback procedure exists after the change",
+      "case_kind": "rollback_readiness",
+      "source_refs": ["cisa-vex"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 20, "rollback_ready": true, "control_active": false, "evidence_present": true},
+      "expected": {"before": "fail", "after": "pass"}
+    }
+  ],
+  "evidence": {
+    "tested_on": "2026-08-29",
+    "environment": "AAU local synthetic dependency fixture",
+    "runner": "aau-fix 0.1 deterministic safe-fixture evaluator",
+    "producer": "AAU maintainer reference implementation",
+    "run_id": "run:synthetic-ai-dependency-upgrade-v1"
+  },
+  "boundaries": {
+    "public_or_synthetic_only": true,
+    "no_live_target": true,
+    "no_exploit_payload": true,
+    "not_organizational_security_claim": true,
+    "not_compliance_or_certification": true,
+    "human_approved_change_required": true
+  }
+}

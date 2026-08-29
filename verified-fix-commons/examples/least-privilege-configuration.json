@@ -1,0 +1,96 @@
+{
+  "contract_version": "aau-verified-fix-contract/0.1",
+  "fix_id": "synthetic-least-privilege-configuration-v1",
+  "title": "Broad agent permission narrowed without breaking approved work",
+  "vulnerability": {
+    "identifier": "AAU-SYNTH-AUTHZ-001",
+    "affected_component": "synthetic:agent-tool-policy/v1",
+    "affected_range": "Policy epoch 1",
+    "exploitation_basis": "Synthetic excessive-permission state derived from public least-privilege and agent-authorization research",
+    "fixture_scope": "Inert policy records and simulated decisions only"
+  },
+  "change": {
+    "kind": "configuration",
+    "description": "Replace wildcard write authority with one task-scoped read action and explicit human approval for change operations",
+    "implementation_ref": "policy:least-privilege-epoch-2",
+    "rollback_ref": "rollback:restore-last-reviewed-policy",
+    "accountable_owner": "human identity and access management owner"
+  },
+  "protected_service": {
+    "name": "Synthetic agent operations gateway",
+    "continuity_owner": "human operations continuity owner",
+    "maximum_interruption_ms": 250,
+    "prohibited_actions": [
+      "Do not grant production authority",
+      "Do not accept credential possession as authorization",
+      "Do not change policy without human approval"
+    ]
+  },
+  "public_sources": [
+    {
+      "source_id": "nist-agent-identity",
+      "url": "https://www.nccoe.nist.gov/projects/software-and-ai-agent-identity-and-authorization",
+      "role": "Standards-based agent identity, management, authorization, and action guidance project",
+      "reviewed_on": "2026-08-29"
+    },
+    {
+      "source_id": "nist-agent-initiative",
+      "url": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
+      "role": "Open protocol, interoperability, and security research direction",
+      "reviewed_on": "2026-08-29"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "authz-001",
+      "title": "Wildcard write authority is removed",
+      "case_kind": "vulnerability_regression",
+      "source_refs": ["nist-agent-identity"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 40, "rollback_ready": true, "control_active": true, "evidence_present": true},
+      "expected": {"before": "fail", "after": "pass"}
+    },
+    {
+      "case_id": "authz-002",
+      "title": "Task-scoped inspection remains available",
+      "case_kind": "legitimate_twin",
+      "source_refs": ["nist-agent-identity"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 40, "rollback_ready": true, "control_active": true, "evidence_present": true},
+      "expected": {"before": "pass", "after": "pass"}
+    },
+    {
+      "case_id": "authz-003",
+      "title": "Policy update stays inside the interruption budget",
+      "case_kind": "service_continuity",
+      "source_refs": ["nist-agent-initiative"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 40, "rollback_ready": true, "control_active": true, "evidence_present": true},
+      "expected": {"before": "pass", "after": "pass"}
+    },
+    {
+      "case_id": "authz-004",
+      "title": "Last reviewed policy can be restored by the human owner",
+      "case_kind": "rollback_readiness",
+      "source_refs": ["nist-agent-initiative"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 40, "rollback_ready": true, "control_active": true, "evidence_present": true},
+      "expected": {"before": "fail", "after": "pass"}
+    }
+  ],
+  "evidence": {
+    "tested_on": "2026-08-29",
+    "environment": "AAU inert authorization policy fixture",
+    "runner": "aau-fix 0.1 deterministic safe-fixture evaluator",
+    "producer": "AAU maintainer reference implementation",
+    "run_id": "run:synthetic-least-privilege-configuration-v1"
+  },
+  "boundaries": {
+    "public_or_synthetic_only": true,
+    "no_live_target": true,
+    "no_exploit_payload": true,
+    "not_organizational_security_claim": true,
+    "not_compliance_or_certification": true,
+    "human_approved_change_required": true
+  }
+}

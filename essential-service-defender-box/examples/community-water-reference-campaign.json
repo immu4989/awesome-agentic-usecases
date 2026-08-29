@@ -1,0 +1,129 @@
+{
+  "campaign_version": "aau-essential-service-campaign/0.1",
+  "campaign_id": "synthetic-community-water-campaign-v1",
+  "title": "Community water continuity-aware vulnerability route exercise",
+  "sector": "Community water systems",
+  "as_of": "2026-08-29",
+  "official_sources": [
+    {
+      "source_id": "cisa-kev",
+      "publisher": "Cybersecurity and Infrastructure Security Agency",
+      "title": "Known Exploited Vulnerabilities Catalog",
+      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "retrieved_on": "2026-08-29"
+    },
+    {
+      "source_id": "cisa-vex",
+      "publisher": "Cybersecurity and Infrastructure Security Agency",
+      "title": "Minimum Requirements for Vulnerability Exploitability eXchange",
+      "url": "https://www.cisa.gov/resources-tools/resources/minimum-requirements-vulnerability-exploitability-exchange-vex",
+      "retrieved_on": "2026-08-29"
+    }
+  ],
+  "assets": [
+    {
+      "asset_id": "asset-office-portal",
+      "system": "Synthetic customer-service portal",
+      "product": "Training portal 4.x",
+      "version_evidence": "synthetic-sbom:portal-4.2",
+      "service_criticality": "moderate",
+      "patchability": "now",
+      "owner_role": "human:application-owner"
+    },
+    {
+      "asset_id": "asset-operations-console",
+      "system": "Synthetic isolated operations console",
+      "product": "Training console 2.x",
+      "version_evidence": "synthetic-inventory:console-2.1",
+      "service_criticality": "essential",
+      "patchability": "window_only",
+      "owner_role": "human:operations-manager"
+    },
+    {
+      "asset_id": "asset-lab-workstation",
+      "system": "Synthetic laboratory workstation",
+      "product": "Training client 8.x",
+      "version_evidence": "synthetic-inventory:client-8.0-unconfirmed",
+      "service_criticality": "high",
+      "patchability": "unavailable",
+      "owner_role": "human:lab-supervisor"
+    }
+  ],
+  "vulnerabilities": [
+    {
+      "vulnerability_id": "AAU-KEV-TRAINING-001",
+      "source_ref": "cisa-kev",
+      "known_exploited": true,
+      "due_date": "2026-09-05",
+      "affected_asset_ids": ["asset-office-portal", "asset-operations-console"],
+      "required_action": "Apply vendor mitigations or discontinue use according to the public advisory."
+    },
+    {
+      "vulnerability_id": "AAU-VEX-TRAINING-002",
+      "source_ref": "cisa-vex",
+      "known_exploited": false,
+      "due_date": "2026-09-19",
+      "affected_asset_ids": ["asset-lab-workstation"],
+      "required_action": "Resolve applicability using product and version evidence before selecting a treatment."
+    }
+  ],
+  "continuity_tests": [
+    {
+      "test_id": "continuity-portal-patch",
+      "asset_id": "asset-office-portal",
+      "service_available": true,
+      "observed_interruption_minutes": 2,
+      "max_interruption_minutes": 15,
+      "rollback_ready": true,
+      "evidence_ref": "synthetic:test-log/portal-patch"
+    },
+    {
+      "test_id": "continuity-console-compensating-control",
+      "asset_id": "asset-operations-console",
+      "service_available": true,
+      "observed_interruption_minutes": 0,
+      "max_interruption_minutes": 5,
+      "rollback_ready": true,
+      "evidence_ref": "synthetic:test-log/console-isolation"
+    }
+  ],
+  "decisions": [
+    {
+      "vulnerability_id": "AAU-KEV-TRAINING-001",
+      "asset_id": "asset-office-portal",
+      "applicability": "confirmed",
+      "route": "patch",
+      "continuity_test_id": "continuity-portal-patch",
+      "evidence_refs": ["synthetic:sbom-match/portal", "synthetic:change-ticket/portal"],
+      "human_approved": true
+    },
+    {
+      "vulnerability_id": "AAU-KEV-TRAINING-001",
+      "asset_id": "asset-operations-console",
+      "applicability": "confirmed",
+      "route": "compensating_control",
+      "continuity_test_id": "continuity-console-compensating-control",
+      "evidence_refs": ["synthetic:inventory-match/console", "synthetic:exception/console"],
+      "human_approved": true
+    },
+    {
+      "vulnerability_id": "AAU-VEX-TRAINING-002",
+      "asset_id": "asset-lab-workstation",
+      "applicability": "unknown",
+      "route": "investigate",
+      "continuity_test_id": null,
+      "evidence_refs": ["synthetic:version-gap/lab-client"],
+      "human_approved": false
+    }
+  ],
+  "boundaries": {
+    "synthetic_or_authorized_inventory": true,
+    "no_live_scanning": true,
+    "no_network_access": true,
+    "no_exploit_payloads": true,
+    "no_automatic_changes": true,
+    "human_approval_required": true,
+    "not_risk_assessment": true,
+    "not_compliance_claim": true
+  }
+}

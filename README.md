@@ -18,6 +18,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/?boundary=sterility-is-not-chemical-oos#boundary-lab">Boundary Lab</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder">Build a boundary</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab">Inspect a receipt</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense">Collective Cyber Defense Lab</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons">Agent Security Commons</a> ·
   <a href="agentic-cyber-resilience/">Agentic Cyber Resilience</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-starter">Agent Evidence Starter</a> ·
@@ -76,6 +77,7 @@ and observed failure cards with a direct path to reproduction. Start with
 | A connected Starter + public receipt | [Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop) | A privacy-checked contribution pack, derived evidence level, share card, and credited PR path |
 | A reviewed task but no human comparator | [Human Baseline Lab](https://immu4989.github.io/awesome-agentic-usecases/#human-baseline-lab) | A blinded study pack, aggregate human-process measures, and same-suite agent comparison |
 | A model score but no evidence of public benefit | [Evidence Commons](https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons) | A hash-bound Impact Capsule with visible human, outcome, and reproduction gaps plus a safe partner path |
+| A vulnerability notice, agent-security incident, or defensive AI system | [Collective Cyber Defense Lab](https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense) | A verified-fix contract, containment drill, local continuity route, safe benchmark, privacy-bounded evidence mesh, and honest public outcome report |
 | A tool-using or multi-agent system | [Agent Security Commons](https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons) | A runtime authority gate, 50-event conformance suite, incident regressions, matched control experiment, and recomputable receipts |
 | A public or synthetic AI inventory | [Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory) | Quality gaps, possible-overlap questions, bounded value measurements, TEV&V and clause coverage |
 | A public-sector AI mission | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A non-certifying 12-file assurance draft |
@@ -83,7 +85,47 @@ and observed failure cards with a direct path to reproduction. Start with
 | One risky decision boundary | [Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder) | A fork-ready counterfactual evaluation lab |
 | Nothing but a workflow description | [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) | A matched lab and Forge-compatible brief |
 
-## New: an open Agent Security Commons—from incident lesson to runtime proof
+## New: Collective Cyber Defense Lab—from public signal to reproducible evidence
+
+<a href="https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense"><img src="docs/assets/collective-cyber-defense.svg" alt="Collective cyber defense: a public signal moves through verified fix, containment, essential-service continuity, privacy-bounded evidence, and a visible independent-reproduction gap" width="100%"></a>
+
+The [collective cyber-defense call](https://openai.com/collective-cyberdefense/) asks organizations
+to verify high-risk fixes, security partners to measure containment and fix effectiveness,
+governments to support essential services, and frontier labs to make agent activity traceable and
+accountable. The **[Collective Cyber Defense Lab](https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense)**
+turns that agenda into six offline, forkable public modules:
+
+| Open module | Concrete contribution |
+|---|---|
+| [Verified Fix Commons](verified-fix-commons/) | Tests the vulnerability regression, legitimate twin, service continuity, rollback, and human-approved change; exports hash-chained receipts, OpenVEX-style statements, and SARIF |
+| [Agent Containment Drill Runner](agent-containment-drills/) | Measures parent stop, delegated-authority revocation, queued-work cancellation, monitor loss, evidence mutation, and human-gated recovery on separate clocks |
+| [Essential-Service Defender-in-a-Box](essential-service-defender-box/) | Routes authorized inventory evidence to patch, compensating control, investigation, or not-affected review while requiring continuity evidence and accountable approval |
+| [Frontier Defensive Capability Benchmark](frontier-defense-benchmark/) | Provides 20 non-weaponizable tasks across vulnerability prioritization, secure code, identity, containment, and essential-service continuity |
+| [Cyber Defense Evidence Mesh](cyber-defense-evidence-mesh/) | Exchanges artifact hashes, evidence levels, bounded measurements, control fingerprints, and an experimental OpenTelemetry map instead of sensitive raw logs |
+| [Public Defense Outcomes Observatory](public-defense-outcomes-observatory/) | Counts artifacts and family-specific observations separately, prohibits vendor or agency rankings, and exposes the absence of independent reproduction |
+
+The live page includes a **zero-upload continuity-aware route planner**. It reads a campaign JSON
+inside the browser tab and performs no scan, model call, network request, or change. The six
+committed artifacts are synthetic/reference protocol executions; the public observatory correctly
+shows **zero independent reproductions**. Nothing here is field-effectiveness evidence,
+certification, compliance, government endorsement, or operational authorization.
+
+```bash
+python3 verified-fix-commons/aau_fix.py evaluate \
+  verified-fix-commons/examples/ai-generated-dependency-upgrade.json \
+  --out /tmp/fix-receipt.json
+
+python3 agent-containment-drills/aau_containment.py evaluate \
+  agent-containment-drills/examples/reference-containment-drill.json \
+  --out /tmp/containment-receipt.json
+
+python3 frontier-defense-benchmark/aau_defense_benchmark.py evaluate \
+  frontier-defense-benchmark/examples/collective-defense-suite.json \
+  frontier-defense-benchmark/examples/reference-protocol-responses.json \
+  --out /tmp/benchmark-receipt.json
+```
+
+## Foundation: an open Agent Security Commons—from incident lesson to runtime proof
 
 <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons"><img src="docs/assets/agent-security-commons.svg" alt="Agent Security Commons: public incident lessons become regressions, runtime controls, essential-service exercises, matched experiments, and evidence-bounded pilots" width="100%"></a>
 

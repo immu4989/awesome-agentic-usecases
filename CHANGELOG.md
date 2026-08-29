@@ -85,6 +85,32 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Verified Fix Commons** — three public-safe fix contracts now require a vulnerability
+  regression, legitimate twin, service-continuity budget, rollback evidence, source binding, and
+  accountable human owner. The dependency upgrade, least-privilege configuration, and
+  essential-service compensating-control fixtures emit deterministic hash-chained receipts plus
+  OpenVEX-style and SARIF exports without claiming production exploitability or effectiveness.
+- **Agent Containment Drill Runner** — a 21-event synthetic drill measures pause, parent
+  revocation, delegated-authority revocation, queued-work cancellation, monitor loss, evidence
+  mutation, blocked unauthorized restart, and evidence-backed human recovery on separate clocks.
+- **Essential-Service Defender-in-a-Box** — a zero-network CLI and zero-upload browser workbench
+  route public/synthetic or authorized inventory evidence to patch, compensating control,
+  investigation, or not-affected review. Treatment gates require exact applicability, continuity,
+  rollback, evidence, and accountable approval; no scan or automatic change occurs.
+- **Frontier Defensive Capability Benchmark** — 20 safe, provider-neutral tasks cover
+  vulnerability prioritization, secure code review, identity and authorization, containment and
+  recovery, and essential-service continuity. Exactness, citations, human boundaries, and service
+  preservation remain separate; the committed 20/20 reference fixture is explicitly not a model
+  or vendor result.
+- **Cyber Defense Evidence Mesh and Public Defense Outcomes Observatory** — six public-safe
+  reference artifacts now flow through a hash-manifested evidence index, reusable control
+  fingerprints, and an experimental OpenTelemetry naming bridge. The observatory counts unlike
+  observation families separately, prohibits organizational rankings, and visibly reports that
+  no independent reproduction has yet been contributed.
+- **Collective Cyber Defense live lab** — a restrained public interface links the six-module
+  defense stack, derived reference receipts, primary-source ledger, containment clock, benchmark
+  families, Verified Fix cards, zero-upload local planner, and honest evidence-level gap display.
+
 - **Agent Security Commons and Agent Boundary Protocol 0.2** — the original dependency-free
   boundary verifier now has a stateful policy decision point, runtime state machine, delegation
   ceiling, policy-epoch and sequence checks, token-audience binding, revocation, monitor-loss

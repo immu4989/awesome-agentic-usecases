@@ -58,6 +58,17 @@ pilot proposals use the
 their evidence level must stay `designed` until external review, observation, comparison, and
 independent reproduction actually exist.
 
+To contribute a verified fix, containment reproduction, essential-service campaign, defensive
+benchmark response, or public evidence-mesh artifact, start with the
+[Collective Cyber Defense contribution form](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=collective-cyber-defense.yml).
+Only public, synthetic, or explicitly authorized aggregate evidence may enter the repository.
+Fixes must retain the legitimate twin, continuity test, rollback evidence, source binding, and
+accountable human approval. Containment results must disclose the executor and separately measure
+parent, child, queued-work, and recovery behavior. Never submit a live target, exploit payload,
+credential, private telemetry, inventory, incident record, personal data, controlled information,
+or classified information. `independently_reproduced` requires a producer independent of the
+original and a matching contract hash; a rerun by the original producer remains a reference run.
+
 After generating or rerunning evidence, open the result in
 [Receipt Lab](https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab). Resolve hard
 integrity gaps before submission and explain any open disclosure finding in the PR. A green

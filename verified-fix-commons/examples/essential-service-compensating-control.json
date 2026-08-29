@@ -1,0 +1,105 @@
+{
+  "contract_version": "aau-verified-fix-contract/0.1",
+  "fix_id": "synthetic-essential-service-compensating-control-v1",
+  "title": "Compensating control while an essential-service component awaits maintenance",
+  "vulnerability": {
+    "identifier": "AAU-SYNTH-LEGACY-001",
+    "affected_component": "synthetic:legacy-operations-console/v3",
+    "affected_range": "Synthetic legacy release 3.x",
+    "exploitation_basis": "Synthetic exposed management-path condition; no product or organization is represented",
+    "fixture_scope": "Offline network-policy and continuity records only"
+  },
+  "change": {
+    "kind": "compensating_control",
+    "description": "Remove the synthetic console from the exposed path, restrict management access, add monitoring, and set a human-owned replacement deadline",
+    "implementation_ref": "control:synthetic-isolation-monitoring-v1",
+    "rollback_ref": "rollback:human-approved-network-policy-v0",
+    "accountable_owner": "human essential-service security owner"
+  },
+  "protected_service": {
+    "name": "Synthetic essential-service operations console",
+    "continuity_owner": "human essential-service operations owner",
+    "maximum_interruption_ms": 500,
+    "prohibited_actions": [
+      "Do not interrupt the simulated safety function",
+      "Do not connect to an operational technology network",
+      "Do not treat the compensating control as permanent remediation"
+    ]
+  },
+  "public_sources": [
+    {
+      "source_id": "cisa-cpg",
+      "url": "https://www.cisa.gov/cybersecurity-performance-goals",
+      "role": "Cross-sector baseline practices for essential-service risk reduction",
+      "reviewed_on": "2026-08-29"
+    },
+    {
+      "source_id": "collective-defense",
+      "url": "https://openai.com/collective-cyberdefense/",
+      "role": "Public call to verify compensating controls without disrupting essential services",
+      "reviewed_on": "2026-08-29"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "essential-001",
+      "title": "Exposed management path is no longer reachable in the fixture",
+      "case_kind": "vulnerability_regression",
+      "source_refs": ["cisa-cpg"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 80, "rollback_ready": true, "control_active": true, "evidence_present": true},
+      "expected": {"before": "fail", "after": "pass"}
+    },
+    {
+      "case_id": "essential-002",
+      "title": "Approved local operations remain available",
+      "case_kind": "legitimate_twin",
+      "source_refs": ["collective-defense"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 80, "rollback_ready": true, "control_active": true, "evidence_present": true},
+      "expected": {"before": "pass", "after": "pass"}
+    },
+    {
+      "case_id": "essential-003",
+      "title": "Essential service remains available during the policy change",
+      "case_kind": "service_continuity",
+      "source_refs": ["collective-defense"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 80, "rollback_ready": true, "control_active": true, "evidence_present": true},
+      "expected": {"before": "pass", "after": "pass"}
+    },
+    {
+      "case_id": "essential-004",
+      "title": "Human owner retains a reviewed rollback path",
+      "case_kind": "rollback_readiness",
+      "source_refs": ["cisa-cpg"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 80, "rollback_ready": true, "control_active": true, "evidence_present": true},
+      "expected": {"before": "fail", "after": "pass"}
+    },
+    {
+      "case_id": "essential-005",
+      "title": "Temporary isolation and monitoring have committed evidence",
+      "case_kind": "compensating_control",
+      "source_refs": ["cisa-cpg", "collective-defense"],
+      "before": {"vulnerable": true, "legitimate_allowed": true, "service_available": true, "interruption_ms": 0, "rollback_ready": false, "control_active": false, "evidence_present": false},
+      "after": {"vulnerable": false, "legitimate_allowed": true, "service_available": true, "interruption_ms": 80, "rollback_ready": true, "control_active": true, "evidence_present": true},
+      "expected": {"before": "fail", "after": "pass"}
+    }
+  ],
+  "evidence": {
+    "tested_on": "2026-08-29",
+    "environment": "AAU offline essential-service continuity fixture",
+    "runner": "aau-fix 0.1 deterministic safe-fixture evaluator",
+    "producer": "AAU maintainer reference implementation",
+    "run_id": "run:synthetic-essential-service-compensating-control-v1"
+  },
+  "boundaries": {
+    "public_or_synthetic_only": true,
+    "no_live_target": true,
+    "no_exploit_payload": true,
+    "not_organizational_security_claim": true,
+    "not_compliance_or_certification": true,
+    "human_approved_change_required": true
+  }
+}

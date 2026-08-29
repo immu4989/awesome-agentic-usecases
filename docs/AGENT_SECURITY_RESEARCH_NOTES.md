@@ -38,6 +38,41 @@ AAU response: the Agent Incident Regression Commons accepts only public syntheti
 requires each lesson to end in paired pre-fix/post-fix outcomes plus a legitimate twin. It is not
 an original incident reconstruction, attribution, exploit range, or production-fix claim.
 
+The same call makes distinct requests of four groups: organizations should fix the highest-risk
+weaknesses, verify changes without disrupting essential services, use least privilege, test
+compensating controls, and secure AI-generated code; cybersecurity partners should continuously
+test containment and fix effectiveness and share accessible playbooks; governments should support
+essential services and authorized testing; frontier labs should improve observability, traceable
+agent identities, continuous monitoring, authorized testing, private disclosure, and verified
+fixes. The six-module Collective Cyber Defense Lab maps to those requests, but this mapping is an
+AAU interpretation and does not imply OpenAI review or endorsement.
+
+## Vulnerability and evidence interchange
+
+- [CISA Known Exploited Vulnerabilities Catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog),
+  reviewed 2026-08-29: provides an authoritative prioritization input and machine-readable CSV,
+  JSON, and schema resources for vulnerabilities known to be exploited in the wild.
+- [CISA Minimum Requirements for Vulnerability Exploitability eXchange](https://www.cisa.gov/resources-tools/resources/minimum-requirements-vulnerability-exploitability-exchange-vex),
+  reviewed 2026-08-29: defines minimum elements for communicating whether a product is affected,
+  not affected, fixed, or under investigation.
+- [OpenTelemetry GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai),
+  reviewed 2026-08-29: maintains developing conventions for generative-AI operations and agent
+  spans, events, and metrics.
+
+AAU response: Verified Fix packs offer OpenVEX-style and SARIF views of public/synthetic fixture
+results. The Evidence Mesh adds a deliberately experimental OpenTelemetry naming map; AAU-specific
+attributes are labeled as extensions, not official semantic conventions. No exporter, collector,
+telemetry backend, or threat-intelligence feed is implemented.
+
+## Evidence-level boundary
+
+The committed Verified Fix, Containment, Defender, and Benchmark artifacts are deterministic
+reference executions. The benchmark's 20/20 fixture is hand-authored protocol data, not a model
+result. The Public Defense Outcomes Observatory reports zero independent reproductions at this
+research cut. These artifacts establish reproducibility of the local evaluator only; they do not
+establish field effectiveness, production containment, exploitability, compliance, certification,
+government endorsement, or operational authorization.
+
 ## MCP authorization
 
 - [MCP authorization specification](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization),

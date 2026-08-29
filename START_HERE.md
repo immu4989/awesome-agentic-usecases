@@ -91,6 +91,16 @@ certification, compliance, production validation, or an Authority to Operate. St
 [control observatory](agent-control-observatory/), or
 [public-value pilot network](public-value-pilot-network/).
 
+If your job starts with a vulnerability notice, an agent-security incident, an essential service,
+or a defensive AI capability, open the
+**[Collective Cyber Defense Lab](https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense)**.
+Use Verified Fix Commons to preserve the legitimate twin and service while closing a safe-fixture
+regression; use the Containment Drill Runner to measure parent, child, and queued-work stops; use
+Defender-in-a-Box to plan locally from public, synthetic, or authorized inventory; or evaluate a
+provider-neutral response file against 20 safe defensive tasks. Publish only the aggregate receipt
+through the Evidence Mesh. The observatory keeps reference results and independent reproduction
+separate and never ranks vendors, agencies, or models.
+
 If you have a workflow but do not know which lab fits, start with
 **[AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio)**. It matches
 your description to the full verified catalog, explains the evidence behind each result,
