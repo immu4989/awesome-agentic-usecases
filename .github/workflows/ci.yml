@@ -93,12 +93,18 @@ jobs:
           node --check docs/assurance.js
           ruff check portable-agent-assurance tev-v-athlon-profile docs/make_assurance_data.py docs/check_assurance.py
           git diff --exit-code docs/assurance-data.json portable-agent-assurance/examples/reference-pack tev-v-athlon-profile/examples/reference-pack
-      - name: Agent releases, outside reproduction, incident exchange, and source freshness are verifiable
+      - name: Agent releases, authority BOMs, outside reproduction, incidents, and source freshness are verifiable
         run: |
-          pytest harness/tests/test_release_gate.py -q
+          pytest harness/tests/test_release_gate.py harness/tests/test_agent_bom.py -q
           python -m aau_harness.release_gate verify agent-release-gate/examples/reference-pack
           python -m aau_harness.release_gate assess agent-release-gate/examples/baseline/release-manifest.json agent-release-gate/examples/candidate/release-manifest.json agent-release-gate/examples/release-policy.json agent-release-gate/examples/evidence-plan.json --command "python agent-release-gate/examples/reference_adapter.py" --approval agent-release-gate/examples/approval.json --out "$RUNNER_TEMP/aau-release-pack"
           python -m aau_harness.release_gate verify "$RUNNER_TEMP/aau-release-pack"
+          python -m aau_harness.agent_bom validate agent-capability-bom/examples/candidate.json
+          python -m aau_harness.agent_bom diff agent-capability-bom/examples/baseline.json agent-capability-bom/examples/candidate.json --out "$RUNNER_TEMP/aau-agent-bom-diff.json"
+          cmp "$RUNNER_TEMP/aau-agent-bom-diff.json" agent-capability-bom/examples/reference-diff.json
+          python -m aau_harness.agent_bom verify agent-capability-bom/examples/reference-pack
+          python -m aau_harness.agent_bom pack agent-capability-bom/examples/candidate.json --out "$RUNNER_TEMP/aau-agent-bom-pack"
+          python -m aau_harness.agent_bom verify "$RUNNER_TEMP/aau-agent-bom-pack"
           python reproduction-challenges/submit.py verify-campaign
           PYTHONPATH=agent-incident-exchange pytest agent-incident-exchange/tests -q
           python agent-incident-exchange/make_exchange.py
@@ -109,7 +115,7 @@ jobs:
           python docs/make_release_gate_data.py
           python docs/check_release_gate.py
           node --check docs/release-gate.js
-          ruff check harness/src/aau_harness/release_gate.py harness/tests/test_release_gate.py agent-release-gate agent-incident-exchange reproduction-challenges policy-freshness docs/make_release_gate_data.py docs/check_release_gate.py
+          ruff check harness/src/aau_harness/release_gate.py harness/src/aau_harness/agent_bom.py harness/tests/test_release_gate.py harness/tests/test_agent_bom.py agent-release-gate agent-capability-bom agent-incident-exchange reproduction-challenges policy-freshness docs/make_release_gate_data.py docs/check_release_gate.py
           git diff --exit-code agent-incident-exchange/examples/reference-exchange.json docs/release-gate-data.json agent-release-gate/examples/reference-pack agent-incident-exchange/examples/reference-pack
       - name: Collective Cyber Defense fixes, containment, continuity, and public evidence are reproducible
         run: |

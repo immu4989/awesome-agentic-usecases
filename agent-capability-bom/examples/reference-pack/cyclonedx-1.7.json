@@ -1,0 +1,129 @@
+{
+  "$schema": "https://cyclonedx.org/schema/bom-1.7.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.7",
+  "serialNumber": "urn:uuid:9f9b7c2a-0bee-55fa-9907-62fddc187286",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-08-30T19:00:00Z",
+    "component": {
+      "type": "application",
+      "bom-ref": "agent:public-records-routing-agent",
+      "name": "public-records-routing-agent",
+      "version": "1.1.0",
+      "properties": [
+        {
+          "name": "aau:agent:bom-version",
+          "value": "aau-agent-capability-bom/1.0"
+        },
+        {
+          "name": "aau:agent:owner-role",
+          "value": "Public Records Program Manager"
+        },
+        {
+          "name": "aau:agent:generation-context",
+          "value": "build"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "type": "machine-learning-model",
+      "bom-ref": "routing-model",
+      "name": "records-router-v1",
+      "version": "1.1.0",
+      "supplier": {
+        "name": "synthetic-reference"
+      },
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1111111111111111111111111111111111111111111111111111111111111111"
+        }
+      ],
+      "properties": [
+        {
+          "name": "aau:agent:model:role",
+          "value": "classify public synthetic requests"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "bom-ref": "records-catalog",
+      "name": "records-catalog",
+      "version": "1.1.0",
+      "properties": [
+        {
+          "name": "aau:agent:tool:protocol",
+          "value": "MCP"
+        },
+        {
+          "name": "aau:agent:tool:side-effect",
+          "value": "prepare"
+        },
+        {
+          "name": "aau:agent:tool:operations",
+          "value": "records.prepare_draft,records.search"
+        },
+        {
+          "name": "aau:agent:tool:resource-scopes",
+          "value": "cases/public/*,cases/public/drafts/*"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "bom-ref": "review-queue",
+      "name": "review-queue",
+      "version": "1.1.0",
+      "properties": [
+        {
+          "name": "aau:agent:tool:protocol",
+          "value": "HTTP"
+        },
+        {
+          "name": "aau:agent:tool:side-effect",
+          "value": "prepare"
+        },
+        {
+          "name": "aau:agent:tool:operations",
+          "value": "review.prepare"
+        },
+        {
+          "name": "aau:agent:tool:resource-scopes",
+          "value": "queues/records-review"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "agent:public-records-routing-agent",
+      "dependsOn": [
+        "records-catalog",
+        "review-queue",
+        "routing-model"
+      ]
+    }
+  ],
+  "properties": [
+    {
+      "name": "aau:agent:authority-count",
+      "value": "2"
+    },
+    {
+      "name": "aau:agent:data-route-count",
+      "value": "1"
+    },
+    {
+      "name": "aau:agent:evidence-binding-count",
+      "value": "1"
+    },
+    {
+      "name": "aau:agent:inventory-is-not-authorization",
+      "value": "true"
+    }
+  ]
+}

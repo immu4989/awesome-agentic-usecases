@@ -35,6 +35,10 @@ def main() -> None:
         raise SystemExit("independent reproduction must be derived, never inferred")
     if expected["freshness"]["source_count"] != expected["freshness"]["baseline_count"]:
         raise SystemExit("all policy-source records need explicit baselines")
+    if expected["capability_bom"]["status"] != "human_review_required":
+        raise SystemExit("a valid public AABOM must remain human-review bounded")
+    if expected["capability_bom"]["production_identity_verified"] is not False:
+        raise SystemExit("the public AABOM cannot claim verified production identity")
     html = (DOCS / "index.html").read_text()
     for marker in (
         'id="release-gate"',
@@ -42,6 +46,7 @@ def main() -> None:
         "not confidence.",
         'href="release-gate.css?v=1"',
         'src="release-gate.js?v=1"',
+        'id="agent-capability-bom"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing release-operations marker: {marker}")

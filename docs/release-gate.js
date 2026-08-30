@@ -58,6 +58,23 @@
     });
   }
 
+  function renderBomFindings(findings) {
+    const target = node("release-bom-findings");
+    if (!target) return;
+    target.replaceChildren();
+    findings.forEach((finding) => {
+      const row = document.createElement("li");
+      const code = document.createElement("code");
+      code.textContent = finding.code;
+      const copy = document.createElement("span");
+      copy.textContent = `${finding.subject} · ${finding.detail}`;
+      const state = document.createElement("b");
+      state.textContent = finding.severity;
+      row.append(code, copy, state);
+      target.append(row);
+    });
+  }
+
   fetch("release-gate-data.json")
     .then((response) => { if (!response.ok) throw new Error("release data unavailable"); return response.json(); })
     .then((data) => {
@@ -79,6 +96,14 @@
       renderChanges(release.changes);
       renderChallenges(data.reproduction.challenges);
       renderIncidents(data.incidents.entries);
+      set("release-bom-tool-count", data.capability_bom.tool_count);
+      set("release-bom-authority-count", data.capability_bom.authority_count);
+      set("release-bom-route-count", data.capability_bom.route_count);
+      set("release-bom-evidence-count", data.capability_bom.evidence_count);
+      set("release-bom-finding-count", data.capability_bom.finding_count);
+      set("release-bom-status", data.capability_bom.diff_status.replaceAll("_", " "));
+      set("release-bom-cdx", data.capability_bom.cyclonedx_version);
+      renderBomFindings(data.capability_bom.findings);
     })
     .catch((error) => set("release-data-status", `Evidence view unavailable: ${error.message}`));
 })();

@@ -24,6 +24,10 @@ def build() -> dict:
     campaign = load("reproduction-challenges/campaign.json")
     exchange = load("agent-incident-exchange/examples/reference-exchange.json")
     sources = load("policy-freshness/sources.json")
+    capability_bom = load("agent-capability-bom/examples/candidate.json")
+    capability_diff = load("agent-capability-bom/examples/reference-diff.json")
+    capability_review = load("agent-capability-bom/examples/reference-pack/authority-review.json")
+    cyclonedx = load("agent-capability-bom/examples/reference-pack/cyclonedx-1.7.json")
     oscal_result = oscal["assessment-results"]["results"][0]
     formats = sorted(
         path.name for path in (ROOT / "agent-incident-exchange/examples/reference-pack").glob("*.*json")
@@ -77,6 +81,22 @@ def build() -> dict:
                 for row in exchange["entries"]
             ],
         },
+        "capability_bom": {
+            "bom_id": capability_bom["bom_id"],
+            "status": capability_review["status"],
+            "owner_role": capability_bom["accountability"]["owner_role"],
+            "model_count": len(capability_bom["models"]),
+            "tool_count": len(capability_bom["tools"]),
+            "authority_count": len(capability_bom["authorities"]),
+            "route_count": len(capability_bom["data_routes"]),
+            "evidence_count": len(capability_bom["evidence"]),
+            "diff_status": capability_diff["status"],
+            "finding_count": capability_diff["finding_count"],
+            "blocking_count": capability_diff["blocking_count"],
+            "findings": capability_diff["findings"],
+            "cyclonedx_version": cyclonedx["specVersion"],
+            "production_identity_verified": capability_bom["accountability"]["production_identity_verified"],
+        },
         "freshness": {
             "source_count": len(sources["sources"]),
             "baseline_count": sum(row["baseline"]["content_sha256"] is not None for row in sources["sources"]),
@@ -100,6 +120,7 @@ def build() -> dict:
             "incident_exchange_excludes_exploit_and_sensitive_data": True,
             "source_monitor_does_not_interpret_policy": True,
             "oscal_export_is_experimental_and_non_certifying": True,
+            "capability_inventory_is_not_live_authorization": True,
         },
     }
 

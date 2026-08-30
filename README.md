@@ -14,6 +14,7 @@
 <p align="center">
   <a href="START_HERE.md">Start here</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#release-gate">Agent Release Gate</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-capability-bom">Authority BOM</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#playground">60-second lab</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance">Portable Agent Assurance</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-mission">Federal Mission Studio</a> ·
@@ -42,6 +43,7 @@ and observed failure cards with a direct path to reproduction. Start with
 | I already have… | Start here | Leave with… |
 |---|---|---|
 | A candidate agent release | [Agent Release Gate](https://immu4989.github.io/awesome-agentic-usecases/#release-gate) | A byte-exact change map, impact-selected tests, fail-closed decision, experimental OSCAL view, and verifiable evidence pack |
+| An agent deployment whose real authority is hard to see | [Agent Capability & Authority BOM](agent-capability-bom/) | A strict model/tool/operation/scope/lease/route inventory, widening diff, CycloneDX 1.7 projection, and tamper-evident pack |
 | An outside team ready to reproduce a claim | [Fork-to-Reproduce](reproduction-challenges/) | An answer-free challenge, oracle commitment, fork-bound submission, and GitHub-attested bytes for separate human adjudication |
 | A public agent-security lesson | [Agent Incident Exchange](agent-incident-exchange/) | A safe regression record plus SARIF, OpenVEX, and experimental CSAF/OCSF bridge exports |
 | An AI agent or endpoint | [Agent Evidence Starter](https://immu4989.github.io/awesome-agentic-usecases/#agent-starter) | A runnable synthetic suite, adapters, tests, CI, visual, manifest, and privacy-bounded receipt |
@@ -91,6 +93,27 @@ contain only task inputs and oracle commitments. The **[Agent Incident Exchange]
 turns public or synthetic lessons into clean-twin regressions and interoperable findings, while the
 **[Policy Freshness Radar](policy-freshness/)** watches nine official source baselines and opens a
 human-review issue without interpreting policy or editing tests.
+
+## Agent Capability & Authority BOM—from model inventory to blast-radius visibility
+
+The experimental **[AABOM profile](agent-capability-bom/)** fills the operational gap between a
+model or software inventory and the authority an agent can exercise. One strict public contract
+binds the model to callable tools, operations, resource scopes, expiring leases, delegation,
+revocation, data routes, accountable ownership, monitors, safe stop, rollback, and evidence.
+
+```bash
+aau bom diff \
+  agent-capability-bom/examples/baseline.json \
+  agent-capability-bom/examples/candidate.json
+aau bom verify agent-capability-bom/examples/reference-pack
+```
+
+The reference diff finds five meaningful widening facts even though its model is unchanged. A
+removed human-approval boundary blocks; ordinary rotation of an equal-duration lease does not
+create a false extension alert. The pack includes an officially schema-validated CycloneDX 1.7
+projection and unsigned in-toto byte binding. A valid AABOM remains `human_review_required`: it is
+not verified identity, a credential, live authorization, safety evidence, certification,
+compliance, deployment approval, government endorsement, or an ATO.
 
 ## Portable Agent Assurance—from identity to exact protocol evidence
 

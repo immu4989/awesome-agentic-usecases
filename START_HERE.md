@@ -21,6 +21,21 @@ pip install -e harness
 aau release verify agent-release-gate/examples/reference-pack
 ```
 
+If the release inventory still cannot answer **what the agent may reach and attempt**, open the
+**[Agent Capability & Authority BOM](agent-capability-bom/)**. It links models to tools,
+operations, resource scopes, expiring authority leases, delegation, revocation, data routes,
+accountable ownership, stop controls, rollback, and evidence. Diff two releases to surface
+authority widening even when the model did not change:
+
+```bash
+aau bom diff agent-capability-bom/examples/baseline.json \
+  agent-capability-bom/examples/candidate.json
+aau bom verify agent-capability-bom/examples/reference-pack
+```
+
+The inventory complements SBOM and AI/ML-BOM practice; it is not a credential, enforcement point,
+verified identity, certification, deployment approval, compliance result, or ATO.
+
 If you are outside the maintainer workflow and want to test a public claim, choose one of the
 three [Fork-to-Reproduce challenges](reproduction-challenges/). You receive six tasks and an
 oracle commitment—not the gold outcomes. The manual workflow builds and attests your exact

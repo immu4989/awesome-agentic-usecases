@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-capability-bom-1.0.json",
+  "title": "AAU Agent Capability and Authority Bill of Materials 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "bom_version", "bom_id", "agent_id", "release_id", "generated_at",
+    "generation_context", "accountability", "models", "tools", "authorities",
+    "data_routes", "controls", "evidence", "sharing"
+  ],
+  "properties": {
+    "bom_version": {"const": "aau-agent-capability-bom/1.0"},
+    "bom_id": {"$ref": "#/$defs/text160"},
+    "agent_id": {"$ref": "#/$defs/text160"},
+    "release_id": {"$ref": "#/$defs/text160"},
+    "generated_at": {"type": "string", "format": "date-time", "maxLength": 40},
+    "generation_context": {"enum": ["design", "source", "build", "deployed"]},
+    "accountability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner_role", "human_release_authority_preserved", "production_identity_verified"],
+      "properties": {
+        "owner_role": {"$ref": "#/$defs/text160"},
+        "human_release_authority_preserved": {"const": true},
+        "production_identity_verified": {"const": false}
+      }
+    },
+    "models": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component_id", "provider", "model_ref", "digest", "role"],
+        "properties": {
+          "component_id": {"$ref": "#/$defs/text120"},
+          "provider": {"$ref": "#/$defs/text200"},
+          "model_ref": {"$ref": "#/$defs/text200"},
+          "digest": {"$ref": "#/$defs/sha256"},
+          "role": {"$ref": "#/$defs/text200"}
+        }
+      }
+    },
+    "tools": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component_id", "protocol", "operations", "side_effect", "resource_scopes"],
+        "properties": {
+          "component_id": {"$ref": "#/$defs/text120"},
+          "protocol": {"enum": ["MCP", "A2A", "HTTP", "CLI", "other"]},
+          "operations": {"$ref": "#/$defs/nonemptyStringList"},
+          "side_effect": {"enum": ["read", "prepare", "write", "irreversible"]},
+          "resource_scopes": {"$ref": "#/$defs/nonemptyStringList"}
+        }
+      }
+    },
+    "authorities": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "authority_id", "subject", "tool_ids", "operations", "resource_scopes",
+          "delegation_depth", "not_before", "expires_at", "revocation_channel",
+          "human_approval_required"
+        ],
+        "properties": {
+          "authority_id": {"$ref": "#/$defs/text120"},
+          "subject": {"$ref": "#/$defs/text200"},
+          "tool_ids": {"$ref": "#/$defs/nonemptyStringList"},
+          "operations": {"$ref": "#/$defs/nonemptyStringList"},
+          "resource_scopes": {"$ref": "#/$defs/nonemptyStringList"},
+          "delegation_depth": {"type": "integer", "minimum": 0, "maximum": 20},
+          "not_before": {"type": "string", "format": "date-time", "maxLength": 40},
+          "expires_at": {"type": "string", "format": "date-time", "maxLength": 40},
+          "revocation_channel": {"type": "string", "minLength": 1, "maxLength": 300},
+          "human_approval_required": {"type": "boolean"}
+        }
+      }
+    },
+    "data_routes": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["route_id", "source", "destination", "data_classes", "egress_allowed", "retention_days"],
+        "properties": {
+          "route_id": {"$ref": "#/$defs/text120"},
+          "source": {"$ref": "#/$defs/text200"},
+          "destination": {"$ref": "#/$defs/text200"},
+          "data_classes": {"$ref": "#/$defs/nonemptyStringList"},
+          "egress_allowed": {"type": "boolean"},
+          "retention_days": {"type": "integer", "minimum": 0, "maximum": 36500}
+        }
+      }
+    },
+    "controls": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["monitor_ids", "safe_stop", "restart_authority", "rollback"],
+      "properties": {
+        "monitor_ids": {"$ref": "#/$defs/nonemptyStringList"},
+        "safe_stop": {"type": "string", "minLength": 1, "maxLength": 300},
+        "restart_authority": {"type": "string", "minLength": 1, "maxLength": 300},
+        "rollback": {"type": "string", "minLength": 1, "maxLength": 300}
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "kind", "sha256", "uri"],
+        "properties": {
+          "evidence_id": {"$ref": "#/$defs/text120"},
+          "kind": {
+            "enum": [
+              "evaluation_receipt", "release_pack", "incident_regression",
+              "reproduction", "monitoring", "rollback_test", "other"
+            ]
+          },
+          "sha256": {"$ref": "#/$defs/sha256"},
+          "uri": {"type": "string", "minLength": 1, "maxLength": 500}
+        }
+      }
+    },
+    "sharing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "public_or_synthetic_only", "contains_personal_data", "contains_credentials",
+        "contains_nonpublic_configuration", "contains_controlled_information"
+      ],
+      "properties": {
+        "public_or_synthetic_only": {"const": true},
+        "contains_personal_data": {"const": false},
+        "contains_credentials": {"const": false},
+        "contains_nonpublic_configuration": {"const": false},
+        "contains_controlled_information": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "text120": {"type": "string", "minLength": 1, "maxLength": 120},
+    "text160": {"type": "string", "minLength": 1, "maxLength": 160},
+    "text200": {"type": "string", "minLength": 1, "maxLength": 200},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "nonemptyStringList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 200}
+    }
+  }
+}

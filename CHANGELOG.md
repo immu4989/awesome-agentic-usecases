@@ -100,6 +100,21 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Agent Capability & Authority Bill of Materials** — `aau bom` now inventories models, tools,
+  operations, resource scopes, expiring authority leases, delegation, revocation, data routes,
+  accountable ownership, controls, and evidence in one strict public contract. Cross-reference
+  violations, unsafe sharing claims, and consequential authority without a human boundary fail
+  closed.
+- **Directional authority-diff and interoperable evidence** — the reference pair finds five
+  widening facts without a trust score, blocks removed human approval, compares lease duration
+  instead of producing rotation noise, exports an officially schema-validated CycloneDX 1.7
+  projection, and emits a deterministic pack with unsigned in-toto byte bindings.
+- **Live blast-radius view** — the release-operations surface now renders the AABOM inventory and
+  derived widening findings from committed evidence. Research notes ground the profile in current
+  NIST, NCCoE, CISA, CycloneDX, and in-toto primary sources while explicitly excluding standards
+  endorsement, live authorization, verified identity, safety, compliance, deployment, and ATO
+  claims.
+
 - **Portable Agent Assurance Envelope** — a dependency-free offline verifier binds a deliberately
   public synthetic workload credential to its accountable operator, short-lived authority lease,
   task, policy epoch, exact MCP/A2A operation, destination, peer, delegation ceiling, monitor

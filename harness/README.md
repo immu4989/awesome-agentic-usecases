@@ -179,6 +179,25 @@ identity, production validation, certification, compliance, deployment permissio
 the [complete reference gate](../agent-release-gate/) and the
 [live evidence view](https://immu4989.github.io/awesome-agentic-usecases/#release-gate).
 
+## Inventory agent capability and authority
+
+`aau bom` validates a strict Agent Capability & Authority BOM, detects directional authority
+widening between releases, emits a CycloneDX 1.7 projection, and builds a deterministic evidence
+pack:
+
+```bash
+aau bom validate agent-capability-bom/examples/candidate.json
+aau bom diff agent-capability-bom/examples/baseline.json agent-capability-bom/examples/candidate.json
+aau bom export-cyclonedx agent-capability-bom/examples/candidate.json --out /tmp/agent.cdx.json
+aau bom pack agent-capability-bom/examples/candidate.json --out /tmp/agent-bom-pack
+aau bom verify /tmp/agent-bom-pack
+```
+
+Cross-reference checks reject authority operations or resource scopes that exceed their declared
+tools. Widening findings stay discrete rather than becoming a trust score. Protected human
+approval removal blocks; a valid inventory still requires owner review. See the
+[contract, source ledger, fixtures, and boundaries](../agent-capability-bom/).
+
 ## Evaluate an existing agent
 
 You do not need to rebuild an application around the harness. `aau evaluate` sends each case to
@@ -247,6 +266,7 @@ aau challenge list
 aau challenge show completion-is-not-correctness
 aau baseline --help
 aau release --help
+aau bom --help
 aau doctor
 ```
 

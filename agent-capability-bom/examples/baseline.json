@@ -1,0 +1,95 @@
+{
+  "bom_version": "aau-agent-capability-bom/1.0",
+  "bom_id": "aabom-public-records-1.0",
+  "agent_id": "public-records-routing-agent",
+  "release_id": "1.0.0",
+  "generated_at": "2026-08-30T18:00:00Z",
+  "generation_context": "build",
+  "accountability": {
+    "owner_role": "Public Records Program Manager",
+    "human_release_authority_preserved": true,
+    "production_identity_verified": false
+  },
+  "models": [
+    {
+      "component_id": "routing-model",
+      "provider": "synthetic-reference",
+      "model_ref": "records-router-v1",
+      "digest": "1111111111111111111111111111111111111111111111111111111111111111",
+      "role": "classify public synthetic requests"
+    }
+  ],
+  "tools": [
+    {
+      "component_id": "records-catalog",
+      "protocol": "MCP",
+      "operations": ["records.search"],
+      "side_effect": "read",
+      "resource_scopes": ["cases/public/*"]
+    },
+    {
+      "component_id": "review-queue",
+      "protocol": "HTTP",
+      "operations": ["review.prepare"],
+      "side_effect": "prepare",
+      "resource_scopes": ["queues/records-review"]
+    }
+  ],
+  "authorities": [
+    {
+      "authority_id": "records-read-lease",
+      "subject": "spiffe://example.test/agent/public-records-router",
+      "tool_ids": ["records-catalog"],
+      "operations": ["records.search"],
+      "resource_scopes": ["cases/public/*"],
+      "delegation_depth": 0,
+      "not_before": "2026-08-30T18:00:00Z",
+      "expires_at": "2026-08-30T18:15:00Z",
+      "revocation_channel": "urn:synthetic:control-plane:records-read",
+      "human_approval_required": false
+    },
+    {
+      "authority_id": "review-prepare-lease",
+      "subject": "spiffe://example.test/agent/public-records-router",
+      "tool_ids": ["review-queue"],
+      "operations": ["review.prepare"],
+      "resource_scopes": ["queues/records-review"],
+      "delegation_depth": 0,
+      "not_before": "2026-08-30T18:00:00Z",
+      "expires_at": "2026-08-30T18:15:00Z",
+      "revocation_channel": "urn:synthetic:control-plane:review-prepare",
+      "human_approval_required": true
+    }
+  ],
+  "data_routes": [
+    {
+      "route_id": "synthetic-case-route",
+      "source": "synthetic-case-store",
+      "destination": "local-review-queue",
+      "data_classes": ["public_synthetic_case"],
+      "egress_allowed": false,
+      "retention_days": 7
+    }
+  ],
+  "controls": {
+    "monitor_ids": ["authority-expiry", "destination-allowlist"],
+    "safe_stop": "revoke both leases and cancel queued work",
+    "restart_authority": "Public Records Program Manager",
+    "rollback": "restore release 1.0.0 and its exact authority epoch"
+  },
+  "evidence": [
+    {
+      "evidence_id": "release-pack-1.0.0",
+      "kind": "release_pack",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "uri": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/agent-release-gate/examples/reference-pack/manifest.json"
+    }
+  ],
+  "sharing": {
+    "public_or_synthetic_only": true,
+    "contains_personal_data": false,
+    "contains_credentials": false,
+    "contains_nonpublic_configuration": false,
+    "contains_controlled_information": false
+  }
+}

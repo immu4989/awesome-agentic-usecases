@@ -258,6 +258,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="capture, test, and verify change-specific agent release evidence",
     )
 
+    sub.add_parser(
+        "bom",
+        add_help=False,
+        help="inventory and diff agent capabilities, authority, egress, and evidence",
+    )
+
     forging = sub.add_parser("forge", help="turn a Studio brief into a runnable adaptation lab")
     forging.add_argument("brief", help="evaluation brief downloaded from AAU Studio")
     forging.add_argument("doctor_path", nargs="?", help="lab path when brief is 'doctor'")
@@ -332,6 +338,10 @@ def main(argv: list[str] | None = None) -> int:
         from .release_gate import main as release_main
 
         return release_main(raw_args[1:])
+    if raw_args and raw_args[0] == "bom":
+        from .agent_bom import main as agent_bom_main
+
+        return agent_bom_main(raw_args[1:])
     args = build_parser().parse_args(raw_args)
     if args.command == "init":
         from .starter import main as starter_main
