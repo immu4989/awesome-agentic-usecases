@@ -11,7 +11,7 @@ or build a blinded study from any AAU public/synthetic suite with `aau-harness`.
 
 ## What ships
 
-- A dependency-free `aau baseline` CLI in `aau-harness==1.5.0`.
+- A dependency-free `aau baseline` CLI in `aau-harness==1.6.0`.
 - A deterministic preparer that splits participant-visible `study.json` from local
   `answer-key.json` and refuses to overwrite an existing study.
 - Identifier-free session and aggregate-report contracts with three strict JSON Schemas.
@@ -27,7 +27,7 @@ or build a blinded study from any AAU public/synthetic suite with `aau-harness`.
 ## Prepare a blinded study
 
 ```bash
-python -m pip install aau-harness==1.5.0
+python -m pip install aau-harness==1.6.0
 
 aau baseline prepare ../harness/examples/byo-agent-suite.json \
   --id service-routing-human-baseline \

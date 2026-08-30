@@ -1,0 +1,65 @@
+name: Fork-to-Reproduce submission
+
+on:
+  workflow_dispatch:
+    inputs:
+      challenge:
+        description: Answer-free challenge to reproduce
+        required: true
+        type: choice
+        options:
+          - portable-agent-assurance-2026-01
+          - grid-restoration-2026-01
+          - pharma-batch-disposition-2026-01
+      responses_path:
+        description: Response JSON path below your checkout
+        required: true
+        type: string
+      metadata_path:
+        description: Public reproduction metadata JSON path below your checkout
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  build-attest:
+    name: Validate, bind, and attest the answer-free submission
+    runs-on: ubuntu-latest
+    env:
+      AAU_CHALLENGE_ID: ${{ inputs.challenge }}
+      AAU_RESPONSES_PATH: ${{ inputs.responses_path }}
+      AAU_METADATA_PATH: ${{ inputs.metadata_path }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Verify that every public challenge remains answer-free
+        run: python reproduction-challenges/submit.py verify-campaign
+      - name: Build the challenge-bound public submission
+        run: |
+          mkdir -p .dist
+          python reproduction-challenges/submit.py build \
+            --challenge-id "$AAU_CHALLENGE_ID" \
+            --responses "$AAU_RESPONSES_PATH" \
+            --metadata "$AAU_METADATA_PATH" \
+            --out .dist/reproduction-submission.json
+          sha256sum .dist/reproduction-submission.json > .dist/SHA256SUMS
+      - name: Attest the exact submission bytes in this fork
+        uses: actions/attest@c32b4b8b198b65d0bd9d63490e847ff7b53989d4 # v4.0.0
+        with:
+          subject-path: .dist/reproduction-submission.json
+      - name: Upload the submission and checksum
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: aau-reproduction-submission
+          path: |
+            .dist/reproduction-submission.json
+            .dist/SHA256SUMS
+          if-no-files-found: error

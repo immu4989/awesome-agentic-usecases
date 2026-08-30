@@ -7,9 +7,9 @@ PyPA publishing action.
 The identity is live: [`aau-harness` on PyPI](https://pypi.org/project/aau-harness/) is
 published from the `pypi` GitHub environment, and the first provenance-backed distributions
 were attached to the [1.1.0 GitHub release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.1.0).
-The [latest release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.5.0)
-adds strict Impact Capsules, public-value and independent-reproduction contracts, deterministic
-evidence packs, visible missing-evidence comparisons, and the live Evidence Commons.
+The [latest release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.6.0)
+adds change-specific Agent Release Gate commands, fail-closed impact coverage, protected approval
+records, deterministic packs, and an experimental non-certifying OSCAL Assessment Results export.
 
 ## Trusted identity (completed)
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.6.0 - 2026-08-30
+
+- Added the Agent Release Gate: exact component snapshots, before/after impact selection,
+  fail-closed thresholds, protected-change approval records, deterministic evidence packs,
+  unsigned in-toto provenance, and an experimental non-certifying OSCAL Assessment Results export.
+- Opened three answer-free Fork-to-Reproduce challenges with hidden-oracle commitments, safe
+  templates, a manual attested-submission workflow, and explicit human review of independence.
+- Added the Agent Incident Exchange with clean-twin regression bindings and SARIF, OpenVEX, plus
+  explicitly experimental CSAF and OCSF bridge exports.
+- Added a nine-source Policy Freshness Radar that uses stable byte or visible-text fingerprints,
+  maps each official source to affected repository paths, and opens one human-review issue without
+  interpreting policy or modifying a lab.
+- Rebuilt the live entry experience around a quieter evidence-operations surface and reduced the
+  primary navigation from a long feature inventory to six clear routes.
+
 Notable changes to the repository. Versions follow [semantic versioning](https://semver.org/):
 the harness API is what is versioned; use cases are additive.
 

@@ -93,6 +93,24 @@ jobs:
           node --check docs/assurance.js
           ruff check portable-agent-assurance tev-v-athlon-profile docs/make_assurance_data.py docs/check_assurance.py
           git diff --exit-code docs/assurance-data.json portable-agent-assurance/examples/reference-pack tev-v-athlon-profile/examples/reference-pack
+      - name: Agent releases, outside reproduction, incident exchange, and source freshness are verifiable
+        run: |
+          pytest harness/tests/test_release_gate.py -q
+          python -m aau_harness.release_gate verify agent-release-gate/examples/reference-pack
+          python -m aau_harness.release_gate assess agent-release-gate/examples/baseline/release-manifest.json agent-release-gate/examples/candidate/release-manifest.json agent-release-gate/examples/release-policy.json agent-release-gate/examples/evidence-plan.json --command "python agent-release-gate/examples/reference_adapter.py" --approval agent-release-gate/examples/approval.json --out "$RUNNER_TEMP/aau-release-pack"
+          python -m aau_harness.release_gate verify "$RUNNER_TEMP/aau-release-pack"
+          python reproduction-challenges/submit.py verify-campaign
+          PYTHONPATH=agent-incident-exchange pytest agent-incident-exchange/tests -q
+          python agent-incident-exchange/make_exchange.py
+          python agent-incident-exchange/aau_incident_exchange.py verify-pack agent-incident-exchange/examples/reference-pack --root .
+          python policy-freshness/aau_freshness.py validate policy-freshness/sources.json --root .
+          python policy-freshness/aau_freshness.py offline policy-freshness/sources.json --root . --as-of 2026-08-30 --out "$RUNNER_TEMP/policy-freshness-offline.json"
+          pytest policy-freshness/tests -q
+          python docs/make_release_gate_data.py
+          python docs/check_release_gate.py
+          node --check docs/release-gate.js
+          ruff check harness/src/aau_harness/release_gate.py harness/tests/test_release_gate.py agent-release-gate agent-incident-exchange reproduction-challenges policy-freshness docs/make_release_gate_data.py docs/check_release_gate.py
+          git diff --exit-code agent-incident-exchange/examples/reference-exchange.json docs/release-gate-data.json agent-release-gate/examples/reference-pack agent-incident-exchange/examples/reference-pack
       - name: Collective Cyber Defense fixes, containment, continuity, and public evidence are reproducible
         run: |
           PYTHONPATH=verified-fix-commons pytest verified-fix-commons/tests -q
@@ -194,7 +212,7 @@ jobs:
         run: |
           aau evaluate harness/examples/byo-agent-suite.json --command "python harness/examples/byo_agent_adapter.py" --out "$RUNNER_TEMP/aau-agent-receipt.json"
           pytest harness/tests/test_evaluate.py -q
-          python harness/tools/check_release_version.py harness-v1.5.0
+          python harness/tools/check_release_version.py harness-v1.6.0
       - name: Agent Evidence Starter is runnable, private by default, and browser-synchronized
         run: |
           python docs/make_agent_starter_data.py

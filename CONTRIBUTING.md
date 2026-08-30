@@ -64,6 +64,18 @@ with a maturity score or claim NIST conformance. The included public-comment tex
 draft that has not been submitted; changes should preserve its primary-source basis and explicit
 claim boundary.
 
+To independently reproduce a public AAU claim, choose an answer-free task in
+[Fork-to-Reproduce](reproduction-challenges/) and follow its manual workflow. Never request,
+publish, infer, or commit the hidden oracle. Complete the response and metadata templates without
+credentials, personal data, targets, private traces, controlled information, or exploit content.
+The workflow attests the exact submitted bytes; maintainers separately verify the oracle result
+and review role relationships before any evidence level changes.
+
+Agent release-gate adaptations belong in [agent-release-gate](agent-release-gate/). Keep component
+kinds, impact tags, thresholds, and protected approval tags explicit. New mappings need a failing
+coverage test, at least one risky case and its legitimate twin, a deterministic reference adapter,
+and a pack-verification test. A mock adapter must never authorize release.
+
 To contribute a public incident regression, essential-service exercise, matched control
 experiment, or bounded partner pilot, begin in the
 [Agent Security Commons](https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons).

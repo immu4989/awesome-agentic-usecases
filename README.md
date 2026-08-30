@@ -13,45 +13,12 @@
 
 <p align="center">
   <a href="START_HERE.md">Start here</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/">Use-case explorer</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/?case=grid-restoration-ready#playground">Interactive playground</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/?boundary=sterility-is-not-chemical-oos#boundary-lab">Boundary Lab</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder">Build a boundary</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab">Inspect a receipt</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#release-gate">Agent Release Gate</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#playground">60-second lab</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance">Portable Agent Assurance</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense">Collective Cyber Defense Lab</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons">Agent Security Commons</a> ·
-  <a href="agentic-cyber-resilience/">Agentic Cyber Resilience</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-starter">Agent Evidence Starter</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop">Publish community evidence</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons">Evidence Commons</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-mission">Federal Mission Studio</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot">Federal Pilot Desk</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory">Portfolio Observatory</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#reliability">State of Agent Reliability 2026</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#challenge">AAU Reliability Challenge</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#studio">AAU Studio</a> ·
-  <a href="AAU_FORGE.md">AAU Forge</a> ·
-  <a href="https://immu4989.github.io/awesome-agentic-usecases/#gallery">Community Gallery</a> ·
-  <a href="#run-one-now">Run one</a> ·
-  <a href="PLAYBOOKS.md">Playbooks</a> ·
-  <a href="USE_CASE_RADAR.md">Use-case radar</a> ·
-  <a href="RIGHTS_CONTINUITY_CONTRACT.md">Rights Continuity</a> ·
-  <a href="CRITICAL_EVENT_FANOUT_CONTRACT.md">Critical Event Fan-Out</a> ·
-  <a href="OBLIGATION_GRAPH_CONTRACT.md">Obligation Graph Contract</a> ·
-  <a href="CLOCK_COLLISION_REPORT.md">Clock Collision report</a> ·
-  <a href="PROTECTION_RECEIPT_CONTRACT.md">Protection Receipt Contract</a> ·
-  <a href="PUBLIC_PROTECTION_REPORT.md">Public Protection report</a> ·
-  <a href="DECISION_GATE_CONTRACT.md">Decision Gate Contract</a> ·
-  <a href="DECISION_GATE_REPORT.md">Decision Gate report</a> ·
-  <a href="PROOF_ACTION_REPORT.md">Proof Before Action report</a> ·
-  <a href="PUBLIC_VALUE_CONTRACT.md">Public Value Contract</a> ·
-  <a href="EVIDENCE_SERVICE_CONTRACT.md">Evidence Service Contract</a> ·
-  <a href="EVIDENCE_SERVICE_REPORT.md">Matched report</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#explorer">Explore 71 labs</a> ·
   <a href="BUILD_YOUR_OWN.md">Build your own</a> ·
-  <a href="human-baseline-lab/">Human Baseline Lab</a> ·
-  <a href="FAILURE_TAXONOMY.md">Failure taxonomy</a> ·
-  <a href="#there-is-no-best-model">Results</a> ·
   <a href="CONTRIBUTING.md">Contribute</a>
 </p>
 
@@ -74,6 +41,9 @@ and observed failure cards with a direct path to reproduction. Start with
 
 | I already have… | Start here | Leave with… |
 |---|---|---|
+| A candidate agent release | [Agent Release Gate](https://immu4989.github.io/awesome-agentic-usecases/#release-gate) | A byte-exact change map, impact-selected tests, fail-closed decision, experimental OSCAL view, and verifiable evidence pack |
+| An outside team ready to reproduce a claim | [Fork-to-Reproduce](reproduction-challenges/) | An answer-free challenge, oracle commitment, fork-bound submission, and GitHub-attested bytes for separate human adjudication |
+| A public agent-security lesson | [Agent Incident Exchange](agent-incident-exchange/) | A safe regression record plus SARIF, OpenVEX, and experimental CSAF/OCSF bridge exports |
 | An AI agent or endpoint | [Agent Evidence Starter](https://immu4989.github.io/awesome-agentic-usecases/#agent-starter) | A runnable synthetic suite, adapters, tests, CI, visual, manifest, and privacy-bounded receipt |
 | A connected Starter + public receipt | [Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop) | A privacy-checked contribution pack, derived evidence level, share card, and credited PR path |
 | A reviewed task but no human comparator | [Human Baseline Lab](https://immu4989.github.io/awesome-agentic-usecases/#human-baseline-lab) | A blinded study pack, aggregate human-process measures, and same-suite agent comparison |
@@ -87,7 +57,42 @@ and observed failure cards with a direct path to reproduction. Start with
 | One risky decision boundary | [Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder) | A fork-ready counterfactual evaluation lab |
 | Nothing but a workflow description | [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) | A matched lab and Forge-compatible brief |
 
-## New: Portable Agent Assurance—from identity to exact protocol evidence
+## Agent Release Gate—from change to a defensible ship decision
+
+The **[Agent Release Gate](https://immu4989.github.io/awesome-agentic-usecases/#release-gate)**
+captures exact release-component bytes, computes the before/after impact surface, selects only the
+mapped evidence suites, and blocks an uncovered, deleted, mock-only, or below-threshold change. A
+protected authority or tool change also requires a structured human approval record. The reference
+candidate changes three components, maps them to three impact tags, and resolves all six synthetic
+cases—including two legitimate twins—exactly.
+
+```bash
+pip install -e harness
+aau release assess \
+  agent-release-gate/examples/baseline/release-manifest.json \
+  agent-release-gate/examples/candidate/release-manifest.json \
+  agent-release-gate/examples/release-policy.json \
+  agent-release-gate/examples/evidence-plan.json \
+  --command "python agent-release-gate/examples/reference_adapter.py" \
+  --approval agent-release-gate/examples/approval.json \
+  --out /tmp/aau-release-pack
+aau release verify /tmp/aau-release-pack
+```
+
+The pack includes snapshots, diff, policy, plan, exact receipts, decision, byte manifest, unsigned
+in-toto statement, and an explicitly experimental, non-certifying OSCAL 1.1.3-shaped Assessment
+Results export. It does not verify the approver's identity, establish production safety, authorize
+deployment, certify compliance, or grant an ATO.
+
+Three **[answer-free reproduction challenges](reproduction-challenges/)** now let outside forks test
+portable agent authority, distribution restoration, and pharmaceutical batch disposition without
+receiving gold answers. The hidden source suites and oracles are excluded from Git; public files
+contain only task inputs and oracle commitments. The **[Agent Incident Exchange](agent-incident-exchange/)**
+turns public or synthetic lessons into clean-twin regressions and interoperable findings, while the
+**[Policy Freshness Radar](policy-freshness/)** watches nine official source baselines and opens a
+human-review issue without interpreting policy or editing tests.
+
+## Portable Agent Assurance—from identity to exact protocol evidence
 
 Identity, authorization, protocol scope, and evaluation often live in different systems. The
 **[Portable Agent Assurance lab](https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance)**
@@ -279,7 +284,7 @@ expected answers, raw responses, reasoning, headers, and credentials. Copy the
 [three-case suite](harness/examples/byo-agent-suite.json), inspect the
 [command adapter](harness/examples/byo_agent_adapter.py), or add the
 [reusable GitHub Action](.github/actions/aau-evaluate/action.yml). The
-[v1.5.0 release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.5.0)
+[v1.6.0 release](https://github.com/immu4989/awesome-agentic-usecases/releases/tag/harness-v1.6.0)
 ships a wheel and source archive with verified build provenance.
 
 ## New: turn your fork into inspectable community evidence
@@ -292,7 +297,7 @@ fork. Load the public Starter manifest, reviewed synthetic suite, and aggregate 
 your browser; twelve local gates derive the evidence level and unlock a contribution ZIP. No file
 or form value is uploaded or persisted.
 
-The same contract is enforced by `aau-harness==1.5.0`:
+The same contract is enforced by `aau-harness==1.6.0`:
 
 ```bash
 aau submit ./my-agent-eval \
@@ -360,7 +365,7 @@ bounded outcome observation, and an independent reproduction. Status is derived 
 presence; there is no trust score, vendor ranking, or certification badge.
 
 ```bash
-python -m pip install aau-harness==1.5.0
+python -m pip install aau-harness==1.6.0
 aau evidence validate evidence-commons/capsules/foia-routing-impact-pilot.json
 aau evidence compare evidence-commons/capsules/foia-routing-impact-pilot.json
 aau evidence pack evidence-commons/capsules/foia-routing-impact-pilot.json --out /tmp/foia-impact-pack

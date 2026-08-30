@@ -1,0 +1,39 @@
+name: Policy source freshness
+
+on:
+  schedule:
+    - cron: "17 13 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  scan:
+    name: Detect source changes for human review
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Scan official source bytes and metadata
+        run: |
+          mkdir -p .dist
+          python policy-freshness/aau_freshness.py scan policy-freshness/sources.json \
+            --root . --out .dist/policy-freshness-report.json
+          python policy-freshness/aau_freshness.py issue-body \
+            .dist/policy-freshness-report.json --out .dist/policy-freshness-issue.md
+      - name: Open one human-review issue when needed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python policy-freshness/open_review_issue.py .dist/policy-freshness-report.json .dist/policy-freshness-issue.md
+      - name: Upload the exact scan report
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: policy-freshness-report
+          path: .dist/policy-freshness-report.json
+          if-no-files-found: error

@@ -176,7 +176,7 @@
     if (byId("evidence-export").disabled) return;
     const meta = metadata();
     const receiptNames = state.receipts.map((_, index) => `receipts/run-${String(index + 1).padStart(2, "0")}.json`);
-    const complete = { ...meta, package_version: "1.5.0", starter_version: state.starter.starter_version, suite_id: state.suite.suite_id, suite_sha256: await sha256(suiteText(state.suite)), receipt_files: receiptNames };
+    const complete = { ...meta, package_version: "1.6.0", starter_version: state.starter.starter_version, suite_id: state.suite.suite_id, suite_sha256: await sha256(suiteText(state.suite)), receipt_files: receiptNames };
     const sourceLines = (meta.review.sources || []).map((url) => `- ${url}`).join("\n") || "- No source URLs supplied; Domain reviewed cannot be derived.";
     const files = {
       "submission.json": renderJson(complete), "starter-manifest.json": renderJson(state.starter), "suite.json": renderJson(state.suite), "checks.json": renderJson(state.report),
@@ -192,7 +192,7 @@
     const archive = globalThis.AAUBoundaryZip.archive(files);
     const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([archive], { type: "application/zip" })); link.download = `${meta.id}-aau-evidence.zip`; link.click();
     setTimeout(() => URL.revokeObjectURL(link.href), 1_000);
-    byId("evidence-status").textContent = `${state.report.level} contribution pack downloaded locally. Validate it with aau-harness 1.5.0 before opening a pull request.`;
+    byId("evidence-status").textContent = `${state.report.level} contribution pack downloaded locally. Validate it with aau-harness 1.6.0 before opening a pull request.`;
   }
 
   function renderShowcase(data) {

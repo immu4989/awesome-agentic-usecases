@@ -8,6 +8,25 @@ agent do this?”:
 
 You do not need an API key to begin. Pick the route that matches the job you are doing.
 
+If you are preparing an agent change for release, start with the
+**[Agent Release Gate](https://immu4989.github.io/awesome-agentic-usecases/#release-gate)**. It
+captures exact model, policy, tool, identity, authority, dependency, egress, monitoring, and
+rollback components; maps the before/after diff to only the relevant suites; and fails closed when
+coverage, thresholds, required components, or human approval are missing. The reference command
+adapter resolves all six synthetic cases exactly. A mock adapter can exercise the path but can
+never produce `release_ready`.
+
+```bash
+pip install -e harness
+aau release verify agent-release-gate/examples/reference-pack
+```
+
+If you are outside the maintainer workflow and want to test a public claim, choose one of the
+three [Fork-to-Reproduce challenges](reproduction-challenges/). You receive six tasks and an
+oracle commitment—not the gold outcomes. The manual workflow builds and attests your exact
+submission bytes. A separate reviewer must adjudicate the result and relationship; cryptography
+does not prove organizational independence.
+
 If you already operate an agent, connect it without rewriting the application:
 
 ```bash

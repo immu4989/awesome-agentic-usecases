@@ -66,10 +66,28 @@ def main() -> None:
             "actions/attest@",
             "SHA256SUMS",
         ),
+        WORKFLOWS / "fork-to-reproduce.yml": (
+            "workflow_dispatch",
+            "actions/attest@",
+            "verify-campaign",
+            "persist-credentials: false",
+        ),
+        WORKFLOWS / "policy-freshness.yml": (
+            "schedule:",
+            "aau_freshness.py scan",
+            "open_review_issue.py",
+            "issues: write",
+        ),
         ROOT / ".github" / "actions" / "aau-evaluate" / "action.yml": (
             "aau evaluate",
             "GITHUB_ACTION_PATH",
             "shell: bash",
+        ),
+        ROOT / ".github" / "actions" / "aau-release" / "action.yml": (
+            "aau_harness.release_gate assess",
+            "aau_harness.release_gate verify",
+            "github.action_path",
+            "set -euo pipefail",
         ),
         ROOT / "federal-portfolio-observatory" / "README.md": (
             "AAU Federal AI Portfolio Observatory",

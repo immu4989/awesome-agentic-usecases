@@ -1,0 +1,57 @@
+name: AAU agent release gate
+description: Test an exact agent change against its impacted public or synthetic suites and verify the evidence pack.
+branding:
+  icon: git-commit
+  color: green
+inputs:
+  baseline-manifest:
+    description: Path to the baseline aau-agent-release-manifest/1.0 file.
+    required: true
+  candidate-manifest:
+    description: Path to the candidate aau-agent-release-manifest/1.0 file.
+    required: true
+  policy:
+    description: Path to the aau-agent-release-policy/1.0 file.
+    required: true
+  evidence-plan:
+    description: Path to the public or synthetic suite plan.
+    required: true
+  adapter-command:
+    description: Trusted local command implementing the BYO-agent JSON adapter contract.
+    required: true
+  approval:
+    description: Optional structural protected-change approval record path.
+    required: false
+    default: ""
+  pack:
+    description: Non-existing output directory for the verified release evidence pack.
+    required: false
+    default: aau-release-pack
+outputs:
+  pack:
+    description: Path to the verified release evidence pack.
+    value: ${{ steps.release.outputs.pack }}
+runs:
+  using: composite
+  steps:
+    - name: Assess and verify the exact release change
+      id: release
+      shell: bash
+      env:
+        AAU_APPROVAL: ${{ inputs.approval }}
+        AAU_BASELINE: ${{ inputs.baseline-manifest }}
+        AAU_CANDIDATE: ${{ inputs.candidate-manifest }}
+        AAU_COMMAND: ${{ inputs.adapter-command }}
+        AAU_PACK: ${{ inputs.pack }}
+        AAU_PLAN: ${{ inputs.evidence-plan }}
+        AAU_POLICY: ${{ inputs.policy }}
+        AAU_RELEASE_PYTHONPATH: ${{ github.action_path }}/../../../harness/src
+      run: |
+        set -euo pipefail
+        args=("$AAU_BASELINE" "$AAU_CANDIDATE" "$AAU_POLICY" "$AAU_PLAN" --command "$AAU_COMMAND" --out "$AAU_PACK")
+        if [[ -n "$AAU_APPROVAL" ]]; then
+          args+=(--approval "$AAU_APPROVAL")
+        fi
+        PYTHONPATH="$AAU_RELEASE_PYTHONPATH" python -m aau_harness.release_gate assess "${args[@]}"
+        PYTHONPATH="$AAU_RELEASE_PYTHONPATH" python -m aau_harness.release_gate verify "$AAU_PACK"
+        echo "pack=$AAU_PACK" >> "$GITHUB_OUTPUT"

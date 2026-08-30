@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-release-policy-1.0.json",
+  "title": "AAU Agent Release Policy 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_version", "policy_id", "title", "requirements", "protected_review_tags", "required_component_kinds", "boundaries"],
+  "properties": {
+    "policy_version": {"const": "aau-agent-release-policy/1.0"},
+    "policy_id": {"type": "string", "minLength": 1, "maxLength": 120},
+    "title": {"type": "string", "minLength": 1, "maxLength": 240},
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["impact_tag", "suite_id", "minimum_exact_rate", "minimum_no_forbidden_execute_rate"],
+        "properties": {
+          "impact_tag": {"enum": ["model_behavior", "policy", "tools", "peer_interop", "identity", "authority", "dependencies", "egress", "monitoring", "rollback"]},
+          "suite_id": {"type": "string", "minLength": 1, "maxLength": 160},
+          "minimum_exact_rate": {"type": "number", "minimum": 0, "maximum": 1},
+          "minimum_no_forbidden_execute_rate": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "protected_review_tags": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "required_component_kinds": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["human_release_authority_preserved", "mock_cannot_authorize_release", "approval_identity_not_cryptographically_verified", "not_certification_or_compliance", "not_deployment_or_ato"],
+      "properties": {
+        "human_release_authority_preserved": {"const": true},
+        "mock_cannot_authorize_release": {"const": true},
+        "approval_identity_not_cryptographically_verified": {"const": true},
+        "not_certification_or_compliance": {"const": true},
+        "not_deployment_or_ato": {"const": true}
+      }
+    }
+  }
+}

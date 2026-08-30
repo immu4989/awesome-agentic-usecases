@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-release-manifest-1.0.json",
+  "title": "AAU Agent Release Manifest 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_version", "release_id", "agent_id", "effective_at", "environment", "components", "sharing"],
+  "properties": {
+    "manifest_version": {"const": "aau-agent-release-manifest/1.0"},
+    "release_id": {"type": "string", "minLength": 1, "maxLength": 120},
+    "agent_id": {"type": "string", "minLength": 1, "maxLength": 160},
+    "effective_at": {"type": "string", "format": "date-time"},
+    "environment": {"enum": ["public", "synthetic", "public_synthetic"]},
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component_id", "kind", "source_path", "impact_tags", "required"],
+        "properties": {
+          "component_id": {"type": "string", "minLength": 1, "maxLength": 120},
+          "kind": {"enum": ["model", "system_policy", "tool_contract", "agent_card", "identity", "authority", "dependency", "egress", "monitoring", "rollback"]},
+          "source_path": {"type": "string", "minLength": 1, "maxLength": 300},
+          "impact_tags": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"enum": ["model_behavior", "policy", "tools", "peer_interop", "identity", "authority", "dependencies", "egress", "monitoring", "rollback"]}
+          },
+          "required": {"type": "boolean"}
+        }
+      }
+    },
+    "sharing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["public_or_synthetic_only", "contains_personal_data", "contains_credentials", "contains_nonpublic_configuration", "contains_controlled_information"],
+      "properties": {
+        "public_or_synthetic_only": {"const": true},
+        "contains_personal_data": {"const": false},
+        "contains_credentials": {"const": false},
+        "contains_nonpublic_configuration": {"const": false},
+        "contains_controlled_information": {"const": false}
+      }
+    }
+  }
+}

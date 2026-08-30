@@ -33,7 +33,7 @@ The Commons therefore preserves eight scenario-ID snapshots and labels the bindi
 ## Run the contract
 
 ```bash
-python -m pip install aau-harness==1.5.0
+python -m pip install aau-harness==1.6.0
 
 aau evidence validate evidence-commons/capsules/foia-routing-impact-pilot.json
 aau evidence compare evidence-commons/capsules/foia-routing-impact-pilot.json

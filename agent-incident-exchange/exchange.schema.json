@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-incident-exchange-1.0.json",
+  "title": "AAU Agent Incident Exchange 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["exchange_version", "exchange_id", "title", "publisher", "published_at", "entries", "boundary", "exchange_sha256"],
+  "properties": {
+    "exchange_version": {"const": "aau-agent-incident-exchange/1.0"},
+    "exchange_id": {"type": "string", "minLength": 1, "maxLength": 120},
+    "title": {"type": "string", "minLength": 1, "maxLength": 240},
+    "published_at": {"type": "string", "format": "date-time"},
+    "exchange_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "publisher": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "namespace", "contact"],
+      "properties": {"name": {"type": "string"}, "namespace": {"type": "string", "format": "uri"}, "contact": {"type": "string"}}
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["incident_id", "title", "summary", "published_at", "updated_at", "status", "severity", "affected", "failure_shapes", "authority_boundary", "regression", "sources", "disclosure"],
+        "properties": {
+          "incident_id": {"type": "string", "minLength": 1, "maxLength": 120},
+          "title": {"type": "string", "minLength": 1},
+          "summary": {"type": "string", "minLength": 1},
+          "published_at": {"type": "string", "format": "date-time"},
+          "updated_at": {"type": "string", "format": "date-time"},
+          "status": {"enum": ["under_investigation", "mitigation_available", "fixed_in_fixture", "withdrawn"]},
+          "severity": {"enum": ["critical", "high", "medium", "low", "unknown"]},
+          "affected": {"type": "object"},
+          "failure_shapes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "authority_boundary": {"type": "string", "minLength": 1},
+          "regression": {"type": "object"},
+          "sources": {"type": "array", "minItems": 1},
+          "disclosure": {"type": "object"}
+        }
+      }
+    },
+    "boundary": {"type": "object"}
+  }
+}

@@ -156,6 +156,29 @@ causal impact, certification, government endorsement, or authority to deploy. Se
 [three open partner capsules and schemas](../evidence-commons/) or the
 [live evidence-chain inspector](https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons).
 
+## Gate a specific agent release
+
+`aau release` captures the exact components of a baseline and candidate, computes their change
+surface, and runs only the public or synthetic suites mapped to the impacted tags. Unknown tags,
+missing required components, incomplete coverage, below-threshold results, and forbidden action
+execution block the release evidence. Protected tags also require a structured human-role record.
+
+```bash
+aau release assess baseline-manifest.json candidate-manifest.json \
+  release-policy.json evidence-plan.json \
+  --command "python my_release_adapter.py" \
+  --approval approval.json --out /tmp/aau-release-pack
+aau release verify /tmp/aau-release-pack
+```
+
+Every pack includes component snapshots, exact diff, policy, plan, aggregate receipts, derived
+decision, manifest, unsigned in-toto statement, and an experimental OSCAL 1.1.3-shaped Assessment
+Results export. A mock adapter always resolves to `human_review_required`, never `release_ready`.
+`release_ready` is structural evidence against the declared contract—not verified approver
+identity, production validation, certification, compliance, deployment permission, or an ATO. See
+the [complete reference gate](../agent-release-gate/) and the
+[live evidence view](https://immu4989.github.io/awesome-agentic-usecases/#release-gate).
+
 ## Evaluate an existing agent
 
 You do not need to rebuild an application around the harness. `aau evaluate` sends each case to
@@ -223,6 +246,7 @@ aau start refund-injected
 aau challenge list
 aau challenge show completion-is-not-correctness
 aau baseline --help
+aau release --help
 aau doctor
 ```
 

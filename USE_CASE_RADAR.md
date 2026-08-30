@@ -33,6 +33,21 @@ Sources: [OpenAI enterprise AI report](https://openai.com/business/guides-and-re
 These sources identify demand, not ground truth. Each lab still needs a domain owner to
 define the actual policy and decide which decisions must remain human.
 
+## Cross-organization evidence operations — shipped
+
+The repository now covers the lifecycle around the 71 domain labs, not only the labs themselves:
+
+| Operational gap | Shipped contribution | Honest boundary |
+|---|---|---|
+| A candidate changes but its old benchmark is rerun indiscriminately | **[Agent Release Gate](agent-release-gate/)** captures exact components, maps the diff to impacted suites, blocks missing coverage, and emits a deterministic pack plus experimental OSCAL Assessment Results | `release_ready` is not deployment authority, certification, production safety, or an ATO |
+| Outside teams cannot test a claim without receiving the answers | **[Fork-to-Reproduce](reproduction-challenges/)** opens three six-task challenges with hidden-oracle commitments and attested submission bytes | Cryptography binds bytes; human review determines result and independence |
+| Public agent-security lessons remain prose instead of regressions | **[Agent Incident Exchange](agent-incident-exchange/)** binds safe incident abstractions to clean-twin artifacts and exports SARIF, OpenVEX, and experimental CSAF/OCSF bridges | No active-incident intake, attribution, exploit content, regulator feed, or field-effectiveness claim |
+| Policy-dependent tests silently age | **[Policy Freshness Radar](policy-freshness/)** watches nine allowlisted official sources and maps a byte or visible-text change to artifact owners | It detects content and review dates; it never interprets policy or automatically changes a test |
+
+This creates a concrete handoff for organizations, government teams, cybersecurity partners, and
+frontier labs: test a release, expose the remaining boundary, reproduce it outside the authoring
+workflow, safely exchange the regression, and reopen review when an official source changes.
+
 ## Federal Mission Assurance release — shipped
 
 Public teams can now turn an AI proposal into an inspectable, non-certifying evidence

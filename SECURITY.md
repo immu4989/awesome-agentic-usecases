@@ -126,6 +126,26 @@ guard—not a formal privacy guarantee or permission to publish sensitive operat
 
 ## Repository and release supply chain
 
+The Agent Release Gate reads bounded public or synthetic component files, rejects path traversal,
+symbolic links, oversized inputs, unknown fields, destructive overwrite, and missing impact
+coverage. Its command adapter intentionally executes the configured local adapter process; use
+only an adapter you trust, in an isolated environment, and never treat a public reference approval
+as a real authorization. A `release_ready` reference decision proves internal contract
+relationships—not approver identity, event truth, production safety, deployment permission,
+certification, compliance, or an Authority to Operate.
+
+Fork-to-Reproduce public challenge files intentionally exclude the hidden oracle. Never commit the
+private source suite or oracle to a fork, issue, artifact, cache, or workflow log. Manual workflow
+inputs are treated as untrusted repository paths and the workflow never executes pull-request
+code. GitHub Artifact Attestation binds bytes to a workflow identity; it does not prove the
+operator is independent or that the submitted claims are true.
+
+The Agent Incident Exchange accepts public or synthetic records only and rejects credentials,
+personal data, targets, raw traces, and exploit instructions by contract. Its CSAF and OCSF files
+are experimental bridges, not schema-certified advisories or regulator submissions. The Policy
+Freshness Radar contacts only allowlisted HTTPS hosts, records content fingerprints and metadata,
+and never interprets or automatically updates policy-dependent artifacts.
+
 - GitHub Actions are pinned to immutable commit SHAs and checkout credentials are not persisted.
 - Workflow permissions are declared explicitly; CodeQL, dependency review, OpenSSF Scorecard, and
   Dependabot provide independent change signals.

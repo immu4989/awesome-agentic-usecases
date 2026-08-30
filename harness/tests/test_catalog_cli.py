@@ -61,3 +61,9 @@ def test_cli_start_prints_a_copyable_no_key_path(capsys):
     output = capsys.readouterr().out
     assert "python -m pip install -e harness" in output
     assert "exception-triage-agent eval --backend mock" in output
+
+
+def test_cli_forwards_release_verification(capsys):
+    pack = ROOT / "agent-release-gate" / "examples" / "reference-pack"
+    assert main(["release", "verify", str(pack)]) == 0
+    assert "release pack verified with status release_ready" in capsys.readouterr().out
