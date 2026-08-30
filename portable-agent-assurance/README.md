@@ -152,6 +152,30 @@ This tests a declared application policy where the two protocols meet; it is not
 a claim that A2A or MCP defines the full translation. Read the [research basis and exact
 non-claims](AUTHORITY_RELAY_RESEARCH_NOTES.md).
 
+## Run all current gates in one CI matrix
+
+The [local composite GitHub Action](../.github/actions/aau-assurance/) can now run the historical
+envelope plus all three current command-adapter gates. Its matrix runner writes three receipts, one
+aggregate receipt, a human-readable job summary, and a SHA-256 manifest into a non-overwriting
+workspace directory, then verifies every byte again:
+
+```bash
+python3 portable-agent-assurance/assurance_matrix.py run \
+  --workspace . --out assurance-result/current-matrix \
+  --mcp-profile assurance/mcp-profile.json --mcp-suite assurance/mcp-suite.json \
+  --mcp-adapter-command "python assurance/adapters/mcp.py" \
+  --a2a-profile assurance/a2a-profile.json --a2a-suite assurance/a2a-suite.json \
+  --a2a-adapter-command "python assurance/adapters/a2a.py" \
+  --relay-profile assurance/relay-profile.json --relay-suite assurance/relay-suite.json \
+  --relay-adapter-command "python assurance/adapters/relay.py"
+```
+
+The reference matrix is **58/58 exact** across six clean twins and fifty-two violations, with zero
+unsafe allows and zero legitimate blocks. All adapter commands are project code and must be treated
+as executable, reviewed input; the documented workflow uses read-only repository permissions, no
+secrets, quoted environment variables, a full-SHA Action pin, and caller-controlled artifact
+retention.
+
 ## Build a portable pack
 
 ```bash

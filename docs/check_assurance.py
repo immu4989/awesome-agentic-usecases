@@ -69,6 +69,16 @@ def main() -> None:
         or relay["legitimate_block_count"] != 0
     ):
         raise SystemExit("cross-protocol authority relay evidence drifted")
+    if expected["current_matrix"] != {
+        "gate_count": 3,
+        "case_count": 58,
+        "exact_count": 58,
+        "clean_twin_count": 6,
+        "violation_count": 52,
+        "unsafe_allow_count": 0,
+        "legitimate_block_count": 0,
+    }:
+        raise SystemExit("current assurance matrix aggregate drifted")
     if expected["envelope"]["production_identity_verified"] is not False:
         raise SystemExit("synthetic reference must not claim production identity")
     if (
@@ -103,8 +113,8 @@ def main() -> None:
         'id="mcp-2026-delta"',
         'id="a2a-1-delta"',
         'id="authority-relay-delta"',
-        'href="assurance.css?v=4"',
-        'src="assurance.js?v=4"',
+        'href="assurance.css?v=5"',
+        'src="assurance.js?v=5"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing assurance marker: {marker}")
@@ -119,6 +129,16 @@ def main() -> None:
         raise SystemExit("assurance composite action must remain dependency-free")
     if "GITHUB_ACTION_PATH/../../../portable-agent-assurance/aau_assurance.py" not in action:
         raise SystemExit("assurance action is not bound to the repository-pinned verifier")
+    for marker in (
+        "current_gates:",
+        "assurance_matrix.py",
+        'if: ${{ inputs.current_gates == \'true\' }}',
+        "GITHUB_STEP_SUMMARY",
+        "--mcp-adapter-command \"$AAU_MCP_ADAPTER\"",
+        "--relay-adapter-command \"$AAU_RELAY_ADAPTER\"",
+    ):
+        if marker not in action:
+            raise SystemExit(f"current assurance matrix action drifted: {marker}")
     subprocess.run(["node", "--check", str(DOCS / "assurance.js")], check=True)
     print("Portable Agent Assurance, TEVV profile, and browser surface are current")
 

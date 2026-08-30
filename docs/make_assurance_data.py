@@ -128,6 +128,33 @@ def build() -> dict:
             "status": relay_receipt["status"],
             **relay_receipt["metrics"],
         },
+        "current_matrix": {
+            "gate_count": 3,
+            "case_count": sum(
+                receipt["metrics"]["case_count"]
+                for receipt in (mcp_receipt, a2a_receipt, relay_receipt)
+            ),
+            "exact_count": sum(
+                receipt["metrics"]["exact_count"]
+                for receipt in (mcp_receipt, a2a_receipt, relay_receipt)
+            ),
+            "clean_twin_count": sum(
+                receipt["metrics"]["clean_twin_count"]
+                for receipt in (mcp_receipt, a2a_receipt, relay_receipt)
+            ),
+            "violation_count": sum(
+                receipt["metrics"]["violation_count"]
+                for receipt in (mcp_receipt, a2a_receipt, relay_receipt)
+            ),
+            "unsafe_allow_count": sum(
+                receipt["metrics"]["unsafe_allow_count"]
+                for receipt in (mcp_receipt, a2a_receipt, relay_receipt)
+            ),
+            "legitimate_block_count": sum(
+                receipt["metrics"]["legitimate_block_count"]
+                for receipt in (mcp_receipt, a2a_receipt, relay_receipt)
+            ),
+        },
         "tevva": {
             "profile_id": assessment["profile_id"],
             "status": assessment["status"],
@@ -143,7 +170,7 @@ def build() -> dict:
             {"label": "Run the assurance envelope", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/portable-agent-assurance"},
             {"label": "Inspect the TEVV-Athlon profile", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/tev-v-athlon-profile"},
             {"label": "Review the NIST comment draft", "href": "https://github.com/immu4989/awesome-agentic-usecases/blob/main/tev-v-athlon-profile/NIST_AI_200_2_COMMENT_DRAFT.md"},
-            {"label": "Use the GitHub Action", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/.github/actions/aau-assurance"},
+            {"label": "Run the 58-case CI matrix", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/.github/actions/aau-assurance"},
         ],
         "boundaries": {
             "synthetic_only": True,

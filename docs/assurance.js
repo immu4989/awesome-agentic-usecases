@@ -180,6 +180,7 @@
       text("paa-relay-clean", data.authority_relay.clean_twin_count);
       text("paa-relay-unsafe", data.authority_relay.unsafe_allow_count);
       text("paa-relay-blocks", data.authority_relay.legitimate_block_count);
+      text("paa-matrix-exact", `${data.current_matrix.exact_count}/${data.current_matrix.case_count}`);
       text("paa-chain", data.suite.result_chain_head_sha256.slice(0, 16));
       text("paa-deadline", data.tevva.comment_deadline);
       renderStages(data.tevva.stages);

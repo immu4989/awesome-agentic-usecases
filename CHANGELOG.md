@@ -100,6 +100,16 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Current Assurance Matrix Action** — the reusable local GitHub Action can now run the MCP
+  `2026-07-28`, A2A `1.0`, and cross-protocol relay gates through project-owned answer-blind
+  adapters. It emits three receipts, a 58-case aggregate receipt, a GitHub job summary, and a
+  SHA-256 manifest, then recomputes all six pack files. Workspace escapes, symlinks, overwrite,
+  extra files, receipt drift, summary drift, and manifest drift fail closed.
+- **Hardened CI adoption path** — adapter inputs flow through quoted environment variables, the
+  example grants read-only repository access, excludes secrets, pins artifact upload by full SHA,
+  and leaves retention under the caller's control. Passing remains profile-specific recorded
+  evidence rather than production identity, authorization, conformance, certification, or ATO.
+
 - **Cross-protocol Authority Relay Gate** — a new answer-blind compiler tests the unstandardized
   application boundary where an authenticated A2A task becomes an MCP tool call. Two legitimate
   routes and twenty-three isolated violations cover subject/actor/task continuity, tenant and Agent

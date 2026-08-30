@@ -1,5 +1,5 @@
 name: AAU portable agent assurance
-description: Verify a synthetic MCP/A2A identity-authority envelope and emit a recomputable evidence pack.
+description: Verify the stable envelope and optionally run the current MCP, A2A, and authority-relay matrix.
 branding:
   icon: shield
   color: blue
@@ -18,6 +18,45 @@ inputs:
     description: Output directory for the portable evidence pack.
     required: false
     default: aau-assurance-pack
+  current_gates:
+    description: Set to true to run the current three-gate command-adapter matrix.
+    required: false
+    default: "false"
+  current_output:
+    description: Workspace-relative, non-existing output directory for the matrix evidence pack.
+    required: false
+    default: aau-current-assurance
+  mcp_profile:
+    description: Workspace-relative MCP 2026 profile path; required when current_gates is true.
+    required: false
+  mcp_suite:
+    description: Workspace-relative MCP 2026 suite path; required when current_gates is true.
+    required: false
+  mcp_adapter_command:
+    description: Command for the project's answer-blind MCP adapter; required when current_gates is true.
+    required: false
+  a2a_profile:
+    description: Workspace-relative A2A 1.0 profile path; required when current_gates is true.
+    required: false
+  a2a_suite:
+    description: Workspace-relative A2A 1.0 suite path; required when current_gates is true.
+    required: false
+  a2a_adapter_command:
+    description: Command for the project's answer-blind A2A adapter; required when current_gates is true.
+    required: false
+  relay_profile:
+    description: Workspace-relative A2A-to-MCP relay profile path; required when current_gates is true.
+    required: false
+  relay_suite:
+    description: Workspace-relative A2A-to-MCP relay suite path; required when current_gates is true.
+    required: false
+  relay_adapter_command:
+    description: Command for the project's answer-blind relay adapter; required when current_gates is true.
+    required: false
+outputs:
+  matrix_pack:
+    description: Workspace-relative path to the current-gates evidence pack.
+    value: ${{ inputs.current_output }}
 runs:
   using: composite
   steps:
@@ -33,3 +72,31 @@ runs:
         python "$GITHUB_ACTION_PATH/../../../portable-agent-assurance/aau_assurance.py" verify "$AAU_RECEIPT" --envelope "$AAU_ENVELOPE" --suite "$AAU_SUITE"
         python "$GITHUB_ACTION_PATH/../../../portable-agent-assurance/aau_assurance.py" pack "$AAU_ENVELOPE" "$AAU_SUITE" --out "$AAU_PACK"
         python "$GITHUB_ACTION_PATH/../../../portable-agent-assurance/aau_assurance.py" verify-pack "$AAU_PACK"
+    - name: Run and verify the current assurance matrix
+      if: ${{ inputs.current_gates == 'true' }}
+      shell: bash
+      env:
+        AAU_A2A_ADAPTER: ${{ inputs.a2a_adapter_command }}
+        AAU_A2A_PROFILE: ${{ inputs.a2a_profile }}
+        AAU_A2A_SUITE: ${{ inputs.a2a_suite }}
+        AAU_CURRENT_OUTPUT: ${{ inputs.current_output }}
+        AAU_MCP_ADAPTER: ${{ inputs.mcp_adapter_command }}
+        AAU_MCP_PROFILE: ${{ inputs.mcp_profile }}
+        AAU_MCP_SUITE: ${{ inputs.mcp_suite }}
+        AAU_RELAY_ADAPTER: ${{ inputs.relay_adapter_command }}
+        AAU_RELAY_PROFILE: ${{ inputs.relay_profile }}
+        AAU_RELAY_SUITE: ${{ inputs.relay_suite }}
+      run: |
+        python "$GITHUB_ACTION_PATH/../../../portable-agent-assurance/assurance_matrix.py" run \
+          --workspace "$GITHUB_WORKSPACE" --out "$AAU_CURRENT_OUTPUT" \
+          --mcp-profile "$AAU_MCP_PROFILE" --mcp-suite "$AAU_MCP_SUITE" --mcp-adapter-command "$AAU_MCP_ADAPTER" \
+          --a2a-profile "$AAU_A2A_PROFILE" --a2a-suite "$AAU_A2A_SUITE" --a2a-adapter-command "$AAU_A2A_ADAPTER" \
+          --relay-profile "$AAU_RELAY_PROFILE" --relay-suite "$AAU_RELAY_SUITE" --relay-adapter-command "$AAU_RELAY_ADAPTER"
+        python "$GITHUB_ACTION_PATH/../../../portable-agent-assurance/assurance_matrix.py" verify \
+          --workspace "$GITHUB_WORKSPACE" --out "$AAU_CURRENT_OUTPUT" \
+          --mcp-profile "$AAU_MCP_PROFILE" --mcp-suite "$AAU_MCP_SUITE" --mcp-adapter-command "$AAU_MCP_ADAPTER" \
+          --a2a-profile "$AAU_A2A_PROFILE" --a2a-suite "$AAU_A2A_SUITE" --a2a-adapter-command "$AAU_A2A_ADAPTER" \
+          --relay-profile "$AAU_RELAY_PROFILE" --relay-suite "$AAU_RELAY_SUITE" --relay-adapter-command "$AAU_RELAY_ADAPTER"
+        if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+          cat "$AAU_CURRENT_OUTPUT/SUMMARY.md" >> "$GITHUB_STEP_SUMMARY"
+        fi

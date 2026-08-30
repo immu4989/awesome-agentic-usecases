@@ -198,6 +198,11 @@ audience, monitor, and approval continuity across the hop. Its answer-blind comm
 25/25 exact with two valid routes, twenty-three violations, zero unsafe allows, and zero legitimate
 blocks. The mapping is explicit application policy—not a claim that either protocol defines it.
 
+For adopters, the repository-pinned **Current Assurance Matrix Action** runs the MCP, A2A, and
+relay adapters together and emits a six-file, manifest-bound CI pack. The reference matrix is
+58/58 exact across six clean twins and fifty-two violations. The job summary preserves each gate's
+unsafe-allow and legitimate-block count, so one aggregate number cannot hide asymmetric failure.
+
 The companion **[TEVV-Athlon profile](tev-v-athlon-profile/)** maps the evidence to the four stages
 in the NIST AI 200-2 initial public draft and deliberately keeps three gaps visible: the outside
 adapter event is planned, the public reference material is revealed, and no outside independent
