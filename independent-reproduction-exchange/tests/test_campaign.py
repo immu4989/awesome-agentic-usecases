@@ -87,3 +87,21 @@ def test_campaign_paths_cannot_escape_or_cross_symlinks(tmp_path):
             raise AssertionError("symbolic-link campaign path accepted")
     finally:
         link.unlink(missing_ok=True)
+
+
+def test_independent_count_is_derived_from_verified_registry_entries():
+    module = campaign_module()
+    campaign = module.load_public(ROOT / "reproduction-challenges" / "campaign.json")
+    registry = module.load_public(
+        ROOT / "reproduction-challenges" / "accepted-reproductions.json"
+    )
+    assert module.verify_reproduction_registry(campaign, registry)["entries"] == []
+
+    inflated = dict(campaign)
+    inflated["independently_reproduced_count"] = 1
+    try:
+        module.verify_reproduction_registry(inflated, registry)
+    except ValueError as exc:
+        assert "must equal verified registry entries" in str(exc)
+    else:
+        raise AssertionError("a manually inflated independent count was accepted")

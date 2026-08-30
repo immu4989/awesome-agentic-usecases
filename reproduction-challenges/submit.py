@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import date
 import importlib.util
 import json
 import sys
@@ -13,6 +14,14 @@ ROOT = Path(__file__).resolve().parents[1]
 HERE = Path(__file__).resolve().parent
 EXCHANGE_PATH = ROOT / "independent-reproduction-exchange" / "aau_reproduction.py"
 MAX_BYTES = 2_000_000
+REGISTRY_VERSION = "aau-accepted-reproductions/1.0"
+REGISTRY_BOUNDARIES = {
+    "verified_exchange_pack_required",
+    "independence_reviewed_status_required",
+    "relationship_evidence_human_reviewed",
+    "independence_not_cryptographic",
+    "not_certification_or_field_effectiveness",
+}
 
 
 def exchange_module():
@@ -71,6 +80,99 @@ def campaign_entry(challenge_id: str) -> dict:
     return matches[0]
 
 
+def verify_reproduction_registry(campaign: dict, registry: dict | None = None) -> dict:
+    module = exchange_module()
+    value = registry if registry is not None else load_public(HERE / "accepted-reproductions.json")
+    if set(value) != {"registry_version", "entries", "boundary"}:
+        raise ValueError("accepted-reproduction registry fields differ from the 1.0 contract")
+    if value["registry_version"] != REGISTRY_VERSION:
+        raise ValueError("unsupported accepted-reproduction registry version")
+    boundaries = value["boundary"]
+    if (
+        not isinstance(boundaries, dict)
+        or set(boundaries) != REGISTRY_BOUNDARIES
+        or any(boundaries[key] is not True for key in REGISTRY_BOUNDARIES)
+    ):
+        raise ValueError("accepted-reproduction boundaries must be explicit and true")
+    entries = value["entries"]
+    if not isinstance(entries, list) or len(entries) > 200:
+        raise ValueError("accepted-reproduction entries must be a bounded list")
+    if campaign["independently_reproduced_count"] != len(entries):
+        raise ValueError("campaign independent count must equal verified registry entries")
+
+    challenge_entries = {entry["challenge_id"]: entry for entry in campaign["challenges"]}
+    challenges = {
+        challenge_id: load_public(safe_campaign_path(entry["path"]))
+        for challenge_id, entry in challenge_entries.items()
+    }
+    seen_ids: set[str] = set()
+    seen_packs: set[str] = set()
+    seen_submissions: set[str] = set()
+    seen_producers: set[str] = set()
+    seen_challenges: set[str] = set()
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {
+            "entry_id", "challenge_id", "pack_path", "accepted_on",
+            "adjudication_sha256", "subject_sha256",
+        }:
+            raise ValueError("accepted-reproduction entry fields differ from the 1.0 contract")
+        if (
+            not isinstance(entry["entry_id"], str)
+            or not entry["entry_id"]
+            or entry["entry_id"] in seen_ids
+        ):
+            raise ValueError("accepted-reproduction entry ids must be non-empty and unique")
+        seen_ids.add(entry["entry_id"])
+        if not isinstance(entry["challenge_id"], str) or entry["challenge_id"] not in challenges:
+            raise ValueError("accepted reproduction names an unknown challenge")
+        if entry["challenge_id"] in seen_challenges:
+            raise ValueError("a revealed challenge can have only one accepted blind reproduction")
+        seen_challenges.add(entry["challenge_id"])
+        if challenge_entries[entry["challenge_id"]]["status"] != "closed":
+            raise ValueError("a challenge must close when its accepted pack reveals the oracle")
+        if (
+            not isinstance(entry["pack_path"], str)
+            or not entry["pack_path"].startswith("accepted/")
+        ):
+            raise ValueError("accepted reproduction packs must be below accepted/")
+        if entry["pack_path"] in seen_packs:
+            raise ValueError("accepted reproduction pack paths must be unique")
+        seen_packs.add(entry["pack_path"])
+        for field in ("adjudication_sha256", "subject_sha256"):
+            digest = entry[field]
+            if (
+                not isinstance(digest, str)
+                or len(digest) != 64
+                or any(char not in "0123456789abcdef" for char in digest)
+            ):
+                raise ValueError(f"accepted reproduction {field} must be a lowercase SHA-256")
+        try:
+            date.fromisoformat(entry["accepted_on"])
+        except (TypeError, ValueError) as exc:
+            raise ValueError("accepted_on must be an ISO calendar date") from exc
+
+        adjudication = module.verify_pack(safe_campaign_path(entry["pack_path"]))
+        challenge = challenges[entry["challenge_id"]]
+        if (
+            adjudication["status"] != "independence_reviewed"
+            or adjudication["evidence_level"] != "independently_reproduced"
+            or adjudication["challenge_id"] != entry["challenge_id"]
+            or adjudication["challenge_sha256"] != challenge["challenge_sha256"]
+            or adjudication["adjudication_sha256"] != entry["adjudication_sha256"]
+            or adjudication["subject"]["sha256"] != entry["subject_sha256"]
+        ):
+            raise ValueError("accepted reproduction does not match its reviewed pack or challenge")
+        submission = adjudication["submission_sha256"]
+        producer = adjudication["role_commitments"]["producer"]
+        if submission in seen_submissions or producer in seen_producers:
+            raise ValueError("accepted reproductions must have unique submissions and producers")
+        seen_submissions.add(submission)
+        seen_producers.add(producer)
+    if [entry["entry_id"] for entry in entries] != sorted(seen_ids):
+        raise ValueError("accepted reproductions must be sorted by entry_id")
+    return value
+
+
 def verify_campaign() -> dict:
     module = exchange_module()
     campaign = load_public(HERE / "campaign.json")
@@ -99,8 +201,8 @@ def verify_campaign() -> dict:
             "metadata_template", "task_count", "status",
         }:
             raise ValueError("campaign challenge fields differ from the 1.0 contract")
-        if entry["status"] != "open" or type(entry["task_count"]) is not int or entry["task_count"] < 1:
-            raise ValueError("campaign challenges must be open with a positive task count")
+        if entry["status"] not in {"open", "closed"} or type(entry["task_count"]) is not int or entry["task_count"] < 1:
+            raise ValueError("campaign challenges must have a valid status and positive task count")
         if entry["challenge_id"] in ids:
             raise ValueError("challenge ids must be unique")
         ids.add(entry["challenge_id"])
@@ -128,6 +230,7 @@ def verify_campaign() -> dict:
     boundaries = campaign["boundary"]
     if not isinstance(boundaries, dict) or not boundaries or any(value is not True for value in boundaries.values()):
         raise ValueError("all campaign boundary declarations must be true")
+    verify_reproduction_registry(campaign)
     return campaign
 
 
@@ -135,6 +238,8 @@ def build_submission(challenge_id: str, responses_path: str, metadata_path: str,
     module = exchange_module()
     verify_campaign()
     entry = campaign_entry(challenge_id)
+    if entry["status"] != "open":
+        raise ValueError("the selected challenge is closed after oracle reveal")
     challenge = load_public(HERE / entry["path"])
     responses = load_public(safe_user_path(responses_path))
     metadata = load_public(safe_user_path(metadata_path))
@@ -163,7 +268,11 @@ def main() -> int:
     try:
         if args.command == "verify-campaign":
             campaign = verify_campaign()
-            print(f"OK: {len(campaign['challenges'])} answer-free challenges verified.")
+            accepted = campaign["independently_reproduced_count"]
+            print(
+                f"OK: {len(campaign['challenges'])} answer-free challenges and "
+                f"{accepted} accepted independent reproductions verified."
+            )
         else:
             submission = build_submission(
                 args.challenge_id, args.responses, args.metadata, args.out

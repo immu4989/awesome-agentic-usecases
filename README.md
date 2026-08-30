@@ -88,9 +88,11 @@ deployment, certify compliance, or grant an ATO.
 
 Four **[answer-free reproduction challenges](reproduction-challenges/)** now let outside forks test
 portable agent authority, distribution restoration, pharmaceutical batch disposition, and the
-A2A-to-MCP authority relay without
-receiving gold answers. The hidden source suites and oracles are excluded from Git; public files
-contain only task inputs and oracle commitments. The **[Agent Incident Exchange](agent-incident-exchange/)**
+A2A-to-MCP authority relay without receiving gold answers. The hidden source suites and oracles
+are excluded from Git; public files
+contain only task inputs and oracle commitments. Accepted independent results are derived from
+fully verified Exchange packs in a public registry, never from a self-declared badge or manually
+inflated counter. The **[Agent Incident Exchange](agent-incident-exchange/)**
 turns public or synthetic lessons into clean-twin regressions and interoperable findings, while the
 **[Policy Freshness Radar](policy-freshness/)** watches nine official source baselines and now
 maps their exact revisions to nine implementation-evidence bindings. Its compatibility ledger

@@ -100,6 +100,16 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Artifact-derived independent reproduction ledger** — the public count now equals the number of
+  accepted Exchange packs that recompute to `independence_reviewed`, bind the current challenge,
+  and have unique producer/submission commitments. Missing packs, path escapes, symlinks, digest
+  drift, protocol demonstrations, duplicate producers, and manually inflated counts fail closed.
+  Oracle reveal closes that challenge and limits it to one blind result; another run requires new
+  suite and oracle commitments.
+- **Honest zero and scalable intake** — the empty registry renders as zero on the live release
+  surface while four challenges and 26 tasks remain open. The new A2A-to-MCP relay challenge is
+  available in the issue intake; human-reviewed relationships remain explicitly non-cryptographic.
+
 - **Privacy-bounded Cross-protocol Authority Trace** — the exact Authority Relay receipt now
   projects into 25 synthetic traces and 52 spans using W3C-shaped trace context and a pinned
   OpenTelemetry semantic-convention basis. All 23 blocked cases stop before MCP dispatch; only the

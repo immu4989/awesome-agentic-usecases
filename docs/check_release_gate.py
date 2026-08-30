@@ -31,8 +31,13 @@ def main() -> None:
         raise SystemExit("reference release must remain an exact command-adapter execution")
     if release["human_identity_verified"] is not False:
         raise SystemExit("reference release must not claim verified human identity")
-    if expected["reproduction"]["independently_reproduced_count"] != 0:
-        raise SystemExit("independent reproduction must be derived, never inferred")
+    campaign = builder().load("reproduction-challenges/campaign.json")
+    registry = builder().load("reproduction-challenges/accepted-reproductions.json")
+    if (
+        expected["reproduction"]["independently_reproduced_count"] != len(registry["entries"])
+        or campaign["independently_reproduced_count"] != len(registry["entries"])
+    ):
+        raise SystemExit("independent reproduction must be derived from accepted packs, never inferred")
     if expected["freshness"]["source_count"] != expected["freshness"]["baseline_count"]:
         raise SystemExit("all policy-source records need explicit baselines")
     compatibility = expected["freshness"]["compatibility"]
@@ -95,6 +100,7 @@ def main() -> None:
         'id="release-migration-count"',
         'id="release-a2a-path"',
         'id="release-challenge-inline"',
+        'id="release-independent-count"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing release-operations marker: {marker}")

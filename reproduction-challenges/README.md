@@ -38,6 +38,18 @@ public pack can reach `independence_reviewed` only after the three role commitme
 the reviewer records no issuer/producer relationship. This is human-reviewed relationship evidence,
 not cryptographic proof of organizational independence.
 
+Accepted results are listed in [`accepted-reproductions.json`](accepted-reproductions.json). Its
+count is not a badge or manually maintained claim: campaign verification recomputes every listed
+Exchange pack, requires `independence_reviewed`, binds it to the current challenge digest, rejects
+duplicate submissions and producer commitments, and requires the campaign count to equal the
+verified registry length. The empty registry therefore means exactly zero accepted independent
+reproductions—not “unknown” and not an inferred success.
+
+An accepted pack reveals the committed oracle, so that exact challenge must change to `closed` and
+can have only one accepted blind reproduction. Further testing requires a new challenge id and new
+source-suite and oracle commitments. The verifier rejects an accepted pack for an open challenge
+and rejects a second accepted result against an already revealed challenge.
+
 No submission becomes a model ranking, certification, compliance finding, production-safety claim,
 government endorsement, or permission to automate the protected decision.
 
