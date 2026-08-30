@@ -100,6 +100,16 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **A2A 1.0 Interface & Authorization Delta Gate** — a strict offline compiler now creates two
+  legitimate twins and fifteen one-change violations for `A2A-Version: 1.0`, selected
+  `AgentInterface` version/binding/endpoint/tenant, Agent Card drift, PascalCase JSON-RPC methods,
+  per-operation authorization, application authority, and caller-scoped task access. Its
+  answer-blind command adapter is 17/17 exact with zero unsafe allows and zero legitimate blocks.
+- **Immutable A2A standards evidence** — the Policy Freshness Radar no longer treats mutable A2A
+  `main` bytes as a stable evaluated revision. It pins official specification release `v1.0.1`,
+  preserves protocol compatibility revision `1.0`, and binds the exact source digest to the new
+  suite and receipt without claiming protocol conformance, security, or deployment approval.
+
 - **Agent Capability & Authority Bill of Materials** — `aau bom` now inventories models, tools,
   operations, resource scopes, expiring authority leases, delegation, revocation, data routes,
   accountable ownership, controls, and evidence in one strict public contract. Cross-reference

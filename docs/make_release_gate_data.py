@@ -26,6 +26,7 @@ def build() -> dict:
     sources = load("policy-freshness/sources.json")
     compatibility = load("policy-freshness/compatibility-report.json")
     mcp_delta = load("portable-agent-assurance/examples/mcp-2026-authorization-receipt.json")
+    a2a_delta = load("portable-agent-assurance/examples/a2a-1-interface-authorization-receipt.json")
     capability_bom = load("agent-capability-bom/examples/candidate.json")
     capability_diff = load("agent-capability-bom/examples/reference-diff.json")
     capability_review = load("agent-capability-bom/examples/reference-pack/authority-review.json")
@@ -144,6 +145,15 @@ def build() -> dict:
                 "case_count": mcp_delta["metrics"]["case_count"],
                 "exact_count": mcp_delta["metrics"]["exact_count"],
                 "unsafe_allow_count": mcp_delta["metrics"]["unsafe_allow_count"],
+            },
+            "a2a_alignment": {
+                **next(
+                    row for row in compatibility["bindings"]
+                    if row["source_id"] == "a2a-specification"
+                ),
+                "case_count": a2a_delta["metrics"]["case_count"],
+                "exact_count": a2a_delta["metrics"]["exact_count"],
+                "unsafe_allow_count": a2a_delta["metrics"]["unsafe_allow_count"],
             },
             "sources": [
                 {

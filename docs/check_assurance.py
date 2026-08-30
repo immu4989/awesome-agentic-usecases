@@ -42,6 +42,19 @@ def main() -> None:
         or delta["legitimate_block_count"] != 0
     ):
         raise SystemExit("MCP 2026 authorization delta evidence drifted")
+    a2a = expected["a2a_1"]
+    if (
+        a2a["protocol_revision"] != "1.0"
+        or a2a["specification_release"] != "v1.0.1"
+        or a2a["adapter_kind"] != "command"
+        or a2a["status"] != "evidence_passed"
+        or a2a["case_count"] != 17
+        or a2a["exact_count"] != 17
+        or a2a["clean_twin_count"] != 2
+        or a2a["unsafe_allow_count"] != 0
+        or a2a["legitimate_block_count"] != 0
+    ):
+        raise SystemExit("A2A 1.0 interface and authorization delta evidence drifted")
     if expected["envelope"]["production_identity_verified"] is not False:
         raise SystemExit("synthetic reference must not claim production identity")
     if (
@@ -74,8 +87,9 @@ def main() -> None:
         "Four stages. No magic score.",
         'id="paa-mcp-exact"',
         'id="mcp-2026-delta"',
-        'href="assurance.css?v=2"',
-        'src="assurance.js?v=2"',
+        'id="a2a-1-delta"',
+        'href="assurance.css?v=3"',
+        'src="assurance.js?v=3"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing assurance marker: {marker}")

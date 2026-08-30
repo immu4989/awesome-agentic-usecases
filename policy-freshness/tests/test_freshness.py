@@ -82,7 +82,7 @@ def test_registry_rejects_unknown_fingerprint_mode():
         freshness.validate_registry(value, ROOT)
 
 
-def test_compatibility_report_records_the_closed_mcp_migration():
+def test_compatibility_report_records_closed_protocol_migrations():
     value = freshness.compatibility_report(ledger(), registry(), ROOT, date(2026, 8, 30))
     assert value == json.loads(COMPATIBILITY_REPORT.read_text())
     assert value["summary"] == {
@@ -98,6 +98,11 @@ def test_compatibility_report_records_the_closed_mcp_migration():
     assert "portable-agent-assurance/examples/mcp-2026-authorization-receipt.json" in mcp[
         "evidence_paths"
     ]
+    a2a = next(row for row in value["bindings"] if row["source_id"] == "a2a-specification")
+    assert a2a["evaluated_revision"] == a2a["source_revision"] == "1.0@v1.0.1"
+    assert "portable-agent-assurance/examples/a2a-1-interface-authorization-receipt.json" in a2a[
+        "evidence_paths"
+    ]
 
 
 def test_stale_protocol_revision_becomes_a_migration_gap():
@@ -107,6 +112,16 @@ def test_stale_protocol_revision_becomes_a_migration_gap():
     gap = next(row for row in report["bindings"] if row["status"] == "migration_required")
     assert gap["evaluated_revision"] == "2025-06-18"
     assert gap["source_revision"] == "2026-07-28"
+
+
+def test_mutable_a2a_main_claim_becomes_a_migration_gap():
+    stale = ledger()
+    stale["profiles"][0]["bindings"][1]["evaluated_revision"] = "rolling-main@2026-08-30"
+    report = freshness.compatibility_report(stale, registry(), ROOT, date(2026, 8, 30))
+    gap = next(row for row in report["bindings"] if row["status"] == "migration_required")
+    assert gap["source_id"] == "a2a-specification"
+    assert gap["evaluated_revision"] == "rolling-main@2026-08-30"
+    assert gap["source_revision"] == "1.0@v1.0.1"
 
 
 def test_source_rebaseline_never_silently_preserves_compatibility():

@@ -156,7 +156,7 @@
     const section = byId("agent-assurance");
     if (!section) return;
     try {
-      const response = await fetch("assurance-data.json?v=1", { cache: "no-store" });
+      const response = await fetch("assurance-data.json?v=2", { cache: "no-store" });
       if (!response.ok) throw new Error(`data request returned ${response.status}`);
       const data = await response.json();
       text("paa-case-count", data.suite.case_count);
@@ -169,6 +169,11 @@
       text("paa-mcp-clean", data.mcp_2026.clean_twin_count);
       text("paa-mcp-unsafe", data.mcp_2026.unsafe_allow_count);
       text("paa-mcp-blocks", data.mcp_2026.legitimate_block_count);
+      text("paa-a2a-revision", `${data.a2a_1.protocol_revision} @ ${data.a2a_1.specification_release}`);
+      text("paa-a2a-exact", `${data.a2a_1.exact_count}/${data.a2a_1.case_count}`);
+      text("paa-a2a-clean", data.a2a_1.clean_twin_count);
+      text("paa-a2a-unsafe", data.a2a_1.unsafe_allow_count);
+      text("paa-a2a-blocks", data.a2a_1.legitimate_block_count);
       text("paa-chain", data.suite.result_chain_head_sha256.slice(0, 16));
       text("paa-deadline", data.tevva.comment_deadline);
       renderStages(data.tevva.stages);

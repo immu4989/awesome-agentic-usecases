@@ -96,6 +96,34 @@ envelope wire shape, operate an OAuth flow, validate SDK behavior, or establish 
 conformance, security, interoperability, compliance, certification, or deployment approval.
 See the [current-revision research and premise checks](MCP_2026_AUTHORIZATION_DELTA.md).
 
+## Migrate recorded A2A requests to 1.0
+
+The stable envelope suite also preserves its historical pre-1.0 A2A operation names. A separate
+version-pinned gate tests the migration without silently relabeling those fixtures:
+
+```bash
+python3 portable-agent-assurance/a2a_1_delta.py generate \
+  portable-agent-assurance/examples/a2a-1-interface-authorization-profile.json \
+  --out /tmp/a2a-1-suite.json
+
+python3 portable-agent-assurance/a2a_1_delta.py run \
+  portable-agent-assurance/examples/a2a-1-interface-authorization-profile.json \
+  /tmp/a2a-1-suite.json \
+  --adapter-command "python3 my_a2a_authorization_adapter.py" \
+  --out /tmp/a2a-1-receipt.json
+```
+
+The compiler produces **17 recorded cases**: two legitimate twins and fifteen single-delta
+violations. They exercise the required `A2A-Version: 1.0` negotiation, exact selected
+`AgentInterface` version/binding/endpoint/tenant tuple, pinned Agent Card bytes, PascalCase
+JSON-RPC methods, per-operation authentication and authorization, declared application authority,
+and caller-scoped task access. The committed answer-blind command adapter is 17/17 exact with zero
+unsafe allows and zero legitimate blocks; allow-all and deny-all both fail.
+
+The watched standard now resolves to immutable A2A specification release `v1.0.1`, while the
+protocol revision correctly remains `1.0` because patch releases do not affect negotiation.
+See the [source mapping, premise checks, and non-claims](A2A_1_RESEARCH_NOTES.md).
+
 ## Build a portable pack
 
 ```bash
@@ -129,7 +157,7 @@ This experimental profile draws from—not conforms to or represents:
 - [NIST agent identity foundation discussion](https://www.nist.gov/blogs/cybersecurity-insights/back-future-why-agentic-ai-needs-strong-identity-foundation)
 - [NIST NCCoE Software and AI Agent Identity and Authorization](https://www.nccoe.nist.gov/projects/software-and-ai-agent-identity-and-authorization)
 - [MCP authorization 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization)
-- [A2A specification](https://github.com/a2aproject/A2A/blob/main/docs/specification.md)
+- [A2A 1.0 specification, release v1.0.1](https://github.com/a2aproject/A2A/blob/v1.0.1/docs/specification.md)
 - [SPIFFE workload identity](https://spiffe.io/docs/latest/spiffe-specs/)
 - [OpenTelemetry semantic conventions](https://opentelemetry.io/docs/specs/semconv/)
 - [in-toto Statement v1](https://in-toto.io/Statement/v1)

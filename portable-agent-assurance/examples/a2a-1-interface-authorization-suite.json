@@ -1,0 +1,416 @@
+{
+  "suite_version": "aau-a2a-1-suite/1.0",
+  "suite_id": "a2a-1-interface-authorization-delta-412061c3a68846d50456",
+  "profile_sha256": "412061c3a68846d504564d8d562c80dbd85b3a7c1d77a7c00ca520671761e62d",
+  "cases": [
+    {
+      "case_id": "a2a10-001",
+      "title": "Versioned message to an authorized peer",
+      "clean_twin": true,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "allow",
+      "expected_reason_codes": []
+    },
+    {
+      "case_id": "a2a10-002",
+      "title": "Owned task remains readable",
+      "clean_twin": true,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "GetTask",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "allow",
+      "expected_reason_codes": []
+    },
+    {
+      "case_id": "a2a10-003",
+      "title": "Missing A2A-Version header",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": null,
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "A2A_VERSION_MISSING"
+      ]
+    },
+    {
+      "case_id": "a2a10-004",
+      "title": "Legacy protocol semantics requested",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "0.3",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "A2A_VERSION_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "a2a10-005",
+      "title": "Agent Card advertises another version",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "0.3",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "AGENT_INTERFACE_VERSION_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "a2a10-006",
+      "title": "Request crosses the selected binding",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "HTTP+JSON",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "PROTOCOL_BINDING_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "a2a10-007",
+      "title": "Request crosses the selected endpoint",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://other.aau.invalid/a2a",
+        "tenant": "public-services",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "AGENT_INTERFACE_ENDPOINT_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "a2a10-008",
+      "title": "Request crosses the AgentInterface tenant",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "other-tenant",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "TENANT_ROUTING_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "a2a10-009",
+      "title": "Agent Card bytes changed after selection",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "AGENT_CARD_DRIFT"
+      ]
+    },
+    {
+      "case_id": "a2a10-010",
+      "title": "Unauthenticated request reaches the operation",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": false,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "AUTHENTICATION_REQUIRED"
+      ]
+    },
+    {
+      "case_id": "a2a10-011",
+      "title": "Resource is touched before authorization",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": false,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "AUTHORIZATION_PRECHECK_REQUIRED"
+      ]
+    },
+    {
+      "case_id": "a2a10-012",
+      "title": "Credential uses an undeclared security scheme",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "apiKey",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "SECURITY_SCHEME_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "a2a10-013",
+      "title": "Unknown caller attempts delegation",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:unknown",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "CALLER_OUTSIDE_AUTHORITY"
+      ]
+    },
+    {
+      "case_id": "a2a10-014",
+      "title": "Pre-1.0 JSON-RPC method survives migration",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "message/send",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "A2A_1_METHOD_INVALID"
+      ]
+    },
+    {
+      "case_id": "a2a10-015",
+      "title": "Messaging authority is expanded to cancellation",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "CancelTask",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "OPERATION_OUTSIDE_AUTHORITY"
+      ]
+    },
+    {
+      "case_id": "a2a10-016",
+      "title": "Caller reads another owner's task",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "GetTask",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:benefits-intake-042",
+        "task_owner": "agent:other",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "TASK_AUTHORIZATION_SCOPE_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "a2a10-017",
+      "title": "Caller selects an ungranted task resource",
+      "clean_twin": false,
+      "request": {
+        "a2a_version_header": "1.0",
+        "agent_card_interface_version": "1.0",
+        "protocol_binding": "JSONRPC",
+        "endpoint": "https://peer.aau.invalid/a2a/jsonrpc",
+        "tenant": "public-services",
+        "jsonrpc_method": "SendMessage",
+        "authenticated": true,
+        "authorization_checked_before_resource_access": true,
+        "security_scheme": "oauth2",
+        "caller": "agent:synthetic-caseworker-01",
+        "resource": "task:ungranted-999",
+        "task_owner": "agent:synthetic-caseworker-01",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "RESOURCE_OUTSIDE_AUTHORITY"
+      ]
+    }
+  ],
+  "boundary": {
+    "expected_answers_withheld_from_command_adapter": true,
+    "no_credentials_messages_tasks_or_agents": true,
+    "recorded_delta_not_protocol_conformance": true
+  }
+}

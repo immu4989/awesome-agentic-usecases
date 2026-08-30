@@ -97,6 +97,9 @@
       const mcp = data.freshness.mcp_alignment;
       set("release-migration-path", `${mcp.evaluated_revision} = ${mcp.source_revision}`);
       set("release-mcp-delta-count", mcp.case_count);
+      const a2a = data.freshness.a2a_alignment;
+      set("release-a2a-path", `${a2a.evaluated_revision} = ${a2a.source_revision}`);
+      set("release-a2a-delta-count", a2a.case_count);
       set("release-data-status", `Evidence-derived · ${data.generated_on} · human identity not verified`);
       renderChanges(release.changes);
       renderChallenges(data.reproduction.challenges);

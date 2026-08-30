@@ -52,7 +52,7 @@ and observed failure cards with a direct path to reproduction. Start with
 | A model score but no evidence of public benefit | [Evidence Commons](https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons) | A hash-bound Impact Capsule with visible human, outcome, and reproduction gaps plus a safe partner path |
 | A vulnerability notice, agent-security incident, or defensive AI system | [Collective Cyber Defense Lab](https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense) | A verified-fix contract, containment drill, local continuity route, safe benchmark, blind outside-reproduction protocol, evidence mesh, and honest public outcome report |
 | A tool-using or multi-agent system | [Agent Security Commons](https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons) | A runtime authority gate, 50-event conformance suite, incident regressions, matched control experiment, and recomputable receipts |
-| An MCP or A2A agent with identity and delegated-authority questions | [Portable Agent Assurance](https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance) | A synthetic authority envelope, 18-case collision suite, 16-case MCP 2026 authorization delta gate, deterministic pack, and TEVV profile |
+| An MCP or A2A agent with identity and delegated-authority questions | [Portable Agent Assurance](https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance) | A synthetic authority envelope, 18-case collision suite, current MCP and A2A delta gates, deterministic pack, and TEVV profile |
 | A public or synthetic AI inventory | [Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory) | Quality gaps, possible-overlap questions, bounded value measurements, TEV&V and clause coverage |
 | A public-sector AI mission | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A non-certifying 12-file assurance draft |
 | An agency pilot ready to test | [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) | A claim → evidence → exact-test exchange and closeout lesson |
@@ -94,8 +94,10 @@ turns public or synthetic lessons into clean-twin regressions and interoperable 
 **[Policy Freshness Radar](policy-freshness/)** watches nine official source baselines and now
 maps their exact revisions to nine implementation-evidence bindings. Its compatibility ledger
 surfaced an MCP `2025-06-18 → 2026-07-28` migration, then closed it with a separate 16-case
-authorization delta gate instead of silently calling the older fixture current. Weekly review opens
-one human-owned issue without interpreting policy or editing tests.
+authorization delta gate instead of silently calling the older fixture current. It also replaced
+the mutable A2A `main` watcher with immutable specification release `v1.0.1` and bound revision
+`1.0` to a 17-case migration gate. Weekly review opens one human-owned issue without interpreting
+policy or editing tests.
 
 ## Agent Capability & Authority BOM—from model inventory to blast-radius visibility
 
@@ -181,6 +183,13 @@ testing current issuer, credential, resource, audience, scope step-up, self-desc
 token-transport bindings. Its answer-blind command receipt is 16/16 exact across two clean and
 fourteen violation twins, with zero unsafe allows and zero legitimate blocks. It is recorded
 current-revision evidence, not an OAuth/MCP implementation or conformance claim.
+
+The separate **A2A 1.0 Interface & Authorization Delta Gate** pins specification release
+`v1.0.1` and compiles 17 recorded cases around version negotiation, selected interface tuple,
+PascalCase JSON-RPC methods, Agent Card drift, per-operation authorization, caller authority, and
+task scoping. Its answer-blind command adapter resolves all 17 exactly, including two clean twins,
+with zero unsafe allows and zero legitimate blocks. The older wire shape remains historical rather
+than being silently called current.
 
 The companion **[TEVV-Athlon profile](tev-v-athlon-profile/)** maps the evidence to the four stages
 in the NIST AI 200-2 initial public draft and deliberately keeps three gaps visible: the outside

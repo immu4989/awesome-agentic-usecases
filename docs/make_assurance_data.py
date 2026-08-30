@@ -23,6 +23,7 @@ def _module(name: str, path: Path):
 def build() -> dict:
     assurance = _module("aau_assurance", ROOT / "portable-agent-assurance/aau_assurance.py")
     mcp_delta = _module("mcp_2026_delta", ROOT / "portable-agent-assurance/mcp_2026_delta.py")
+    a2a_delta = _module("a2a_1_delta", ROOT / "portable-agent-assurance/a2a_1_delta.py")
     tevva = _module("aau_tevva", ROOT / "tev-v-athlon-profile/aau_tevva.py")
     envelope = assurance.load_json(
         ROOT / "portable-agent-assurance/examples/synthetic-assurance-envelope.json"
@@ -41,6 +42,16 @@ def build() -> dict:
         ROOT / "portable-agent-assurance/examples/mcp-2026-authorization-receipt.json"
     )
     mcp_delta.verify_receipt(mcp_receipt, mcp_profile, mcp_suite)
+    a2a_profile = a2a_delta.load_json(
+        ROOT / "portable-agent-assurance/examples/a2a-1-interface-authorization-profile.json"
+    )
+    a2a_suite = a2a_delta.load_json(
+        ROOT / "portable-agent-assurance/examples/a2a-1-interface-authorization-suite.json"
+    )
+    a2a_receipt = a2a_delta.load_json(
+        ROOT / "portable-agent-assurance/examples/a2a-1-interface-authorization-receipt.json"
+    )
+    a2a_delta.verify_receipt(a2a_receipt, a2a_profile, a2a_suite)
     profile = tevva.load_json(ROOT / "tev-v-athlon-profile/examples/agent-assurance-tevva.json")
     assessment = tevva.assess(profile, ROOT)
     reason_counts: dict[str, int] = {}
@@ -88,6 +99,13 @@ def build() -> dict:
             "adapter_kind": mcp_receipt["adapter_kind"],
             "status": mcp_receipt["status"],
             **mcp_receipt["metrics"],
+        },
+        "a2a_1": {
+            "protocol_revision": a2a_profile["protocol_revision"],
+            "specification_release": a2a_profile["specification_release"],
+            "adapter_kind": a2a_receipt["adapter_kind"],
+            "status": a2a_receipt["status"],
+            **a2a_receipt["metrics"],
         },
         "tevva": {
             "profile_id": assessment["profile_id"],

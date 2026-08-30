@@ -39,7 +39,7 @@ def main() -> None:
     if compatibility["binding_count"] != expected["freshness"]["source_count"]:
         raise SystemExit("every watched source needs one standards compatibility binding")
     if compatibility["migration_required_count"] != 0:
-        raise SystemExit("the MCP revision migration regressed")
+        raise SystemExit("a standards revision migration regressed")
     mcp = expected["freshness"]["mcp_alignment"]
     if (
         mcp["source_id"] != "mcp-authorization"
@@ -51,6 +51,17 @@ def main() -> None:
         or mcp["unsafe_allow_count"] != 0
     ):
         raise SystemExit("the MCP revision alignment evidence drifted")
+    a2a = expected["freshness"]["a2a_alignment"]
+    if (
+        a2a["source_id"] != "a2a-specification"
+        or a2a["evaluated_revision"] != "1.0@v1.0.1"
+        or a2a["source_revision"] != "1.0@v1.0.1"
+        or a2a["status"] != "evidence_ready"
+        or a2a["case_count"] != 17
+        or a2a["exact_count"] != 17
+        or a2a["unsafe_allow_count"] != 0
+    ):
+        raise SystemExit("the A2A revision alignment evidence drifted")
     if expected["capability_bom"]["status"] != "human_review_required":
         raise SystemExit("a valid public AABOM must remain human-review bounded")
     if expected["capability_bom"]["production_identity_verified"] is not False:
@@ -76,12 +87,13 @@ def main() -> None:
         'id="release-gate"',
         "Ship evidence,",
         "not confidence.",
-        'href="release-gate.css?v=2"',
-        'src="release-gate.js?v=2"',
+        'href="release-gate.css?v=3"',
+        'src="release-gate.js?v=3"',
         'id="agent-capability-bom"',
         'id="release-bom-conformance-status"',
         'id="authority-conformance"',
         'id="release-migration-count"',
+        'id="release-a2a-path"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing release-operations marker: {marker}")
