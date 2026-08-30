@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import argparse
 from datetime import date
+import hashlib
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -22,6 +24,7 @@ REGISTRY_BOUNDARIES = {
     "independence_not_cryptographic",
     "not_certification_or_field_effectiveness",
 }
+ENTRY_ID = re.compile(r"[a-z0-9][a-z0-9-]{2,79}")
 
 
 def exchange_module():
@@ -72,6 +75,16 @@ def safe_campaign_path(value: str) -> Path:
     return candidate
 
 
+def safe_accepted_path(value: str) -> Path:
+    candidate = safe_campaign_path(value)
+    accepted = (HERE / "accepted").resolve()
+    try:
+        candidate.relative_to(accepted)
+    except ValueError as exc:
+        raise ValueError("accepted reproduction packs must stay below accepted/") from exc
+    return candidate
+
+
 def campaign_entry(challenge_id: str) -> dict:
     campaign = load_public(HERE / "campaign.json")
     matches = [item for item in campaign["challenges"] if item["challenge_id"] == challenge_id]
@@ -80,7 +93,11 @@ def campaign_entry(challenge_id: str) -> dict:
     return matches[0]
 
 
-def verify_reproduction_registry(campaign: dict, registry: dict | None = None) -> dict:
+def verify_reproduction_registry(
+    campaign: dict,
+    registry: dict | None = None,
+    pack_overrides: dict[str, Path] | None = None,
+) -> dict:
     module = exchange_module()
     value = registry if registry is not None else load_public(HERE / "accepted-reproductions.json")
     if set(value) != {"registry_version", "entries", "boundary"}:
@@ -130,11 +147,9 @@ def verify_reproduction_registry(campaign: dict, registry: dict | None = None) -
         seen_challenges.add(entry["challenge_id"])
         if challenge_entries[entry["challenge_id"]]["status"] != "closed":
             raise ValueError("a challenge must close when its accepted pack reveals the oracle")
-        if (
-            not isinstance(entry["pack_path"], str)
-            or not entry["pack_path"].startswith("accepted/")
-        ):
-            raise ValueError("accepted reproduction packs must be below accepted/")
+        if not isinstance(entry["pack_path"], str):
+            raise ValueError("accepted reproduction pack paths must be text")
+        registered_pack = safe_accepted_path(entry["pack_path"])
         if entry["pack_path"] in seen_packs:
             raise ValueError("accepted reproduction pack paths must be unique")
         seen_packs.add(entry["pack_path"])
@@ -151,7 +166,8 @@ def verify_reproduction_registry(campaign: dict, registry: dict | None = None) -
         except (TypeError, ValueError) as exc:
             raise ValueError("accepted_on must be an ISO calendar date") from exc
 
-        adjudication = module.verify_pack(safe_campaign_path(entry["pack_path"]))
+        pack = (pack_overrides or {}).get(entry["pack_path"], registered_pack)
+        adjudication = module.verify_pack(pack)
         challenge = challenges[entry["challenge_id"]]
         if (
             adjudication["status"] != "independence_reviewed"
@@ -171,6 +187,110 @@ def verify_reproduction_registry(campaign: dict, registry: dict | None = None) -
     if [entry["entry_id"] for entry in entries] != sorted(seen_ids):
         raise ValueError("accepted reproductions must be sorted by entry_id")
     return value
+
+
+def plan_acceptance(
+    challenge_id: str,
+    pack: Path,
+    entry_id: str,
+    accepted_on: str,
+    out: Path,
+) -> dict:
+    module = exchange_module()
+    campaign = verify_campaign()
+    registry = load_public(HERE / "accepted-reproductions.json")
+    entry = campaign_entry(challenge_id)
+    if entry["status"] != "open":
+        raise ValueError("the selected challenge is already closed")
+    if not ENTRY_ID.fullmatch(entry_id):
+        raise ValueError("entry_id must be a 3-80 character lowercase slug")
+    try:
+        date.fromisoformat(accepted_on)
+    except ValueError as exc:
+        raise ValueError("accepted_on must be an ISO calendar date") from exc
+    source_pack = pack.absolute()
+    adjudication = module.verify_pack(source_pack)
+    challenge = load_public(safe_campaign_path(entry["path"]))
+    if (
+        adjudication["status"] != "independence_reviewed"
+        or adjudication["evidence_level"] != "independently_reproduced"
+        or adjudication["challenge_id"] != challenge_id
+        or adjudication["challenge_sha256"] != challenge["challenge_sha256"]
+    ):
+        raise ValueError("only an independence-reviewed pack for the current challenge can be planned")
+
+    pack_path = f"accepted/{entry_id}"
+    proposed_campaign = json.loads(json.dumps(campaign))
+    proposed_entry = next(
+        item for item in proposed_campaign["challenges"]
+        if item["challenge_id"] == challenge_id
+    )
+    proposed_entry["status"] = "closed"
+    proposed_campaign["independently_reproduced_count"] += 1
+    accepted_entry = {
+        "entry_id": entry_id,
+        "challenge_id": challenge_id,
+        "pack_path": pack_path,
+        "accepted_on": accepted_on,
+        "adjudication_sha256": adjudication["adjudication_sha256"],
+        "subject_sha256": adjudication["subject"]["sha256"],
+    }
+    proposed_registry = json.loads(json.dumps(registry))
+    proposed_registry["entries"].append(accepted_entry)
+    proposed_registry["entries"].sort(key=lambda item: item["entry_id"])
+    verify_reproduction_registry(
+        proposed_campaign,
+        proposed_registry,
+        pack_overrides={pack_path: source_pack},
+    )
+
+    if out.exists() or out.is_symlink():
+        raise ValueError(f"refusing to overwrite acceptance plan: {out}")
+    campaign_bytes = (json.dumps(proposed_campaign, indent=2) + "\n").encode()
+    registry_bytes = (json.dumps(proposed_registry, indent=2) + "\n").encode()
+    plan = {
+        "plan_version": "aau-reproduction-acceptance-plan/1.0",
+        "entry": accepted_entry,
+        "source_pack": {
+            "challenge_sha256": adjudication["challenge_sha256"],
+            "submission_sha256": adjudication["submission_sha256"],
+            "adjudication_sha256": adjudication["adjudication_sha256"],
+            "subject_sha256": adjudication["subject"]["sha256"],
+        },
+        "proposed_campaign_sha256": hashlib.sha256(campaign_bytes).hexdigest(),
+        "proposed_registry_sha256": hashlib.sha256(registry_bytes).hexdigest(),
+        "boundary": {
+            "source_pack_not_copied": True,
+            "repository_not_modified": True,
+            "human_review_before_publication_required": True,
+            "oracle_reveal_closes_challenge": True,
+            "not_certification_or_field_effectiveness": True,
+        },
+    }
+    plan_bytes = (json.dumps(plan, indent=2) + "\n").encode()
+    readme = (
+        "# Reproduction acceptance plan\n\n"
+        "This non-mutating plan was built only after the source Exchange pack recomputed as "
+        "`independence_reviewed`. Review the relationship evidence and disclosed limitations, copy "
+        f"the exact verified pack to `reproduction-challenges/{pack_path}/`, then replace campaign.json "
+        "and accepted-reproductions.json with the proposed files. Run `python3 "
+        "reproduction-challenges/submit.py verify-campaign` before commit. Oracle reveal closes the "
+        "challenge. This is not certification or field-effectiveness evidence.\n"
+    ).encode()
+    payloads = {
+        "README.md": readme,
+        "acceptance-plan.json": plan_bytes,
+        "campaign.proposed.json": campaign_bytes,
+        "accepted-reproductions.proposed.json": registry_bytes,
+    }
+    sums = "".join(
+        f"{hashlib.sha256(payload).hexdigest()}  {name}\n"
+        for name, payload in sorted(payloads.items())
+    ).encode()
+    out.mkdir(parents=True)
+    for name, payload in {**payloads, "SHA256SUMS": sums}.items():
+        (out / name).write_bytes(payload)
+    return plan
 
 
 def verify_campaign() -> dict:
@@ -260,6 +380,12 @@ def parser() -> argparse.ArgumentParser:
     build.add_argument("--responses", required=True)
     build.add_argument("--metadata", required=True)
     build.add_argument("--out", type=Path, required=True)
+    accepting = sub.add_parser("plan-accept")
+    accepting.add_argument("--challenge-id", required=True)
+    accepting.add_argument("--pack", type=Path, required=True)
+    accepting.add_argument("--entry-id", required=True)
+    accepting.add_argument("--accepted-on", required=True)
+    accepting.add_argument("--out", type=Path, required=True)
     return root
 
 
@@ -273,11 +399,19 @@ def main() -> int:
                 f"OK: {len(campaign['challenges'])} answer-free challenges and "
                 f"{accepted} accepted independent reproductions verified."
             )
-        else:
+        elif args.command == "build":
             submission = build_submission(
                 args.challenge_id, args.responses, args.metadata, args.out
             )
             print(f"OK: challenge-bound submission {submission['submission_sha256']} written to {args.out}.")
+        else:
+            plan = plan_acceptance(
+                args.challenge_id, args.pack, args.entry_id, args.accepted_on, args.out
+            )
+            print(
+                f"OK: non-mutating acceptance plan for {plan['entry']['entry_id']} "
+                f"written to {args.out}."
+            )
         return 0
     except (ValueError, RuntimeError, json.JSONDecodeError) as exc:
         print(f"aau reproduction challenge: {exc}", file=sys.stderr)

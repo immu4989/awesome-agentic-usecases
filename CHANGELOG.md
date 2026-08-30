@@ -109,6 +109,9 @@ the harness API is what is versioned; use cases are additive.
 - **Honest zero and scalable intake** — the empty registry renders as zero on the live release
   surface while four challenges and 26 tasks remain open. The new A2A-to-MCP relay challenge is
   available in the issue intake; human-reviewed relationships remain explicitly non-cryptographic.
+- **Non-mutating acceptance planner** — a maintainer command recomputes the reviewed Exchange pack,
+  simulates challenge close and registry insertion, validates the complete proposed state, and
+  writes checksummed proposed files without copying the revealed oracle or changing the checkout.
 
 - **Privacy-bounded Cross-protocol Authority Trace** — the exact Authority Relay receipt now
   projects into 25 synthetic traces and 52 spans using W3C-shaped trace context and a pinned

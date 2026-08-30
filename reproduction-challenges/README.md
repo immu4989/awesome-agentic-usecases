@@ -50,6 +50,24 @@ can have only one accepted blind reproduction. Further testing requires a new ch
 source-suite and oracle commitments. The verifier rejects an accepted pack for an open challenge
 and rejects a second accepted result against an already revealed challenge.
 
+After the separate reviewer builds an Exchange pack, generate a non-mutating acceptance plan:
+
+```bash
+python3 reproduction-challenges/submit.py plan-accept \
+  --challenge-id CHALLENGE_ID \
+  --pack PATH_TO_REVIEWED_PACK \
+  --entry-id PUBLIC_ENTRY_SLUG \
+  --accepted-on YYYY-MM-DD \
+  --out /tmp/aau-acceptance-plan
+```
+
+The planner first recomputes the complete pack and rejects protocol demonstrations, stale challenge
+digests, invalid dates and ids, an already closed challenge, duplicate producers/submissions, or a
+result that would violate the proposed registry. It writes proposed campaign and registry files,
+an acceptance record, instructions, and SHA-256 checksums without copying the oracle-bearing pack
+or modifying the checkout. A human must review the plan, run `shasum -c SHA256SUMS` inside it, and
+copy the exact verified pack.
+
 No submission becomes a model ranking, certification, compliance finding, production-safety claim,
 government endorsement, or permission to automate the protected decision.
 

@@ -105,3 +105,105 @@ def test_independent_count_is_derived_from_verified_registry_entries():
         assert "must equal verified registry entries" in str(exc)
     else:
         raise AssertionError("a manually inflated independent count was accepted")
+
+
+def test_acceptance_plan_recomputes_pack_without_mutating_campaign(tmp_path, monkeypatch):
+    module = campaign_module()
+    exchange = module.exchange_module()
+    demo = ROOT / "independent-reproduction-exchange" / "examples" / "revealed-protocol-demo"
+    challenge = exchange.load_json(demo / "challenge.json")
+    oracle = exchange.load_json(demo / "oracle.json")
+    stored_submission = exchange.load_json(demo / "submission.json")
+    metadata = {
+        "metadata_version": "aau-reproduction-metadata/0.1",
+        "submission_id": "outside-reproducer-test",
+        "producer_commitment_sha256": stored_submission["producer_commitment_sha256"],
+        "relationship_to_issuer": "none",
+        "executed_on": "2026-08-30",
+        "environment": stored_submission["environment"],
+        "methodology": stored_submission["methodology"],
+        "sharing": stored_submission["sharing"],
+    }
+    submission = exchange.build_submission(challenge, stored_submission["responses"], metadata)
+    review = exchange.load_json(demo / "review.json")
+    review["relationship_to_issuer"] = "none"
+    review["relationship_to_producer"] = "none"
+    review["limitations"] = ["Synthetic test of the acceptance transition only."]
+    payloads, adjudication = exchange.pack_payloads(challenge, oracle, submission, review)
+    assert adjudication["status"] == "independence_reviewed"
+    pack = tmp_path / "reviewed-pack"
+    pack.mkdir()
+    for name, payload in payloads.items():
+        (pack / name).write_bytes(payload)
+
+    campaign_root = tmp_path / "campaign"
+    (campaign_root / "demo").mkdir(parents=True)
+    (campaign_root / "demo" / "challenge.json").write_text(
+        json.dumps(challenge, indent=2) + "\n"
+    )
+    response_template = {
+        "responses": [{"task_id": task["task_id"]} for task in challenge["tasks"]]
+    }
+    (campaign_root / "demo" / "responses.template.json").write_text(
+        json.dumps(response_template, indent=2) + "\n"
+    )
+    (campaign_root / "demo" / "metadata.template.json").write_text("{}\n")
+    base_campaign = module.load_public(ROOT / "reproduction-challenges" / "campaign.json")
+    campaign = {
+        **base_campaign,
+        "independently_reproduced_count": 0,
+        "challenges": [{
+            "challenge_id": challenge["challenge_id"],
+            "title": challenge["title"],
+            "path": "demo/challenge.json",
+            "responses_template": "demo/responses.template.json",
+            "metadata_template": "demo/metadata.template.json",
+            "task_count": len(challenge["tasks"]),
+            "status": "open",
+        }],
+    }
+    (campaign_root / "campaign.json").write_text(json.dumps(campaign, indent=2) + "\n")
+    registry = module.load_public(
+        ROOT / "reproduction-challenges" / "accepted-reproductions.json"
+    )
+    (campaign_root / "accepted-reproductions.json").write_text(
+        json.dumps(registry, indent=2) + "\n"
+    )
+    monkeypatch.setattr(module, "HERE", campaign_root)
+
+    out = tmp_path / "acceptance-plan"
+    plan = module.plan_acceptance(
+        challenge["challenge_id"], pack, "outside-reproducer-test", "2026-08-30", out
+    )
+    assert plan["entry"]["adjudication_sha256"] == adjudication["adjudication_sha256"]
+    proposed_campaign = json.loads((out / "campaign.proposed.json").read_text())
+    proposed_registry = json.loads((out / "accepted-reproductions.proposed.json").read_text())
+    assert proposed_campaign["challenges"][0]["status"] == "closed"
+    assert proposed_campaign["independently_reproduced_count"] == 1
+    assert len(proposed_registry["entries"]) == 1
+    assert not (campaign_root / "accepted").exists()
+    assert json.loads((campaign_root / "campaign.json").read_text()) == campaign
+    assert set(path.name for path in out.iterdir()) == {
+        "README.md", "SHA256SUMS", "acceptance-plan.json",
+        "accepted-reproductions.proposed.json", "campaign.proposed.json",
+    }
+
+
+def test_acceptance_plan_rejects_protocol_demonstration(tmp_path):
+    module = campaign_module()
+    demo_pack = (
+        ROOT / "independent-reproduction-exchange" / "examples" / "revealed-protocol-demo"
+    )
+    try:
+        module.plan_acceptance(
+            "portable-agent-assurance-2026-01",
+            demo_pack,
+            "invalid-protocol-demo",
+            "2026-08-30",
+            tmp_path / "must-not-exist",
+        )
+    except ValueError as exc:
+        assert "only an independence-reviewed pack" in str(exc)
+    else:
+        raise AssertionError("a protocol demonstration was accepted")
+    assert not (tmp_path / "must-not-exist").exists()
