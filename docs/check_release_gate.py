@@ -35,6 +35,18 @@ def main() -> None:
         raise SystemExit("independent reproduction must be derived, never inferred")
     if expected["freshness"]["source_count"] != expected["freshness"]["baseline_count"]:
         raise SystemExit("all policy-source records need explicit baselines")
+    compatibility = expected["freshness"]["compatibility"]
+    if compatibility["binding_count"] != expected["freshness"]["source_count"]:
+        raise SystemExit("every watched source needs one standards compatibility binding")
+    if compatibility["migration_required_count"] != 1:
+        raise SystemExit("the known MCP revision migration must remain explicit until resolved")
+    migration = expected["freshness"]["migration_gaps"][0]
+    if (
+        migration["source_id"] != "mcp-authorization"
+        or migration["evaluated_revision"] != "2025-06-18"
+        or migration["source_revision"] != "2026-07-28"
+    ):
+        raise SystemExit("the MCP revision impact binding drifted")
     if expected["capability_bom"]["status"] != "human_review_required":
         raise SystemExit("a valid public AABOM must remain human-review bounded")
     if expected["capability_bom"]["production_identity_verified"] is not False:
@@ -65,6 +77,7 @@ def main() -> None:
         'id="agent-capability-bom"',
         'id="release-bom-conformance-status"',
         'id="authority-conformance"',
+        'id="release-migration-count"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing release-operations marker: {marker}")

@@ -91,8 +91,10 @@ portable agent authority, distribution restoration, and pharmaceutical batch dis
 receiving gold answers. The hidden source suites and oracles are excluded from Git; public files
 contain only task inputs and oracle commitments. The **[Agent Incident Exchange](agent-incident-exchange/)**
 turns public or synthetic lessons into clean-twin regressions and interoperable findings, while the
-**[Policy Freshness Radar](policy-freshness/)** watches nine official source baselines and opens a
-human-review issue without interpreting policy or editing tests.
+**[Policy Freshness Radar](policy-freshness/)** watches nine official source baselines and now
+maps their exact revisions to nine implementation-evidence bindings. Its compatibility ledger
+surfaces an MCP `2025-06-18 → 2026-07-28` migration instead of silently calling the older fixture
+current, and opens one human-review issue without interpreting policy or editing tests.
 
 ## Agent Capability & Authority BOM—from model inventory to blast-radius visibility
 

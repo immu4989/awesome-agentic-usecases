@@ -16,13 +16,21 @@ from pathlib import Path
 from typing import Any
 
 
-REGISTRY_VERSION = "aau-policy-source-registry/1.0"
+REGISTRY_VERSION = "aau-policy-source-registry/1.1"
 REPORT_VERSION = "aau-policy-freshness-report/1.0"
+COMPATIBILITY_VERSION = "aau-standards-compatibility-ledger/1.0"
+COMPATIBILITY_REPORT_VERSION = "aau-standards-compatibility-report/1.0"
 MAX_REGISTRY_BYTES = 2_000_000
 MAX_SOURCE_BYTES = 12_000_000
 MAX_SOURCES = 250
 HEX = set("0123456789abcdef")
 STATUS_ORDER = {"source_changed": 0, "unreachable": 1, "review_due": 2, "current": 3}
+COMPATIBILITY_STATUS_ORDER = {
+    "source_lock_changed": 0,
+    "migration_required": 1,
+    "review_due": 2,
+    "evidence_ready": 3,
+}
 BOUNDARY_KEYS = {
     "metadata_and_bytes_only",
     "no_automatic_policy_interpretation",
@@ -169,6 +177,8 @@ def validate_registry(registry: dict[str, Any], root: Path | None = None) -> Non
                 "source_id",
                 "title",
                 "authority",
+                "source_revision",
+                "revision_kind",
                 "url",
                 "allowed_hosts",
                 "fingerprint_mode",
@@ -185,6 +195,9 @@ def validate_registry(registry: dict[str, Any], root: Path | None = None) -> Non
         ids.add(source_id)
         _text(source["title"], "source title", 300)
         _text(source["authority"], "source authority", 200)
+        _text(source["source_revision"], "source revision", 160)
+        if source["revision_kind"] not in {"versioned", "rolling"}:
+            raise FreshnessError("revision_kind must be versioned or rolling")
         url = _text(source["url"], "source URL", 800)
         parsed = urllib.parse.urlparse(url)
         if parsed.scheme != "https" or not parsed.hostname:
@@ -232,6 +245,175 @@ def validate_registry(registry: dict[str, Any], root: Path | None = None) -> Non
     boundary = _exact(registry["boundary"], BOUNDARY_KEYS, "registry boundary")
     if any(boundary[key] is not True for key in BOUNDARY_KEYS):
         raise FreshnessError("all source registry boundaries must be true")
+
+
+def validate_compatibility_ledger(
+    ledger: dict[str, Any], registry: dict[str, Any], root: Path
+) -> None:
+    """Validate explicit source-revision bindings without asserting conformance."""
+    validate_registry(registry, root)
+    _exact(
+        ledger,
+        {"ledger_version", "ledger_id", "reviewed_on", "profiles", "boundary"},
+        "compatibility ledger",
+    )
+    if ledger["ledger_version"] != COMPATIBILITY_VERSION:
+        raise FreshnessError(f"ledger_version must be {COMPATIBILITY_VERSION}")
+    _text(ledger["ledger_id"], "ledger_id", 160)
+    _date(ledger["reviewed_on"], "ledger reviewed_on")
+    profiles = ledger["profiles"]
+    if not isinstance(profiles, list) or not profiles or len(profiles) > MAX_SOURCES:
+        raise FreshnessError("compatibility profiles must be a non-empty bounded list")
+    source_map = {row["source_id"]: row for row in registry["sources"]}
+    profile_ids: set[str] = set()
+    pair_ids: set[tuple[str, str]] = set()
+    for profile_index, profile in enumerate(profiles):
+        profile = _exact(
+            profile,
+            {"profile_id", "title", "owner_path", "bindings"},
+            f"profiles[{profile_index}]",
+        )
+        profile_id = _text(profile["profile_id"], "profile_id", 160)
+        if profile_id in profile_ids:
+            raise FreshnessError(f"duplicate profile_id: {profile_id}")
+        profile_ids.add(profile_id)
+        _text(profile["title"], "profile title", 300)
+        owner = Path(_text(profile["owner_path"], "profile owner_path", 300))
+        if owner.is_absolute() or ".." in owner.parts or not (root / owner).exists():
+            raise FreshnessError(f"profile owner path is invalid: {owner}")
+        bindings = profile["bindings"]
+        if not isinstance(bindings, list) or not bindings or len(bindings) > MAX_SOURCES:
+            raise FreshnessError("profile bindings must be a non-empty bounded list")
+        for binding_index, binding in enumerate(bindings):
+            binding = _exact(
+                binding,
+                {
+                    "source_id",
+                    "evaluated_revision",
+                    "reviewed_source_sha256",
+                    "relationship",
+                    "evidence_paths",
+                    "claim_boundary",
+                },
+                f"profiles[{profile_index}].bindings[{binding_index}]",
+            )
+            source_id = _text(binding["source_id"], "binding source_id", 160)
+            if source_id not in source_map:
+                raise FreshnessError(f"compatibility binding references unknown source: {source_id}")
+            pair = (profile_id, source_id)
+            if pair in pair_ids:
+                raise FreshnessError(f"duplicate profile/source binding: {profile_id}/{source_id}")
+            pair_ids.add(pair)
+            _text(binding["evaluated_revision"], "evaluated_revision", 160)
+            _sha_or_none(binding["reviewed_source_sha256"], "reviewed_source_sha256")
+            if binding["reviewed_source_sha256"] is None:
+                raise FreshnessError("compatibility bindings require a reviewed source fingerprint")
+            if binding["relationship"] not in {
+                "informed_by",
+                "protocol_tested",
+                "schema_validated",
+                "export_profile",
+            }:
+                raise FreshnessError("compatibility relationship is unsupported")
+            if binding["claim_boundary"] != "experimental_nonconforming_reference":
+                raise FreshnessError("compatibility binding must preserve the nonconformance claim")
+            paths = binding["evidence_paths"]
+            if not isinstance(paths, list) or not paths or len(paths) != len(set(paths)):
+                raise FreshnessError("evidence_paths must be a unique non-empty list")
+            for evidence in paths:
+                evidence_path = Path(_text(evidence, "evidence path", 300))
+                if (
+                    evidence_path.is_absolute()
+                    or ".." in evidence_path.parts
+                    or not (root / evidence_path).is_file()
+                ):
+                    raise FreshnessError(f"compatibility evidence path is invalid: {evidence}")
+            source = source_map[source_id]
+            if profile["owner_path"] not in source["owner_paths"]:
+                raise FreshnessError(
+                    f"source {source_id} does not name profile owner {profile['owner_path']}"
+                )
+    boundary = _exact(
+        ledger["boundary"],
+        {
+            "declared_revisions_not_implementation_verification",
+            "alignment_not_conformance",
+            "source_change_requires_human_review",
+            "no_automatic_migration",
+            "no_automatic_policy_interpretation",
+        },
+        "compatibility boundary",
+    )
+    if any(value is not True for value in boundary.values()):
+        raise FreshnessError("all compatibility boundaries must be true")
+
+
+def compatibility_report(
+    ledger: dict[str, Any], registry: dict[str, Any], root: Path, as_of: date
+) -> dict[str, Any]:
+    """Derive exact revision gaps and source-lock drift for human-owned migration."""
+    validate_compatibility_ledger(ledger, registry, root)
+    source_map = {row["source_id"]: row for row in registry["sources"]}
+    rows = []
+    for profile in ledger["profiles"]:
+        for binding in profile["bindings"]:
+            source = source_map[binding["source_id"]]
+            if binding["reviewed_source_sha256"] != source["baseline"]["content_sha256"]:
+                status = "source_lock_changed"
+            elif binding["evaluated_revision"] != source["source_revision"]:
+                status = "migration_required"
+            elif as_of > date.fromisoformat(source["review_due"]):
+                status = "review_due"
+            else:
+                status = "evidence_ready"
+            rows.append(
+                {
+                    "profile_id": profile["profile_id"],
+                    "title": profile["title"],
+                    "owner_path": profile["owner_path"],
+                    "source_id": source["source_id"],
+                    "source_revision": source["source_revision"],
+                    "evaluated_revision": binding["evaluated_revision"],
+                    "revision_kind": source["revision_kind"],
+                    "relationship": binding["relationship"],
+                    "evidence_paths": binding["evidence_paths"],
+                    "status": status,
+                    "interpretation": "human_review_required"
+                    if status != "evidence_ready"
+                    else "declared_alignment_only",
+                }
+            )
+    rows.sort(key=lambda row: (COMPATIBILITY_STATUS_ORDER[row["status"]], row["profile_id"], row["source_id"]))
+    counts = {
+        status: sum(row["status"] == status for row in rows)
+        for status in COMPATIBILITY_STATUS_ORDER
+    }
+    report = {
+        "report_version": COMPATIBILITY_REPORT_VERSION,
+        "ledger_id": ledger["ledger_id"],
+        "ledger_sha256": digest(ledger),
+        "registry_id": registry["registry_id"],
+        "registry_sha256": digest(registry),
+        "as_of": as_of.isoformat(),
+        "summary": {
+            "binding_count": len(rows),
+            **{f"{status}_count": count for status, count in counts.items()},
+            "human_review_required_count": len(rows) - counts["evidence_ready"],
+        },
+        "bindings": rows,
+        "boundary": {
+            "declared_alignment_not_implementation_verification": True,
+            "evidence_presence_not_evidence_quality": True,
+            "alignment_not_conformance_certification_or_compliance": True,
+            "no_automatic_source_migration_or_policy_interpretation": True,
+            "human_owner_decides_applicability_and_remediation": True,
+        },
+        "report_sha256": "",
+    }
+    report["report_sha256"] = digest(
+        {key: value for key, value in report.items() if key != "report_sha256"}
+    )
+    return report
 
 
 def _fetch(source: dict[str, Any], timeout: float) -> dict[str, Any]:
@@ -378,7 +560,9 @@ def offline_report(registry: dict[str, Any], root: Path, as_of: date) -> dict[st
     }
 
 
-def issue_markdown(report: dict[str, Any]) -> str:
+def issue_markdown(
+    report: dict[str, Any], compatibility: dict[str, Any] | None = None
+) -> str:
     summary = report["summary"]
     lines = [
         "## Policy source freshness review",
@@ -403,6 +587,32 @@ def issue_markdown(report: dict[str, Any]) -> str:
             "This workflow is not legal, regulatory, or compliance monitoring.",
         ]
     )
+    if compatibility and compatibility["summary"]["human_review_required_count"]:
+        lines.extend(
+            [
+                "",
+                "## Standards revision impact",
+                "",
+                "| Status | Profile | Evaluated revision | Watched revision | Evidence owner |",
+                "|---|---|---|---|---|",
+            ]
+        )
+        for binding in compatibility["bindings"]:
+            if binding["status"] == "evidence_ready":
+                continue
+            lines.append(
+                f"| `{binding['status']}` | {binding['title']} | "
+                f"`{binding['evaluated_revision']}` | `{binding['source_revision']}` | "
+                f"`{binding['owner_path']}` |"
+            )
+        lines.extend(
+            [
+                "",
+                "Revision alignment is declared evidence metadata, not implementation verification, "
+                "standards conformance, certification, or compliance. A human owner must decide "
+                "applicability, migration scope, and the evidence needed to close each gap.",
+            ]
+        )
     return "\n".join(lines) + "\n"
 
 
@@ -431,7 +641,18 @@ def parser() -> argparse.ArgumentParser:
     scan.add_argument("--out", type=Path, required=True)
     body = sub.add_parser("issue-body")
     body.add_argument("report", type=Path)
+    body.add_argument("--compatibility-report", type=Path)
     body.add_argument("--out", type=Path, required=True)
+    compatibility_validate = sub.add_parser("validate-compatibility")
+    compatibility_validate.add_argument("ledger", type=Path)
+    compatibility_validate.add_argument("registry", type=Path)
+    compatibility_validate.add_argument("--root", type=Path, default=Path.cwd())
+    compatibility = sub.add_parser("compatibility")
+    compatibility.add_argument("ledger", type=Path)
+    compatibility.add_argument("registry", type=Path)
+    compatibility.add_argument("--root", type=Path, default=Path.cwd())
+    compatibility.add_argument("--as-of", type=date.fromisoformat, default=date.today())
+    compatibility.add_argument("--out", type=Path, required=True)
     return root
 
 
@@ -440,11 +661,28 @@ def main() -> int:
     try:
         if args.command == "issue-body":
             report = load_json(args.report)
+            compatibility = (
+                load_json(args.compatibility_report) if args.compatibility_report else None
+            )
             if args.out.exists() or args.out.is_symlink():
                 raise FreshnessError(f"refusing to overwrite: {args.out}")
             args.out.parent.mkdir(parents=True, exist_ok=True)
-            args.out.write_text(issue_markdown(report))
+            args.out.write_text(issue_markdown(report, compatibility))
             print(f"OK: review issue body written to {args.out}.")
+            return 0
+        if args.command in {"validate-compatibility", "compatibility"}:
+            ledger = load_json(args.ledger)
+            registry = load_json(args.registry)
+            if args.command == "validate-compatibility":
+                validate_compatibility_ledger(ledger, registry, args.root)
+                print(f"OK: {len(ledger['profiles'])} compatibility profiles verified.")
+            else:
+                report = compatibility_report(ledger, registry, args.root, args.as_of)
+                write_json(report, args.out)
+                print(
+                    f"OK: evaluated {report['summary']['binding_count']} source bindings; "
+                    f"{report['summary']['human_review_required_count']} require human review."
+                )
             return 0
         registry = load_json(args.registry)
         if args.command == "validate":

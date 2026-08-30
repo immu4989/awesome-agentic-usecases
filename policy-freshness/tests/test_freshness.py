@@ -11,10 +11,16 @@ import aau_freshness as freshness  # noqa: E402
 
 ROOT = Path(__file__).parents[2]
 REGISTRY = ROOT / "policy-freshness" / "sources.json"
+LEDGER = ROOT / "policy-freshness" / "compatibility-ledger.json"
+COMPATIBILITY_REPORT = ROOT / "policy-freshness" / "compatibility-report.json"
 
 
 def registry():
     return json.loads(REGISTRY.read_text())
+
+
+def ledger():
+    return json.loads(LEDGER.read_text())
 
 
 def test_committed_registry_is_complete_and_not_due():
@@ -74,3 +80,56 @@ def test_registry_rejects_unknown_fingerprint_mode():
     value["sources"][0]["fingerprint_mode"] = "semantic_guess"
     with pytest.raises(freshness.FreshnessError):
         freshness.validate_registry(value, ROOT)
+
+
+def test_compatibility_report_exposes_the_known_mcp_migration_gap():
+    value = freshness.compatibility_report(ledger(), registry(), ROOT, date(2026, 8, 30))
+    assert value == json.loads(COMPATIBILITY_REPORT.read_text())
+    assert value["summary"] == {
+        "binding_count": 9,
+        "source_lock_changed_count": 0,
+        "migration_required_count": 1,
+        "review_due_count": 0,
+        "evidence_ready_count": 8,
+        "human_review_required_count": 1,
+    }
+    gap = next(row for row in value["bindings"] if row["status"] == "migration_required")
+    assert gap["source_id"] == "mcp-authorization"
+    assert gap["evaluated_revision"] == "2025-06-18"
+    assert gap["source_revision"] == "2026-07-28"
+
+
+def test_source_rebaseline_never_silently_preserves_compatibility():
+    changed = registry()
+    changed["sources"][0]["baseline"]["content_sha256"] = "0" * 64
+    report = freshness.compatibility_report(ledger(), changed, ROOT, date(2026, 8, 30))
+    affected = [row for row in report["bindings"] if row["status"] == "source_lock_changed"]
+    assert [row["source_id"] for row in affected] == ["nist-agent-standards-initiative"]
+
+
+def test_claim_inflation_and_missing_evidence_fail_closed():
+    inflated = ledger()
+    inflated["profiles"][0]["bindings"][0]["claim_boundary"] = "certified"
+    with pytest.raises(freshness.FreshnessError, match="nonconformance claim"):
+        freshness.validate_compatibility_ledger(inflated, registry(), ROOT)
+    missing = ledger()
+    missing["profiles"][0]["bindings"][0]["evidence_paths"] = ["missing.json"]
+    with pytest.raises(freshness.FreshnessError, match="evidence path is invalid"):
+        freshness.validate_compatibility_ledger(missing, registry(), ROOT)
+
+
+def test_review_issue_includes_revision_impact_without_calling_it_conformance():
+    scan = freshness.offline_report(registry(), ROOT, date(2026, 8, 30))
+    scan_report = {
+        "report_sha256": "0" * 64,
+        "summary": {"human_review_required_count": 0},
+        "sources": [],
+    }
+    compatibility = freshness.compatibility_report(
+        ledger(), registry(), ROOT, date(2026, 8, 30)
+    )
+    body = freshness.issue_markdown(scan_report, compatibility)
+    assert scan["review_due_count"] == 0
+    assert "Standards revision impact" in body
+    assert "2025-06-18" in body and "2026-07-28" in body
+    assert "not implementation verification" in body

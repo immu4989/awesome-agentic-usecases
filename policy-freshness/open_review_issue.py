@@ -16,9 +16,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("report", type=Path)
     parser.add_argument("body", type=Path)
+    parser.add_argument("compatibility_report", type=Path, nargs="?")
     args = parser.parse_args()
     report = json.loads(args.report.read_text())
-    if report["summary"]["human_review_required_count"] == 0:
+    compatibility_count = 0
+    if args.compatibility_report:
+        compatibility = json.loads(args.compatibility_report.read_text())
+        compatibility_count = compatibility["summary"]["human_review_required_count"]
+    if report["summary"]["human_review_required_count"] == 0 and compatibility_count == 0:
         print("No policy-source review issue required.")
         return 0
     repository = os.environ.get("GITHUB_REPOSITORY")

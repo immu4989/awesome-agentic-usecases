@@ -24,6 +24,7 @@ def build() -> dict:
     campaign = load("reproduction-challenges/campaign.json")
     exchange = load("agent-incident-exchange/examples/reference-exchange.json")
     sources = load("policy-freshness/sources.json")
+    compatibility = load("policy-freshness/compatibility-report.json")
     capability_bom = load("agent-capability-bom/examples/candidate.json")
     capability_diff = load("agent-capability-bom/examples/reference-diff.json")
     capability_review = load("agent-capability-bom/examples/reference-pack/authority-review.json")
@@ -129,11 +130,17 @@ def build() -> dict:
             "baseline_count": sum(row["baseline"]["content_sha256"] is not None for row in sources["sources"]),
             "next_review_due": min(row["review_due"] for row in sources["sources"]),
             "next_review_days": (date.fromisoformat(min(row["review_due"] for row in sources["sources"])) - date(2026, 8, 30)).days,
+            "compatibility": compatibility["summary"],
+            "migration_gaps": [
+                row for row in compatibility["bindings"]
+                if row["status"] == "migration_required"
+            ],
             "sources": [
                 {
                     "source_id": row["source_id"],
                     "title": row["title"],
                     "authority": row["authority"],
+                    "source_revision": row["source_revision"],
                     "review_due": row["review_due"],
                     "fingerprint_mode": row["fingerprint_mode"],
                     "owner_count": len(row["owner_paths"]),

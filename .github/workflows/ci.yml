@@ -119,6 +119,9 @@ jobs:
           python agent-incident-exchange/aau_incident_exchange.py verify-pack agent-incident-exchange/examples/reference-pack --root .
           python policy-freshness/aau_freshness.py validate policy-freshness/sources.json --root .
           python policy-freshness/aau_freshness.py offline policy-freshness/sources.json --root . --as-of 2026-08-30 --out "$RUNNER_TEMP/policy-freshness-offline.json"
+          python policy-freshness/aau_freshness.py validate-compatibility policy-freshness/compatibility-ledger.json policy-freshness/sources.json --root .
+          python policy-freshness/aau_freshness.py compatibility policy-freshness/compatibility-ledger.json policy-freshness/sources.json --root . --as-of 2026-08-30 --out "$RUNNER_TEMP/standards-compatibility-report.json"
+          cmp "$RUNNER_TEMP/standards-compatibility-report.json" policy-freshness/compatibility-report.json
           pytest policy-freshness/tests -q
           python docs/make_release_gate_data.py
           python docs/check_release_gate.py

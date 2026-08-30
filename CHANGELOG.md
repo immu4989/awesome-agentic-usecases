@@ -130,6 +130,16 @@ the harness API is what is versioned; use cases are additive.
   malformed adapter answers, and altered exactness or failure counts. Strict readable schemas,
   fail-closed tests, CI parity, a public adapter, and a live evidence view make the experiment
   forkable without presenting it as production enforcement, certification, compliance, or an ATO.
+- **Standards Compatibility Ledger** — the policy radar 1.1 registry now names the exact revision
+  behind every watched source. A strict nine-binding ledger maps seven experimental profiles to
+  their reviewed source fingerprint, evaluated revision, evidence paths, and nonconformance
+  boundary; the deterministic report distinguishes source-lock change, migration required, review
+  due, and evidence ready without a trust score.
+- **No silent MCP currency claim** — the radar now watches the official MCP `2026-07-28`
+  authorization revision and openly reports that Portable Agent Assurance still targets
+  `2025-06-18`. Weekly review combines source drift and revision impact in one issue; accepting a
+  new baseline cannot automatically relabel implementation evidence, migrate a fixture, interpret
+  policy, claim conformance, certification, compliance, or approval.
 
 - **Portable Agent Assurance Envelope** — a dependency-free offline verifier binds a deliberately
   public synthetic workload credential to its accountable operator, short-lived authority lease,

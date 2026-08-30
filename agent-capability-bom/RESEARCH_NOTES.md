@@ -84,6 +84,6 @@ conformance claim.
 - OWASP CycloneDX, [official 1.7 JSON Schema](https://github.com/CycloneDX/specification/blob/master/schema/bom-1.7.schema.json), accessed 2026-08-30.
 - in-toto, [Attestation Framework Specification](https://github.com/in-toto/attestation/blob/main/spec/README.md), accessed 2026-08-30.
 - OpenTelemetry, [Generative AI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/), accessed 2026-08-30.
-- Model Context Protocol, [Authorization specification](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization), accessed 2026-08-30.
+- Model Context Protocol, [Authorization specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization), accessed 2026-08-30.
 - IETF, [RFC 8707: Resource Indicators for OAuth 2.0](https://www.rfc-editor.org/rfc/rfc8707), February 2020.
 - IETF, [RFC 9700: Best Current Practice for OAuth 2.0 Security](https://www.rfc-editor.org/rfc/rfc9700), January 2025.

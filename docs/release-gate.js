@@ -92,6 +92,10 @@
       set("release-source-count", data.freshness.source_count);
       set("release-baseline-count", data.freshness.baseline_count);
       set("release-review-due", data.freshness.next_review_due);
+      set("release-compat-binding-count", data.freshness.compatibility.binding_count);
+      set("release-migration-count", data.freshness.compatibility.migration_required_count);
+      const migration = data.freshness.migration_gaps[0];
+      set("release-migration-path", migration ? `${migration.evaluated_revision} → ${migration.source_revision}` : "none");
       set("release-data-status", `Evidence-derived · ${data.generated_on} · human identity not verified`);
       renderChanges(release.changes);
       renderChallenges(data.reproduction.challenges);
