@@ -27,7 +27,7 @@ def test_committed_registry_is_complete_and_not_due():
     value = registry()
     freshness.validate_registry(value, ROOT)
     report = freshness.offline_report(value, ROOT, date(2026, 8, 30))
-    assert report["source_count"] == 9
+    assert report["source_count"] == 10
     assert report["baseline_missing_count"] == 0
     assert report["review_due_count"] == 0
 
@@ -36,7 +36,7 @@ def test_equal_fingerprint_is_current(monkeypatch):
     value = registry()
     monkeypatch.setattr(freshness, "_fetch", lambda source, timeout: source["baseline"])
     report = freshness.scan_registry(value, ROOT, 1, date(2026, 8, 30))
-    assert report["summary"]["current_count"] == 9
+    assert report["summary"]["current_count"] == 10
     assert report["summary"]["human_review_required_count"] == 0
 
 
@@ -63,7 +63,7 @@ def test_unreachable_source_is_not_treated_as_current(monkeypatch):
 
     monkeypatch.setattr(freshness, "_fetch", unavailable)
     report = freshness.scan_registry(value, ROOT, 1, date(2026, 8, 30))
-    assert report["summary"]["unreachable_count"] == 9
+    assert report["summary"]["unreachable_count"] == 10
     assert all(row["interpretation"] == "human_review_required" for row in report["sources"])
 
 
@@ -86,11 +86,11 @@ def test_compatibility_report_records_closed_protocol_migrations():
     value = freshness.compatibility_report(ledger(), registry(), ROOT, date(2026, 8, 30))
     assert value == json.loads(COMPATIBILITY_REPORT.read_text())
     assert value["summary"] == {
-        "binding_count": 9,
+        "binding_count": 10,
         "source_lock_changed_count": 0,
         "migration_required_count": 0,
         "review_due_count": 0,
-        "evidence_ready_count": 9,
+        "evidence_ready_count": 10,
         "human_review_required_count": 0,
     }
     mcp = next(row for row in value["bindings"] if row["source_id"] == "mcp-authorization")
@@ -103,6 +103,34 @@ def test_compatibility_report_records_closed_protocol_migrations():
     assert "portable-agent-assurance/examples/a2a-1-interface-authorization-receipt.json" in a2a[
         "evidence_paths"
     ]
+    identity = next(
+        row for row in value["bindings"]
+        if row["source_id"] == "nist-agent-identity-concept-paper"
+    )
+    assert identity["evaluated_revision"] == "NCCoE-concept-paper-2026-02"
+    assert identity["status"] == "evidence_ready"
+    assert "reproduction-challenges/a2a-mcp-authority-relay/challenge.json" in identity[
+        "evidence_paths"
+    ]
+
+
+def test_blind_challenge_sources_are_watched_by_exact_owner_path():
+    watched = {source["source_id"]: source for source in registry()["sources"]}
+    identity = watched["nist-agent-identity-concept-paper"]
+    assert identity["baseline"] == {
+        "content_sha256": "b303f7fba8c916f440a9435fa48d0e4465553f6b974d3157a1494747589e0b71",
+        "bytes": 406665,
+        "etag": None,
+        "last_modified": "Thu, 05 Feb 2026 14:44:53 GMT",
+        "final_url": identity["url"],
+        "content_type": "application/pdf",
+    }
+    for source_id in (
+        "nist-agent-identity-concept-paper", "mcp-authorization", "a2a-specification",
+    ):
+        owners = watched[source_id]["owner_paths"]
+        assert "reproduction-challenges/portable-agent-assurance-2026-02" in owners
+        assert "reproduction-challenges/a2a-mcp-authority-relay" in owners
 
 
 def test_stale_protocol_revision_becomes_a_migration_gap():

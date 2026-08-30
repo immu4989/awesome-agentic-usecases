@@ -9,7 +9,7 @@
   templates, a manual attested-submission workflow, and explicit human review of independence.
 - Added the Agent Incident Exchange with clean-twin regression bindings and SARIF, OpenVEX, plus
   explicitly experimental CSAF and OCSF bridge exports.
-- Added a nine-source Policy Freshness Radar that uses stable byte or visible-text fingerprints,
+- Added a ten-source Policy Freshness Radar that uses stable byte or visible-text fingerprints,
   maps each official source to affected repository paths, and opens one human-review issue without
   interpreting policy or modifying a lab.
 - Rebuilt the live entry experience around a quieter evidence-operations surface and reduced the
@@ -118,6 +118,9 @@ the harness API is what is versioned; use cases are additive.
 - **Registry-driven fork intake** — the manual GitHub workflow and issue form no longer maintain
   stale challenge choice lists. `list-open` derives the current four IDs from the verified campaign;
   unknown and closed IDs fail at the same build boundary used locally and in forks.
+- **Challenge-to-source freshness closure** — the exact 406,665-byte NIST NCCoE agent-identity paper
+  joins the watched registry, and NIST/MCP/A2A owner paths now name the current portable and relay
+  challenges. Ten source baselines map to ten revision bindings with zero inferred policy meaning.
 
 - **Privacy-bounded Cross-protocol Authority Trace** — the exact Authority Relay receipt now
   projects into 25 synthetic traces and 52 spans using W3C-shaped trace context and a pinned

@@ -4,7 +4,7 @@ Policy-dependent agent tests can look reproducible while the official source ben
 quietly changed. This module keeps that risk visible without pretending that software can decide
 what a law, standard, or government publication means.
 
-The committed registry binds nine official sources—and their explicitly named revisions—to the
+The committed registry binds ten official sources—and their explicitly named revisions—to the
 repository artifacts that depend on them. A weekly workflow compares either the exact bytes of
 stable documents or a versioned visible-text fingerprint of dynamic HTML pages. Any change,
 unreachable source, elapsed review date, or declared implementation/revision mismatch opens one
@@ -43,9 +43,14 @@ The report distinguishes four conditions without a score: `source_lock_changed`,
 `migration_required`, `review_due`, and `evidence_ready`. The ledger first exposed a real gap:
 Portable Agent Assurance targeted MCP `2025-06-18` while the radar watched `2026-07-28`. A separate
 16-case authorization delta gate then supplied the exact current-revision evidence needed to close
-it. The current report covers all nine watched sources across seven profiles with nine aligned
+it. The current report covers all ten watched sources across seven profiles with ten aligned
 bindings and zero open migrations; Git history preserves the detected gap and its evidence-backed
 closure. Nothing was silently relabeled current.
+
+The tenth source is the February 2026 NIST NCCoE Software and AI Agent Identity and Authorization
+concept paper. Its exact 406,665-byte PDF is fingerprinted and mapped directly to the revision-locked
+portable-agent and A2A-to-MCP relay challenges. MCP and A2A owner paths now point to those current
+challenge versions rather than the retained, source-superseded historical artifact.
 
 This also catches a subtle failure mode: after a maintainer accepts a new source baseline, every
 ledger binding still carries the previously reviewed fingerprint. The report changes to

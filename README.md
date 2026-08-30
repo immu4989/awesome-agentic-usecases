@@ -95,8 +95,8 @@ fully verified Exchange packs in a public registry, never from a self-declared b
 inflated counter; a non-mutating planner prepares the challenge-close and registry transition for
 human review. The **[Agent Incident Exchange](agent-incident-exchange/)**
 turns public or synthetic lessons into clean-twin regressions and interoperable findings, while the
-**[Policy Freshness Radar](policy-freshness/)** watches nine official source baselines and now
-maps their exact revisions to nine implementation-evidence bindings. Its compatibility ledger
+**[Policy Freshness Radar](policy-freshness/)** watches ten official source baselines and now
+maps their exact revisions to ten implementation-evidence bindings. Its compatibility ledger
 surfaced an MCP `2025-06-18 → 2026-07-28` migration, then closed it with a separate 16-case
 authorization delta gate instead of silently calling the older fixture current. It also replaced
 the mutable A2A `main` watcher with immutable specification release `v1.0.1` and bound revision
