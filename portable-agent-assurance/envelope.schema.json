@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/portable-agent-assurance/envelope.schema.json",
+  "title": "AAU Portable Agent Assurance Envelope 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["envelope_version", "envelope_id", "issued_at", "expires_at", "classification", "subject", "authority", "protocols", "evidence", "telemetry", "claim_boundaries"],
+  "properties": {
+    "envelope_version": {"const": "aau-agent-assurance-envelope/0.1"},
+    "envelope_id": {"$ref": "#/$defs/identifier"},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data", "live_system", "test_credentials_only"],
+      "properties": {
+        "data": {"const": "synthetic"},
+        "live_system": {"const": false},
+        "test_credentials_only": {"const": true}
+      }
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_id", "operator_ref", "workload_identity", "identity_verifier"],
+      "properties": {
+        "agent_id": {"$ref": "#/$defs/identifier"},
+        "operator_ref": {"$ref": "#/$defs/identifier"},
+        "workload_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "identifier"],
+          "properties": {
+            "kind": {"const": "spiffe"},
+            "identifier": {"type": "string", "pattern": "^spiffe://[a-z0-9.-]+(?:/[A-Za-z0-9._-]+)*$"}
+          }
+        },
+        "identity_verifier": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "algorithm", "issuer", "audience", "key_id", "test_only_shared_secret"],
+          "properties": {
+            "mode": {"const": "synthetic_local_fixture"},
+            "algorithm": {"const": "HS256"},
+            "issuer": {"type": "string", "minLength": 1},
+            "audience": {"type": "string", "minLength": 1},
+            "key_id": {"type": "string", "minLength": 1},
+            "test_only_shared_secret": {"type": "string", "minLength": 32}
+          }
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lease_id", "task_id", "policy_epoch", "valid_from", "valid_until", "revocation_state", "human_owner_ref", "allowed_actions", "allowed_peers", "delegation", "monitoring_required"],
+      "properties": {
+        "lease_id": {"$ref": "#/$defs/identifier"},
+        "task_id": {"$ref": "#/$defs/identifier"},
+        "policy_epoch": {"type": "integer", "minimum": 1},
+        "valid_from": {"type": "string", "format": "date-time"},
+        "valid_until": {"type": "string", "format": "date-time"},
+        "revocation_state": {"enum": ["active", "revoked"]},
+        "human_owner_ref": {"$ref": "#/$defs/identifier"},
+        "allowed_actions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["protocol", "operation", "resource", "destination"],
+            "properties": {
+              "protocol": {"enum": ["mcp", "a2a"]},
+              "operation": {"type": "string", "minLength": 1},
+              "resource": {"type": "string", "minLength": 1},
+              "destination": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "allowed_peers": {"type": "array", "uniqueItems": true, "maxItems": 50, "items": {"$ref": "#/$defs/identifier"}},
+        "delegation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["allowed", "max_depth", "operations"],
+          "properties": {
+            "allowed": {"const": true},
+            "max_depth": {"const": 1},
+            "operations": {"type": "array", "minItems": 1, "maxItems": 100, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 160}}
+          }
+        },
+        "monitoring_required": {"const": true}
+      }
+    },
+    "protocols": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mcp", "a2a"],
+      "properties": {
+        "mcp": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["authorization_profile", "token_passthrough_forbidden"],
+          "properties": {
+            "authorization_profile": {"const": "oauth-resource-bound-recorded-fixture"},
+            "token_passthrough_forbidden": {"const": true}
+          }
+        },
+        "a2a": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["authorization_per_request", "agent_card_sha256"],
+          "properties": {
+            "authorization_per_request": {"const": true},
+            "agent_card_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["boundary_profile_sha256", "evaluation_receipt_sha256", "independent_reproduction"],
+      "properties": {
+        "boundary_profile_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "evaluation_receipt_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "independent_reproduction": {"enum": ["not_provided", "protocol_demonstration", "independence_reviewed"]}
+      }
+    },
+    "telemetry": {
+      "const": {"format": "opentelemetry-compatible-json", "include_prompts": false, "include_credentials": false, "include_personal_data": false}
+    },
+    "claim_boundaries": {
+      "const": {"not_certification": true, "not_compliance_finding": true, "not_authorization_to_operate": true, "not_government_endorsement": true, "production_identity_not_verified": true, "no_live_action_authorized": true}
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,159}$"
+    }
+  }
+}

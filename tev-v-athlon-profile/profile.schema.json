@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/tev-v-athlon-profile/profile.schema.json",
+  "title": "AAU Experimental TEVV-Athlon Profile 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile_version", "profile_id", "title", "draft_basis", "articulate_and_organize", "define_and_construct", "apply_and_measure", "synthesize_and_interrogate", "evidence_artifacts", "claim_boundaries"],
+  "properties": {
+    "profile_version": {"const": "aau-tevv-athlon-profile/0.1"},
+    "profile_id": {"type": "string", "minLength": 1, "maxLength": 160},
+    "title": {"type": "string", "minLength": 1, "maxLength": 300},
+    "draft_basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["publication", "version", "doi", "reviewed_on", "comment_deadline", "not_nist_endorsement"],
+      "properties": {
+        "publication": {"const": "NIST AI 200-2"},
+        "version": {"const": "initial_public_draft_august_2026"},
+        "doi": {"const": "https://doi.org/10.6028/NIST.AI.200-2.ipd"},
+        "reviewed_on": {"type": "string", "format": "date"},
+        "comment_deadline": {"const": "2026-10-06"},
+        "not_nist_endorsement": {"const": true}
+      }
+    },
+    "articulate_and_organize": {"$ref": "#/$defs/stageOne"},
+    "define_and_construct": {"$ref": "#/$defs/stageTwo"},
+    "apply_and_measure": {"$ref": "#/$defs/stageThree"},
+    "synthesize_and_interrogate": {"$ref": "#/$defs/stageFour"},
+    "evidence_artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "stage", "path", "sha256", "kind", "public_synthetic"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "stage": {"enum": ["articulate_and_organize", "define_and_construct", "apply_and_measure", "synthesize_and_interrogate"]},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "kind": {"type": "string", "minLength": 1},
+          "public_synthetic": {"const": true}
+        }
+      }
+    },
+    "claim_boundaries": {
+      "const": {"not_nist_conformance": true, "not_certification": true, "not_compliance_finding": true, "not_deployment_authorization": true, "not_government_endorsement": true, "no_universal_score": true}
+    }
+  },
+  "$defs": {
+    "textList": {"type": "array", "minItems": 1, "maxItems": 200, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 1000}},
+    "idList": {"type": "array", "minItems": 1, "maxItems": 200, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 160}},
+    "optionalIdList": {"type": "array", "minItems": 0, "maxItems": 200, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 160}},
+    "stageOne": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["goal", "stakeholders", "lifecycle_stages", "system_attributes", "time_cost_scope", "organizational_decision", "challenges"],
+      "properties": {
+        "goal": {"type": "string", "minLength": 1},
+        "stakeholders": {"$ref": "#/$defs/textList"},
+        "lifecycle_stages": {"$ref": "#/$defs/textList"},
+        "system_attributes": {"$ref": "#/$defs/textList"},
+        "time_cost_scope": {"type": "string", "minLength": 1},
+        "organizational_decision": {"type": "string", "minLength": 1},
+        "challenges": {"$ref": "#/$defs/textList"}
+      }
+    },
+    "stageTwo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blocks"],
+      "properties": {
+        "blocks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 200,
+          "items": {"$ref": "#/$defs/block"}
+        }
+      }
+    },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "characteristic", "definition", "evidence_required", "success_interpretation", "failure_interpretation"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 160},
+        "characteristic": {"type": "string", "minLength": 1, "maxLength": 1000},
+        "definition": {"type": "string", "minLength": 1, "maxLength": 1000},
+        "evidence_required": {"$ref": "#/$defs/textList"},
+        "success_interpretation": {"type": "string", "minLength": 1, "maxLength": 1000},
+        "failure_interpretation": {"type": "string", "minLength": 1, "maxLength": 1000}
+      }
+    },
+    "stageThree": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["events", "toolbox", "protocol"],
+      "properties": {
+        "events": {"type": "array", "minItems": 1, "maxItems": 200, "items": {"$ref": "#/$defs/event"}},
+        "toolbox": {"type": "array", "minItems": 1, "maxItems": 200, "items": {"$ref": "#/$defs/tool"}},
+        "protocol": {"$ref": "#/$defs/protocol"}
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "status", "independent_reproduction", "block_ids", "tool_ids", "evidence_artifact_ids"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 160},
+        "title": {"type": "string", "minLength": 1, "maxLength": 300},
+        "status": {"enum": ["observed", "planned", "not_applicable"]},
+        "independent_reproduction": {"type": "boolean"},
+        "block_ids": {"$ref": "#/$defs/idList"},
+        "tool_ids": {"$ref": "#/$defs/idList"},
+        "evidence_artifact_ids": {"$ref": "#/$defs/optionalIdList"}
+      }
+    },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "method", "implementation_path", "human_review", "executes_live_system"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 160},
+        "method": {"type": "string", "minLength": 1, "maxLength": 1000},
+        "implementation_path": {"type": "string", "minLength": 1, "maxLength": 500},
+        "human_review": {"type": "boolean"},
+        "executes_live_system": {"const": false}
+      }
+    },
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["predeclared", "held_out_material", "clean_twins", "repeats", "environment", "human_participant_data"],
+      "properties": {
+        "predeclared": {"type": "boolean"},
+        "held_out_material": {"type": "boolean"},
+        "clean_twins": {"type": "boolean"},
+        "repeats": {"type": "integer", "minimum": 1},
+        "environment": {"type": "string", "minLength": 1, "maxLength": 500},
+        "human_participant_data": {"const": false}
+      }
+    },
+    "stageFour": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["analysis_plan", "joint_analysis", "decision_owner", "decision_boundary", "reporting_outputs", "goodhart_controls", "transfer_limits"],
+      "properties": {
+        "analysis_plan": {"type": "string", "minLength": 1},
+        "joint_analysis": {"type": "string", "minLength": 1},
+        "decision_owner": {"type": "string", "minLength": 1},
+        "decision_boundary": {"type": "string", "minLength": 1},
+        "reporting_outputs": {"$ref": "#/$defs/textList"},
+        "goodhart_controls": {"$ref": "#/$defs/textList"},
+        "transfer_limits": {"$ref": "#/$defs/textList"}
+      }
+    }
+  }
+}

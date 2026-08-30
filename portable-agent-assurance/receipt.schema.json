@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/portable-agent-assurance/receipt.schema.json",
+  "title": "AAU Portable Agent Assurance Receipt 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["receipt_version", "envelope_id", "envelope_sha256", "suite_id", "suite_sha256", "summary", "results", "result_chain_head_sha256", "claim_boundaries", "receipt_sha256"],
+  "properties": {
+    "receipt_version": {"const": "aau-agent-assurance-receipt/0.1"},
+    "envelope_id": {"type": "string", "minLength": 1, "maxLength": 160},
+    "envelope_sha256": {"$ref": "#/$defs/sha256"},
+    "suite_id": {"type": "string", "minLength": 1, "maxLength": 160},
+    "suite_sha256": {"$ref": "#/$defs/sha256"},
+    "summary": {"$ref": "#/$defs/summary"},
+    "results": {"type": "array", "minItems": 1, "maxItems": 500, "items": {"$ref": "#/$defs/result"}},
+    "result_chain_head_sha256": {"$ref": "#/$defs/sha256"},
+    "claim_boundaries": {"$ref": "#/$defs/claimBoundaries"},
+    "receipt_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "reasonCodes": {
+      "type": "array",
+      "maxItems": 50,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 160}
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "reason_codes"],
+      "properties": {
+        "outcome": {"enum": ["allow", "block", "pause"]},
+        "reason_codes": {"$ref": "#/$defs/reasonCodes"}
+      }
+    },
+    "normalizedRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["occurred_at", "agent_id", "authority_ref", "task_id", "policy_epoch", "monitoring_active", "delegation_depth", "delegated_operations", "protocol", "operation", "resource", "destination", "peer", "token_passthrough", "agent_card_sha256"],
+      "properties": {
+        "occurred_at": {"type": "string", "format": "date-time"},
+        "agent_id": {"type": "string", "minLength": 1, "maxLength": 160},
+        "authority_ref": {"type": "string", "minLength": 1, "maxLength": 160},
+        "task_id": {"type": "string", "minLength": 1, "maxLength": 160},
+        "policy_epoch": {"type": "integer", "minimum": 0},
+        "monitoring_active": {"type": "boolean"},
+        "delegation_depth": {"type": "integer", "minimum": 0},
+        "delegated_operations": {
+          "type": "array",
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 160}
+        },
+        "protocol": {"enum": ["mcp", "a2a"]},
+        "operation": {"type": "string", "minLength": 1, "maxLength": 160},
+        "resource": {"type": "string", "maxLength": 300},
+        "destination": {"type": "string", "maxLength": 300},
+        "peer": {"type": "string", "maxLength": 160},
+        "token_passthrough": {"type": "boolean"},
+        "agent_card_sha256": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/sha256"}]}
+      }
+    },
+    "observed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "reason_codes", "normalized_request", "identity_fixture_verified", "production_identity_verified"],
+      "properties": {
+        "outcome": {"enum": ["allow", "block", "pause"]},
+        "reason_codes": {"$ref": "#/$defs/reasonCodes"},
+        "normalized_request": {"$ref": "#/$defs/normalizedRequest"},
+        "identity_fixture_verified": {"type": "boolean"},
+        "production_identity_verified": {"const": false}
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "clean_twin", "expected", "observed", "exact", "previous_result_sha256", "result_sha256"],
+      "properties": {
+        "case_id": {"type": "string", "minLength": 1, "maxLength": 160},
+        "clean_twin": {"type": "boolean"},
+        "expected": {"$ref": "#/$defs/expected"},
+        "observed": {"$ref": "#/$defs/observed"},
+        "exact": {"type": "boolean"},
+        "previous_result_sha256": {"$ref": "#/$defs/sha256"},
+        "result_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_count", "exact_count", "exact_rate", "clean_twin_count", "clean_twin_allow_count", "identity_fixture_verified_count", "production_identity_verified_count"],
+      "properties": {
+        "case_count": {"type": "integer", "minimum": 1, "maximum": 500},
+        "exact_count": {"type": "integer", "minimum": 0, "maximum": 500},
+        "exact_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "clean_twin_count": {"type": "integer", "minimum": 2, "maximum": 500},
+        "clean_twin_allow_count": {"type": "integer", "minimum": 0, "maximum": 500},
+        "identity_fixture_verified_count": {"type": "integer", "minimum": 0, "maximum": 500},
+        "production_identity_verified_count": {"const": 0}
+      }
+    },
+    "claimBoundaries": {
+      "const": {
+        "not_certification": true,
+        "not_compliance_finding": true,
+        "not_authorization_to_operate": true,
+        "not_government_endorsement": true,
+        "production_identity_not_verified": true,
+        "no_live_action_authorized": true
+      }
+    }
+  }
+}

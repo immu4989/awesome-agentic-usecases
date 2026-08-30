@@ -1,0 +1,254 @@
+{
+  "profile_version": "aau-tevv-athlon-profile/0.1",
+  "profile_id": "tevva:portable-agent-assurance:2026-08-30",
+  "title": "Portable agent identity, authority, and interoperability TEVV-Athlon",
+  "draft_basis": {
+    "publication": "NIST AI 200-2",
+    "version": "initial_public_draft_august_2026",
+    "doi": "https://doi.org/10.6028/NIST.AI.200-2.ipd",
+    "reviewed_on": "2026-08-30",
+    "comment_deadline": "2026-10-06",
+    "not_nist_endorsement": true
+  },
+  "articulate_and_organize": {
+    "goal": "Determine whether recorded MCP and A2A actions stay inside a named agent's short-lived task authority while legitimate reads and handoffs remain available.",
+    "stakeholders": [
+      "Organizations integrating tool-using or multi-agent systems",
+      "Cybersecurity and identity teams",
+      "Government evaluation and acquisition teams",
+      "Protocol, standards, and open-source maintainers"
+    ],
+    "lifecycle_stages": [
+      "Plan and design",
+      "Build and use",
+      "Deploy",
+      "Operate and monitor"
+    ],
+    "system_attributes": [
+      "Valid and reliable",
+      "Secure and resilient",
+      "Accountable and transparent",
+      "Interoperable"
+    ],
+    "time_cost_scope": "The reference assessment runs offline in seconds with no API, model, account, network, participant, or paid service.",
+    "organizational_decision": "Inform whether an integration preserves the declared identity and authority boundary; accountable owners still decide deployment, risk acceptance, and operation.",
+    "challenges": [
+      "A recorded request cannot prove that a block preceded a real side effect",
+      "A public symmetric token cannot demonstrate production key custody",
+      "Protocol interoperability must not erase task-specific authority",
+      "Evaluation evidence can become stale when policy, tools, or deployment context change"
+    ]
+  },
+  "define_and_construct": {
+    "blocks": [
+      {
+        "id": "identity_operator_binding",
+        "characteristic": "Accountable and transparent",
+        "definition": "The request credential binds the workload identity, agent identifier, operator reference, issuer, audience, task, authority, and policy epoch.",
+        "evidence_required": ["Signature result", "Exact claim comparison", "Credential validity window"],
+        "success_interpretation": "The public synthetic credential matches every declared binding for this fixture.",
+        "failure_interpretation": "At least one required identity or operator binding is absent, stale, mismatched, or cryptographically invalid."
+      },
+      {
+        "id": "live_authority",
+        "characteristic": "Secure and resilient",
+        "definition": "The request occurs within a current, unrevoked, task-specific authority lease and policy epoch.",
+        "evidence_required": ["Lease time result", "Revocation state", "Task and policy comparison"],
+        "success_interpretation": "Authority is current for the exact task and epoch.",
+        "failure_interpretation": "Credential possession is incorrectly treated as current authority."
+      },
+      {
+        "id": "protocol_scope",
+        "characteristic": "Interoperable",
+        "definition": "MCP or A2A operation, resource, destination, peer, and protocol-specific security fields remain inside the authority envelope.",
+        "evidence_required": ["Normalized protocol record", "Exact allowed-action match", "Token passthrough and Agent Card checks"],
+        "success_interpretation": "The protocol request matches one exact authority tuple.",
+        "failure_interpretation": "Interoperability introduces an unauthorized operation, resource, destination, peer, or token flow."
+      },
+      {
+        "id": "delegation_integrity",
+        "characteristic": "Secure and resilient",
+        "definition": "Delegation depth and delegated operations never exceed the parent's declared ceiling.",
+        "evidence_required": ["Delegation depth", "Delegated operation subset"],
+        "success_interpretation": "The child remains a strict subset of parent authority.",
+        "failure_interpretation": "Delegation widens scope or chains beyond the allowed depth."
+      },
+      {
+        "id": "legitimate_service_continuity",
+        "characteristic": "Valid and reliable",
+        "definition": "Security controls preserve at least one valid MCP action and one valid A2A action instead of blocking all work.",
+        "evidence_required": ["Predeclared clean twins", "Exact allow outcomes"],
+        "success_interpretation": "Both protocol clean twins remain available.",
+        "failure_interpretation": "The control appears safe only because legitimate service is denied."
+      },
+      {
+        "id": "evidence_integrity",
+        "characteristic": "Accountable and transparent",
+        "definition": "The envelope, suite, results, metadata-only telemetry, statement, and pack are byte-bound and recomputable.",
+        "evidence_required": ["Result chain", "Manifest", "Receipt verification", "Unsigned statement disclosure"],
+        "success_interpretation": "Committed public artifacts recompute exactly with their claim limits intact.",
+        "failure_interpretation": "A result, source, telemetry export, or provenance statement differs from its declared bytes."
+      }
+    ]
+  },
+  "apply_and_measure": {
+    "events": [
+      {
+        "id": "mcp_a2a_protocol_collision_evaluation",
+        "title": "Run paired MCP and A2A identity-authority collisions",
+        "status": "observed",
+        "independent_reproduction": false,
+        "block_ids": ["identity_operator_binding", "live_authority", "protocol_scope", "delegation_integrity", "legitimate_service_continuity"],
+        "tool_ids": ["assurance_evaluator", "synthetic_identity_fixture"],
+        "evidence_artifact_ids": ["assurance_spec", "assurance_envelope", "protocol_suite", "protocol_receipt"]
+      },
+      {
+        "id": "portable_pack_recomputation",
+        "title": "Recompute the receipt, telemetry, statement, and byte manifest",
+        "status": "observed",
+        "independent_reproduction": false,
+        "block_ids": ["evidence_integrity"],
+        "tool_ids": ["assurance_pack_verifier"],
+        "evidence_artifact_ids": ["protocol_receipt", "otel_export", "intoto_statement"]
+      },
+      {
+        "id": "independent_production_adapter_reproduction",
+        "title": "Outside organization adapts the profile to a production identity system and reproduces the held-out suite",
+        "status": "planned",
+        "independent_reproduction": true,
+        "block_ids": ["identity_operator_binding", "live_authority", "protocol_scope", "delegation_integrity", "legitimate_service_continuity", "evidence_integrity"],
+        "tool_ids": ["independent_reproduction_exchange"],
+        "evidence_artifact_ids": []
+      }
+    ],
+    "toolbox": [
+      {
+        "id": "assurance_evaluator",
+        "method": "Dependency-free deterministic MCP/A2A normalization and authority evaluation",
+        "implementation_path": "portable-agent-assurance/aau_assurance.py",
+        "human_review": false,
+        "executes_live_system": false
+      },
+      {
+        "id": "synthetic_identity_fixture",
+        "method": "Public HS256 fixture for signature, issuer, audience, workload, operator, task, lease, epoch, and time checks",
+        "implementation_path": "portable-agent-assurance/examples/synthetic-assurance-envelope.json",
+        "human_review": true,
+        "executes_live_system": false
+      },
+      {
+        "id": "assurance_pack_verifier",
+        "method": "Deterministic receipt recomputation, metadata-only OTel export, in-toto byte binding, and manifest verification",
+        "implementation_path": "portable-agent-assurance/aau_assurance.py",
+        "human_review": false,
+        "executes_live_system": false
+      },
+      {
+        "id": "independent_reproduction_exchange",
+        "method": "Blind role-separated challenge, submission, review, reveal, adjudication, and privacy-bounded federation",
+        "implementation_path": "independent-reproduction-exchange/aau_reproduction.py",
+        "human_review": true,
+        "executes_live_system": false
+      }
+    ],
+    "protocol": {
+      "predeclared": true,
+      "held_out_material": false,
+      "clean_twins": true,
+      "repeats": 1,
+      "environment": "Offline deterministic public protocol fixture; Python standard library; no model or live service.",
+      "human_participant_data": false
+    }
+  },
+  "synthesize_and_interrogate": {
+    "analysis_plan": "Report exact expected-versus-observed outcomes, reason-code agreement, clean-twin preservation, synthetic identity verification, and byte integrity separately.",
+    "joint_analysis": "Trace each Tool output back through its Event and Block, then distinguish structural success from production identity, deployment, field-effectiveness, and independence gaps.",
+    "decision_owner": "The organization operating or acquiring the agent system retains deployment, risk acceptance, identity trust, and operational authority.",
+    "decision_boundary": "A green reference assessment supports adaptation and further testing only; it never authorizes a live action or deployment.",
+    "reporting_outputs": [
+      "Deterministic assurance receipt",
+      "Metadata-only OpenTelemetry-compatible event export",
+      "Unsigned in-toto receipt statement",
+      "TEVV-Athlon structural assessment",
+      "Visible evidence-gap list"
+    ],
+    "goodhart_controls": [
+      "Report each Block and Event rather than one universal score",
+      "Keep clean-twin availability separate from unsafe-action blocking",
+      "Fix production identity verification to false for the public fixture",
+      "Expose planned independent reproduction instead of counting it"
+    ],
+    "transfer_limits": [
+      "The fixture does not predict behavior with a production identity provider",
+      "Recorded protocol objects do not prove ordering before a real side effect",
+      "Public synthetic cases do not establish field effectiveness",
+      "A different task, policy epoch, tool, peer, or deployment requires reassessment"
+    ]
+  },
+  "evidence_artifacts": [
+    {
+      "id": "research_basis",
+      "stage": "articulate_and_organize",
+      "path": "portable-agent-assurance/RESEARCH_NOTES.md",
+      "sha256": "76b0570f4c1f49f09c76d3c061d792c59939014bbb26a9a3431832e649021c88",
+      "kind": "research_notes",
+      "public_synthetic": true
+    },
+    {
+      "id": "assurance_spec",
+      "stage": "define_and_construct",
+      "path": "portable-agent-assurance/SPEC.md",
+      "sha256": "74ad7b5e88ac6c75019e79da80f878f68700f988fe1dc9f2e1f73cf6452fd67e",
+      "kind": "experimental_interoperability_specification",
+      "public_synthetic": true
+    },
+    {
+      "id": "assurance_envelope",
+      "stage": "articulate_and_organize",
+      "path": "portable-agent-assurance/examples/synthetic-assurance-envelope.json",
+      "sha256": "47919e36c87249d7353b78c8a43ca07ba4f814a901e70cb3e2c03de9cc598555",
+      "kind": "authority_profile",
+      "public_synthetic": true
+    },
+    {
+      "id": "protocol_suite",
+      "stage": "define_and_construct",
+      "path": "portable-agent-assurance/examples/mcp-a2a-conformance-suite.json",
+      "sha256": "9076330c6efebcc3e8318be51f4f497dbcadfff848cc136a719bc98fe4f5ab1e",
+      "kind": "evaluation_suite",
+      "public_synthetic": true
+    },
+    {
+      "id": "protocol_receipt",
+      "stage": "apply_and_measure",
+      "path": "portable-agent-assurance/examples/reference-pack/receipt.json",
+      "sha256": "1de513054b69d42e5115bb08e7eb86df1df9f00fe47271c2c529884956256131",
+      "kind": "deterministic_receipt",
+      "public_synthetic": true
+    },
+    {
+      "id": "otel_export",
+      "stage": "apply_and_measure",
+      "path": "portable-agent-assurance/examples/reference-pack/otel-events.json",
+      "sha256": "f411dbf5d932381db4e2b9b28a008a04d7f2274590e53f46f8bf5a56536fc8e1",
+      "kind": "metadata_only_telemetry",
+      "public_synthetic": true
+    },
+    {
+      "id": "intoto_statement",
+      "stage": "synthesize_and_interrogate",
+      "path": "portable-agent-assurance/examples/reference-pack/statement.intoto.json",
+      "sha256": "034274a981d120ddc1e257a728db3610a6d4d0833b2a6bfead692eff8b62eaa2",
+      "kind": "unsigned_provenance_statement",
+      "public_synthetic": true
+    }
+  ],
+  "claim_boundaries": {
+    "not_nist_conformance": true,
+    "not_certification": true,
+    "not_compliance_finding": true,
+    "not_deployment_authorization": true,
+    "not_government_endorsement": true,
+    "no_universal_score": true
+  }
+}

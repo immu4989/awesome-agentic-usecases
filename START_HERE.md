@@ -77,6 +77,30 @@ the artifact locally, recomputes its structural evidence, keeps interval and pro
 visible, and exports an aggregate-only inspection receipt. Nothing is uploaded. A passing
 inspection means structurally coherent—not independently reproduced or domain validated.
 
+If an MCP or A2A agent can authenticate but you still need to prove what it may do now, open
+**[Portable Agent Assurance](https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance)**.
+The experimental offline verifier binds a deliberately public synthetic identity fixture to its
+operator, task, short-lived authority lease, policy epoch, exact protocol operation, destination,
+peer, delegation ceiling, monitor state, and evidence. Its 18-case suite preserves two legitimate
+twins while testing sixteen identity, authority, MCP, A2A, and delegation collisions.
+
+```bash
+python3 portable-agent-assurance/aau_assurance.py evaluate \
+  portable-agent-assurance/examples/synthetic-assurance-envelope.json \
+  portable-agent-assurance/examples/mcp-a2a-conformance-suite.json \
+  --out /tmp/aau-assurance-receipt.json
+python3 portable-agent-assurance/aau_assurance.py verify \
+  /tmp/aau-assurance-receipt.json \
+  --envelope portable-agent-assurance/examples/synthetic-assurance-envelope.json \
+  --suite portable-agent-assurance/examples/mcp-a2a-conformance-suite.json
+```
+
+For evaluation planning, use the companion [TEVV-Athlon profile](tev-v-athlon-profile/). It maps
+the same artifacts to all four stages of the NIST AI 200-2 initial public draft while keeping
+planned events, revealed material, and absent independent reproduction visible. It is an
+experimental profile—not NIST conformance, certification, production identity validation, live
+authorization, compliance, or an Authority to Operate.
+
 If your agent already has consequential tools and the question is whether its authority remains
 bounded over a long or multi-agent task, start with the
 **[Agent Security Commons](https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons)**.

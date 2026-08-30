@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/portable-agent-assurance/suite.schema.json",
+  "title": "AAU Portable Agent Assurance Conformance Suite 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["suite_version", "suite_id", "title", "envelope_sha256", "cases"],
+  "properties": {
+    "suite_version": {"const": "aau-agent-assurance-suite/0.1"},
+    "suite_id": {"type": "string", "minLength": 1, "maxLength": 160},
+    "title": {"type": "string", "minLength": 1, "maxLength": 300},
+    "envelope_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "cases": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 500,
+      "items": {"$ref": "#/$defs/case"}
+    }
+  },
+  "$defs": {
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "reason_codes"],
+      "properties": {
+        "outcome": {"enum": ["allow", "block", "pause"]},
+        "reason_codes": {
+          "type": "array",
+          "maxItems": 50,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 160}
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["occurred_at", "agent_id", "authority_ref", "task_id", "policy_epoch", "token", "monitoring_active", "delegation_depth", "delegated_operations"],
+      "properties": {
+        "occurred_at": {"type": "string", "format": "date-time"},
+        "agent_id": {"type": "string", "minLength": 1, "maxLength": 160},
+        "authority_ref": {"type": "string", "minLength": 1, "maxLength": 160},
+        "task_id": {"type": "string", "minLength": 1, "maxLength": 160},
+        "policy_epoch": {"type": "integer", "minimum": 0},
+        "token": {"type": "string", "minLength": 1, "maxLength": 20000},
+        "monitoring_active": {"type": "boolean"},
+        "delegation_depth": {"type": "integer", "minimum": 0},
+        "delegated_operations": {
+          "type": "array",
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1, "maxLength": 160}
+        }
+      }
+    },
+    "mcpRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol", "context", "request"],
+      "properties": {
+        "protocol": {"const": "mcp"},
+        "context": {"$ref": "#/$defs/context"},
+        "request": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["jsonrpc", "method", "params"],
+          "properties": {
+            "jsonrpc": {"const": "2.0"},
+            "method": {"const": "tools/call"},
+            "params": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name", "arguments"],
+              "properties": {
+                "name": {"type": "string", "pattern": "^.+\\..+$", "maxLength": 160},
+                "arguments": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["resource", "destination", "token_passthrough"],
+                  "properties": {
+                    "resource": {"type": "string", "maxLength": 300},
+                    "destination": {"type": "string", "maxLength": 300},
+                    "peer": {"type": "string", "maxLength": 160},
+                    "token_passthrough": {"type": "boolean"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "a2aRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol", "context", "request"],
+      "properties": {
+        "protocol": {"const": "a2a"},
+        "context": {"$ref": "#/$defs/context"},
+        "request": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method", "params"],
+          "properties": {
+            "method": {"enum": ["message/send", "tasks/get", "tasks/cancel"]},
+            "params": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["resource", "destination", "peer", "agent_card_sha256", "token_passthrough"],
+              "properties": {
+                "resource": {"type": "string", "maxLength": 300},
+                "destination": {"type": "string", "maxLength": 300},
+                "peer": {"type": "string", "maxLength": 160},
+                "agent_card_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                "token_passthrough": {"type": "boolean"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "title", "clean_twin", "record", "expected"],
+      "properties": {
+        "case_id": {"type": "string", "minLength": 1, "maxLength": 160},
+        "title": {"type": "string", "minLength": 1, "maxLength": 300},
+        "clean_twin": {"type": "boolean"},
+        "record": {"oneOf": [{"$ref": "#/$defs/mcpRecord"}, {"$ref": "#/$defs/a2aRecord"}]},
+        "expected": {"$ref": "#/$defs/expected"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"clean_twin": {"const": true}}, "required": ["clean_twin"]},
+          "then": {"properties": {"expected": {"const": {"outcome": "allow", "reason_codes": []}}}}
+        }
+      ]
+    }
+  }
+}

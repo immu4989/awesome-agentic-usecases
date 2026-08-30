@@ -85,6 +85,23 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Portable Agent Assurance Envelope** — a dependency-free offline verifier binds a deliberately
+  public synthetic workload credential to its accountable operator, short-lived authority lease,
+  task, policy epoch, exact MCP/A2A operation, destination, peer, delegation ceiling, monitor
+  state, and evidence digests. Eighteen fixtures preserve two legitimate twins and test sixteen
+  identity, credential, authority, protocol, and delegation collisions with exact reason codes.
+- **Portable evidence and reusable CI** — deterministic receipts add a result chain,
+  privacy-bounded OpenTelemetry-compatible events, an unsigned in-toto Statement v1, and a
+  fail-closed byte manifest. A repository-local composite GitHub Action evaluates, verifies,
+  packages, and re-verifies a caller's envelope and suite without remote action dependencies.
+- **Experimental NIST TEVV-Athlon profile** — a machine-readable profile maps six Metrology Blocks,
+  three Events, four Tools, and seven byte-verified artifacts to the four stages in the NIST AI 200-2
+  initial public draft. Planned outside work, revealed reference material, and absent independent
+  reproduction stay visible. The evidence-backed public-comment draft is explicitly unsubmitted.
+- **Live Agent Assurance lab** — the homepage now presents the assurance chain, exact collision
+  matrix, four TEVV stages, visible gaps, and a zero-upload structural envelope inspector from
+  generated committed evidence rather than handwritten counts.
+
 - **Blind Independent Reproduction Exchange** — a dependency-free CLI now issues answer-free
   defensive challenges against a committed hidden oracle, freezes a public-safe outside submission,
   and requires separate role/relationship, blinding, affordance, and transcript review before

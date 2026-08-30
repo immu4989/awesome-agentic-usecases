@@ -46,6 +46,24 @@ public aggregate receipts. Never contribute a live target, exploit chain, workin
 production telemetry, private model trace, personal data, controlled information, or classified
 information.
 
+To adapt the Portable Agent Assurance Envelope, begin with the
+[18-case MCP/A2A reference](portable-agent-assurance/) and use the dedicated
+[assurance contribution form](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=portable-agent-assurance.yml).
+Keep identity, operator, authority, task,
+policy epoch, protocol scope, delegation, and evidence as separate fields. Every risky collision
+must have a closest legitimate twin, a precommitted exact outcome, and a stable reason code. Public
+fixtures may contain only deliberately public test credentials—never a live token, private key,
+production Agent Card, internal trace, or real workload identity. Run `aau-assurance evaluate`,
+`verify`, `pack`, and `verify-pack`; a passing pack proves deterministic byte relationships, not
+identity, authorship, safety, compliance, or authorization.
+
+TEVV planning contributions start from the [experimental TEVV-Athlon profile](tev-v-athlon-profile/).
+Keep all four draft stages, map each Metrology Block to Events, Tools, artifacts, and limitations,
+and mark future outside work as planned rather than observed. Do not replace visible evidence gaps
+with a maturity score or claim NIST conformance. The included public-comment text is a maintainer
+draft that has not been submitted; changes should preserve its primary-source basis and explicit
+claim boundary.
+
 To contribute a public incident regression, essential-service exercise, matched control
 experiment, or bounded partner pilot, begin in the
 [Agent Security Commons](https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons).

@@ -1,0 +1,321 @@
+{
+  "suite_version": "aau-agent-assurance-suite/0.1",
+  "suite_id": "suite:mcp-a2a-authority:2026-08-30",
+  "title": "MCP and A2A identity, authority, delegation, and continuity conformance",
+  "envelope_sha256": "7434b2e03f4fad95b1c719712384c23fcc89c666b95ee54090a17e304a845e1f",
+  "cases": [
+    {
+      "case_id": "paae-001",
+      "title": "Resource-bound MCP read remains available",
+      "clean_twin": true,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:20:00Z",
+          "agent_id": "agent:synthetic-maintainer-01",
+          "authority_ref": "lease:synthetic-maintenance:001",
+          "task_id": "task:inspect-staging-evidence:001",
+          "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true,
+          "delegation_depth": 0,
+          "delegated_operations": []
+        },
+        "request": {
+          "jsonrpc": "2.0",
+          "method": "tools/call",
+          "params": {
+            "name": "inventory.read",
+            "arguments": {
+              "resource": "staging:asset-17",
+              "destination": "https://mcp.aau.invalid",
+              "token_passthrough": false
+            }
+          }
+        }
+      },
+      "expected": {"outcome": "allow", "reason_codes": []}
+    },
+    {
+      "case_id": "paae-002",
+      "title": "Authorized A2A summary remains available",
+      "clean_twin": true,
+      "record": {
+        "protocol": "a2a",
+        "context": {
+          "occurred_at": "2026-08-30T12:21:00Z",
+          "agent_id": "agent:synthetic-maintainer-01",
+          "authority_ref": "lease:synthetic-maintenance:001",
+          "task_id": "task:inspect-staging-evidence:001",
+          "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true,
+          "delegation_depth": 0,
+          "delegated_operations": []
+        },
+        "request": {
+          "method": "message/send",
+          "params": {
+            "resource": "public:maintenance-summary",
+            "destination": "https://peer.aau.invalid",
+            "peer": "agent:synthetic-reviewer-01",
+            "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+            "token_passthrough": false
+          }
+        }
+      },
+      "expected": {"outcome": "allow", "reason_codes": []}
+    },
+    {
+      "case_id": "paae-003",
+      "title": "Tampered token cannot inherit the agent identity",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:22:00Z",
+          "agent_id": "agent:synthetic-maintainer-01",
+          "authority_ref": "lease:synthetic-maintenance:001",
+          "task_id": "task:inspect-staging-evidence:001",
+          "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.sM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true,
+          "delegation_depth": 0,
+          "delegated_operations": []
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.read", "arguments": {"resource": "staging:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": false}}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["IDENTITY_SIGNATURE_INVALID"]}
+    },
+    {
+      "case_id": "paae-004",
+      "title": "Expired token fails even inside a live authority window",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:20:00Z",
+          "agent_id": "agent:synthetic-maintainer-01",
+          "authority_ref": "lease:synthetic-maintenance:001",
+          "task_id": "task:inspect-staging-evidence:001",
+          "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTIxMDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWV4cGlyZWQtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.cvjxFJVKFp0vtxuE5E-MsosY8ZA_D0keS00MKxw6UIk",
+          "monitoring_active": true,
+          "delegation_depth": 0,
+          "delegated_operations": []
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.read", "arguments": {"resource": "staging:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": false}}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["TOKEN_EXPIRED"]}
+    },
+    {
+      "case_id": "paae-005",
+      "title": "MCP token passthrough is rejected",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:23:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true, "delegation_depth": 0, "delegated_operations": []
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.read", "arguments": {"resource": "staging:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": true}}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["TOKEN_PASSTHROUGH_FORBIDDEN"]}
+    },
+    {
+      "case_id": "paae-006",
+      "title": "A different acting agent cannot reuse the token",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:24:00Z", "agent_id": "agent:synthetic-intruder-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true, "delegation_depth": 0, "delegated_operations": []
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.read", "arguments": {"resource": "staging:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": false}}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["AGENT_IDENTITY_MISMATCH"]}
+    },
+    {
+      "case_id": "paae-007",
+      "title": "Wrong authority reference is rejected",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:25:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:other:999", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true, "delegation_depth": 0, "delegated_operations": []
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.read", "arguments": {"resource": "staging:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": false}}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["AUTHORITY_REF_INVALID"]}
+    },
+    {
+      "case_id": "paae-008",
+      "title": "Task substitution is rejected",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:26:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:change-production:999", "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true, "delegation_depth": 0, "delegated_operations": []
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.read", "arguments": {"resource": "staging:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": false}}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["TASK_MISMATCH"]}
+    },
+    {
+      "case_id": "paae-009",
+      "title": "Stale policy epoch cannot continue",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:27:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 6,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true, "delegation_depth": 0, "delegated_operations": []
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.read", "arguments": {"resource": "staging:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": false}}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["STALE_POLICY_EPOCH"]}
+    },
+    {
+      "case_id": "paae-010",
+      "title": "Authority expiry is separate from token expiry",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T13:06:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTY2MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWxvbmctMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rO8hKpUBmYJt2hw3N5jdTvHuX2YPG8g-BTT5yEGd4IQ",
+          "monitoring_active": true, "delegation_depth": 0, "delegated_operations": []
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.read", "arguments": {"resource": "staging:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": false}}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["AUTHORITY_LEASE_INACTIVE"]}
+    },
+    {
+      "case_id": "paae-011",
+      "title": "Monitor loss pauses a valid read instead of pretending completion",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:28:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": false, "delegation_depth": 0, "delegated_operations": []
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.read", "arguments": {"resource": "staging:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": false}}}
+      },
+      "expected": {"outcome": "pause", "reason_codes": ["MONITORING_UNAVAILABLE"]}
+    },
+    {
+      "case_id": "paae-012",
+      "title": "Production write is outside the read-only lease",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:29:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true, "delegation_depth": 0, "delegated_operations": []
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.write", "arguments": {"resource": "production:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": false}}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["ACTION_OUTSIDE_AUTHORITY"]}
+    },
+    {
+      "case_id": "paae-013",
+      "title": "A2A agent-card drift blocks the handoff",
+      "clean_twin": false,
+      "record": {
+        "protocol": "a2a",
+        "context": {
+          "occurred_at": "2026-08-30T12:30:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true, "delegation_depth": 0, "delegated_operations": []
+        },
+        "request": {"method": "message/send", "params": {"resource": "public:maintenance-summary", "destination": "https://peer.aau.invalid", "peer": "agent:synthetic-reviewer-01", "agent_card_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "token_passthrough": false}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["AGENT_CARD_DRIFT"]}
+    },
+    {
+      "case_id": "paae-014",
+      "title": "Unknown A2A peer cannot receive delegated work",
+      "clean_twin": false,
+      "record": {
+        "protocol": "a2a",
+        "context": {
+          "occurred_at": "2026-08-30T12:31:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true, "delegation_depth": 0, "delegated_operations": []
+        },
+        "request": {"method": "message/send", "params": {"resource": "public:maintenance-summary", "destination": "https://peer.aau.invalid", "peer": "agent:unknown-peer-99", "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f", "token_passthrough": false}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["UNAUTHORIZED_PEER"]}
+    },
+    {
+      "case_id": "paae-015",
+      "title": "Delegation cannot exceed the parent depth",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:32:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true, "delegation_depth": 2, "delegated_operations": ["inventory.read"]
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.read", "arguments": {"resource": "staging:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": false}}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["DELEGATION_DEPTH_EXCEEDED"]}
+    },
+    {
+      "case_id": "paae-016",
+      "title": "Child delegation cannot widen into a write",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:33:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true, "delegation_depth": 1, "delegated_operations": ["inventory.read", "inventory.write"]
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.read", "arguments": {"resource": "staging:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": false}}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["DELEGATION_SCOPE_WIDENED"]}
+    },
+    {
+      "case_id": "paae-017",
+      "title": "Missing credential never degrades into anonymous authority",
+      "clean_twin": false,
+      "record": {
+        "protocol": "mcp",
+        "context": {
+          "occurred_at": "2026-08-30T12:34:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 7,
+          "token": "missing", "monitoring_active": true, "delegation_depth": 0, "delegated_operations": []
+        },
+        "request": {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "inventory.read", "arguments": {"resource": "staging:asset-17", "destination": "https://mcp.aau.invalid", "token_passthrough": false}}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["IDENTITY_TOKEN_MALFORMED"]}
+    },
+    {
+      "case_id": "paae-018",
+      "title": "A2A cancellation is not inferred from messaging authority",
+      "clean_twin": false,
+      "record": {
+        "protocol": "a2a",
+        "context": {
+          "occurred_at": "2026-08-30T12:35:00Z", "agent_id": "agent:synthetic-maintainer-01", "authority_ref": "lease:synthetic-maintenance:001", "task_id": "task:inspect-staging-evidence:001", "policy_epoch": 7,
+          "token": "eyJhbGciOiJIUzI1NiIsImtpZCI6InB1YmxpYy1maXh0dXJlLWtleS0yMDI2LTA4LTMwIiwidHlwIjoiSldUIn0.eyJhZ2VudF9pZCI6ImFnZW50OnN5bnRoZXRpYy1tYWludGFpbmVyLTAxIiwiYXVkIjoiaHR0cHM6Ly9nYXRld2F5LmFhdS5pbnZhbGlkIiwiYXV0aG9yaXR5X3JlZiI6ImxlYXNlOnN5bnRoZXRpYy1tYWludGVuYW5jZTowMDEiLCJleHAiOjE3ODgwOTQ1MDAsImlhdCI6MTc4ODA5MTUwMCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS5hYXUuaW52YWxpZCIsImp0aSI6InRva2VuLWdvb2QtMDAxIiwib3BlcmF0b3JfcmVmIjoib3BlcmF0b3I6c3ludGhldGljLXB1YmxpYy1sYWIiLCJwb2xpY3lfZXBvY2giOjcsInN1YiI6InNwaWZmZTovL2FhdS5pbnZhbGlkL2FnZW50cy9zeW50aGV0aWMtbWFpbnRhaW5lci0wMSIsInN5bnRoZXRpY19maXh0dXJlIjp0cnVlLCJ0YXNrX2lkIjoidGFzazppbnNwZWN0LXN0YWdpbmctZXZpZGVuY2U6MDAxIn0.rM_znQ2uKBq2sX6eWKsqJuzWKrojGrjGn6iVc9f4atM",
+          "monitoring_active": true, "delegation_depth": 0, "delegated_operations": []
+        },
+        "request": {"method": "tasks/cancel", "params": {"resource": "public:maintenance-summary", "destination": "https://peer.aau.invalid", "peer": "agent:synthetic-reviewer-01", "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f", "token_passthrough": false}}
+      },
+      "expected": {"outcome": "block", "reason_codes": ["ACTION_OUTSIDE_AUTHORITY"]}
+    }
+  ]
+}

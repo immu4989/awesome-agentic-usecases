@@ -71,6 +71,27 @@ Evidence packs copy the supplied public or synthetic source record, so review th
 sharing the pack. The homepage fetches only the aggregate JSON generated from committed examples
 and does not accept or upload operational input.
 
+## Portable Agent Assurance boundary
+
+The Portable Agent Assurance verifier accepts bounded JSON, rejects symbolic links and oversized
+or unexpected pack files, refuses destructive overwrites, executes no request content, and needs no
+network, model, identity provider, tool server, or agent endpoint. The committed HS256 secret and
+token are deliberately public synthetic fixtures. They must never be copied into production,
+treated as confidential, or used to authorize anything.
+
+The live envelope inspector uses the browser's local file API; selected JSON stays in the tab and
+is not transmitted by repository code. Its eight checks are structural and do not verify a
+signature. Use the Python verifier for the synthetic signature and exact MCP/A2A fixtures, and use
+an approved production identity and authorization system for real workloads. Receipts, hashes,
+OpenTelemetry-compatible events, and the unsigned in-toto statement prove deterministic
+relationships—not a person's or organization's identity, key custody, non-repudiation, event
+truth, production fitness, NIST conformance, certification, compliance, or permission to act.
+
+The companion TEVV-Athlon pack copies each referenced public artifact into its output. Review every
+input before publishing it. Do not place a live credential, private Agent Card, production trace,
+internal topology, personal data, controlled information, classified information, or other
+non-public record in a public envelope, suite, profile, issue, pull request, or fork.
+
 ## Collective Cyber Defense input boundary
 
 Verified Fix Commons, Agent Containment Drills, Essential-Service Defender-in-a-Box, the Frontier

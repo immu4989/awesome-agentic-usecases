@@ -1,0 +1,35 @@
+name: AAU portable agent assurance
+description: Verify a synthetic MCP/A2A identity-authority envelope and emit a recomputable evidence pack.
+branding:
+  icon: shield
+  color: blue
+inputs:
+  envelope:
+    description: Path to an aau-agent-assurance-envelope/0.1 JSON file.
+    required: true
+  suite:
+    description: Path to an aau-agent-assurance-suite/0.1 JSON file.
+    required: true
+  receipt:
+    description: Output path for the deterministic receipt.
+    required: false
+    default: aau-assurance-receipt.json
+  pack:
+    description: Output directory for the portable evidence pack.
+    required: false
+    default: aau-assurance-pack
+runs:
+  using: composite
+  steps:
+    - name: Evaluate and verify the envelope
+      shell: bash
+      env:
+        AAU_ENVELOPE: ${{ inputs.envelope }}
+        AAU_PACK: ${{ inputs.pack }}
+        AAU_RECEIPT: ${{ inputs.receipt }}
+        AAU_SUITE: ${{ inputs.suite }}
+      run: |
+        python "$GITHUB_ACTION_PATH/../../../portable-agent-assurance/aau_assurance.py" evaluate "$AAU_ENVELOPE" "$AAU_SUITE" --out "$AAU_RECEIPT"
+        python "$GITHUB_ACTION_PATH/../../../portable-agent-assurance/aau_assurance.py" verify "$AAU_RECEIPT" --envelope "$AAU_ENVELOPE" --suite "$AAU_SUITE"
+        python "$GITHUB_ACTION_PATH/../../../portable-agent-assurance/aau_assurance.py" pack "$AAU_ENVELOPE" "$AAU_SUITE" --out "$AAU_PACK"
+        python "$GITHUB_ACTION_PATH/../../../portable-agent-assurance/aau_assurance.py" verify-pack "$AAU_PACK"

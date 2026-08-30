@@ -18,6 +18,7 @@
   <a href="https://immu4989.github.io/awesome-agentic-usecases/?boundary=sterility-is-not-chemical-oos#boundary-lab">Boundary Lab</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder">Build a boundary</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#receipt-lab">Inspect a receipt</a> ·
+  <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance">Portable Agent Assurance</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense">Collective Cyber Defense Lab</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons">Agent Security Commons</a> ·
   <a href="agentic-cyber-resilience/">Agentic Cyber Resilience</a> ·
@@ -79,11 +80,55 @@ and observed failure cards with a direct path to reproduction. Start with
 | A model score but no evidence of public benefit | [Evidence Commons](https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons) | A hash-bound Impact Capsule with visible human, outcome, and reproduction gaps plus a safe partner path |
 | A vulnerability notice, agent-security incident, or defensive AI system | [Collective Cyber Defense Lab](https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense) | A verified-fix contract, containment drill, local continuity route, safe benchmark, blind outside-reproduction protocol, evidence mesh, and honest public outcome report |
 | A tool-using or multi-agent system | [Agent Security Commons](https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons) | A runtime authority gate, 50-event conformance suite, incident regressions, matched control experiment, and recomputable receipts |
+| An MCP or A2A agent with identity and delegated-authority questions | [Portable Agent Assurance](https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance) | A signed synthetic identity fixture, short-lived authority envelope, 18-case protocol-collision suite, deterministic evidence pack, and four-stage TEVV profile |
 | A public or synthetic AI inventory | [Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory) | Quality gaps, possible-overlap questions, bounded value measurements, TEV&V and clause coverage |
 | A public-sector AI mission | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A non-certifying 12-file assurance draft |
 | An agency pilot ready to test | [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) | A claim → evidence → exact-test exchange and closeout lesson |
 | One risky decision boundary | [Boundary Builder](https://immu4989.github.io/awesome-agentic-usecases/#boundary-builder) | A fork-ready counterfactual evaluation lab |
 | Nothing but a workflow description | [AAU Studio](https://immu4989.github.io/awesome-agentic-usecases/#studio) | A matched lab and Forge-compatible brief |
+
+## New: Portable Agent Assurance—from identity to exact protocol evidence
+
+Identity, authorization, protocol scope, and evaluation often live in different systems. The
+**[Portable Agent Assurance lab](https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance)**
+binds them without pretending they are interchangeable. Its experimental envelope keeps the
+workload identity, accountable operator, expiring authority lease, task, policy epoch, exact MCP
+or A2A action, delegation ceiling, monitoring requirement, and evidence digests inspectable in one
+portable contract.
+
+The committed suite contains two legitimate twins and sixteen collisions: altered signatures,
+expired credentials, MCP token passthrough, agent substitution, wrong authority, task substitution,
+stale policy, lease expiry, monitor loss, scope escape, Agent Card drift, unknown peers, excessive
+or widened delegation, missing credentials, and unauthorized A2A cancellation. The reference
+verifier resolves all 18 to their precommitted decision and exact reason code, then exports a
+hash-chained receipt, metadata-only OpenTelemetry-compatible events, an unsigned in-toto Statement
+v1, and a byte manifest.
+
+```bash
+python3 portable-agent-assurance/aau_assurance.py evaluate \
+  portable-agent-assurance/examples/synthetic-assurance-envelope.json \
+  portable-agent-assurance/examples/mcp-a2a-conformance-suite.json \
+  --out /tmp/aau-assurance-receipt.json
+
+python3 portable-agent-assurance/aau_assurance.py verify \
+  /tmp/aau-assurance-receipt.json \
+  --envelope portable-agent-assurance/examples/synthetic-assurance-envelope.json \
+  --suite portable-agent-assurance/examples/mcp-a2a-conformance-suite.json
+```
+
+The companion **[TEVV-Athlon profile](tev-v-athlon-profile/)** maps the evidence to the four stages
+in the NIST AI 200-2 initial public draft and deliberately keeps three gaps visible: the outside
+adapter event is planned, the public reference material is revealed, and no outside independent
+reproduction has been observed. The included [public-comment draft](tev-v-athlon-profile/NIST_AI_200_2_COMMENT_DRAFT.md)
+is for owner and community review and has not been submitted; NIST's stated comment deadline is
+October 6, 2026.
+
+Everything is offline, dependency-free, synthetic, and non-authorizing. The public HS256 secret is
+a test fixture, not a credential. The result does not verify production identity, authorize a live
+action, establish NIST conformance, certify a system, determine compliance, or grant an Authority
+to Operate. Read the [module guide](portable-agent-assurance/) and
+[premise-checked research ledger](portable-agent-assurance/RESEARCH_NOTES.md), then use the
+[0.1 specification and adapter checklist](portable-agent-assurance/SPEC.md) before adapting it.
 
 ## New: Collective Cyber Defense Lab—from public signal to reproducible evidence
 
