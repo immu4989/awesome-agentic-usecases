@@ -93,6 +93,19 @@ def campaign_entry(challenge_id: str) -> dict:
     return matches[0]
 
 
+def validate_challenge_sources(entry: dict, challenge: dict) -> None:
+    if entry["status"] != "open":
+        return
+    mutable_markers = ("/blob/main/", "/raw/main/", "/refs/heads/", "/main/")
+    for source in challenge["official_sources"]:
+        url = source["url"]
+        if (
+            ("github.com" in url or "raw.githubusercontent.com" in url)
+            and any(marker in url for marker in mutable_markers)
+        ):
+            raise ValueError("open challenges cannot cite a mutable GitHub branch URL")
+
+
 def verify_reproduction_registry(
     campaign: dict,
     registry: dict | None = None,
@@ -332,6 +345,7 @@ def verify_campaign() -> dict:
             raise ValueError("campaign challenge id does not match its artifact")
         if entry["task_count"] != len(challenge["tasks"]):
             raise ValueError("campaign task count does not match its challenge artifact")
+        validate_challenge_sources(entry, challenge)
         serialized = json.dumps(challenge)
         for forbidden in (
             "gold_outcome",

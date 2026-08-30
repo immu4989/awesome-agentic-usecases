@@ -112,6 +112,9 @@ the harness API is what is versioned; use cases are additive.
 - **Non-mutating acceptance planner** — a maintainer command recomputes the reviewed Exchange pack,
   simulates challenge close and registry insertion, validates the complete proposed state, and
   writes checksummed proposed files without copying the revealed oracle or changing the checkout.
+- **Revision-locked public challenge** — the original portable-agent challenge is retained as
+  closed byte-history, while its open successor pins A2A `v1.0.1`, MCP `2026-07-28`, and the dated
+  NIST NCCoE paper. Open challenges with mutable GitHub branch URLs now fail campaign verification.
 
 - **Privacy-bounded Cross-protocol Authority Trace** — the exact Authority Relay receipt now
   projects into 25 synthetic traces and 52 spans using W3C-shaped trace context and a pinned

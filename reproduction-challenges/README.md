@@ -1,15 +1,21 @@
 # Fork-to-Reproduce Challenge Network
 
-Four public challenges are open. Their answer keys are committed by SHA-256 but are not in Git.
+Four public challenges are open and one source-superseded artifact is retained as closed history.
+Their answer keys are committed by SHA-256 but are not in Git.
 Fork the repository, produce a challenge-bound submission, and use the dedicated workflow to attach
 GitHub's build identity to the exact submission bytes.
 
-| Challenge | Tasks | Decision boundary | Open challenge |
-|---|---:|---|---|
-| Portable Agent Assurance | 6 | Identity, task, token audience, peer/card, monitoring | [Inspect](portable-agent-assurance/challenge.json) |
-| Grid restoration | 6 | Restoration conditions, clearance ownership, urgency, monitoring | [Inspect](grid-restoration/challenge.json) |
-| Pharmaceutical batch disposition | 6 | Chemical OOS, sterility, record conflict, transfer limits | [Inspect](pharma-batch-disposition/challenge.json) |
-| A2A-to-MCP authority relay | 8 | Protocol, identity, delegation, resource, audience, monitoring, approval | [Inspect](a2a-mcp-authority-relay/challenge.json) |
+| Challenge | Tasks | Status | Decision boundary | Inspect |
+|---|---:|---|---|---|
+| Portable Agent Assurance, revision locked | 6 | Open | Identity, task, token audience, peer/card, monitoring | [Inspect](portable-agent-assurance-2026-02/challenge.json) |
+| Grid restoration | 6 | Open | Restoration conditions, clearance ownership, urgency, monitoring | [Inspect](grid-restoration/challenge.json) |
+| Pharmaceutical batch disposition | 6 | Open | Chemical OOS, sterility, record conflict, transfer limits | [Inspect](pharma-batch-disposition/challenge.json) |
+| A2A-to-MCP authority relay | 8 | Open | Protocol, identity, delegation, resource, audience, monitoring, approval | [Inspect](a2a-mcp-authority-relay/challenge.json) |
+| Portable Agent Assurance, original | 6 | Closed · source superseded | Historical MCP 2025 and mutable A2A source link | [Inspect history](portable-agent-assurance/challenge.json) |
+
+Open challenges cannot cite mutable GitHub branch URLs. The original portable challenge is retained
+for byte-history and is not accepted by the submission builder; its revision-locked successor uses
+A2A `v1.0.1`, MCP `2026-07-28`, and the dated February 2026 NIST NCCoE paper.
 
 ## Reproduce one
 

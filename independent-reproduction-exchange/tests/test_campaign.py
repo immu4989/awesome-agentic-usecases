@@ -17,8 +17,11 @@ def campaign_module():
 
 def test_public_challenges_are_answer_free_and_bound():
     campaign = campaign_module().verify_campaign()
-    assert len(campaign["challenges"]) >= 4
-    assert sum(entry["task_count"] for entry in campaign["challenges"]) >= 26
+    assert len(campaign["challenges"]) >= 5
+    assert sum(
+        entry["task_count"] for entry in campaign["challenges"]
+        if entry["status"] == "open"
+    ) >= 26
     assert campaign["independently_reproduced_count"] == 0
     for entry in campaign["challenges"]:
         challenge = json.loads(
@@ -47,6 +50,41 @@ def test_authority_relay_challenge_is_current_and_cross_protocol():
     assert {task["task_id"] for task in challenge["tasks"]} == {
         f"relay-blind-{number:02d}" for number in range(1, 9)
     }
+
+
+def test_open_portable_challenge_is_revision_locked():
+    module = campaign_module()
+    campaign = module.verify_campaign()
+    original = next(
+        item for item in campaign["challenges"]
+        if item["challenge_id"] == "portable-agent-assurance-2026-01"
+    )
+    current = next(
+        item for item in campaign["challenges"]
+        if item["challenge_id"] == "portable-agent-assurance-2026-02"
+    )
+    assert original["status"] == "closed"
+    assert current["status"] == "open"
+    challenge = module.load_public(ROOT / "reproduction-challenges" / current["path"])
+    urls = {source["url"] for source in challenge["official_sources"]}
+    assert any("v1.0.1" in url for url in urls)
+    assert any("2026-07-28" in url for url in urls)
+    assert any("2026-02" in url and url.endswith(".pdf") for url in urls)
+    assert all("/blob/main/" not in url and "/raw/main/" not in url for url in urls)
+
+
+def test_mutable_github_source_can_only_remain_as_closed_history():
+    module = campaign_module()
+    original = module.load_public(
+        ROOT / "reproduction-challenges" / "portable-agent-assurance" / "challenge.json"
+    )
+    try:
+        module.validate_challenge_sources({"status": "open"}, original)
+    except ValueError as exc:
+        assert "mutable GitHub branch URL" in str(exc)
+    else:
+        raise AssertionError("an open challenge accepted a mutable GitHub source")
+    module.validate_challenge_sources({"status": "closed"}, original)
 
 
 def test_templates_cannot_accidentally_validate_as_submissions():
@@ -196,7 +234,7 @@ def test_acceptance_plan_rejects_protocol_demonstration(tmp_path):
     )
     try:
         module.plan_acceptance(
-            "portable-agent-assurance-2026-01",
+            "portable-agent-assurance-2026-02",
             demo_pack,
             "invalid-protocol-demo",
             "2026-08-30",

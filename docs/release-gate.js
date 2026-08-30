@@ -30,12 +30,15 @@
     challenges.forEach((challenge) => {
       const link = document.createElement("a");
       link.href = `https://github.com/immu4989/awesome-agentic-usecases/tree/main/reproduction-challenges/${challenge.path.split("/")[0]}`;
+      if (challenge.status === "closed") link.classList.add("is-closed");
       const state = document.createElement("span");
       state.textContent = `${challenge.task_count} HIDDEN-ORACLE TASKS / ${challenge.status}`;
       const title = document.createElement("b");
       title.textContent = challenge.title;
       const action = document.createElement("small");
-      action.textContent = "Fork. Run. Submit attested bytes. ↗";
+      action.textContent = challenge.status === "closed"
+        ? "Historical artifact · submissions disabled. ↗"
+        : "Fork. Run. Submit attested bytes. ↗";
       link.append(state, title, action);
       target.append(link);
     });
