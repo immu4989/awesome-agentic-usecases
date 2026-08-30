@@ -87,6 +87,49 @@ arguments, results, prompts, reasoning, credentials, and operational payloads; O
 that tool-call arguments and results may contain sensitive information, so this public profile
 retains only normalized identifiers, sequence, operation, scope class, and decision.
 
+## Compile the inventory into executable authority twins
+
+An inventory becomes more useful when its claims can challenge an enforcement point. The
+**Authority Conformance Compiler** deterministically turns every authority/tool intersection into
+legitimate clean twins, then changes one boundary at a time: time window, revocation, delegation
+depth, human approval, operation, or resource scope.
+
+```bash
+aau bom generate-conformance \
+  agent-capability-bom/examples/candidate.json \
+  --out /tmp/authority-suite.json
+
+aau bom run-conformance \
+  agent-capability-bom/examples/candidate.json \
+  /tmp/authority-suite.json \
+  --command "python my_authority_adapter.py" \
+  --out /tmp/authority-receipt.json
+
+aau bom verify-conformance \
+  /tmp/authority-receipt.json \
+  agent-capability-bom/examples/candidate.json \
+  /tmp/authority-suite.json
+```
+
+The committed synthetic candidate compiles to **19 cases**: 5 legitimate clean twins and 14
+single-boundary violations. The public command adapter returns 19/19 exact decisions with zero
+unsafe allows and zero legitimate blocks. A deny-all adapter fails because the clean twins catch
+availability destruction; an allow-all adapter fails on the violation twins.
+
+The adapter receives only `protocol_version`, `case_id`, and the normalized authority input. It
+never receives expected answers, credentials, arguments, results, prompts, or tool payloads, and
+the compiler never invokes a tool. The command is parsed without a shell. The committed
+[`reference-conformance-suite.json`](examples/reference-conformance-suite.json) and
+[`reference-conformance-receipt.json`](examples/reference-conformance-receipt.json) are bound to
+the exact BOM and suite digests; verification recomputes case coverage, expected decisions,
+reason codes, exactness, and both asymmetric failure counts.
+
+The readable suite and receipt schemas publish their transport shapes. The strict CLI remains the
+normative validator because it also recomputes cross-file and semantic invariants. Reference
+adapter success is a protocol self-test. Command-adapter success is bounded evidence against the
+declared synthetic contract—not proof of production enforcement, policy correctness, safety,
+identity, compliance, certification, deployment approval, or an ATO.
+
 ## Build a portable evidence pack
 
 ```bash
@@ -123,6 +166,8 @@ linkage only—not who generated, reviewed, or authorized the deployment.
 - consequential write/irreversible authority without declared human approval.
 - allowed observation events outside the declared authority, noncontiguous run sequences, false
   run/scenario counts, and observation/BOM release mismatches.
+- stale or hand-edited conformance suites, duplicate/missing case coverage, adapter answer-shape
+  drift, receipt identity/digest mismatch, and non-recomputable exactness or failure counts.
 
 The strict CLI is the normative 1.0 validator. The readable
 [`agent-capability-bom.schema.json`](agent-capability-bom.schema.json) publishes the transport
@@ -137,11 +182,13 @@ shape; cross-reference, interval, and authority-subset invariants are enforced b
 3. Diff every release and require an accountable owner to review each widening finding.
 4. Use authorized aggregate or reviewed synthetic observations to locate review candidates. Never
    remove a permission merely because a bounded window did not exercise it.
-5. Verify identity, current authorization, revocation, destination, and policy again at action
+5. Compile clean and violation twins and run them against the real authorization adapter. Keep
+   adapter evidence distinct from the reference protocol self-test.
+6. Verify identity, current authorization, revocation, destination, and policy again at action
    time. An inventory is a snapshot, not an enforcement point.
-6. Attach organization-controlled signatures or attestations after verification and preserve the
+7. Attach organization-controlled signatures or attestations after verification and preserve the
    actual approval in the authoritative change system.
-7. Pair the inventory with the [Agent Release Gate](../agent-release-gate/),
+8. Pair the inventory with the [Agent Release Gate](../agent-release-gate/),
    [Portable Agent Assurance](../portable-agent-assurance/), and
    [Containment Drills](../agent-containment-drills/) for test, runtime, and recovery evidence.
 

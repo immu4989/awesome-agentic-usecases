@@ -16,6 +16,8 @@ conformance claim.
 | NIST SP 800-53 AC-6 applies least privilege to processes acting on behalf of users and privileges necessary for assigned organizational tasks. | Review agent leases at the operation and scope level. | A bounded non-use observation proves a privilege is unnecessary. |
 | NIST SP 800-207A describes telemetry as an input for fine-tuning access rights and step-up authentication. | Use authorized observations to form a review hypothesis. | Telemetry alone should automatically rewrite access policy. |
 | OpenTelemetry's GenAI conventions warn that tool arguments and results may contain sensitive information. | Keep the public observation profile metadata-only. | Metadata is risk-free or establishes trace integrity/completeness. |
+| NIST's NCCoE agent concept asks how least privilege can be established when actions are unpredictable and how agent actions can be logged and audited. | Derive repeatable authority challenges from the declared inventory and retain bounded results. | A generated test proves the deployed policy is correct or complete. |
+| MCP authorization requires audience-bound tokens and prohibits token passthrough; OAuth security guidance recommends sender-constrained, audience-restricted access tokens. | Test exact tool/scope/time/delegation bindings at the adapter boundary rather than accepting a bearer token as sufficient proof. | This generic compiler establishes MCP or OAuth conformance. |
 
 ## Design decisions
 
@@ -41,6 +43,15 @@ conformance claim.
 8. **Denied attempts do not justify privilege.** Only allowed events count as observed use. A
    blocked or errored request remains evidence about enforcement, not evidence that the agent needs
    the requested grant.
+9. **Compile both sides of every boundary.** Violation-only suites reward deny-all systems, so each
+   reachable authority intersection first produces a legitimate clean twin. Each negative twin
+   then changes one normalized boundary and preserves the rest of the case.
+10. **Do not leak the oracle to adapters.** Command adapters receive the case identifier and input,
+    never the expected decision or reason codes. The public protocol carries no credentials, tool
+    arguments, results, prompts, reasoning, or operational payloads and cannot execute a tool.
+11. **Conformance is scoped evidence.** A reference run only self-tests the compiler. A real adapter
+    run shows behavior on the exact generated suite, not correctness of the source inventory,
+    completeness of policy, production enforcement, safety, compliance, certification, or approval.
 
 ## Transfer-failure checks
 
@@ -52,6 +63,13 @@ conformance claim.
   compliant, effective, approved, or currently authorized.
 - A `read` tool becoming `prepare` is consequential even if model bytes are unchanged.
 - Absolute expiry moving forward is ordinary lease rotation; duration increasing is widening.
+- A suite of prohibited requests alone cannot distinguish safe enforcement from destructive
+  deny-all behavior; legitimate clean twins are required.
+- Matching decisions without exact reason codes can hide a different boundary implementation;
+  the reference contract scores both.
+- Independent operation and scope declarations can produce a Cartesian test intersection. Systems
+  with conditional operation/scope relationships need a future relationship profile rather than
+  treating this 1.0 compiler as a complete policy model.
 
 ## Primary sources
 
@@ -66,3 +84,6 @@ conformance claim.
 - OWASP CycloneDX, [official 1.7 JSON Schema](https://github.com/CycloneDX/specification/blob/master/schema/bom-1.7.schema.json), accessed 2026-08-30.
 - in-toto, [Attestation Framework Specification](https://github.com/in-toto/attestation/blob/main/spec/README.md), accessed 2026-08-30.
 - OpenTelemetry, [Generative AI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/), accessed 2026-08-30.
+- Model Context Protocol, [Authorization specification](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization), accessed 2026-08-30.
+- IETF, [RFC 8707: Resource Indicators for OAuth 2.0](https://www.rfc-editor.org/rfc/rfc8707), February 2020.
+- IETF, [RFC 9700: Best Current Practice for OAuth 2.0 Security](https://www.rfc-editor.org/rfc/rfc9700), January 2025.

@@ -44,6 +44,17 @@ def main() -> None:
         raise SystemExit("the least-authority planner must never auto-remove a grant")
     if reduction["status"] != "proposal_only":
         raise SystemExit("authority reduction output must stay proposal-only")
+    conformance = expected["capability_bom"]["conformance"]
+    if conformance["adapter_kind"] != "command":
+        raise SystemExit("authority conformance evidence must come from a command adapter")
+    if conformance["status"] != "evidence_passed":
+        raise SystemExit("reference authority conformance must remain exact")
+    if conformance["exact_count"] != conformance["case_count"]:
+        raise SystemExit("reference authority conformance case coverage is incomplete")
+    if conformance["unsafe_allow_count"] or conformance["legitimate_block_count"]:
+        raise SystemExit("reference authority conformance has asymmetric failures")
+    if conformance["expected_answers_sent_to_adapter"] or conformance["tools_executed"]:
+        raise SystemExit("authority conformance adapter boundary was weakened")
     html = (DOCS / "index.html").read_text()
     for marker in (
         'id="release-gate"',
@@ -52,6 +63,8 @@ def main() -> None:
         'href="release-gate.css?v=1"',
         'src="release-gate.js?v=1"',
         'id="agent-capability-bom"',
+        'id="release-bom-conformance-status"',
+        'id="authority-conformance"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing release-operations marker: {marker}")

@@ -108,6 +108,14 @@
       set("release-bom-unobserved", data.capability_bom.reduction_plan.summary.unobserved_operation_count + data.capability_bom.reduction_plan.summary.unobserved_scope_count);
       set("release-bom-auto-removed", data.capability_bom.reduction_plan.summary.automatically_removed_count);
       set("release-bom-next-evidence", data.capability_bom.reduction_plan.next_evidence_count);
+      const conformance = data.capability_bom.conformance;
+      set("release-bom-conformance-status", conformance.status.replaceAll("_", " "));
+      set("release-bom-conformance-exact", `${conformance.exact_count}/${conformance.case_count}`);
+      set("release-bom-conformance-clean", conformance.clean_twin_count);
+      set("release-bom-conformance-violations", conformance.violation_twin_count);
+      set("release-bom-conformance-unsafe", conformance.unsafe_allow_count);
+      set("release-bom-conformance-shapes", conformance.shape_count);
+      set("release-bom-conformance-blocks", conformance.legitimate_block_count);
       renderBomFindings(data.capability_bom.findings);
     })
     .catch((error) => set("release-data-status", `Evidence view unavailable: ${error.message}`));

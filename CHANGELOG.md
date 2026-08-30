@@ -120,6 +120,16 @@ the harness API is what is versioned; use cases are additive.
   demands six next proofs for every candidate, emits no executable policy, and automatically
   removes zero permissions. `verify-reduction-plan` recomputes the proposal from exact input
   digests; cross-reference escapes, false coverage counts, and noncontiguous runs fail closed.
+- **Inventory-derived Authority Conformance Compiler** — `aau bom generate-conformance` compiles
+  every declared authority/tool intersection into legitimate clean twins plus single-boundary
+  time, revocation, delegation, approval, operation, and scope violations. The command protocol
+  withholds expected answers and never executes tools; the reference candidate produces 19 cases,
+  19/19 exact results, zero unsafe allows, and zero legitimate blocks.
+- **Recomputable asymmetric evidence** — `run-conformance` emits a BOM- and suite-bound receipt;
+  `verify-conformance` detects stale suites, missing/duplicate coverage, identity or digest drift,
+  malformed adapter answers, and altered exactness or failure counts. Strict readable schemas,
+  fail-closed tests, CI parity, a public adapter, and a live evidence view make the experiment
+  forkable without presenting it as production enforcement, certification, compliance, or an ATO.
 
 - **Portable Agent Assurance Envelope** — a dependency-free offline verifier binds a deliberately
   public synthetic workload credential to its accountable operator, short-lived authority lease,

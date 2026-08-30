@@ -2,7 +2,7 @@
 
 This module inventories the operational authority around an agent, validates
 cross-references, identifies authority widening between releases, and emits a
-    conservative CycloneDX 1.7 projection.  It never grants authority or establishes
+conservative CycloneDX 1.7 projection.  It never grants authority or establishes
 identity, compliance, certification, safety, or deployment approval.
 """
 
@@ -11,6 +11,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import shlex
+import subprocess
 import sys
 import uuid
 from datetime import datetime
@@ -24,6 +26,8 @@ REVIEW_VERSION = "aau-agent-capability-review/1.0"
 PACK_VERSION = "aau-agent-capability-pack/1.0"
 OBSERVATION_VERSION = "aau-agent-authority-observation/1.0"
 REDUCTION_PLAN_VERSION = "aau-agent-authority-reduction-plan/1.0"
+CONFORMANCE_SUITE_VERSION = "aau-agent-authority-conformance-suite/1.0"
+CONFORMANCE_RECEIPT_VERSION = "aau-agent-authority-conformance-receipt/1.0"
 STATEMENT_TYPE = "https://in-toto.io/Statement/v1"
 PREDICATE_TYPE = (
     "https://immu4989.github.io/awesome-agentic-usecases/"
@@ -852,10 +856,367 @@ def verify_reduction_plan(
         raise AgentBomError("authority reduction plan does not recompute from its inputs")
 
 
+def _iso(value: datetime) -> str:
+    return value.isoformat().replace("+00:00", "Z")
+
+
+def evaluate_authority_case(
+    bom: dict[str, Any], case_input: dict[str, Any]
+) -> tuple[str, list[str]]:
+    """Evaluate one normalized request without executing its tool."""
+    _exact(
+        case_input,
+        {
+            "authority_id",
+            "tool_id",
+            "operation",
+            "resource_scope",
+            "evaluated_at",
+            "revoked",
+            "delegation_depth",
+            "human_approval_present",
+        },
+        "conformance case input",
+    )
+    authorities = _by_id(bom["authorities"], "authority_id")
+    tools = _by_id(bom["tools"], "component_id")
+    authority = authorities.get(case_input["authority_id"])
+    if authority is None:
+        return "block", ["AUTHORITY_UNKNOWN"]
+    tool = tools.get(case_input["tool_id"])
+    if tool is None:
+        return "block", ["TOOL_UNKNOWN"]
+    if case_input["tool_id"] not in authority["tool_ids"]:
+        return "block", ["TOOL_OUTSIDE_AUTHORITY"]
+    if case_input["operation"] not in tool["operations"]:
+        return "block", ["TOOL_OPERATION_UNKNOWN"]
+    if case_input["resource_scope"] not in tool["resource_scopes"]:
+        return "block", ["TOOL_SCOPE_UNKNOWN"]
+    if case_input["operation"] not in authority["operations"]:
+        return "block", ["OPERATION_OUTSIDE_AUTHORITY"]
+    if case_input["resource_scope"] not in authority["resource_scopes"]:
+        return "block", ["RESOURCE_SCOPE_OUTSIDE_AUTHORITY"]
+    evaluated_at = _timestamp(case_input["evaluated_at"], "case evaluated_at")
+    if evaluated_at < _timestamp(authority["not_before"], "authority not_before"):
+        return "block", ["AUTHORITY_NOT_YET_VALID"]
+    if evaluated_at >= _timestamp(authority["expires_at"], "authority expires_at"):
+        return "block", ["AUTHORITY_EXPIRED"]
+    if case_input["revoked"] is not False:
+        if case_input["revoked"] is not True:
+            raise AgentBomError("case revoked must be boolean")
+        return "block", ["AUTHORITY_REVOKED"]
+    depth = case_input["delegation_depth"]
+    if not isinstance(depth, int) or isinstance(depth, bool) or depth < 0:
+        raise AgentBomError("case delegation_depth must be a non-negative integer")
+    if depth > authority["delegation_depth"]:
+        return "block", ["DELEGATION_DEPTH_EXCEEDED"]
+    if not isinstance(case_input["human_approval_present"], bool):
+        raise AgentBomError("case human_approval_present must be boolean")
+    if authority["human_approval_required"] and not case_input["human_approval_present"]:
+        return "block", ["HUMAN_APPROVAL_REQUIRED"]
+    return "allow", []
+
+
+def generate_conformance_suite(bom: dict[str, Any]) -> dict[str, Any]:
+    """Compile an AABOM into clean and single-boundary authority twins."""
+    validate_bom(bom)
+    tools = _by_id(bom["tools"], "component_id")
+    cases: list[dict[str, Any]] = []
+
+    def add(
+        authority: dict[str, Any],
+        tool_id: str,
+        shape: str,
+        operation: str,
+        scope: str,
+        evaluated_at: datetime,
+        *,
+        revoked: bool = False,
+        depth: int | None = None,
+        approval: bool = True,
+    ) -> None:
+        case_input = {
+            "authority_id": authority["authority_id"],
+            "tool_id": tool_id,
+            "operation": operation,
+            "resource_scope": scope,
+            "evaluated_at": _iso(evaluated_at),
+            "revoked": revoked,
+            "delegation_depth": authority["delegation_depth"] if depth is None else depth,
+            "human_approval_present": approval,
+        }
+        decision, reasons = evaluate_authority_case(bom, case_input)
+        cases.append(
+            {
+                "case_id": f"{authority['authority_id']}--{tool_id}--{shape}--{len(cases) + 1:03d}",
+                "shape": shape,
+                "input": case_input,
+                "expected_decision": decision,
+                "expected_reason_codes": reasons,
+                "clean_twin": decision == "allow",
+            }
+        )
+
+    for authority in sorted(bom["authorities"], key=lambda row: row["authority_id"]):
+        starts = _timestamp(authority["not_before"], "authority not_before")
+        expires = _timestamp(authority["expires_at"], "authority expires_at")
+        valid_at = starts + (expires - starts) / 2
+        available: list[tuple[str, str, str]] = []
+        for tool_id in sorted(authority["tool_ids"]):
+            tool = tools[tool_id]
+            for operation in sorted(set(tool["operations"]) & set(authority["operations"])):
+                for scope in sorted(set(tool["resource_scopes"]) & set(authority["resource_scopes"])):
+                    available.append((tool_id, operation, scope))
+                    add(authority, tool_id, "legitimate_clean_twin", operation, scope, valid_at)
+        if not available:
+            raise AgentBomError(f"authority {authority['authority_id']} has no executable intersection")
+        tool_id, operation, scope = available[0]
+        add(authority, tool_id, "not_yet_valid", operation, scope, starts - (expires - starts))
+        add(authority, tool_id, "expired", operation, scope, expires)
+        add(authority, tool_id, "revoked", operation, scope, valid_at, revoked=True)
+        add(
+            authority,
+            tool_id,
+            "delegation_depth_exceeded",
+            operation,
+            scope,
+            valid_at,
+            depth=authority["delegation_depth"] + 1,
+        )
+        if authority["human_approval_required"]:
+            add(authority, tool_id, "human_approval_missing", operation, scope, valid_at, approval=False)
+        add(authority, tool_id, "operation_outside_tool", "aau.invalid_operation", scope, valid_at)
+        add(authority, tool_id, "scope_outside_tool", operation, "aau.invalid/scope", valid_at)
+    if len(cases) > 2000:
+        raise AgentBomError("generated conformance suite exceeds 2000 cases")
+    return {
+        "suite_version": CONFORMANCE_SUITE_VERSION,
+        "suite_id": f"aau-authority-conformance-{digest(bom)[:20]}",
+        "agent_id": bom["agent_id"],
+        "release_id": bom["release_id"],
+        "bom_sha256": digest(bom),
+        "generated_at": bom["generated_at"],
+        "cases": cases,
+        "boundary": {
+            "requests_contain_no_credentials_or_payloads": True,
+            "adapter_cannot_execute_tools": True,
+            "reference_result_not_product_or_deployment_evidence": True,
+            "passing_not_certification_compliance_or_authorization": True,
+        },
+    }
+
+
+def _command_conformance_adapter(command: str, timeout: float):
+    argv = shlex.split(command)
+    if not argv:
+        raise AgentBomError("adapter command is empty")
+
+    def invoke(case_id: str, case_input: dict[str, Any]) -> tuple[str, list[str]]:
+        request = {
+            "protocol_version": "aau-agent-authority-adapter/1.0",
+            "case_id": case_id,
+            "input": case_input,
+        }
+        try:
+            completed = subprocess.run(
+                argv,
+                input=canonical(request),
+                capture_output=True,
+                timeout=timeout,
+                check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            raise AgentBomError(f"adapter execution failed: {exc}") from exc
+        if completed.returncode != 0:
+            raise AgentBomError(f"adapter exited with status {completed.returncode}")
+        if len(completed.stdout) > 1_000_000:
+            raise AgentBomError("adapter response exceeds 1000000 bytes")
+        try:
+            response = json.loads(completed.stdout)
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise AgentBomError("adapter returned invalid JSON") from exc
+        response = _exact(response, {"decision", "reason_codes"}, "adapter response")
+        if response["decision"] not in {"allow", "block"}:
+            raise AgentBomError("adapter decision must be allow or block")
+        reasons = _string_list(
+            response["reason_codes"], "adapter reason_codes", allow_empty=True
+        )
+        if reasons != sorted(reasons):
+            raise AgentBomError("adapter reason_codes must be sorted")
+        return response["decision"], reasons
+
+    return invoke
+
+
+def run_conformance(
+    bom: dict[str, Any],
+    suite: dict[str, Any],
+    adapter_kind: str,
+    command: str | None = None,
+    timeout: float = 10.0,
+) -> dict[str, Any]:
+    expected_suite = generate_conformance_suite(bom)
+    if suite != expected_suite:
+        raise AgentBomError("conformance suite does not recompute from the AABOM")
+    if adapter_kind == "reference":
+        def invoke(_case_id: str, case_input: dict[str, Any]) -> tuple[str, list[str]]:
+            return evaluate_authority_case(bom, case_input)
+    elif adapter_kind == "command" and command:
+        invoke = _command_conformance_adapter(command, timeout)
+    else:
+        raise AgentBomError("choose the reference adapter or provide a command")
+    results = []
+    for case in suite["cases"]:
+        decision, reasons = invoke(case["case_id"], case["input"])
+        results.append(
+            {
+                "case_id": case["case_id"],
+                "actual_decision": decision,
+                "actual_reason_codes": reasons,
+                "exact": decision == case["expected_decision"]
+                and reasons == case["expected_reason_codes"],
+            }
+        )
+    exact_count = sum(row["exact"] for row in results)
+    expected = _by_id(suite["cases"], "case_id")
+    unsafe_allow_count = sum(
+        row["actual_decision"] == "allow"
+        and expected[row["case_id"]]["expected_decision"] == "block"
+        for row in results
+    )
+    legitimate_block_count = sum(
+        row["actual_decision"] == "block"
+        and expected[row["case_id"]]["expected_decision"] == "allow"
+        for row in results
+    )
+    status = "evidence_passed" if exact_count == len(results) else "evidence_failed"
+    return {
+        "receipt_version": CONFORMANCE_RECEIPT_VERSION,
+        "suite_id": suite["suite_id"],
+        "agent_id": bom["agent_id"],
+        "release_id": bom["release_id"],
+        "bom_sha256": digest(bom),
+        "suite_sha256": digest(suite),
+        "adapter_kind": adapter_kind,
+        "status": status,
+        "metrics": {
+            "case_count": len(results),
+            "clean_twin_count": sum(case["clean_twin"] for case in suite["cases"]),
+            "violation_twin_count": sum(not case["clean_twin"] for case in suite["cases"]),
+            "exact_count": exact_count,
+            "unsafe_allow_count": unsafe_allow_count,
+            "legitimate_block_count": legitimate_block_count,
+        },
+        "results": results,
+        "boundary": {
+            "aggregate_and_reason_codes_only": True,
+            "no_request_payload_response_or_reasoning_retained": True,
+            "reference_adapter_is_protocol_self_test_only": adapter_kind == "reference",
+            "passing_not_certification_compliance_or_deployment_authority": True,
+        },
+    }
+
+
+def verify_conformance_receipt(
+    receipt: dict[str, Any], bom: dict[str, Any], suite: dict[str, Any]
+) -> None:
+    _exact(
+        receipt,
+        {
+            "receipt_version",
+            "suite_id",
+            "agent_id",
+            "release_id",
+            "bom_sha256",
+            "suite_sha256",
+            "adapter_kind",
+            "status",
+            "metrics",
+            "results",
+            "boundary",
+        },
+        "conformance receipt",
+    )
+    expected_suite = generate_conformance_suite(bom)
+    if suite != expected_suite:
+        raise AgentBomError("conformance suite does not recompute from the AABOM")
+    if receipt.get("receipt_version") != CONFORMANCE_RECEIPT_VERSION:
+        raise AgentBomError("conformance receipt version is invalid")
+    if (
+        receipt["suite_id"] != suite["suite_id"]
+        or receipt["agent_id"] != bom["agent_id"]
+        or receipt["release_id"] != bom["release_id"]
+    ):
+        raise AgentBomError("conformance receipt identity binding mismatch")
+    if receipt.get("bom_sha256") != digest(bom) or receipt.get("suite_sha256") != digest(suite):
+        raise AgentBomError("conformance receipt input digest mismatch")
+    results = receipt.get("results")
+    if not isinstance(results, list) or len(results) != len(suite["cases"]):
+        raise AgentBomError("conformance receipt results are incomplete")
+    expected = _by_id(suite["cases"], "case_id")
+    if {row.get("case_id") for row in results} != set(expected):
+        raise AgentBomError("conformance receipt case coverage is invalid")
+    for row in results:
+        _exact(
+            row,
+            {"case_id", "actual_decision", "actual_reason_codes", "exact"},
+            "conformance result",
+        )
+        if row["actual_decision"] not in {"allow", "block"}:
+            raise AgentBomError("conformance result decision is invalid")
+        reasons = _string_list(
+            row["actual_reason_codes"],
+            "conformance result reason_codes",
+            allow_empty=True,
+        )
+        if reasons != sorted(reasons):
+            raise AgentBomError("conformance result reason_codes must be sorted")
+        if not isinstance(row["exact"], bool):
+            raise AgentBomError("conformance result exact must be boolean")
+        exact = row["actual_decision"] == expected[row["case_id"]]["expected_decision"] and row[
+            "actual_reason_codes"
+        ] == expected[row["case_id"]]["expected_reason_codes"]
+        if row["exact"] is not exact:
+            raise AgentBomError(f"conformance exactness does not recompute: {row['case_id']}")
+    recomputed = run_conformance(bom, suite, "reference")
+    exact_count = sum(row["exact"] for row in results)
+    unsafe = sum(
+        row["actual_decision"] == "allow"
+        and expected[row["case_id"]]["expected_decision"] == "block"
+        for row in results
+    )
+    legitimate_blocks = sum(
+        row["actual_decision"] == "block"
+        and expected[row["case_id"]]["expected_decision"] == "allow"
+        for row in results
+    )
+    expected_metrics = {
+        **recomputed["metrics"],
+        "exact_count": exact_count,
+        "unsafe_allow_count": unsafe,
+        "legitimate_block_count": legitimate_blocks,
+    }
+    if receipt.get("metrics") != expected_metrics:
+        raise AgentBomError("conformance receipt metrics do not recompute")
+    expected_status = "evidence_passed" if exact_count == len(results) else "evidence_failed"
+    if receipt.get("status") != expected_status:
+        raise AgentBomError("conformance receipt status does not recompute")
+    if receipt.get("adapter_kind") not in {"reference", "command"}:
+        raise AgentBomError("conformance receipt adapter_kind is invalid")
+    expected_boundary = {
+        "aggregate_and_reason_codes_only": True,
+        "no_request_payload_response_or_reasoning_retained": True,
+        "reference_adapter_is_protocol_self_test_only": receipt["adapter_kind"] == "reference",
+        "passing_not_certification_compliance_or_deployment_authority": True,
+    }
+    if receipt.get("boundary") != expected_boundary:
+        raise AgentBomError("conformance receipt boundary is invalid")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="aau bom",
-        description="Validate, diff, project, and pack an Agent Capability & Authority BOM.",
+        description="Inventory, reduce, and test Agent Capability & Authority BOMs.",
     )
     sub = parser.add_subparsers(dest="command", required=True)
     validate = sub.add_parser("validate", help="validate one strict public AABOM")
@@ -886,6 +1247,27 @@ def build_parser() -> argparse.ArgumentParser:
     verify_reduction.add_argument("plan", type=Path)
     verify_reduction.add_argument("bom", type=Path)
     verify_reduction.add_argument("observation", type=Path)
+    generate = sub.add_parser(
+        "generate-conformance", help="compile one AABOM into clean and violation authority twins"
+    )
+    generate.add_argument("bom", type=Path)
+    generate.add_argument("--out", type=Path, required=True)
+    run = sub.add_parser(
+        "run-conformance", help="run inventory-derived twins through a reference or command adapter"
+    )
+    run.add_argument("bom", type=Path)
+    run.add_argument("suite", type=Path)
+    adapter = run.add_mutually_exclusive_group(required=True)
+    adapter.add_argument("--reference", action="store_true")
+    adapter.add_argument("--command", dest="adapter_command")
+    run.add_argument("--timeout", type=float, default=10.0)
+    run.add_argument("--out", type=Path, required=True)
+    verify_run = sub.add_parser(
+        "verify-conformance", help="verify a conformance receipt and exact input coverage"
+    )
+    verify_run.add_argument("receipt", type=Path)
+    verify_run.add_argument("bom", type=Path)
+    verify_run.add_argument("suite", type=Path)
     return parser
 
 
@@ -927,10 +1309,37 @@ def main(argv: list[str] | None = None) -> int:
                 "candidate authority record(s); 0 automatic removals)"
             )
             return 0
-        verify_reduction_plan(
-            load_json(args.plan), load_json(args.bom), load_json(args.observation)
+        if args.command == "verify-reduction-plan":
+            verify_reduction_plan(
+                load_json(args.plan), load_json(args.bom), load_json(args.observation)
+            )
+            print(f"verified {args.plan} (proposal_only; 0 automatic removals)")
+            return 0
+        if args.command == "generate-conformance":
+            suite = generate_conformance_suite(load_json(args.bom))
+            write_json(suite, args.out)
+            print(
+                f"wrote {args.out} ({len(suite['cases'])} clean and violation twins)"
+            )
+            return 0
+        if args.command == "run-conformance":
+            receipt = run_conformance(
+                load_json(args.bom),
+                load_json(args.suite),
+                "reference" if args.reference else "command",
+                args.adapter_command,
+                args.timeout,
+            )
+            write_json(receipt, args.out)
+            print(
+                f"wrote {args.out} ({receipt['metrics']['exact_count']}/"
+                f"{receipt['metrics']['case_count']} exact; {receipt['status']})"
+            )
+            return 0 if receipt["status"] == "evidence_passed" else 1
+        verify_conformance_receipt(
+            load_json(args.receipt), load_json(args.bom), load_json(args.suite)
         )
-        print(f"verified {args.plan} (proposal_only; 0 automatic removals)")
+        print(f"verified {args.receipt}")
         return 0
     except (AgentBomError, OSError) as exc:
         print(f"aau bom: {exc}", file=sys.stderr)

@@ -1,5 +1,6 @@
 import copy
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -8,13 +9,16 @@ from aau_harness.agent_bom import (
     AgentBomError,
     build_pack,
     diff_boms,
+    generate_conformance_suite,
     load_json,
     plan_authority_reduction,
     review_bom,
+    run_conformance,
     to_cyclonedx,
     validate_bom,
     validate_observation,
     verify_pack,
+    verify_conformance_receipt,
     verify_reduction_plan,
 )
 
@@ -23,6 +27,13 @@ ROOT = Path(__file__).resolve().parents[2]
 BASELINE = ROOT / "agent-capability-bom" / "examples" / "baseline.json"
 CANDIDATE = ROOT / "agent-capability-bom" / "examples" / "candidate.json"
 OBSERVATION = ROOT / "agent-capability-bom" / "examples" / "authority-observation.json"
+CONFORMANCE_ADAPTER = (
+    ROOT / "agent-capability-bom" / "examples" / "reference_conformance_adapter.py"
+)
+CONFORMANCE_SCHEMAS = (
+    ROOT / "agent-capability-bom" / "authority-conformance-suite.schema.json",
+    ROOT / "agent-capability-bom" / "authority-conformance-receipt.schema.json",
+)
 
 
 def fixtures():
@@ -162,3 +173,88 @@ def test_reduction_plan_recomputes_and_input_drift_is_detected():
     drifted["summary"]["automatically_removed_count"] = 1
     with pytest.raises(AgentBomError, match="does not recompute"):
         verify_reduction_plan(drifted, bom, observation)
+
+
+def test_inventory_compiles_to_clean_and_single_boundary_twins():
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+    assert len(suite["cases"]) == 19
+    assert sum(row["clean_twin"] for row in suite["cases"]) == 5
+    assert sum(not row["clean_twin"] for row in suite["cases"]) == 14
+    assert all(
+        len(row["expected_reason_codes"]) == 1
+        for row in suite["cases"]
+        if not row["clean_twin"]
+    )
+    assert {row["shape"] for row in suite["cases"]} >= {
+        "legitimate_clean_twin",
+        "not_yet_valid",
+        "expired",
+        "revoked",
+        "delegation_depth_exceeded",
+        "human_approval_missing",
+        "operation_outside_tool",
+        "scope_outside_tool",
+    }
+
+
+def test_reference_and_command_conformance_are_exact_and_privacy_bounded():
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+    reference = run_conformance(bom, suite, "reference")
+    assert reference["status"] == "evidence_passed"
+    assert reference["metrics"] == {
+        "case_count": 19,
+        "clean_twin_count": 5,
+        "violation_twin_count": 14,
+        "exact_count": 19,
+        "unsafe_allow_count": 0,
+        "legitimate_block_count": 0,
+    }
+    verify_conformance_receipt(reference, bom, suite)
+    command = run_conformance(
+        bom, suite, "command", f"{sys.executable} {CONFORMANCE_ADAPTER}"
+    )
+    assert command["metrics"] == reference["metrics"]
+    assert command["boundary"]["reference_adapter_is_protocol_self_test_only"] is False
+    verify_conformance_receipt(command, bom, suite)
+
+
+def test_deny_all_is_caught_by_legitimate_twins(tmp_path):
+    adapter = tmp_path / "deny_all.py"
+    adapter.write_text(
+        "import json,sys\njson.load(sys.stdin)\n"
+        "json.dump({'decision':'block','reason_codes':['DENY_ALL']},sys.stdout)\n"
+    )
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+    receipt = run_conformance(bom, suite, "command", f"{sys.executable} {adapter}")
+    assert receipt["status"] == "evidence_failed"
+    assert receipt["metrics"]["legitimate_block_count"] == 5
+    verify_conformance_receipt(receipt, bom, suite)
+
+
+def test_conformance_suite_and_receipt_drift_fail_closed():
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+    drifted_suite = copy.deepcopy(suite)
+    drifted_suite["cases"][0]["expected_decision"] = "block"
+    with pytest.raises(AgentBomError, match="suite does not recompute"):
+        run_conformance(bom, drifted_suite, "reference")
+    receipt = run_conformance(bom, suite, "reference")
+    receipt["results"][0]["exact"] = False
+    with pytest.raises(AgentBomError, match="exactness does not recompute"):
+        verify_conformance_receipt(receipt, bom, suite)
+
+
+def test_conformance_transport_schemas_are_strict_and_receipt_identity_is_bound():
+    for path in CONFORMANCE_SCHEMAS:
+        schema = json.loads(path.read_text())
+        assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
+        assert schema["additionalProperties"] is False
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+    receipt = run_conformance(bom, suite, "reference")
+    receipt["release_id"] = "different-release"
+    with pytest.raises(AgentBomError, match="identity binding mismatch"):
+        verify_conformance_receipt(receipt, bom, suite)

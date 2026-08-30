@@ -43,7 +43,7 @@ and observed failure cards with a direct path to reproduction. Start with
 | I already have… | Start here | Leave with… |
 |---|---|---|
 | A candidate agent release | [Agent Release Gate](https://immu4989.github.io/awesome-agentic-usecases/#release-gate) | A byte-exact change map, impact-selected tests, fail-closed decision, experimental OSCAL view, and verifiable evidence pack |
-| An agent deployment whose real authority is hard to see | [Agent Capability & Authority BOM](agent-capability-bom/) | A strict model/tool/operation/scope/lease/route inventory, widening diff, CycloneDX 1.7 projection, and tamper-evident pack |
+| An agent deployment whose real authority is hard to see or test | [Agent Capability & Authority BOM](agent-capability-bom/) | A strict authority inventory, widening diff, least-authority plan, inventory-derived conformance twins, and tamper-evident evidence |
 | An outside team ready to reproduce a claim | [Fork-to-Reproduce](reproduction-challenges/) | An answer-free challenge, oracle commitment, fork-bound submission, and GitHub-attested bytes for separate human adjudication |
 | A public agent-security lesson | [Agent Incident Exchange](agent-incident-exchange/) | A safe regression record plus SARIF, OpenVEX, and experimental CSAF/OCSF bridge exports |
 | An AI agent or endpoint | [Agent Evidence Starter](https://immu4989.github.io/awesome-agentic-usecases/#agent-starter) | A runnable synthetic suite, adapters, tests, CI, visual, manifest, and privacy-bounded receipt |
@@ -126,6 +126,23 @@ aau bom plan-reduction agent-capability-bom/examples/candidate.json \
   agent-capability-bom/examples/authority-observation.json \
   --out /tmp/authority-reduction-plan.json
 ```
+
+The **Authority Conformance Compiler** then turns the same inventory into executable clean and
+violation twins. The reference candidate yields 19 cases—5 legitimate and 14 boundary
+violations—and its command-adapter receipt records 19/19 exact, zero unsafe allows, and zero
+legitimate blocks. Expected answers never enter the adapter request and no tool is executed:
+
+```bash
+aau bom generate-conformance agent-capability-bom/examples/candidate.json \
+  --out /tmp/authority-suite.json
+aau bom run-conformance agent-capability-bom/examples/candidate.json \
+  /tmp/authority-suite.json --command "python my_authority_adapter.py" \
+  --out /tmp/authority-receipt.json
+```
+
+The receipt is digest-bound and fully recomputable. Passing remains evidence against this declared
+synthetic contract—not proof of production enforcement, identity, safety, compliance,
+certification, deployment approval, or an ATO.
 
 ## Portable Agent Assurance—from identity to exact protocol evidence
 

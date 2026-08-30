@@ -29,6 +29,8 @@ def build() -> dict:
     capability_review = load("agent-capability-bom/examples/reference-pack/authority-review.json")
     cyclonedx = load("agent-capability-bom/examples/reference-pack/cyclonedx-1.7.json")
     reduction_plan = load("agent-capability-bom/examples/reference-reduction-plan.json")
+    conformance_suite = load("agent-capability-bom/examples/reference-conformance-suite.json")
+    conformance_receipt = load("agent-capability-bom/examples/reference-conformance-receipt.json")
     oscal_result = oscal["assessment-results"]["results"][0]
     formats = sorted(
         path.name for path in (ROOT / "agent-incident-exchange/examples/reference-pack").glob("*.*json")
@@ -108,6 +110,19 @@ def build() -> dict:
                     )["required_next_evidence"]
                 ),
             },
+            "conformance": {
+                "status": conformance_receipt["status"],
+                "adapter_kind": conformance_receipt["adapter_kind"],
+                "case_count": conformance_receipt["metrics"]["case_count"],
+                "clean_twin_count": conformance_receipt["metrics"]["clean_twin_count"],
+                "violation_twin_count": conformance_receipt["metrics"]["violation_twin_count"],
+                "exact_count": conformance_receipt["metrics"]["exact_count"],
+                "unsafe_allow_count": conformance_receipt["metrics"]["unsafe_allow_count"],
+                "legitimate_block_count": conformance_receipt["metrics"]["legitimate_block_count"],
+                "shape_count": len({row["shape"] for row in conformance_suite["cases"]}),
+                "expected_answers_sent_to_adapter": False,
+                "tools_executed": 0,
+            },
         },
         "freshness": {
             "source_count": len(sources["sources"]),
@@ -134,6 +149,7 @@ def build() -> dict:
             "oscal_export_is_experimental_and_non_certifying": True,
             "capability_inventory_is_not_live_authorization": True,
             "authority_nonuse_never_auto_removes_permission": True,
+            "authority_conformance_is_not_production_enforcement_evidence": True,
         },
     }
 

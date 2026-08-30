@@ -196,6 +196,13 @@ aau bom plan-reduction agent-capability-bom/examples/candidate.json \
 aau bom verify-reduction-plan /tmp/reduction-plan.json \
   agent-capability-bom/examples/candidate.json \
   agent-capability-bom/examples/authority-observation.json
+aau bom generate-conformance agent-capability-bom/examples/candidate.json \
+  --out /tmp/authority-suite.json
+aau bom run-conformance agent-capability-bom/examples/candidate.json \
+  /tmp/authority-suite.json --command "python my_authority_adapter.py" \
+  --out /tmp/authority-receipt.json
+aau bom verify-conformance /tmp/authority-receipt.json \
+  agent-capability-bom/examples/candidate.json /tmp/authority-suite.json
 ```
 
 Cross-reference checks reject authority operations or resource scopes that exceed their declared
@@ -207,6 +214,11 @@ The reduction planner records only normalized event identifiers, sequence, opera
 and decision. It identifies unobserved grants but produces no executable policy and automatically
 removes nothing. Each candidate needs owner review, a representative holdout, legitimate clean
 twin, staging denial test, rollback rehearsal, and separate change approval.
+
+The conformance compiler derives legitimate and single-boundary violation twins directly from the
+inventory. Command adapters receive inputs without expected answers; no tool is invoked. Receipts
+bind the exact BOM and suite and separately count unsafe allows and legitimate blocks. Passing is
+bounded adapter evidence, not production validation, certification, compliance, or authorization.
 
 ## Evaluate an existing agent
 
