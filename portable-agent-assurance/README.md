@@ -124,6 +124,34 @@ The watched standard now resolves to immutable A2A specification release `v1.0.1
 protocol revision correctly remains `1.0` because patch releases do not affect negotiation.
 See the [source mapping, premise checks, and non-claims](A2A_1_RESEARCH_NOTES.md).
 
+## Test the A2A → MCP authority relay
+
+Passing the A2A and MCP gates independently still leaves one consequential boundary untested: the
+application-owned translation from an inbound agent task to an outbound tool call. The Authority
+Relay Gate makes that hop executable:
+
+```bash
+python3 portable-agent-assurance/authority_relay.py generate \
+  portable-agent-assurance/examples/a2a-mcp-authority-relay-profile.json \
+  --out /tmp/authority-relay-suite.json
+
+python3 portable-agent-assurance/authority_relay.py run \
+  portable-agent-assurance/examples/a2a-mcp-authority-relay-profile.json \
+  /tmp/authority-relay-suite.json \
+  --adapter-command "python3 my_authority_relay_adapter.py" \
+  --out /tmp/authority-relay-receipt.json
+```
+
+The compiler produces **25 cases**: two legitimate A2A-to-MCP routes and twenty-three isolated
+violations. It preserves the delegated subject, acting agent, task, tenant, Agent Card, delegation
+identifier/depth/window, policy epoch, route, tool, resource, OAuth scope, MCP audience, monitor,
+and human approval boundary. The committed answer-blind command adapter is 25/25 exact with zero
+unsafe allows and zero legitimate blocks; allow-all and deny-all both fail.
+
+This tests a declared application policy where the two protocols meet; it is not a new protocol or
+a claim that A2A or MCP defines the full translation. Read the [research basis and exact
+non-claims](AUTHORITY_RELAY_RESEARCH_NOTES.md).
+
 ## Build a portable pack
 
 ```bash

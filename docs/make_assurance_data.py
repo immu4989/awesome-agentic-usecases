@@ -24,6 +24,9 @@ def build() -> dict:
     assurance = _module("aau_assurance", ROOT / "portable-agent-assurance/aau_assurance.py")
     mcp_delta = _module("mcp_2026_delta", ROOT / "portable-agent-assurance/mcp_2026_delta.py")
     a2a_delta = _module("a2a_1_delta", ROOT / "portable-agent-assurance/a2a_1_delta.py")
+    authority_relay = _module(
+        "authority_relay", ROOT / "portable-agent-assurance/authority_relay.py"
+    )
     tevva = _module("aau_tevva", ROOT / "tev-v-athlon-profile/aau_tevva.py")
     envelope = assurance.load_json(
         ROOT / "portable-agent-assurance/examples/synthetic-assurance-envelope.json"
@@ -52,6 +55,16 @@ def build() -> dict:
         ROOT / "portable-agent-assurance/examples/a2a-1-interface-authorization-receipt.json"
     )
     a2a_delta.verify_receipt(a2a_receipt, a2a_profile, a2a_suite)
+    relay_profile = authority_relay.load_json(
+        ROOT / "portable-agent-assurance/examples/a2a-mcp-authority-relay-profile.json"
+    )
+    relay_suite = authority_relay.load_json(
+        ROOT / "portable-agent-assurance/examples/a2a-mcp-authority-relay-suite.json"
+    )
+    relay_receipt = authority_relay.load_json(
+        ROOT / "portable-agent-assurance/examples/a2a-mcp-authority-relay-receipt.json"
+    )
+    authority_relay.verify_receipt(relay_receipt, relay_profile, relay_suite)
     profile = tevva.load_json(ROOT / "tev-v-athlon-profile/examples/agent-assurance-tevva.json")
     assessment = tevva.assess(profile, ROOT)
     reason_counts: dict[str, int] = {}
@@ -106,6 +119,14 @@ def build() -> dict:
             "adapter_kind": a2a_receipt["adapter_kind"],
             "status": a2a_receipt["status"],
             **a2a_receipt["metrics"],
+        },
+        "authority_relay": {
+            "a2a_revision": relay_profile["a2a"]["protocol_revision"],
+            "mcp_revision": relay_profile["mcp"]["protocol_revision"],
+            "route_count": len(relay_profile["routes"]),
+            "adapter_kind": relay_receipt["adapter_kind"],
+            "status": relay_receipt["status"],
+            **relay_receipt["metrics"],
         },
         "tevva": {
             "profile_id": assessment["profile_id"],

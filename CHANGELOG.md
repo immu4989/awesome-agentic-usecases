@@ -100,6 +100,13 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Cross-protocol Authority Relay Gate** — a new answer-blind compiler tests the unstandardized
+  application boundary where an authenticated A2A task becomes an MCP tool call. Two legitimate
+  routes and twenty-three isolated violations cover subject/actor/task continuity, tenant and Agent
+  Card binding, delegation replay/depth/window, policy epoch, exact route/tool/resource/scope,
+  MCP audience, token passthrough, monitoring, and human approval. The reference command adapter
+  is 25/25 exact with zero unsafe allows and zero legitimate blocks.
+
 - **A2A 1.0 Interface & Authorization Delta Gate** — a strict offline compiler now creates two
   legitimate twins and fifteen one-change violations for `A2A-Version: 1.0`, selected
   `AgentInterface` version/binding/endpoint/tenant, Agent Card drift, PascalCase JSON-RPC methods,

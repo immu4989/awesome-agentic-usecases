@@ -55,6 +55,20 @@ def main() -> None:
         or a2a["legitimate_block_count"] != 0
     ):
         raise SystemExit("A2A 1.0 interface and authorization delta evidence drifted")
+    relay = expected["authority_relay"]
+    if (
+        relay["a2a_revision"] != "1.0"
+        or relay["mcp_revision"] != "2026-07-28"
+        or relay["route_count"] != 2
+        or relay["adapter_kind"] != "command"
+        or relay["status"] != "evidence_passed"
+        or relay["case_count"] != 25
+        or relay["exact_count"] != 25
+        or relay["clean_twin_count"] != 2
+        or relay["unsafe_allow_count"] != 0
+        or relay["legitimate_block_count"] != 0
+    ):
+        raise SystemExit("cross-protocol authority relay evidence drifted")
     if expected["envelope"]["production_identity_verified"] is not False:
         raise SystemExit("synthetic reference must not claim production identity")
     if (
@@ -88,8 +102,9 @@ def main() -> None:
         'id="paa-mcp-exact"',
         'id="mcp-2026-delta"',
         'id="a2a-1-delta"',
-        'href="assurance.css?v=3"',
-        'src="assurance.js?v=3"',
+        'id="authority-relay-delta"',
+        'href="assurance.css?v=4"',
+        'src="assurance.js?v=4"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing assurance marker: {marker}")

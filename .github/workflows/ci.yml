@@ -95,6 +95,12 @@ jobs:
           python portable-agent-assurance/a2a_1_delta.py run portable-agent-assurance/examples/a2a-1-interface-authorization-profile.json portable-agent-assurance/examples/a2a-1-interface-authorization-suite.json --adapter-command "python portable-agent-assurance/examples/a2a_1_reference_adapter.py" --out "$RUNNER_TEMP/a2a-1-interface-authorization-receipt.json"
           cmp "$RUNNER_TEMP/a2a-1-interface-authorization-receipt.json" portable-agent-assurance/examples/a2a-1-interface-authorization-receipt.json
           python portable-agent-assurance/a2a_1_delta.py verify portable-agent-assurance/examples/a2a-1-interface-authorization-receipt.json portable-agent-assurance/examples/a2a-1-interface-authorization-profile.json portable-agent-assurance/examples/a2a-1-interface-authorization-suite.json
+          python portable-agent-assurance/authority_relay.py validate portable-agent-assurance/examples/a2a-mcp-authority-relay-profile.json
+          python portable-agent-assurance/authority_relay.py generate portable-agent-assurance/examples/a2a-mcp-authority-relay-profile.json --out "$RUNNER_TEMP/a2a-mcp-authority-relay-suite.json"
+          cmp "$RUNNER_TEMP/a2a-mcp-authority-relay-suite.json" portable-agent-assurance/examples/a2a-mcp-authority-relay-suite.json
+          python portable-agent-assurance/authority_relay.py run portable-agent-assurance/examples/a2a-mcp-authority-relay-profile.json portable-agent-assurance/examples/a2a-mcp-authority-relay-suite.json --adapter-command "python portable-agent-assurance/examples/authority_relay_reference_adapter.py" --out "$RUNNER_TEMP/a2a-mcp-authority-relay-receipt.json"
+          cmp "$RUNNER_TEMP/a2a-mcp-authority-relay-receipt.json" portable-agent-assurance/examples/a2a-mcp-authority-relay-receipt.json
+          python portable-agent-assurance/authority_relay.py verify portable-agent-assurance/examples/a2a-mcp-authority-relay-receipt.json portable-agent-assurance/examples/a2a-mcp-authority-relay-profile.json portable-agent-assurance/examples/a2a-mcp-authority-relay-suite.json
           python tev-v-athlon-profile/aau_tevva.py validate tev-v-athlon-profile/examples/agent-assurance-tevva.json
           python tev-v-athlon-profile/aau_tevva.py assess tev-v-athlon-profile/examples/agent-assurance-tevva.json --root . --out "$RUNNER_TEMP/aau-tevva-assessment.json"
           python tev-v-athlon-profile/aau_tevva.py pack tev-v-athlon-profile/examples/agent-assurance-tevva.json --root . --out "$RUNNER_TEMP/aau-tevva-pack"

@@ -52,7 +52,7 @@ and observed failure cards with a direct path to reproduction. Start with
 | A model score but no evidence of public benefit | [Evidence Commons](https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons) | A hash-bound Impact Capsule with visible human, outcome, and reproduction gaps plus a safe partner path |
 | A vulnerability notice, agent-security incident, or defensive AI system | [Collective Cyber Defense Lab](https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense) | A verified-fix contract, containment drill, local continuity route, safe benchmark, blind outside-reproduction protocol, evidence mesh, and honest public outcome report |
 | A tool-using or multi-agent system | [Agent Security Commons](https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons) | A runtime authority gate, 50-event conformance suite, incident regressions, matched control experiment, and recomputable receipts |
-| An MCP or A2A agent with identity and delegated-authority questions | [Portable Agent Assurance](https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance) | A synthetic authority envelope, 18-case collision suite, current MCP and A2A delta gates, deterministic pack, and TEVV profile |
+| An MCP or A2A agent with identity and delegated-authority questions | [Portable Agent Assurance](https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance) | A synthetic authority envelope, current MCP/A2A gates, a 25-case cross-protocol authority relay, deterministic pack, and TEVV profile |
 | A public or synthetic AI inventory | [Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory) | Quality gaps, possible-overlap questions, bounded value measurements, TEV&V and clause coverage |
 | A public-sector AI mission | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A non-certifying 12-file assurance draft |
 | An agency pilot ready to test | [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) | A claim → evidence → exact-test exchange and closeout lesson |
@@ -190,6 +190,13 @@ PascalCase JSON-RPC methods, Agent Card drift, per-operation authorization, call
 task scoping. Its answer-blind command adapter resolves all 17 exactly, including two clean twins,
 with zero unsafe allows and zero legitimate blocks. The older wire shape remains historical rather
 than being silently called current.
+
+The **Cross-protocol Authority Relay Gate** then tests what the individual protocol gates cannot:
+whether an authenticated A2A task stays bounded when it becomes an MCP tool call. Twenty-five
+generated cases preserve subject, actor, task, tenant, delegation, route, tool, resource, scope,
+audience, monitor, and approval continuity across the hop. Its answer-blind command adapter is
+25/25 exact with two valid routes, twenty-three violations, zero unsafe allows, and zero legitimate
+blocks. The mapping is explicit application policy—not a claim that either protocol defines it.
 
 The companion **[TEVV-Athlon profile](tev-v-athlon-profile/)** maps the evidence to the four stages
 in the NIST AI 200-2 initial public draft and deliberately keeps three gaps visible: the outside

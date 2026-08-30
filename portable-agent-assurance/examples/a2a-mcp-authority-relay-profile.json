@@ -1,0 +1,58 @@
+{
+  "profile_version": "aau-authority-relay-profile/1.0",
+  "profile_id": "aau-public-synthetic-a2a-mcp-relay",
+  "a2a": {
+    "protocol_revision": "1.0",
+    "tenant": "public-services",
+    "interface_url": "https://peer.aau.invalid/a2a/jsonrpc",
+    "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f"
+  },
+  "mcp": {
+    "protocol_revision": "2026-07-28",
+    "server_uri": "https://mcp.aau.invalid/mcp",
+    "method": "tools/call",
+    "token_passthrough_forbidden": true
+  },
+  "delegation": {
+    "subject": "person:synthetic-requester-01",
+    "actor": "agent:synthetic-caseworker-01",
+    "task_id": "task:benefits-intake-042",
+    "delegation_id": "delegation:synthetic-042",
+    "policy_epoch": 7,
+    "max_depth": 1,
+    "valid_from": "2026-08-30T19:00:00Z",
+    "valid_until": "2026-08-30T21:00:00Z",
+    "monitoring_required": true
+  },
+  "routes": [
+    {
+      "route_id": "draft-public-record",
+      "inbound_skill": "public-records-draft",
+      "outbound_tool": "records.prepare_draft",
+      "resource": "cases/public/drafts/*",
+      "scopes": [
+        "records:prepare"
+      ],
+      "effect": "prepare",
+      "human_approval_required": true
+    },
+    {
+      "route_id": "read-public-record",
+      "inbound_skill": "public-records-summary",
+      "outbound_tool": "records.search",
+      "resource": "cases/public/*",
+      "scopes": [
+        "records:read"
+      ],
+      "effect": "read",
+      "human_approval_required": false
+    }
+  ],
+  "claim_boundaries": {
+    "synthetic_recorded_metadata_only": true,
+    "no_tokens_messages_arguments_results_or_personal_data": true,
+    "does_not_contact_agents_tools_or_identity_systems": true,
+    "not_protocol_identity_security_or_compliance_conformance": true,
+    "not_certification_deployment_authority_or_ato": true
+  }
+}

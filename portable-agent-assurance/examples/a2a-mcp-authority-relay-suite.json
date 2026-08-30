@@ -1,0 +1,934 @@
+{
+  "suite_version": "aau-authority-relay-suite/1.0",
+  "suite_id": "a2a-mcp-authority-relay-ee760d35db3467bbb457",
+  "profile_sha256": "ee760d35db3467bbb4574ce27d5594a73bb1df4baae99d7b55c974416d6f7532",
+  "cases": [
+    {
+      "case_id": "relay-001",
+      "title": "Authorized A2A task attenuates to an exact MCP read",
+      "clean_twin": true,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "allow",
+      "expected_reason_codes": []
+    },
+    {
+      "case_id": "relay-002",
+      "title": "Approved draft preparation preserves the accountable boundary",
+      "clean_twin": true,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "draft-public-record",
+        "inbound_skill": "public-records-draft",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.prepare_draft",
+        "resource": "cases/public/drafts/*",
+        "scopes": [
+          "records:prepare"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": true
+      },
+      "expected_decision": "allow",
+      "expected_reason_codes": []
+    },
+    {
+      "case_id": "relay-003",
+      "title": "Legacy A2A semantics cross the hop",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "0.3",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "A2A_REVISION_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "relay-004",
+      "title": "Unauthenticated inbound work reaches a tool",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": false,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "INBOUND_AUTHENTICATION_REQUIRED"
+      ]
+    },
+    {
+      "case_id": "relay-005",
+      "title": "Unauthorized inbound work reaches a tool",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": false,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "INBOUND_AUTHORIZATION_REQUIRED"
+      ]
+    },
+    {
+      "case_id": "relay-006",
+      "title": "Tenant context is lost at the hop",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "other-tenant",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "A2A_TENANT_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "relay-007",
+      "title": "Selected Agent Card changes",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "AGENT_CARD_DRIFT"
+      ]
+    },
+    {
+      "case_id": "relay-008",
+      "title": "Delegated subject is substituted",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:other",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "DELEGATED_SUBJECT_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "relay-009",
+      "title": "Acting agent is substituted",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:other",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "ACTOR_CONTINUITY_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "relay-010",
+      "title": "Task continuity is lost",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:other",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "TASK_CONTINUITY_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "relay-011",
+      "title": "Delegation identifier is replaced",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:other",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "DELEGATION_ID_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "relay-012",
+      "title": "Delegation is replayed",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": true,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "DELEGATION_REPLAY_DETECTED"
+      ]
+    },
+    {
+      "case_id": "relay-013",
+      "title": "Delegation chain exceeds its ceiling",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 2,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "DELEGATION_DEPTH_EXCEEDED"
+      ]
+    },
+    {
+      "case_id": "relay-014",
+      "title": "Policy epoch is stale",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 6,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "POLICY_EPOCH_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "relay-015",
+      "title": "Delegation is used after expiry",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-31T00:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "DELEGATION_INACTIVE"
+      ]
+    },
+    {
+      "case_id": "relay-016",
+      "title": "Inbound skill changes after route selection",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "records.delete",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "INBOUND_SKILL_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "relay-017",
+      "title": "MCP protocol revision changes",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2025-06-18",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "MCP_REVISION_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "relay-018",
+      "title": "MCP method changes",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "resources/read",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "MCP_METHOD_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "relay-019",
+      "title": "Outbound tool exceeds the selected route",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.delete",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "OUTBOUND_TOOL_EXPANSION"
+      ]
+    },
+    {
+      "case_id": "relay-020",
+      "title": "Resource scope widens",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "RESOURCE_SCOPE_EXPANSION"
+      ]
+    },
+    {
+      "case_id": "relay-021",
+      "title": "OAuth scope widens",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "admin",
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "OAUTH_SCOPE_EXPANSION"
+      ]
+    },
+    {
+      "case_id": "relay-022",
+      "title": "Token targets another audience",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://other.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "TOKEN_AUDIENCE_MISMATCH"
+      ]
+    },
+    {
+      "case_id": "relay-023",
+      "title": "Inbound token is passed through",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": true,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "TOKEN_PASSTHROUGH_FORBIDDEN"
+      ]
+    },
+    {
+      "case_id": "relay-024",
+      "title": "Required monitor is unavailable",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "read-public-record",
+        "inbound_skill": "public-records-summary",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.search",
+        "resource": "cases/public/*",
+        "scopes": [
+          "records:read"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": false,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "MONITORING_UNAVAILABLE"
+      ]
+    },
+    {
+      "case_id": "relay-025",
+      "title": "Prepare route loses required human approval",
+      "clean_twin": false,
+      "request": {
+        "observed_at": "2026-08-30T20:00:00Z",
+        "a2a_revision": "1.0",
+        "inbound_authenticated": true,
+        "inbound_authorized": true,
+        "tenant": "public-services",
+        "agent_card_sha256": "f83be945eb169fdab6d40ca75f4d158425492f63a591e1839a28fc760048936f",
+        "subject": "person:synthetic-requester-01",
+        "actor": "agent:synthetic-caseworker-01",
+        "task_id": "task:benefits-intake-042",
+        "delegation_id": "delegation:synthetic-042",
+        "delegation_replayed": false,
+        "delegation_depth": 1,
+        "policy_epoch": 7,
+        "route_id": "draft-public-record",
+        "inbound_skill": "public-records-draft",
+        "mcp_revision": "2026-07-28",
+        "mcp_method": "tools/call",
+        "outbound_tool": "records.prepare_draft",
+        "resource": "cases/public/drafts/*",
+        "scopes": [
+          "records:prepare"
+        ],
+        "token_audience": "https://mcp.aau.invalid/mcp",
+        "token_passthrough": false,
+        "monitor_active": true,
+        "human_approval_present": false
+      },
+      "expected_decision": "block",
+      "expected_reason_codes": [
+        "HUMAN_APPROVAL_REQUIRED"
+      ]
+    }
+  ],
+  "boundary": {
+    "expected_answers_withheld_from_command_adapter": true,
+    "metadata_only_no_credentials_or_payloads": true,
+    "recorded_hop_not_protocol_or_security_conformance": true
+  }
+}
