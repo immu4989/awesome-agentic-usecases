@@ -87,6 +87,27 @@ def test_mutable_github_source_can_only_remain_as_closed_history():
     module.validate_challenge_sources({"status": "closed"}, original)
 
 
+def test_fork_intake_derives_open_ids_instead_of_copying_a_stale_list():
+    module = campaign_module()
+    open_ids = {entry["challenge_id"] for entry in module.open_challenges()}
+    assert open_ids == {
+        "portable-agent-assurance-2026-02",
+        "grid-restoration-2026-01",
+        "pharma-batch-disposition-2026-01",
+        "a2a-mcp-authority-relay-2026-01",
+    }
+    workflow = (ROOT / ".github" / "workflows" / "fork-to-reproduce.yml").read_text()
+    issue_form = (
+        ROOT / ".github" / "ISSUE_TEMPLATE" / "independent-reproduction.yml"
+    ).read_text()
+    assert "type: string" in workflow
+    assert "type: choice" not in workflow
+    assert "portable-agent-assurance-2026-01" not in workflow
+    challenge_block = issue_form.split("id: challenge", 1)[1].split("validations:", 1)[0]
+    assert "Open challenge ID" in challenge_block
+    assert "options:" not in challenge_block
+
+
 def test_templates_cannot_accidentally_validate_as_submissions():
     module = campaign_module()
     exchange = module.exchange_module()

@@ -115,6 +115,9 @@ the harness API is what is versioned; use cases are additive.
 - **Revision-locked public challenge** — the original portable-agent challenge is retained as
   closed byte-history, while its open successor pins A2A `v1.0.1`, MCP `2026-07-28`, and the dated
   NIST NCCoE paper. Open challenges with mutable GitHub branch URLs now fail campaign verification.
+- **Registry-driven fork intake** — the manual GitHub workflow and issue form no longer maintain
+  stale challenge choice lists. `list-open` derives the current four IDs from the verified campaign;
+  unknown and closed IDs fail at the same build boundary used locally and in forks.
 
 - **Privacy-bounded Cross-protocol Authority Trace** — the exact Authority Relay receipt now
   projects into 25 synthetic traces and 52 spans using W3C-shaped trace context and a pinned

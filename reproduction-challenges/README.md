@@ -20,11 +20,14 @@ A2A `v1.0.1`, MCP `2026-07-28`, and the dated February 2026 NIST NCCoE paper.
 ## Reproduce one
 
 1. Fork the repository.
-2. Choose one challenge and read only its `challenge.json` plus the named public sources.
+2. Run `python3 reproduction-challenges/submit.py list-open`, choose an open challenge, and read
+   only its `challenge.json` plus the named public sources.
 3. Copy `responses.template.json` to `responses.json` and replace every `TODO` value.
 4. Copy `metadata.template.json` to `metadata.json`. Generate a private random role secret, publish
    only its SHA-256 commitment, and retain the role mapping outside the public pack.
-5. In your fork, open **Actions → Fork-to-Reproduce submission → Run workflow**.
+5. In your fork, open **Actions → Fork-to-Reproduce submission → Run workflow**, then paste the
+   chosen `challenge_id`. The workflow accepts text so it cannot retain a stale duplicated list;
+   the campaign verifier rejects unknown or closed ids.
 6. Download the attested `aau-reproduction-submission` artifact.
 7. Open the [reproduction contribution issue](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=independent-reproduction.yml)
    with the fork workflow URL and submission digest. Do not send an oracle, raw trace, identity

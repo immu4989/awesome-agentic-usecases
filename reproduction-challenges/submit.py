@@ -93,6 +93,20 @@ def campaign_entry(challenge_id: str) -> dict:
     return matches[0]
 
 
+def open_challenges() -> list[dict]:
+    campaign = verify_campaign()
+    return [
+        {
+            "challenge_id": entry["challenge_id"],
+            "title": entry["title"],
+            "task_count": entry["task_count"],
+            "path": entry["path"],
+        }
+        for entry in campaign["challenges"]
+        if entry["status"] == "open"
+    ]
+
+
 def validate_challenge_sources(entry: dict, challenge: dict) -> None:
     if entry["status"] != "open":
         return
@@ -389,6 +403,8 @@ def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description="Build an answer-free AAU reproduction submission")
     sub = root.add_subparsers(dest="command", required=True)
     sub.add_parser("verify-campaign")
+    listing = sub.add_parser("list-open")
+    listing.add_argument("--json", action="store_true")
     build = sub.add_parser("build")
     build.add_argument("--challenge-id", required=True)
     build.add_argument("--responses", required=True)
@@ -409,10 +425,22 @@ def main() -> int:
         if args.command == "verify-campaign":
             campaign = verify_campaign()
             accepted = campaign["independently_reproduced_count"]
+            open_count = sum(entry["status"] == "open" for entry in campaign["challenges"])
             print(
-                f"OK: {len(campaign['challenges'])} answer-free challenges and "
+                f"OK: {open_count} open answer-free challenges, "
+                f"{len(campaign['challenges'])} total artifacts, and "
                 f"{accepted} accepted independent reproductions verified."
             )
+        elif args.command == "list-open":
+            challenges = open_challenges()
+            if args.json:
+                print(json.dumps(challenges, indent=2))
+            else:
+                for challenge in challenges:
+                    print(
+                        f"{challenge['challenge_id']}\t{challenge['task_count']} tasks\t"
+                        f"{challenge['title']}"
+                    )
         elif args.command == "build":
             submission = build_submission(
                 args.challenge_id, args.responses, args.metadata, args.out
