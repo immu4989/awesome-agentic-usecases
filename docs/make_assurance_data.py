@@ -22,6 +22,7 @@ def _module(name: str, path: Path):
 
 def build() -> dict:
     assurance = _module("aau_assurance", ROOT / "portable-agent-assurance/aau_assurance.py")
+    mcp_delta = _module("mcp_2026_delta", ROOT / "portable-agent-assurance/mcp_2026_delta.py")
     tevva = _module("aau_tevva", ROOT / "tev-v-athlon-profile/aau_tevva.py")
     envelope = assurance.load_json(
         ROOT / "portable-agent-assurance/examples/synthetic-assurance-envelope.json"
@@ -30,6 +31,16 @@ def build() -> dict:
         ROOT / "portable-agent-assurance/examples/mcp-a2a-conformance-suite.json"
     )
     receipt = assurance.evaluate_suite(envelope, suite)
+    mcp_profile = mcp_delta.load_json(
+        ROOT / "portable-agent-assurance/examples/mcp-2026-authorization-profile.json"
+    )
+    mcp_suite = mcp_delta.load_json(
+        ROOT / "portable-agent-assurance/examples/mcp-2026-authorization-suite.json"
+    )
+    mcp_receipt = mcp_delta.load_json(
+        ROOT / "portable-agent-assurance/examples/mcp-2026-authorization-receipt.json"
+    )
+    mcp_delta.verify_receipt(mcp_receipt, mcp_profile, mcp_suite)
     profile = tevva.load_json(ROOT / "tev-v-athlon-profile/examples/agent-assurance-tevva.json")
     assessment = tevva.assess(profile, ROOT)
     reason_counts: dict[str, int] = {}
@@ -71,6 +82,12 @@ def build() -> dict:
             "reason_codes": [
                 {"code": code, "count": count} for code, count in sorted(reason_counts.items())
             ],
+        },
+        "mcp_2026": {
+            "protocol_revision": mcp_profile["protocol_revision"],
+            "adapter_kind": mcp_receipt["adapter_kind"],
+            "status": mcp_receipt["status"],
+            **mcp_receipt["metrics"],
         },
         "tevva": {
             "profile_id": assessment["profile_id"],

@@ -164,6 +164,11 @@
       text("paa-twin-count", data.suite.clean_twin_allow_count);
       text("paa-block-count", data.tevva.block_count);
       text("paa-identity-state", data.envelope.production_identity_verified ? "VERIFIED" : "NOT VERIFIED");
+      text("paa-mcp-revision", data.mcp_2026.protocol_revision);
+      text("paa-mcp-exact", `${data.mcp_2026.exact_count}/${data.mcp_2026.case_count}`);
+      text("paa-mcp-clean", data.mcp_2026.clean_twin_count);
+      text("paa-mcp-unsafe", data.mcp_2026.unsafe_allow_count);
+      text("paa-mcp-blocks", data.mcp_2026.legitimate_block_count);
       text("paa-chain", data.suite.result_chain_head_sha256.slice(0, 16));
       text("paa-deadline", data.tevva.comment_deadline);
       renderStages(data.tevva.stages);

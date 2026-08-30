@@ -60,6 +60,42 @@ expiry, token passthrough, identity substitution, wrong authority, task substitu
 lease expiry, monitor loss, scope escape, Agent Card drift, unknown peer, excessive delegation,
 delegation widening, missing credentials, and unauthorized cancellation.
 
+## Close the MCP 2026-07-28 authorization delta
+
+The original envelope suite intentionally remains a stable `0.1` recorded MCP/A2A contract. A
+separate current-revision gate tests the authorization and self-describing request changes that
+landed after its MCP `2025-06-18` research basis:
+
+```bash
+python3 portable-agent-assurance/mcp_2026_delta.py generate \
+  portable-agent-assurance/examples/mcp-2026-authorization-profile.json \
+  --out /tmp/mcp-2026-suite.json
+
+python3 portable-agent-assurance/mcp_2026_delta.py run \
+  portable-agent-assurance/examples/mcp-2026-authorization-profile.json \
+  /tmp/mcp-2026-suite.json \
+  --adapter-command "python3 my_mcp_authorization_adapter.py" \
+  --out /tmp/mcp-2026-receipt.json
+```
+
+The deterministic compiler produces **16 cases**: two legitimate clean twins and fourteen
+single-delta violations. They test protocol revision, `Mcp-Method`/`Mcp-Name` bindings,
+authorization-response issuer validation, issuer-bound client credentials, authorization and token
+resource indicators, token audience, initial scope minimization, scope-union step-up, token
+passthrough, and query-string token transport. The committed command adapter is 16/16 exact with
+zero unsafe allows and zero legitimate blocks; allow-all and deny-all both fail.
+
+Expected answers are not sent to command adapters. Records contain no bearer values, authorization
+codes, PKCE verifiers, credentials, tool arguments, results, prompts, or personal data, and no
+authorization request or tool is executed. The initial-scope check is an explicit conservative AAU
+profile choice based on MCP's least-privilege `SHOULD`, not a claim that MCP requires every excess
+scope request to be rejected.
+
+This closes the repository's declared revision-evidence gap; it does not upgrade the older
+envelope wire shape, operate an OAuth flow, validate SDK behavior, or establish MCP/OAuth
+conformance, security, interoperability, compliance, certification, or deployment approval.
+See the [current-revision research and premise checks](MCP_2026_AUTHORIZATION_DELTA.md).
+
 ## Build a portable pack
 
 ```bash
@@ -92,7 +128,7 @@ This experimental profile draws from—not conforms to or represents:
 - [NIST AI Agent Standards Initiative](https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative)
 - [NIST agent identity foundation discussion](https://www.nist.gov/blogs/cybersecurity-insights/back-future-why-agentic-ai-needs-strong-identity-foundation)
 - [NIST NCCoE Software and AI Agent Identity and Authorization](https://www.nccoe.nist.gov/projects/software-and-ai-agent-identity-and-authorization)
-- [MCP authorization](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)
+- [MCP authorization 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization)
 - [A2A specification](https://github.com/a2aproject/A2A/blob/main/docs/specification.md)
 - [SPIFFE workload identity](https://spiffe.io/docs/latest/spiffe-specs/)
 - [OpenTelemetry semantic conventions](https://opentelemetry.io/docs/specs/semconv/)

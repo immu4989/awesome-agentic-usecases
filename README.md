@@ -52,7 +52,7 @@ and observed failure cards with a direct path to reproduction. Start with
 | A model score but no evidence of public benefit | [Evidence Commons](https://immu4989.github.io/awesome-agentic-usecases/#evidence-commons) | A hash-bound Impact Capsule with visible human, outcome, and reproduction gaps plus a safe partner path |
 | A vulnerability notice, agent-security incident, or defensive AI system | [Collective Cyber Defense Lab](https://immu4989.github.io/awesome-agentic-usecases/#collective-cyber-defense) | A verified-fix contract, containment drill, local continuity route, safe benchmark, blind outside-reproduction protocol, evidence mesh, and honest public outcome report |
 | A tool-using or multi-agent system | [Agent Security Commons](https://immu4989.github.io/awesome-agentic-usecases/#agent-security-commons) | A runtime authority gate, 50-event conformance suite, incident regressions, matched control experiment, and recomputable receipts |
-| An MCP or A2A agent with identity and delegated-authority questions | [Portable Agent Assurance](https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance) | A signed synthetic identity fixture, short-lived authority envelope, 18-case protocol-collision suite, deterministic evidence pack, and four-stage TEVV profile |
+| An MCP or A2A agent with identity and delegated-authority questions | [Portable Agent Assurance](https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance) | A synthetic authority envelope, 18-case collision suite, 16-case MCP 2026 authorization delta gate, deterministic pack, and TEVV profile |
 | A public or synthetic AI inventory | [Federal AI Portfolio Observatory](https://immu4989.github.io/awesome-agentic-usecases/#portfolio-observatory) | Quality gaps, possible-overlap questions, bounded value measurements, TEV&V and clause coverage |
 | A public-sector AI mission | [Federal Mission Studio](https://immu4989.github.io/awesome-agentic-usecases/#federal-mission) | A non-certifying 12-file assurance draft |
 | An agency pilot ready to test | [Federal Pilot Desk](https://immu4989.github.io/awesome-agentic-usecases/#federal-pilot) | A claim → evidence → exact-test exchange and closeout lesson |
@@ -93,8 +93,9 @@ contain only task inputs and oracle commitments. The **[Agent Incident Exchange]
 turns public or synthetic lessons into clean-twin regressions and interoperable findings, while the
 **[Policy Freshness Radar](policy-freshness/)** watches nine official source baselines and now
 maps their exact revisions to nine implementation-evidence bindings. Its compatibility ledger
-surfaces an MCP `2025-06-18 → 2026-07-28` migration instead of silently calling the older fixture
-current, and opens one human-review issue without interpreting policy or editing tests.
+surfaced an MCP `2025-06-18 → 2026-07-28` migration, then closed it with a separate 16-case
+authorization delta gate instead of silently calling the older fixture current. Weekly review opens
+one human-owned issue without interpreting policy or editing tests.
 
 ## Agent Capability & Authority BOM—from model inventory to blast-radius visibility
 
@@ -174,6 +175,12 @@ python3 portable-agent-assurance/aau_assurance.py verify \
   --envelope portable-agent-assurance/examples/synthetic-assurance-envelope.json \
   --suite portable-agent-assurance/examples/mcp-a2a-conformance-suite.json
 ```
+
+A separate **MCP 2026-07-28 Authorization Delta Gate** keeps the stable 0.1 envelope honest while
+testing current issuer, credential, resource, audience, scope step-up, self-describing header, and
+token-transport bindings. Its answer-blind command receipt is 16/16 exact across two clean and
+fourteen violation twins, with zero unsafe allows and zero legitimate blocks. It is recorded
+current-revision evidence, not an OAuth/MCP implementation or conformance claim.
 
 The companion **[TEVV-Athlon profile](tev-v-athlon-profile/)** maps the evidence to the four stages
 in the NIST AI 200-2 initial public draft and deliberately keeps three gaps visible: the outside

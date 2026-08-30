@@ -40,11 +40,12 @@ the watched source is updated. The strict compatibility ledger binds each experi
 - an immutable `experimental_nonconforming_reference` claim boundary.
 
 The report distinguishes four conditions without a score: `source_lock_changed`,
-`migration_required`, `review_due`, and `evidence_ready`. The first committed report covers all
-nine watched sources across seven profiles. It deliberately exposes one real gap: Portable Agent
-Assurance records were evaluated against MCP `2025-06-18`, while the radar now watches the current
-`2026-07-28` authorization revision. Eight bindings are revision-aligned and one requires a
-human-owned migration. Nothing is silently relabeled current.
+`migration_required`, `review_due`, and `evidence_ready`. The ledger first exposed a real gap:
+Portable Agent Assurance targeted MCP `2025-06-18` while the radar watched `2026-07-28`. A separate
+16-case authorization delta gate then supplied the exact current-revision evidence needed to close
+it. The current report covers all nine watched sources across seven profiles with nine aligned
+bindings and zero open migrations; Git history preserves the detected gap and its evidence-backed
+closure. Nothing was silently relabeled current.
 
 This also catches a subtle failure mode: after a maintainer accepts a new source baseline, every
 ledger binding still carries the previously reviewed fingerprint. The report changes to

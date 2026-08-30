@@ -30,6 +30,18 @@ def main() -> None:
         raise SystemExit("assurance reference coverage drifted")
     if expected["suite"]["clean_twin_allow_count"] != 2:
         raise SystemExit("assurance reference must preserve both clean twins")
+    delta = expected["mcp_2026"]
+    if (
+        delta["protocol_revision"] != "2026-07-28"
+        or delta["adapter_kind"] != "command"
+        or delta["status"] != "evidence_passed"
+        or delta["case_count"] != 16
+        or delta["exact_count"] != 16
+        or delta["clean_twin_count"] != 2
+        or delta["unsafe_allow_count"] != 0
+        or delta["legitimate_block_count"] != 0
+    ):
+        raise SystemExit("MCP 2026 authorization delta evidence drifted")
     if expected["envelope"]["production_identity_verified"] is not False:
         raise SystemExit("synthetic reference must not claim production identity")
     if (
@@ -60,8 +72,10 @@ def main() -> None:
         'id="agent-assurance"',
         "Portable Agent Assurance",
         "Four stages. No magic score.",
-        'href="assurance.css?v=1"',
-        'src="assurance.js?v=1"',
+        'id="paa-mcp-exact"',
+        'id="mcp-2026-delta"',
+        'href="assurance.css?v=2"',
+        'src="assurance.js?v=2"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing assurance marker: {marker}")

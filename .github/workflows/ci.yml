@@ -83,6 +83,12 @@ jobs:
           python portable-agent-assurance/aau_assurance.py pack portable-agent-assurance/examples/synthetic-assurance-envelope.json portable-agent-assurance/examples/mcp-a2a-conformance-suite.json --out "$RUNNER_TEMP/aau-assurance-pack"
           python portable-agent-assurance/aau_assurance.py verify-pack "$RUNNER_TEMP/aau-assurance-pack"
           python portable-agent-assurance/aau_assurance.py verify-pack portable-agent-assurance/examples/reference-pack
+          python portable-agent-assurance/mcp_2026_delta.py validate portable-agent-assurance/examples/mcp-2026-authorization-profile.json
+          python portable-agent-assurance/mcp_2026_delta.py generate portable-agent-assurance/examples/mcp-2026-authorization-profile.json --out "$RUNNER_TEMP/mcp-2026-authorization-suite.json"
+          cmp "$RUNNER_TEMP/mcp-2026-authorization-suite.json" portable-agent-assurance/examples/mcp-2026-authorization-suite.json
+          python portable-agent-assurance/mcp_2026_delta.py run portable-agent-assurance/examples/mcp-2026-authorization-profile.json portable-agent-assurance/examples/mcp-2026-authorization-suite.json --adapter-command "python portable-agent-assurance/examples/mcp_2026_reference_adapter.py" --out "$RUNNER_TEMP/mcp-2026-authorization-receipt.json"
+          cmp "$RUNNER_TEMP/mcp-2026-authorization-receipt.json" portable-agent-assurance/examples/mcp-2026-authorization-receipt.json
+          python portable-agent-assurance/mcp_2026_delta.py verify portable-agent-assurance/examples/mcp-2026-authorization-receipt.json portable-agent-assurance/examples/mcp-2026-authorization-profile.json portable-agent-assurance/examples/mcp-2026-authorization-suite.json
           python tev-v-athlon-profile/aau_tevva.py validate tev-v-athlon-profile/examples/agent-assurance-tevva.json
           python tev-v-athlon-profile/aau_tevva.py assess tev-v-athlon-profile/examples/agent-assurance-tevva.json --root . --out "$RUNNER_TEMP/aau-tevva-assessment.json"
           python tev-v-athlon-profile/aau_tevva.py pack tev-v-athlon-profile/examples/agent-assurance-tevva.json --root . --out "$RUNNER_TEMP/aau-tevva-pack"

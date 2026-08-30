@@ -140,6 +140,16 @@ the harness API is what is versioned; use cases are additive.
   `2025-06-18`. Weekly review combines source drift and revision impact in one issue; accepting a
   new baseline cannot automatically relabel implementation evidence, migrate a fixture, interpret
   policy, claim conformance, certification, compliance, or approval.
+- **MCP 2026-07-28 Authorization Delta Gate** — a strict offline compiler now creates two
+  legitimate and fourteen single-delta recorded cases for self-describing method/tool headers,
+  response issuer validation, issuer-bound credentials, exact resource/audience binding, scope
+  minimization and union-preserving step-up, token passthrough, and query transport. A public
+  answer-blind command adapter returns 16/16 exact with zero unsafe allows or legitimate blocks.
+- **Revision gap closed with bounded evidence** — the compatibility ledger now aligns the Portable
+  Agent Assurance binding to `2026-07-28` through the exact suite and receipt while preserving the
+  older 0.1 envelope wire contract. The gate executes no OAuth flow or tool and does not claim full
+  MCP/OAuth implementation, conformance, security, interoperability, compliance, certification, or
+  deployment approval.
 
 - **Portable Agent Assurance Envelope** — a dependency-free offline verifier binds a deliberately
   public synthetic workload credential to its accountable operator, short-lived authority lease,

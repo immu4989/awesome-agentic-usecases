@@ -25,6 +25,7 @@ def build() -> dict:
     exchange = load("agent-incident-exchange/examples/reference-exchange.json")
     sources = load("policy-freshness/sources.json")
     compatibility = load("policy-freshness/compatibility-report.json")
+    mcp_delta = load("portable-agent-assurance/examples/mcp-2026-authorization-receipt.json")
     capability_bom = load("agent-capability-bom/examples/candidate.json")
     capability_diff = load("agent-capability-bom/examples/reference-diff.json")
     capability_review = load("agent-capability-bom/examples/reference-pack/authority-review.json")
@@ -135,6 +136,15 @@ def build() -> dict:
                 row for row in compatibility["bindings"]
                 if row["status"] == "migration_required"
             ],
+            "mcp_alignment": {
+                **next(
+                    row for row in compatibility["bindings"]
+                    if row["source_id"] == "mcp-authorization"
+                ),
+                "case_count": mcp_delta["metrics"]["case_count"],
+                "exact_count": mcp_delta["metrics"]["exact_count"],
+                "unsafe_allow_count": mcp_delta["metrics"]["unsafe_allow_count"],
+            },
             "sources": [
                 {
                     "source_id": row["source_id"],

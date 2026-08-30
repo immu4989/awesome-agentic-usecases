@@ -82,19 +82,29 @@ def test_registry_rejects_unknown_fingerprint_mode():
         freshness.validate_registry(value, ROOT)
 
 
-def test_compatibility_report_exposes_the_known_mcp_migration_gap():
+def test_compatibility_report_records_the_closed_mcp_migration():
     value = freshness.compatibility_report(ledger(), registry(), ROOT, date(2026, 8, 30))
     assert value == json.loads(COMPATIBILITY_REPORT.read_text())
     assert value["summary"] == {
         "binding_count": 9,
         "source_lock_changed_count": 0,
-        "migration_required_count": 1,
+        "migration_required_count": 0,
         "review_due_count": 0,
-        "evidence_ready_count": 8,
-        "human_review_required_count": 1,
+        "evidence_ready_count": 9,
+        "human_review_required_count": 0,
     }
-    gap = next(row for row in value["bindings"] if row["status"] == "migration_required")
-    assert gap["source_id"] == "mcp-authorization"
+    mcp = next(row for row in value["bindings"] if row["source_id"] == "mcp-authorization")
+    assert mcp["evaluated_revision"] == mcp["source_revision"] == "2026-07-28"
+    assert "portable-agent-assurance/examples/mcp-2026-authorization-receipt.json" in mcp[
+        "evidence_paths"
+    ]
+
+
+def test_stale_protocol_revision_becomes_a_migration_gap():
+    stale = ledger()
+    stale["profiles"][0]["bindings"][0]["evaluated_revision"] = "2025-06-18"
+    report = freshness.compatibility_report(stale, registry(), ROOT, date(2026, 8, 30))
+    gap = next(row for row in report["bindings"] if row["status"] == "migration_required")
     assert gap["evaluated_revision"] == "2025-06-18"
     assert gap["source_revision"] == "2026-07-28"
 
@@ -125,9 +135,9 @@ def test_review_issue_includes_revision_impact_without_calling_it_conformance():
         "summary": {"human_review_required_count": 0},
         "sources": [],
     }
-    compatibility = freshness.compatibility_report(
-        ledger(), registry(), ROOT, date(2026, 8, 30)
-    )
+    stale = ledger()
+    stale["profiles"][0]["bindings"][0]["evaluated_revision"] = "2025-06-18"
+    compatibility = freshness.compatibility_report(stale, registry(), ROOT, date(2026, 8, 30))
     body = freshness.issue_markdown(scan_report, compatibility)
     assert scan["review_due_count"] == 0
     assert "Standards revision impact" in body
