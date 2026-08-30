@@ -79,6 +79,17 @@ def main() -> None:
         "legitimate_block_count": 0,
     }:
         raise SystemExit("current assurance matrix aggregate drifted")
+    if expected["authority_trace"] != {
+        "trace_count": 25,
+        "span_count": 52,
+        "allow_trace_count": 2,
+        "block_trace_count": 23,
+        "blocked_mcp_dispatch_count": 23,
+        "raw_content_attribute_count": 0,
+        "tracestate_field_count": 0,
+        "baggage_field_count": 0,
+    }:
+        raise SystemExit("privacy-bounded authority trace evidence drifted")
     if expected["envelope"]["production_identity_verified"] is not False:
         raise SystemExit("synthetic reference must not claim production identity")
     if (
@@ -113,8 +124,9 @@ def main() -> None:
         'id="mcp-2026-delta"',
         'id="a2a-1-delta"',
         'id="authority-relay-delta"',
-        'href="assurance.css?v=5"',
-        'src="assurance.js?v=5"',
+        'id="paa-trace-spans"',
+        'href="assurance.css?v=6"',
+        'src="assurance.js?v=6"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing assurance marker: {marker}")

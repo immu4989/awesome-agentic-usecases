@@ -157,7 +157,7 @@ non-claims](AUTHORITY_RELAY_RESEARCH_NOTES.md).
 The [local composite GitHub Action](../.github/actions/aau-assurance/) can now run the historical
 envelope plus all three current command-adapter gates. Its matrix runner writes three receipts, one
 aggregate receipt, a human-readable job summary, and a SHA-256 manifest into a non-overwriting
-workspace directory, then verifies every byte again:
+workspace directory, adds the 52-span privacy-bounded relay trace, then verifies every byte again:
 
 ```bash
 python3 portable-agent-assurance/assurance_matrix.py run \
@@ -175,6 +175,31 @@ unsafe allows and zero legitimate blocks. All adapter commands are project code 
 as executable, reviewed input; the documented workflow uses read-only repository permissions, no
 secrets, quoted environment variables, a full-SHA Action pin, and caller-controlled artifact
 retention.
+
+## Export a privacy-bounded authority trace
+
+Incident responders need correlation without a second sensitive-data lake. The trace exporter
+turns the exact relay receipt into deterministic synthetic W3C-shaped trace context and
+OpenTelemetry-compatible attribute records:
+
+```bash
+python3 portable-agent-assurance/authority_trace.py export \
+  portable-agent-assurance/examples/a2a-mcp-authority-relay-profile.json \
+  portable-agent-assurance/examples/a2a-mcp-authority-relay-suite.json \
+  portable-agent-assurance/examples/a2a-mcp-authority-relay-receipt.json \
+  --out /tmp/a2a-mcp-authority-traces.json
+```
+
+The reference export contains **25 traces and 52 spans**. Every case records A2A receipt and
+authority-decision spans; only the two allowed cases receive an MCP dispatch span. All twenty-three
+blocked cases stop before dispatch. Raw subjects, actors, tasks, delegation ids, tenants, routes,
+tools, resources, scopes, and audiences are replaced by SHA-256 references. Prompts, messages,
+arguments, results, tokens, `tracestate`, and baggage are prohibited; each span is capped at sixteen
+attributes and 160 characters per string.
+
+This is a deterministic metadata projection, not live instrumentation, OTLP, anonymity, proof that
+an action occurred, or protocol/security/compliance conformance. Read the [privacy research and
+non-claims](AUTHORITY_TRACE_RESEARCH_NOTES.md).
 
 ## Build a portable pack
 

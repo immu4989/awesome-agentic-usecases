@@ -11,6 +11,7 @@ from typing import Any
 
 import a2a_1_delta
 import authority_relay
+import authority_trace
 import mcp_2026_delta
 
 
@@ -22,7 +23,9 @@ RECEIPTS = {
     "a2a_1": "a2a-1-receipt.json",
     "authority_relay": "authority-relay-receipt.json",
 }
-PACK_FILES = set(RECEIPTS.values()) | {"matrix-receipt.json", "SUMMARY.md", "manifest.json"}
+PACK_FILES = set(RECEIPTS.values()) | {
+    "authority-traces.json", "matrix-receipt.json", "SUMMARY.md", "manifest.json",
+}
 
 
 class MatrixError(ValueError):
@@ -93,7 +96,9 @@ def _inputs(args: argparse.Namespace) -> dict[str, dict[str, Any]]:
     return specs
 
 
-def _matrix(receipts: dict[str, dict[str, Any]]) -> dict[str, Any]:
+def _matrix(
+    receipts: dict[str, dict[str, Any]], trace_export: dict[str, Any]
+) -> dict[str, Any]:
     gates = []
     for gate_id in ("mcp_2026", "a2a_1", "authority_relay"):
         receipt = receipts[gate_id]
@@ -120,6 +125,10 @@ def _matrix(receipts: dict[str, dict[str, Any]]) -> dict[str, Any]:
         "gate_count": len(gates),
         "gates": gates,
         "aggregate": aggregate,
+        "authority_trace": {
+            **trace_export["summary"],
+            "export_sha256": trace_export["export_sha256"],
+        },
         "boundary": {
             "all_gates_use_answer_blind_command_adapters": all(
                 gate["adapter_kind"] == "command" for gate in gates
@@ -139,6 +148,8 @@ def _summary(matrix: dict[str, Any]) -> str:
         f"{matrix['aggregate']['exact_count']}/{matrix['aggregate']['case_count']} exact · "
         f"{matrix['aggregate']['unsafe_allow_count']} unsafe allows · "
         f"{matrix['aggregate']['legitimate_block_count']} legitimate blocks",
+        f"{matrix['authority_trace']['span_count']} privacy-bounded spans · "
+        f"{matrix['authority_trace']['raw_content_attribute_count']} raw content fields",
         "",
         "| Gate | Exact | Clean twins | Violations | Unsafe allows | Legitimate blocks |",
         "|---|---:|---:|---:|---:|---:|",
@@ -185,6 +196,7 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
         raise MatrixError(f"refusing to overwrite matrix output: {output}")
     output.mkdir(parents=True)
     receipts = {}
+    trace_export = None
     for gate_id, spec in specs.items():
         module = spec["module"]
         profile = module.load_json(spec["profile"])
@@ -193,7 +205,12 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
         module.verify_receipt(receipt, profile, suite)
         receipts[gate_id] = receipt
         _write_json(output / RECEIPTS[gate_id], receipt)
-    matrix = _matrix(receipts)
+        if gate_id == "authority_relay":
+            trace_export = authority_trace.build_export(profile, suite, receipt)
+    if trace_export is None:
+        raise MatrixError("authority trace source receipt is missing")
+    _write_json(output / "authority-traces.json", trace_export)
+    matrix = _matrix(receipts, trace_export)
     _write_json(output / "matrix-receipt.json", matrix)
     (output / "SUMMARY.md").write_text(_summary(matrix))
     _write_json(output / "manifest.json", _manifest(output))
@@ -210,6 +227,7 @@ def verify_pack(args: argparse.Namespace) -> dict[str, Any]:
     if files != PACK_FILES or any(path.is_symlink() or not path.is_file() for path in output.iterdir()):
         raise MatrixError("matrix pack has missing, extra, or symbolic-link files")
     receipts = {}
+    relay_sources = None
     for gate_id, spec in specs.items():
         module = spec["module"]
         profile = module.load_json(spec["profile"])
@@ -219,7 +237,13 @@ def verify_pack(args: argparse.Namespace) -> dict[str, Any]:
         if receipt["adapter_kind"] != "command":
             raise MatrixError(f"{gate_id} receipt did not come from a command adapter")
         receipts[gate_id] = receipt
-    expected_matrix = _matrix(receipts)
+        if gate_id == "authority_relay":
+            relay_sources = (profile, suite, receipt)
+    if relay_sources is None:
+        raise MatrixError("authority trace source receipt is missing")
+    trace_export = _load(output / "authority-traces.json")
+    authority_trace.validate_export(trace_export, *relay_sources)
+    expected_matrix = _matrix(receipts, trace_export)
     if _load(output / "matrix-receipt.json") != expected_matrix:
         raise MatrixError("matrix receipt does not recompute")
     if (output / "SUMMARY.md").read_text() != _summary(expected_matrix):

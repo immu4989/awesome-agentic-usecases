@@ -100,10 +100,20 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Privacy-bounded Cross-protocol Authority Trace** — the exact Authority Relay receipt now
+  projects into 25 synthetic traces and 52 spans using W3C-shaped trace context and a pinned
+  OpenTelemetry semantic-convention basis. All 23 blocked cases stop before MCP dispatch; only the
+  two allowed twins receive client spans.
+- **Content-minimized incident evidence** — raw subjects, actors, tasks, delegations, tenants,
+  routes, tools, resources, scopes, and audiences become SHA-256 references. Prompts, messages,
+  arguments, results, tokens, `tracestate`, and baggage are prohibited; attribute count and length
+  are bounded. The export explicitly does not claim anonymity, live capture, OTLP, conformance,
+  security, compliance, certification, deployment approval, or ATO.
+
 - **Current Assurance Matrix Action** — the reusable local GitHub Action can now run the MCP
   `2026-07-28`, A2A `1.0`, and cross-protocol relay gates through project-owned answer-blind
-  adapters. It emits three receipts, a 58-case aggregate receipt, a GitHub job summary, and a
-  SHA-256 manifest, then recomputes all six pack files. Workspace escapes, symlinks, overwrite,
+  adapters. It emits three receipts, a 52-span privacy-bounded trace, a 58-case aggregate receipt,
+  a GitHub job summary, and a SHA-256 manifest, then recomputes all seven pack files. Workspace escapes, symlinks, overwrite,
   extra files, receipt drift, summary drift, and manifest drift fail closed.
 - **Hardened CI adoption path** — adapter inputs flow through quoted environment variables, the
   example grants read-only repository access, excludes secrets, pins artifact upload by full SHA,

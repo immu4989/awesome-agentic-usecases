@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import sys
 from pathlib import Path
 
 
@@ -16,6 +17,7 @@ def _module(name: str, path: Path):
     if spec is None or spec.loader is None:
         raise RuntimeError(f"cannot load {path}")
     module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
     spec.loader.exec_module(module)
     return module
 
@@ -26,6 +28,9 @@ def build() -> dict:
     a2a_delta = _module("a2a_1_delta", ROOT / "portable-agent-assurance/a2a_1_delta.py")
     authority_relay = _module(
         "authority_relay", ROOT / "portable-agent-assurance/authority_relay.py"
+    )
+    authority_trace = _module(
+        "authority_trace", ROOT / "portable-agent-assurance/authority_trace.py"
     )
     tevva = _module("aau_tevva", ROOT / "tev-v-athlon-profile/aau_tevva.py")
     envelope = assurance.load_json(
@@ -65,6 +70,10 @@ def build() -> dict:
         ROOT / "portable-agent-assurance/examples/a2a-mcp-authority-relay-receipt.json"
     )
     authority_relay.verify_receipt(relay_receipt, relay_profile, relay_suite)
+    trace_export = authority_trace.load_json(
+        ROOT / "portable-agent-assurance/examples/a2a-mcp-authority-traces.json"
+    )
+    authority_trace.validate_export(trace_export, relay_profile, relay_suite, relay_receipt)
     profile = tevva.load_json(ROOT / "tev-v-athlon-profile/examples/agent-assurance-tevva.json")
     assessment = tevva.assess(profile, ROOT)
     reason_counts: dict[str, int] = {}
@@ -155,6 +164,7 @@ def build() -> dict:
                 for receipt in (mcp_receipt, a2a_receipt, relay_receipt)
             ),
         },
+        "authority_trace": trace_export["summary"],
         "tevva": {
             "profile_id": assessment["profile_id"],
             "status": assessment["status"],

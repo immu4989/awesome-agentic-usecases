@@ -6,8 +6,8 @@ This composite action has two layers:
    a portable evidence pack, and verifies that pack again.
 2. When `current_gates: "true"`, it runs project-owned command adapters against the MCP
    `2026-07-28`, A2A `1.0`, and A2A-to-MCP Authority Relay suites. It then emits and re-verifies one
-   six-file matrix pack with three gate receipts, an aggregate receipt, a job summary, and a
-   SHA-256 manifest.
+   seven-file matrix pack with three gate receipts, a 52-span privacy-bounded trace, an aggregate
+   receipt, a job summary, and a SHA-256 manifest.
 
 The action executes dependency-free verifiers from the same repository revision and makes no
 package download or remote action call. The current matrix has **58 cases**: six clean twins and

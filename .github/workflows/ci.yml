@@ -110,6 +110,9 @@ jobs:
             --a2a-profile portable-agent-assurance/examples/a2a-1-interface-authorization-profile.json --a2a-suite portable-agent-assurance/examples/a2a-1-interface-authorization-suite.json --a2a-adapter-command "python portable-agent-assurance/examples/a2a_1_reference_adapter.py" \
             --relay-profile portable-agent-assurance/examples/a2a-mcp-authority-relay-profile.json --relay-suite portable-agent-assurance/examples/a2a-mcp-authority-relay-suite.json --relay-adapter-command "python portable-agent-assurance/examples/authority_relay_reference_adapter.py"
           rm -rf .aau-ci-current-matrix
+          python portable-agent-assurance/authority_trace.py export portable-agent-assurance/examples/a2a-mcp-authority-relay-profile.json portable-agent-assurance/examples/a2a-mcp-authority-relay-suite.json portable-agent-assurance/examples/a2a-mcp-authority-relay-receipt.json --out "$RUNNER_TEMP/a2a-mcp-authority-traces.json"
+          cmp "$RUNNER_TEMP/a2a-mcp-authority-traces.json" portable-agent-assurance/examples/a2a-mcp-authority-traces.json
+          python portable-agent-assurance/authority_trace.py verify portable-agent-assurance/examples/a2a-mcp-authority-traces.json portable-agent-assurance/examples/a2a-mcp-authority-relay-profile.json portable-agent-assurance/examples/a2a-mcp-authority-relay-suite.json portable-agent-assurance/examples/a2a-mcp-authority-relay-receipt.json
           python tev-v-athlon-profile/aau_tevva.py validate tev-v-athlon-profile/examples/agent-assurance-tevva.json
           python tev-v-athlon-profile/aau_tevva.py assess tev-v-athlon-profile/examples/agent-assurance-tevva.json --root . --out "$RUNNER_TEMP/aau-tevva-assessment.json"
           python tev-v-athlon-profile/aau_tevva.py pack tev-v-athlon-profile/examples/agent-assurance-tevva.json --root . --out "$RUNNER_TEMP/aau-tevva-pack"
