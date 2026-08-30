@@ -37,7 +37,7 @@ The inventory complements SBOM and AI/ML-BOM practice; it is not a credential, e
 verified identity, certification, deployment approval, compliance result, or ATO.
 
 If you are outside the maintainer workflow and want to test a public claim, choose one of the
-three [Fork-to-Reproduce challenges](reproduction-challenges/). You receive six tasks and an
+four [Fork-to-Reproduce challenges](reproduction-challenges/). You receive six or eight tasks and an
 oracle commitment—not the gold outcomes. The manual workflow builds and attests your exact
 submission bytes. A separate reviewer must adjudicate the result and relationship; cryptography
 does not prove organizational independence.

@@ -150,7 +150,8 @@ unsafe allows and zero legitimate blocks; allow-all and deny-all both fail.
 
 This tests a declared application policy where the two protocols meet; it is not a new protocol or
 a claim that A2A or MCP defines the full translation. Read the [research basis and exact
-non-claims](AUTHORITY_RELAY_RESEARCH_NOTES.md).
+non-claims](AUTHORITY_RELAY_RESEARCH_NOTES.md), or test the claim from an outside fork with the
+[eight-task answer-free relay challenge](../reproduction-challenges/a2a-mcp-authority-relay/).
 
 ## Run all current gates in one CI matrix
 

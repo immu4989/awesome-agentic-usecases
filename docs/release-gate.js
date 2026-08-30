@@ -85,6 +85,7 @@
       set("release-tag-count", release.impacted_tags.length);
       set("release-oscal-count", `${release.oscal_observations} + ${release.oscal_findings}`);
       set("release-challenge-count", data.reproduction.challenge_count);
+      set("release-challenge-inline", data.reproduction.challenge_count);
       set("release-task-count", data.reproduction.task_count);
       set("release-independent-count", data.reproduction.independently_reproduced_count);
       set("release-incident-count", data.incidents.entry_count);

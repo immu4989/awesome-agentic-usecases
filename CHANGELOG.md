@@ -5,7 +5,7 @@
 - Added the Agent Release Gate: exact component snapshots, before/after impact selection,
   fail-closed thresholds, protected-change approval records, deterministic evidence packs,
   unsigned in-toto provenance, and an experimental non-certifying OSCAL Assessment Results export.
-- Opened three answer-free Fork-to-Reproduce challenges with hidden-oracle commitments, safe
+- Opened four answer-free Fork-to-Reproduce challenges with 26 tasks, hidden-oracle commitments, safe
   templates, a manual attested-submission workflow, and explicit human review of independence.
 - Added the Agent Incident Exchange with clean-twin regression bindings and SARIF, OpenVEX, plus
   explicitly experimental CSAF and OCSF bridge exports.

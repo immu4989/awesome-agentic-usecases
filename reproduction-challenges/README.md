@@ -1,6 +1,6 @@
 # Fork-to-Reproduce Challenge Network
 
-Three public challenges are open. Their answer keys are committed by SHA-256 but are not in Git.
+Four public challenges are open. Their answer keys are committed by SHA-256 but are not in Git.
 Fork the repository, produce a challenge-bound submission, and use the dedicated workflow to attach
 GitHub's build identity to the exact submission bytes.
 
@@ -9,6 +9,7 @@ GitHub's build identity to the exact submission bytes.
 | Portable Agent Assurance | 6 | Identity, task, token audience, peer/card, monitoring | [Inspect](portable-agent-assurance/challenge.json) |
 | Grid restoration | 6 | Restoration conditions, clearance ownership, urgency, monitoring | [Inspect](grid-restoration/challenge.json) |
 | Pharmaceutical batch disposition | 6 | Chemical OOS, sterility, record conflict, transfer limits | [Inspect](pharma-batch-disposition/challenge.json) |
+| A2A-to-MCP authority relay | 8 | Protocol, identity, delegation, resource, audience, monitoring, approval | [Inspect](a2a-mcp-authority-relay/challenge.json) |
 
 ## Reproduce one
 

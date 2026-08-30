@@ -88,12 +88,13 @@ def main() -> None:
         "Ship evidence,",
         "not confidence.",
         'href="release-gate.css?v=3"',
-        'src="release-gate.js?v=3"',
+        'src="release-gate.js?v=4"',
         'id="agent-capability-bom"',
         'id="release-bom-conformance-status"',
         'id="authority-conformance"',
         'id="release-migration-count"',
         'id="release-a2a-path"',
+        'id="release-challenge-inline"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing release-operations marker: {marker}")

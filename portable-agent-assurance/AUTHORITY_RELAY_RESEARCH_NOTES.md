@@ -33,6 +33,18 @@ choices, not protocol mandates. The gate never assumes an Agent Card signature i
 passes or validates a credential, and never treats a self-reported MCP client/server name as an
 authorization signal.
 
+## Independent reproduction route
+
+The committed 25-case suite is maintainer-generated evidence. It is not an independent result. The
+separate [blind A2A-to-MCP challenge](../reproduction-challenges/a2a-mcp-authority-relay/) exposes
+eight answer-free boundary decisions and the same four primary-source anchors while keeping its
+source suite and oracle outside Git. A fork can freeze and attest its response bytes before a
+separate reviewer receives the SHA-256-committed oracle.
+
+The challenge does not increment the repository's independent-reproduction count merely by being
+open or completed. That count remains zero until a human review confirms distinct role
+commitments, declared relationship evidence, challenge blinding, and an adjudicated Exchange pack.
+
 ## Primary sources
 
 - [A2A v1.0.1 specification](https://github.com/a2aproject/A2A/blob/v1.0.1/docs/specification.md)

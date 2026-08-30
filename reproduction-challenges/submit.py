@@ -47,6 +47,22 @@ def safe_user_path(value: str) -> Path:
     return candidate
 
 
+def safe_campaign_path(value: str) -> Path:
+    if not isinstance(value, str) or not value or Path(value).is_absolute():
+        raise ValueError("campaign artifact paths must be non-empty relative paths")
+    candidate = (HERE / value).resolve()
+    try:
+        candidate.relative_to(HERE)
+    except ValueError as exc:
+        raise ValueError("campaign artifact paths must stay below reproduction-challenges") from exc
+    current = HERE
+    for part in Path(value).parts:
+        current = current / part
+        if current.is_symlink():
+            raise ValueError(f"campaign artifact path contains a symbolic link: {value}")
+    return candidate
+
+
 def campaign_entry(challenge_id: str) -> dict:
     campaign = load_public(HERE / "campaign.json")
     matches = [item for item in campaign["challenges"] if item["challenge_id"] == challenge_id]
@@ -69,19 +85,31 @@ def verify_campaign() -> dict:
         raise ValueError("campaign fields differ from the 1.0 contract")
     if campaign["campaign_version"] != "aau-fork-to-reproduce-campaign/1.0":
         raise ValueError("unsupported campaign version")
-    if campaign["status"] != "open" or campaign["independently_reproduced_count"] != 0:
-        raise ValueError("the initial campaign must disclose zero independent reproductions")
-    if not isinstance(campaign["challenges"], list) or len(campaign["challenges"]) != 3:
-        raise ValueError("the initial campaign must contain exactly three challenges")
+    reproduced = campaign["independently_reproduced_count"]
+    if campaign["status"] != "open":
+        raise ValueError("the campaign must be open")
+    if type(reproduced) is not int or reproduced < 0:
+        raise ValueError("independently_reproduced_count must be a non-negative integer")
+    if not isinstance(campaign["challenges"], list) or len(campaign["challenges"]) < 1:
+        raise ValueError("the campaign must contain at least one challenge")
     ids = set()
     for entry in campaign["challenges"]:
+        if set(entry) != {
+            "challenge_id", "title", "path", "responses_template",
+            "metadata_template", "task_count", "status",
+        }:
+            raise ValueError("campaign challenge fields differ from the 1.0 contract")
+        if entry["status"] != "open" or type(entry["task_count"]) is not int or entry["task_count"] < 1:
+            raise ValueError("campaign challenges must be open with a positive task count")
         if entry["challenge_id"] in ids:
             raise ValueError("challenge ids must be unique")
         ids.add(entry["challenge_id"])
-        challenge = load_public(HERE / entry["path"])
+        challenge = load_public(safe_campaign_path(entry["path"]))
         module.validate_challenge(challenge)
         if challenge["challenge_id"] != entry["challenge_id"]:
             raise ValueError("campaign challenge id does not match its artifact")
+        if entry["task_count"] != len(challenge["tasks"]):
+            raise ValueError("campaign task count does not match its challenge artifact")
         serialized = json.dumps(challenge)
         for forbidden in (
             "gold_outcome",
@@ -91,12 +119,12 @@ def verify_campaign() -> dict:
         ):
             if forbidden in serialized:
                 raise ValueError(f"public challenge leaks oracle field: {forbidden}")
-        template = load_public(HERE / entry["responses_template"])
+        template = load_public(safe_campaign_path(entry["responses_template"]))
         template_ids = {row["task_id"] for row in template["responses"]}
         challenge_ids = {row["task_id"] for row in challenge["tasks"]}
         if template_ids != challenge_ids or len(template_ids) != entry["task_count"]:
             raise ValueError("response template does not cover the exact challenge task set")
-        load_public(HERE / entry["metadata_template"])
+        load_public(safe_campaign_path(entry["metadata_template"]))
     boundaries = campaign["boundary"]
     if not isinstance(boundaries, dict) or not boundaries or any(value is not True for value in boundaries.values()):
         raise ValueError("all campaign boundary declarations must be true")

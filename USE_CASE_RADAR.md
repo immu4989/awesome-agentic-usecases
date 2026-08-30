@@ -40,7 +40,7 @@ The repository now covers the lifecycle around the 71 domain labs, not only the 
 | Operational gap | Shipped contribution | Honest boundary |
 |---|---|---|
 | A candidate changes but its old benchmark is rerun indiscriminately | **[Agent Release Gate](agent-release-gate/)** captures exact components, maps the diff to impacted suites, blocks missing coverage, and emits a deterministic pack plus experimental OSCAL Assessment Results | `release_ready` is not deployment authority, certification, production safety, or an ATO |
-| Outside teams cannot test a claim without receiving the answers | **[Fork-to-Reproduce](reproduction-challenges/)** opens three six-task challenges with hidden-oracle commitments and attested submission bytes | Cryptography binds bytes; human review determines result and independence |
+| Outside teams cannot test a claim without receiving the answers | **[Fork-to-Reproduce](reproduction-challenges/)** opens four challenges and 26 tasks with hidden-oracle commitments and attested submission bytes | Cryptography binds bytes; human review determines result and independence |
 | Public agent-security lessons remain prose instead of regressions | **[Agent Incident Exchange](agent-incident-exchange/)** binds safe incident abstractions to clean-twin artifacts and exports SARIF, OpenVEX, and experimental CSAF/OCSF bridges | No active-incident intake, attribution, exploit content, regulator feed, or field-effectiveness claim |
 | Policy-dependent tests silently age | **[Policy Freshness Radar](policy-freshness/)** watches nine allowlisted official sources and maps a byte or visible-text change to artifact owners | It detects content and review dates; it never interprets policy or automatically changes a test |
 

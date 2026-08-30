@@ -86,8 +86,9 @@ in-toto statement, and an explicitly experimental, non-certifying OSCAL 1.1.3-sh
 Results export. It does not verify the approver's identity, establish production safety, authorize
 deployment, certify compliance, or grant an ATO.
 
-Three **[answer-free reproduction challenges](reproduction-challenges/)** now let outside forks test
-portable agent authority, distribution restoration, and pharmaceutical batch disposition without
+Four **[answer-free reproduction challenges](reproduction-challenges/)** now let outside forks test
+portable agent authority, distribution restoration, pharmaceutical batch disposition, and the
+A2A-to-MCP authority relay without
 receiving gold answers. The hidden source suites and oracles are excluded from Git; public files
 contain only task inputs and oracle commitments. The **[Agent Incident Exchange](agent-incident-exchange/)**
 turns public or synthetic lessons into clean-twin regressions and interoperable findings, while the
