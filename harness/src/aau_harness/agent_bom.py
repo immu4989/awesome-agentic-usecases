@@ -22,6 +22,8 @@ BOM_VERSION = "aau-agent-capability-bom/1.0"
 DIFF_VERSION = "aau-agent-capability-diff/1.0"
 REVIEW_VERSION = "aau-agent-capability-review/1.0"
 PACK_VERSION = "aau-agent-capability-pack/1.0"
+OBSERVATION_VERSION = "aau-agent-authority-observation/1.0"
+REDUCTION_PLAN_VERSION = "aau-agent-authority-reduction-plan/1.0"
 STATEMENT_TYPE = "https://in-toto.io/Statement/v1"
 PREDICATE_TYPE = (
     "https://immu4989.github.io/awesome-agentic-usecases/"
@@ -41,6 +43,7 @@ EVIDENCE_KINDS = {
     "rollback_test",
     "other",
 }
+OBSERVATION_DECISIONS = {"allowed", "blocked", "error"}
 SHARING_KEYS = {
     "public_or_synthetic_only",
     "contains_personal_data",
@@ -616,6 +619,239 @@ def verify_pack(pack: Path) -> dict[str, Any]:
     return review
 
 
+def validate_observation(observation: dict[str, Any], bom: dict[str, Any]) -> None:
+    """Validate a privacy-bounded authority-use observation against one AABOM."""
+    validate_bom(bom)
+    _exact(
+        observation,
+        {
+            "observation_version",
+            "observation_id",
+            "agent_id",
+            "release_id",
+            "window",
+            "events",
+            "sharing",
+        },
+        "authority observation",
+    )
+    if observation["observation_version"] != OBSERVATION_VERSION:
+        raise AgentBomError(f"observation_version must be {OBSERVATION_VERSION}")
+    _text(observation["observation_id"], "observation_id", 160)
+    if observation["agent_id"] != bom["agent_id"]:
+        raise AgentBomError("observation agent_id does not match the BOM")
+    if observation["release_id"] != bom["release_id"]:
+        raise AgentBomError("observation release_id does not match the BOM")
+    window = _exact(
+        observation["window"],
+        {
+            "starts_at",
+            "ends_at",
+            "environment",
+            "scenario_set_sha256",
+            "scenario_count",
+            "run_count",
+            "coverage_basis",
+        },
+        "observation window",
+    )
+    starts = _timestamp(window["starts_at"], "window.starts_at")
+    ends = _timestamp(window["ends_at"], "window.ends_at")
+    if ends <= starts:
+        raise AgentBomError("observation window must end after it starts")
+    if window["environment"] not in {"public", "synthetic", "public_synthetic"}:
+        raise AgentBomError("observation environment is unsupported")
+    _sha(window["scenario_set_sha256"], "window.scenario_set_sha256")
+    if window["coverage_basis"] not in {
+        "reviewed_synthetic",
+        "public_replay",
+        "authorized_aggregate",
+    }:
+        raise AgentBomError("observation coverage_basis is unsupported")
+    for key in ("scenario_count", "run_count"):
+        value = window[key]
+        if not isinstance(value, int) or isinstance(value, bool) or not 1 <= value <= 100000:
+            raise AgentBomError(f"window.{key} must be an integer from 1 to 100000")
+
+    events = observation["events"]
+    if not isinstance(events, list) or not 1 <= len(events) <= 100000:
+        raise AgentBomError("events must contain 1 to 100000 entries")
+    tools = _by_id(bom["tools"], "component_id")
+    authorities = _by_id(bom["authorities"], "authority_id")
+    event_ids: set[str] = set()
+    run_sequences: dict[str, set[int]] = {}
+    run_ids: set[str] = set()
+    scenario_ids: set[str] = set()
+    for index, event in enumerate(events):
+        event = _exact(
+            event,
+            {
+                "event_id",
+                "run_id",
+                "scenario_id",
+                "sequence",
+                "authority_id",
+                "tool_id",
+                "operation",
+                "resource_scope",
+                "decision",
+            },
+            f"events[{index}]",
+        )
+        event_id = _text(event["event_id"], f"events[{index}].event_id", 160)
+        if event_id in event_ids:
+            raise AgentBomError(f"duplicate event_id: {event_id}")
+        event_ids.add(event_id)
+        run_id = _text(event["run_id"], f"events[{index}].run_id", 160)
+        scenario_id = _text(event["scenario_id"], f"events[{index}].scenario_id", 160)
+        run_ids.add(run_id)
+        scenario_ids.add(scenario_id)
+        sequence = event["sequence"]
+        if not isinstance(sequence, int) or isinstance(sequence, bool) or sequence < 1:
+            raise AgentBomError(f"events[{index}].sequence must be a positive integer")
+        if sequence in run_sequences.setdefault(run_id, set()):
+            raise AgentBomError(f"duplicate sequence {sequence} in run {run_id}")
+        run_sequences[run_id].add(sequence)
+        authority_id = event["authority_id"]
+        tool_id = event["tool_id"]
+        if authority_id not in authorities:
+            raise AgentBomError(f"event {event_id} references unknown authority")
+        if tool_id not in tools:
+            raise AgentBomError(f"event {event_id} references unknown tool")
+        authority = authorities[authority_id]
+        tool = tools[tool_id]
+        if tool_id not in authority["tool_ids"]:
+            raise AgentBomError(f"event {event_id} tool is not bound to its authority")
+        operation = _text(event["operation"], f"events[{index}].operation", 200)
+        scope = _text(event["resource_scope"], f"events[{index}].resource_scope", 200)
+        if operation not in tool["operations"] or scope not in tool["resource_scopes"]:
+            raise AgentBomError(f"event {event_id} exceeds the declared tool capability")
+        if event["decision"] not in OBSERVATION_DECISIONS:
+            raise AgentBomError(f"events[{index}].decision is unsupported")
+        if event["decision"] == "allowed" and (
+            operation not in authority["operations"]
+            or scope not in authority["resource_scopes"]
+        ):
+            raise AgentBomError(f"allowed event {event_id} exceeds declared authority")
+    for run_id, sequences in run_sequences.items():
+        if sequences != set(range(1, len(sequences) + 1)):
+            raise AgentBomError(f"run {run_id} sequences must be contiguous from 1")
+    if len(run_ids) != window["run_count"]:
+        raise AgentBomError("window.run_count does not match distinct event run ids")
+    if len(scenario_ids) != window["scenario_count"]:
+        raise AgentBomError("window.scenario_count does not match distinct scenario ids")
+
+    sharing = _exact(observation["sharing"], SHARING_KEYS, "observation sharing")
+    if sharing["public_or_synthetic_only"] is not True:
+        raise AgentBomError("observation sharing.public_or_synthetic_only must be true")
+    for key in SHARING_KEYS - {"public_or_synthetic_only"}:
+        if sharing[key] is not False:
+            raise AgentBomError(f"observation sharing.{key} must be false")
+
+
+def plan_authority_reduction(
+    bom: dict[str, Any], observation: dict[str, Any]
+) -> dict[str, Any]:
+    """Find unobserved grants and emit a proposal-only validation agenda.
+
+    Absence in a bounded observation is never treated as proof that a grant can be
+    removed.  The output contains no executable policy and changes no entitlement.
+    """
+    validate_observation(observation, bom)
+    allowed = [event for event in observation["events"] if event["decision"] == "allowed"]
+    reviews: list[dict[str, Any]] = []
+    for authority in sorted(bom["authorities"], key=lambda row: row["authority_id"]):
+        authority_events = [
+            event for event in observation["events"] if event["authority_id"] == authority["authority_id"]
+        ]
+        allowed_events = [event for event in authority_events if event["decision"] == "allowed"]
+        observed_operations = sorted({event["operation"] for event in allowed_events})
+        observed_scopes = sorted({event["resource_scope"] for event in allowed_events})
+        unobserved_operations = sorted(set(authority["operations"]) - set(observed_operations))
+        unobserved_scopes = sorted(set(authority["resource_scopes"]) - set(observed_scopes))
+        candidate = bool(unobserved_operations or unobserved_scopes)
+        reviews.append(
+            {
+                "authority_id": authority["authority_id"],
+                "allowed_event_count": len(allowed_events),
+                "blocked_or_error_event_count": len(authority_events) - len(allowed_events),
+                "observed_operations": observed_operations,
+                "observed_resource_scopes": observed_scopes,
+                "unobserved_operations": unobserved_operations,
+                "unobserved_resource_scopes": unobserved_scopes,
+                "candidate_reduction": candidate,
+                "required_next_evidence": (
+                    [
+                        "domain_owner_need_review",
+                        "representative_holdout_suite",
+                        "legitimate_clean_twin",
+                        "staging_denial_test",
+                        "rollback_rehearsal",
+                        "separate_change_approval",
+                    ]
+                    if candidate
+                    else []
+                ),
+            }
+        )
+    granted_operations = sum(len(row["operations"]) for row in bom["authorities"])
+    granted_scopes = sum(len(row["resource_scopes"]) for row in bom["authorities"])
+    observed_operations = sum(len(row["observed_operations"]) for row in reviews)
+    observed_scopes = sum(len(row["observed_resource_scopes"]) for row in reviews)
+    unsigned = {
+        "plan_version": REDUCTION_PLAN_VERSION,
+        "plan_id": "",
+        "bom_id": bom["bom_id"],
+        "observation_id": observation["observation_id"],
+        "bom_sha256": digest(bom),
+        "observation_sha256": digest(observation),
+        "status": "proposal_only",
+        "coverage": {
+            "environment": observation["window"]["environment"],
+            "coverage_basis": observation["window"]["coverage_basis"],
+            "scenario_count": observation["window"]["scenario_count"],
+            "run_count": observation["window"]["run_count"],
+            "event_count": len(observation["events"]),
+            "allowed_event_count": len(allowed),
+        },
+        "summary": {
+            "granted_operation_count": granted_operations,
+            "observed_operation_count": observed_operations,
+            "unobserved_operation_count": granted_operations - observed_operations,
+            "granted_scope_count": granted_scopes,
+            "observed_scope_count": observed_scopes,
+            "unobserved_scope_count": granted_scopes - observed_scopes,
+            "candidate_authority_count": sum(row["candidate_reduction"] for row in reviews),
+            "automatically_removed_count": 0,
+        },
+        "authority_reviews": reviews,
+        "blind_spots": [
+            "absence_in_observed_events_does_not_prove_a_grant_is_unnecessary",
+            "blocked_or_error_events_do_not_justify_retaining_authority",
+            "scenario_coverage_does_not_establish_production_workload_coverage",
+            "resource_scope_strings_do_not_prove_data_sensitivity_or_policy_applicability",
+            "telemetry_integrity_authorship_and_completeness_are_not_verified",
+        ],
+        "boundary": {
+            "proposal_contains_no_executable_policy": True,
+            "no_permission_is_automatically_removed": True,
+            "human_owner_and_change_approval_required": True,
+            "not_proof_of_least_privilege_or_production_safety": True,
+            "not_certification_compliance_or_deployment_authority": True,
+        },
+    }
+    unsigned["plan_id"] = f"aau-reduction-{digest({key: value for key, value in unsigned.items() if key != 'plan_id'})[:20]}"
+    return unsigned
+
+
+def verify_reduction_plan(
+    plan: dict[str, Any], bom: dict[str, Any], observation: dict[str, Any]
+) -> None:
+    expected = plan_authority_reduction(bom, observation)
+    if plan != expected:
+        raise AgentBomError("authority reduction plan does not recompute from its inputs")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="aau bom",
@@ -636,6 +872,20 @@ def build_parser() -> argparse.ArgumentParser:
     pack.add_argument("--out", type=Path, required=True)
     verify = sub.add_parser("verify", help="recompute and verify a complete AABOM pack")
     verify.add_argument("pack", type=Path)
+    reduction = sub.add_parser(
+        "plan-reduction",
+        help="find unobserved grants and emit a proposal-only validation agenda",
+    )
+    reduction.add_argument("bom", type=Path)
+    reduction.add_argument("observation", type=Path)
+    reduction.add_argument("--out", type=Path, required=True)
+    verify_reduction = sub.add_parser(
+        "verify-reduction-plan",
+        help="recompute a least-authority proposal from its exact inputs",
+    )
+    verify_reduction.add_argument("plan", type=Path)
+    verify_reduction.add_argument("bom", type=Path)
+    verify_reduction.add_argument("observation", type=Path)
     return parser
 
 
@@ -665,9 +915,23 @@ def main(argv: list[str] | None = None) -> int:
             review = build_pack(load_json(args.bom), args.out)
             print(f"wrote {args.out} ({review['status']})")
             return 1 if review["status"] == "boundary_violation" else 0
-        review = verify_pack(args.pack)
-        print(f"verified {args.pack} ({review['status']})")
-        return 1 if review["status"] == "boundary_violation" else 0
+        if args.command == "verify":
+            review = verify_pack(args.pack)
+            print(f"verified {args.pack} ({review['status']})")
+            return 1 if review["status"] == "boundary_violation" else 0
+        if args.command == "plan-reduction":
+            plan = plan_authority_reduction(load_json(args.bom), load_json(args.observation))
+            write_json(plan, args.out)
+            print(
+                f"wrote {args.out} ({plan['summary']['candidate_authority_count']} "
+                "candidate authority record(s); 0 automatic removals)"
+            )
+            return 0
+        verify_reduction_plan(
+            load_json(args.plan), load_json(args.bom), load_json(args.observation)
+        )
+        print(f"verified {args.plan} (proposal_only; 0 automatic removals)")
+        return 0
     except (AgentBomError, OSError) as exc:
         print(f"aau bom: {exc}", file=sys.stderr)
         return 2

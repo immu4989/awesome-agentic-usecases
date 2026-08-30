@@ -191,12 +191,22 @@ aau bom diff agent-capability-bom/examples/baseline.json agent-capability-bom/ex
 aau bom export-cyclonedx agent-capability-bom/examples/candidate.json --out /tmp/agent.cdx.json
 aau bom pack agent-capability-bom/examples/candidate.json --out /tmp/agent-bom-pack
 aau bom verify /tmp/agent-bom-pack
+aau bom plan-reduction agent-capability-bom/examples/candidate.json \
+  agent-capability-bom/examples/authority-observation.json --out /tmp/reduction-plan.json
+aau bom verify-reduction-plan /tmp/reduction-plan.json \
+  agent-capability-bom/examples/candidate.json \
+  agent-capability-bom/examples/authority-observation.json
 ```
 
 Cross-reference checks reject authority operations or resource scopes that exceed their declared
 tools. Widening findings stay discrete rather than becoming a trust score. Protected human
 approval removal blocks; a valid inventory still requires owner review. See the
 [contract, source ledger, fixtures, and boundaries](../agent-capability-bom/).
+
+The reduction planner records only normalized event identifiers, sequence, operation, scope class,
+and decision. It identifies unobserved grants but produces no executable policy and automatically
+removes nothing. Each candidate needs owner review, a representative holdout, legitimate clean
+twin, staging denial test, rollback rehearsal, and separate change approval.
 
 ## Evaluate an existing agent
 

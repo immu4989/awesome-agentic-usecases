@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-authority-observation-1.0.json",
+  "title": "AAU Privacy-Bounded Agent Authority Observation 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["observation_version", "observation_id", "agent_id", "release_id", "window", "events", "sharing"],
+  "properties": {
+    "observation_version": {"const": "aau-agent-authority-observation/1.0"},
+    "observation_id": {"$ref": "#/$defs/text160"},
+    "agent_id": {"$ref": "#/$defs/text160"},
+    "release_id": {"$ref": "#/$defs/text160"},
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["starts_at", "ends_at", "environment", "scenario_set_sha256", "scenario_count", "run_count", "coverage_basis"],
+      "properties": {
+        "starts_at": {"type": "string", "format": "date-time", "maxLength": 40},
+        "ends_at": {"type": "string", "format": "date-time", "maxLength": 40},
+        "environment": {"enum": ["public", "synthetic", "public_synthetic"]},
+        "scenario_set_sha256": {"$ref": "#/$defs/sha256"},
+        "scenario_count": {"type": "integer", "minimum": 1, "maximum": 100000},
+        "run_count": {"type": "integer", "minimum": 1, "maximum": 100000},
+        "coverage_basis": {"enum": ["reviewed_synthetic", "public_replay", "authorized_aggregate"]}
+      }
+    },
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["event_id", "run_id", "scenario_id", "sequence", "authority_id", "tool_id", "operation", "resource_scope", "decision"],
+        "properties": {
+          "event_id": {"$ref": "#/$defs/text160"},
+          "run_id": {"$ref": "#/$defs/text160"},
+          "scenario_id": {"$ref": "#/$defs/text160"},
+          "sequence": {"type": "integer", "minimum": 1},
+          "authority_id": {"$ref": "#/$defs/text160"},
+          "tool_id": {"$ref": "#/$defs/text160"},
+          "operation": {"$ref": "#/$defs/text200"},
+          "resource_scope": {"$ref": "#/$defs/text200"},
+          "decision": {"enum": ["allowed", "blocked", "error"]}
+        }
+      }
+    },
+    "sharing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["public_or_synthetic_only", "contains_personal_data", "contains_credentials", "contains_nonpublic_configuration", "contains_controlled_information"],
+      "properties": {
+        "public_or_synthetic_only": {"const": true},
+        "contains_personal_data": {"const": false},
+        "contains_credentials": {"const": false},
+        "contains_nonpublic_configuration": {"const": false},
+        "contains_controlled_information": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "text160": {"type": "string", "minLength": 1, "maxLength": 160},
+    "text200": {"type": "string", "minLength": 1, "maxLength": 200},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

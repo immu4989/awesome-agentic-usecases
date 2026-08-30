@@ -39,6 +39,11 @@ def main() -> None:
         raise SystemExit("a valid public AABOM must remain human-review bounded")
     if expected["capability_bom"]["production_identity_verified"] is not False:
         raise SystemExit("the public AABOM cannot claim verified production identity")
+    reduction = expected["capability_bom"]["reduction_plan"]
+    if reduction["summary"]["automatically_removed_count"] != 0:
+        raise SystemExit("the least-authority planner must never auto-remove a grant")
+    if reduction["status"] != "proposal_only":
+        raise SystemExit("authority reduction output must stay proposal-only")
     html = (DOCS / "index.html").read_text()
     for marker in (
         'id="release-gate"',

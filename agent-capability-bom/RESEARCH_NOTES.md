@@ -13,6 +13,9 @@ conformance claim.
 | NIST AI 800-5 reports broad agreement that agent security is an adoption barrier and established cybersecurity practices need agent-specific adaptation. | A small, implementable adaptation layer can help adoption. | The report does not endorse AAU or validate field effectiveness. |
 | CISA's 2025 minimum elements emphasize component transparency, generation context, relationships, automation, and current interoperable formats including SPDX and CycloneDX. | Preserve generation context, relationships, machine readability, and an open projection. | A software-component BOM alone describes all active agent authority. |
 | CycloneDX supports AI/ML models and datasets and offers extensible properties. | Reuse a maintained BOM ecosystem rather than inventing a sealed format. | `aau:agent:*` properties are registered CycloneDX taxonomy entries. |
+| NIST SP 800-53 AC-6 applies least privilege to processes acting on behalf of users and privileges necessary for assigned organizational tasks. | Review agent leases at the operation and scope level. | A bounded non-use observation proves a privilege is unnecessary. |
+| NIST SP 800-207A describes telemetry as an input for fine-tuning access rights and step-up authentication. | Use authorized observations to form a review hypothesis. | Telemetry alone should automatically rewrite access policy. |
+| OpenTelemetry's GenAI conventions warn that tool arguments and results may contain sensitive information. | Keep the public observation profile metadata-only. | Metadata is risk-free or establishes trace integrity/completeness. |
 
 ## Design decisions
 
@@ -31,6 +34,13 @@ conformance claim.
    controlled information, or verified production identity.
 6. **Validity is not authority.** The clean reference remains `human_review_required`. Real systems
    must check current identity, authorization, revocation, context, and policy at action time.
+7. **Non-use is a question, not an answer.** The planner identifies unobserved grants but produces
+   no executable policy and removes nothing. Each candidate requires owner review, a representative
+   holdout, a legitimate clean twin, staging denial test, rollback rehearsal, and separate change
+   approval.
+8. **Denied attempts do not justify privilege.** Only allowed events count as observed use. A
+   blocked or errored request remains evidence about enforcement, not evidence that the agent needs
+   the requested grant.
 
 ## Transfer-failure checks
 
@@ -48,7 +58,11 @@ conformance claim.
 - NIST, [AI Agent Standards Initiative](https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative), updated 2026-08-14.
 - NIST NCCoE, [Accelerating the Adoption of Software and AI Agent Identity and Authorization](https://www.nccoe.nist.gov/publications/other/accelerating-adoption-software-and-ai-agent-identity-and-authorization-concept), draft published 2026-02-05.
 - NIST AI 800-5, [Summary Analysis of Responses Regarding Security Considerations for AI Agents](https://www.nist.gov/publications/summary-analysis-responses-request-information-regarding-security-considerations-ai), published 2026-05-18.
+- NIST, [SP 800-53 Revision 5.1, AC-6 Least Privilege](https://csrc.nist.gov/Projects/risk-management/sp800-53-controls/downloads), current derivative downloads accessed 2026-08-30.
+- NIST, [SP 800-207 Zero Trust Architecture](https://csrc.nist.gov/pubs/sp/800/207/final), final published 2020-08-11.
+- NIST, [SP 800-207A Zero Trust Access Control for Cloud-Native Applications](https://csrc.nist.gov/pubs/sp/800/207/a/final), final published 2023-09-13.
 - CISA, [2025 Minimum Elements for a Software Bill of Materials](https://www.cisa.gov/resources-tools/resources/2025-minimum-elements-software-bill-materials-sbom), August 2025.
 - OWASP CycloneDX, [Machine Learning Bill of Materials](https://cyclonedx.org/capabilities/mlbom/), accessed 2026-08-30.
 - OWASP CycloneDX, [official 1.7 JSON Schema](https://github.com/CycloneDX/specification/blob/master/schema/bom-1.7.schema.json), accessed 2026-08-30.
 - in-toto, [Attestation Framework Specification](https://github.com/in-toto/attestation/blob/main/spec/README.md), accessed 2026-08-30.
+- OpenTelemetry, [Generative AI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/), accessed 2026-08-30.

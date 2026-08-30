@@ -115,6 +115,18 @@ projection and unsigned in-toto byte binding. A valid AABOM remains `human_revie
 not verified identity, a credential, live authorization, safety evidence, certification,
 compliance, deployment approval, government endorsement, or an ATO.
 
+The companion **Least-Authority Planner** compares privacy-bounded action metadata with that exact
+inventory. The reference plan observes two of three granted operations and scopes, flags the two
+unobserved grants, demands six separate next proofs, and removes zero permissions. It counts only
+allowed events as use and never treats bounded non-use as proof that production authority is
+unnecessary:
+
+```bash
+aau bom plan-reduction agent-capability-bom/examples/candidate.json \
+  agent-capability-bom/examples/authority-observation.json \
+  --out /tmp/authority-reduction-plan.json
+```
+
 ## Portable Agent Assurance—from identity to exact protocol evidence
 
 Identity, authorization, protocol scope, and evaluation often live in different systems. The

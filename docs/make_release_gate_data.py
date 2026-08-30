@@ -28,6 +28,7 @@ def build() -> dict:
     capability_diff = load("agent-capability-bom/examples/reference-diff.json")
     capability_review = load("agent-capability-bom/examples/reference-pack/authority-review.json")
     cyclonedx = load("agent-capability-bom/examples/reference-pack/cyclonedx-1.7.json")
+    reduction_plan = load("agent-capability-bom/examples/reference-reduction-plan.json")
     oscal_result = oscal["assessment-results"]["results"][0]
     formats = sorted(
         path.name for path in (ROOT / "agent-incident-exchange/examples/reference-pack").glob("*.*json")
@@ -96,6 +97,17 @@ def build() -> dict:
             "findings": capability_diff["findings"],
             "cyclonedx_version": cyclonedx["specVersion"],
             "production_identity_verified": capability_bom["accountability"]["production_identity_verified"],
+            "reduction_plan": {
+                "status": reduction_plan["status"],
+                "coverage": reduction_plan["coverage"],
+                "summary": reduction_plan["summary"],
+                "next_evidence_count": len(
+                    next(
+                        row for row in reduction_plan["authority_reviews"]
+                        if row["candidate_reduction"]
+                    )["required_next_evidence"]
+                ),
+            },
         },
         "freshness": {
             "source_count": len(sources["sources"]),
@@ -121,6 +133,7 @@ def build() -> dict:
             "source_monitor_does_not_interpret_policy": True,
             "oscal_export_is_experimental_and_non_certifying": True,
             "capability_inventory_is_not_live_authorization": True,
+            "authority_nonuse_never_auto_removes_permission": True,
         },
     }
 

@@ -105,6 +105,9 @@ jobs:
           python -m aau_harness.agent_bom verify agent-capability-bom/examples/reference-pack
           python -m aau_harness.agent_bom pack agent-capability-bom/examples/candidate.json --out "$RUNNER_TEMP/aau-agent-bom-pack"
           python -m aau_harness.agent_bom verify "$RUNNER_TEMP/aau-agent-bom-pack"
+          python -m aau_harness.agent_bom plan-reduction agent-capability-bom/examples/candidate.json agent-capability-bom/examples/authority-observation.json --out "$RUNNER_TEMP/aau-authority-reduction-plan.json"
+          cmp "$RUNNER_TEMP/aau-authority-reduction-plan.json" agent-capability-bom/examples/reference-reduction-plan.json
+          python -m aau_harness.agent_bom verify-reduction-plan agent-capability-bom/examples/reference-reduction-plan.json agent-capability-bom/examples/candidate.json agent-capability-bom/examples/authority-observation.json
           python reproduction-challenges/submit.py verify-campaign
           PYTHONPATH=agent-incident-exchange pytest agent-incident-exchange/tests -q
           python agent-incident-exchange/make_exchange.py

@@ -9,16 +9,20 @@ from aau_harness.agent_bom import (
     build_pack,
     diff_boms,
     load_json,
+    plan_authority_reduction,
     review_bom,
     to_cyclonedx,
     validate_bom,
+    validate_observation,
     verify_pack,
+    verify_reduction_plan,
 )
 
 
 ROOT = Path(__file__).resolve().parents[2]
 BASELINE = ROOT / "agent-capability-bom" / "examples" / "baseline.json"
 CANDIDATE = ROOT / "agent-capability-bom" / "examples" / "candidate.json"
+OBSERVATION = ROOT / "agent-capability-bom" / "examples" / "authority-observation.json"
 
 
 def fixtures():
@@ -102,3 +106,59 @@ def test_pack_is_deterministic_recomputable_and_tamper_evident(tmp_path):
     (first / "authority-review.json").write_text(json.dumps({"tampered": True}))
     with pytest.raises(AgentBomError, match="integrity mismatch"):
         verify_pack(first)
+
+
+def test_least_authority_plan_finds_negative_space_but_removes_nothing():
+    bom = load_json(CANDIDATE)
+    observation = load_json(OBSERVATION)
+    validate_observation(observation, bom)
+    plan = plan_authority_reduction(bom, observation)
+    assert plan["status"] == "proposal_only"
+    assert plan["summary"] == {
+        "granted_operation_count": 3,
+        "observed_operation_count": 2,
+        "unobserved_operation_count": 1,
+        "granted_scope_count": 3,
+        "observed_scope_count": 2,
+        "unobserved_scope_count": 1,
+        "candidate_authority_count": 1,
+        "automatically_removed_count": 0,
+    }
+    candidate = next(row for row in plan["authority_reviews"] if row["candidate_reduction"])
+    assert candidate["unobserved_operations"] == ["records.prepare_draft"]
+    assert candidate["unobserved_resource_scopes"] == ["cases/public/drafts/*"]
+    assert candidate["blocked_or_error_event_count"] == 1
+    assert len(candidate["required_next_evidence"]) == 6
+
+
+def test_blocked_attempt_does_not_count_as_authority_use():
+    plan = plan_authority_reduction(load_json(CANDIDATE), load_json(OBSERVATION))
+    candidate = next(row for row in plan["authority_reviews"] if row["candidate_reduction"])
+    assert "records.prepare_draft" not in candidate["observed_operations"]
+
+
+def test_allowed_event_outside_authority_and_false_coverage_fail_closed():
+    bom = load_json(CANDIDATE)
+    observation = load_json(OBSERVATION)
+    escaped = copy.deepcopy(observation)
+    escaped["events"][-1]["decision"] = "allowed"
+    escaped_bom = copy.deepcopy(bom)
+    escaped_bom["authorities"][0]["operations"] = ["records.search"]
+    escaped_bom["authorities"][0]["resource_scopes"] = ["cases/public/*"]
+    with pytest.raises(AgentBomError, match="allowed event .* exceeds declared authority"):
+        validate_observation(escaped, escaped_bom)
+    wrong_count = copy.deepcopy(observation)
+    wrong_count["window"]["run_count"] = 4
+    with pytest.raises(AgentBomError, match="run_count does not match"):
+        validate_observation(wrong_count, bom)
+
+
+def test_reduction_plan_recomputes_and_input_drift_is_detected():
+    bom = load_json(CANDIDATE)
+    observation = load_json(OBSERVATION)
+    plan = plan_authority_reduction(bom, observation)
+    verify_reduction_plan(plan, bom, observation)
+    drifted = copy.deepcopy(plan)
+    drifted["summary"]["automatically_removed_count"] = 1
+    with pytest.raises(AgentBomError, match="does not recompute"):
+        verify_reduction_plan(drifted, bom, observation)

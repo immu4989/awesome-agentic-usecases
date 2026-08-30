@@ -114,6 +114,12 @@ the harness API is what is versioned; use cases are additive.
   NIST, NCCoE, CISA, CycloneDX, and in-toto primary sources while explicitly excluding standards
   endorsement, live authorization, verified identity, safety, compliance, deployment, and ATO
   claims.
+- **Proposal-only Least-Authority Planner** — `aau bom plan-reduction` compares an exact AABOM with
+  privacy-bounded public, synthetic, or authorized aggregate event metadata. It identifies
+  unobserved operations and scopes, excludes blocked/error attempts from legitimate-use evidence,
+  demands six next proofs for every candidate, emits no executable policy, and automatically
+  removes zero permissions. `verify-reduction-plan` recomputes the proposal from exact input
+  digests; cross-reference escapes, false coverage counts, and noncontiguous runs fail closed.
 
 - **Portable Agent Assurance Envelope** — a dependency-free offline verifier binds a deliberately
   public synthetic workload credential to its accountable operator, short-lived authority lease,
