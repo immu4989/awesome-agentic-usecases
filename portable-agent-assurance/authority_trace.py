@@ -114,12 +114,18 @@ def _span(
 
 
 def build_export(
-    profile: dict[str, Any], suite: dict[str, Any], receipt: dict[str, Any]
+    profile: dict[str, Any],
+    suite: dict[str, Any],
+    receipt: dict[str, Any],
+    *,
+    require_exact: bool = True,
 ) -> dict[str, Any]:
     authority_relay.validate_profile(profile)
     authority_relay.verify_receipt(receipt, profile, suite)
-    if receipt["adapter_kind"] != "command" or receipt["status"] != "evidence_passed":
-        raise TraceError("trace export requires an exact command-adapter relay receipt")
+    if receipt["adapter_kind"] != "command":
+        raise TraceError("trace export requires a command-adapter relay receipt")
+    if require_exact and receipt["status"] != "evidence_passed":
+        raise TraceError("public trace export requires an exact relay receipt")
     results = {row["case_id"]: row for row in receipt["results"]}
     traces = []
     for case in suite["cases"]:
@@ -211,6 +217,7 @@ def build_export(
             "suite_sha256": digest(suite),
             "receipt_sha256": digest(receipt),
             "adapter_kind": receipt["adapter_kind"],
+            "evidence_status": receipt["status"],
         },
         "summary": {
             "trace_count": len(traces),
@@ -250,7 +257,12 @@ def validate_export(
         raise TraceError("trace export version is invalid")
     if export.get("semantic_convention_basis") != SEMCONV_BASIS:
         raise TraceError("semantic convention basis is invalid")
-    expected = build_export(profile, suite, receipt)
+    expected = build_export(
+        profile,
+        suite,
+        receipt,
+        require_exact=receipt.get("status") != "evidence_failed",
+    )
     if export != expected:
         raise TraceError("trace export does not recompute from its exact sources")
 

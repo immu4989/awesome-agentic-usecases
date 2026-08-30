@@ -87,16 +87,29 @@ runs:
         AAU_RELAY_PROFILE: ${{ inputs.relay_profile }}
         AAU_RELAY_SUITE: ${{ inputs.relay_suite }}
       run: |
+        set +e
         python "$GITHUB_ACTION_PATH/../../../portable-agent-assurance/assurance_matrix.py" run \
           --workspace "$GITHUB_WORKSPACE" --out "$AAU_CURRENT_OUTPUT" \
           --mcp-profile "$AAU_MCP_PROFILE" --mcp-suite "$AAU_MCP_SUITE" --mcp-adapter-command "$AAU_MCP_ADAPTER" \
           --a2a-profile "$AAU_A2A_PROFILE" --a2a-suite "$AAU_A2A_SUITE" --a2a-adapter-command "$AAU_A2A_ADAPTER" \
           --relay-profile "$AAU_RELAY_PROFILE" --relay-suite "$AAU_RELAY_SUITE" --relay-adapter-command "$AAU_RELAY_ADAPTER"
+        matrix_status=$?
+        set -e
+        if [[ "$matrix_status" -eq 2 ]]; then
+          exit 2
+        fi
+        set +e
         python "$GITHUB_ACTION_PATH/../../../portable-agent-assurance/assurance_matrix.py" verify \
           --workspace "$GITHUB_WORKSPACE" --out "$AAU_CURRENT_OUTPUT" \
           --mcp-profile "$AAU_MCP_PROFILE" --mcp-suite "$AAU_MCP_SUITE" --mcp-adapter-command "$AAU_MCP_ADAPTER" \
           --a2a-profile "$AAU_A2A_PROFILE" --a2a-suite "$AAU_A2A_SUITE" --a2a-adapter-command "$AAU_A2A_ADAPTER" \
           --relay-profile "$AAU_RELAY_PROFILE" --relay-suite "$AAU_RELAY_SUITE" --relay-adapter-command "$AAU_RELAY_ADAPTER"
+        verify_status=$?
+        set -e
+        if [[ "$verify_status" -eq 2 || "$verify_status" -ne "$matrix_status" ]]; then
+          exit 2
+        fi
         if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
           cat "$AAU_CURRENT_OUTPUT/SUMMARY.md" >> "$GITHUB_STEP_SUMMARY"
         fi
+        exit "$matrix_status"

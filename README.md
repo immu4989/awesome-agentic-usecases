@@ -199,10 +199,12 @@ audience, monitor, and approval continuity across the hop. Its answer-blind comm
 blocks. The mapping is explicit application policy—not a claim that either protocol defines it.
 
 For adopters, the repository-pinned **Current Assurance Matrix Action** runs the MCP, A2A, and
-relay adapters together and emits a seven-file, manifest-bound CI pack including the privacy-bounded
-authority trace. The reference matrix is
+relay adapters together and emits an eight-file, manifest-bound CI pack including the privacy-bounded
+authority trace and privacy-safe SARIF. The reference matrix is
 58/58 exact across six clean twins and fifty-two violations. The job summary preserves each gate's
 unsafe-allow and legitimate-block count, so one aggregate number cannot hide asymmetric failure.
+When a gate mismatch correctly fails CI, the Action first verifies and publishes the diagnostic
+summary; structural or tamper failures remain a distinct hard error.
 
 The companion **Privacy-bounded Authority Trace** gives incident responders a correlatable record
 without exporting raw work content. It derives 25 W3C-shaped traces and 52 metadata spans from the

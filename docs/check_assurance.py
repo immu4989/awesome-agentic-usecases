@@ -146,6 +146,8 @@ def main() -> None:
         "assurance_matrix.py",
         'if: ${{ inputs.current_gates == \'true\' }}',
         "GITHUB_STEP_SUMMARY",
+        "matrix_status=$?",
+        "verify_status=$?",
         "--mcp-adapter-command \"$AAU_MCP_ADAPTER\"",
         "--relay-adapter-command \"$AAU_RELAY_ADAPTER\"",
     ):

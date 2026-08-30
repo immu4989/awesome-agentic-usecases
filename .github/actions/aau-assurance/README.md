@@ -6,8 +6,8 @@ This composite action has two layers:
    a portable evidence pack, and verifies that pack again.
 2. When `current_gates: "true"`, it runs project-owned command adapters against the MCP
    `2026-07-28`, A2A `1.0`, and A2A-to-MCP Authority Relay suites. It then emits and re-verifies one
-   seven-file matrix pack with three gate receipts, a 52-span privacy-bounded trace, an aggregate
-   receipt, a job summary, and a SHA-256 manifest.
+   eight-file matrix pack with three gate receipts, a 52-span privacy-bounded trace, privacy-safe
+   SARIF, an aggregate receipt, a job summary, and a SHA-256 manifest.
 
 The action executes dependency-free verifiers from the same repository revision and makes no
 package download or remote action call. The current matrix has **58 cases**: six clean twins and
@@ -66,18 +66,26 @@ adapter per contract, and enable the matrix:
           relay_adapter_command: python assurance/adapters/relay.py
 
       - name: Archive recomputable assurance evidence
+        if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: current-agent-assurance
           path: assurance-result/current-matrix
           retention-days: 14
+          if-no-files-found: ignore
 ```
 
 The matrix output must be a new directory inside `GITHUB_WORKSPACE`; absolute escapes, symbolic
 input files, existing outputs, extra pack files, digest drift, receipt drift, and summary drift fail
 closed. GitHub's job summary shows exactness and asymmetric failures for every gate. The Action does
 not upload evidence itself; the caller controls retention and must pin any upload Action by full
-commit SHA.
+commit SHA. The example's `always()` preserves an evidence-failed pack; `if-no-files-found: ignore`
+does not manufacture an artifact after a structural failure that produced no valid pack.
+
+A gate mismatch still fails the job, but the Action first verifies the diagnostic pack and appends
+the failure summary. `matrix.sarif.json` contains only case ids, gate ids, actual decisions, and
+reason codes—never requests, profiles, messages, arguments, results, or tokens. Structural or
+tamper failures exit immediately and are never presented as valid evaluation evidence.
 
 ## Runner and adapter security
 

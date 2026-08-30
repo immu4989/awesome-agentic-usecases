@@ -157,7 +157,8 @@ non-claims](AUTHORITY_RELAY_RESEARCH_NOTES.md).
 The [local composite GitHub Action](../.github/actions/aau-assurance/) can now run the historical
 envelope plus all three current command-adapter gates. Its matrix runner writes three receipts, one
 aggregate receipt, a human-readable job summary, and a SHA-256 manifest into a non-overwriting
-workspace directory, adds the 52-span privacy-bounded relay trace, then verifies every byte again:
+workspace directory, adds the 52-span privacy-bounded relay trace and privacy-safe SARIF, then
+verifies every byte again:
 
 ```bash
 python3 portable-agent-assurance/assurance_matrix.py run \
@@ -175,6 +176,11 @@ unsafe allows and zero legitimate blocks. All adapter commands are project code 
 as executable, reviewed input; the documented workflow uses read-only repository permissions, no
 secrets, quoted environment variables, a full-SHA Action pin, and caller-controlled artifact
 retention.
+
+On a legitimate mismatch, the CLI exits nonzero but leaves a fully verifiable diagnostic pack. The
+Action verifies it, appends the failure summary, and only then fails the job. `matrix.sarif.json`
+contains gate/case ids, actual decisions, and reason codes without request payloads. Structural or
+tamper errors use a separate exit path and do not receive a valid-evidence summary.
 
 ## Export a privacy-bounded authority trace
 

@@ -85,3 +85,21 @@ def test_output_escape_and_overwrite_are_rejected(tmp_path):
     MATRIX.run_pack(args)
     with pytest.raises(MATRIX.MatrixError, match="refusing to overwrite"):
         MATRIX.run_pack(args)
+
+
+def test_failed_gate_still_emits_a_verified_diagnostic_pack(tmp_path):
+    args = arguments(tmp_path, Path("failed-matrix"))
+    allow = tmp_path / "allow_all.py"
+    allow.write_text(
+        "import json,sys\njson.load(sys.stdin)\n"
+        "json.dump({'decision':'allow','reason_codes':[]},sys.stdout)\n"
+    )
+    args.mcp_adapter_command = f"{sys.executable} {allow}"
+    matrix = MATRIX.run_pack(args)
+    assert matrix["status"] == "evidence_failed"
+    assert matrix["aggregate"]["unsafe_allow_count"] == 14
+    assert MATRIX.verify_pack(args) == matrix
+    sarif = MATRIX._load(tmp_path / args.out / "matrix.sarif.json")
+    assert len(sarif["runs"][0]["results"]) == 14
+    assert all(row["properties"]["raw_inputs_included"] is False for row in sarif["runs"][0]["results"])
+    assert "**EVIDENCE FAILED**" in (tmp_path / args.out / "SUMMARY.md").read_text()

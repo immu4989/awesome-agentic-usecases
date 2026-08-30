@@ -24,7 +24,8 @@ RECEIPTS = {
     "authority_relay": "authority-relay-receipt.json",
 }
 PACK_FILES = set(RECEIPTS.values()) | {
-    "authority-traces.json", "matrix-receipt.json", "SUMMARY.md", "manifest.json",
+    "authority-traces.json", "matrix-receipt.json", "matrix.sarif.json", "SUMMARY.md",
+    "manifest.json",
 }
 
 
@@ -181,6 +182,67 @@ def _summary(matrix: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def _sarif(receipts: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    labels = {
+        "mcp_2026": "MCP 2026 authorization gate mismatch",
+        "a2a_1": "A2A 1.0 interface and authorization gate mismatch",
+        "authority_relay": "A2A-to-MCP authority relay gate mismatch",
+    }
+    rules = []
+    results = []
+    for gate_id in ("mcp_2026", "a2a_1", "authority_relay"):
+        rule_id = f"AAU_{gate_id.upper()}_EVIDENCE_MISMATCH"
+        rules.append(
+            {
+                "id": rule_id,
+                "name": labels[gate_id],
+                "shortDescription": {"text": labels[gate_id]},
+                "help": {
+                    "text": "Inspect the digest-bound gate receipt and project adapter. Expected answers were not sent to the adapter."
+                },
+                "properties": {"precision": "very-high", "security-severity": "8.0"},
+            }
+        )
+        for row in receipts[gate_id]["results"]:
+            if row["exact"]:
+                continue
+            results.append(
+                {
+                    "ruleId": rule_id,
+                    "level": "error",
+                    "message": {"text": f"{gate_id} case {row['case_id']} did not match its committed decision and reason codes."},
+                    "properties": {
+                        "gate_id": gate_id,
+                        "case_id": row["case_id"],
+                        "actual_decision": row["actual_decision"],
+                        "actual_reason_codes": row["actual_reason_codes"],
+                        "raw_inputs_included": False,
+                    },
+                }
+            )
+    return {
+        "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+        "version": "2.1.0",
+        "runs": [
+            {
+                "tool": {
+                    "driver": {
+                        "name": "AAU Current Assurance Matrix",
+                        "informationUri": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/portable-agent-assurance",
+                        "rules": rules,
+                    }
+                },
+                "results": results,
+                "properties": {
+                    "synthetic_recorded_metadata_only": True,
+                    "result_count": len(results),
+                    "not_security_certification_or_deployment_approval": True,
+                },
+            }
+        ],
+    }
+
+
 def _manifest(directory: Path) -> dict[str, Any]:
     files = []
     for name in sorted(PACK_FILES - {"manifest.json"}):
@@ -206,12 +268,15 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
         receipts[gate_id] = receipt
         _write_json(output / RECEIPTS[gate_id], receipt)
         if gate_id == "authority_relay":
-            trace_export = authority_trace.build_export(profile, suite, receipt)
+            trace_export = authority_trace.build_export(
+                profile, suite, receipt, require_exact=False
+            )
     if trace_export is None:
         raise MatrixError("authority trace source receipt is missing")
     _write_json(output / "authority-traces.json", trace_export)
     matrix = _matrix(receipts, trace_export)
     _write_json(output / "matrix-receipt.json", matrix)
+    _write_json(output / "matrix.sarif.json", _sarif(receipts))
     (output / "SUMMARY.md").write_text(_summary(matrix))
     _write_json(output / "manifest.json", _manifest(output))
     verify_pack(args)
@@ -246,6 +311,8 @@ def verify_pack(args: argparse.Namespace) -> dict[str, Any]:
     expected_matrix = _matrix(receipts, trace_export)
     if _load(output / "matrix-receipt.json") != expected_matrix:
         raise MatrixError("matrix receipt does not recompute")
+    if _load(output / "matrix.sarif.json") != _sarif(receipts):
+        raise MatrixError("matrix SARIF does not recompute")
     if (output / "SUMMARY.md").read_text() != _summary(expected_matrix):
         raise MatrixError("matrix summary does not recompute")
     if _load(output / "manifest.json") != _manifest(output):
