@@ -44,7 +44,7 @@ and observed failure cards with a direct path to reproduction. Start with
 |---|---|---|
 | A candidate agent release | [Agent Release Gate](https://immu4989.github.io/awesome-agentic-usecases/#release-gate) | A byte-exact change map, impact-selected tests, fail-closed decision, experimental OSCAL view, and verifiable evidence pack |
 | An agent deployment whose real authority is hard to see or test | [Agent Capability & Authority BOM](agent-capability-bom/) | A strict authority inventory, widening diff, least-authority plan, inventory-derived conformance twins, and tamper-evident evidence |
-| An outside team ready to reproduce a claim | [Fork-to-Reproduce](reproduction-challenges/) | An answer-free challenge, oracle commitment, fork-bound submission, and GitHub-attested bytes for separate human adjudication |
+| An outside team ready to reproduce a claim | [Fork-to-Reproduce](reproduction-challenges/) | An oracle-free challenge, oracle commitment, fork-bound submission, and GitHub-attested bytes for separate human adjudication |
 | A public agent-security lesson | [Agent Incident Exchange](agent-incident-exchange/) | A safe regression record plus SARIF, OpenVEX, and experimental CSAF/OCSF bridge exports |
 | An AI agent or endpoint | [Agent Evidence Starter](https://immu4989.github.io/awesome-agentic-usecases/#agent-starter) | A runnable synthetic suite, adapters, tests, CI, visual, manifest, and privacy-bounded receipt |
 | A connected Starter + public receipt | [Community Evidence Desk](https://immu4989.github.io/awesome-agentic-usecases/#community-evidence-loop) | A privacy-checked contribution pack, derived evidence level, share card, and credited PR path |
@@ -86,7 +86,7 @@ in-toto statement, and an explicitly experimental, non-certifying OSCAL 1.1.3-sh
 Results export. It does not verify the approver's identity, establish production safety, authorize
 deployment, certify compliance, or grant an ATO.
 
-Four **[answer-free reproduction challenges](reproduction-challenges/)** now let outside forks test
+Four **[oracle-free reproduction challenges](reproduction-challenges/)** now let outside forks test
 portable agent authority, distribution restoration, pharmaceutical batch disposition, and the
 A2A-to-MCP authority relay without receiving gold answers. The hidden source suites and oracles
 are excluded from Git; public files

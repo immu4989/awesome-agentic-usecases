@@ -57,7 +57,7 @@ symlinks, challenge closure or supersession, missing tasks, and unfinished `TODO
    with the fork workflow URL and submission digest. Do not send an oracle, raw trace, identity
    document, credential, target, personal data, or confidential relationship evidence.
 
-The workflow never receives the oracle. It validates the answer-free challenge and your declared
+The workflow never receives the oracle. It validates the oracle-free challenge and your declared
 public response, binds the submission to the challenge digest, creates a SHA-256 checksum, and
 generates a GitHub Artifact Attestation. It runs only on manual dispatch; upstream pull requests do
 not execute contributor adapters or responses.
