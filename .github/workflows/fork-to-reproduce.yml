@@ -3,16 +3,8 @@ name: Fork-to-Reproduce submission
 on:
   workflow_dispatch:
     inputs:
-      challenge:
-        description: Open challenge_id from reproduction-challenges/campaign.json
-        required: true
-        type: string
-      responses_path:
-        description: Response JSON path below your checkout
-        required: true
-        type: string
-      metadata_path:
-        description: Public reproduction metadata JSON path below your checkout
+      workspace_path:
+        description: Prepared workspace path below your checkout (contains .aau/, responses.json, metadata.json)
         required: true
         type: string
 
@@ -26,9 +18,7 @@ jobs:
     name: Validate, bind, and attest the answer-free submission
     runs-on: ubuntu-latest
     env:
-      AAU_CHALLENGE_ID: ${{ inputs.challenge }}
-      AAU_RESPONSES_PATH: ${{ inputs.responses_path }}
-      AAU_METADATA_PATH: ${{ inputs.metadata_path }}
+      AAU_WORKSPACE_PATH: ${{ inputs.workspace_path }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -38,13 +28,11 @@ jobs:
           python-version: "3.12"
       - name: Verify that every public challenge remains answer-free
         run: python reproduction-challenges/submit.py verify-campaign
-      - name: Build the challenge-bound public submission
+      - name: Verify workspace origin and build the challenge-bound public submission
         run: |
           mkdir -p .dist
-          python reproduction-challenges/submit.py build \
-            --challenge-id "$AAU_CHALLENGE_ID" \
-            --responses "$AAU_RESPONSES_PATH" \
-            --metadata "$AAU_METADATA_PATH" \
+          python reproduction-challenges/submit.py build-prepared \
+            "$AAU_WORKSPACE_PATH" \
             --out .dist/reproduction-submission.json
           sha256sum .dist/reproduction-submission.json > .dist/SHA256SUMS
       - name: Attest the exact submission bytes in this fork

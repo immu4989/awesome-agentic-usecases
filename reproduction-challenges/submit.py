@@ -468,6 +468,15 @@ def check_prepared(workspace: Path) -> dict:
     return module.build_submission(challenge, responses, metadata)
 
 
+def build_prepared(workspace: Path, out: Path) -> dict:
+    submission = check_prepared(workspace)
+    if out.exists() or out.is_symlink():
+        raise ValueError(f"refusing to overwrite prepared submission: {out}")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(submission, indent=2) + "\n")
+    return submission
+
+
 def verify_campaign() -> dict:
     module = exchange_module()
     campaign = load_public(HERE / "campaign.json")
@@ -558,6 +567,9 @@ def parser() -> argparse.ArgumentParser:
     prepare.add_argument("--out", type=Path, required=True)
     checking = sub.add_parser("check-prepared")
     checking.add_argument("workspace", type=Path)
+    prepared_build = sub.add_parser("build-prepared")
+    prepared_build.add_argument("workspace", type=Path)
+    prepared_build.add_argument("--out", type=Path, required=True)
     build = sub.add_parser("build")
     build.add_argument("--challenge-id", required=True)
     build.add_argument("--responses", required=True)
@@ -604,6 +616,12 @@ def main() -> int:
             print(
                 f"OK: prepared response is structurally ready; submission digest will be "
                 f"{submission['submission_sha256']}."
+            )
+        elif args.command == "build-prepared":
+            submission = build_prepared(args.workspace, args.out)
+            print(
+                f"OK: origin-verified submission {submission['submission_sha256']} "
+                f"written to {args.out}."
             )
         elif args.command == "build":
             submission = build_submission(

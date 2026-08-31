@@ -104,6 +104,9 @@ def test_fork_intake_derives_open_ids_instead_of_copying_a_stale_list():
     assert "type: string" in workflow
     assert "type: choice" not in workflow
     assert "portable-agent-assurance-2026-01" not in workflow
+    assert "workspace_path:" in workflow and "build-prepared" in workflow
+    assert "responses_path:" not in workflow and "metadata_path:" not in workflow
+    assert "AAU_CHALLENGE_ID" not in workflow
     challenge_block = issue_form.split("id: challenge", 1)[1].split("validations:", 1)[0]
     assert "Open challenge ID" in challenge_block
     assert "options:" not in challenge_block
@@ -162,6 +165,15 @@ def test_prepared_workspace_is_oracle_free_current_and_tamper_evident(tmp_path):
     submission = module.check_prepared(workspace)
     assert submission["challenge_sha256"] == origin["challenge_sha256"]
     assert len(submission["submission_sha256"]) == 64
+    submission_path = tmp_path / "submission.json"
+    built = module.build_prepared(workspace, submission_path)
+    assert json.loads(submission_path.read_text()) == built == submission
+    try:
+        module.build_prepared(workspace, submission_path)
+    except ValueError as exc:
+        assert "refusing to overwrite" in str(exc)
+    else:
+        raise AssertionError("build-prepared overwrote an existing submission")
 
     challenge_path = workspace / ".aau" / "challenge.json"
     challenge_path.write_bytes(challenge_path.read_bytes() + b" ")
