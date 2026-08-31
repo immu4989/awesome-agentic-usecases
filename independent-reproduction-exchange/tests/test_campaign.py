@@ -137,6 +137,7 @@ def test_fork_intake_derives_open_ids_instead_of_copying_a_stale_list():
     assert "workspace_path:" in workflow and "build-prepared" in workflow
     assert "responses_path:" not in workflow and "metadata_path:" not in workflow
     assert "AAU_CHALLENGE_ID" not in workflow
+    assert "subject-checksums: .dist/SHA256SUMS" in workflow
     challenge_block = issue_form.split("id: challenge", 1)[1].split("validations:", 1)[0]
     assert "Open challenge ID" in challenge_block
     assert "options:" not in challenge_block

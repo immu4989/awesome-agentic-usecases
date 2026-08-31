@@ -58,6 +58,18 @@ Primary sources:
 - [GitHub Artifact Attestations](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations)
 - [Sigstore attestation verification](https://docs.sigstore.dev/cosign/verifying/attestation/)
 
+### 2026-08-30 fork-attestation revision check
+
+- The pinned [`actions/attest` source](https://github.com/actions/attest/tree/c32b4b8b198b65d0bd9d63490e847ff7b53989d4)
+  accepts multiple subjects and documents `subject-checksums` for a tool-generated checksum file.
+  The fork workflow therefore uses its shipped `SHA256SUMS` as the sole subject inventory.
+- GitHub associates an attestation with the repository that initiated the workflow. Verification
+  instructions must name the participant fork, then separately compare the portable receipt with a
+  current upstream checkout; using the upstream repository identity would assert the wrong issuer.
+- Artifact provenance records repository, workflow, commit, event, and subject bytes. It does not
+  establish oracle secrecy, answer truth, organizational independence, or upstream approval; those
+  remain separate adjudication findings.
+
 The in-toto statement layer binds an immutable subject digest to a typed predicate. SLSA uses
 provenance to describe where, when, and how an artifact was produced. The Exchange emits an in-toto
 v1 statement whose subject digest is the exact `receipt.json` bytes and whose predicate binds the

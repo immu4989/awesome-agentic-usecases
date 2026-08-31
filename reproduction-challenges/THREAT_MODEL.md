@@ -10,7 +10,7 @@ provenance without executing pull-request code or granting upstream authority.
 |---|---|---|
 | Public challenge origin | Protected `.aau` copies are compared byte-for-byte with the current upstream campaign | That the upstream challenge is correct, complete, or fit for deployment |
 | Hidden oracle | Only commitments appear in the public campaign and prepared workspace | That a participant did not obtain the oracle elsewhere |
-| Submission bytes | SHA-256 plus GitHub Artifact Attestation binds the artifact and verification receipt to a fork workflow run | That answers are true, independently produced, or endorsed upstream |
+| Submission bytes | One checksum inventory names both files and drives their multi-subject GitHub Artifact Attestation | That answers are true, independently produced, or endorsed upstream |
 | Campaign state | The campaign lock binds both registries and every challenge/template byte | Confidentiality, availability, or the safety of code changed in a fork |
 | Independence claim | Distinct role commitments plus separate human relationship review | Cryptographic proof of organizational or personal independence |
 
@@ -35,7 +35,8 @@ provenance without executing pull-request code or granting upstream authority.
 3. consumes no GitHub secret and does not persist checkout credentials;
 4. passes the untrusted input once through an environment variable and quotes it at execution;
 5. runs campaign verification and protected-origin `build-prepared`; and
-6. pins every third-party Action to a full 40-character commit SHA.
+6. derives attestation subjects from the same `SHA256SUMS` shipped to reviewers; and
+7. pins every third-party Action to a full 40-character commit SHA.
 
 The workspace verifier also rejects checkout escape, symbolic links, protected-byte drift, stale or
 closed challenges, changed task sets, oversized JSON, unfinished templates, and destructive output

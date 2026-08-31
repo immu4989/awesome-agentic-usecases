@@ -106,7 +106,8 @@ the harness API is what is versioned; use cases are additive.
   model separates byte provenance from independence, truth, oracle secrecy, and upstream approval.
   Each fork bundle now includes an attested portable receipt binding the submission to the exact
   campaign lock and reviewed workflow-policy bytes. A fail-closed verifier and fork-specific
-  procedure recompute every binding instead of asking reviewers to inspect JSON by eye.
+  procedure recompute every binding instead of asking reviewers to inspect JSON by eye. The shipped
+  checksum inventory is also the attestation's subject inventory, preventing provenance drift.
 
 - **Artifact-derived independent reproduction ledger** — the public count now equals the number of
   accepted Exchange packs that recompute to `independence_reviewed`, bind the current challenge,

@@ -130,6 +130,8 @@ def validate_fork_workflow_text(body: str) -> None:
     for command in ("verify-campaign", "build-prepared", "build-receipt"):
         if command not in body:
             raise ValueError(f"fork workflow must run {command}")
+    if "subject-checksums: .dist/SHA256SUMS" not in body:
+        raise ValueError("fork attestation subjects must derive from the emitted checksum inventory")
     action_refs = re.findall(r"(?m)^\s*-?\s*uses:\s*([^\s#]+)", body)
     if not action_refs or any(
         re.fullmatch(r"[^@]+@[0-9a-f]{40}", ref) is None for ref in action_refs
