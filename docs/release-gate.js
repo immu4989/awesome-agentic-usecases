@@ -28,19 +28,46 @@
     if (!target) return;
     target.replaceChildren();
     challenges.forEach((challenge) => {
-      const link = document.createElement("a");
-      link.href = `https://github.com/immu4989/awesome-agentic-usecases/tree/main/reproduction-challenges/${challenge.path.split("/")[0]}`;
-      if (challenge.status === "closed") link.classList.add("is-closed");
+      const card = document.createElement("article");
+      card.className = "release-challenge-card";
+      if (challenge.status === "closed") card.classList.add("is-closed");
       const state = document.createElement("span");
       state.textContent = `${challenge.task_count} HIDDEN-ORACLE TASKS / ${challenge.status}`;
       const title = document.createElement("b");
       title.textContent = challenge.title;
-      const action = document.createElement("small");
-      action.textContent = challenge.status === "closed"
-        ? "Historical artifact · submissions disabled. ↗"
-        : "Fork. Run. Submit attested bytes. ↗";
-      link.append(state, title, action);
-      target.append(link);
+      const command = `python3 reproduction-challenges/submit.py prepare --challenge-id ${challenge.challenge_id} --out my-reproduction`;
+      const controls = document.createElement("div");
+      controls.className = "release-challenge-actions";
+      const inspect = document.createElement("a");
+      inspect.href = `https://github.com/immu4989/awesome-agentic-usecases/tree/main/reproduction-challenges/${challenge.path.split("/")[0]}`;
+      inspect.textContent = challenge.status === "closed" ? "Inspect history ↗" : "Inspect challenge ↗";
+      controls.append(inspect);
+      card.append(state, title);
+      if (challenge.status === "open") {
+        const commandNode = document.createElement("code");
+        commandNode.textContent = command;
+        const copy = document.createElement("button");
+        copy.type = "button";
+        copy.textContent = "Copy prepare command";
+        copy.setAttribute("aria-label", `Copy prepare command for ${challenge.title}`);
+        copy.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(command);
+            copy.textContent = "Copied";
+            window.setTimeout(() => { copy.textContent = "Copy prepare command"; }, 1600);
+          } catch {
+            copy.textContent = "Select the command above";
+          }
+        });
+        controls.append(copy);
+        card.append(commandNode);
+      } else {
+        const note = document.createElement("small");
+        note.textContent = "Source-superseded artifact · new submissions disabled.";
+        card.append(note);
+      }
+      card.append(controls);
+      target.append(card);
     });
   }
 

@@ -92,8 +92,8 @@ def main() -> None:
         'id="release-gate"',
         "Ship evidence,",
         "not confidence.",
-        'href="release-gate.css?v=4"',
-        'src="release-gate.js?v=5"',
+        'href="release-gate.css?v=5"',
+        'src="release-gate.js?v=6"',
         'id="agent-capability-bom"',
         'id="release-bom-conformance-status"',
         'id="authority-conformance"',
@@ -107,6 +107,8 @@ def main() -> None:
     browser_js = (DOCS / "release-gate.js").read_text()
     if "fetch(\"release-gate-data.json\")" not in browser_js:
         raise SystemExit("release-operations browser surface is not bound to generated evidence")
+    if "Copy prepare command" not in browser_js or "submit.py prepare --challenge-id" not in browser_js:
+        raise SystemExit("open challenge cards are missing the oracle-free prepare command")
     subprocess.run(["node", "--check", str(DOCS / "release-gate.js")], check=True)
     print("Agent release, reproduction, incident, freshness, and browser evidence are current")
 

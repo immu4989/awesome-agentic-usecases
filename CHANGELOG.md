@@ -125,6 +125,9 @@ the harness API is what is versioned; use cases are additive.
   around an oracle-free, manifest-bound `.aau` origin; `check-prepared` detects protected-byte drift,
   symlinks, source-suite/challenge changes, closure, missing tasks, and unfinished templates before
   users spend a GitHub Actions run.
+- **Launch-ready challenge cards** — every open challenge on the live site now shows its exact
+  oracle-free `prepare` command with an accessible copy control and direct inspection link. Closed
+  history is visually subdued and cannot present a runnable action.
 
 - **Privacy-bounded Cross-protocol Authority Trace** — the exact Authority Relay receipt now
   projects into 25 synthetic traces and 52 spans using W3C-shaped trace context and a pinned
