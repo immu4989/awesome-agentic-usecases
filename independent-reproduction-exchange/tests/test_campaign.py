@@ -245,6 +245,17 @@ def test_prepared_workspace_is_oracle_free_current_and_tamper_evident(tmp_path):
         (ROOT / ".github" / "workflows" / "fork-to-reproduce.yml").read_bytes()
     ).hexdigest()
     assert all(receipt["boundary"].values())
+    assert module.verify_verification_receipt(receipt_path, submission_path) == receipt
+    changed_receipt = json.loads(receipt_path.read_text())
+    changed_receipt["campaign_lock_sha256"] = "0" * 64
+    changed_path = tmp_path / "changed-receipt.json"
+    changed_path.write_text(json.dumps(changed_receipt))
+    try:
+        module.verify_verification_receipt(changed_path, submission_path)
+    except ValueError as exc:
+        assert "does not bind" in str(exc)
+    else:
+        raise AssertionError("a receipt with a false campaign lock was accepted")
     try:
         module.build_prepared(workspace, submission_path)
     except ValueError as exc:

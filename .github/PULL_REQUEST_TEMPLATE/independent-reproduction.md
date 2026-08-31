@@ -4,12 +4,16 @@
 - Accepted contribution issue:
 - Fork workflow run:
 - Submission SHA-256:
+- Verification receipt SHA-256:
+- Verified fork attestation repository:
 - Separate reviewer commitment:
 - Adjudicated pack path:
 
 ### Required verification
 
 - [ ] `python reproduction-challenges/submit.py verify-campaign`
+- [ ] Both subject attestations and `SHA256SUMS` verify using the fork repository identity.
+- [ ] `python reproduction-challenges/submit.py verify-receipt --receipt PATH --submission PATH` passes against the current upstream checkout.
 - [ ] The submission was frozen before oracle reveal.
 - [ ] `aau-reproduction verify-pack PATH` passes.
 - [ ] The three role commitments are distinct.

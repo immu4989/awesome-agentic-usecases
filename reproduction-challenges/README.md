@@ -51,7 +51,8 @@ symlinks, challenge closure or supersession, missing tasks, and unfinished `TODO
    **Actions → Fork-to-Reproduce submission → Run workflow** and enter its directory path.
 6. The workflow runs `build-prepared`, rechecking protected origin bytes and current campaign
    status immediately before it builds and attests the submission.
-7. Download the attested `aau-reproduction-submission` artifact.
+7. Download the attested `aau-reproduction-submission` artifact and follow the
+   [verification procedure](RELEASE_VERIFICATION.md) before sharing its digest.
 8. Open the [reproduction contribution issue](https://github.com/immu4989/awesome-agentic-usecases/issues/new?template=independent-reproduction.yml)
    with the fork workflow URL and submission digest. Do not send an oracle, raw trace, identity
    document, credential, target, personal data, or confidential relationship evidence.

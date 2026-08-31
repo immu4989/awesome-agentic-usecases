@@ -643,6 +643,42 @@ def build_verification_receipt(workspace: Path, out: Path) -> dict:
     return receipt
 
 
+def verify_verification_receipt(receipt_path: Path, submission_path: Path) -> dict:
+    module = exchange_module()
+    verify_campaign()
+    receipt = load_public(receipt_path)
+    submission = load_public(submission_path)
+    if set(receipt) != {
+        "receipt_version", "challenge_id", "challenge_sha256", "submission_sha256",
+        "campaign_lock_sha256", "fork_workflow_sha256", "boundary",
+    } or receipt["receipt_version"] != "aau-reproduction-verification-receipt/1.0":
+        raise ValueError("verification receipt fields or version differ from the 1.0 contract")
+    entry = campaign_entry(receipt["challenge_id"])
+    if entry["status"] != "open":
+        raise ValueError("verification receipt challenge is no longer open")
+    challenge = load_public(safe_campaign_path(entry["path"]))
+    module.validate_submission(submission, challenge)
+    expected = {
+        "challenge_sha256": challenge["challenge_sha256"],
+        "submission_sha256": submission["submission_sha256"],
+        "campaign_lock_sha256": load_public(HERE / "campaign-lock.json")["lock_sha256"],
+        "fork_workflow_sha256": hashlib.sha256(FORK_WORKFLOW_PATH.read_bytes()).hexdigest(),
+    }
+    if any(receipt[key] != value for key, value in expected.items()):
+        raise ValueError("verification receipt does not bind the current submitted artifacts")
+    if (
+        not isinstance(receipt["boundary"], dict)
+        or set(receipt["boundary"]) != {
+            "origin_verified_against_checkout", "workflow_policy_verified",
+            "human_independence_review_required", "not_truth_or_oracle_secrecy_proof",
+            "not_upstream_endorsement_or_deployment_authority",
+        }
+        or any(value is not True for value in receipt["boundary"].values())
+    ):
+        raise ValueError("verification receipt boundaries must be complete and true")
+    return receipt
+
+
 def verify_campaign(check_lock: bool = True) -> dict:
     module = exchange_module()
     verify_fork_workflow()
@@ -746,6 +782,9 @@ def parser() -> argparse.ArgumentParser:
     receipt = sub.add_parser("build-receipt")
     receipt.add_argument("workspace", type=Path)
     receipt.add_argument("--out", type=Path, required=True)
+    verify_receipt = sub.add_parser("verify-receipt")
+    verify_receipt.add_argument("--receipt", type=Path, required=True)
+    verify_receipt.add_argument("--submission", type=Path, required=True)
     build = sub.add_parser("build")
     build.add_argument("--challenge-id", required=True)
     build.add_argument("--responses", required=True)
@@ -813,6 +852,12 @@ def main() -> int:
             print(
                 f"OK: verification receipt for {receipt['submission_sha256']} "
                 f"written to {args.out}."
+            )
+        elif args.command == "verify-receipt":
+            receipt = verify_verification_receipt(args.receipt, args.submission)
+            print(
+                f"OK: submission {receipt['submission_sha256']} is bound to the current "
+                "campaign and reviewed workflow policy."
             )
         elif args.command == "build":
             submission = build_submission(
