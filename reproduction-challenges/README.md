@@ -43,7 +43,7 @@ symlinks, challenge closure or supersession, missing tasks, and unfinished `TODO
 3. Read only `.aau/challenge.json` and its named public sources.
 4. Replace every `TODO` in `responses.json` and `metadata.json`. Generate a private random role
    secret, publish only its SHA-256 commitment, and retain the role mapping outside the public pack.
-5. Run `check-prepared`, commit the answer-free workspace to your fork, then open
+5. Run `check-prepared`, commit the oracle-free workspace to your fork, then open
    **Actions → Fork-to-Reproduce submission → Run workflow** and enter its directory path.
 6. The workflow runs `build-prepared`, rechecking protected origin bytes and current campaign
    status immediately before it builds and attests the submission.

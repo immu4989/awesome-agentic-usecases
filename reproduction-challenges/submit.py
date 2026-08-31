@@ -445,7 +445,7 @@ def prepare_workspace(challenge_id: str, out: Path) -> dict:
         ],
     }
     readme = (
-        "# Answer-free reproduction workspace\n\n"
+        "# Oracle-free reproduction workspace\n\n"
         f"Challenge: `{challenge_id}`. Read `.aau/challenge.json` and its official sources, then "
         "replace every `TODO` in `responses.json` and `metadata.json`. Do not edit `.aau/`; it "
         "binds the exact upstream challenge and templates.\n\n"
@@ -641,7 +641,7 @@ def build_submission(challenge_id: str, responses_path: str, metadata_path: str,
 
 
 def parser() -> argparse.ArgumentParser:
-    root = argparse.ArgumentParser(description="Build an answer-free AAU reproduction submission")
+    root = argparse.ArgumentParser(description="Build an oracle-free AAU reproduction submission")
     sub = root.add_subparsers(dest="command", required=True)
     sub.add_parser("verify-campaign")
     lock = sub.add_parser("write-lock")
@@ -704,7 +704,7 @@ def main() -> int:
         elif args.command == "prepare":
             origin = prepare_workspace(args.challenge_id, args.out)
             print(
-                f"OK: answer-free workspace for {origin['challenge_id']} written to {args.out}."
+                f"OK: oracle-free workspace for {origin['challenge_id']} written to {args.out}."
             )
         elif args.command == "check-prepared":
             submission = check_prepared(args.workspace)

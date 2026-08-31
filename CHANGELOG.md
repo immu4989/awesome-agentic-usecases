@@ -140,6 +140,9 @@ the harness API is what is versioned; use cases are additive.
 - **Raw-byte registry integrity** — campaign verification hashes the committed registry bytes, not
   a normalized parse, so even whitespace-only drift is visible; proposed acceptance files retain
   the same exact-byte semantics before they exist in the checkout.
+- **All-challenge launch regression** — CI now generates and origin-verifies a workspace for every
+  open challenge, checks exact task coverage, and scans all starter files for forbidden gold fields.
+  User workspaces are consistently named oracle-free rather than inaccurately answer-free.
 
 - **Privacy-bounded Cross-protocol Authority Trace** — the exact Authority Relay receipt now
   projects into 25 synthetic traces and 52 spans using W3C-shaped trace context and a pinned

@@ -236,6 +236,25 @@ def test_prepared_workspace_is_oracle_free_current_and_tamper_evident(tmp_path):
         raise AssertionError("a self-consistent but non-upstream template was accepted")
 
 
+def test_every_open_challenge_produces_a_current_oracle_free_workspace(tmp_path):
+    module = campaign_module()
+    for entry in module.open_challenges():
+        workspace = tmp_path / entry["challenge_id"]
+        origin = module.prepare_workspace(entry["challenge_id"], workspace)
+        checked_origin, challenge = module.verify_prepared_origin(workspace)
+        responses = json.loads((workspace / "responses.json").read_text())
+        assert checked_origin == origin
+        assert len(challenge["tasks"]) == entry["task_count"]
+        assert {row["task_id"] for row in responses["responses"]} == {
+            row["task_id"] for row in challenge["tasks"]
+        }
+        serialized = "\n".join(
+            path.read_text() for path in workspace.rglob("*") if path.is_file()
+        )
+        assert "gold_outcome" not in serialized
+        assert "gold_actions" not in serialized
+
+
 def test_prepare_rejects_closed_challenge(tmp_path):
     module = campaign_module()
     try:

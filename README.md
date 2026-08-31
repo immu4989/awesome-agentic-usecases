@@ -93,7 +93,9 @@ are excluded from Git; public files
 contain only task inputs and oracle commitments. Accepted independent results are derived from
 fully verified Exchange packs in a public registry, never from a self-declared badge or manually
 inflated counter; a non-mutating planner prepares the challenge-close and registry transition for
-human review. The **[Agent Incident Exchange](agent-incident-exchange/)**
+human review. Outside teams can now create a current, manifest-bound, oracle-free workspace with
+`python3 reproduction-challenges/submit.py prepare --challenge-id ID --out my-reproduction`.
+The **[Agent Incident Exchange](agent-incident-exchange/)**
 turns public or synthetic lessons into clean-twin regressions and interoperable findings, while the
 **[Policy Freshness Radar](policy-freshness/)** watches ten official source baselines and now
 maps their exact revisions to ten implementation-evidence bindings. Its compatibility ledger
