@@ -1,4 +1,5 @@
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
 
@@ -106,6 +107,103 @@ def test_fork_intake_derives_open_ids_instead_of_copying_a_stale_list():
     challenge_block = issue_form.split("id: challenge", 1)[1].split("validations:", 1)[0]
     assert "Open challenge ID" in challenge_block
     assert "options:" not in challenge_block
+
+
+def test_prepared_workspace_is_oracle_free_current_and_tamper_evident(tmp_path):
+    module = campaign_module()
+    workspace = tmp_path / "relay-reproduction"
+    origin = module.prepare_workspace(
+        "a2a-mcp-authority-relay-2026-01", workspace
+    )
+    assert origin["challenge_id"] == "a2a-mcp-authority-relay-2026-01"
+    assert set(path.name for path in workspace.iterdir()) == {
+        ".aau", "README.md", "metadata.json", "responses.json",
+    }
+    public_text = "\n".join(
+        path.read_text()
+        for path in workspace.rglob("*")
+        if path.is_file()
+    )
+    assert "gold_outcome" not in public_text
+    assert "gold_actions" not in public_text
+    try:
+        module.check_prepared(workspace)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("an unfinished workspace was treated as ready")
+
+    responses_path = workspace / "responses.json"
+    responses = json.loads(responses_path.read_text())
+    responses["system_id"] = "outside-system-test"
+    responses["adapter_description"] = "Public synthetic test adapter."
+    for row in responses["responses"]:
+        row.update({
+            "outcome": "investigate",
+            "actions": ["route-review"],
+            "source_refs": [],
+            "human_escalation": True,
+            "service_preserved": True,
+        })
+    responses_path.write_text(json.dumps(responses, indent=2) + "\n")
+    metadata_path = workspace / "metadata.json"
+    metadata = json.loads(metadata_path.read_text())
+    metadata.update({
+        "submission_id": "outside-system-test-2026-08-30",
+        "producer_commitment_sha256": "d" * 64,
+        "executed_on": "2026-08-30",
+    })
+    metadata["environment"].update({
+        "runtime": "Python 3.12",
+        "runner": "local synthetic test",
+        "adapter_version": "outside-system-test/1.0",
+    })
+    metadata_path.write_text(json.dumps(metadata, indent=2) + "\n")
+    submission = module.check_prepared(workspace)
+    assert submission["challenge_sha256"] == origin["challenge_sha256"]
+    assert len(submission["submission_sha256"]) == 64
+
+    challenge_path = workspace / ".aau" / "challenge.json"
+    challenge_path.write_bytes(challenge_path.read_bytes() + b" ")
+    try:
+        module.check_prepared(workspace)
+    except ValueError as exc:
+        assert "origin bytes do not match" in str(exc)
+    else:
+        raise AssertionError("protected challenge tampering was accepted")
+
+    forged = tmp_path / "forged-origin"
+    module.prepare_workspace("a2a-mcp-authority-relay-2026-01", forged)
+    protected_template = forged / ".aau" / "responses.template.json"
+    protected_template.write_bytes(protected_template.read_bytes() + b" ")
+    manifest_path = forged / ".aau" / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    template_entry = next(
+        item for item in manifest["files"]
+        if item["path"] == "responses.template.json"
+    )
+    payload = protected_template.read_bytes()
+    template_entry["sha256"] = hashlib.sha256(payload).hexdigest()
+    template_entry["bytes"] = len(payload)
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+    try:
+        module.verify_prepared_origin(forged)
+    except ValueError as exc:
+        assert "differs from the current upstream template" in str(exc)
+    else:
+        raise AssertionError("a self-consistent but non-upstream template was accepted")
+
+
+def test_prepare_rejects_closed_challenge(tmp_path):
+    module = campaign_module()
+    try:
+        module.prepare_workspace(
+            "portable-agent-assurance-2026-01", tmp_path / "closed"
+        )
+    except ValueError as exc:
+        assert "closed" in str(exc)
+    else:
+        raise AssertionError("a closed challenge produced a new workspace")
 
 
 def test_templates_cannot_accidentally_validate_as_submissions():

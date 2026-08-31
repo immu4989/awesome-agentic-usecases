@@ -121,6 +121,10 @@ the harness API is what is versioned; use cases are additive.
 - **Challenge-to-source freshness closure** — the exact 406,665-byte NIST NCCoE agent-identity paper
   joins the watched registry, and NIST/MCP/A2A owner paths now name the current portable and relay
   challenges. Ten source baselines map to ten revision bindings with zero inferred policy meaning.
+- **One-command reproduction workspace** — `prepare` creates editable response and metadata files
+  around an oracle-free, manifest-bound `.aau` origin; `check-prepared` detects protected-byte drift,
+  symlinks, source-suite/challenge changes, closure, missing tasks, and unfinished templates before
+  users spend a GitHub Actions run.
 
 - **Privacy-bounded Cross-protocol Authority Trace** — the exact Authority Relay receipt now
   projects into 25 synthetic traces and 52 spans using W3C-shaped trace context and a pinned

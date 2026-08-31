@@ -25,6 +25,7 @@ REGISTRY_BOUNDARIES = {
     "not_certification_or_field_effectiveness",
 }
 ENTRY_ID = re.compile(r"[a-z0-9][a-z0-9-]{2,79}")
+WORKSPACE_VERSION = "aau-reproduction-workspace/1.0"
 
 
 def exchange_module():
@@ -320,6 +321,153 @@ def plan_acceptance(
     return plan
 
 
+def prepare_workspace(challenge_id: str, out: Path) -> dict:
+    module = exchange_module()
+    verify_campaign()
+    entry = campaign_entry(challenge_id)
+    if entry["status"] != "open":
+        raise ValueError("the selected challenge is closed")
+    if out.exists() or out.is_symlink():
+        raise ValueError(f"refusing to overwrite challenge workspace: {out}")
+    challenge_path = safe_campaign_path(entry["path"])
+    responses_path = safe_campaign_path(entry["responses_template"])
+    metadata_path = safe_campaign_path(entry["metadata_template"])
+    challenge = load_public(challenge_path)
+    module.validate_challenge(challenge)
+    origin = {
+        "workspace_version": WORKSPACE_VERSION,
+        "challenge_id": challenge_id,
+        "challenge_sha256": challenge["challenge_sha256"],
+        "oracle_commitment_sha256": challenge["oracle_commitment_sha256"],
+        "source_suite_sha256": challenge["source_suite"]["sha256"],
+        "upstream_paths": {
+            "challenge": entry["path"],
+            "responses_template": entry["responses_template"],
+            "metadata_template": entry["metadata_template"],
+        },
+    }
+    origin_bytes = (json.dumps(origin, indent=2) + "\n").encode()
+    protected = {
+        "challenge.json": challenge_path.read_bytes(),
+        "responses.template.json": responses_path.read_bytes(),
+        "metadata.template.json": metadata_path.read_bytes(),
+        "origin.json": origin_bytes,
+    }
+    manifest = {
+        "manifest_version": WORKSPACE_VERSION,
+        "files": [
+            {
+                "path": name,
+                "sha256": hashlib.sha256(payload).hexdigest(),
+                "bytes": len(payload),
+            }
+            for name, payload in sorted(protected.items())
+        ],
+    }
+    readme = (
+        "# Answer-free reproduction workspace\n\n"
+        f"Challenge: `{challenge_id}`. Read `.aau/challenge.json` and its official sources, then "
+        "replace every `TODO` in `responses.json` and `metadata.json`. Do not edit `.aau/`; it "
+        "binds the exact upstream challenge and templates.\n\n"
+        "Check locally with:\n\n"
+        "```bash\npython3 reproduction-challenges/submit.py check-prepared PATH\n```\n\n"
+        "Then run the Fork-to-Reproduce workflow with `PATH/responses.json` and "
+        "`PATH/metadata.json`. No oracle is included. This workspace is not certification, "
+        "independent adjudication, or field-effectiveness evidence.\n"
+    ).encode()
+    protected_dir = out / ".aau"
+    protected_dir.mkdir(parents=True)
+    for name, payload in protected.items():
+        (protected_dir / name).write_bytes(payload)
+    (protected_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (out / "responses.json").write_bytes(protected["responses.template.json"])
+    (out / "metadata.json").write_bytes(protected["metadata.template.json"])
+    (out / "README.md").write_bytes(readme)
+    verify_prepared_origin(out)
+    return origin
+
+
+def verify_prepared_origin(workspace: Path) -> tuple[dict, dict]:
+    module = exchange_module()
+    if workspace.is_symlink() or not workspace.is_dir():
+        raise ValueError("prepared workspace must be a real directory")
+    protected = workspace / ".aau"
+    if protected.is_symlink() or not protected.is_dir():
+        raise ValueError("prepared workspace is missing its protected origin directory")
+    manifest = load_public(protected / "manifest.json")
+    if set(manifest) != {"manifest_version", "files"} or manifest["manifest_version"] != WORKSPACE_VERSION:
+        raise ValueError("prepared workspace manifest is invalid")
+    expected = {
+        "challenge.json", "responses.template.json", "metadata.template.json", "origin.json",
+    }
+    if (
+        not isinstance(manifest["files"], list)
+        or any(not isinstance(item, dict) for item in manifest["files"])
+        or {item.get("path") for item in manifest["files"]} != expected
+        or {path.name for path in protected.iterdir()} != expected | {"manifest.json"}
+    ):
+        raise ValueError("prepared workspace protected file set is invalid")
+    for item in manifest["files"]:
+        if not isinstance(item, dict) or set(item) != {"path", "sha256", "bytes"}:
+            raise ValueError("prepared workspace manifest entry is invalid")
+        path = protected / item["path"]
+        if path.is_symlink() or not path.is_file():
+            raise ValueError("prepared workspace contains a missing or symbolic-link origin file")
+        payload = path.read_bytes()
+        if len(payload) != item["bytes"] or hashlib.sha256(payload).hexdigest() != item["sha256"]:
+            raise ValueError("prepared workspace origin bytes do not match the manifest")
+    origin = load_public(protected / "origin.json")
+    challenge = load_public(protected / "challenge.json")
+    module.validate_challenge(challenge)
+    if set(origin) != {
+        "workspace_version", "challenge_id", "challenge_sha256", "oracle_commitment_sha256",
+        "source_suite_sha256", "upstream_paths",
+    } or origin["workspace_version"] != WORKSPACE_VERSION:
+        raise ValueError("prepared workspace origin contract is invalid")
+    if (
+        origin["challenge_id"] != challenge["challenge_id"]
+        or origin["challenge_sha256"] != challenge["challenge_sha256"]
+        or origin["oracle_commitment_sha256"] != challenge["oracle_commitment_sha256"]
+        or origin["source_suite_sha256"] != challenge["source_suite"]["sha256"]
+    ):
+        raise ValueError("prepared workspace origin does not bind its challenge")
+    verify_campaign()
+    entry = campaign_entry(origin["challenge_id"])
+    current = load_public(safe_campaign_path(entry["path"]))
+    current_paths = {
+        "challenge": entry["path"],
+        "responses_template": entry["responses_template"],
+        "metadata_template": entry["metadata_template"],
+    }
+    if (
+        entry["status"] != "open"
+        or current["challenge_sha256"] != origin["challenge_sha256"]
+        or origin["upstream_paths"] != current_paths
+    ):
+        raise ValueError("prepared workspace challenge is closed or superseded")
+    upstream_bytes = {
+        "challenge.json": safe_campaign_path(entry["path"]).read_bytes(),
+        "responses.template.json": safe_campaign_path(entry["responses_template"]).read_bytes(),
+        "metadata.template.json": safe_campaign_path(entry["metadata_template"]).read_bytes(),
+    }
+    for name, payload in upstream_bytes.items():
+        if (protected / name).read_bytes() != payload:
+            raise ValueError("prepared workspace origin differs from the current upstream template")
+    return origin, challenge
+
+
+def check_prepared(workspace: Path) -> dict:
+    module = exchange_module()
+    _, challenge = verify_prepared_origin(workspace)
+    for name in ("responses.json", "metadata.json"):
+        path = workspace / name
+        if path.is_symlink() or not path.is_file():
+            raise ValueError(f"prepared workspace is missing a real {name}")
+    responses = load_public(workspace / "responses.json")
+    metadata = load_public(workspace / "metadata.json")
+    return module.build_submission(challenge, responses, metadata)
+
+
 def verify_campaign() -> dict:
     module = exchange_module()
     campaign = load_public(HERE / "campaign.json")
@@ -405,6 +553,11 @@ def parser() -> argparse.ArgumentParser:
     sub.add_parser("verify-campaign")
     listing = sub.add_parser("list-open")
     listing.add_argument("--json", action="store_true")
+    prepare = sub.add_parser("prepare")
+    prepare.add_argument("--challenge-id", required=True)
+    prepare.add_argument("--out", type=Path, required=True)
+    checking = sub.add_parser("check-prepared")
+    checking.add_argument("workspace", type=Path)
     build = sub.add_parser("build")
     build.add_argument("--challenge-id", required=True)
     build.add_argument("--responses", required=True)
@@ -441,6 +594,17 @@ def main() -> int:
                         f"{challenge['challenge_id']}\t{challenge['task_count']} tasks\t"
                         f"{challenge['title']}"
                     )
+        elif args.command == "prepare":
+            origin = prepare_workspace(args.challenge_id, args.out)
+            print(
+                f"OK: answer-free workspace for {origin['challenge_id']} written to {args.out}."
+            )
+        elif args.command == "check-prepared":
+            submission = check_prepared(args.workspace)
+            print(
+                f"OK: prepared response is structurally ready; submission digest will be "
+                f"{submission['submission_sha256']}."
+            )
         elif args.command == "build":
             submission = build_submission(
                 args.challenge_id, args.responses, args.metadata, args.out

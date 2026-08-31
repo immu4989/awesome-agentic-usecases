@@ -19,6 +19,20 @@ A2A `v1.0.1`, MCP `2026-07-28`, and the dated February 2026 NIST NCCoE paper.
 
 ## Reproduce one
 
+Fastest path—prepare an oracle-free workspace without copying files by hand:
+
+```bash
+python3 reproduction-challenges/submit.py prepare \
+  --challenge-id a2a-mcp-authority-relay-2026-01 \
+  --out my-reproduction
+```
+
+Edit `my-reproduction/responses.json` and `metadata.json`, leave its `.aau/` origin directory
+unchanged, then run `python3 reproduction-challenges/submit.py check-prepared my-reproduction`.
+The checker recomputes the protected origin manifest, embedded challenge digest, current campaign
+status, source-suite and oracle commitments, and final submission shape. It detects template drift,
+symlinks, challenge closure or supersession, missing tasks, and unfinished `TODO` values.
+
 1. Fork the repository.
 2. Run `python3 reproduction-challenges/submit.py list-open`, choose an open challenge, and read
    only its `challenge.json` plus the named public sources.
