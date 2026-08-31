@@ -100,6 +100,11 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
+- **Executable fork-workflow trust boundary** — campaign verification now rejects non-manual
+  triggers, expanded permissions, secret consumption, persisted checkout credentials, unquoted
+  workspace input, missing origin verification, and mutable Action references. A dedicated threat
+  model separates byte provenance from independence, truth, oracle secrecy, and upstream approval.
+
 - **Artifact-derived independent reproduction ledger** — the public count now equals the number of
   accepted Exchange packs that recompute to `independence_reviewed`, bind the current challenge,
   and have unique producer/submission commitments. Missing packs, path escapes, symlinks, digest

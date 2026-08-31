@@ -1,5 +1,9 @@
 # Fork-to-Reproduce Challenge Network
 
+Run a public, oracle-free challenge in a fork without granting the workflow deployment authority.
+The [threat model](THREAT_MODEL.md) defines the protected assets, attacker capabilities, executable
+workflow invariants, review obligations, and residual risks before you submit evidence.
+
 Four public challenges are open and one source-superseded artifact is retained as closed history.
 Their answer keys are committed by SHA-256 but are not in Git.
 Fork the repository, produce a challenge-bound submission, and use the dedicated workflow to attach

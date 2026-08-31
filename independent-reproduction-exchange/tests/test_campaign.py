@@ -142,6 +142,43 @@ def test_fork_intake_derives_open_ids_instead_of_copying_a_stale_list():
     assert "options:" not in challenge_block
 
 
+def test_fork_workflow_boundary_is_executable_policy():
+    module = campaign_module()
+    workflow = (ROOT / ".github" / "workflows" / "fork-to-reproduce.yml").read_text()
+    module.validate_fork_workflow_text(workflow)
+
+    unsafe_variants = {
+        "pull-request trigger": workflow.replace(
+            "  workflow_dispatch:", "  pull_request_target:\n  workflow_dispatch:"
+        ),
+        "inline push trigger": workflow.replace(
+            "  workflow_dispatch:", "  push: {}\n  workflow_dispatch:"
+        ),
+        "write permission": workflow.replace("contents: read", "contents: write"),
+        "persisted credentials": workflow.replace(
+            "persist-credentials: false", "persist-credentials: true"
+        ),
+        "secret consumption": workflow.replace(
+            "AAU_WORKSPACE_PATH: ${{ inputs.workspace_path }}",
+            "AAU_WORKSPACE_PATH: ${{ secrets.WORKSPACE_PATH }}",
+        ),
+        "unquoted input": workflow.replace(
+            '\"$AAU_WORKSPACE_PATH\"', "$AAU_WORKSPACE_PATH"
+        ),
+        "mutable action": workflow.replace(
+            "actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1",
+            "actions/setup-python@v6",
+        ),
+    }
+    for label, candidate in unsafe_variants.items():
+        try:
+            module.validate_fork_workflow_text(candidate)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(f"fork workflow accepted {label}")
+
+
 def test_prepared_workspace_is_oracle_free_current_and_tamper_evident(tmp_path):
     module = campaign_module()
     workspace = tmp_path / "relay-reproduction"

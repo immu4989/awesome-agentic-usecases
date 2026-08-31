@@ -138,7 +138,9 @@ Fork-to-Reproduce public challenge files intentionally exclude the hidden oracle
 private source suite or oracle to a fork, issue, artifact, cache, or workflow log. Manual workflow
 inputs are treated as untrusted repository paths and the workflow never executes pull-request
 code. GitHub Artifact Attestation binds bytes to a workflow identity; it does not prove the
-operator is independent or that the submitted claims are true.
+operator is independent or that the submitted claims are true. The dedicated
+[Fork-to-Reproduce threat model](reproduction-challenges/THREAT_MODEL.md) makes those workflow
+invariants executable and records the remaining human-review boundaries.
 
 The Agent Incident Exchange accepts public or synthetic records only and rejects credentials,
 personal data, targets, raw traces, and exploit instructions by contract. Its CSAF and OCSF files

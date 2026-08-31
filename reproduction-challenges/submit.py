@@ -27,6 +27,12 @@ REGISTRY_BOUNDARIES = {
 ENTRY_ID = re.compile(r"[a-z0-9][a-z0-9-]{2,79}")
 WORKSPACE_VERSION = "aau-reproduction-workspace/1.0"
 CAMPAIGN_LOCK_VERSION = "aau-reproduction-campaign-lock/1.0"
+FORK_WORKFLOW_PATH = ROOT / ".github" / "workflows" / "fork-to-reproduce.yml"
+FORK_WORKFLOW_PERMISSIONS = {
+    "contents: read",
+    "id-token: write",
+    "attestations: write",
+}
 
 
 def exchange_module():
@@ -85,6 +91,60 @@ def safe_accepted_path(value: str) -> Path:
     except ValueError as exc:
         raise ValueError("accepted reproduction packs must stay below accepted/") from exc
     return candidate
+
+
+def validate_fork_workflow_text(body: str) -> None:
+    """Fail closed if the public fork workflow widens its trust boundary."""
+    trigger_match = re.search(r"(?ms)^on:\n(?P<body>.*?)(?=^permissions:\n)", body)
+    if trigger_match is None:
+        raise ValueError("fork workflow must declare an explicit trigger block")
+    trigger_body = trigger_match.group("body")
+    trigger_names = set(re.findall(r"(?m)^ {2}([A-Za-z_][A-Za-z0-9_-]*):", trigger_body))
+    if trigger_names != {"workflow_dispatch"} or not re.search(
+        r"(?m)^ {4}inputs:\n {6}workspace_path:\n", trigger_body
+    ):
+        raise ValueError("fork workflow may be triggered only by manual workspace dispatch")
+
+    permissions_match = re.search(
+        r"(?ms)^permissions:\n(?P<body>.*?)(?=^jobs:\n)", body
+    )
+    if permissions_match is None:
+        raise ValueError("fork workflow must declare explicit permissions")
+    permissions = {
+        line.strip() for line in permissions_match.group("body").splitlines()
+        if line.strip()
+    }
+    if permissions != FORK_WORKFLOW_PERMISSIONS:
+        raise ValueError("fork workflow permissions differ from the reviewed minimum set")
+
+    if "${{ secrets." in body:
+        raise ValueError("fork workflow must not consume repository or environment secrets")
+    if "persist-credentials: false" not in body:
+        raise ValueError("fork workflow checkout credentials must not persist")
+    if body.count("${{ inputs.workspace_path }}") != 1 or not re.search(
+        r"(?m)^\s+AAU_WORKSPACE_PATH: \$\{\{ inputs\.workspace_path \}\}$", body
+    ):
+        raise ValueError("untrusted workspace input must enter only through the job environment")
+    if '"$AAU_WORKSPACE_PATH"' not in body:
+        raise ValueError("untrusted workspace path must remain quoted at the command boundary")
+    for command in ("verify-campaign", "build-prepared"):
+        if command not in body:
+            raise ValueError(f"fork workflow must run {command}")
+    action_refs = re.findall(r"(?m)^\s*-?\s*uses:\s*([^\s#]+)", body)
+    if not action_refs or any(
+        re.fullmatch(r"[^@]+@[0-9a-f]{40}", ref) is None for ref in action_refs
+    ):
+        raise ValueError("every fork workflow action must use an immutable commit SHA")
+
+
+def verify_fork_workflow() -> None:
+    if (
+        FORK_WORKFLOW_PATH.is_symlink()
+        or not FORK_WORKFLOW_PATH.is_file()
+        or FORK_WORKFLOW_PATH.stat().st_size > MAX_BYTES
+    ):
+        raise ValueError("fork workflow must be a bounded regular file")
+    validate_fork_workflow_text(FORK_WORKFLOW_PATH.read_text())
 
 
 def campaign_entry(challenge_id: str) -> dict:
@@ -559,6 +619,7 @@ def build_prepared(workspace: Path, out: Path) -> dict:
 
 def verify_campaign(check_lock: bool = True) -> dict:
     module = exchange_module()
+    verify_fork_workflow()
     campaign = load_public(HERE / "campaign.json")
     if set(campaign) != {
         "campaign_version",
@@ -678,7 +739,7 @@ def main() -> int:
             accepted = campaign["independently_reproduced_count"]
             open_count = sum(entry["status"] == "open" for entry in campaign["challenges"])
             print(
-                f"OK: {open_count} open answer-free challenges, "
+                f"OK: {open_count} open oracle-free challenges, "
                 f"{len(campaign['challenges'])} total artifacts, and "
                 f"{accepted} accepted independent reproductions verified."
             )
