@@ -235,6 +235,16 @@ def test_prepared_workspace_is_oracle_free_current_and_tamper_evident(tmp_path):
     submission_path = tmp_path / "submission.json"
     built = module.build_prepared(workspace, submission_path)
     assert json.loads(submission_path.read_text()) == built == submission
+    receipt_path = tmp_path / "verification-receipt.json"
+    receipt = module.build_verification_receipt(workspace, receipt_path)
+    assert receipt["submission_sha256"] == submission["submission_sha256"]
+    assert receipt["campaign_lock_sha256"] == module.load_public(
+        ROOT / "reproduction-challenges" / "campaign-lock.json"
+    )["lock_sha256"]
+    assert receipt["fork_workflow_sha256"] == hashlib.sha256(
+        (ROOT / ".github" / "workflows" / "fork-to-reproduce.yml").read_bytes()
+    ).hexdigest()
+    assert all(receipt["boundary"].values())
     try:
         module.build_prepared(workspace, submission_path)
     except ValueError as exc:

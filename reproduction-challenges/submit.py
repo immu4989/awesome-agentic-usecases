@@ -127,7 +127,7 @@ def validate_fork_workflow_text(body: str) -> None:
         raise ValueError("untrusted workspace input must enter only through the job environment")
     if '"$AAU_WORKSPACE_PATH"' not in body:
         raise ValueError("untrusted workspace path must remain quoted at the command boundary")
-    for command in ("verify-campaign", "build-prepared"):
+    for command in ("verify-campaign", "build-prepared", "build-receipt"):
         if command not in body:
             raise ValueError(f"fork workflow must run {command}")
     action_refs = re.findall(r"(?m)^\s*-?\s*uses:\s*([^\s#]+)", body)
@@ -617,6 +617,32 @@ def build_prepared(workspace: Path, out: Path) -> dict:
     return submission
 
 
+def build_verification_receipt(workspace: Path, out: Path) -> dict:
+    submission = check_prepared(workspace)
+    origin = load_public(workspace / ".aau" / "origin.json")
+    campaign_lock = load_public(HERE / "campaign-lock.json")
+    receipt = {
+        "receipt_version": "aau-reproduction-verification-receipt/1.0",
+        "challenge_id": origin["challenge_id"],
+        "challenge_sha256": submission["challenge_sha256"],
+        "submission_sha256": submission["submission_sha256"],
+        "campaign_lock_sha256": campaign_lock["lock_sha256"],
+        "fork_workflow_sha256": hashlib.sha256(FORK_WORKFLOW_PATH.read_bytes()).hexdigest(),
+        "boundary": {
+            "origin_verified_against_checkout": True,
+            "workflow_policy_verified": True,
+            "human_independence_review_required": True,
+            "not_truth_or_oracle_secrecy_proof": True,
+            "not_upstream_endorsement_or_deployment_authority": True,
+        },
+    }
+    if out.exists() or out.is_symlink():
+        raise ValueError(f"refusing to overwrite verification receipt: {out}")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(receipt, indent=2) + "\n")
+    return receipt
+
+
 def verify_campaign(check_lock: bool = True) -> dict:
     module = exchange_module()
     verify_fork_workflow()
@@ -717,6 +743,9 @@ def parser() -> argparse.ArgumentParser:
     prepared_build = sub.add_parser("build-prepared")
     prepared_build.add_argument("workspace", type=Path)
     prepared_build.add_argument("--out", type=Path, required=True)
+    receipt = sub.add_parser("build-receipt")
+    receipt.add_argument("workspace", type=Path)
+    receipt.add_argument("--out", type=Path, required=True)
     build = sub.add_parser("build")
     build.add_argument("--challenge-id", required=True)
     build.add_argument("--responses", required=True)
@@ -777,6 +806,12 @@ def main() -> int:
             submission = build_prepared(args.workspace, args.out)
             print(
                 f"OK: origin-verified submission {submission['submission_sha256']} "
+                f"written to {args.out}."
+            )
+        elif args.command == "build-receipt":
+            receipt = build_verification_receipt(args.workspace, args.out)
+            print(
+                f"OK: verification receipt for {receipt['submission_sha256']} "
                 f"written to {args.out}."
             )
         elif args.command == "build":

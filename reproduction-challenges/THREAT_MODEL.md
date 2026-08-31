@@ -10,7 +10,7 @@ provenance without executing pull-request code or granting upstream authority.
 |---|---|---|
 | Public challenge origin | Protected `.aau` copies are compared byte-for-byte with the current upstream campaign | That the upstream challenge is correct, complete, or fit for deployment |
 | Hidden oracle | Only commitments appear in the public campaign and prepared workspace | That a participant did not obtain the oracle elsewhere |
-| Submission bytes | SHA-256 plus GitHub Artifact Attestation binds the artifact to a fork workflow run | That answers are true, independently produced, or endorsed upstream |
+| Submission bytes | SHA-256 plus GitHub Artifact Attestation binds the artifact and verification receipt to a fork workflow run | That answers are true, independently produced, or endorsed upstream |
 | Campaign state | The campaign lock binds both registries and every challenge/template byte | Confidentiality, availability, or the safety of code changed in a fork |
 | Independence claim | Distinct role commitments plus separate human relationship review | Cryptographic proof of organizational or personal independence |
 
@@ -48,6 +48,8 @@ Fork owners control their repository and can change or bypass its workflow. An a
 their fork is evidence about the exact artifact and workflow identity shown by GitHub, not evidence
 that upstream ran or approved it. Review the attestation issuer, repository, workflow ref, commit,
 subject digest, campaign lock, and submitted role commitments before adjudication.
+The downloaded verification receipt carries the exact campaign-lock, workflow-policy, challenge,
+and submission digests; it is attested beside the submission so those review inputs remain portable.
 
 No repository control can prove that the oracle remained unknown, a transcript is exhaustive, role
 holders are independent, or evidence is truthful. Those remain explicit human-review findings.

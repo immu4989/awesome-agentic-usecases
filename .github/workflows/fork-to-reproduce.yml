@@ -34,16 +34,23 @@ jobs:
           python reproduction-challenges/submit.py build-prepared \
             "$AAU_WORKSPACE_PATH" \
             --out .dist/reproduction-submission.json
-          sha256sum .dist/reproduction-submission.json > .dist/SHA256SUMS
-      - name: Attest the exact submission bytes in this fork
+          python reproduction-challenges/submit.py build-receipt \
+            "$AAU_WORKSPACE_PATH" \
+            --out .dist/reproduction-verification.json
+          sha256sum .dist/reproduction-submission.json \
+            .dist/reproduction-verification.json > .dist/SHA256SUMS
+      - name: Attest the exact submission and verification receipt bytes in this fork
         uses: actions/attest@c32b4b8b198b65d0bd9d63490e847ff7b53989d4 # v4.0.0
         with:
-          subject-path: .dist/reproduction-submission.json
-      - name: Upload the submission and checksum
+          subject-path: |
+            .dist/reproduction-submission.json
+            .dist/reproduction-verification.json
+      - name: Upload the submission, verification receipt, and checksum
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: aau-reproduction-submission
           path: |
             .dist/reproduction-submission.json
+            .dist/reproduction-verification.json
             .dist/SHA256SUMS
           if-no-files-found: error
