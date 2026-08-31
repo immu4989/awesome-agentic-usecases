@@ -50,9 +50,18 @@ def test_campaign_lock_binds_registries_challenges_and_templates():
     }
     assert len(lock["artifacts"]) == 5
     assert all(len(item["files"]) == 3 for item in lock["artifacts"])
+    campaign_bytes = (ROOT / "reproduction-challenges" / "campaign.json").read_bytes()
+    registry_bytes = (
+        ROOT / "reproduction-challenges" / "accepted-reproductions.json"
+    ).read_bytes()
+    assert lock["campaign"]["sha256"] == hashlib.sha256(campaign_bytes).hexdigest()
+    assert lock["accepted_registry"]["sha256"] == hashlib.sha256(registry_bytes).hexdigest()
     changed = json.loads(json.dumps(campaign))
     changed["challenges"][0]["title"] += " changed"
-    assert module.build_campaign_lock(changed, registry)["lock_sha256"] != lock["lock_sha256"]
+    changed_bytes = (json.dumps(changed, indent=2) + "\n").encode()
+    assert module.build_campaign_lock(
+        changed, registry, campaign_payload=changed_bytes, registry_payload=registry_bytes
+    )["lock_sha256"] != lock["lock_sha256"]
 
 
 def test_authority_relay_challenge_is_current_and_cross_protocol():

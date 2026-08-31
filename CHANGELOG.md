@@ -137,6 +137,9 @@ the harness API is what is versioned; use cases are additive.
 - **Whole-campaign provenance lock** — one embedded digest now binds both registries and the exact
   challenge/response-template/metadata-template bytes for all five artifacts, plus their hidden
   oracle and source-suite commitments. Acceptance planning emits the next lock before publication.
+- **Raw-byte registry integrity** — campaign verification hashes the committed registry bytes, not
+  a normalized parse, so even whitespace-only drift is visible; proposed acceptance files retain
+  the same exact-byte semantics before they exist in the checkout.
 
 - **Privacy-bounded Cross-protocol Authority Trace** — the exact Authority Relay receipt now
   projects into 25 synthetic traces and 52 spans using W3C-shaped trace context and a pinned

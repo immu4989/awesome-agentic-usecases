@@ -122,7 +122,12 @@ def validate_challenge_sources(entry: dict, challenge: dict) -> None:
             raise ValueError("open challenges cannot cite a mutable GitHub branch URL")
 
 
-def build_campaign_lock(campaign: dict, registry: dict) -> dict:
+def build_campaign_lock(
+    campaign: dict,
+    registry: dict,
+    campaign_payload: bytes | None = None,
+    registry_payload: bytes | None = None,
+) -> dict:
     def record(path: str, payload: bytes) -> dict:
         return {
             "path": path,
@@ -148,8 +153,8 @@ def build_campaign_lock(campaign: dict, registry: dict) -> dict:
             "source_suite_sha256": challenge["source_suite"]["sha256"],
             "files": files,
         })
-    campaign_bytes = (json.dumps(campaign, indent=2) + "\n").encode()
-    registry_bytes = (json.dumps(registry, indent=2) + "\n").encode()
+    campaign_bytes = campaign_payload or (HERE / "campaign.json").read_bytes()
+    registry_bytes = registry_payload or (HERE / "accepted-reproductions.json").read_bytes()
     lock = {
         "lock_version": CAMPAIGN_LOCK_VERSION,
         "campaign_id": campaign["campaign_id"],
@@ -338,12 +343,16 @@ def plan_acceptance(
         proposed_registry,
         pack_overrides={pack_path: source_pack},
     )
-    proposed_lock = build_campaign_lock(proposed_campaign, proposed_registry)
-
     if out.exists() or out.is_symlink():
         raise ValueError(f"refusing to overwrite acceptance plan: {out}")
     campaign_bytes = (json.dumps(proposed_campaign, indent=2) + "\n").encode()
     registry_bytes = (json.dumps(proposed_registry, indent=2) + "\n").encode()
+    proposed_lock = build_campaign_lock(
+        proposed_campaign,
+        proposed_registry,
+        campaign_payload=campaign_bytes,
+        registry_payload=registry_bytes,
+    )
     lock_bytes = (json.dumps(proposed_lock, indent=2) + "\n").encode()
     plan = {
         "plan_version": "aau-reproduction-acceptance-plan/1.0",

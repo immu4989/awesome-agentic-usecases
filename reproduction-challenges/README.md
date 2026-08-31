@@ -18,7 +18,7 @@ for byte-history and is not accepted by the submission builder; its revision-loc
 A2A `v1.0.1`, MCP `2026-07-28`, and the dated February 2026 NIST NCCoE paper.
 
 [`campaign-lock.json`](campaign-lock.json) gives the complete public campaign one deterministic
-digest. It binds the rendered campaign and accepted-result registries plus the exact bytes of every
+digest. It binds the exact campaign and accepted-result registry bytes plus the exact bytes of every
 challenge, response template, and metadata template, while carrying each source-suite and oracle
 commitment. Campaign verification rejects any drift, including edits that leave task ids unchanged.
 
