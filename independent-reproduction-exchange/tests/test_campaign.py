@@ -297,6 +297,7 @@ def test_acceptance_plan_recomputes_pack_without_mutating_campaign(tmp_path, mon
     review = exchange.load_json(demo / "review.json")
     review["relationship_to_issuer"] = "none"
     review["relationship_to_producer"] = "none"
+    review["reviewed_on"] = "2026-08-30"
     review["limitations"] = ["Synthetic test of the acceptance transition only."]
     payloads, adjudication = exchange.pack_payloads(challenge, oracle, submission, review)
     assert adjudication["status"] == "independence_reviewed"
@@ -339,6 +340,20 @@ def test_acceptance_plan_recomputes_pack_without_mutating_campaign(tmp_path, mon
         json.dumps(registry, indent=2) + "\n"
     )
     monkeypatch.setattr(module, "HERE", campaign_root)
+
+    try:
+        module.plan_acceptance(
+            challenge["challenge_id"],
+            pack,
+            "outside-reproducer-early",
+            "2026-08-28",
+            tmp_path / "early-plan",
+        )
+    except ValueError as exc:
+        assert "cannot precede the pack review date" in str(exc)
+    else:
+        raise AssertionError("acceptance before review was planned")
+    assert not (tmp_path / "early-plan").exists()
 
     out = tmp_path / "acceptance-plan"
     plan = module.plan_acceptance(

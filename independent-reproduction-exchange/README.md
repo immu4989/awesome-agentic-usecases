@@ -34,6 +34,11 @@ The committed [`examples/revealed-protocol-demo`](examples/revealed-protocol-dem
 Generate role commitments from high-entropy random secrets and keep any role mapping outside the
 public pack. Do not hash a name, email, account id, or other guessable identifier.
 
+`executed_on`, `reviewed_on`, and campaign `accepted_on` values use canonical `YYYY-MM-DD` dates.
+The verifier rejects review before execution, and the acceptance registry and planner reject
+acceptance before review. These are chronology consistency checks—not trusted timestamps or proof
+that an event occurred on the declared date.
+
 The repository's manual `Reproduction protocol bundle` workflow verifies and deterministically
 bundles that walkthrough, then creates a signed GitHub Artifact Attestation for the ZIP. That signed
 workflow identity does not change the pack's `protocol_demonstration` evidence level. See

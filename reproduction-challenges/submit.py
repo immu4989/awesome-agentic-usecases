@@ -190,12 +190,17 @@ def verify_reproduction_registry(
             ):
                 raise ValueError(f"accepted reproduction {field} must be a lowercase SHA-256")
         try:
-            date.fromisoformat(entry["accepted_on"])
+            accepted_date = date.fromisoformat(entry["accepted_on"])
         except (TypeError, ValueError) as exc:
             raise ValueError("accepted_on must be an ISO calendar date") from exc
+        if accepted_date.isoformat() != entry["accepted_on"]:
+            raise ValueError("accepted_on must use canonical YYYY-MM-DD form")
 
         pack = (pack_overrides or {}).get(entry["pack_path"], registered_pack)
         adjudication = module.verify_pack(pack)
+        review = module.load_json(pack / "review.json")
+        if accepted_date < date.fromisoformat(review["reviewed_on"]):
+            raise ValueError("accepted_on cannot precede the pack review date")
         challenge = challenges[entry["challenge_id"]]
         if (
             adjudication["status"] != "independence_reviewed"
@@ -233,11 +238,16 @@ def plan_acceptance(
     if not ENTRY_ID.fullmatch(entry_id):
         raise ValueError("entry_id must be a 3-80 character lowercase slug")
     try:
-        date.fromisoformat(accepted_on)
+        accepted_date = date.fromisoformat(accepted_on)
     except ValueError as exc:
         raise ValueError("accepted_on must be an ISO calendar date") from exc
+    if accepted_date.isoformat() != accepted_on:
+        raise ValueError("accepted_on must use canonical YYYY-MM-DD form")
     source_pack = pack.absolute()
     adjudication = module.verify_pack(source_pack)
+    review = module.load_json(source_pack / "review.json")
+    if accepted_date < date.fromisoformat(review["reviewed_on"]):
+        raise ValueError("accepted_on cannot precede the pack review date")
     challenge = load_public(safe_campaign_path(entry["path"]))
     if (
         adjudication["status"] != "independence_reviewed"

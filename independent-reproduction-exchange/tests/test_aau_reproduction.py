@@ -115,6 +115,22 @@ def test_same_organization_or_same_commitment_cannot_claim_independence():
     assert adjudicate(challenge, oracle, same_role, _review())[2]["status"] == "protocol_demonstration"
 
 
+def test_execution_and_review_dates_are_canonical_and_ordered():
+    challenge, oracle = issue_challenge(_suite(), "blind-test-v1", "a" * 64)
+    malformed = _metadata()
+    malformed["executed_on"] = "08/29/2026"
+    with pytest.raises(ReproductionError, match="ISO calendar date"):
+        build_submission(challenge, _responses(), malformed)
+
+    later = _metadata()
+    later["executed_on"] = "2026-08-30"
+    submission = build_submission(challenge, _responses(), later)
+    early_review = _review()
+    early_review["reviewed_on"] = "2026-08-29"
+    with pytest.raises(ReproductionError, match="cannot precede"):
+        adjudicate(challenge, oracle, submission, early_review)
+
+
 def test_oracle_and_challenge_tampering_fail_closed():
     challenge, oracle = issue_challenge(_suite(), "blind-test-v1", "a" * 64)
     submission = build_submission(challenge, _responses(), _metadata())

@@ -131,6 +131,9 @@ the harness API is what is versioned; use cases are additive.
 - **Origin-verified fork attestation** — the manual workflow now accepts one prepared-workspace path
   instead of three duplicated inputs. `build-prepared` rechecks the protected origin, current open
   challenge, templates, response, and metadata immediately before GitHub attests the submission.
+- **Reproduction chronology gate** — execution, review, and acceptance dates now require canonical
+  ISO dates; review-before-execution and acceptance-before-review fail before a pack or acceptance
+  plan can be presented as valid. Date ordering remains a consistency check, not trusted time proof.
 
 - **Privacy-bounded Cross-protocol Authority Trace** — the exact Authority Relay receipt now
   projects into 25 synthetic traces and 52 spans using W3C-shaped trace context and a pinned

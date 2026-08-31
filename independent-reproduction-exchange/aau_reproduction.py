@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import date
 import hashlib
 import json
 import sys
@@ -112,6 +113,18 @@ def _sha(value: Any, label: str) -> str:
     if not isinstance(value, str) or len(value) != 64 or any(char not in HEX for char in value):
         raise ReproductionError(f"{label} must be a lowercase SHA-256 digest")
     return value
+
+
+def _iso_date(value: Any, label: str) -> date:
+    if not isinstance(value, str):
+        raise ReproductionError(f"{label} must be an ISO calendar date")
+    try:
+        parsed = date.fromisoformat(value)
+    except ValueError as exc:
+        raise ReproductionError(f"{label} must be an ISO calendar date") from exc
+    if parsed.isoformat() != value:
+        raise ReproductionError(f"{label} must use canonical YYYY-MM-DD form")
+    return parsed
 
 
 def _true_flags(value: Any, keys: set[str], label: str) -> dict[str, bool]:
@@ -264,7 +277,7 @@ def validate_metadata(metadata: dict[str, Any]) -> None:
     _sha(metadata["producer_commitment_sha256"], "producer_commitment_sha256")
     if metadata["relationship_to_issuer"] not in RELATIONSHIPS:
         raise ReproductionError("relationship_to_issuer is unsupported")
-    _text(metadata["executed_on"], "executed_on", 32)
+    _iso_date(metadata["executed_on"], "executed_on")
     environment = _exact(metadata["environment"], {
         "runtime", "runner", "network_access", "adapter_version",
     }, "environment")
@@ -361,7 +374,7 @@ def validate_review(review: dict[str, Any]) -> None:
     _sha(review["reviewer_commitment_sha256"], "reviewer_commitment_sha256")
     if review["relationship_to_issuer"] not in RELATIONSHIPS or review["relationship_to_producer"] not in RELATIONSHIPS:
         raise ReproductionError("review relationships are unsupported")
-    _text(review["reviewed_on"], "reviewed_on", 32)
+    _iso_date(review["reviewed_on"], "reviewed_on")
     _true_flags(review["checks"], REVIEW_FLAGS, "review checks")
     if not isinstance(review["limitations"], list) or not review["limitations"]:
         raise ReproductionError("review limitations must contain at least one disclosure")
@@ -466,6 +479,10 @@ def adjudicate(
     validate_challenge(challenge)
     validate_submission(submission, challenge)
     validate_review(review)
+    if _iso_date(review["reviewed_on"], "reviewed_on") < _iso_date(
+        submission["executed_on"], "executed_on"
+    ):
+        raise ReproductionError("reviewed_on cannot precede executed_on")
     suite = _reconstruct_suite(challenge, oracle)
     receipt = _score(suite, submission["responses"])
     issuer = challenge["issuer_commitment_sha256"]
