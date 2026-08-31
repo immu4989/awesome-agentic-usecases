@@ -34,6 +34,27 @@ def test_public_challenges_are_answer_free_and_bound():
         assert len(challenge["oracle_commitment_sha256"]) == 64
 
 
+def test_campaign_lock_binds_registries_challenges_and_templates():
+    module = campaign_module()
+    campaign = module.verify_campaign()
+    registry = module.load_public(
+        ROOT / "reproduction-challenges" / "accepted-reproductions.json"
+    )
+    lock = module.load_public(ROOT / "reproduction-challenges" / "campaign-lock.json")
+    assert lock == module.build_campaign_lock(campaign, registry)
+    assert lock["summary"] == {
+        "open_challenge_count": 4,
+        "closed_challenge_count": 1,
+        "open_task_count": 26,
+        "accepted_reproduction_count": 0,
+    }
+    assert len(lock["artifacts"]) == 5
+    assert all(len(item["files"]) == 3 for item in lock["artifacts"])
+    changed = json.loads(json.dumps(campaign))
+    changed["challenges"][0]["title"] += " changed"
+    assert module.build_campaign_lock(changed, registry)["lock_sha256"] != lock["lock_sha256"]
+
+
 def test_authority_relay_challenge_is_current_and_cross_protocol():
     campaign = campaign_module().verify_campaign()
     entry = next(
@@ -340,6 +361,10 @@ def test_acceptance_plan_recomputes_pack_without_mutating_campaign(tmp_path, mon
         json.dumps(registry, indent=2) + "\n"
     )
     monkeypatch.setattr(module, "HERE", campaign_root)
+    campaign_lock = module.build_campaign_lock(campaign, registry)
+    (campaign_root / "campaign-lock.json").write_text(
+        json.dumps(campaign_lock, indent=2) + "\n"
+    )
 
     try:
         module.plan_acceptance(
@@ -369,8 +394,11 @@ def test_acceptance_plan_recomputes_pack_without_mutating_campaign(tmp_path, mon
     assert json.loads((campaign_root / "campaign.json").read_text()) == campaign
     assert set(path.name for path in out.iterdir()) == {
         "README.md", "SHA256SUMS", "acceptance-plan.json",
-        "accepted-reproductions.proposed.json", "campaign.proposed.json",
+        "accepted-reproductions.proposed.json", "campaign-lock.proposed.json",
+        "campaign.proposed.json",
     }
+    proposed_lock = json.loads((out / "campaign-lock.proposed.json").read_text())
+    assert proposed_lock["lock_sha256"] == plan["proposed_campaign_lock_sha256"]
 
 
 def test_acceptance_plan_rejects_protocol_demonstration(tmp_path):

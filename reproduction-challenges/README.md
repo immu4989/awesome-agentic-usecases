@@ -17,6 +17,11 @@ Open challenges cannot cite mutable GitHub branch URLs. The original portable ch
 for byte-history and is not accepted by the submission builder; its revision-locked successor uses
 A2A `v1.0.1`, MCP `2026-07-28`, and the dated February 2026 NIST NCCoE paper.
 
+[`campaign-lock.json`](campaign-lock.json) gives the complete public campaign one deterministic
+digest. It binds the rendered campaign and accepted-result registries plus the exact bytes of every
+challenge, response template, and metadata template, while carrying each source-suite and oracle
+commitment. Campaign verification rejects any drift, including edits that leave task ids unchanged.
+
 ## Reproduce one
 
 Fastest path—prepare an oracle-free workspace without copying files by hand:
@@ -87,7 +92,7 @@ python3 reproduction-challenges/submit.py plan-accept \
 The planner first recomputes the complete pack and rejects protocol demonstrations, stale challenge
 digests, invalid dates and ids, an already closed challenge, duplicate producers/submissions, or a
 result that would violate the proposed registry. It writes proposed campaign and registry files,
-an acceptance record, instructions, and SHA-256 checksums without copying the oracle-bearing pack
+an acceptance record, proposed campaign lock, instructions, and SHA-256 checksums without copying the oracle-bearing pack
 or modifying the checkout. A human must review the plan, run `shasum -c SHA256SUMS` inside it, and
 copy the exact verified pack.
 
@@ -101,4 +106,5 @@ python reproduction-challenges/submit.py verify-campaign
 ```
 
 This checks the registry, every challenge's embedded digest and oracle commitment shape, the absence
-of gold fields, all template task ids, and the declared public boundary.
+of gold fields, all template task ids, the declared public boundary, every accepted pack, and the
+single campaign lock over all public artifacts.

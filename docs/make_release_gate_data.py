@@ -23,6 +23,7 @@ def build() -> dict:
     oscal = load("agent-release-gate/examples/reference-pack/assessment-results.oscal.json")
     campaign = load("reproduction-challenges/campaign.json")
     accepted_reproductions = load("reproduction-challenges/accepted-reproductions.json")
+    campaign_lock = load("reproduction-challenges/campaign-lock.json")
     exchange = load("agent-incident-exchange/examples/reference-exchange.json")
     sources = load("policy-freshness/sources.json")
     compatibility = load("policy-freshness/compatibility-report.json")
@@ -70,6 +71,7 @@ def build() -> dict:
             "challenge_count": len(open_challenges),
             "task_count": sum(row["task_count"] for row in open_challenges),
             "independently_reproduced_count": len(accepted_reproductions["entries"]),
+            "campaign_lock_sha256": campaign_lock["lock_sha256"],
             "challenges": campaign["challenges"],
         },
         "incidents": {

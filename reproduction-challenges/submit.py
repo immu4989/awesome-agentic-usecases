@@ -26,6 +26,7 @@ REGISTRY_BOUNDARIES = {
 }
 ENTRY_ID = re.compile(r"[a-z0-9][a-z0-9-]{2,79}")
 WORKSPACE_VERSION = "aau-reproduction-workspace/1.0"
+CAMPAIGN_LOCK_VERSION = "aau-reproduction-campaign-lock/1.0"
 
 
 def exchange_module():
@@ -119,6 +120,62 @@ def validate_challenge_sources(entry: dict, challenge: dict) -> None:
             and any(marker in url for marker in mutable_markers)
         ):
             raise ValueError("open challenges cannot cite a mutable GitHub branch URL")
+
+
+def build_campaign_lock(campaign: dict, registry: dict) -> dict:
+    def record(path: str, payload: bytes) -> dict:
+        return {
+            "path": path,
+            "sha256": hashlib.sha256(payload).hexdigest(),
+            "bytes": len(payload),
+        }
+
+    artifacts = []
+    for entry in campaign["challenges"]:
+        challenge = load_public(safe_campaign_path(entry["path"]))
+        files = [
+            record(path, safe_campaign_path(path).read_bytes())
+            for path in (
+                entry["path"], entry["responses_template"], entry["metadata_template"],
+            )
+        ]
+        artifacts.append({
+            "challenge_id": entry["challenge_id"],
+            "status": entry["status"],
+            "task_count": entry["task_count"],
+            "challenge_sha256": challenge["challenge_sha256"],
+            "oracle_commitment_sha256": challenge["oracle_commitment_sha256"],
+            "source_suite_sha256": challenge["source_suite"]["sha256"],
+            "files": files,
+        })
+    campaign_bytes = (json.dumps(campaign, indent=2) + "\n").encode()
+    registry_bytes = (json.dumps(registry, indent=2) + "\n").encode()
+    lock = {
+        "lock_version": CAMPAIGN_LOCK_VERSION,
+        "campaign_id": campaign["campaign_id"],
+        "summary": {
+            "open_challenge_count": sum(
+                entry["status"] == "open" for entry in campaign["challenges"]
+            ),
+            "closed_challenge_count": sum(
+                entry["status"] == "closed" for entry in campaign["challenges"]
+            ),
+            "open_task_count": sum(
+                entry["task_count"] for entry in campaign["challenges"]
+                if entry["status"] == "open"
+            ),
+            "accepted_reproduction_count": len(registry["entries"]),
+        },
+        "campaign": record("campaign.json", campaign_bytes),
+        "accepted_registry": record("accepted-reproductions.json", registry_bytes),
+        "artifacts": artifacts,
+        "lock_sha256": "",
+    }
+    unsigned = {key: value for key, value in lock.items() if key != "lock_sha256"}
+    lock["lock_sha256"] = hashlib.sha256(
+        json.dumps(unsigned, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    return lock
 
 
 def verify_reproduction_registry(
@@ -281,11 +338,13 @@ def plan_acceptance(
         proposed_registry,
         pack_overrides={pack_path: source_pack},
     )
+    proposed_lock = build_campaign_lock(proposed_campaign, proposed_registry)
 
     if out.exists() or out.is_symlink():
         raise ValueError(f"refusing to overwrite acceptance plan: {out}")
     campaign_bytes = (json.dumps(proposed_campaign, indent=2) + "\n").encode()
     registry_bytes = (json.dumps(proposed_registry, indent=2) + "\n").encode()
+    lock_bytes = (json.dumps(proposed_lock, indent=2) + "\n").encode()
     plan = {
         "plan_version": "aau-reproduction-acceptance-plan/1.0",
         "entry": accepted_entry,
@@ -297,6 +356,7 @@ def plan_acceptance(
         },
         "proposed_campaign_sha256": hashlib.sha256(campaign_bytes).hexdigest(),
         "proposed_registry_sha256": hashlib.sha256(registry_bytes).hexdigest(),
+        "proposed_campaign_lock_sha256": proposed_lock["lock_sha256"],
         "boundary": {
             "source_pack_not_copied": True,
             "repository_not_modified": True,
@@ -320,6 +380,7 @@ def plan_acceptance(
         "acceptance-plan.json": plan_bytes,
         "campaign.proposed.json": campaign_bytes,
         "accepted-reproductions.proposed.json": registry_bytes,
+        "campaign-lock.proposed.json": lock_bytes,
     }
     sums = "".join(
         f"{hashlib.sha256(payload).hexdigest()}  {name}\n"
@@ -487,7 +548,7 @@ def build_prepared(workspace: Path, out: Path) -> dict:
     return submission
 
 
-def verify_campaign() -> dict:
+def verify_campaign(check_lock: bool = True) -> dict:
     module = exchange_module()
     campaign = load_public(HERE / "campaign.json")
     if set(campaign) != {
@@ -545,7 +606,11 @@ def verify_campaign() -> dict:
     boundaries = campaign["boundary"]
     if not isinstance(boundaries, dict) or not boundaries or any(value is not True for value in boundaries.values()):
         raise ValueError("all campaign boundary declarations must be true")
-    verify_reproduction_registry(campaign)
+    registry = verify_reproduction_registry(campaign)
+    if check_lock:
+        actual_lock = load_public(HERE / "campaign-lock.json")
+        if actual_lock != build_campaign_lock(campaign, registry):
+            raise ValueError("campaign lock is stale or does not bind every public artifact")
     return campaign
 
 
@@ -570,6 +635,8 @@ def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description="Build an answer-free AAU reproduction submission")
     sub = root.add_subparsers(dest="command", required=True)
     sub.add_parser("verify-campaign")
+    lock = sub.add_parser("write-lock")
+    lock.add_argument("--out", type=Path, required=True)
     listing = sub.add_parser("list-open")
     listing.add_argument("--json", action="store_true")
     prepare = sub.add_parser("prepare")
@@ -606,6 +673,15 @@ def main() -> int:
                 f"{len(campaign['challenges'])} total artifacts, and "
                 f"{accepted} accepted independent reproductions verified."
             )
+        elif args.command == "write-lock":
+            campaign = verify_campaign(check_lock=False)
+            registry = load_public(HERE / "accepted-reproductions.json")
+            lock = build_campaign_lock(campaign, registry)
+            if args.out.exists() or args.out.is_symlink():
+                raise ValueError(f"refusing to overwrite campaign lock: {args.out}")
+            args.out.parent.mkdir(parents=True, exist_ok=True)
+            args.out.write_text(json.dumps(lock, indent=2) + "\n")
+            print(f"OK: campaign lock {lock['lock_sha256']} written to {args.out}.")
         elif args.command == "list-open":
             challenges = open_challenges()
             if args.json:

@@ -134,6 +134,9 @@ the harness API is what is versioned; use cases are additive.
 - **Reproduction chronology gate** — execution, review, and acceptance dates now require canonical
   ISO dates; review-before-execution and acceptance-before-review fail before a pack or acceptance
   plan can be presented as valid. Date ordering remains a consistency check, not trusted time proof.
+- **Whole-campaign provenance lock** — one embedded digest now binds both registries and the exact
+  challenge/response-template/metadata-template bytes for all five artifacts, plus their hidden
+  oracle and source-suite commitments. Acceptance planning emits the next lock before publication.
 
 - **Privacy-bounded Cross-protocol Authority Trace** — the exact Authority Relay receipt now
   projects into 25 synthetic traces and 52 spans using W3C-shaped trace context and a pinned

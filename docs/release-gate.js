@@ -118,6 +118,7 @@
       set("release-challenge-inline", data.reproduction.challenge_count);
       set("release-task-count", data.reproduction.task_count);
       set("release-independent-count", data.reproduction.independently_reproduced_count);
+      set("release-campaign-lock", data.reproduction.campaign_lock_sha256.slice(0, 12));
       set("release-incident-count", data.incidents.entry_count);
       set("release-export-count", data.incidents.export_count);
       set("release-source-count", data.freshness.source_count);
