@@ -108,6 +108,8 @@ the harness API is what is versioned; use cases are additive.
   campaign lock and reviewed workflow-policy bytes. A fail-closed verifier and fork-specific
   procedure recompute every binding instead of asking reviewers to inspect JSON by eye. The shipped
   checksum inventory is also the attestation's subject inventory, preventing provenance drift.
+  Intake requires both artifact digests and fork-identity verification, and CI protects the
+  verification procedure from documentation drift.
 
 - **Artifact-derived independent reproduction ledger** — the public count now equals the number of
   accepted Exchange packs that recompute to `independence_reviewed`, bind the current challenge,

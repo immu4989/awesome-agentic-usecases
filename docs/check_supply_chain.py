@@ -103,6 +103,12 @@ def main() -> None:
             "gh attestation verify",
             "protocol_demonstration",
         ),
+        ROOT / "reproduction-challenges" / "RELEASE_VERIFICATION.md": (
+            "gh attestation verify",
+            "SHA256SUMS",
+            "verify-receipt",
+            "FORK_OWNER/awesome-agentic-usecases",
+        ),
         ROOT / "federal-pilot-kit" / "pilot-launch" / "README.md": ("30-Day",),
         ROOT / "federal-pilot-kit" / "lesson-record.schema.json": ("aau-federal-ai-lesson/0.4",),
         ROOT / "federal-pilot-kit" / "lessons" / "source-ledger.json": ("aau-federal-ai-lesson-sources/0.4",),

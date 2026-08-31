@@ -141,6 +141,8 @@ def test_fork_intake_derives_open_ids_instead_of_copying_a_stale_list():
     challenge_block = issue_form.split("id: challenge", 1)[1].split("validations:", 1)[0]
     assert "Open challenge ID" in challenge_block
     assert "options:" not in challenge_block
+    assert "id: verification_digest" in issue_form
+    assert "both GitHub attestation subjects" in issue_form
 
 
 def test_fork_workflow_boundary_is_executable_policy():
