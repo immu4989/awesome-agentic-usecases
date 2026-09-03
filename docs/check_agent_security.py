@@ -43,6 +43,8 @@ def main() -> None:
         ROOT / "essential-services-defender-kits/kit.schema.json",
         ROOT / "agent-control-observatory/experiment.schema.json",
         ROOT / "public-value-pilot-network/pilot.schema.json",
+        ROOT / "agent-side-effect-ledger/side-effect-suite.schema.json",
+        ROOT / "agent-side-effect-ledger/side-effect-receipt.schema.json",
     ):
         schema = json.loads(schema_path.read_text())
         if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema" or not schema.get("$id"):

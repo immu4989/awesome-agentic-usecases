@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+- **Agent Side-Effect Ledger** — added a 12-case, 48-event offline state machine that binds exact
+  intent bytes, human approval, agent/task identity, authority expiry, policy epoch, idempotency
+  key, trace context, authoritative reconciliation, and compensation. The reference suite prevents
+  duplicate effects, blocks changed-intent key reuse and self-approval, preserves timeout
+  uncertainty, and keeps compensation as a second recorded effect.
+- **Portable retry-safety evidence** — added deterministic evaluation and verification, exact
+  reason codes, hash-chained result rows, a non-overwriting evidence pack, seven adversarial tests,
+  source/premise notes, and a threat model. The feature explicitly does not claim exactly-once
+  delivery, production execution, identity, compliance, certification, deployment approval, or an
+  ATO.
+
 ## 1.6.0 - 2026-08-30
 
 - Added the Agent Release Gate: exact component snapshots, before/after impact selection,

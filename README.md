@@ -15,6 +15,7 @@
   <a href="START_HERE.md">Start here</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#release-gate">Agent Release Gate</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-capability-bom">Authority BOM</a> ·
+  <a href="agent-side-effect-ledger/">Side-Effect Ledger</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#playground">60-second lab</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#agent-assurance">Portable Agent Assurance</a> ·
   <a href="https://immu4989.github.io/awesome-agentic-usecases/#federal-mission">Federal Mission Studio</a> ·
@@ -44,6 +45,7 @@ and observed failure cards with a direct path to reproduction. Start with
 |---|---|---|
 | A candidate agent release | [Agent Release Gate](https://immu4989.github.io/awesome-agentic-usecases/#release-gate) | A byte-exact change map, impact-selected tests, fail-closed decision, experimental OSCAL view, and verifiable evidence pack |
 | A repository whose Action pins need provenance, not just SHA length | [Workflow Dependency Trust Lock](workflow-dependency-trust/) | An exact use inventory, offline drift gate, and live proof that every SHA is a commit in its named repository |
+| An agent that may retry a payment, notice, order, or other side effect | [Agent Side-Effect Ledger](agent-side-effect-ledger/) | An intent-bound approval journal, unknown-outcome reconciliation gate, duplicate-effect defense, and tamper-evident receipt |
 | An agent deployment whose real authority is hard to see or test | [Agent Capability & Authority BOM](agent-capability-bom/) | A strict authority inventory, widening diff, least-authority plan, inventory-derived conformance twins, and tamper-evident evidence |
 | An outside team ready to reproduce a claim | [Fork-to-Reproduce](reproduction-challenges/) | An oracle-free challenge, oracle commitment, fork-bound submission, and GitHub-attested bytes for separate human adjudication |
 | A public agent-security lesson | [Agent Incident Exchange](agent-incident-exchange/) | A safe regression record plus SARIF, OpenVEX, and experimental CSAF/OCSF bridge exports |
@@ -104,6 +106,30 @@ the two legacy provenance/SBOM wrappers. Those release steps now use the unified
 v4 interface, and the security workflow repeats the repository-membership check online. Signature
 status is recorded separately; origin verification is not an Action code audit, safety proof, or
 guarantee of upstream availability.
+
+## Agent Side-Effect Ledger—from timeout ambiguity to a safe next action
+
+The **[Agent Side-Effect Ledger](agent-side-effect-ledger/)** makes a failure mode with immediate
+economic and public-service impact executable: an agent sends a non-idempotent request, loses the
+response, and tries again. The reference state machine binds the exact intent bytes to the agent,
+task, tool, target, parameters, policy epoch, authority window, idempotency key, and time-bounded
+human approval. An unknown transport result enters reconciliation instead of retry.
+
+```bash
+python3 agent-side-effect-ledger/aau_side_effect.py evaluate \
+  agent-side-effect-ledger/examples/reference-suite.json \
+  --out /tmp/aau-side-effect-receipt.json
+python3 agent-side-effect-ledger/aau_side_effect.py verify \
+  /tmp/aau-side-effect-receipt.json \
+  --suite agent-side-effect-ledger/examples/reference-suite.json
+```
+
+The 12-case, 48-event synthetic suite prevents three duplicate effects, blocks a reused key whose
+amount and target changed, reconciles both committed and absent timeout outcomes, rejects agent
+self-approval and stale authority, and treats compensation as a separately approved second effect.
+It produces zero adapter-scoped at-most-one breaches. This is a transaction-safety contract and
+portable test—not an exactly-once claim, a real payment or notice, production authorization,
+certification, compliance result, or ATO.
 
 Four **[oracle-free reproduction challenges](reproduction-challenges/)** now let outside forks test
 portable agent authority, distribution restoration, pharmaceutical batch disposition, and the

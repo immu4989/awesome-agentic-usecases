@@ -54,6 +54,7 @@ jobs:
           ruff check agentic-cyber-resilience
       - name: Agent Security Commons controls, exercises, and claims are reproducible
         run: |
+          PYTHONPATH=agent-side-effect-ledger pytest agent-side-effect-ledger/tests -q
           PYTHONPATH=agentic-cyber-resilience pytest agentic-cyber-resilience/tests/test_aau_runtime.py -q
           PYTHONPATH=agent-incident-regression-commons pytest agent-incident-regression-commons/tests -q
           PYTHONPATH=essential-services-defender-kits pytest essential-services-defender-kits/tests -q
@@ -72,9 +73,12 @@ jobs:
           python agent-control-observatory/aau_observatory.py verify "$RUNNER_TEMP/aau-control-report.json" --experiment agent-control-observatory/experiments/authority-control-ladder.json
           python public-value-pilot-network/aau_pilot_network.py assess public-value-pilot-network/pilots/foia-routing-partner-call.json --out "$RUNNER_TEMP/aau-pilot-assessment.json"
           python public-value-pilot-network/aau_pilot_network.py verify "$RUNNER_TEMP/aau-pilot-assessment.json" --pilot public-value-pilot-network/pilots/foia-routing-partner-call.json
+          python agent-side-effect-ledger/aau_side_effect.py evaluate agent-side-effect-ledger/examples/reference-suite.json --out "$RUNNER_TEMP/aau-side-effect-receipt.json"
+          cmp "$RUNNER_TEMP/aau-side-effect-receipt.json" agent-side-effect-ledger/examples/reference-receipt.json
+          python agent-side-effect-ledger/aau_side_effect.py verify agent-side-effect-ledger/examples/reference-receipt.json --suite agent-side-effect-ledger/examples/reference-suite.json
           python docs/make_agent_security_data.py
           python docs/check_agent_security.py
-          ruff check agentic-cyber-resilience agent-incident-regression-commons essential-services-defender-kits agent-control-observatory public-value-pilot-network docs/make_agent_security_data.py docs/check_agent_security.py
+          ruff check agent-side-effect-ledger agentic-cyber-resilience agent-incident-regression-commons essential-services-defender-kits agent-control-observatory public-value-pilot-network docs/make_agent_security_data.py docs/check_agent_security.py
           git diff --exit-code docs/agent-security-data.json
       - name: Portable Agent Assurance and TEVV evidence are reproducible
         run: |

@@ -1,0 +1,131 @@
+# Agent Side-Effect Ledger
+
+> A timeout is not permission to do it twice.
+
+The Agent Side-Effect Ledger (ASEL) is an offline, vendor-neutral reference state machine for
+actions that change the world: issue a payment, send a notice, create an account, place an order,
+change access, or trigger another consequential workflow. It binds the exact canonical intent to
+the agent, task, tool, target, parameters, authority expiry, policy epoch, human approval,
+idempotency key, and evidence chain.
+
+The distinctive rule is simple: when the transport outcome is unknown, the next valid action is
+**reconcile**, not retry. If the authoritative system says the first attempt committed, the ledger
+replays the original receipt. If it says the attempt is absent, one controlled retry may proceed.
+
+```mermaid
+flowchart LR
+  I[Exact intent] --> P[Prepare + hash]
+  P --> A[Human approval\nbound to intent]
+  A --> C{Commit result}
+  C -->|success| J[Committed journal]
+  C -->|timeout / unknown| R[Reconcile first]
+  R -->|committed| J
+  R -->|absent| C
+  J -->|same key + same intent| D[Replay receipt\nno new effect]
+  J -->|same key + changed intent| B[Block conflict]
+  J -->|separate approval| X[Compensating effect\noriginal stays recorded]
+```
+
+## Run the 60-second reference exercise
+
+No package install, model key, target system, or network access is required:
+
+```bash
+python3 agent-side-effect-ledger/aau_side_effect.py evaluate \
+  agent-side-effect-ledger/examples/reference-suite.json \
+  --out /tmp/aau-side-effect-receipt.json
+
+python3 agent-side-effect-ledger/aau_side_effect.py verify \
+  /tmp/aau-side-effect-receipt.json \
+  --suite agent-side-effect-ledger/examples/reference-suite.json
+```
+
+The committed public-synthetic suite contains **12 cases and 48 ordered events**. The reference
+ledger resolves all 48 outcomes and exact reason-code sets, records seven known primary effects,
+preserves one separately approved compensation as a second effect, reconciles two uncertain
+outcomes, prevents three duplicate effects, blocks one changed-intent key collision, and produces
+zero adapter-scoped at-most-one breaches.
+
+| Collision | Unsafe shortcut | Ledger behavior |
+|---|---|---|
+| Response was lost | Retry the non-idempotent action | Hold and require authoritative reconciliation |
+| Same key, changed amount or target | Treat the key as a reusable authorization | Block because the canonical intent digest changed |
+| Agent supplies its own approval | Trust the workflow's actor string | Require the named accountable human role |
+| Approval or authority expired | Honor a previously valid token | Block with both expired boundaries visible |
+| Policy changed after preparation | Commit under the old decision context | Bind preparation and commit to the same policy epoch |
+| Compensation exists | Call it rollback and erase the first action | Require separate approval and retain both effects |
+| No compensation exists | Invent a reverse operation | Block and preserve the irreversible-action record |
+| A trace ID is present | Treat observability as authorization | Use it only for correlation; enforce authority separately |
+
+## What a receipt proves
+
+Each result row contains the event kind, derived outcome, exact reason codes, intent digest,
+known-effect counters, unresolved-effect counter, and previous-result digest. `verify` recomputes
+the entire receipt from the suite and rejects changed rows, broken ordering, altered summaries, or
+a mismatched suite.
+
+Build a non-overwriting portable pack after evaluation:
+
+```bash
+python3 agent-side-effect-ledger/aau_side_effect.py pack \
+  agent-side-effect-ledger/examples/reference-suite.json \
+  /tmp/aau-side-effect-receipt.json \
+  --out /tmp/aau-side-effect-pack
+```
+
+The pack includes the suite, receipt, plain-language boundary, and SHA-256 manifest. Hashes prove
+byte integrity and ordering; they do not establish truth, identity, authorization, or that an
+external action occurred. The versioned
+[suite](side-effect-suite.schema.json) and [receipt](side-effect-receipt.schema.json) schemas give
+adapters a portable interchange surface; the Python verifier applies the stricter event-specific
+and cross-event rules that JSON Schema cannot express alone.
+
+## Adapter contract
+
+Integrators translate their own staging events into five small event kinds:
+
+| Event | Minimum responsibility |
+|---|---|
+| `prepare` | Canonicalize the complete intended effect and bind agent, task, policy, authority, key, and trace context |
+| `approve` | Record a time-bounded human decision for that exact intent and purpose |
+| `commit` | Return `success` or `timeout_unknown`; never silently turn uncertainty into success |
+| `reconcile` | Query the authoritative target by the same intent and key before retrying |
+| `compensate` | Treat remediation as a separately approved, separately idempotent side effect |
+
+The reference executable does not call the adapter or a target. A production integration should
+place the durable journal at the enforcement boundary, make canonicalization stable across
+languages, define atomic persistence with the side effect, size retention for real retry windows,
+and test crash points between every state transition. If the target cannot support an atomic or
+queryable effect record, keep that limitation visible; this profile cannot manufacture exactly-once
+delivery.
+
+## Why these fields exist
+
+- [RFC 9110 §9.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) says a client should
+  not automatically retry a non-idempotent request unless it knows the semantics are idempotent or
+  can detect that the original request was never applied.
+- [CloudEvents 1.0.2](https://github.com/cloudevents/spec/blob/ce@v1.0.2/cloudevents/spec.md#id)
+  defines `source + id` uniqueness and duplicate recognition. ASEL uses that lesson for event
+  identity, without treating an event ID as authority.
+- [W3C Trace Context](https://www.w3.org/TR/trace-context/) standardizes cross-system request
+  correlation. ASEL validates the reference `traceparent`, but explicitly refuses to use it as an
+  authorization signal.
+- [NIST SP 800-53 Rev. 5](https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final) supplies adaptable
+  least-privilege, audit, and change-control objectives. The mapping is design context, not a
+  compliance determination.
+- The IETF HTTPAPI working group's
+  [Idempotency-Key draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/)
+  is useful design history for non-idempotent POST/PATCH fault tolerance, but revision 07 expired
+  on 2026-04-18 and is not presented here as an RFC or active standard.
+
+See [RESEARCH_NOTES.md](RESEARCH_NOTES.md) for premise checks and
+[THREAT_MODEL.md](THREAT_MODEL.md) for the explicit attack and failure boundary.
+
+## Claim boundary
+
+The reference result is a deterministic simulation. It is **not** evidence of exactly-once
+delivery, a production transaction, a real payment or notice, correct target-system behavior,
+verified identity, legal authority, safety, compliance, certification, government endorsement,
+deployment approval, or an Authorization to Operate. A real organization must connect its own
+authorized staging adapter, inspect privacy and records obligations, validate atomicity and
+retention, and preserve human ownership of consequential decisions.

@@ -36,6 +36,24 @@ aau bom verify agent-capability-bom/examples/reference-pack
 The inventory complements SBOM and AI/ML-BOM practice; it is not a credential, enforcement point,
 verified identity, certification, deployment approval, compliance result, or ATO.
 
+If the agent can trigger a payment, notice, order, access change, or another non-idempotent action,
+use the **[Agent Side-Effect Ledger](agent-side-effect-ledger/)** before connecting the tool. Its
+synthetic state machine binds exact intent, approval, policy epoch, authority, idempotency key,
+unknown-outcome reconciliation, and compensation into one recomputable receipt. The reference
+suite tests 48 ordered events without calling a target:
+
+```bash
+python3 agent-side-effect-ledger/aau_side_effect.py evaluate \
+  agent-side-effect-ledger/examples/reference-suite.json \
+  --out /tmp/aau-side-effect-receipt.json
+python3 agent-side-effect-ledger/aau_side_effect.py verify \
+  /tmp/aau-side-effect-receipt.json \
+  --suite agent-side-effect-ledger/examples/reference-suite.json
+```
+
+An unknown response must be reconciled before retry. The ledger is adapter-scoped test evidence,
+not exactly-once delivery, a production transaction, legal authority, certification, or an ATO.
+
 If you are outside the maintainer workflow and want to test a public claim, choose one of the
 four [Fork-to-Reproduce challenges](reproduction-challenges/). You receive six or eight tasks and an
 oracle commitment—not the gold outcomes. The manual workflow builds and attests your exact

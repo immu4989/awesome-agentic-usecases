@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-suite-0.1.json",
+  "title": "AAU Agent Side-Effect Suite 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["suite_version", "suite_id", "title", "profile", "cases", "boundaries"],
+  "properties": {
+    "suite_version": {"const": "aau-agent-side-effect-suite/0.1"},
+    "suite_id": {"type": "string", "minLength": 1, "maxLength": 120},
+    "title": {"type": "string", "minLength": 1, "maxLength": 240},
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_id", "task_id", "policy_epoch", "authority_expires_at_ms", "approval_role", "reconciler_role", "approval_ttl_ms", "idempotency_retention_ms", "tools"],
+      "properties": {
+        "agent_id": {"type": "string", "minLength": 1},
+        "task_id": {"type": "string", "minLength": 1},
+        "policy_epoch": {"type": "integer", "minimum": 1},
+        "authority_expires_at_ms": {"type": "integer", "minimum": 1},
+        "approval_role": {"type": "string", "pattern": "^human:"},
+        "reconciler_role": {"type": "string", "minLength": 1},
+        "approval_ttl_ms": {"type": "integer", "minimum": 1},
+        "idempotency_retention_ms": {"type": "integer", "minimum": 1},
+        "tools": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 30,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["tool_id", "operation", "effect_class", "compensation_operation"],
+            "properties": {
+              "tool_id": {"type": "string", "minLength": 1},
+              "operation": {"type": "string", "minLength": 1},
+              "effect_class": {"enum": ["reversible", "irreversible"]},
+              "compensation_operation": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "title", "events"],
+        "properties": {
+          "case_id": {"type": "string", "minLength": 1},
+          "title": {"type": "string", "minLength": 1},
+          "events": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 30,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["event_id", "at_ms", "kind", "actor", "content", "expected"],
+              "properties": {
+                "event_id": {"type": "string", "minLength": 1},
+                "at_ms": {"type": "integer", "minimum": 0},
+                "kind": {"enum": ["prepare", "approve", "commit", "reconcile", "compensate"]},
+                "actor": {"type": "string", "minLength": 1},
+                "content": {"type": "object"},
+                "expected": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["outcome", "reason_codes"],
+                  "properties": {
+                    "outcome": {"enum": ["prepared", "approved", "committed", "duplicate_replayed", "blocked", "reconcile_required", "reconciled_committed", "reconciled_absent", "compensated"]},
+                    "reason_codes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "boundaries": {"type": "object"}
+  }
+}
