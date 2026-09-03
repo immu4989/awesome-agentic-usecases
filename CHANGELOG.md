@@ -105,6 +105,11 @@ the harness API is what is versioned; use cases are additive.
   compatibility warning. An offline guard rejects the annotated-tag object that OpenSSF correctly
   identified as an invalid action commit.
 
+- **Workflow Dependency Trust Lock** — every external Action commit is now inventory-bound to each
+  workflow use and verified through GitHub's commit API as belonging to its named repository. The
+  same audit found two more annotated-tag objects and replaced the deprecated provenance/SBOM
+  wrappers with the unified `actions/attest` v4 interface.
+
 - **Executable fork-workflow trust boundary** — campaign verification now rejects non-manual
   triggers, expanded permissions, secret consumption, persisted checkout credentials, unquoted
   workspace input, missing origin verification, and mutable Action references. A dedicated threat

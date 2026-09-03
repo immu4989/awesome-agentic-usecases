@@ -43,6 +43,7 @@ and observed failure cards with a direct path to reproduction. Start with
 | I already have… | Start here | Leave with… |
 |---|---|---|
 | A candidate agent release | [Agent Release Gate](https://immu4989.github.io/awesome-agentic-usecases/#release-gate) | A byte-exact change map, impact-selected tests, fail-closed decision, experimental OSCAL view, and verifiable evidence pack |
+| A repository whose Action pins need provenance, not just SHA length | [Workflow Dependency Trust Lock](workflow-dependency-trust/) | An exact use inventory, offline drift gate, and live proof that every SHA is a commit in its named repository |
 | An agent deployment whose real authority is hard to see or test | [Agent Capability & Authority BOM](agent-capability-bom/) | A strict authority inventory, widening diff, least-authority plan, inventory-derived conformance twins, and tamper-evident evidence |
 | An outside team ready to reproduce a claim | [Fork-to-Reproduce](reproduction-challenges/) | An oracle-free challenge, oracle commitment, fork-bound submission, and GitHub-attested bytes for separate human adjudication |
 | A public agent-security lesson | [Agent Incident Exchange](agent-incident-exchange/) | A safe regression record plus SARIF, OpenVEX, and experimental CSAF/OCSF bridge exports |
@@ -85,6 +86,24 @@ The pack includes snapshots, diff, policy, plan, exact receipts, decision, byte 
 in-toto statement, and an explicitly experimental, non-certifying OSCAL 1.1.3-shaped Assessment
 Results export. It does not verify the approver's identity, establish production safety, authorize
 deployment, certify compliance, or grant an ATO.
+
+## Workflow Dependency Trust Lock—from immutable-looking to verified origin
+
+The **[Workflow Dependency Trust Lock](workflow-dependency-trust/)** closes a supply-chain gap that
+ordinary SHA pin checks miss. It inventories all 48 external Action uses, binds them to 12 exact
+repository/commit pairs, and verifies through GitHub's commit API that every object is a commit in
+the repository named by the workflow:
+
+```bash
+python3 workflow-dependency-trust/aau_action_trust.py verify
+python3 workflow-dependency-trust/aau_action_trust.py verify --online
+```
+
+The first real audit rejected three immutable-looking annotated-tag objects: one CodeQL v4 pin and
+the two legacy provenance/SBOM wrappers. Those release steps now use the unified `actions/attest`
+v4 interface, and the security workflow repeats the repository-membership check online. Signature
+status is recorded separately; origin verification is not an Action code audit, safety proof, or
+guarantee of upstream availability.
 
 Four **[oracle-free reproduction challenges](reproduction-challenges/)** now let outside forks test
 portable agent authority, distribution restoration, pharmaceutical batch disposition, and the

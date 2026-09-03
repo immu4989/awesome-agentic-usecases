@@ -126,6 +126,12 @@ guard—not a formal privacy guarantee or permission to publish sensitive operat
 
 ## Repository and release supply chain
 
+Every external GitHub Action is checked twice: immutable full-SHA syntax is enforced locally, and
+the [Workflow Dependency Trust Lock](workflow-dependency-trust/) verifies that each SHA resolves as
+a commit in the repository named by the workflow. This rejects annotated-tag objects and commits
+available only from a fork. The committed result is an origin observation, not an audit of the
+Action's code or a guarantee that its maintainer, dependencies, or infrastructure remain safe.
+
 The Agent Release Gate reads bounded public or synthetic component files, rejects path traversal,
 symbolic links, oversized inputs, unknown fields, destructive overwrite, and missing impact
 coverage. Its command adapter intentionally executes the configured local adapter process; use

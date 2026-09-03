@@ -50,19 +50,19 @@ def main() -> None:
             "ossf/scorecard-action@",
         ),
         WORKFLOWS / "federal-pilot-release.yml": (
-            "actions/attest-build-provenance@",
-            "actions/attest-sbom@",
+            "actions/attest@",
+            "sbom-path:",
             "SHA256SUMS",
             "build_release.py",
         ),
         WORKFLOWS / "harness-release.yml": (
             "pypa/gh-action-pypi-publish@",
-            "actions/attest-build-provenance@",
+            "actions/attest@",
             "check_release_version.py",
         ),
         WORKFLOWS / "federal-portfolio-release.yml": (
-            "actions/attest-build-provenance@",
-            "actions/attest-sbom@",
+            "actions/attest@",
+            "sbom-path:",
             "SHA256SUMS",
             "build_release.py",
         ),
@@ -115,6 +115,15 @@ def main() -> None:
             "verify-receipt",
             "FORK_OWNER/awesome-agentic-usecases",
         ),
+        ROOT / "workflow-dependency-trust" / "README.md": (
+            "verify --online",
+            "commit-signature metadata",
+            "does not audit Action",
+        ),
+        ROOT / "workflow-dependency-trust" / "action-trust-lock.json": (
+            "aau-github-action-trust-lock/1.0",
+            "repository_membership_failure_count",
+        ),
         ROOT / "federal-pilot-kit" / "pilot-launch" / "README.md": ("30-Day",),
         ROOT / "federal-pilot-kit" / "lesson-record.schema.json": ("aau-federal-ai-lesson/0.4",),
         ROOT / "federal-pilot-kit" / "lessons" / "source-ledger.json": ("aau-federal-ai-lesson-sources/0.4",),
@@ -129,7 +138,8 @@ def main() -> None:
 
     print(
         f"Supply-chain controls verified: {len(workflow_paths)} workflows, "
-        f"{action_count} immutable Action references, release provenance, SBOM, and threat model"
+        f"{action_count} immutable Action references, origin trust lock, release provenance, "
+        "SBOM, and threat model"
     )
 
 

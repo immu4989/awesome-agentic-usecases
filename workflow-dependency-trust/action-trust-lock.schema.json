@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/action-trust-lock.schema.json",
+  "title": "AAU GitHub Action trust lock 1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["lock_version", "verified_at", "github_api", "dependencies", "summary", "boundary", "lock_sha256"],
+  "properties": {
+    "lock_version": {"const": "aau-github-action-trust-lock/1.0"},
+    "verified_at": {"type": "string", "format": "date-time"},
+    "github_api": {"const": "https://api.github.com"},
+    "dependencies": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["repository", "commit_sha", "uses", "repository_membership", "commit_verification", "commit_url"],
+        "properties": {
+          "repository": {"type": "string", "pattern": "^[a-z0-9_.-]+/[a-z0-9_.-]+$"},
+          "commit_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "uses": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+          "repository_membership": {"const": "verified_by_github_commit_api"},
+          "commit_verification": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["verified", "reason"],
+            "properties": {"verified": {"type": "boolean"}, "reason": {"type": "string", "minLength": 1}}
+          },
+          "commit_url": {"type": "string", "format": "uri"}
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dependency_count", "workflow_use_count", "signature_verified_count", "repository_membership_failure_count"],
+      "properties": {
+        "dependency_count": {"type": "integer", "minimum": 1},
+        "workflow_use_count": {"type": "integer", "minimum": 1},
+        "signature_verified_count": {"type": "integer", "minimum": 0},
+        "repository_membership_failure_count": {"const": 0}
+      }
+    },
+    "boundary": {"type": "object"},
+    "lock_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
