@@ -122,6 +122,14 @@
       set("release-incident-count", data.incidents.entry_count);
       set("release-export-count", data.incidents.export_count);
       set("release-source-count", data.freshness.source_count);
+      const actionTrust = data.workflow_dependency_trust;
+      set("release-action-dependency-count", actionTrust.dependency_count);
+      set("release-action-use-count", actionTrust.workflow_use_count);
+      set("release-action-unique-count", actionTrust.dependency_count);
+      set("release-action-signed-count", actionTrust.signature_verified_count);
+      set("release-action-origin-failures", actionTrust.repository_membership_failure_count);
+      set("release-action-lock", actionTrust.lock_sha256.slice(0, 12));
+      set("release-action-verified-at", actionTrust.verified_at.replace("T", " ").replace("Z", " UTC"));
       set("release-baseline-count", data.freshness.baseline_count);
       set("release-review-due", data.freshness.next_review_due);
       set("release-compat-binding-count", data.freshness.compatibility.binding_count);

@@ -36,6 +36,7 @@ def build() -> dict:
     reduction_plan = load("agent-capability-bom/examples/reference-reduction-plan.json")
     conformance_suite = load("agent-capability-bom/examples/reference-conformance-suite.json")
     conformance_receipt = load("agent-capability-bom/examples/reference-conformance-receipt.json")
+    action_trust = load("workflow-dependency-trust/action-trust-lock.json")
     open_challenges = [row for row in campaign["challenges"] if row["status"] == "open"]
     oscal_result = oscal["assessment-results"]["results"][0]
     formats = sorted(
@@ -44,7 +45,7 @@ def build() -> dict:
     )
     return {
         "data_version": "aau-release-operations-live-data/1.0",
-        "generated_on": "2026-08-30",
+        "generated_on": "2026-09-03",
         "release": {
             "release_id": decision["release_id"],
             "status": decision["status"],
@@ -131,11 +132,16 @@ def build() -> dict:
                 "tools_executed": 0,
             },
         },
+        "workflow_dependency_trust": {
+            "verified_at": action_trust["verified_at"],
+            "lock_sha256": action_trust["lock_sha256"],
+            **action_trust["summary"],
+        },
         "freshness": {
             "source_count": len(sources["sources"]),
             "baseline_count": sum(row["baseline"]["content_sha256"] is not None for row in sources["sources"]),
             "next_review_due": min(row["review_due"] for row in sources["sources"]),
-            "next_review_days": (date.fromisoformat(min(row["review_due"] for row in sources["sources"])) - date(2026, 8, 30)).days,
+            "next_review_days": (date.fromisoformat(min(row["review_due"] for row in sources["sources"])) - date(2026, 9, 3)).days,
             "compatibility": compatibility["summary"],
             "migration_gaps": [
                 row for row in compatibility["bindings"]
@@ -181,6 +187,7 @@ def build() -> dict:
             "capability_inventory_is_not_live_authorization": True,
             "authority_nonuse_never_auto_removes_permission": True,
             "authority_conformance_is_not_production_enforcement_evidence": True,
+            "action_origin_verification_is_not_an_action_code_audit": True,
         },
     }
 

@@ -87,13 +87,21 @@ def main() -> None:
         raise SystemExit("reference authority conformance has asymmetric failures")
     if conformance["expected_answers_sent_to_adapter"] or conformance["tools_executed"]:
         raise SystemExit("authority conformance adapter boundary was weakened")
+    action_trust = expected["workflow_dependency_trust"]
+    if (
+        action_trust["dependency_count"] < 1
+        or action_trust["workflow_use_count"] < action_trust["dependency_count"]
+        or action_trust["repository_membership_failure_count"] != 0
+        or len(action_trust["lock_sha256"]) != 64
+    ):
+        raise SystemExit("workflow dependency origin evidence drifted")
     html = (DOCS / "index.html").read_text()
     for marker in (
         'id="release-gate"',
         "Ship evidence,",
         "not confidence.",
         'href="release-gate.css?v=5"',
-        'src="release-gate.js?v=7"',
+        'src="release-gate.js?v=8"',
         'id="agent-capability-bom"',
         'id="release-bom-conformance-status"',
         'id="authority-conformance"',
@@ -102,6 +110,10 @@ def main() -> None:
         'id="release-challenge-inline"',
         'id="release-independent-count"',
         'id="release-campaign-lock"',
+        'id="release-action-dependency-count"',
+        'id="workflow-dependency-trust"',
+        'id="release-action-origin-failures"',
+        'id="release-action-lock"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing release-operations marker: {marker}")
