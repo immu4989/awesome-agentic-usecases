@@ -12,6 +12,7 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 PINNED_ACTION = re.compile(
     r"^\s*-?\s*uses:\s+[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)+@[a-f0-9]{40}(?:\s+#.*)?$"
 )
+CODEQL_V4_COMMIT = "cdf488f595d80d6e07e03d4674febd5ab45fa938"
 
 
 def fail(message: str) -> None:
@@ -35,6 +36,11 @@ def main() -> None:
         checkouts = source.count("uses: actions/checkout@")
         if source.count("persist-credentials: false") != checkouts:
             fail(f"{path.relative_to(ROOT)} must disable persisted credentials on every checkout")
+
+    security_source = (WORKFLOWS / "security.yml").read_text()
+    codeql_refs = re.findall(r"github/codeql-action/[a-z-]+@([a-f0-9]{40})", security_source)
+    if codeql_refs != [CODEQL_V4_COMMIT] * 3:
+        fail("CodeQL init, analyze, and SARIF upload must use the reviewed v4.37.9 commit")
 
     required = {
         ROOT / ".github" / "dependabot.yml": ("package-ecosystem: github-actions",),

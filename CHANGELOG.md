@@ -100,9 +100,10 @@ the harness API is what is versioned; use cases are additive.
 
 ## Unreleased
 
-- **CodeQL v4 migration** — all init, analysis, and SARIF upload steps now use the official v4
-  release commit with immutable SHA pins, removing the December 2026 v3 deprecation and forced
-  Node 20 compatibility warning surfaced by the live security workflow.
+- **CodeQL v4 migration** — all init, analysis, and SARIF upload steps use the verified v4.37.9
+  commit with immutable SHA pins, removing the December 2026 v3 deprecation and forced Node 20
+  compatibility warning. An offline guard rejects the annotated-tag object that OpenSSF correctly
+  identified as an invalid action commit.
 
 - **Executable fork-workflow trust boundary** — campaign verification now rejects non-manual
   triggers, expanded permissions, secret consumption, persisted checkout credentials, unquoted
