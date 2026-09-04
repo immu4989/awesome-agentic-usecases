@@ -24,6 +24,8 @@ def _workspace(tmp_path: Path) -> tuple[Path, argparse.Namespace]:
             ROOT / "examples" / name,
             workspace / "agent-side-effect-ledger" / "examples" / name,
         )
+    for name in ("aau_side_effect.py", "aau_crash_lab.py", "aau_race_lab.py"):
+        shutil.copyfile(ROOT / name, workspace / "agent-side-effect-ledger" / name)
     shutil.copyfile(
         ROOT / "examples" / "release-binding" / "agent-capability-bom.json",
         workspace / "bom.json",
@@ -122,13 +124,33 @@ def test_binding_holds_when_release_adapter_bytes_differ_from_matrix(tmp_path):
     assert receipt["status"] == "binding_held"
     assert receipt["fully_bound_consequential_operation_count"] == 0
     assert [item["code"] for item in receipt["findings"]] == [
-        "ADAPTER_BYTES_DIFFER_FROM_MATRIX"
+        "ADAPTER_BYTES_DIFFER_FROM_MATRIX",
+        "ADAPTER_MATERIALS_DIFFER_FROM_MATRIX",
     ]
     binding = receipt["bindings"][0]
     assert not binding["all_adapters_match_matrix"]
     assert not binding["adapters"]["race"]["matches_matrix"]
     assert binding["adapters"]["semantic"]["matches_matrix"]
     assert binding["adapters"]["crash"]["matches_matrix"]
+    assert verify_pack(workspace / "binding-pack") == receipt
+
+
+def test_binding_holds_when_imported_local_material_differs_from_matrix(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    imported = workspace / "agent-side-effect-ledger" / "aau_race_lab.py"
+    imported.write_bytes(imported.read_bytes() + b"\n# release substitution\n")
+
+    receipt = build_pack(args)
+
+    assert receipt["status"] == "binding_held"
+    assert receipt["fully_bound_consequential_operation_count"] == 0
+    assert [item["code"] for item in receipt["findings"]] == [
+        "ADAPTER_MATERIALS_DIFFER_FROM_MATRIX"
+    ]
+    race = receipt["bindings"][0]["adapters"]["race"]
+    assert race["sha256"] == race["matrix_sha256"]
+    assert not race["material_set_matches_matrix"]
+    assert not race["matches_matrix"]
     assert verify_pack(workspace / "binding-pack") == receipt
 
 

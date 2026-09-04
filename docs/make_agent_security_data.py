@@ -110,7 +110,7 @@ def build() -> dict:
     pilot = assess_pilot(pilot_record)
 
     return {
-        "data_version": "aau-agent-security-commons-data/0.3",
+        "data_version": "aau-agent-security-commons-data/0.4",
         "generated_on": "2026-09-04",
         "runtime": {
             "event_count": runtime["event_count"],
@@ -143,12 +143,21 @@ def build() -> dict:
                 "summary": race_receipt["summary"],
             },
             "matrix": {
+                "matrix_version": side_effect_matrix["matrix_version"],
                 "status": side_effect_matrix["status"],
                 "matrix_sha256": side_effect_matrix["matrix_sha256"],
                 "component_count": side_effect_matrix["component_count"],
                 "aggregate": side_effect_matrix["aggregate"],
                 "coverage_binding": side_effect_matrix["coverage_binding"],
                 "adapter_artifacts": side_effect_matrix["adapter_artifacts"],
+                "material_count": sum(
+                    item["material_count"]
+                    for item in side_effect_matrix["adapter_artifacts"]
+                ),
+                "unresolved_import_count": sum(
+                    item["unresolved_import_count"]
+                    for item in side_effect_matrix["adapter_artifacts"]
+                ),
             },
             "release_binding": {
                 "status": release_binding["status"],
@@ -160,6 +169,15 @@ def build() -> dict:
                     "fully_bound_consequential_operation_count"
                 ],
                 "finding_count": len(release_binding["findings"]),
+                "material_set_count": sum(
+                    len(item["adapters"])
+                    for item in release_binding["bindings"]
+                ),
+                "material_set_match_count": sum(
+                    adapter["material_set_matches_matrix"]
+                    for item in release_binding["bindings"]
+                    for adapter in item["adapters"].values()
+                ),
                 "receipt_sha256": release_binding["receipt_sha256"],
             },
             "failure_shapes": [

@@ -1,6 +1,6 @@
 # Side-Effect Release Binding research notes
 
-Research checked on 2026-09-03. This profile addresses a narrow evidence-substitution problem:
+Research checked on 2026-09-04. This profile addresses a narrow evidence-substitution problem:
 testing one adapter snapshot and then associating the receipt with a different release, tool,
 operation, or adapter. It binds copied bytes; it does not establish what is actually running.
 
@@ -11,7 +11,8 @@ operation, or adapter. It binds copied bytes; it does not establish what is actu
 | SLSA 1.2 defines provenance as verifiable information for tracing an artifact through the supply chain | The pack hashes the AABOM, binding plan, complete matrix manifest, matrix receipt, and three exact adapter snapshots | The pack is not SLSA provenance and has no builder identity or signature |
 | NIST SP 800-53 Rev. 5 AC-6 applies least privilege to users and processes acting for users | Every AABOM write or irreversible operation must have a declared binding and matching authority | A declared authority is not a verified live credential or authorization decision |
 | NIST SP 800-53 Rev. 5 CM controls treat configuration and change evidence as an organizational responsibility | Agent ID, release ID, tool ID, operation, authority, evidence digest, and adapter bytes are joined in one recomputable receipt | A byte match is not production equivalence, change approval, compliance, or an ATO |
-| The matrix separately tests semantics, crash recovery, and concurrency and now carries the declared entrypoint artifact for each command | A consequential operation is fully bound only when it is the exact pair covered by all three matrix gates and every release path plus digest agrees with those captured artifacts | Other semantic-suite tools do not inherit crash or race coverage; a single entrypoint is not dependency closure |
+| The matrix separately tests semantics, crash recovery, and concurrency and carries the entrypoint plus static-local Python execution materials for each command | A consequential operation is fully bound only when it is the exact pair covered by all three matrix gates and every release path, entrypoint digest, and material-set digest agrees | Other semantic-suite tools do not inherit crash or race coverage; static local imports are not a complete runtime dependency graph |
+| SLSA 1.2 records known resolved dependencies while describing dependency completeness as best effort | The binding pack preserves matrix-side and release-side material sets and holds on any digest mismatch | This unsigned pack is not SLSA provenance and has no builder or workload identity |
 
 ## Premise checks
 
@@ -29,13 +30,18 @@ operation, or adapter. It binds copied bytes; it does not establish what is actu
 6. **The matrix remains bounded.** Even a byte-perfect binding to a passing public-synthetic matrix
    is not evidence about real data, target atomicity, workload identity, production equivalence,
    safety, compliance, certification, release approval, or an Authorization to Operate.
-7. **Test-to-release binding is byte equality, not execution identity.** Matrix 0.3 proves its
-   command referenced one declared entrypoint and carries those original bytes. Release Binding 0.2
-   compares both the declared path and digest. It does not prove the packaged file was deployed or
-   capture interpreters, imports, transitive dependencies, configuration, containers, or builders.
+7. **Test-to-release binding is byte equality, not execution identity.** Matrix 0.4 proves its
+   command referenced one declared entrypoint and carries those original bytes plus a static-local
+   Python material set. Release Binding 0.3 compares the path, entrypoint digest, and material-set
+   digest. It does not prove the packaged files were deployed or capture interpreters, installed
+   packages, dynamic imports, configuration, containers, or builders.
+8. **Unchanged entrypoint bytes are insufficient.** A changed statically imported local module
+   produces `ADAPTER_MATERIALS_DIFFER_FROM_MATRIX` even when the release entrypoint digest matches.
 
 ## Official sources
 
 - [SLSA 1.2 — Provenance](https://slsa.dev/spec/v1.2/provenance)
+- [SLSA 1.2 — Build provenance](https://slsa.dev/spec/v1.2/build-provenance)
+- [Python language reference — the import system](https://docs.python.org/3/reference/import.html)
 - [NIST SP 800-53 Rev. 5 — Security and Privacy Controls](https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final)
 - [AWS Agentic AI Lens — deterministic idempotency and conditional writes](https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentrel06-bp04.html)

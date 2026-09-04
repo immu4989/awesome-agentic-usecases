@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-release-binding-receipt-0.2.json",
-  "title": "AAU Agent Side-Effect Release Binding Receipt 0.2",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-release-binding-receipt-0.3.json",
+  "title": "AAU Agent Side-Effect Release Binding Receipt 0.3",
   "type": "object",
   "additionalProperties": false,
   "required": ["receipt_version", "binding_id", "agent_id", "release_id", "status", "aabom_sha256", "plan_sha256", "matrix_manifest_sha256", "matrix_sha256", "matrix_status", "matrix_boundary", "consequential_operation_count", "fully_bound_consequential_operation_count", "bindings", "findings", "claim_boundary", "receipt_sha256"],
   "properties": {
-    "receipt_version": {"const": "aau-agent-side-effect-release-binding-receipt/0.2"},
+    "receipt_version": {"const": "aau-agent-side-effect-release-binding-receipt/0.3"},
     "binding_id": {"$ref": "#/$defs/text160"},
     "agent_id": {"$ref": "#/$defs/text160"},
     "release_id": {"$ref": "#/$defs/text160"},
@@ -63,11 +63,13 @@
     "claim_boundary": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["hashes_bind_pack_bytes_not_runtime_identity", "source_paths_are_declarations_not_provenance", "adapter_byte_mismatches_are_binding_holds", "public_synthetic_staging_only", "valid_binding_not_deployment_approval_or_authority", "passing_matrix_not_production_equivalence"],
+      "required": ["hashes_bind_pack_bytes_not_runtime_identity", "source_paths_are_declarations_not_provenance", "adapter_byte_mismatches_are_binding_holds", "execution_material_mismatches_are_binding_holds", "static_local_python_imports_not_complete_runtime_dependency_graph", "public_synthetic_staging_only", "valid_binding_not_deployment_approval_or_authority", "passing_matrix_not_production_equivalence"],
       "properties": {
         "hashes_bind_pack_bytes_not_runtime_identity": {"const": true},
         "source_paths_are_declarations_not_provenance": {"const": true},
         "adapter_byte_mismatches_are_binding_holds": {"const": true},
+        "execution_material_mismatches_are_binding_holds": {"const": true},
+        "static_local_python_imports_not_complete_runtime_dependency_graph": {"const": true},
         "public_synthetic_staging_only": {"const": true},
         "valid_binding_not_deployment_approval_or_authority": {"const": true},
         "passing_matrix_not_production_equivalence": {"const": true}
@@ -87,13 +89,20 @@
     "artifact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source_path", "pack_path", "size_bytes", "sha256", "matrix_sha256", "matches_matrix"],
+      "required": ["source_path", "pack_path", "size_bytes", "sha256", "matrix_sha256", "materials_pack_path", "material_capture_mode", "material_count", "unresolved_import_count", "material_set_sha256", "matrix_material_set_sha256", "material_set_matches_matrix", "matches_matrix"],
       "properties": {
         "source_path": {"type": "string", "minLength": 1, "maxLength": 500},
         "pack_path": {"type": "string", "minLength": 1, "maxLength": 500},
         "size_bytes": {"type": "integer", "minimum": 1, "maximum": 2000000},
         "sha256": {"$ref": "#/$defs/digest"},
         "matrix_sha256": {"$ref": "#/$defs/digest"},
+        "materials_pack_path": {"type": "string", "minLength": 1, "maxLength": 500},
+        "material_capture_mode": {"enum": ["static_local_python_imports", "entrypoint_only_non_python"]},
+        "material_count": {"type": "integer", "minimum": 1, "maximum": 200},
+        "unresolved_import_count": {"type": "integer", "minimum": 0, "maximum": 200},
+        "material_set_sha256": {"$ref": "#/$defs/digest"},
+        "matrix_material_set_sha256": {"$ref": "#/$defs/digest"},
+        "material_set_matches_matrix": {"type": "boolean"},
         "matches_matrix": {"type": "boolean"}
       }
     }

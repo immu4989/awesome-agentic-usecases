@@ -37,6 +37,8 @@ def _workspace(tmp_path: Path) -> tuple[Path, argparse.Namespace]:
     }
     for name, source in adapters.items():
         shutil.copyfile(source, adapter_root / name)
+    for name in ("aau_side_effect.py", "aau_crash_lab.py", "aau_race_lab.py"):
+        shutil.copyfile(ROOT / name, workspace / "agent-side-effect-ledger" / name)
     semantic_adapter = adapter_root / "reference_adapter.py"
     crash_adapter = adapter_root / "reference_crash_adapter.py"
     race_adapter = adapter_root / "reference_race_adapter.py"
@@ -90,6 +92,17 @@ def test_reference_matrix_is_exact_self_contained_and_reproducible(tmp_path):
     assert {item["launch_mode"] for item in matrix["adapter_artifacts"]} == {
         "supported_interpreter_target"
     }
+    assert {
+        item["material_capture_mode"] for item in matrix["adapter_artifacts"]
+    } == {"static_local_python_imports"}
+    assert sum(item["material_count"] for item in matrix["adapter_artifacts"]) == 8
+    assert sum(
+        item["unresolved_import_count"] for item in matrix["adapter_artifacts"]
+    ) == 42
+    assert all(
+        len(item["material_set_sha256"]) == 64
+        for item in matrix["adapter_artifacts"]
+    )
     assert verify_pack(workspace / "pack") == matrix
     assert {path.name for path in (workspace / "pack").iterdir()} == PACK_FILES
     for name in PACK_FILES:
@@ -169,17 +182,54 @@ def test_matrix_executes_workspace_artifact_not_same_named_cwd_file(tmp_path):
 def test_matrix_rejects_adapter_artifact_changed_during_run(tmp_path):
     workspace, args = _workspace(tmp_path)
     mutating = workspace / "mutating_adapter.py"
-    target = ROOT / "examples" / "reference_adapter.py"
     mutating.write_text(
-        "import runpy\n"
+        "import json, sys\n"
         "from pathlib import Path\n"
         "p=Path(__file__)\n"
         "p.write_text(p.read_text()+'# changed\\n')\n"
-        f"runpy.run_path({str(target)!r}, run_name='__main__')\n"
+        "r=json.load(sys.stdin)\n"
+        "rows=[{'event_id':e['event_id'],'outcome':'committed','reason_codes':[]} "
+        "for e in r['case']['events']]\n"
+        "json.dump({'case_id':r['case']['case_id'],'results':rows},sys.stdout)\n"
     )
     args.semantic_adapter_command = _command(mutating)
     args.semantic_adapter_artifact = Path("mutating_adapter.py")
     with pytest.raises(MatrixError, match="changed during the matrix run"):
+        run_pack(args)
+
+
+def test_matrix_rejects_imported_material_changed_during_run(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    helper = workspace / "mutating_helper.py"
+    helper.write_text(
+        "from pathlib import Path\n"
+        "p=Path(__file__)\n"
+        "p.write_text(p.read_text()+'# changed\\n')\n"
+    )
+    adapter = workspace / "mutating_material_adapter.py"
+    adapter.write_text(
+        "import json, sys\n"
+        "import mutating_helper\n"
+        "r=json.load(sys.stdin)\n"
+        "rows=[{'event_id':e['event_id'],'outcome':'committed','reason_codes':[]} "
+        "for e in r['case']['events']]\n"
+        "json.dump({'case_id':r['case']['case_id'],'results':rows},sys.stdout)\n"
+    )
+    args.semantic_adapter_command = _command(adapter)
+    args.semantic_adapter_artifact = adapter.relative_to(workspace)
+
+    with pytest.raises(MatrixError, match="execution material changed"):
+        run_pack(args)
+
+
+def test_matrix_rejects_obvious_dynamic_code_loading(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    adapter = workspace / "dynamic_adapter.py"
+    adapter.write_text("import importlib\nimportlib.import_module('hidden')\n")
+    args.semantic_adapter_command = _command(adapter)
+    args.semantic_adapter_artifact = adapter.relative_to(workspace)
+
+    with pytest.raises(MatrixError, match="dynamic code loading"):
         run_pack(args)
 
 

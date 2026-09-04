@@ -21,8 +21,8 @@ import aau_side_effect_matrix  # noqa: E402
 
 
 PLAN_VERSION = "aau-agent-side-effect-release-binding-plan/0.1"
-RECEIPT_VERSION = "aau-agent-side-effect-release-binding-receipt/0.2"
-PACK_VERSION = "aau-agent-side-effect-release-binding-pack/0.2"
+RECEIPT_VERSION = "aau-agent-side-effect-release-binding-receipt/0.3"
+PACK_VERSION = "aau-agent-side-effect-release-binding-pack/0.3"
 MAX_BYTES = 2_000_000
 ROLES = ("semantic", "crash", "race")
 MATRIX_COMPONENT = {
@@ -182,12 +182,51 @@ def _adapter_pack_path(binding_index: int, role: str) -> str:
     return f"adapters/{binding_index + 1:03d}-{role}.artifact"
 
 
+def _adapter_material_pack_path(binding_index: int, role: str) -> str:
+    return f"adapters/{binding_index + 1:03d}-{role}.materials.json"
+
+
 def _expected_files(plan: dict[str, Any]) -> set[str]:
     files = set(BASE_FILES)
     files.update(f"matrix/{name}" for name in aau_side_effect_matrix.PACK_FILES)
     for index, _binding in enumerate(plan["bindings"]):
         files.update(_adapter_pack_path(index, role) for role in ROLES)
+        files.update(_adapter_material_pack_path(index, role) for role in ROLES)
     return files
+
+
+def _validate_materials(value: dict[str, Any]) -> dict[str, bytes]:
+    try:
+        return aau_side_effect_matrix.aau_execution_materials.validate_materials(value)
+    except aau_side_effect_matrix.aau_execution_materials.MaterialError as exc:
+        raise BindingError(f"invalid adapter execution materials: {exc}") from exc
+
+
+def _capture_materials(
+    workspace: Path,
+    source: Path,
+    capture_mode: str,
+) -> dict[str, Any]:
+    try:
+        return aau_side_effect_matrix.aau_execution_materials.capture_materials(
+            workspace, source, capture_mode
+        )
+    except aau_side_effect_matrix.aau_execution_materials.MaterialError as exc:
+        raise BindingError(f"cannot capture adapter execution materials: {exc}") from exc
+
+
+def _load_material(path: Path) -> dict[str, Any]:
+    limit = aau_side_effect_matrix.aau_execution_materials.MAX_TOTAL_BYTES * 2
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > limit:
+        raise BindingError("adapter material pack must be a bounded regular file")
+    try:
+        value = json.loads(path.read_bytes())
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise BindingError("adapter material pack must contain one JSON object") from exc
+    if not isinstance(value, dict):
+        raise BindingError("adapter material pack must contain one JSON object")
+    _validate_materials(value)
+    return value
 
 
 def _authority_ids(
@@ -213,6 +252,7 @@ def _receipt(
     plan_bytes: bytes,
     matrix_manifest_bytes: bytes,
     adapter_payloads: dict[tuple[int, str], bytes],
+    adapter_materials: dict[tuple[int, str], dict[str, Any]],
 ) -> dict[str, Any]:
     validate_bom(bom)
     validate_plan(plan)
@@ -248,9 +288,26 @@ def _receipt(
             payload = adapter_payloads[(index, role)]
             sha256 = _digest(payload)
             matrix_artifact = matrix_artifacts[MATRIX_COMPONENT[role]]
+            material_pack = adapter_materials[(index, role)]
+            material_payloads = _validate_materials(material_pack)
             path_matches = binding[f"{role}_adapter"] == matrix_artifact["source_path"]
             bytes_match = sha256 == matrix_artifact["sha256"]
-            matches_matrix = path_matches and bytes_match
+            material_entrypoint_matches = (
+                material_pack["entrypoint"] == binding[f"{role}_adapter"]
+                and material_payloads.get(material_pack["entrypoint"]) == payload
+            )
+            material_set_matches = (
+                material_pack["capture_mode"]
+                == matrix_artifact["material_capture_mode"]
+                and material_pack["material_set_sha256"]
+                == matrix_artifact["material_set_sha256"]
+            )
+            matches_matrix = (
+                path_matches
+                and bytes_match
+                and material_entrypoint_matches
+                and material_set_matches
+            )
             all_adapters_match = all_adapters_match and matches_matrix
             adapters[role] = {
                 "source_path": binding[f"{role}_adapter"],
@@ -258,6 +315,13 @@ def _receipt(
                 "size_bytes": len(payload),
                 "sha256": sha256,
                 "matrix_sha256": matrix_artifact["sha256"],
+                "materials_pack_path": _adapter_material_pack_path(index, role),
+                "material_capture_mode": material_pack["capture_mode"],
+                "material_count": len(material_payloads),
+                "unresolved_import_count": len(material_pack["unresolved_imports"]),
+                "material_set_sha256": material_pack["material_set_sha256"],
+                "matrix_material_set_sha256": matrix_artifact["material_set_sha256"],
+                "material_set_matches_matrix": material_set_matches,
                 "matches_matrix": matches_matrix,
             }
             if not path_matches:
@@ -271,6 +335,18 @@ def _receipt(
                     "ADAPTER_BYTES_DIFFER_FROM_MATRIX",
                     f"{tool_id} / {operation} / {role}",
                     "The release adapter bytes differ from the artifact hashed during the matrix run.",
+                )
+            if not material_entrypoint_matches:
+                add(
+                    "ADAPTER_MATERIAL_ENTRYPOINT_DIFFERS",
+                    f"{tool_id} / {operation} / {role}",
+                    "The release material set does not contain the exact declared adapter entrypoint bytes.",
+                )
+            if not material_set_matches:
+                add(
+                    "ADAPTER_MATERIALS_DIFFER_FROM_MATRIX",
+                    f"{tool_id} / {operation} / {role}",
+                    "The release execution-material set differs from the one captured during the matrix run.",
                 )
         binding_matches[(tool_id, operation)] = all_adapters_match
         rows.append(
@@ -386,6 +462,8 @@ def _receipt(
             "hashes_bind_pack_bytes_not_runtime_identity": True,
             "source_paths_are_declarations_not_provenance": True,
             "adapter_byte_mismatches_are_binding_holds": True,
+            "execution_material_mismatches_are_binding_holds": True,
+            "static_local_python_imports_not_complete_runtime_dependency_graph": True,
             "public_synthetic_staging_only": True,
             "valid_binding_not_deployment_approval_or_authority": True,
             "passing_matrix_not_production_equivalence": True,
@@ -417,13 +495,18 @@ def _summary(receipt: dict[str, Any]) -> str:
             f"Matrix boundary: `{receipt['matrix_boundary']['tool_id']} / "
             f"{receipt['matrix_boundary']['operation']}`",
             "",
+            "Each adapter binding compares both the entrypoint bytes and its captured static-local "
+            "Python execution-material set with the matrix evidence.",
+            "",
             "## Holds",
             "",
             *finding_lines,
             "",
-            "The manifest binds these copied bytes. Source paths are declarations, and neither "
-            "a valid binding nor a passing matrix proves runtime identity, production equivalence, "
-            "authorization, safety, compliance, certification, deployment approval, or an ATO.",
+            "The manifest binds these copied bytes. Source paths are declarations; static local "
+            "imports are not the interpreter, installed dependencies, configuration, environment, "
+            "container, or runtime identity. Neither a valid binding nor a passing matrix proves "
+            "production equivalence, authorization, safety, compliance, certification, deployment "
+            "approval, or an ATO.",
             "",
         ]
     )
@@ -437,7 +520,12 @@ def _manifest(root: Path) -> dict[str, Any]:
         if not path.is_file() or path.relative_to(root).as_posix() == "manifest.json":
             continue
         payload = path.read_bytes()
-        if len(payload) > MAX_BYTES:
+        limit = (
+            aau_side_effect_matrix.aau_execution_materials.MAX_TOTAL_BYTES * 2
+            if path.name.endswith(".materials.json")
+            else MAX_BYTES
+        )
+        if len(payload) > limit:
             raise BindingError(f"binding pack file is oversized: {path.relative_to(root)}")
         files.append(
             {
@@ -461,8 +549,12 @@ def build_pack(args: argparse.Namespace) -> dict[str, Any]:
     validate_bom(bom)
     validate_plan(plan)
     matrix = aau_side_effect_matrix.verify_pack(matrix_path)
+    matrix_artifacts = {
+        item["component_id"]: item for item in matrix["adapter_artifacts"]
+    }
     adapter_sources: dict[tuple[int, str], Path] = {}
     adapter_payloads: dict[tuple[int, str], bytes] = {}
+    adapter_materials: dict[tuple[int, str], dict[str, Any]] = {}
     for index, binding in enumerate(plan["bindings"]):
         for role in ROLES:
             source = _inside_file(
@@ -470,6 +562,12 @@ def build_pack(args: argparse.Namespace) -> dict[str, Any]:
             )
             adapter_sources[(index, role)] = source
             adapter_payloads[(index, role)] = source.read_bytes()
+            capture_mode = matrix_artifacts[MATRIX_COMPONENT[role]][
+                "material_capture_mode"
+            ]
+            adapter_materials[(index, role)] = _capture_materials(
+                workspace, source, capture_mode
+            )
     receipt = _receipt(
         bom,
         plan,
@@ -478,6 +576,7 @@ def build_pack(args: argparse.Namespace) -> dict[str, Any]:
         plan_path.read_bytes(),
         (matrix_path / "manifest.json").read_bytes(),
         adapter_payloads,
+        adapter_materials,
     )
 
     scratch = Path(tempfile.mkdtemp(prefix=".aau-binding-", dir=output.parent))
@@ -490,6 +589,10 @@ def build_pack(args: argparse.Namespace) -> dict[str, Any]:
             shutil.copyfile(matrix_path / name, scratch / "matrix" / name)
         for (index, role), source in adapter_sources.items():
             shutil.copyfile(source, scratch / _adapter_pack_path(index, role))
+            _write_json(
+                scratch / _adapter_material_pack_path(index, role),
+                adapter_materials[(index, role)],
+            )
         _write_json(scratch / "binding-receipt.json", receipt)
         (scratch / "README.md").write_text(_summary(receipt))
         _write_json(scratch / "manifest.json", _manifest(scratch))
@@ -509,7 +612,16 @@ def verify_pack(root: Path) -> dict[str, Any]:
         raise BindingError("binding packs cannot contain symbolic links")
     if any(not path.is_file() and not path.is_dir() for path in paths):
         raise BindingError("binding packs may contain only regular files and directories")
-    if any(path.is_file() and path.stat().st_size > MAX_BYTES for path in paths):
+    if any(
+        path.is_file()
+        and path.stat().st_size
+        > (
+            aau_side_effect_matrix.aau_execution_materials.MAX_TOTAL_BYTES * 2
+            if path.name.endswith(".materials.json")
+            else MAX_BYTES
+        )
+        for path in paths
+    ):
         raise BindingError("binding pack contains an oversized file")
     bom = _load(root / "agent-capability-bom.json")
     plan = _load(root / "binding-plan.json")
@@ -531,6 +643,13 @@ def verify_pack(root: Path) -> dict[str, Any]:
         for index, _binding in enumerate(plan["bindings"])
         for role in ROLES
     }
+    materials = {
+        (index, role): _load_material(
+            root / _adapter_material_pack_path(index, role)
+        )
+        for index, _binding in enumerate(plan["bindings"])
+        for role in ROLES
+    }
     expected = _receipt(
         bom,
         plan,
@@ -539,6 +658,7 @@ def verify_pack(root: Path) -> dict[str, Any]:
         (root / "binding-plan.json").read_bytes(),
         (root / "matrix" / "manifest.json").read_bytes(),
         payloads,
+        materials,
     )
     if _load(root / "binding-receipt.json") != expected:
         raise BindingError("binding receipt does not recompute")

@@ -269,7 +269,7 @@ universal storage recommendation. Read the [race-lab research notes](RACE_LAB_RE
 ## Put all three boundaries in one CI gate
 
 The **Side-Effect Safety Matrix** runs semantic conformance, fresh-process recovery, and
-multi-process races, then writes a self-contained 12-file pack. It keeps each component's metrics
+multi-process races, then writes a self-contained 15-file pack. It keeps each component's metrics
 separate while providing one release signal and one digest-bound summary.
 
 ```bash
@@ -291,26 +291,48 @@ python3 agent-side-effect-ledger/aau_side_effect_matrix.py verify safety-result/
 
 The committed [reference matrix pack](examples/reference-matrix-pack/) reports **72/72 exact
 checked outcomes across 36 cases**, zero unsafe outcomes, zero availability losses, and three
-uncertainties correctly preserved. Matrix 0.3 includes exact copies of all three suites, receipts,
-and declared adapter entrypoint artifacts, plus the
+uncertainties correctly preserved. Matrix 0.4 includes exact copies of all three suites, receipts,
+declared adapter entrypoints, and three self-contained execution-material sets, plus the
 [matrix receipt](side-effect-safety-matrix.schema.json), readable summary, and byte manifest.
 Verification needs no adapter command, model, account, network, or package install.
 
-Matrix 0.3 retains the coverage identity introduced in 0.2: crash and race suites must name the
+Matrix 0.4 retains the coverage identity introduced in 0.2: crash and race suites must name the
 same `tool_id + operation`, and that pair must exist in the semantic suite. The reference fully
 stresses `notification-service / send_synthetic_notice`. Its semantic suite additionally exercises
 `benefits-disbursement / issue_synthetic_payment`; the matrix does **not** imply crash or race
 coverage for that second pair. This distinction is encoded in the receipt rather than left to
 README interpretation.
 
-Matrix 0.3 requires each command to place its declared entrypoint artifact at `argv[0]` or the
+Matrix 0.4 requires each command to place its declared entrypoint artifact at `argv[0]` or the
 `argv[1]` supported-interpreter target. It records that position, replaces the token with the declared
 artifact's absolute path before execution, hashes the file before execution, rejects a different
 after-run byte sequence, copies the original bytes into the pack, and omits the command text so an
-accidental token is not published. This binds one declared file—not its interpreter, imports,
-container, configuration, dependency closure,
-builder identity, or running workload. Equal before/after bytes do not prove the file was immutable
-between those observations.
+accidental token is not published. For a Python interpreter target, it also parses static import
+syntax transitively, captures every matching regular Python file on the entrypoint's workspace
+ancestor search paths, embeds those bytes in a material set, exposes unresolved import names, and
+rejects obvious dynamic loading. The reference matrix binds **8 material records** across three
+adapters and explicitly exposes **42 per-adapter unresolved import names** rather than silently
+calling them captured. Every captured file must retain the same bytes after the matrix run.
+
+The standalone material tool makes that narrower claim independently inspectable:
+
+```bash
+python3 agent-side-effect-ledger/aau_execution_materials.py capture \
+  --workspace . \
+  --entrypoint safety/semantic_adapter.py \
+  --capture-mode static_local_python_imports \
+  --out safety-result/semantic-materials.json
+
+python3 agent-side-effect-ledger/aau_execution_materials.py verify \
+  safety-result/semantic-materials.json
+```
+
+Static syntax is not a complete runtime dependency graph. The material set does not capture the
+Python interpreter, installed distributions, import hooks, data/configuration reads, environment,
+container, builder, or running workload. Equal before/after bytes do not prove continuous
+immutability. Non-Python launchers carry an explicit `entrypoint_only_non_python` mode rather than
+pretending their imports were discovered. See the
+[execution-material research notes](EXECUTION_MATERIALS_RESEARCH_NOTES.md).
 
 Supported `argv[1]` launchers are Python, Node.js, Bash, POSIX shell, Zsh, Ruby, Perl, and PHP.
 Interpreter flags before the artifact are deliberately rejected; use a direct executable wrapper
@@ -349,11 +371,13 @@ schemas make the boundary portable. The reusable
 [Release Binding Action](../.github/actions/aau-side-effect-release-binding/) preserves diagnostics
 before failing CI.
 
-Release Binding 0.2 compares every declared release adapter path and SHA-256 digest with its Matrix
-0.3 artifact record. A different path or even a one-byte change produces
-`ADAPTER_PATH_DIFFERS_FROM_MATRIX` or `ADAPTER_BYTES_DIFFER_FROM_MATRIX`, reduces the fully bound
-count, and remains inspectable in a valid hold pack. This closes substitution between the tested
-entrypoint and the packaged release entrypoint; it does not expand the evidence beyond that file.
+Release Binding 0.3 compares every declared release adapter path, entrypoint digest, and captured
+execution-material-set digest with its Matrix 0.4 record. A different path, a one-byte entrypoint
+change, or a changed statically imported local module produces
+`ADAPTER_PATH_DIFFERS_FROM_MATRIX`, `ADAPTER_BYTES_DIFFER_FROM_MATRIX`, or
+`ADAPTER_MATERIALS_DIFFER_FROM_MATRIX`, reduces the fully bound count, and remains inspectable in a
+valid 26-file hold pack. This closes a local-import substitution gap without relabeling static
+source discovery as live workload identity.
 
 Hashes bind the copied files, not a running workload. Source paths are declarations. This pack has
 no signature or builder identity and does not prove provenance, production equivalence, live

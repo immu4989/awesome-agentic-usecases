@@ -49,6 +49,14 @@
   release paths and bytes to those matrix artifacts and turns any substitution into a portable hold.
   The contract is deliberately one-file evidence, not interpreter, dependency, container, builder,
   configuration, or runtime identity. Equal observations do not prove continuous immutability.
+- **Static-local execution-material binding** — upgraded Matrix 0.4 from one-file entrypoint
+  evidence to three self-contained material sets. Python targets transitively capture static local
+  imports, reject obvious dynamic loading, expose unresolved import names, and compare every
+  captured file before and after execution. The reference binds 8 material records while leaving 42
+  per-adapter standard-library or installed-package import names explicit. Release Binding 0.3 now
+  detects imported-module substitution even when entrypoint bytes are unchanged; its 26-file pack
+  remains explicit that source capture is not interpreter, environment, container, builder, or live
+  workload identity.
 
 ## 1.6.0 - 2026-08-30
 

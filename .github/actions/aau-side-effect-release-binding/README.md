@@ -2,8 +2,9 @@
 
 This dependency-free local composite Action joins a verified Side-Effect Safety Matrix to an exact
 Agent Capability and Authority BOM release plus byte snapshots of the semantic, crash, and race
-adapters. It fails closed when the matrix boundary, AABOM consequential operations, binding plan,
-authority approval requirement, or evidence digest does not agree.
+adapters and their static-local Python material sets. It fails closed when the matrix boundary,
+AABOM consequential operations, binding plan, authority approval requirement, entrypoint digest,
+material-set digest, or evidence digest does not agree.
 
 Run the matrix Action first, then bind its pack:
 
@@ -35,9 +36,9 @@ another structural failure. The Action uploads nothing; preserve the output in a
 records policy allows it.
 
 Adapter paths are workspace-relative declarations. Their exact copied bytes are hashed, but the
-release pack is accepted only when each path and digest agrees with the artifact captured by the
-matrix. The pack has no signature or builder identity and does not establish interpreter or
-dependency closure, live workload identity, production
+release pack is accepted only when each path, entrypoint digest, and captured material-set digest
+agrees with the matrix. The pack has no signature or builder identity and does not establish the
+interpreter, installed-package or dynamic dependency closure, live workload identity, production
 provenance, authority, safety, compliance, certification, deployment approval, or an ATO. Pin this
 Action and every third-party Action to a reviewed full commit SHA, use synthetic staging adapters,
 and do not expose production credentials to the runner.

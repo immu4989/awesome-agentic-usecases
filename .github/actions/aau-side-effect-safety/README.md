@@ -8,7 +8,7 @@ and that pair exists in the semantic suite:
 2. recovery in a fresh process after six crash boundaries; and
 3. 2-to-16-process races followed by a separate durable-state inspection.
 
-It writes and re-verifies a self-contained 12-file evidence pack before returning the gate result.
+It writes and re-verifies a self-contained 15-file evidence pack before returning the gate result.
 A behavioral mismatch returns exit code 1 after preserving a valid diagnostic pack. Structural,
 adapter, or tamper failures return exit code 2. The Action never uploads evidence; the caller owns
 retention.
@@ -64,8 +64,11 @@ untrusted GitHub context are not interpolated into the script.
 The runner requires each command to place a declared workspace-relative entrypoint artifact at
 `argv[0]` or a supported `argv[1]` interpreter target, normalizes that token to the declared
 absolute path, hashes it before and after execution, and carries those three exact files in the
-pack without recording the command text. It does not capture the interpreter or dependency closure.
-Python, Node.js, Bash, POSIX shell, Zsh, Ruby, Perl, and PHP launchers are accepted at `argv[0]`;
+pack without recording the command text. Python targets also capture transitive static-local
+imports, compare every captured file after the run, reject obvious dynamic loading, and expose
+unresolved imports. This is not a complete runtime dependency closure and does not capture the
+interpreter, installed packages, configuration, environment, or container. Python, Node.js, Bash,
+POSIX shell, Zsh, Ruby, Perl, and PHP launchers are accepted at `argv[0]`;
 interpreter flags before the artifact are intentionally unsupported. The runner groups
 nondeterministic race winners, keeps each component's metrics separate, records which one semantic
 tool-operation pair received all three gates, and does not treat intentionally

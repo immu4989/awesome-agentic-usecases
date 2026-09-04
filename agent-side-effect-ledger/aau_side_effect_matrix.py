@@ -11,12 +11,13 @@ from pathlib import Path
 from typing import Any
 
 import aau_crash_lab
+import aau_execution_materials
 import aau_race_lab
 import aau_side_effect
 
 
-MATRIX_VERSION = "aau-agent-side-effect-safety-matrix/0.3"
-MANIFEST_VERSION = "aau-agent-side-effect-safety-manifest/0.2"
+MATRIX_VERSION = "aau-agent-side-effect-safety-matrix/0.4"
+MANIFEST_VERSION = "aau-agent-side-effect-safety-manifest/0.3"
 MAX_BYTES = 2_000_000
 SUPPORTED_INTERPRETERS = {
     "bash",
@@ -30,6 +31,7 @@ SUPPORTED_INTERPRETERS = {
     "sh",
     "zsh",
 }
+PYTHON_INTERPRETERS = {"python", "python3"}
 SUITES = {
     "semantics": "semantic-suite.json",
     "crash_recovery": "crash-suite.json",
@@ -45,19 +47,30 @@ ARTIFACTS = {
     "crash_recovery": "crash-adapter.artifact",
     "concurrency": "race-adapter.artifact",
 }
-PACK_FILES = set(SUITES.values()) | set(RECEIPTS.values()) | set(ARTIFACTS.values()) | {
+MATERIALS = {
+    "semantics": "semantic-adapter.materials.json",
+    "crash_recovery": "crash-adapter.materials.json",
+    "concurrency": "race-adapter.materials.json",
+}
+PACK_FILES = (
+    set(SUITES.values())
+    | set(RECEIPTS.values())
+    | set(ARTIFACTS.values())
+    | set(MATERIALS.values())
+    | {
     "matrix-receipt.json",
     "SUMMARY.md",
     "manifest.json",
-}
+    }
+)
 
 
 class MatrixError(ValueError):
     """Raised when a matrix input or pack violates the public contract."""
 
 
-def _load(path: Path) -> dict[str, Any]:
-    if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_BYTES:
+def _load(path: Path, max_bytes: int = MAX_BYTES) -> dict[str, Any]:
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > max_bytes:
         raise MatrixError(f"invalid, oversized, or symbolic-link file: {path}")
     try:
         value = json.loads(path.read_bytes())
@@ -85,7 +98,7 @@ def _inside(workspace: Path, value: Path, label: str, *, exists: bool) -> Path:
 
 def _artifact_binding(
     workspace: Path, value: Path, command: str, component_id: str
-) -> tuple[dict[str, Any], Path, bytes, str]:
+) -> tuple[dict[str, Any], Path, bytes, str, str]:
     path = _inside(workspace, value, f"{component_id} adapter artifact", exists=True)
     try:
         argv = shlex.split(command)
@@ -119,6 +132,7 @@ def _artifact_binding(
             f"{component_id} adapter artifact must be argv[0] or the argv[1] interpreter target"
         )
     launch_mode = "direct_executable"
+    material_capture_mode = "entrypoint_only_non_python"
     if referenced_index == 1:
         launcher = Path(argv[0]).name
         supported = launcher in SUPPORTED_INTERPRETERS or (
@@ -130,6 +144,8 @@ def _artifact_binding(
                 f"{component_id} argv[1] artifact requires a supported script interpreter"
             )
         launch_mode = "supported_interpreter_target"
+        if launcher in PYTHON_INTERPRETERS or launcher.startswith("python3."):
+            material_capture_mode = "static_local_python_imports"
     payload = path.read_bytes()
     if not payload or len(payload) > MAX_BYTES:
         raise MatrixError(
@@ -145,7 +161,36 @@ def _artifact_binding(
         "sha256": aau_side_effect.digest(payload),
     }
     argv[referenced_index] = str(path)
-    return row, path, payload, shlex.join(argv)
+    return row, path, payload, shlex.join(argv), material_capture_mode
+
+
+def _material_fields(value: dict[str, Any], component_id: str) -> dict[str, Any]:
+    payloads = _validate_materials(value)
+    return {
+        "materials_pack_path": MATERIALS[component_id],
+        "material_capture_mode": value["capture_mode"],
+        "material_count": len(payloads),
+        "unresolved_import_count": len(value["unresolved_imports"]),
+        "material_set_sha256": value["material_set_sha256"],
+    }
+
+
+def _validate_materials(value: dict[str, Any]) -> dict[str, bytes]:
+    try:
+        return aau_execution_materials.validate_materials(value)
+    except aau_execution_materials.MaterialError as exc:
+        raise MatrixError(f"invalid adapter execution materials: {exc}") from exc
+
+
+def _capture_materials(
+    workspace: Path, entrypoint: Path, capture_mode: str
+) -> dict[str, Any]:
+    try:
+        return aau_execution_materials.capture_materials(
+            workspace, entrypoint, capture_mode
+        )
+    except aau_execution_materials.MaterialError as exc:
+        raise MatrixError(f"cannot capture adapter execution materials: {exc}") from exc
 
 
 def _packed_artifacts(
@@ -165,6 +210,11 @@ def _packed_artifacts(
             "launch_mode",
             "size_bytes",
             "sha256",
+            "materials_pack_path",
+            "material_capture_mode",
+            "material_count",
+            "unresolved_import_count",
+            "material_set_sha256",
         }:
             raise MatrixError("matrix adapter artifact fields are invalid")
         component_id = row["component_id"]
@@ -192,9 +242,19 @@ def _packed_artifacts(
         )
         if row["launch_mode"] != expected_mode:
             raise MatrixError("matrix adapter launch_mode is invalid")
+        material_value = _load(
+            output / MATERIALS[component_id],
+            aau_execution_materials.MAX_TOTAL_BYTES * 2,
+        )
+        material_fields = _material_fields(material_value, component_id)
+        if any(row[key] != value for key, value in material_fields.items()):
+            raise MatrixError("matrix adapter execution-material binding is invalid")
         payload = (output / row["pack_path"]).read_bytes()
         if not payload:
             raise MatrixError("matrix adapter artifact cannot be empty")
+        material_payloads = _validate_materials(material_value)
+        if material_payloads.get(source) != payload:
+            raise MatrixError("adapter artifact differs from its execution-material entrypoint")
         result.append(
             {
                 "component_id": component_id,
@@ -204,6 +264,7 @@ def _packed_artifacts(
                 "launch_mode": row["launch_mode"],
                 "size_bytes": len(payload),
                 "sha256": aau_side_effect.digest(payload),
+                **material_fields,
             }
         )
     return result
@@ -325,8 +386,11 @@ def _matrix(
             "declared_artifact_is_executable_or_supported_interpreter_target": True,
             "declared_artifact_path_normalized_before_execution": True,
             "adapter_artifact_same_before_and_after_matrix_run": True,
+            "captured_materials_same_before_and_after_matrix_run": True,
             "command_text_not_recorded": True,
-            "single_adapter_artifact_not_dependency_closure": True,
+            "static_local_python_import_materials_captured": True,
+            "unresolved_imports_remain_explicit": True,
+            "not_interpreter_installed_dependency_config_environment_container_or_runtime_identity": True,
             "passing_not_atomicity_linearizability_exactly_once_or_deployment_authority": True,
         },
     }
@@ -372,6 +436,11 @@ def _summary(matrix: dict[str, Any]) -> str:
                 f"`{item['component_id']}:{item['sha256'][:12]}`"
                 for item in matrix["adapter_artifacts"]
             ),
+            "",
+            "Captured execution materials: "
+            f"**{sum(item['material_count'] for item in matrix['adapter_artifacts'])}** files · "
+            f"**{sum(item['unresolved_import_count'] for item in matrix['adapter_artifacts'])}** "
+            "unresolved standard-library or installed-package import names remain explicit.",
             "",
             "Expected answers were not sent to adapters. Every command is trusted local code and "
             "must be restricted to public-synthetic staging state.",
@@ -421,14 +490,20 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
     artifact_sources = {}
     artifact_payloads = {}
     artifact_commands = {}
+    material_packs = {}
+    material_source_payloads = {}
     for component_id, artifact, command in artifact_inputs:
-        row, path, payload, normalized_command = _artifact_binding(
+        row, path, payload, normalized_command, material_capture_mode = _artifact_binding(
             workspace, artifact, command, component_id
         )
+        material_pack = _capture_materials(workspace, path, material_capture_mode)
+        row.update(_material_fields(material_pack, component_id))
         artifact_rows.append(row)
         artifact_sources[component_id] = path
         artifact_payloads[component_id] = payload
         artifact_commands[component_id] = normalized_command
+        material_packs[component_id] = material_pack
+        material_source_payloads[component_id] = _validate_materials(material_pack)
     semantic_suite = aau_side_effect.load_json(semantic_path)
     crash_suite = aau_side_effect.load_json(crash_path)
     race_suite = aau_side_effect.load_json(race_path)
@@ -447,6 +522,17 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
     for component_id, path in artifact_sources.items():
         if path.read_bytes() != artifact_payloads[component_id]:
             raise MatrixError(f"{component_id} adapter artifact changed during the matrix run")
+        for source_path, payload in material_source_payloads[component_id].items():
+            source = _inside(
+                workspace,
+                Path(source_path),
+                f"{component_id} execution material",
+                exists=True,
+            )
+            if source.read_bytes() != payload:
+                raise MatrixError(
+                    f"{component_id} execution material changed during the matrix run"
+                )
     matrix = _matrix(
         semantic_receipt,
         crash_receipt,
@@ -471,6 +557,8 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
         _write_json(output / name, receipt)
     for component_id, name in ARTIFACTS.items():
         (output / name).write_bytes(artifact_payloads[component_id])
+    for component_id, name in MATERIALS.items():
+        _write_json(output / name, material_packs[component_id])
     _write_json(output / "matrix-receipt.json", matrix)
     (output / "SUMMARY.md").write_text(_summary(matrix))
     _write_json(output / "manifest.json", _manifest(output))
@@ -483,7 +571,14 @@ def verify_pack(output: Path) -> dict[str, Any]:
         raise MatrixError("matrix output must be a regular directory")
     files = {path.name for path in output.iterdir()}
     if files != PACK_FILES or any(
-        path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_BYTES
+        path.is_symlink()
+        or not path.is_file()
+        or path.stat().st_size
+        > (
+            aau_execution_materials.MAX_TOTAL_BYTES * 2
+            if path.name in MATERIALS.values()
+            else MAX_BYTES
+        )
         for path in output.iterdir()
     ):
         raise MatrixError("matrix pack has missing, extra, or symbolic-link files")
@@ -549,7 +644,13 @@ def main() -> int:
             f"{matrix['aggregate']['checked_outcome_count']} exact checked outcomes"
         )
         return 0 if matrix["status"] == "evidence_passed" else 1
-    except (MatrixError, OSError, aau_side_effect.SideEffectError, ValueError) as exc:
+    except (
+        MatrixError,
+        OSError,
+        aau_execution_materials.MaterialError,
+        aau_side_effect.SideEffectError,
+        ValueError,
+    ) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
 

@@ -12,6 +12,8 @@ Crash and concurrency evidence bind **`notification-service` / `send_synthetic_n
 
 Adapter entrypoint artifacts: `semantics:383ba97b9b39` · `crash_recovery:2d8e4e44c260` · `concurrency:c3c35c77fd72`
 
+Captured execution materials: **8** files · **42** unresolved standard-library or installed-package import names remain explicit.
+
 Expected answers were not sent to adapters. Every command is trusted local code and must be restricted to public-synthetic staging state.
 
 A passing matrix is bounded evidence for these exact adapters and suites. It is not proof of production atomicity, linearizability, exactly-once execution, safety, certification, compliance, deployment approval, or an Authority to Operate.

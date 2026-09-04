@@ -27,6 +27,8 @@ def main() -> None:
     actual = json.loads((DOCS / "agent-security-data.json").read_text())
     if actual != expected:
         raise SystemExit("docs/agent-security-data.json is stale; run docs/make_agent_security_data.py")
+    if expected["data_version"] != "aau-agent-security-commons-data/0.4":
+        raise SystemExit("Agent Security Commons data version drifted")
     if expected["runtime"]["event_count"] != 50 or expected["runtime"]["adapter_count"] != 6:
         raise SystemExit("ABP runtime reference coverage drifted")
     side_effects = expected["side_effects"]["summary"]
@@ -75,7 +77,8 @@ def main() -> None:
         raise SystemExit("side-effect race-lab evidence drifted")
     matrix = expected["side_effects"]["matrix"]
     if (
-        matrix["status"] != "evidence_passed"
+        matrix["matrix_version"] != "aau-agent-side-effect-safety-matrix/0.4"
+        or matrix["status"] != "evidence_passed"
         or matrix["component_count"] != 3
         or matrix["aggregate"]["case_count"] != 36
         or matrix["aggregate"]["checked_outcome_count"] != 72
@@ -91,10 +94,19 @@ def main() -> None:
         != ["semantics", "crash_recovery", "concurrency"]
         or any(item["command_argv_index"] != 1 for item in matrix["adapter_artifacts"])
         or any(len(item["sha256"]) != 64 for item in matrix["adapter_artifacts"])
+        or any(
+            item["material_capture_mode"] != "static_local_python_imports"
+            for item in matrix["adapter_artifacts"]
+        )
+        or matrix["material_count"] != 8
+        or matrix["unresolved_import_count"] != 42
+        or any(
+            len(item["material_set_sha256"]) != 64
+            for item in matrix["adapter_artifacts"]
+        )
         or len(matrix["adapter_artifacts"]) != 3
         or {item["component_id"] for item in matrix["adapter_artifacts"]}
         != {"semantics", "crash_recovery", "concurrency"}
-        or any(len(item["sha256"]) != 64 for item in matrix["adapter_artifacts"])
     ):
         raise SystemExit("side-effect safety matrix evidence drifted")
     binding = expected["side_effects"]["release_binding"]
@@ -103,6 +115,8 @@ def main() -> None:
         or binding["consequential_operation_count"] != 1
         or binding["fully_bound_consequential_operation_count"] != 1
         or binding["finding_count"] != 0
+        or binding["material_set_count"] != 3
+        or binding["material_set_match_count"] != 3
     ):
         raise SystemExit("side-effect release binding evidence drifted")
     if len(expected["defender_kits"]) != 5 or len({item["sector"] for item in expected["defender_kits"]}) != 5:
@@ -127,6 +141,7 @@ def main() -> None:
         ROOT / "agent-side-effect-ledger/race-suite.schema.json",
         ROOT / "agent-side-effect-ledger/race-receipt.schema.json",
         ROOT / "agent-side-effect-ledger/side-effect-safety-matrix.schema.json",
+        ROOT / "agent-side-effect-ledger/execution-materials.schema.json",
         ROOT / "agent-side-effect-ledger/release-binding-plan.schema.json",
         ROOT / "agent-side-effect-ledger/release-binding-receipt.schema.json",
         ROOT / "agent-side-effect-ledger/release-binding-manifest.schema.json",
@@ -149,9 +164,11 @@ def main() -> None:
         'id="asc-effect-race-duplicates"',
         'id="asc-effect-matrix-exact"',
         'id="asc-effect-matrix-artifacts"',
+        'id="asc-effect-matrix-materials"',
+        'id="asc-effect-matrix-unresolved"',
         'id="asc-effect-matrix-boundary"',
-        'id="asc-effect-matrix-artifacts"',
         'id="asc-effect-binding-count"',
+        'id="asc-effect-binding-materials"',
         'id="asc-effect-binding-release"',
         'id="asc-effect-binding-hash"',
         'id="asc-effect-matrix-hash"',
@@ -161,9 +178,9 @@ def main() -> None:
         if required not in html:
             raise SystemExit(f"site is missing Agent Security Commons marker: {required}")
     js = (DOCS / "agent-security.js").read_text()
-    if "agent-security-data.json?v=9" not in js:
+    if "agent-security-data.json?v=10" not in js:
         raise SystemExit("Agent Security Commons browser data is not source-bound")
-    if 'agent-security.css?v=7' not in html or 'agent-security.js?v=8' not in html:
+    if 'agent-security.css?v=7' not in html or 'agent-security.js?v=9' not in html:
         raise SystemExit("Agent Security Commons browser assets are not cache-busted")
     subprocess.run(["node", "--check", str(DOCS / "agent-security.js")], check=True)
     print("Agent Security Commons contracts, evidence, and browser surface are current")

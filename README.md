@@ -156,19 +156,22 @@ nondeterministic winner identity so valid reruns remain byte-identical.
 Teams can now adopt all three layers through the dependency-free
 **[Side-Effect Safety Matrix Action](.github/actions/aau-side-effect-safety/)**. Its self-contained
 reference pack combines 72 checked outcomes across 36 cases, preserves valid failure diagnostics,
-and can be reverified without rerunning an adapter. Matrix 0.3 fails closed unless crash and race
+and can be reverified without rerunning an adapter. Matrix 0.4 fails closed unless crash and race
 evidence names the same tool-operation pair, that pair exists in semantic conformance, and each
 command places a declared workspace-relative entrypoint at `argv[0]` or a supported interpreter target at
 `argv[1]`. It normalizes that token to the declared absolute path before execution, captures those
-three files, rejects a before/after byte mismatch, and exposes semantic
-tools that did not receive all three gates.
-It does not capture dependency closure, upload artifacts, or grant release authority.
+three files plus **8 statically reachable local Python material records**, rejects a before/after
+byte mismatch for every captured file, exposes 42 per-adapter unresolved import names, and shows
+semantic tools that did not receive all three gates. Static import discovery is not proof of the
+interpreter, installed packages, configuration, environment, container, runtime identity, or a
+complete dynamic dependency graph.
 
 The companion **Side-Effect Release Binding** closes the next evidence-substitution gap. It packages
 the exact AABOM agent and release IDs, the fully stressed tool-operation pair, the complete matrix,
-the human-approval declaration, and byte snapshots of all three adapters. It now rejects any release
-path or adapter bytes that differ from the entrypoint artifacts captured during the matrix run. The
-committed reference pack verifies 1/1 consequential operations; missing coverage or substitution
+the human-approval declaration, and byte snapshots of all three adapters plus their captured local
+material sets. It now rejects any release path, adapter bytes, or static-local material set that
+differs from the matrix run. The committed 26-file reference pack verifies 1/1 consequential
+operations; missing coverage or substitution
 becomes an inspectable hold rather than a misleading pass. Hashes bind copied files, not workload
 identity, production provenance, or deployment authority.
 

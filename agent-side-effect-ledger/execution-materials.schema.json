@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/python-execution-materials-0.1.json",
+  "title": "AAU Python Execution Materials 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["material_version", "capture_mode", "entrypoint", "materials", "unresolved_imports", "boundaries", "material_set_sha256"],
+  "properties": {
+    "material_version": {"const": "aau-python-execution-materials/0.1"},
+    "capture_mode": {"enum": ["static_local_python_imports", "entrypoint_only_non_python"]},
+    "entrypoint": {"$ref": "#/$defs/path"},
+    "materials": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_path", "role", "size_bytes", "sha256", "content_base64"],
+        "properties": {
+          "source_path": {"$ref": "#/$defs/path"},
+          "role": {"enum": ["entrypoint", "static_local_python_import"]},
+          "size_bytes": {"type": "integer", "minimum": 1, "maximum": 2000000},
+          "sha256": {"$ref": "#/$defs/digest"},
+          "content_base64": {"type": "string", "minLength": 1, "contentEncoding": "base64"}
+        }
+      }
+    },
+    "unresolved_imports": {
+      "type": "array",
+      "maxItems": 200,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 300}
+    },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["byte_equality_not_continuous_immutability", "not_interpreter_installed_dependency_config_environment_container_or_runtime_identity", "obvious_dynamic_code_loading_rejected", "static_import_syntax_only", "unresolved_imports_are_explicit", "workspace_ancestor_search_is_conservative", "workspace_regular_files_only"],
+      "properties": {
+        "byte_equality_not_continuous_immutability": {"const": true},
+        "not_interpreter_installed_dependency_config_environment_container_or_runtime_identity": {"const": true},
+        "obvious_dynamic_code_loading_rejected": {"const": true},
+        "static_import_syntax_only": {"const": true},
+        "unresolved_imports_are_explicit": {"const": true},
+        "workspace_ancestor_search_is_conservative": {"const": true},
+        "workspace_regular_files_only": {"const": true}
+      }
+    },
+    "material_set_sha256": {"$ref": "#/$defs/digest"}
+  },
+  "$defs": {
+    "path": {"type": "string", "minLength": 1, "maxLength": 500},
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
