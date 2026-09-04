@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/action-trust-lock.schema.json",
-  "title": "AAU GitHub Action trust lock 1.0",
+  "title": "AAU GitHub Action trust lock 1.1",
   "type": "object",
   "additionalProperties": false,
   "required": ["lock_version", "verified_at", "github_api", "dependencies", "summary", "boundary", "lock_sha256"],
   "properties": {
-    "lock_version": {"const": "aau-github-action-trust-lock/1.0"},
+    "lock_version": {"const": "aau-github-action-trust-lock/1.1"},
     "verified_at": {"type": "string", "format": "date-time"},
     "github_api": {"const": "https://api.github.com"},
     "dependencies": {
@@ -20,7 +20,22 @@
         "properties": {
           "repository": {"type": "string", "pattern": "^[a-z0-9_.-]+/[a-z0-9_.-]+$"},
           "commit_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-          "uses": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+          "uses": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "scope", "ordinal", "coordinate"],
+              "properties": {
+                "path": {"type": "string", "pattern": "^\\.github/(?:workflows|actions)/.+\\.ya?ml$"},
+                "scope": {"type": "string", "pattern": "^(?:job:[A-Za-z_][A-Za-z0-9_-]*|composite)$"},
+                "ordinal": {"type": "integer", "minimum": 1},
+                "coordinate": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"}
+              }
+            }
+          },
           "repository_membership": {"const": "verified_by_github_commit_api"},
           "commit_verification": {
             "type": "object",
@@ -43,7 +58,24 @@
         "repository_membership_failure_count": {"const": 0}
       }
     },
-    "boundary": {"type": "object"},
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit_signature_observed_not_required", "full_commit_sha_required", "line_numbers_not_trust_identity", "live_reverification_required", "not_an_action_code_audit", "not_upstream_availability_or_safety_proof", "not_workflow_behavior_or_order_audit", "repository_membership_verified", "stable_scope_ordinal_locator", "tag_objects_rejected", "yaml_aliases_cannot_hide_action_uses"],
+      "properties": {
+        "commit_signature_observed_not_required": {"const": true},
+        "full_commit_sha_required": {"const": true},
+        "line_numbers_not_trust_identity": {"const": true},
+        "live_reverification_required": {"const": true},
+        "not_an_action_code_audit": {"const": true},
+        "not_upstream_availability_or_safety_proof": {"const": true},
+        "not_workflow_behavior_or_order_audit": {"const": true},
+        "repository_membership_verified": {"const": true},
+        "stable_scope_ordinal_locator": {"const": true},
+        "tag_objects_rejected": {"const": true},
+        "yaml_aliases_cannot_hide_action_uses": {"const": true}
+      }
+    },
     "lock_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
   }
 }

@@ -105,7 +105,7 @@
     });
   }
 
-  fetch("release-gate-data.json")
+  fetch("release-gate-data.json?v=2", { cache: "no-store" })
     .then((response) => { if (!response.ok) throw new Error("release data unavailable"); return response.json(); })
     .then((data) => {
       const release = data.release;
@@ -128,6 +128,7 @@
       set("release-action-unique-count", actionTrust.dependency_count);
       set("release-action-signed-count", actionTrust.signature_verified_count);
       set("release-action-origin-failures", actionTrust.repository_membership_failure_count);
+      set("release-action-locator", actionTrust.lock_version.split("/").at(-1));
       set("release-action-lock", actionTrust.lock_sha256.slice(0, 12));
       set("release-action-verified-at", actionTrust.verified_at.replace("T", " ").replace("Z", " UTC"));
       set("release-baseline-count", data.freshness.baseline_count);

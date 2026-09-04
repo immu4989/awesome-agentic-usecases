@@ -19,13 +19,27 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[1]
 HERE = Path(__file__).resolve().parent
 DEFAULT_LOCK = HERE / "action-trust-lock.json"
-LOCK_VERSION = "aau-github-action-trust-lock/1.0"
+LOCK_VERSION = "aau-github-action-trust-lock/1.1"
 MAX_BYTES = 1_000_000
 SHA = re.compile(r"[0-9a-f]{40}")
 USES = re.compile(
     r"^\s*-?\s*uses:\s*"
     r"(?P<repository>[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)"
     r"(?P<component>(?:/[A-Za-z0-9_.-]+)*)@(?P<revision>[^\s#]+)"
+    r"(?:\s+#.*)?\s*$"
+)
+USES_KEY = re.compile(r"^\s*-?\s*uses\s*:")
+QUOTED_USES_KEY = re.compile(r'''^\s*-?\s*["']uses["']\s*:''')
+FLOW_USES_KEY = re.compile(
+    r'''^\s*(?:-\s*)?(?:[A-Za-z_][A-Za-z0-9_-]*\s*:\s*)?[\[{].*["']?uses["']?\s*:'''
+)
+BLOCK_SCALAR = re.compile(
+    r"^(?P<indent> *)(?:-\s*)?[^#:\s][^:]*:\s*[|>]"
+    r"(?:[1-9][+-]?|[+-][1-9]?)?\s*(?:#.*)?$"
+)
+JOB_KEY = re.compile(r"(?P<job>[A-Za-z_][A-Za-z0-9_-]*):(?P<tail>.*)$")
+COORDINATE = re.compile(
+    r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*"
 )
 BOUNDARIES = {
     "full_commit_sha_required",
@@ -33,7 +47,11 @@ BOUNDARIES = {
     "tag_objects_rejected",
     "commit_signature_observed_not_required",
     "live_reverification_required",
+    "stable_scope_ordinal_locator",
+    "line_numbers_not_trust_identity",
+    "yaml_aliases_cannot_hide_action_uses",
     "not_an_action_code_audit",
+    "not_workflow_behavior_or_order_audit",
     "not_upstream_availability_or_safety_proof",
 }
 
@@ -48,9 +66,9 @@ def digest(value: dict) -> str:
     ).hexdigest()
 
 
-def workflow_files() -> list[Path]:
+def workflow_files(root: Path = ROOT) -> list[Path]:
     paths: set[Path] = set()
-    for base in (ROOT / ".github" / "workflows", ROOT / ".github" / "actions"):
+    for base in (root / ".github" / "workflows", root / ".github" / "actions"):
         if base.is_dir():
             paths.update(base.rglob("*.yml"))
             paths.update(base.rglob("*.yaml"))
@@ -63,15 +81,98 @@ def read_workflow(path: Path) -> str:
     return path.read_text()
 
 
-def scan_dependencies() -> list[dict]:
-    found: dict[tuple[str, str], set[str]] = {}
-    for path in workflow_files():
-        relative = path.relative_to(ROOT).as_posix()
-        for number, line in enumerate(read_workflow(path).splitlines(), start=1):
-            if not re.match(r"^\s*-?\s*uses:", line):
+def _structural_lines(lines: list[str]) -> list[tuple[int, str]]:
+    """Return YAML structure lines while masking literal and folded scalar bodies."""
+    structural: list[tuple[int, str]] = []
+    scalar_indent: int | None = None
+    for number, line in enumerate(lines, start=1):
+        stripped = line.lstrip(" ")
+        indent = len(line) - len(stripped)
+        if scalar_indent is not None:
+            if not stripped or stripped.startswith("#") or indent > scalar_indent:
+                continue
+            scalar_indent = None
+        structural.append((number, line))
+        match = BLOCK_SCALAR.fullmatch(line)
+        if match:
+            scalar_indent = len(match["indent"])
+    return structural
+
+
+def _scope_map(
+    path: Path,
+    root: Path,
+    lines: list[tuple[int, str]],
+) -> dict[int, str]:
+    relative = path.relative_to(root).as_posix()
+    for number, line in lines:
+        if QUOTED_USES_KEY.match(line) or FLOW_USES_KEY.match(line):
+            raise ActionTrustError(
+                f"uses must use a canonical expanded mapping: {relative}:{number}"
+            )
+        if (
+            re.match(r"^\s*(?:-\s*)?<<\s*:", line)
+            or re.match(r"^\s*-\s*\*[A-Za-z0-9_-]+\s*(?:#.*)?$", line)
+            or re.match(
+                r"^\s*[A-Za-z_][A-Za-z0-9_-]*\s*:\s*\*[A-Za-z0-9_-]+\s*(?:#.*)?$",
+                line,
+            )
+        ):
+            raise ActionTrustError(
+                f"YAML aliases cannot define workflow trust structure: {relative}:{number}"
+            )
+    if relative.startswith(".github/actions/"):
+        return {
+            number: "composite"
+            for number, line in lines
+            if USES_KEY.match(line)
+        }
+    scopes: dict[int, str] = {}
+    in_jobs = False
+    current_job: str | None = None
+    seen_jobs: set[str] = set()
+    for number, line in lines:
+        stripped = line.lstrip(" ")
+        indent = len(line) - len(stripped)
+        if indent == 0 and stripped and not stripped.startswith("#"):
+            in_jobs = bool(re.fullmatch(r"jobs:\s*(?:#.*)?", stripped))
+            current_job = None
+        elif in_jobs and indent == 2:
+            match = JOB_KEY.fullmatch(stripped)
+            if match:
+                current_job = match["job"]
+                tail = match["tail"].strip()
+                if tail and not tail.startswith("#"):
+                    raise ActionTrustError(
+                        f"workflow jobs must use an expanded mapping: {relative}:{number}"
+                    )
+                if current_job in seen_jobs:
+                    raise ActionTrustError(
+                        f"workflow job identifiers must be unique: {relative}:{number}"
+                    )
+                seen_jobs.add(current_job)
+        if USES_KEY.match(line):
+            if not in_jobs or current_job is None:
+                raise ActionTrustError(
+                    f"external or local uses must belong to a recognized job: {relative}:{number}"
+                )
+            scopes[number] = f"job:{current_job}"
+    return scopes
+
+
+def scan_dependencies(root: Path = ROOT) -> list[dict]:
+    found: dict[tuple[str, str], set[tuple[str, str, int, str]]] = {}
+    for path in workflow_files(root):
+        relative = path.relative_to(root).as_posix()
+        lines = read_workflow(path).splitlines()
+        structural = _structural_lines(lines)
+        scopes = _scope_map(path, root, structural)
+        ordinals: dict[str, int] = {}
+        for number, line in structural:
+            if not USES_KEY.match(line):
                 continue
             value = line.split("uses:", 1)[1].strip()
-            if value.startswith("./"):
+            if value.startswith(("./", "$/")):
                 continue
             match = USES.match(line)
             if match is None or SHA.fullmatch(match["revision"]) is None:
@@ -80,12 +181,23 @@ def scan_dependencies() -> list[dict]:
                 )
             coordinate = match["repository"] + match["component"]
             key = (match["repository"].lower(), match["revision"])
-            found.setdefault(key, set()).add(f"{relative}:{number}:{coordinate}")
+            scope = scopes[number]
+            ordinal = ordinals.get(scope, 0) + 1
+            ordinals[scope] = ordinal
+            found.setdefault(key, set()).add((relative, scope, ordinal, coordinate))
     return [
         {
             "repository": repository,
             "commit_sha": commit,
-            "uses": sorted(uses),
+            "uses": [
+                {
+                    "path": path,
+                    "scope": scope,
+                    "ordinal": ordinal,
+                    "coordinate": coordinate,
+                }
+                for path, scope, ordinal, coordinate in sorted(uses)
+            ],
         }
         for (repository, commit), uses in sorted(found.items())
     ]
@@ -105,7 +217,7 @@ def validate_lock(lock: dict) -> list[dict]:
         "lock_version", "verified_at", "github_api", "dependencies", "summary",
         "boundary", "lock_sha256",
     } or lock["lock_version"] != LOCK_VERSION:
-        raise ActionTrustError("action trust lock fields or version differ from the 1.0 contract")
+        raise ActionTrustError("action trust lock fields or version differ from the 1.1 contract")
     try:
         verified = datetime.fromisoformat(lock["verified_at"].replace("Z", "+00:00"))
     except (AttributeError, ValueError) as exc:
@@ -125,13 +237,14 @@ def validate_lock(lock: dict) -> list[dict]:
     if not isinstance(dependencies, list) or not dependencies or len(dependencies) > 100:
         raise ActionTrustError("dependencies must be a non-empty bounded list")
     seen: set[tuple[str, str]] = set()
+    seen_uses: set[tuple[str, str, int]] = set()
     signed_count = 0
     for item in dependencies:
         if not isinstance(item, dict) or set(item) != {
             "repository", "commit_sha", "uses", "repository_membership",
             "commit_verification", "commit_url",
         }:
-            raise ActionTrustError("dependency fields differ from the 1.0 contract")
+            raise ActionTrustError("dependency fields differ from the 1.1 contract")
         repository = item["repository"]
         commit = item["commit_sha"]
         if (
@@ -160,8 +273,41 @@ def validate_lock(lock: dict) -> list[dict]:
         if item["commit_url"] != f"https://github.com/{repository}/commit/{commit}":
             raise ActionTrustError("dependency commit URL does not match its repository and SHA")
         uses = item["uses"]
-        if not isinstance(uses, list) or not uses or uses != sorted(set(uses)):
-            raise ActionTrustError("dependency uses must be a sorted, non-empty unique list")
+        if not isinstance(uses, list) or not uses:
+            raise ActionTrustError("dependency uses must be a non-empty list")
+        use_keys = []
+        for use in uses:
+            if not isinstance(use, dict) or set(use) != {
+                "path",
+                "scope",
+                "ordinal",
+                "coordinate",
+            }:
+                raise ActionTrustError("dependency use locator fields are invalid")
+            path, scope = use["path"], use["scope"]
+            ordinal, coordinate = use["ordinal"], use["coordinate"]
+            if (
+                not isinstance(path, str)
+                or not path.startswith(".github/")
+                or Path(path).is_absolute()
+                or ".." in Path(path).parts
+                or not isinstance(scope, str)
+                or re.fullmatch(r"(?:job:[A-Za-z_][A-Za-z0-9_-]*|composite)", scope)
+                is None
+                or not isinstance(ordinal, int)
+                or isinstance(ordinal, bool)
+                or ordinal < 1
+                or not isinstance(coordinate, str)
+                or COORDINATE.fullmatch(coordinate) is None
+            ):
+                raise ActionTrustError("dependency use locator value is invalid")
+            locator = (path, scope, ordinal)
+            if locator in seen_uses:
+                raise ActionTrustError("dependency use locators must be globally unique")
+            seen_uses.add(locator)
+            use_keys.append((path, scope, ordinal, coordinate))
+        if use_keys != sorted(set(use_keys)):
+            raise ActionTrustError("dependency uses must be sorted and unique")
 
     scanned = scan_dependencies()
     expected = [
@@ -193,7 +339,7 @@ def github_commit(repository: str, commit: str, token: str = "") -> dict:
         headers={
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28",
-            "User-Agent": "AAU-Action-Trust-Lock/1.0",
+            "User-Agent": "AAU-Action-Trust-Lock/1.1",
             **({"Authorization": f"Bearer {token}"} if token else {}),
         },
     )

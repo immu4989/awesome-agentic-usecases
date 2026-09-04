@@ -175,8 +175,11 @@ guard—not a formal privacy guarantee or permission to publish sensitive operat
 Every external GitHub Action is checked twice: immutable full-SHA syntax is enforced locally, and
 the [Workflow Dependency Trust Lock](workflow-dependency-trust/) verifies that each SHA resolves as
 a commit in the repository named by the workflow. This rejects annotated-tag objects and commits
-available only from a fork. The committed result is an origin observation, not an audit of the
-Action's code or a guarantee that its maintainer, dependencies, or infrastructure remain safe.
+available only from a fork. Lock 1.1 uses workflow path, job ID, external-use ordinal, and component
+as stable identity; line shifts do not weaken or invalidate the dependency observation. YAML aliases
+and merge keys are rejected because the dependency-free scanner does not expand them. The committed
+result is an origin observation, not an audit of Action code, workflow behavior or order, or a
+guarantee that its maintainer, dependencies, or infrastructure remain safe.
 
 The Agent Release Gate reads bounded public or synthetic component files, rejects path traversal,
 symbolic links, oversized inputs, unknown fields, destructive overwrite, and missing impact

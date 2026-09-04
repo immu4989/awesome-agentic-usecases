@@ -160,6 +160,13 @@ the harness API is what is versioned; use cases are additive.
   same audit found two more annotated-tag objects and replaced the deprecated provenance/SBOM
   wrappers with the unified `actions/attest` v4 interface.
 
+- **Stable Action-use identity** — upgraded the trust lock to 1.1 so reviewed dependencies bind to
+  workflow path, job ID, external-use ordinal, and Action component rather than YAML line number.
+  Harmless comments, run steps, and local Actions no longer force an online lock refresh; external
+  insertion, removal, reorder, repin, component change, or job movement still fails. The scanner
+  also masks block-scalar bodies and rejects YAML aliases, merge keys, and noncanonical mappings
+  that could create phantom uses or hide real `uses` sites.
+
 - **Executable fork-workflow trust boundary** — campaign verification now rejects non-manual
   triggers, expanded permissions, secret consumption, persisted checkout credentials, unquoted
   workspace input, missing origin verification, and mutable Action references. A dedicated threat

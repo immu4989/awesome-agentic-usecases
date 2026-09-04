@@ -44,8 +44,8 @@ def build() -> dict:
         if path.name != "manifest.json" and path.name != "exchange.json"
     )
     return {
-        "data_version": "aau-release-operations-live-data/1.0",
-        "generated_on": "2026-09-03",
+        "data_version": "aau-release-operations-live-data/1.1",
+        "generated_on": "2026-09-04",
         "release": {
             "release_id": decision["release_id"],
             "status": decision["status"],
@@ -133,8 +133,14 @@ def build() -> dict:
             },
         },
         "workflow_dependency_trust": {
+            "lock_version": action_trust["lock_version"],
             "verified_at": action_trust["verified_at"],
             "lock_sha256": action_trust["lock_sha256"],
+            "locator_mode": "workflow_path + job_id + external_use_ordinal + component",
+            "line_numbers_are_identity": False,
+            "yaml_aliases_rejected": action_trust["boundary"][
+                "yaml_aliases_cannot_hide_action_uses"
+            ],
             **action_trust["summary"],
         },
         "freshness": {

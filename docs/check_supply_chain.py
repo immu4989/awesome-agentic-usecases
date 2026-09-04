@@ -121,7 +121,7 @@ def main() -> None:
             "does not audit Action",
         ),
         ROOT / "workflow-dependency-trust" / "action-trust-lock.json": (
-            "aau-github-action-trust-lock/1.0",
+            "aau-github-action-trust-lock/1.1",
             "repository_membership_failure_count",
         ),
         ROOT / "federal-pilot-kit" / "pilot-launch" / "README.md": ("30-Day",),

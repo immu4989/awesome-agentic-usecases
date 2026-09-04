@@ -94,7 +94,8 @@ deployment, certify compliance, or grant an ATO.
 The **[Workflow Dependency Trust Lock](workflow-dependency-trust/)** closes a supply-chain gap that
 ordinary SHA pin checks miss. It inventories all 48 external Action uses, binds them to 12 exact
 repository/commit pairs, and verifies through GitHub's commit API that every object is a commit in
-the repository named by the workflow:
+the repository named by the workflow. Trust Lock 1.1 identifies each use by workflow path, job ID,
+external-use ordinal, and component—not a fragile line number:
 
 ```bash
 python3 workflow-dependency-trust/aau_action_trust.py verify
@@ -106,6 +107,11 @@ the two legacy provenance/SBOM wrappers. Those release steps now use the unified
 v4 interface, and the security workflow repeats the repository-membership check online. Signature
 status is recorded separately; origin verification is not an Action code audit, safety proof, or
 guarantee of upstream availability.
+
+Comments, blank lines, run steps, and local Actions can now move without invalidating origin
+evidence. An external Action insertion, removal, reorder, repin, component change, or job move still
+fails closed. YAML aliases and merge keys are rejected rather than incompletely expanded by the
+dependency-free scanner.
 
 ## Agent Side-Effect Ledger—from timeout ambiguity to a safe next action
 

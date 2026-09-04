@@ -92,6 +92,9 @@ def main() -> None:
         action_trust["dependency_count"] < 1
         or action_trust["workflow_use_count"] < action_trust["dependency_count"]
         or action_trust["repository_membership_failure_count"] != 0
+        or action_trust["lock_version"] != "aau-github-action-trust-lock/1.1"
+        or action_trust["line_numbers_are_identity"] is not False
+        or action_trust["yaml_aliases_rejected"] is not True
         or len(action_trust["lock_sha256"]) != 64
     ):
         raise SystemExit("workflow dependency origin evidence drifted")
@@ -101,7 +104,7 @@ def main() -> None:
         "Ship evidence,",
         "not confidence.",
         'href="release-gate.css?v=5"',
-        'src="release-gate.js?v=8"',
+        'src="release-gate.js?v=9"',
         'id="agent-capability-bom"',
         'id="release-bom-conformance-status"',
         'id="authority-conformance"',
@@ -113,12 +116,13 @@ def main() -> None:
         'id="release-action-dependency-count"',
         'id="workflow-dependency-trust"',
         'id="release-action-origin-failures"',
+        'id="release-action-locator"',
         'id="release-action-lock"',
     ):
         if marker not in html:
             raise SystemExit(f"site is missing release-operations marker: {marker}")
     browser_js = (DOCS / "release-gate.js").read_text()
-    if "fetch(\"release-gate-data.json\")" not in browser_js:
+    if 'fetch("release-gate-data.json?v=2", { cache: "no-store" })' not in browser_js:
         raise SystemExit("release-operations browser surface is not bound to generated evidence")
     if "Copy prepare command" not in browser_js or "submit.py prepare --challenge-id" not in browser_js:
         raise SystemExit("open challenge cards are missing the oracle-free prepare command")
