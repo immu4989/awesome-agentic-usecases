@@ -141,6 +141,12 @@ and three states that must remain unresolved. The reference receipt is 12/12 exa
 resumes and zero duplicate-effect breaches; process-exit evidence is explicitly not a power-loss,
 storage-durability, distributed-atomicity, or production-equivalence claim.
 
+The **Multi-Process Race Lab** adds the concurrent-worker boundary: 61 fresh processes contend in
+12 cases, followed by a separate durable-state inspection. It catches naive check-then-act logic,
+changed-intent key reuse, response/state disagreement, duplicate effects, and availability loss.
+The reference adapter is 12/12 exact with zero duplicate or missing effects, while receipts discard
+nondeterministic winner identity so valid reruns remain byte-identical.
+
 Four **[oracle-free reproduction challenges](reproduction-challenges/)** now let outside forks test
 portable agent authority, distribution restoration, pharmaceutical batch disposition, and the
 A2A-to-MCP authority relay without receiving gold answers. The hidden source suites and oracles

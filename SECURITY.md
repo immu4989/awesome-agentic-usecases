@@ -92,6 +92,12 @@ give it only synthetic, staging-scoped authority. A fresh process and flushed re
 recovery logic, not power-loss durability, torn writes, volume persistence, database atomicity,
 failover correctness, or equivalence to a deployed binary.
 
+The Multi-Process Race Lab launches up to 32 instances of the named adapter command concurrently
+and then invokes its inspection phase. Limit it to reviewed staging code and synthetic state. The
+barrier does not guarantee scheduler overlap, and the adapter controls both action and inspection;
+passing is not independent proof of target state, linearizability, cross-host behavior, or
+exactly-once execution.
+
 ## Portable Agent Assurance boundary
 
 The Portable Agent Assurance verifier accepts bounded JSON, rejects symbolic links and oversized

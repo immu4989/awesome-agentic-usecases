@@ -77,6 +77,18 @@ python3 agent-side-effect-ledger/aau_crash_lab.py run \
 The crash lab uses public-synthetic state and reserved exit code 86. It does not prove behavior
 under power loss, filesystem corruption, database failover, or a production target.
 
+Finally, test concurrent workers against the same synthetic effect:
+
+```bash
+python3 agent-side-effect-ledger/aau_race_lab.py run \
+  agent-side-effect-ledger/examples/race-suite.json \
+  --command "python3 path/to/your_race_adapter.py" \
+  --out /tmp/aau-race-receipt.json
+```
+
+The runner uses fresh processes and inspects adapter state after every race. It exposes duplicate
+effects and deny-all availability loss separately; it is not a linearizability or production test.
+
 If you are outside the maintainer workflow and want to test a public claim, choose one of the
 four [Fork-to-Reproduce challenges](reproduction-challenges/). You receive six or eight tasks and an
 oracle commitment—not the gold outcomes. The manual workflow builds and attests your exact

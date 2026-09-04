@@ -62,6 +62,17 @@ def main() -> None:
         or crash["summary"]["unresolved_effect_count"] != 3
     ):
         raise SystemExit("side-effect crash-lab evidence drifted")
+    race = expected["side_effects"]["race_lab"]
+    if (
+        race["status"] != "evidence_passed"
+        or race["summary"]["case_count"] != 12
+        or race["summary"]["attempt_count"] != 61
+        or race["summary"]["exact_count"] != 12
+        or race["summary"]["duplicate_effect_count"] != 0
+        or race["summary"]["missing_effect_count"] != 0
+        or race["summary"]["response_state_mismatch_count"] != 0
+    ):
+        raise SystemExit("side-effect race-lab evidence drifted")
     if len(expected["defender_kits"]) != 5 or len({item["sector"] for item in expected["defender_kits"]}) != 5:
         raise SystemExit("essential-service defender coverage drifted")
     if expected["controls"]["case_count"] != 12 or expected["controls"]["control_count"] != 8:
@@ -81,6 +92,8 @@ def main() -> None:
         ROOT / "agent-side-effect-ledger/side-effect-conformance-receipt.schema.json",
         ROOT / "agent-side-effect-ledger/crash-suite.schema.json",
         ROOT / "agent-side-effect-ledger/crash-receipt.schema.json",
+        ROOT / "agent-side-effect-ledger/race-suite.schema.json",
+        ROOT / "agent-side-effect-ledger/race-receipt.schema.json",
     ):
         schema = json.loads(schema_path.read_text())
         if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema" or not schema.get("$id"):
@@ -96,13 +109,15 @@ def main() -> None:
         'id="asc-effect-conformance-receipt"',
         'id="asc-effect-crash-exact"',
         'id="asc-effect-crash-unknown"',
+        'id="asc-effect-race-exact"',
+        'id="asc-effect-race-duplicates"',
         "Agent Security Commons",
         "Authorization is a live condition",
     ):
         if required not in html:
             raise SystemExit(f"site is missing Agent Security Commons marker: {required}")
     js = (DOCS / "agent-security.js").read_text()
-    if "agent-security-data.json?v=4" not in js:
+    if "agent-security-data.json?v=5" not in js:
         raise SystemExit("Agent Security Commons browser data is not source-bound")
     subprocess.run(["node", "--check", str(DOCS / "agent-security.js")], check=True)
     print("Agent Security Commons contracts, evidence, and browser surface are current")

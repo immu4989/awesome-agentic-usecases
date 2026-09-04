@@ -82,6 +82,11 @@ jobs:
           python agent-side-effect-ledger/aau_crash_lab.py run agent-side-effect-ledger/examples/crash-suite.json --command "python agent-side-effect-ledger/examples/reference_crash_adapter.py" --out "$RUNNER_TEMP/aau-crash-receipt.json"
           cmp "$RUNNER_TEMP/aau-crash-receipt.json" agent-side-effect-ledger/examples/reference-crash-receipt.json
           python agent-side-effect-ledger/aau_crash_lab.py verify agent-side-effect-ledger/examples/reference-crash-receipt.json --suite agent-side-effect-ledger/examples/crash-suite.json
+          python agent-side-effect-ledger/examples/make_race_suite.py --out "$RUNNER_TEMP/aau-race-suite.json"
+          cmp "$RUNNER_TEMP/aau-race-suite.json" agent-side-effect-ledger/examples/race-suite.json
+          python agent-side-effect-ledger/aau_race_lab.py run agent-side-effect-ledger/examples/race-suite.json --command "python agent-side-effect-ledger/examples/reference_race_adapter.py" --out "$RUNNER_TEMP/aau-race-receipt.json"
+          cmp "$RUNNER_TEMP/aau-race-receipt.json" agent-side-effect-ledger/examples/reference-race-receipt.json
+          python agent-side-effect-ledger/aau_race_lab.py verify agent-side-effect-ledger/examples/reference-race-receipt.json --suite agent-side-effect-ledger/examples/race-suite.json
           python docs/make_agent_security_data.py
           python docs/check_agent_security.py
           ruff check agent-side-effect-ledger agentic-cyber-resilience agent-incident-regression-commons essential-services-defender-kits agent-control-observatory public-value-pilot-network docs/make_agent_security_data.py docs/check_agent_security.py

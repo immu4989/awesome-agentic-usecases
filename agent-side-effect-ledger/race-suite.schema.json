@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-race-suite-0.1.json",
+  "title": "AAU Agent Side-Effect Race Suite 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["suite_version", "suite_id", "title", "profile", "cases", "boundaries"],
+  "properties": {
+    "suite_version": {"const": "aau-agent-side-effect-race-suite/0.1"},
+    "suite_id": {"type": "string", "minLength": 1, "maxLength": 120},
+    "title": {"type": "string", "minLength": 1, "maxLength": 240},
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operation_id"],
+      "properties": {"operation_id": {"type": "string", "minLength": 1, "maxLength": 160}}
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "title", "attempts", "expected"],
+        "properties": {
+          "case_id": {"type": "string", "minLength": 1, "maxLength": 100},
+          "title": {"type": "string", "minLength": 1, "maxLength": 220},
+          "attempts": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["attempt_id", "idempotency_key", "intent_sha256", "authority_valid", "approval_valid"],
+              "properties": {
+                "attempt_id": {"type": "string", "minLength": 1, "maxLength": 100},
+                "idempotency_key": {"type": "string", "minLength": 1, "maxLength": 200},
+                "intent_sha256": {"$ref": "#/$defs/digest"},
+                "authority_valid": {"type": "boolean"},
+                "approval_valid": {"type": "boolean"}
+              }
+            }
+          },
+          "expected": {"$ref": "#/$defs/aggregate"}
+        }
+      }
+    },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["public_synthetic_only", "oracle_withheld_from_adapter", "fresh_process_per_attempt", "post_race_state_inspection", "no_production_target", "concurrent_launch_is_not_scheduler_proof", "adapter_scoped_not_exactly_once"],
+      "properties": {
+        "public_synthetic_only": {"const": true},
+        "oracle_withheld_from_adapter": {"const": true},
+        "fresh_process_per_attempt": {"const": true},
+        "post_race_state_inspection": {"const": true},
+        "no_production_target": {"const": true},
+        "concurrent_launch_is_not_scheduler_proof": {"const": true},
+        "adapter_scoped_not_exactly_once": {"const": true}
+      }
+    }
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "aggregate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effect_count", "key_count", "committed_count", "replayed_count", "conflict_count", "blocked_count"],
+      "properties": {
+        "effect_count": {"type": "integer", "minimum": 0},
+        "key_count": {"type": "integer", "minimum": 0},
+        "committed_count": {"type": "integer", "minimum": 0},
+        "replayed_count": {"type": "integer", "minimum": 0},
+        "conflict_count": {"type": "integer", "minimum": 0},
+        "blocked_count": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

@@ -22,6 +22,7 @@ from aau_crash_lab import verify_receipt as verify_crash_receipt  # noqa: E402
 from aau_incident import evaluate_incident, load_json as load_incident_json  # noqa: E402
 from aau_observatory import evaluate_experiment, load_json as load_experiment_json  # noqa: E402
 from aau_pilot_network import assess_pilot, load_json as load_pilot_json  # noqa: E402
+from aau_race_lab import verify_receipt as verify_race_receipt  # noqa: E402
 from aau_runtime import evaluate_suite as evaluate_runtime_suite  # noqa: E402
 from aau_side_effect import (  # noqa: E402
     evaluate_suite as evaluate_side_effect_suite,
@@ -50,6 +51,11 @@ def build() -> dict:
         ROOT / "agent-side-effect-ledger/examples/reference-crash-receipt.json"
     )
     verify_crash_receipt(crash_receipt, crash_suite)
+    race_suite = load_boundary_json(ROOT / "agent-side-effect-ledger/examples/race-suite.json")
+    race_receipt = load_boundary_json(
+        ROOT / "agent-side-effect-ledger/examples/reference-race-receipt.json"
+    )
+    verify_race_receipt(race_receipt, race_suite)
 
     incident_record = load_incident_json(
         ROOT / "agent-incident-regression-commons/examples/public-agent-boundary-incident.json"
@@ -122,6 +128,11 @@ def build() -> dict:
                 "status": crash_receipt["status"],
                 "receipt_sha256": crash_receipt["receipt_sha256"],
                 "summary": crash_receipt["summary"],
+            },
+            "race_lab": {
+                "status": race_receipt["status"],
+                "receipt_sha256": race_receipt["receipt_sha256"],
+                "summary": race_receipt["summary"],
             },
             "failure_shapes": [
                 "unknown_outcome_requires_reconciliation",

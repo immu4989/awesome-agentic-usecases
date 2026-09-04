@@ -213,6 +213,59 @@ storage durability. Passing this lab does not establish atomicity across a journ
 exactly-once execution, target correctness, production equivalence, safety, certification, or an
 ATO. Read the [crash-lab research notes](CRASH_LAB_RESEARCH_NOTES.md) before adapting it.
 
+## Race every worker against the same effect
+
+Crash recovery is sequential; production workers are not. The **Multi-Process Race Lab** launches
+2 to 16 fresh adapter processes at a barrier, gives each only its own oracle-free attempt, then asks
+the adapter to inspect the durable synthetic target after every contender exits. The score uses the
+inspected effect count as well as grouped responses, so a naive adapter cannot hide duplicate writes
+behind `replayed` labels.
+
+```mermaid
+flowchart LR
+  B[Launch barrier] --> W1[Worker 1]
+  B --> W2[Worker 2]
+  B --> WN[Workers 3…16]
+  W1 --> G[(Shared staging guard)]
+  W2 --> G
+  WN --> G
+  G -->|one exact key + intent| E[One effect]
+  G -->|same key, changed intent| C[Conflict]
+  E --> I[Post-race inspection]
+  C --> I
+  I --> R[Tamper-evident aggregate receipt]
+```
+
+```bash
+python3 agent-side-effect-ledger/aau_race_lab.py run \
+  agent-side-effect-ledger/examples/race-suite.json \
+  --command "python3 path/to/your_race_adapter.py" \
+  --out /tmp/aau-race-receipt.json
+
+python3 agent-side-effect-ledger/aau_race_lab.py verify \
+  /tmp/aau-race-receipt.json \
+  --suite agent-side-effect-ledger/examples/race-suite.json
+```
+
+The deterministic [race-suite generator](examples/make_race_suite.py) builds 12 cases with 61
+fresh-process attempts: identical retries, changed-intent collisions, distinct legitimate keys,
+missing approval, invalid authority, mixed-authority contenders, two independent key groups, and a
+16-worker contention burst. The SQLite-backed
+[reference adapter](examples/reference_race_adapter.py) produces one effect for each exact key,
+replays the same intent, conflicts a changed intent, and preserves valid parallel work across
+distinct keys.
+
+The committed [race receipt](examples/reference-race-receipt.json) is 12/12 exact with zero
+duplicate effects, zero missing legitimate effects, and zero response/state mismatches. Response
+groups—not nondeterministic winner identities—are hash-chained, so repeated runs produce identical
+receipts. The [race suite](race-suite.schema.json) and [receipt](race-receipt.schema.json) schemas
+publish the transport shapes.
+
+A thread barrier and fresh processes increase contention; they do not prove actual scheduler
+overlap, linearizability, behavior on multiple hosts, target atomicity, exactly-once execution, or
+production equivalence. The reference adapter demonstrates one SQLite transaction pattern, not a
+universal storage recommendation. Read the [race-lab research notes](RACE_LAB_RESEARCH_NOTES.md).
+
 ## Why these fields exist
 
 - [RFC 9110 §9.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) says a client should

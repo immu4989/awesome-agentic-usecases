@@ -38,6 +38,11 @@
     byId("asc-effect-crash-points").textContent = crashLab.summary.crash_point_count;
     byId("asc-effect-crash-unsafe").textContent = crashLab.summary.unsafe_resume_count;
     byId("asc-effect-crash-unknown").textContent = crashLab.summary.unresolved_effect_count;
+    const raceLab = data.side_effects.race_lab;
+    byId("asc-effect-race-exact").textContent = `${raceLab.summary.exact_count}/${raceLab.summary.case_count}`;
+    byId("asc-effect-race-attempts").textContent = raceLab.summary.attempt_count;
+    byId("asc-effect-race-duplicates").textContent = raceLab.summary.duplicate_effect_count;
+    byId("asc-effect-race-missing").textContent = raceLab.summary.missing_effect_count;
   }
 
   function renderKits(data) {
@@ -103,7 +108,7 @@
     byId("asc-pilot-gaps").textContent = `${data.pilot.visible_gaps.length} evidence gaps remain visible: ${data.pilot.visible_gaps.join(", ").replaceAll("_", " ")}.`;
   }
 
-  fetch("agent-security-data.json?v=4", { cache: "no-store" })
+  fetch("agent-security-data.json?v=5", { cache: "no-store" })
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();

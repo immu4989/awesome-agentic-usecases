@@ -22,6 +22,11 @@
   reconciliation, bounded retry, and manual holds separately, and preserves three intentionally
   unknown outcomes. Strict suites, receipts, threat notes, and a reference adapter provide portable
   recovery evidence without claiming power-loss durability, distributed atomicity, or exactly once.
+- **Multi-Process Side-Effect Race Lab** — added 12 oracle-free concurrency cases with 61 fresh
+  process attempts, a post-race target inspection, stable grouped-response receipts, and asymmetric
+  duplicate-effect, missing-effect, and response/state mismatch counts. The reference SQLite adapter
+  is deterministic across reruns; deliberately naive and deny-all adapters fail for different
+  reasons. The experiment does not claim scheduler overlap, linearizability, or production safety.
 
 ## 1.6.0 - 2026-08-30
 

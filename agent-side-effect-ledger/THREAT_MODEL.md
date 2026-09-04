@@ -17,6 +17,9 @@
 | Crash after target commit but before result persistence | A restarted worker repeats an already-applied effect | Two-process crash cases require target reconciliation and result replay | The synthetic files do not prove distributed atomicity |
 | Lost journal, unavailable lookup, or expired retention | Recovery invents certainty and resumes unsafely | Unknown effect counts remain visible and the next action is a manual hold | An operator still needs an authorized system-specific recovery procedure |
 | Process-exit result presented as power-loss proof | Reviewers over-trust a green crash test | Receipt states that exit code 86 does not prove storage durability | Hardware, filesystems, database failover, and replication need separate fault testing |
+| Concurrent check-then-act | Multiple workers observe absence and each applies the effect | Multi-process races plus post-race target inspection count durable effects | A local launch barrier does not prove cross-host scheduler overlap or linearizability |
+| Adapter lies in responses | Duplicate effects are labeled as replays | Inspection result is compared with committed response count and the expected aggregate | A dishonest inspection implementation can still fabricate its state |
+| Deny-all concurrency guard | Duplication is prevented by destroying availability | Distinct-key and mixed-authority cases require legitimate commits | Workload coverage remains bounded to the public synthetic suite |
 
 The reference evaluator accepts only public-synthetic input, never opens the network, never invokes
 a tool, and never performs a side effect. The conformance runner starts the explicitly named local
