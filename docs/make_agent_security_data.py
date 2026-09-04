@@ -15,12 +15,14 @@ sys.path.insert(0, str(ROOT / "agent-incident-regression-commons"))
 sys.path.insert(0, str(ROOT / "essential-services-defender-kits"))
 sys.path.insert(0, str(ROOT / "agent-control-observatory"))
 sys.path.insert(0, str(ROOT / "public-value-pilot-network"))
+sys.path.insert(0, str(ROOT / "agent-side-effect-ledger"))
 
 from aau_boundary import load_json as load_boundary_json  # noqa: E402
 from aau_incident import evaluate_incident, load_json as load_incident_json  # noqa: E402
 from aau_observatory import evaluate_experiment, load_json as load_experiment_json  # noqa: E402
 from aau_pilot_network import assess_pilot, load_json as load_pilot_json  # noqa: E402
-from aau_runtime import evaluate_suite  # noqa: E402
+from aau_runtime import evaluate_suite as evaluate_runtime_suite  # noqa: E402
+from aau_side_effect import evaluate_suite as evaluate_side_effect_suite  # noqa: E402
 from aau_defender import assess_kit, load_json as load_kit_json  # noqa: E402
 
 
@@ -29,7 +31,12 @@ def build() -> dict:
         ROOT / "agentic-cyber-resilience/examples/synthetic-critical-infrastructure-profile.json"
     )
     suite = load_boundary_json(ROOT / "agentic-cyber-resilience/evals/runtime-conformance-suite.json")
-    runtime = evaluate_suite(profile, suite)
+    runtime = evaluate_runtime_suite(profile, suite)
+
+    side_effect_suite = load_boundary_json(
+        ROOT / "agent-side-effect-ledger/examples/reference-suite.json"
+    )
+    side_effects = evaluate_side_effect_suite(side_effect_suite)
 
     incident_record = load_incident_json(
         ROOT / "agent-incident-regression-commons/examples/public-agent-boundary-incident.json"
@@ -77,7 +84,7 @@ def build() -> dict:
 
     return {
         "data_version": "aau-agent-security-commons-data/0.1",
-        "generated_on": "2026-08-29",
+        "generated_on": "2026-09-03",
         "runtime": {
             "event_count": runtime["event_count"],
             "run_count": runtime["run_count"],
@@ -85,6 +92,17 @@ def build() -> dict:
             "adapters": ["Generic JSON", "MCP", "OpenAI Agents", "LangGraph", "CrewAI", "AutoGen"],
             "summary": runtime["summary"],
             "suite_sha256": runtime["suite_sha256"],
+        },
+        "side_effects": {
+            "suite_id": side_effects["suite_id"],
+            "receipt_sha256": side_effects["receipt_sha256"],
+            "summary": side_effects["summary"],
+            "failure_shapes": [
+                "unknown_outcome_requires_reconciliation",
+                "changed_intent_key_conflict",
+                "self_or_expired_approval",
+                "compensation_is_a_second_effect",
+            ],
         },
         "incident": {
             "incident_id": incident["incident_id"],
@@ -107,6 +125,7 @@ def build() -> dict:
         },
         "routes": [
             {"label": "Run ABP 0.2", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/agentic-cyber-resilience"},
+            {"label": "Guard side effects", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/agent-side-effect-ledger"},
             {"label": "Replay incident lessons", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/agent-incident-regression-commons"},
             {"label": "Choose a defender kit", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/essential-services-defender-kits"},
             {"label": "Compare controls", "href": "https://github.com/immu4989/awesome-agentic-usecases/tree/main/agent-control-observatory"},

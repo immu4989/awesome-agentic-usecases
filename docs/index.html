@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="human-baseline.css?v=1">
     <link rel="stylesheet" href="evidence-commons.css?v=1">
     <link rel="stylesheet" href="assurance.css?v=6">
-    <link rel="stylesheet" href="agent-security.css?v=1">
+    <link rel="stylesheet" href="agent-security.css?v=2">
     <link rel="stylesheet" href="collective-cyber-defense.css?v=2">
     <link rel="stylesheet" href="release-gate.css?v=5">
     <script src="explorer.js?v=14" defer></script>
@@ -44,7 +44,7 @@
     <script src="human-baseline.js?v=1" defer></script>
     <script src="evidence-commons.js?v=1" defer></script>
     <script src="assurance.js?v=6" defer></script>
-    <script src="agent-security.js?v=1" defer></script>
+    <script src="agent-security.js?v=2" defer></script>
     <script src="collective-cyber-defense.js?v=2" defer></script>
     <script src="release-gate.js?v=8" defer></script>
   </head>
@@ -357,6 +357,7 @@
             <p>Agent identity is not enough. Test whether authority survives delegation, changing policy, peer contact, tool calls, network destinations, monitor loss, safe-stop, and recovery—then preserve the outcome in a deterministic receipt.</p>
             <div class="asc-actions">
               <a class="asc-primary" href="https://github.com/immu4989/awesome-agentic-usecases/tree/main/agentic-cyber-resilience">Run ABP 0.2 ↗</a>
+              <a class="asc-secondary" href="https://github.com/immu4989/awesome-agentic-usecases/tree/main/agent-side-effect-ledger">Guard side effects ↗</a>
               <a class="asc-secondary" href="https://github.com/immu4989/awesome-agentic-usecases/blob/main/docs/AGENT_SECURITY_RESEARCH_NOTES.md">Review the research ↗</a>
               <a class="asc-secondary" href="agent-security-data.json">Inspect derived data ↗</a>
             </div>
@@ -372,6 +373,7 @@
           <span><b id="asc-adapter-count">6</b><small>adapter shapes</small></span>
           <span><b id="asc-kit-count">5</b><small>defender kits</small></span>
           <span><b id="asc-incident-count">6</b><small>incident regressions</small></span>
+          <span><b id="asc-side-effect-case-count">12</b><small>side-effect cases</small></span>
         </div>
 
         <div class="asc-body">
@@ -388,8 +390,39 @@
             <article><b>RECEIPT</b><h4>Make it replayable</h4><p>Exact reason codes, state transitions, source hashes, and a deterministic chain remain inspectable.</p></article>
           </div>
 
+          <div id="agent-side-effect-ledger" class="asc-section-head">
+            <div><span>02 / SIDE-EFFECT TRANSACTIONS</span><h3>A timeout is not permission to do it twice.</h3></div>
+            <p>Bind the exact intent to approval, authority, policy, and one idempotency key. An unknown result must be reconciled with the authoritative system before retry.</p>
+          </div>
+          <div class="asc-effect-grid">
+            <article class="asc-effect-path">
+              <span>UNKNOWN-OUTCOME PATH</span>
+              <div class="asc-effect-chain" aria-label="Retry-safe side-effect path">
+                <div><i>01</i><b>PREPARE</b><small>hash exact intent</small></div>
+                <em>→</em>
+                <div><i>02</i><b>APPROVE</b><small>human + expiry</small></div>
+                <em>→</em>
+                <div class="uncertain"><i>03</i><b>TIMEOUT</b><small>outcome unknown</small></div>
+                <em>→</em>
+                <div class="safe"><i>04</i><b>RECONCILE</b><small>then replay or retry</small></div>
+              </div>
+              <p>Same key + same intent replays the receipt. Same key + changed amount, target, or policy blocks. Compensation requires a separate approval and remains a second recorded effect.</p>
+            </article>
+            <article class="asc-effect-proof">
+              <header><span>COMMITTED SYNTHETIC RECEIPT</span><code id="asc-effect-receipt">loading</code></header>
+              <div>
+                <span><b id="asc-effect-event-count">48</b><small>ordered events</small></span>
+                <span><b id="asc-effect-duplicate-count">3</b><small>duplicates prevented</small></span>
+                <span><b id="asc-effect-reconcile-count">2</b><small>outcomes reconciled</small></span>
+                <span><b id="asc-effect-conflict-count">1</b><small>changed-intent conflict</small></span>
+                <span><b id="asc-effect-breach-count">0</b><small>at-most-one breaches</small></span>
+              </div>
+              <a href="https://github.com/immu4989/awesome-agentic-usecases/tree/main/agent-side-effect-ledger">Run the 12-case ledger ↗</a>
+            </article>
+          </div>
+
           <div class="asc-section-head">
-            <div><span>02 / CONTROL EFFECTIVENESS</span><h3>Compare controls without a magic score.</h3></div>
+            <div><span>03 / CONTROL EFFECTIVENESS</span><h3>Compare controls without a magic score.</h3></div>
             <p>Switch between matched transparent synthetic arms. The cases stay fixed; only the declared controls change.</p>
           </div>
           <div class="asc-lab">
@@ -406,7 +439,7 @@
           </div>
 
           <div class="asc-section-head">
-            <div><span>03 / ESSENTIAL SERVICES</span><h3>Small-operator kits with visible gaps.</h3></div>
+            <div><span>04 / ESSENTIAL SERVICES</span><h3>Small-operator kits with visible gaps.</h3></div>
             <p>Each four-week kit protects accountable human authority, cites primary public guidance, and separates planned controls from evidenced ones.</p>
           </div>
           <div id="asc-kits" class="asc-kits" aria-live="polite"></div>

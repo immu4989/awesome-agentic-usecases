@@ -17,6 +17,17 @@
     byId("asc-adapter-count").textContent = data.runtime.adapter_count;
     byId("asc-kit-count").textContent = data.defender_kits.length;
     byId("asc-incident-count").textContent = data.incident.regression_count;
+    byId("asc-side-effect-case-count").textContent = data.side_effects.summary.case_count;
+  }
+
+  function renderSideEffects(data) {
+    const summary = data.side_effects.summary;
+    byId("asc-effect-event-count").textContent = summary.event_count;
+    byId("asc-effect-duplicate-count").textContent = summary.duplicate_effects_prevented;
+    byId("asc-effect-reconcile-count").textContent = summary.reconciliation_count;
+    byId("asc-effect-conflict-count").textContent = summary.key_conflicts_blocked;
+    byId("asc-effect-breach-count").textContent = summary.at_most_one_breach_count;
+    byId("asc-effect-receipt").textContent = data.side_effects.receipt_sha256.slice(0, 12);
   }
 
   function renderKits(data) {
@@ -82,13 +93,14 @@
     byId("asc-pilot-gaps").textContent = `${data.pilot.visible_gaps.length} evidence gaps remain visible: ${data.pilot.visible_gaps.join(", ").replaceAll("_", " ")}.`;
   }
 
-  fetch("agent-security-data.json?v=1", { cache: "no-store" })
+  fetch("agent-security-data.json?v=2", { cache: "no-store" })
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();
     })
     .then((data) => {
       renderProof(data);
+      renderSideEffects(data);
       renderKits(data);
       renderArms(data);
       renderPilot(data);

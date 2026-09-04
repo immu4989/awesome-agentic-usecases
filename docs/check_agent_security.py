@@ -29,6 +29,17 @@ def main() -> None:
         raise SystemExit("docs/agent-security-data.json is stale; run docs/make_agent_security_data.py")
     if expected["runtime"]["event_count"] != 50 or expected["runtime"]["adapter_count"] != 6:
         raise SystemExit("ABP runtime reference coverage drifted")
+    side_effects = expected["side_effects"]["summary"]
+    if (
+        side_effects["case_count"] != 12
+        or side_effects["event_count"] != 48
+        or side_effects["duplicate_effects_prevented"] != 3
+        or side_effects["reconciliation_count"] != 2
+        or side_effects["at_most_one_breach_count"] != 0
+        or side_effects["exact_outcome_rate"] != 1
+        or side_effects["exact_reason_rate"] != 1
+    ):
+        raise SystemExit("side-effect ledger reference evidence drifted")
     if len(expected["defender_kits"]) != 5 or len({item["sector"] for item in expected["defender_kits"]}) != 5:
         raise SystemExit("essential-service defender coverage drifted")
     if expected["controls"]["case_count"] != 12 or expected["controls"]["control_count"] != 8:
@@ -53,13 +64,16 @@ def main() -> None:
     html = (DOCS / "index.html").read_text()
     for required in (
         'id="agent-security-commons"',
+        'id="agent-side-effect-ledger"',
+        'id="asc-effect-duplicate-count"',
+        'id="asc-effect-receipt"',
         "Agent Security Commons",
         "Authorization is a live condition",
     ):
         if required not in html:
             raise SystemExit(f"site is missing Agent Security Commons marker: {required}")
     js = (DOCS / "agent-security.js").read_text()
-    if "agent-security-data.json" not in js:
+    if "agent-security-data.json?v=2" not in js:
         raise SystemExit("Agent Security Commons browser data is not source-bound")
     subprocess.run(["node", "--check", str(DOCS / "agent-security.js")], check=True)
     print("Agent Security Commons contracts, evidence, and browser surface are current")
