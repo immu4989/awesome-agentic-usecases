@@ -1,6 +1,6 @@
 # AABOM research notes
 
-Research snapshot: **2026-08-30**. This ledger separates primary-source facts from AAU design
+Research snapshot: **2026-09-04**. This ledger separates primary-source facts from AAU design
 choices. It is not legal advice, procurement guidance, a government position, or a standards
 conformance claim.
 
@@ -18,6 +18,8 @@ conformance claim.
 | OpenTelemetry's GenAI conventions warn that tool arguments and results may contain sensitive information. | Keep the public observation profile metadata-only. | Metadata is risk-free or establishes trace integrity/completeness. |
 | NIST's NCCoE agent concept asks how least privilege can be established when actions are unpredictable and how agent actions can be logged and audited. | Derive repeatable authority challenges from the declared inventory and retain bounded results. | A generated test proves the deployed policy is correct or complete. |
 | MCP authorization requires audience-bound tokens and prohibits token passthrough; OAuth security guidance recommends sender-constrained, audience-restricted access tokens. | Test exact tool/scope/time/delegation bindings at the adapter boundary rather than accepting a bearer token as sufficient proof. | This generic compiler establishes MCP or OAuth conformance. |
+| RFC 9396 says values combined inside one authorization-details object form a product, and demonstrates multiple objects for finer control. | Bind exact tool-operation-scope relationships instead of inferring every combination from flat lists. | AABOM is an OAuth authorization-details type or access token. |
+| NIST SP 800-205 describes access decisions in terms of subject, object, requested operation, environment, and policy relationships. | Preserve operation and object-scope relationships as first-class inventory and test inputs. | This experimental profile implements a NIST access-control system. |
 
 ## Design decisions
 
@@ -50,8 +52,11 @@ conformance claim.
     never the expected decision or reason codes. The public protocol carries no credentials, tool
     arguments, results, prompts, reasoning, or operational payloads and cannot execute a tool.
 11. **Conformance is scoped evidence.** A reference run only self-tests the compiler. A real adapter
-    run shows behavior on the exact generated suite, not correctness of the source inventory,
-    completeness of policy, production enforcement, safety, compliance, certification, or approval.
+   run shows behavior on the exact generated suite, not correctness of the source inventory,
+   completeness of policy, production enforcement, safety, compliance, certification, or approval.
+12. **Flat unions are summaries, not grants.** Version 1.1 requires exact relationships at both the
+    tool and authority layers. Flat operation and scope fields must equal their relationship unions,
+    while evaluation and conformance use only the exact triples.
 
 ## Transfer-failure checks
 
@@ -67,9 +72,9 @@ conformance claim.
   deny-all behavior; legitimate clean twins are required.
 - Matching decisions without exact reason codes can hide a different boundary implementation;
   the reference contract scores both.
-- Independent operation and scope declarations can produce a Cartesian test intersection. Systems
-  with conditional operation/scope relationships need a future relationship profile rather than
-  treating this 1.0 compiler as a complete policy model.
+- Independent operation and scope declarations can produce a Cartesian permission expansion.
+  Version 1.1 blocks those implicit combinations and generates explicit relationship-violation
+  twins, but still does not model arbitrary attribute or environment policy.
 
 ## Primary sources
 
@@ -87,3 +92,5 @@ conformance claim.
 - Model Context Protocol, [Authorization specification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization), accessed 2026-08-30.
 - IETF, [RFC 8707: Resource Indicators for OAuth 2.0](https://www.rfc-editor.org/rfc/rfc8707), February 2020.
 - IETF, [RFC 9700: Best Current Practice for OAuth 2.0 Security](https://www.rfc-editor.org/rfc/rfc9700), January 2025.
+- IETF, [RFC 9396: OAuth 2.0 Rich Authorization Requests](https://www.rfc-editor.org/rfc/rfc9396), May 2023.
+- NIST, [SP 800-205: Attribute Considerations for Access Control Systems](https://csrc.nist.gov/pubs/sp/800/205/final), June 2019.

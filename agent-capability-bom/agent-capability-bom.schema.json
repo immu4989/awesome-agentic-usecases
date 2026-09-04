@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-capability-bom-1.0.json",
-  "title": "AAU Agent Capability and Authority Bill of Materials 1.0",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-capability-bom-1.1.json",
+  "title": "AAU Agent Capability and Authority Bill of Materials 1.1",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -10,7 +10,7 @@
     "data_routes", "controls", "evidence", "sharing"
   ],
   "properties": {
-    "bom_version": {"const": "aau-agent-capability-bom/1.0"},
+    "bom_version": {"const": "aau-agent-capability-bom/1.1"},
     "bom_id": {"$ref": "#/$defs/text160"},
     "agent_id": {"$ref": "#/$defs/text160"},
     "release_id": {"$ref": "#/$defs/text160"},
@@ -50,13 +50,19 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["component_id", "protocol", "operations", "side_effect", "resource_scopes"],
+        "required": ["component_id", "protocol", "operations", "side_effect", "resource_scopes", "operation_scope_bindings"],
         "properties": {
           "component_id": {"$ref": "#/$defs/text120"},
           "protocol": {"enum": ["MCP", "A2A", "HTTP", "CLI", "other"]},
           "operations": {"$ref": "#/$defs/nonemptyStringList"},
           "side_effect": {"enum": ["read", "prepare", "write", "irreversible"]},
-          "resource_scopes": {"$ref": "#/$defs/nonemptyStringList"}
+          "resource_scopes": {"$ref": "#/$defs/nonemptyStringList"},
+          "operation_scope_bindings": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 200,
+            "items": {"$ref": "#/$defs/toolBinding"}
+          }
         }
       }
     },
@@ -68,7 +74,7 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "authority_id", "subject", "tool_ids", "operations", "resource_scopes",
+          "authority_id", "subject", "tool_ids", "operations", "resource_scopes", "operation_scope_bindings",
           "delegation_depth", "not_before", "expires_at", "revocation_channel",
           "human_approval_required"
         ],
@@ -78,6 +84,12 @@
           "tool_ids": {"$ref": "#/$defs/nonemptyStringList"},
           "operations": {"$ref": "#/$defs/nonemptyStringList"},
           "resource_scopes": {"$ref": "#/$defs/nonemptyStringList"},
+          "operation_scope_bindings": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 200,
+            "items": {"$ref": "#/$defs/authorityBinding"}
+          },
           "delegation_depth": {"type": "integer", "minimum": 0, "maximum": 20},
           "not_before": {"type": "string", "format": "date-time", "maxLength": 40},
           "expires_at": {"type": "string", "format": "date-time", "maxLength": 40},
@@ -156,6 +168,25 @@
     "text160": {"type": "string", "minLength": 1, "maxLength": 160},
     "text200": {"type": "string", "minLength": 1, "maxLength": 200},
     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "toolBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operation", "resource_scopes"],
+      "properties": {
+        "operation": {"$ref": "#/$defs/text200"},
+        "resource_scopes": {"$ref": "#/$defs/nonemptyStringList"}
+      }
+    },
+    "authorityBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool_id", "operation", "resource_scopes"],
+      "properties": {
+        "tool_id": {"$ref": "#/$defs/text120"},
+        "operation": {"$ref": "#/$defs/text200"},
+        "resource_scopes": {"$ref": "#/$defs/nonemptyStringList"}
+      }
+    },
     "nonemptyStringList": {
       "type": "array",
       "minItems": 1,

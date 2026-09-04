@@ -212,7 +212,9 @@ aau bom diff \
 aau bom verify agent-capability-bom/examples/reference-pack
 ```
 
-The reference diff finds five meaningful widening facts even though its model is unchanged. A
+The 1.1 contract binds exact `tool → operation → scope` relationships instead of implying every
+combination of separately listed operations and scopes. The reference diff finds nine meaningful
+widening facts—including four newly reachable relationships—even though its model is unchanged. A
 removed human-approval boundary blocks; ordinary rotation of an equal-duration lease does not
 create a false extension alert. The pack includes an officially schema-validated CycloneDX 1.7
 projection and unsigned in-toto byte binding. A valid AABOM remains `human_review_required`: it is
@@ -220,8 +222,9 @@ not verified identity, a credential, live authorization, safety evidence, certif
 compliance, deployment approval, government endorsement, or an ATO.
 
 The companion **Least-Authority Planner** compares privacy-bounded action metadata with that exact
-inventory. The reference plan observes two of three granted operations and scopes, flags the two
-unobserved grants, demands six separate next proofs, and removes zero permissions. It counts only
+inventory. The reference plan observes two of three granted operations, scopes, and exact
+relationships; it flags the unobserved draft relationship, demands six separate next proofs, and
+removes zero permissions. It counts only
 allowed events as use and never treats bounded non-use as proof that production authority is
 unnecessary:
 
@@ -232,8 +235,9 @@ aau bom plan-reduction agent-capability-bom/examples/candidate.json \
 ```
 
 The **Authority Conformance Compiler** then turns the same inventory into executable clean and
-violation twins. The reference candidate yields 19 cases—5 legitimate and 14 boundary
-violations—and its command-adapter receipt records 19/19 exact, zero unsafe allows, and zero
+violation twins. The reference candidate yields 19 cases—3 legitimate and 16 boundary
+violations, including two formerly implicit Cartesian combinations—and its command-adapter receipt
+records 19/19 exact, zero unsafe allows, and zero
 legitimate blocks. Expected answers never enter the adapter request and no tool is executed:
 
 ```bash

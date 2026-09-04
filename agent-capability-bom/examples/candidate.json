@@ -1,5 +1,5 @@
 {
-  "bom_version": "aau-agent-capability-bom/1.0",
+  "bom_version": "aau-agent-capability-bom/1.1",
   "bom_id": "aabom-public-records-1.1",
   "agent_id": "public-records-routing-agent",
   "release_id": "1.1.0",
@@ -25,14 +25,21 @@
       "protocol": "MCP",
       "operations": ["records.search", "records.prepare_draft"],
       "side_effect": "prepare",
-      "resource_scopes": ["cases/public/*", "cases/public/drafts/*"]
+      "resource_scopes": ["cases/public/*", "cases/public/drafts/*"],
+      "operation_scope_bindings": [
+        {"operation": "records.search", "resource_scopes": ["cases/public/*", "cases/public/drafts/*"]},
+        {"operation": "records.prepare_draft", "resource_scopes": ["cases/public/*", "cases/public/drafts/*"]}
+      ]
     },
     {
       "component_id": "review-queue",
       "protocol": "HTTP",
       "operations": ["review.prepare"],
       "side_effect": "prepare",
-      "resource_scopes": ["queues/records-review"]
+      "resource_scopes": ["queues/records-review"],
+      "operation_scope_bindings": [
+        {"operation": "review.prepare", "resource_scopes": ["queues/records-review"]}
+      ]
     }
   ],
   "authorities": [
@@ -42,6 +49,10 @@
       "tool_ids": ["records-catalog"],
       "operations": ["records.search", "records.prepare_draft"],
       "resource_scopes": ["cases/public/*", "cases/public/drafts/*"],
+      "operation_scope_bindings": [
+        {"tool_id": "records-catalog", "operation": "records.search", "resource_scopes": ["cases/public/*"]},
+        {"tool_id": "records-catalog", "operation": "records.prepare_draft", "resource_scopes": ["cases/public/drafts/*"]}
+      ],
       "delegation_depth": 0,
       "not_before": "2026-08-30T19:00:00Z",
       "expires_at": "2026-08-30T19:15:00Z",
@@ -54,6 +65,9 @@
       "tool_ids": ["review-queue"],
       "operations": ["review.prepare"],
       "resource_scopes": ["queues/records-review"],
+      "operation_scope_bindings": [
+        {"tool_id": "review-queue", "operation": "review.prepare", "resource_scopes": ["queues/records-review"]}
+      ],
       "delegation_depth": 0,
       "not_before": "2026-08-30T19:00:00Z",
       "expires_at": "2026-08-30T19:15:00Z",

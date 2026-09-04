@@ -65,6 +65,12 @@
   embedded. Release Binding 0.4 now detects policy/configuration substitution while entrypoints and
   static imports remain unchanged; the 33-file reference pack and explicit Python-hook-not-sandbox
   boundary keep the contribution useful without overstating containment or workload identity.
+- **Exact authority relationship profile** — upgraded AABOM to 1.1 so tools and leases bind exact
+  operation-scope relationships rather than silently granting the Cartesian product of two flat
+  lists. Diffing now surfaces each newly reachable relationship, the Least-Authority Planner tracks
+  relationship non-use without removing permissions, and the conformance compiler adds adversarial
+  twins for independently valid but unbound combinations. The refreshed 19-case reference has 3
+  legitimate clean twins, 16 single-boundary violations, and 19/19 exact command-adapter results.
 
 ## 1.6.0 - 2026-08-30
 

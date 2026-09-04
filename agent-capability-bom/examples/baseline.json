@@ -1,5 +1,5 @@
 {
-  "bom_version": "aau-agent-capability-bom/1.0",
+  "bom_version": "aau-agent-capability-bom/1.1",
   "bom_id": "aabom-public-records-1.0",
   "agent_id": "public-records-routing-agent",
   "release_id": "1.0.0",
@@ -25,14 +25,20 @@
       "protocol": "MCP",
       "operations": ["records.search"],
       "side_effect": "read",
-      "resource_scopes": ["cases/public/*"]
+      "resource_scopes": ["cases/public/*"],
+      "operation_scope_bindings": [
+        {"operation": "records.search", "resource_scopes": ["cases/public/*"]}
+      ]
     },
     {
       "component_id": "review-queue",
       "protocol": "HTTP",
       "operations": ["review.prepare"],
       "side_effect": "prepare",
-      "resource_scopes": ["queues/records-review"]
+      "resource_scopes": ["queues/records-review"],
+      "operation_scope_bindings": [
+        {"operation": "review.prepare", "resource_scopes": ["queues/records-review"]}
+      ]
     }
   ],
   "authorities": [
@@ -42,6 +48,9 @@
       "tool_ids": ["records-catalog"],
       "operations": ["records.search"],
       "resource_scopes": ["cases/public/*"],
+      "operation_scope_bindings": [
+        {"tool_id": "records-catalog", "operation": "records.search", "resource_scopes": ["cases/public/*"]}
+      ],
       "delegation_depth": 0,
       "not_before": "2026-08-30T18:00:00Z",
       "expires_at": "2026-08-30T18:15:00Z",
@@ -54,6 +63,9 @@
       "tool_ids": ["review-queue"],
       "operations": ["review.prepare"],
       "resource_scopes": ["queues/records-review"],
+      "operation_scope_bindings": [
+        {"tool_id": "review-queue", "operation": "review.prepare", "resource_scopes": ["queues/records-review"]}
+      ],
       "delegation_depth": 0,
       "not_before": "2026-08-30T18:00:00Z",
       "expires_at": "2026-08-30T18:15:00Z",

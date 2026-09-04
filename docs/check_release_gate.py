@@ -76,6 +76,12 @@ def main() -> None:
         raise SystemExit("the least-authority planner must never auto-remove a grant")
     if reduction["status"] != "proposal_only":
         raise SystemExit("authority reduction output must stay proposal-only")
+    if (
+        reduction["summary"]["granted_operation_scope_binding_count"] != 3
+        or reduction["summary"]["observed_operation_scope_binding_count"] != 2
+        or reduction["summary"]["unobserved_operation_scope_binding_count"] != 1
+    ):
+        raise SystemExit("exact authority relationship evidence drifted")
     conformance = expected["capability_bom"]["conformance"]
     if conformance["adapter_kind"] != "command":
         raise SystemExit("authority conformance evidence must come from a command adapter")
@@ -85,6 +91,8 @@ def main() -> None:
         raise SystemExit("reference authority conformance case coverage is incomplete")
     if conformance["unsafe_allow_count"] or conformance["legitimate_block_count"]:
         raise SystemExit("reference authority conformance has asymmetric failures")
+    if conformance["clean_twin_count"] != 3 or conformance["violation_twin_count"] != 16:
+        raise SystemExit("authority relationship twins drifted")
     if conformance["expected_answers_sent_to_adapter"] or conformance["tools_executed"]:
         raise SystemExit("authority conformance adapter boundary was weakened")
     action_trust = expected["workflow_dependency_trust"]
@@ -104,7 +112,7 @@ def main() -> None:
         "Ship evidence,",
         "not confidence.",
         'href="release-gate.css?v=5"',
-        'src="release-gate.js?v=9"',
+        'src="release-gate.js?v=10"',
         'id="agent-capability-bom"',
         'id="release-bom-conformance-status"',
         'id="authority-conformance"',
@@ -122,7 +130,7 @@ def main() -> None:
         if marker not in html:
             raise SystemExit(f"site is missing release-operations marker: {marker}")
     browser_js = (DOCS / "release-gate.js").read_text()
-    if 'fetch("release-gate-data.json?v=2", { cache: "no-store" })' not in browser_js:
+    if 'fetch("release-gate-data.json?v=3", { cache: "no-store" })' not in browser_js:
         raise SystemExit("release-operations browser surface is not bound to generated evidence")
     if "Copy prepare command" not in browser_js or "submit.py prepare --challenge-id" not in browser_js:
         raise SystemExit("open challenge cards are missing the oracle-free prepare command")

@@ -105,7 +105,7 @@
     });
   }
 
-  fetch("release-gate-data.json?v=2", { cache: "no-store" })
+  fetch("release-gate-data.json?v=3", { cache: "no-store" })
     .then((response) => { if (!response.ok) throw new Error("release data unavailable"); return response.json(); })
     .then((data) => {
       const release = data.release;
@@ -152,9 +152,9 @@
       set("release-bom-finding-count", data.capability_bom.finding_count);
       set("release-bom-status", data.capability_bom.diff_status.replaceAll("_", " "));
       set("release-bom-cdx", data.capability_bom.cyclonedx_version);
-      set("release-bom-granted", data.capability_bom.reduction_plan.summary.granted_operation_count + data.capability_bom.reduction_plan.summary.granted_scope_count);
-      set("release-bom-observed", data.capability_bom.reduction_plan.summary.observed_operation_count + data.capability_bom.reduction_plan.summary.observed_scope_count);
-      set("release-bom-unobserved", data.capability_bom.reduction_plan.summary.unobserved_operation_count + data.capability_bom.reduction_plan.summary.unobserved_scope_count);
+      set("release-bom-granted", data.capability_bom.reduction_plan.summary.granted_operation_scope_binding_count);
+      set("release-bom-observed", data.capability_bom.reduction_plan.summary.observed_operation_scope_binding_count);
+      set("release-bom-unobserved", data.capability_bom.reduction_plan.summary.unobserved_operation_scope_binding_count);
       set("release-bom-auto-removed", data.capability_bom.reduction_plan.summary.automatically_removed_count);
       set("release-bom-next-evidence", data.capability_bom.reduction_plan.next_evidence_count);
       const conformance = data.capability_bom.conformance;

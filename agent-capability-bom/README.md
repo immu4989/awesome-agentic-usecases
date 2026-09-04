@@ -26,8 +26,8 @@ Operate. A valid inventory still resolves to `human_review_required`.
 
 The committed public synthetic pair changes a records tool from read-only to prepare-only and adds
 one draft operation plus one resource scope. The model did not change. A generic model card or
-dependency SBOM would miss the meaningful deployment delta; `aau bom diff` reports all five
-authority-widening facts.
+dependency SBOM would miss the meaningful deployment delta; `aau bom diff` reports nine
+authority-widening facts, including every newly reachable operation-scope relationship.
 
 ```bash
 python -m pip install -e harness
@@ -47,10 +47,25 @@ Expected derived status: `review_required`, with no trust score and no implied a
 | tool resource scope added | The reachable object set widened |
 | authority operation added | The lease now permits the action |
 | authority resource scope added | The lease now permits the added object set |
+| three tool operation-scope bindings added | The tool API now exposes three additional exact combinations |
+| one authority operation-scope binding added | The agent lease can reach the draft action only at its draft scope |
 
 If protected human approval is removed, the diff changes to `blocking_boundary_loss`. A moving
 15-minute lease does not appear as an extension merely because its timestamps moved; only a longer
 duration triggers `AUTHORITY_WINDOW_EXTENDED`.
+
+## Stop accidental Cartesian authority
+
+AABOM 1.1 keeps the readable `operations` and `resource_scopes` inventories, but requires exact
+`operation_scope_bindings` at both the tool and authority layers. Their flattened unions must agree,
+and an authority binding must exist in the referenced tool. A request can therefore be allowed for
+`records.search @ cases/public/*` and `records.prepare_draft @ cases/public/drafts/*` without also
+granting search over drafts or draft preparation over the broader public scope.
+
+This is a practical response to the combination hazard described by OAuth Rich Authorization
+Requests: values combined in one authorization object form a product, while separate objects can
+express finer rights. The AABOM profile is not an OAuth authorization-details type, token, policy
+engine, or enforcement point; it borrows the relationship lesson and makes it testable offline.
 
 ## Find excess authority without auto-removing it
 
@@ -72,9 +87,9 @@ aau bom verify-reduction-plan \
 ```
 
 The reference observation covers three reviewed synthetic scenarios and four metadata-only events.
-It sees two of three granted operations and two of three scopes. A blocked draft attempt does not
-count as legitimate use, so the planner flags one operation and one scope for investigation—but
-removes **zero** permissions.
+It sees two of three granted operations, two of three scopes, and two of three exact relationships.
+A blocked draft attempt does not count as legitimate use, so the planner flags one operation, one
+scope, and their draft relationship for investigation—but removes **zero** permissions.
 
 Every candidate requires six next proofs: domain-owner need review, representative holdout suite,
 legitimate clean twin, staging denial test, rollback rehearsal, and separate change approval.
@@ -92,7 +107,7 @@ retains only normalized identifiers, sequence, operation, scope class, and decis
 An inventory becomes more useful when its claims can challenge an enforcement point. The
 **Authority Conformance Compiler** deterministically turns every authority/tool intersection into
 legitimate clean twins, then changes one boundary at a time: time window, revocation, delegation
-depth, human approval, operation, or resource scope.
+depth, human approval, operation, resource scope, or operation-scope relationship.
 
 ```bash
 aau bom generate-conformance \
@@ -111,8 +126,10 @@ aau bom verify-conformance \
   /tmp/authority-suite.json
 ```
 
-The committed synthetic candidate compiles to **19 cases**: 5 legitimate clean twins and 14
-single-boundary violations. The public command adapter returns 19/19 exact decisions with zero
+The committed synthetic candidate compiles to **19 cases**: 3 legitimate clean twins and 16
+single-boundary violations. Two relationship twins prove that independently recognized operations
+and scopes remain blocked when their exact combination is absent. The public command adapter
+returns 19/19 exact decisions with zero
 unsafe allows and zero legitimate blocks. A deny-all adapter fails because the clean twins catch
 availability destruction; an allow-all adapter fails on the violation twins.
 
@@ -159,6 +176,7 @@ linkage only—not who generated, reviewed, or authorized the deployment.
 
 - unknown or duplicate model, tool, authority, route, or evidence identifiers;
 - an authority operation or scope that exceeds its referenced tool declaration;
+- a missing, duplicate, inconsistent, or tool-exceeding operation-scope relationship;
 - missing expiry or revocation, invalid time windows, or excessive delegation depth;
 - removed human release authority or a public claim of verified production identity;
 - personal data, credentials, nonpublic configuration, or controlled information in a public BOM;
@@ -169,7 +187,7 @@ linkage only—not who generated, reviewed, or authorized the deployment.
 - stale or hand-edited conformance suites, duplicate/missing case coverage, adapter answer-shape
   drift, receipt identity/digest mismatch, and non-recomputable exactness or failure counts.
 
-The strict CLI is the normative 1.0 validator. The readable
+The strict CLI is the normative 1.1 validator. The readable
 [`agent-capability-bom.schema.json`](agent-capability-bom.schema.json) publishes the transport
 shape; cross-reference, interval, and authority-subset invariants are enforced by the CLI.
 
@@ -202,6 +220,9 @@ and CycloneDX [AI/ML-BOM](https://cyclonedx.org/capabilities/mlbom/) and
 The least-authority workflow is informed by NIST SP 800-53 AC-6 and NIST SP 800-207/207A, including
 the use of telemetry to refine access rights; those sources do not endorse this implementation or
 make short-window non-use sufficient evidence for removal.
+The exact relationship profile is informed by NIST SP 800-205's subject/object/operation model and
+RFC 9396's explicit treatment of combined fields as a product; it does not claim conformance to
+either source.
 The AABOM is an experimental AAU profile, not a NIST, CISA, OWASP, Ecma, CycloneDX, SPDX, or
 government standard and not an assertion of conformance by those organizations.
 

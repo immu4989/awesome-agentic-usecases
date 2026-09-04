@@ -181,9 +181,9 @@ the [complete reference gate](../agent-release-gate/) and the
 
 ## Inventory agent capability and authority
 
-`aau bom` validates a strict Agent Capability & Authority BOM, detects directional authority
-widening between releases, emits a CycloneDX 1.7 projection, and builds a deterministic evidence
-pack:
+`aau bom` validates a strict Agent Capability & Authority BOM, binds exact tool-operation-scope
+relationships, detects directional authority widening between releases, emits a CycloneDX 1.7
+projection, and builds a deterministic evidence pack:
 
 ```bash
 aau bom validate agent-capability-bom/examples/candidate.json

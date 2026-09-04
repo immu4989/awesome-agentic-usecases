@@ -13,7 +13,7 @@ def main() -> int:
     request = json.load(sys.stdin)
     if set(request) != {"protocol_version", "case_id", "input"}:
         raise ValueError("adapter request fields changed or leaked expected evidence")
-    if request["protocol_version"] != "aau-agent-authority-adapter/1.0":
+    if request["protocol_version"] != "aau-agent-authority-adapter/1.1":
         raise ValueError("unsupported protocol")
     bom = json.loads((Path(__file__).with_name("candidate.json")).read_text())
     decision, reasons = evaluate_authority_case(bom, request["input"])

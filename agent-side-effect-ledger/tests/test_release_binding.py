@@ -91,7 +91,20 @@ def test_binding_holds_when_aabom_operation_is_not_fully_stressed(tmp_path):
     workspace, args = _workspace(tmp_path)
     bom = json.loads((workspace / "bom.json").read_text())
     bom["tools"][0]["operations"].append("send_other_notice")
+    bom["tools"][0]["operation_scope_bindings"].append(
+        {
+            "operation": "send_other_notice",
+            "resource_scopes": ["synthetic-benefit-cases/notices/*"],
+        }
+    )
     bom["authorities"][0]["operations"].append("send_other_notice")
+    bom["authorities"][0]["operation_scope_bindings"].append(
+        {
+            "tool_id": "notification-service",
+            "operation": "send_other_notice",
+            "resource_scopes": ["synthetic-benefit-cases/notices/*"],
+        }
+    )
     (workspace / "bom.json").write_text(json.dumps(bom, indent=2) + "\n")
     receipt = build_pack(args)
     assert receipt["status"] == "binding_held"

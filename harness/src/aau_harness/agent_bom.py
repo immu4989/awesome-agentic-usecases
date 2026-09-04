@@ -20,18 +20,18 @@ from pathlib import Path
 from typing import Any
 
 
-BOM_VERSION = "aau-agent-capability-bom/1.0"
-DIFF_VERSION = "aau-agent-capability-diff/1.0"
-REVIEW_VERSION = "aau-agent-capability-review/1.0"
-PACK_VERSION = "aau-agent-capability-pack/1.0"
-OBSERVATION_VERSION = "aau-agent-authority-observation/1.0"
-REDUCTION_PLAN_VERSION = "aau-agent-authority-reduction-plan/1.0"
-CONFORMANCE_SUITE_VERSION = "aau-agent-authority-conformance-suite/1.0"
-CONFORMANCE_RECEIPT_VERSION = "aau-agent-authority-conformance-receipt/1.0"
+BOM_VERSION = "aau-agent-capability-bom/1.1"
+DIFF_VERSION = "aau-agent-capability-diff/1.1"
+REVIEW_VERSION = "aau-agent-capability-review/1.1"
+PACK_VERSION = "aau-agent-capability-pack/1.1"
+OBSERVATION_VERSION = "aau-agent-authority-observation/1.1"
+REDUCTION_PLAN_VERSION = "aau-agent-authority-reduction-plan/1.1"
+CONFORMANCE_SUITE_VERSION = "aau-agent-authority-conformance-suite/1.1"
+CONFORMANCE_RECEIPT_VERSION = "aau-agent-authority-conformance-receipt/1.1"
 STATEMENT_TYPE = "https://in-toto.io/Statement/v1"
 PREDICATE_TYPE = (
     "https://immu4989.github.io/awesome-agentic-usecases/"
-    "predicates/agent-capability-bom/v1"
+    "predicates/agent-capability-bom/v1.1"
 )
 MAX_JSON_BYTES = 2_000_000
 MAX_ITEMS = 200
@@ -101,6 +101,57 @@ def _string_list(value: Any, label: str, *, allow_empty: bool = False) -> list[s
     for index, item in enumerate(value):
         _text(item, f"{label}[{index}]", 200)
     return value
+
+
+def _tool_bindings(value: Any, label: str) -> set[tuple[str, str]]:
+    if not isinstance(value, list) or not 1 <= len(value) <= MAX_ITEMS:
+        raise AgentBomError(f"{label} must contain 1 to 200 operation bindings")
+    operations: set[str] = set()
+    pairs: set[tuple[str, str]] = set()
+    for index, row in enumerate(value):
+        row = _exact(row, {"operation", "resource_scopes"}, f"{label}[{index}]")
+        operation = _text(row["operation"], f"{label}[{index}].operation", 200)
+        if operation in operations:
+            raise AgentBomError(f"{label} operations must be unique")
+        operations.add(operation)
+        scopes = _string_list(
+            row["resource_scopes"], f"{label}[{index}].resource_scopes"
+        )
+        pairs.update((operation, scope) for scope in scopes)
+    return pairs
+
+
+def _authority_bindings(value: Any, label: str) -> set[tuple[str, str, str]]:
+    if not isinstance(value, list) or not 1 <= len(value) <= MAX_ITEMS:
+        raise AgentBomError(f"{label} must contain 1 to 200 authority bindings")
+    operation_keys: set[tuple[str, str]] = set()
+    triples: set[tuple[str, str, str]] = set()
+    for index, row in enumerate(value):
+        row = _exact(
+            row,
+            {"tool_id", "operation", "resource_scopes"},
+            f"{label}[{index}]",
+        )
+        tool_id = _text(row["tool_id"], f"{label}[{index}].tool_id", 120)
+        operation = _text(row["operation"], f"{label}[{index}].operation", 200)
+        key = (tool_id, operation)
+        if key in operation_keys:
+            raise AgentBomError(f"{label} tool-operation pairs must be unique")
+        operation_keys.add(key)
+        scopes = _string_list(
+            row["resource_scopes"], f"{label}[{index}].resource_scopes"
+        )
+        triples.update((tool_id, operation, scope) for scope in scopes)
+    return triples
+
+
+def _binding_rows(
+    bindings: set[tuple[str, str, str]],
+) -> list[dict[str, str]]:
+    return [
+        {"tool_id": tool_id, "operation": operation, "resource_scope": scope}
+        for tool_id, operation, scope in sorted(bindings)
+    ]
 
 
 def _timestamp(value: Any, label: str) -> datetime:
@@ -212,7 +263,14 @@ def validate_bom(bom: dict[str, Any]) -> None:
     for index, tool in enumerate(tools):
         tool = _exact(
             tool,
-            {"component_id", "protocol", "operations", "side_effect", "resource_scopes"},
+            {
+                "component_id",
+                "protocol",
+                "operations",
+                "side_effect",
+                "resource_scopes",
+                "operation_scope_bindings",
+            },
             f"tools[{index}]",
         )
         component_id = _text(tool["component_id"], f"tools[{index}].component_id", 120)
@@ -222,8 +280,20 @@ def validate_bom(bom: dict[str, Any]) -> None:
         tool_map[component_id] = tool
         if tool["protocol"] not in PROTOCOLS:
             raise AgentBomError(f"tools[{index}].protocol is unsupported")
-        _string_list(tool["operations"], f"tools[{index}].operations")
-        _string_list(tool["resource_scopes"], f"tools[{index}].resource_scopes")
+        operations = set(_string_list(tool["operations"], f"tools[{index}].operations"))
+        scopes = set(
+            _string_list(tool["resource_scopes"], f"tools[{index}].resource_scopes")
+        )
+        bindings = _tool_bindings(
+            tool["operation_scope_bindings"],
+            f"tools[{index}].operation_scope_bindings",
+        )
+        if {operation for operation, _scope in bindings} != operations:
+            raise AgentBomError(f"tools[{index}] binding operations must equal operations")
+        if {scope for _operation, scope in bindings} != scopes:
+            raise AgentBomError(
+                f"tools[{index}] binding scopes must equal resource_scopes"
+            )
         if tool["side_effect"] not in SIDE_EFFECT_RANK:
             raise AgentBomError(f"tools[{index}].side_effect is unsupported")
 
@@ -240,6 +310,7 @@ def validate_bom(bom: dict[str, Any]) -> None:
                 "tool_ids",
                 "operations",
                 "resource_scopes",
+                "operation_scope_bindings",
                 "delegation_depth",
                 "not_before",
                 "expires_at",
@@ -262,6 +333,10 @@ def validate_bom(bom: dict[str, Any]) -> None:
         scopes = set(
             _string_list(authority["resource_scopes"], f"authorities[{index}].resource_scopes")
         )
+        bindings = _authority_bindings(
+            authority["operation_scope_bindings"],
+            f"authorities[{index}].operation_scope_bindings",
+        )
         unknown = set(tool_ids) - set(tool_map)
         if unknown:
             raise AgentBomError(f"authority {authority_id} references unknown tools: {sorted(unknown)}")
@@ -271,6 +346,27 @@ def validate_bom(bom: dict[str, Any]) -> None:
             raise AgentBomError(f"authority {authority_id} exceeds declared tool operations")
         if not scopes.issubset(allowed_scopes):
             raise AgentBomError(f"authority {authority_id} exceeds declared resource scopes")
+        if {tool_id for tool_id, _operation, _scope in bindings} != set(tool_ids):
+            raise AgentBomError(
+                f"authority {authority_id} binding tools must equal tool_ids"
+            )
+        if {operation for _tool, operation, _scope in bindings} != operations:
+            raise AgentBomError(
+                f"authority {authority_id} binding operations must equal operations"
+            )
+        if {scope for _tool, _operation, scope in bindings} != scopes:
+            raise AgentBomError(
+                f"authority {authority_id} binding scopes must equal resource_scopes"
+            )
+        for tool_id, operation, scope in bindings:
+            tool_bindings = _tool_bindings(
+                tool_map[tool_id]["operation_scope_bindings"],
+                f"tool {tool_id} operation_scope_bindings",
+            )
+            if (operation, scope) not in tool_bindings:
+                raise AgentBomError(
+                    f"authority {authority_id} binding exceeds tool {tool_id} relationship"
+                )
         depth = authority["delegation_depth"]
         if not isinstance(depth, int) or isinstance(depth, bool) or not 0 <= depth <= 20:
             raise AgentBomError(f"authorities[{index}].delegation_depth must be 0 to 20")
@@ -365,6 +461,14 @@ def diff_boms(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
             add("TOOL_OPERATION_ADDED", tool_id, operation)
         for scope in sorted(set(new["resource_scopes"]) - set(old["resource_scopes"])):
             add("TOOL_SCOPE_ADDED", tool_id, scope)
+        old_bindings = _tool_bindings(
+            old["operation_scope_bindings"], f"tool {tool_id} bindings"
+        )
+        new_bindings = _tool_bindings(
+            new["operation_scope_bindings"], f"tool {tool_id} bindings"
+        )
+        for operation, scope in sorted(new_bindings - old_bindings):
+            add("TOOL_OPERATION_SCOPE_BINDING_ADDED", tool_id, f"{operation} @ {scope}")
 
     old_auth = _by_id(before["authorities"], "authority_id")
     new_auth = _by_id(after["authorities"], "authority_id")
@@ -376,6 +480,18 @@ def diff_boms(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
             add("AUTHORITY_OPERATION_ADDED", authority_id, operation)
         for scope in sorted(set(new["resource_scopes"]) - set(old["resource_scopes"])):
             add("AUTHORITY_SCOPE_ADDED", authority_id, scope)
+        old_bindings = _authority_bindings(
+            old["operation_scope_bindings"], f"authority {authority_id} bindings"
+        )
+        new_bindings = _authority_bindings(
+            new["operation_scope_bindings"], f"authority {authority_id} bindings"
+        )
+        for tool_id, operation, scope in sorted(new_bindings - old_bindings):
+            add(
+                "AUTHORITY_OPERATION_SCOPE_BINDING_ADDED",
+                authority_id,
+                f"{tool_id} / {operation} @ {scope}",
+            )
         if new["delegation_depth"] > old["delegation_depth"]:
             add("DELEGATION_DEPTH_INCREASED", authority_id, f"{old['delegation_depth']} → {new['delegation_depth']}")
         old_window = _timestamp(old["expires_at"], "expires_at") - _timestamp(
@@ -456,6 +572,15 @@ def review_bom(bom: dict[str, Any]) -> dict[str, Any]:
             "models": len(bom["models"]),
             "tools": len(bom["tools"]),
             "authorities": len(bom["authorities"]),
+            "operation_scope_bindings": sum(
+                len(
+                    _authority_bindings(
+                        authority["operation_scope_bindings"],
+                        f"authority {authority['authority_id']} bindings",
+                    )
+                )
+                for authority in bom["authorities"]
+            ),
             "data_routes": len(bom["data_routes"]),
             "evidence_bindings": len(bom["evidence"]),
         },
@@ -495,6 +620,22 @@ def to_cyclonedx(bom: dict[str, Any]) -> dict[str, Any]:
             {"name": "aau:agent:tool:side-effect", "value": tool["side_effect"]},
             {"name": "aau:agent:tool:operations", "value": ",".join(sorted(tool["operations"]))},
             {"name": "aau:agent:tool:resource-scopes", "value": ",".join(sorted(tool["resource_scopes"]))},
+            {
+                "name": "aau:agent:tool:operation-scope-bindings",
+                "value": json.dumps(
+                    [
+                        {"operation": operation, "resource_scope": scope}
+                        for operation, scope in sorted(
+                            _tool_bindings(
+                                tool["operation_scope_bindings"],
+                                f"tool {tool['component_id']} bindings",
+                            )
+                        )
+                    ],
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ),
+            },
         ]
         components.append(
             {
@@ -533,6 +674,20 @@ def to_cyclonedx(bom: dict[str, Any]) -> dict[str, Any]:
         ],
         "properties": [
             {"name": "aau:agent:authority-count", "value": str(len(bom["authorities"]))},
+            {
+                "name": "aau:agent:authority-operation-scope-binding-count",
+                "value": str(
+                    sum(
+                        len(
+                            _authority_bindings(
+                                authority["operation_scope_bindings"],
+                                f"authority {authority['authority_id']} bindings",
+                            )
+                        )
+                        for authority in bom["authorities"]
+                    )
+                ),
+            },
             {"name": "aau:agent:data-route-count", "value": str(len(bom["data_routes"]))},
             {"name": "aau:agent:evidence-binding-count", "value": str(len(bom["evidence"]))},
             {"name": "aau:agent:inventory-is-not-authorization", "value": "true"},
@@ -737,6 +892,17 @@ def validate_observation(observation: dict[str, Any], bom: dict[str, Any]) -> No
             or scope not in authority["resource_scopes"]
         ):
             raise AgentBomError(f"allowed event {event_id} exceeds declared authority")
+        if event["decision"] == "allowed" and (
+            tool_id,
+            operation,
+            scope,
+        ) not in _authority_bindings(
+            authority["operation_scope_bindings"],
+            f"authority {authority_id} bindings",
+        ):
+            raise AgentBomError(
+                f"allowed event {event_id} exceeds declared authority relationship"
+            )
     for run_id, sequences in run_sequences.items():
         if sequences != set(range(1, len(sequences) + 1)):
             raise AgentBomError(f"run {run_id} sequences must be contiguous from 1")
@@ -771,9 +937,20 @@ def plan_authority_reduction(
         allowed_events = [event for event in authority_events if event["decision"] == "allowed"]
         observed_operations = sorted({event["operation"] for event in allowed_events})
         observed_scopes = sorted({event["resource_scope"] for event in allowed_events})
+        observed_bindings = {
+            (event["tool_id"], event["operation"], event["resource_scope"])
+            for event in allowed_events
+        }
+        granted_bindings = _authority_bindings(
+            authority["operation_scope_bindings"],
+            f"authority {authority['authority_id']} bindings",
+        )
         unobserved_operations = sorted(set(authority["operations"]) - set(observed_operations))
         unobserved_scopes = sorted(set(authority["resource_scopes"]) - set(observed_scopes))
-        candidate = bool(unobserved_operations or unobserved_scopes)
+        unobserved_bindings = granted_bindings - observed_bindings
+        candidate = bool(
+            unobserved_operations or unobserved_scopes or unobserved_bindings
+        )
         reviews.append(
             {
                 "authority_id": authority["authority_id"],
@@ -783,6 +960,10 @@ def plan_authority_reduction(
                 "observed_resource_scopes": observed_scopes,
                 "unobserved_operations": unobserved_operations,
                 "unobserved_resource_scopes": unobserved_scopes,
+                "observed_operation_scope_bindings": _binding_rows(observed_bindings),
+                "unobserved_operation_scope_bindings": _binding_rows(
+                    unobserved_bindings
+                ),
                 "candidate_reduction": candidate,
                 "required_next_evidence": (
                     [
@@ -802,6 +983,18 @@ def plan_authority_reduction(
     granted_scopes = sum(len(row["resource_scopes"]) for row in bom["authorities"])
     observed_operations = sum(len(row["observed_operations"]) for row in reviews)
     observed_scopes = sum(len(row["observed_resource_scopes"]) for row in reviews)
+    granted_bindings = sum(
+        len(
+            _authority_bindings(
+                row["operation_scope_bindings"],
+                f"authority {row['authority_id']} bindings",
+            )
+        )
+        for row in bom["authorities"]
+    )
+    observed_bindings = sum(
+        len(row["observed_operation_scope_bindings"]) for row in reviews
+    )
     unsigned = {
         "plan_version": REDUCTION_PLAN_VERSION,
         "plan_id": "",
@@ -825,6 +1018,11 @@ def plan_authority_reduction(
             "granted_scope_count": granted_scopes,
             "observed_scope_count": observed_scopes,
             "unobserved_scope_count": granted_scopes - observed_scopes,
+            "granted_operation_scope_binding_count": granted_bindings,
+            "observed_operation_scope_binding_count": observed_bindings,
+            "unobserved_operation_scope_binding_count": (
+                granted_bindings - observed_bindings
+            ),
             "candidate_authority_count": sum(row["candidate_reduction"] for row in reviews),
             "automatically_removed_count": 0,
         },
@@ -834,6 +1032,7 @@ def plan_authority_reduction(
             "blocked_or_error_events_do_not_justify_retaining_authority",
             "scenario_coverage_does_not_establish_production_workload_coverage",
             "resource_scope_strings_do_not_prove_data_sensitivity_or_policy_applicability",
+            "observed_relationship_nonuse_does_not_prove_a_binding_is_unnecessary",
             "telemetry_integrity_authorship_and_completeness_are_not_verified",
         ],
         "boundary": {
@@ -896,6 +1095,22 @@ def evaluate_authority_case(
         return "block", ["OPERATION_OUTSIDE_AUTHORITY"]
     if case_input["resource_scope"] not in authority["resource_scopes"]:
         return "block", ["RESOURCE_SCOPE_OUTSIDE_AUTHORITY"]
+    tool_bindings = _tool_bindings(
+        tool["operation_scope_bindings"],
+        f"tool {case_input['tool_id']} bindings",
+    )
+    if (case_input["operation"], case_input["resource_scope"]) not in tool_bindings:
+        return "block", ["TOOL_OPERATION_SCOPE_UNBOUND"]
+    authority_bindings = _authority_bindings(
+        authority["operation_scope_bindings"],
+        f"authority {case_input['authority_id']} bindings",
+    )
+    if (
+        case_input["tool_id"],
+        case_input["operation"],
+        case_input["resource_scope"],
+    ) not in authority_bindings:
+        return "block", ["AUTHORITY_OPERATION_SCOPE_UNBOUND"]
     evaluated_at = _timestamp(case_input["evaluated_at"], "case evaluated_at")
     if evaluated_at < _timestamp(authority["not_before"], "authority not_before"):
         return "block", ["AUTHORITY_NOT_YET_VALID"]
@@ -961,13 +1176,14 @@ def generate_conformance_suite(bom: dict[str, Any]) -> dict[str, Any]:
         starts = _timestamp(authority["not_before"], "authority not_before")
         expires = _timestamp(authority["expires_at"], "authority expires_at")
         valid_at = starts + (expires - starts) / 2
-        available: list[tuple[str, str, str]] = []
-        for tool_id in sorted(authority["tool_ids"]):
-            tool = tools[tool_id]
-            for operation in sorted(set(tool["operations"]) & set(authority["operations"])):
-                for scope in sorted(set(tool["resource_scopes"]) & set(authority["resource_scopes"])):
-                    available.append((tool_id, operation, scope))
-                    add(authority, tool_id, "legitimate_clean_twin", operation, scope, valid_at)
+        available = sorted(
+            _authority_bindings(
+                authority["operation_scope_bindings"],
+                f"authority {authority['authority_id']} bindings",
+            )
+        )
+        for tool_id, operation, scope in available:
+            add(authority, tool_id, "legitimate_clean_twin", operation, scope, valid_at)
         if not available:
             raise AgentBomError(f"authority {authority['authority_id']} has no executable intersection")
         tool_id, operation, scope = available[0]
@@ -987,6 +1203,43 @@ def generate_conformance_suite(bom: dict[str, Any]) -> dict[str, Any]:
             add(authority, tool_id, "human_approval_missing", operation, scope, valid_at, approval=False)
         add(authority, tool_id, "operation_outside_tool", "aau.invalid_operation", scope, valid_at)
         add(authority, tool_id, "scope_outside_tool", operation, "aau.invalid/scope", valid_at)
+        for candidate_tool_id in sorted(authority["tool_ids"]):
+            tool = tools[candidate_tool_id]
+            tool_bindings = _tool_bindings(
+                tool["operation_scope_bindings"],
+                f"tool {candidate_tool_id} bindings",
+            )
+            authority_bindings = set(available)
+            common_operations = sorted(
+                set(tool["operations"]) & set(authority["operations"])
+            )
+            common_scopes = sorted(
+                set(tool["resource_scopes"]) & set(authority["resource_scopes"])
+            )
+            for candidate_operation in common_operations:
+                for candidate_scope in common_scopes:
+                    if (candidate_operation, candidate_scope) not in tool_bindings:
+                        add(
+                            authority,
+                            candidate_tool_id,
+                            "tool_operation_scope_unbound",
+                            candidate_operation,
+                            candidate_scope,
+                            valid_at,
+                        )
+                    elif (
+                        candidate_tool_id,
+                        candidate_operation,
+                        candidate_scope,
+                    ) not in authority_bindings:
+                        add(
+                            authority,
+                            candidate_tool_id,
+                            "authority_operation_scope_unbound",
+                            candidate_operation,
+                            candidate_scope,
+                            valid_at,
+                        )
     if len(cases) > 2000:
         raise AgentBomError("generated conformance suite exceeds 2000 cases")
     return {
@@ -1013,7 +1266,7 @@ def _command_conformance_adapter(command: str, timeout: float):
 
     def invoke(case_id: str, case_input: dict[str, Any]) -> tuple[str, list[str]]:
         request = {
-            "protocol_version": "aau-agent-authority-adapter/1.0",
+            "protocol_version": "aau-agent-authority-adapter/1.1",
             "case_id": case_id,
             "input": case_input,
         }
