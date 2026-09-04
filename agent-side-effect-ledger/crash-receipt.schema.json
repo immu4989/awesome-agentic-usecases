@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-crash-receipt-0.1.json",
+  "title": "AAU Agent Side-Effect Crash Receipt 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["receipt_version", "adapter_protocol_version", "suite_id", "suite_sha256", "adapter_kind", "status", "summary", "results", "final_result_sha256", "claim_boundary", "receipt_sha256"],
+  "properties": {
+    "receipt_version": {"const": "aau-agent-side-effect-crash-receipt/0.1"},
+    "adapter_protocol_version": {"const": "aau-agent-side-effect-crash-adapter/0.1"},
+    "suite_id": {"type": "string", "minLength": 1, "maxLength": 120},
+    "suite_sha256": {"$ref": "#/$defs/digest"},
+    "adapter_kind": {"const": "two_process_command"},
+    "status": {"enum": ["evidence_passed", "evidence_failed"]},
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_count", "crash_point_count", "exact_count", "exact_rate", "unsafe_resume_count", "duplicate_effect_breach_count", "unresolved_effect_count"],
+      "properties": {
+        "case_count": {"type": "integer", "minimum": 1},
+        "crash_point_count": {"type": "integer", "minimum": 1},
+        "exact_count": {"type": "integer", "minimum": 0},
+        "exact_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "unsafe_resume_count": {"type": "integer", "minimum": 0},
+        "duplicate_effect_breach_count": {"type": "integer", "minimum": 0},
+        "unresolved_effect_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "results": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "crash_after", "actual_recovered_outcome", "actual_next_action", "actual_known_effect_count", "actual_reason_codes", "exact", "previous_result_sha256", "result_sha256"],
+        "properties": {
+          "case_id": {"type": "string", "minLength": 1, "maxLength": 100},
+          "crash_after": {"enum": ["prepare_durable", "approval_durable", "dispatch_recorded", "target_resolved", "result_durable", "response_returned"]},
+          "actual_recovered_outcome": {"enum": ["recovery_ready", "recovery_held", "reconciled_committed", "reconciled_absent", "replay_committed", "manual_recovery_required"]},
+          "actual_next_action": {"enum": ["request_approval", "reauthorize", "dispatch_once", "retry_once", "replay", "hold_manual"]},
+          "actual_known_effect_count": {"type": ["integer", "null"], "minimum": 0, "maximum": 2},
+          "actual_reason_codes": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100}},
+          "exact": {"type": "boolean"},
+          "previous_result_sha256": {"$ref": "#/$defs/digest"},
+          "result_sha256": {"$ref": "#/$defs/digest"}
+        }
+      }
+    },
+    "final_result_sha256": {"$ref": "#/$defs/digest"},
+    "claim_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["oracle_withheld_from_adapter", "fresh_process_used_for_recovery", "synthetic_state_only", "crash_exit_does_not_prove_power_loss_durability", "adapter_command_is_trusted_local_code", "passing_not_atomicity_exactly_once_or_production_evidence"],
+      "properties": {
+        "oracle_withheld_from_adapter": {"const": true},
+        "fresh_process_used_for_recovery": {"const": true},
+        "synthetic_state_only": {"const": true},
+        "crash_exit_does_not_prove_power_loss_durability": {"const": true},
+        "adapter_command_is_trusted_local_code": {"const": true},
+        "passing_not_atomicity_exactly_once_or_production_evidence": {"const": true}
+      }
+    },
+    "receipt_sha256": {"$ref": "#/$defs/digest"}
+  },
+  "$defs": {"digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

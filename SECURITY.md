@@ -86,6 +86,12 @@ payments, notices, account records, credentials, personal data, private traces, 
 information, or classified information in a public suite, adapter request, receipt, issue, fork,
 or pull request.
 
+The Two-Process Crash Lab intentionally executes the named adapter twice per case and expects the
+first invocation to terminate with exit code 86. Treat the adapter as trusted executable code and
+give it only synthetic, staging-scoped authority. A fresh process and flushed reference files test
+recovery logic, not power-loss durability, torn writes, volume persistence, database atomicity,
+failover correctness, or equivalence to a deployed binary.
+
 ## Portable Agent Assurance boundary
 
 The Portable Agent Assurance verifier accepts bounded JSON, rejects symbolic links and oversized

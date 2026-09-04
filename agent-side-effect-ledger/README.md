@@ -155,6 +155,64 @@ public-synthetic profile and cannot reach production targets. A pass is evidence
 answers to this bounded contract—not evidence that a target system is atomic, queryable, correctly
 configured, authorized, or safe in production.
 
+## Pull the plug between dispatch and proof
+
+Correct answers in one live process do not establish crash recovery. The **Two-Process Crash Lab**
+starts a trusted synthetic adapter, requires it to terminate with reserved exit code `86` at one of
+six boundaries, then starts a fresh process against only the persisted state. Expected recovery
+answers are withheld from both invocations.
+
+```mermaid
+sequenceDiagram
+  participant R as Crash runner
+  participant P1 as Adapter process 1
+  participant S as Synthetic durable state
+  participant P2 as Fresh process 2
+  R->>P1: inject(case, crash_after)
+  P1->>S: persist boundary state
+  P1--xP1: abrupt exit 86
+  R->>P2: recover(same case, same state directory)
+  P2->>S: inspect journal + target record
+  P2-->>R: replay, reconcile, retry once, or hold
+  R->>R: score against withheld oracle
+```
+
+```bash
+python3 agent-side-effect-ledger/aau_crash_lab.py run \
+  agent-side-effect-ledger/examples/crash-suite.json \
+  --command "python3 path/to/your_crash_adapter.py" \
+  --out /tmp/aau-crash-receipt.json
+
+python3 agent-side-effect-ledger/aau_crash_lab.py verify \
+  /tmp/aau-crash-receipt.json \
+  --suite agent-side-effect-ledger/examples/crash-suite.json
+```
+
+| Crash window | Required recovery shape |
+|---|---|
+| Intent persisted, no approval | Request exact approval; do not dispatch |
+| Approval persisted, no dispatch marker | Recheck time boundaries, then dispatch once |
+| Dispatch marker persisted, target status unknown | Query the authoritative target first |
+| Target committed, result not persisted | Reconcile committed and replay; never resend |
+| Target absent, result not persisted | Recheck authority and approval, then retry once |
+| Result persisted, response lost | Replay the durable result |
+| Journal, lookup, or retention unavailable | Hold for manual recovery; preserve uncertainty |
+
+The committed [crash suite](examples/crash-suite.json) spans 12 cases and every one of the six
+declared crash points. The [reference crash adapter](examples/reference_crash_adapter.py) runs in
+24 fresh process invocations—12 injected exits and 12 recoveries—reaches 12/12 exact recoveries,
+produces zero unsafe resumes and
+zero duplicate-effect breaches, and keeps three deliberately unresolvable states visible rather
+than guessing. The [crash receipt](examples/reference-crash-receipt.json),
+[suite schema](crash-suite.schema.json), and [receipt schema](crash-receipt.schema.json) make the
+experiment portable and tamper-evident.
+
+The first process performs file flushes to make the reference exercise realistic, but an ordinary
+process exit is not a power cut, filesystem fault, container loss, database failover, or proof of
+storage durability. Passing this lab does not establish atomicity across a journal and target,
+exactly-once execution, target correctness, production equivalence, safety, certification, or an
+ATO. Read the [crash-lab research notes](CRASH_LAB_RESEARCH_NOTES.md) before adapting it.
+
 ## Why these fields exist
 
 - [RFC 9110 §9.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) says a client should

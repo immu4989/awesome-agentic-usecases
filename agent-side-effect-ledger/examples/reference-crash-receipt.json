@@ -1,0 +1,185 @@
+{
+  "receipt_version": "aau-agent-side-effect-crash-receipt/0.1",
+  "adapter_protocol_version": "aau-agent-side-effect-crash-adapter/0.1",
+  "suite_id": "asel-crash-boundaries-2026-09",
+  "suite_sha256": "f9f821c4ed234fd141e3a8de43d543fa95de6b45343bd9c6e1d706e1bcc12f4f",
+  "adapter_kind": "two_process_command",
+  "status": "evidence_passed",
+  "summary": {
+    "case_count": 12,
+    "crash_point_count": 6,
+    "exact_count": 12,
+    "exact_rate": 1.0,
+    "unsafe_resume_count": 0,
+    "duplicate_effect_breach_count": 0,
+    "unresolved_effect_count": 3
+  },
+  "results": [
+    {
+      "case_id": "CRASH-PREPARED",
+      "crash_after": "prepare_durable",
+      "actual_recovered_outcome": "recovery_held",
+      "actual_next_action": "request_approval",
+      "actual_known_effect_count": 0,
+      "actual_reason_codes": [
+        "APPROVAL_REQUIRED"
+      ],
+      "exact": true,
+      "previous_result_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "result_sha256": "7face33fbde6cd0ba80fddf7f6773cdbaee485f1b84e62cea00313810fe225f1"
+    },
+    {
+      "case_id": "CRASH-APPROVED",
+      "crash_after": "approval_durable",
+      "actual_recovered_outcome": "recovery_ready",
+      "actual_next_action": "dispatch_once",
+      "actual_known_effect_count": 0,
+      "actual_reason_codes": [],
+      "exact": true,
+      "previous_result_sha256": "7face33fbde6cd0ba80fddf7f6773cdbaee485f1b84e62cea00313810fe225f1",
+      "result_sha256": "b75414c9b799badd2a1e45c70547afa654638adeea6eb93bf00317976a149e91"
+    },
+    {
+      "case_id": "CRASH-DISPATCH-MARKER",
+      "crash_after": "dispatch_recorded",
+      "actual_recovered_outcome": "reconciled_absent",
+      "actual_next_action": "retry_once",
+      "actual_known_effect_count": 0,
+      "actual_reason_codes": [
+        "TARGET_CONFIRMED_ABSENT"
+      ],
+      "exact": true,
+      "previous_result_sha256": "b75414c9b799badd2a1e45c70547afa654638adeea6eb93bf00317976a149e91",
+      "result_sha256": "12737442566fae23983baee381c0110131e3dfd41b3374ddd792ee5fd607322b"
+    },
+    {
+      "case_id": "CRASH-TARGET-COMMITTED",
+      "crash_after": "target_resolved",
+      "actual_recovered_outcome": "reconciled_committed",
+      "actual_next_action": "replay",
+      "actual_known_effect_count": 1,
+      "actual_reason_codes": [
+        "TARGET_CONFIRMED_COMMITTED"
+      ],
+      "exact": true,
+      "previous_result_sha256": "12737442566fae23983baee381c0110131e3dfd41b3374ddd792ee5fd607322b",
+      "result_sha256": "065f49060e0ff7304c468916ef5653c983b8b753b97dd631c809ac5cc6b285a7"
+    },
+    {
+      "case_id": "CRASH-TARGET-ABSENT",
+      "crash_after": "target_resolved",
+      "actual_recovered_outcome": "reconciled_absent",
+      "actual_next_action": "retry_once",
+      "actual_known_effect_count": 0,
+      "actual_reason_codes": [
+        "TARGET_CONFIRMED_ABSENT"
+      ],
+      "exact": true,
+      "previous_result_sha256": "065f49060e0ff7304c468916ef5653c983b8b753b97dd631c809ac5cc6b285a7",
+      "result_sha256": "1bb9c3bb2eae9712387c4589176ac7618f5725be7208e2d38e0b55849ca6334a"
+    },
+    {
+      "case_id": "CRASH-RESULT-DURABLE",
+      "crash_after": "result_durable",
+      "actual_recovered_outcome": "replay_committed",
+      "actual_next_action": "replay",
+      "actual_known_effect_count": 1,
+      "actual_reason_codes": [
+        "DURABLE_RESULT_REPLAY"
+      ],
+      "exact": true,
+      "previous_result_sha256": "1bb9c3bb2eae9712387c4589176ac7618f5725be7208e2d38e0b55849ca6334a",
+      "result_sha256": "3ae14498722999818715d1029137efe2e494f9dd6a0fc02729f8012772922174"
+    },
+    {
+      "case_id": "CRASH-RESPONSE-RETURNED",
+      "crash_after": "response_returned",
+      "actual_recovered_outcome": "replay_committed",
+      "actual_next_action": "replay",
+      "actual_known_effect_count": 1,
+      "actual_reason_codes": [
+        "DURABLE_RESULT_REPLAY"
+      ],
+      "exact": true,
+      "previous_result_sha256": "3ae14498722999818715d1029137efe2e494f9dd6a0fc02729f8012772922174",
+      "result_sha256": "cc3afee6d8461a31a83bdf83911aad0eef938d0033e414bf965a37235ad5c685"
+    },
+    {
+      "case_id": "CRASH-JOURNAL-LOST",
+      "crash_after": "target_resolved",
+      "actual_recovered_outcome": "manual_recovery_required",
+      "actual_next_action": "hold_manual",
+      "actual_known_effect_count": null,
+      "actual_reason_codes": [
+        "LOCAL_JOURNAL_UNAVAILABLE"
+      ],
+      "exact": true,
+      "previous_result_sha256": "cc3afee6d8461a31a83bdf83911aad0eef938d0033e414bf965a37235ad5c685",
+      "result_sha256": "3b490f03ffbdcb00d45a850cd2ac7e9940c9f0c156c0e3ea9cc2496947958a8e"
+    },
+    {
+      "case_id": "CRASH-LOOKUP-UNAVAILABLE",
+      "crash_after": "dispatch_recorded",
+      "actual_recovered_outcome": "manual_recovery_required",
+      "actual_next_action": "hold_manual",
+      "actual_known_effect_count": null,
+      "actual_reason_codes": [
+        "TARGET_LOOKUP_UNAVAILABLE"
+      ],
+      "exact": true,
+      "previous_result_sha256": "3b490f03ffbdcb00d45a850cd2ac7e9940c9f0c156c0e3ea9cc2496947958a8e",
+      "result_sha256": "55d61cce98a41986a93cdbc66005098fb6b1b70a56d97abe7d86ad8895e7018e"
+    },
+    {
+      "case_id": "CRASH-RETENTION-EXPIRED",
+      "crash_after": "target_resolved",
+      "actual_recovered_outcome": "manual_recovery_required",
+      "actual_next_action": "hold_manual",
+      "actual_known_effect_count": null,
+      "actual_reason_codes": [
+        "IDEMPOTENCY_RETENTION_EXPIRED"
+      ],
+      "exact": true,
+      "previous_result_sha256": "55d61cce98a41986a93cdbc66005098fb6b1b70a56d97abe7d86ad8895e7018e",
+      "result_sha256": "10cccbaca45f1b27f425f12eddfce0e0bf6f6b1ab2f172171a43b99188351192"
+    },
+    {
+      "case_id": "CRASH-APPROVAL-EXPIRED",
+      "crash_after": "target_resolved",
+      "actual_recovered_outcome": "recovery_held",
+      "actual_next_action": "request_approval",
+      "actual_known_effect_count": 0,
+      "actual_reason_codes": [
+        "APPROVAL_EXPIRED",
+        "TARGET_CONFIRMED_ABSENT"
+      ],
+      "exact": true,
+      "previous_result_sha256": "10cccbaca45f1b27f425f12eddfce0e0bf6f6b1ab2f172171a43b99188351192",
+      "result_sha256": "9c24704356c39e5821e1855cce3ff3bc8203e2f3ca7b6dd8c1eb47a0772d762f"
+    },
+    {
+      "case_id": "CRASH-AUTHORITY-EXPIRED",
+      "crash_after": "target_resolved",
+      "actual_recovered_outcome": "recovery_held",
+      "actual_next_action": "reauthorize",
+      "actual_known_effect_count": 0,
+      "actual_reason_codes": [
+        "AUTHORITY_EXPIRED",
+        "TARGET_CONFIRMED_ABSENT"
+      ],
+      "exact": true,
+      "previous_result_sha256": "9c24704356c39e5821e1855cce3ff3bc8203e2f3ca7b6dd8c1eb47a0772d762f",
+      "result_sha256": "e1ab9ad705c1695432a675bd194de02a5d2bfdc779da3c60639f12c7abce917e"
+    }
+  ],
+  "final_result_sha256": "e1ab9ad705c1695432a675bd194de02a5d2bfdc779da3c60639f12c7abce917e",
+  "claim_boundary": {
+    "oracle_withheld_from_adapter": true,
+    "fresh_process_used_for_recovery": true,
+    "synthetic_state_only": true,
+    "crash_exit_does_not_prove_power_loss_durability": true,
+    "adapter_command_is_trusted_local_code": true,
+    "passing_not_atomicity_exactly_once_or_production_evidence": true
+  },
+  "receipt_sha256": "f44bebcf6b4b82ba7c81fa9665036235c3ca7f18251a550c98d54cb329d1eb2a"
+}

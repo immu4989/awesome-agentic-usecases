@@ -65,6 +65,18 @@ python3 agent-side-effect-ledger/aau_side_effect.py run-conformance \
 The request contains the public synthetic sequence and profile, but removes every expected outcome
 and expected reason code. Run only a local adapter command you trust.
 
+Then challenge recovery in a genuinely fresh process:
+
+```bash
+python3 agent-side-effect-ledger/aau_crash_lab.py run \
+  agent-side-effect-ledger/examples/crash-suite.json \
+  --command "python3 path/to/your_crash_adapter.py" \
+  --out /tmp/aau-crash-receipt.json
+```
+
+The crash lab uses public-synthetic state and reserved exit code 86. It does not prove behavior
+under power loss, filesystem corruption, database failover, or a production target.
+
 If you are outside the maintainer workflow and want to test a public claim, choose one of the
 four [Fork-to-Reproduce challenges](reproduction-challenges/). You receive six or eight tasks and an
 oracle commitment—not the gold outcomes. The manual workflow builds and attests your exact

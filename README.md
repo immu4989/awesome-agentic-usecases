@@ -134,6 +134,13 @@ zero unsafe effect outcomes and zero retry-after-unknown violations. This is a t
 contract and portable test—not an exactly-once claim, a real payment or notice, production
 authorization, certification, compliance result, or ATO.
 
+The accompanying **Two-Process Crash Lab** now terminates a staging adapter at six persistence and
+dispatch boundaries, then launches a fresh process against only the surviving synthetic state. Its
+12 cases distinguish safe first dispatch, reconciliation, replay, bounded retry, expired authority,
+and three states that must remain unresolved. The reference receipt is 12/12 exact with zero unsafe
+resumes and zero duplicate-effect breaches; process-exit evidence is explicitly not a power-loss,
+storage-durability, distributed-atomicity, or production-equivalence claim.
+
 Four **[oracle-free reproduction challenges](reproduction-challenges/)** now let outside forks test
 portable agent authority, distribution restoration, pharmaceutical batch disposition, and the
 A2A-to-MCP authority relay without receiving gold answers. The hidden source suites and oracles

@@ -14,6 +14,9 @@
 | Malformed or partial adapter output | Missing failures disappear from the score | Exact event order, coverage, outcome vocabulary, and sorted reason codes fail closed | Schema-valid output can still be dishonest |
 | Untrusted command adapter | Local code steals data or performs an unintended action | Commands are shell-free and must receive public-synthetic staging data only | The runner executes the named program; users must trust and sandbox it |
 | Adapter/target substitution | A test double passes while production behaves differently | Receipt identifies command-adapter evidence and rejects production claims | Independent deployment binding and target evidence remain necessary |
+| Crash after target commit but before result persistence | A restarted worker repeats an already-applied effect | Two-process crash cases require target reconciliation and result replay | The synthetic files do not prove distributed atomicity |
+| Lost journal, unavailable lookup, or expired retention | Recovery invents certainty and resumes unsafely | Unknown effect counts remain visible and the next action is a manual hold | An operator still needs an authorized system-specific recovery procedure |
+| Process-exit result presented as power-loss proof | Reviewers over-trust a green crash test | Receipt states that exit code 86 does not prove storage durability | Hardware, filesystems, database failover, and replication need separate fault testing |
 
 The reference evaluator accepts only public-synthetic input, never opens the network, never invokes
 a tool, and never performs a side effect. The conformance runner starts the explicitly named local

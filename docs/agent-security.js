@@ -33,6 +33,11 @@
     byId("asc-effect-conformance-unsafe").textContent = conformance.summary.unsafe_effect_outcome_count;
     byId("asc-effect-conformance-retry").textContent = conformance.summary.unknown_retry_violation_count;
     byId("asc-effect-conformance-receipt").textContent = conformance.receipt_sha256.slice(0, 12);
+    const crashLab = data.side_effects.crash_lab;
+    byId("asc-effect-crash-exact").textContent = `${crashLab.summary.exact_count}/${crashLab.summary.case_count}`;
+    byId("asc-effect-crash-points").textContent = crashLab.summary.crash_point_count;
+    byId("asc-effect-crash-unsafe").textContent = crashLab.summary.unsafe_resume_count;
+    byId("asc-effect-crash-unknown").textContent = crashLab.summary.unresolved_effect_count;
   }
 
   function renderKits(data) {
@@ -98,7 +103,7 @@
     byId("asc-pilot-gaps").textContent = `${data.pilot.visible_gaps.length} evidence gaps remain visible: ${data.pilot.visible_gaps.join(", ").replaceAll("_", " ")}.`;
   }
 
-  fetch("agent-security-data.json?v=3", { cache: "no-store" })
+  fetch("agent-security-data.json?v=4", { cache: "no-store" })
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();

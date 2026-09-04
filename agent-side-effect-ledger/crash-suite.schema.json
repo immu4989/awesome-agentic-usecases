@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-crash-suite-0.1.json",
+  "title": "AAU Agent Side-Effect Crash Suite 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["suite_version", "suite_id", "title", "profile", "cases", "boundaries"],
+  "properties": {
+    "suite_version": {"const": "aau-agent-side-effect-crash-suite/0.1"},
+    "suite_id": {"type": "string", "minLength": 1, "maxLength": 120},
+    "title": {"type": "string", "minLength": 1, "maxLength": 240},
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operation_id", "idempotency_key", "intent_sha256"],
+      "properties": {
+        "operation_id": {"type": "string", "minLength": 1, "maxLength": 160},
+        "idempotency_key": {"type": "string", "minLength": 1, "maxLength": 200},
+        "intent_sha256": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 40,
+      "items": {"$ref": "#/$defs/case"}
+    },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "public_synthetic_only",
+        "fresh_process_recovery",
+        "oracle_withheld_from_adapter",
+        "no_production_target",
+        "crash_exit_is_not_power_loss",
+        "fsync_is_not_storage_proof",
+        "not_exactly_once_claim"
+      ],
+      "properties": {
+        "public_synthetic_only": {"const": true},
+        "fresh_process_recovery": {"const": true},
+        "oracle_withheld_from_adapter": {"const": true},
+        "no_production_target": {"const": true},
+        "crash_exit_is_not_power_loss": {"const": true},
+        "fsync_is_not_storage_proof": {"const": true},
+        "not_exactly_once_claim": {"const": true}
+      }
+    }
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "title",
+        "crash_after",
+        "target_outcome",
+        "recovery_at_ms",
+        "approval_expires_at_ms",
+        "authority_expires_at_ms",
+        "retention_expires_at_ms",
+        "local_journal_available",
+        "target_lookup_available",
+        "expected"
+      ],
+      "properties": {
+        "case_id": {"type": "string", "minLength": 1, "maxLength": 100},
+        "title": {"type": "string", "minLength": 1, "maxLength": 220},
+        "crash_after": {"enum": ["prepare_durable", "approval_durable", "dispatch_recorded", "target_resolved", "result_durable", "response_returned"]},
+        "target_outcome": {"enum": ["not_attempted", "committed", "absent"]},
+        "recovery_at_ms": {"type": "integer", "minimum": 1},
+        "approval_expires_at_ms": {"type": "integer", "minimum": 1},
+        "authority_expires_at_ms": {"type": "integer", "minimum": 1},
+        "retention_expires_at_ms": {"type": "integer", "minimum": 1},
+        "local_journal_available": {"type": "boolean"},
+        "target_lookup_available": {"type": "boolean"},
+        "expected": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["recovered_outcome", "next_action", "known_effect_count", "reason_codes"],
+          "properties": {
+            "recovered_outcome": {"enum": ["recovery_ready", "recovery_held", "reconciled_committed", "reconciled_absent", "replay_committed", "manual_recovery_required"]},
+            "next_action": {"enum": ["request_approval", "reauthorize", "dispatch_once", "retry_once", "replay", "hold_manual"]},
+            "known_effect_count": {"type": ["integer", "null"], "minimum": 0, "maximum": 1},
+            "reason_codes": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100}}
+          }
+        }
+      }
+    }
+  }
+}

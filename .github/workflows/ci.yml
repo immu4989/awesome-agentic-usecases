@@ -79,6 +79,9 @@ jobs:
           python agent-side-effect-ledger/aau_side_effect.py run-conformance agent-side-effect-ledger/examples/reference-suite.json --command "python agent-side-effect-ledger/examples/reference_adapter.py" --out "$RUNNER_TEMP/aau-side-effect-conformance.json"
           cmp "$RUNNER_TEMP/aau-side-effect-conformance.json" agent-side-effect-ledger/examples/reference-conformance-receipt.json
           python agent-side-effect-ledger/aau_side_effect.py verify-conformance agent-side-effect-ledger/examples/reference-conformance-receipt.json --suite agent-side-effect-ledger/examples/reference-suite.json
+          python agent-side-effect-ledger/aau_crash_lab.py run agent-side-effect-ledger/examples/crash-suite.json --command "python agent-side-effect-ledger/examples/reference_crash_adapter.py" --out "$RUNNER_TEMP/aau-crash-receipt.json"
+          cmp "$RUNNER_TEMP/aau-crash-receipt.json" agent-side-effect-ledger/examples/reference-crash-receipt.json
+          python agent-side-effect-ledger/aau_crash_lab.py verify agent-side-effect-ledger/examples/reference-crash-receipt.json --suite agent-side-effect-ledger/examples/crash-suite.json
           python docs/make_agent_security_data.py
           python docs/check_agent_security.py
           ruff check agent-side-effect-ledger agentic-cyber-resilience agent-incident-regression-commons essential-services-defender-kits agent-control-observatory public-value-pilot-network docs/make_agent_security_data.py docs/check_agent_security.py

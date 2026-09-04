@@ -17,6 +17,11 @@
   codes, distinguishes unsafe effects from legitimate blocks, detects retry-after-unknown behavior,
   and emits a deterministic tamper-evident receipt. A public reference adapter and strict schema make
   the protocol directly forkable without presenting adapter evidence as production target evidence.
+- **Two-Process Crash Lab** — added 12 answer-blind cases across six persistence and dispatch crash
+  points. The runner requires an abrupt exit, restarts a fresh adapter process, scores replay,
+  reconciliation, bounded retry, and manual holds separately, and preserves three intentionally
+  unknown outcomes. Strict suites, receipts, threat notes, and a reference adapter provide portable
+  recovery evidence without claiming power-loss durability, distributed atomicity, or exactly once.
 
 ## 1.6.0 - 2026-08-30
 
