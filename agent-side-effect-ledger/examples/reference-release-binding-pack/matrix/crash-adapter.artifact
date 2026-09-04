@@ -14,6 +14,16 @@ sys.path.insert(0, str(ROOT))
 from aau_crash_lab import CRASH_EXIT, PROTOCOL_VERSION  # noqa: E402
 
 
+def _require_runtime_policy() -> None:
+    policy = json.loads(Path(__file__).with_name("reference-runtime-policy.json").read_text())
+    if policy != {
+        "policy_id": "public-synthetic-side-effect-staging-v1",
+        "environment": "public_synthetic",
+        "live_targets_allowed": False,
+    }:
+        raise ValueError("runtime policy does not permit the public-synthetic adapter")
+
+
 ORDER = {
     "prepare_durable": 1,
     "approval_durable": 2,
@@ -170,6 +180,7 @@ def _recover(request: dict[str, object], state_dir: Path) -> dict[str, object]:
 
 
 def main() -> int:
+    _require_runtime_policy()
     request = json.load(sys.stdin)
     if set(request) != {"protocol_version", "phase", "suite_id", "state_dir", "profile", "case"}:
         raise ValueError("crash adapter request fields changed")

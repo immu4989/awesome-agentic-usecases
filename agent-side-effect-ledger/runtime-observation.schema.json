@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/cpython-workspace-observation-0.1.json",
+  "title": "AAU CPython Workspace Observation 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["observation_version", "capture_mode", "observer", "expected_session_count", "observed_session_count", "materials", "runtime_only_paths", "unobserved_static_paths", "capabilities", "boundaries", "observation_sha256"],
+  "properties": {
+    "observation_version": {"const": "aau-cpython-workspace-observation/0.1"},
+    "capture_mode": {"enum": ["cpython_audit_workspace_reads", "not_observed_non_python"]},
+    "observer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observer_version", "pack_path", "size_bytes", "sha256"],
+      "properties": {
+        "observer_version": {"const": "aau-cpython-workspace-observer/0.1"},
+        "pack_path": {"const": "runtime-observer.artifact"},
+        "size_bytes": {"type": "integer", "minimum": 1, "maximum": 2000000},
+        "sha256": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "expected_session_count": {"type": "integer", "minimum": 0, "maximum": 250},
+    "observed_session_count": {"type": "integer", "minimum": 0, "maximum": 250},
+    "materials": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "size_bytes", "sha256", "event_kinds"],
+        "properties": {
+          "path": {"$ref": "#/$defs/path"},
+          "size_bytes": {"type": "integer", "minimum": 1, "maximum": 2000000},
+          "sha256": {"$ref": "#/$defs/digest"},
+          "event_kinds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"enum": ["code", "read"]}
+          }
+        }
+      }
+    },
+    "runtime_only_paths": {
+      "type": "array",
+      "maxItems": 200,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/path"}
+    },
+    "unobserved_static_paths": {
+      "type": "array",
+      "maxItems": 200,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/path"}
+    },
+    "capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"enum": ["dynamic_code", "native_or_extension_load", "network", "runtime_instrumentation_change", "subprocess"]}
+    },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cpython_events_are_implementation_specific", "digest_sample_precedes_application_open", "no_interpreter_installed_package_environment_container_or_workload_identity", "outside_workspace_arguments_not_recorded", "python_level_audit_hook_is_not_a_sandbox", "runtime_only_bytes_not_embedded", "trusted_adapter_can_bypass_or_tamper_with_observation", "toctou_window_remains", "workspace_regular_files_only"],
+      "properties": {
+        "cpython_events_are_implementation_specific": {"const": true},
+        "digest_sample_precedes_application_open": {"const": true},
+        "no_interpreter_installed_package_environment_container_or_workload_identity": {"const": true},
+        "outside_workspace_arguments_not_recorded": {"const": true},
+        "python_level_audit_hook_is_not_a_sandbox": {"const": true},
+        "runtime_only_bytes_not_embedded": {"const": true},
+        "trusted_adapter_can_bypass_or_tamper_with_observation": {"const": true},
+        "toctou_window_remains": {"const": true},
+        "workspace_regular_files_only": {"const": true}
+      }
+    },
+    "observation_sha256": {"$ref": "#/$defs/digest"}
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"}
+  }
+}

@@ -534,7 +534,9 @@ def adapter_request(suite: dict[str, Any], case: dict[str, Any]) -> dict[str, An
     }
 
 
-def _command_adapter(command: str, timeout: float):
+def _command_adapter(
+    command: str, timeout: float, adapter_env: dict[str, str] | None = None
+):
     argv = shlex.split(command)
     if not argv:
         raise SideEffectError("adapter command is empty")
@@ -550,6 +552,7 @@ def _command_adapter(command: str, timeout: float):
                 stderr=subprocess.PIPE,
                 timeout=timeout,
                 check=False,
+                env=adapter_env,
             )
         except (OSError, subprocess.TimeoutExpired) as exc:
             raise SideEffectError(f"adapter execution failed: {exc}") from exc
@@ -596,10 +599,15 @@ def _validate_adapter_response(response: Any, case: dict[str, Any]) -> dict[str,
     return response
 
 
-def run_conformance(suite: dict[str, Any], command: str, timeout: float = 10.0) -> dict[str, Any]:
+def run_conformance(
+    suite: dict[str, Any],
+    command: str,
+    timeout: float = 10.0,
+    adapter_env: dict[str, str] | None = None,
+) -> dict[str, Any]:
     """Run oracle-free synthetic case sequences through a trusted local command adapter."""
     validate_suite(suite)
-    invoke = _command_adapter(command, timeout)
+    invoke = _command_adapter(command, timeout, adapter_env)
     previous = ZERO_HASH
     case_rows = []
     event_count = 0

@@ -156,22 +156,26 @@ nondeterministic winner identity so valid reruns remain byte-identical.
 Teams can now adopt all three layers through the dependency-free
 **[Side-Effect Safety Matrix Action](.github/actions/aau-side-effect-safety/)**. Its self-contained
 reference pack combines 72 checked outcomes across 36 cases, preserves valid failure diagnostics,
-and can be reverified without rerunning an adapter. Matrix 0.4 fails closed unless crash and race
+and can be reverified without rerunning an adapter. Matrix 0.5 fails closed unless crash and race
 evidence names the same tool-operation pair, that pair exists in semantic conformance, and each
 command places a declared workspace-relative entrypoint at `argv[0]` or a supported interpreter target at
 `argv[1]`. It normalizes that token to the declared absolute path before execution, captures those
 three files plus **8 statically reachable local Python material records**, rejects a before/after
 byte mismatch for every captured file, exposes 42 per-adapter unresolved import names, and shows
-semantic tools that did not receive all three gates. Static import discovery is not proof of the
-interpreter, installed packages, configuration, environment, container, runtime identity, or a
-complete dynamic dependency graph.
+semantic tools that did not receive all three gates. Its byte-bound CPython observer accounts for
+**109/109 adapter processes** and digest-binds **11 workspace reads**, including three reads of a
+runtime policy that static analysis cannot see. Runtime-only content is not embedded; missing
+traces, workspace writes, or changing read digests fail closed. Python audit hooks are bypassable
+evidence—not a sandbox—and do not prove the interpreter, installed packages, outside-workspace
+reads, environment, container, runtime identity, or a complete dependency graph.
 
 The companion **Side-Effect Release Binding** closes the next evidence-substitution gap. It packages
 the exact AABOM agent and release IDs, the fully stressed tool-operation pair, the complete matrix,
 the human-approval declaration, and byte snapshots of all three adapters plus their captured local
-material sets. It now rejects any release path, adapter bytes, or static-local material set that
-differs from the matrix run. The committed 26-file reference pack verifies 1/1 consequential
-operations; missing coverage or substitution
+material sets. Release Binding 0.4 also re-hashes every workspace material observed during the
+matrix run, so a substituted policy file fails even when entrypoints and static imports are
+unchanged. The committed 33-file reference pack verifies 1/1 consequential operations; missing
+coverage or substitution
 becomes an inspectable hold rather than a misleading pass. Hashes bind copied files, not workload
 identity, production provenance, or deployment authority.
 

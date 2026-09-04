@@ -13,6 +13,16 @@ sys.path.insert(0, str(ROOT))
 from aau_side_effect import ADAPTER_PROTOCOL_VERSION, evaluate_case  # noqa: E402
 
 
+def _require_runtime_policy() -> None:
+    policy = json.loads(Path(__file__).with_name("reference-runtime-policy.json").read_text())
+    if policy != {
+        "policy_id": "public-synthetic-side-effect-staging-v1",
+        "environment": "public_synthetic",
+        "live_targets_allowed": False,
+    }:
+        raise ValueError("runtime policy does not permit the public-synthetic adapter")
+
+
 def _contains_oracle(value: object) -> bool:
     if isinstance(value, dict):
         return "expected" in value or any(_contains_oracle(item) for item in value.values())
@@ -22,6 +32,7 @@ def _contains_oracle(value: object) -> bool:
 
 
 def main() -> int:
+    _require_runtime_policy()
     request = json.load(sys.stdin)
     if set(request) != {"protocol_version", "suite_id", "profile", "case"}:
         raise ValueError("adapter request fields changed")

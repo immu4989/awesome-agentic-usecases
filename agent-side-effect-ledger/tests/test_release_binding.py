@@ -19,6 +19,7 @@ def _workspace(tmp_path: Path) -> tuple[Path, argparse.Namespace]:
         "reference_adapter.py",
         "reference_crash_adapter.py",
         "reference_race_adapter.py",
+        "reference-runtime-policy.json",
     ):
         shutil.copyfile(
             ROOT / "examples" / name,
@@ -64,6 +65,10 @@ def test_reference_release_binding_is_exact_and_reproducible(tmp_path):
         "operation": "send_synthetic_notice",
     }
     assert receipt["findings"] == []
+    adapters = receipt["bindings"][0]["adapters"].values()
+    assert sum(adapter["runtime_material_count"] for adapter in adapters) == 11
+    assert sum(adapter["runtime_only_material_count"] for adapter in adapters) == 3
+    assert all(adapter["runtime_materials_match_matrix"] for adapter in adapters)
     assert verify_pack(workspace / "binding-pack") == receipt
     assert _files(workspace / "binding-pack") == _files(REFERENCE)
 
@@ -126,6 +131,7 @@ def test_binding_holds_when_release_adapter_bytes_differ_from_matrix(tmp_path):
     assert [item["code"] for item in receipt["findings"]] == [
         "ADAPTER_BYTES_DIFFER_FROM_MATRIX",
         "ADAPTER_MATERIALS_DIFFER_FROM_MATRIX",
+        "RUNTIME_MATERIALS_DIFFER_FROM_MATRIX",
     ]
     binding = receipt["bindings"][0]
     assert not binding["all_adapters_match_matrix"]
@@ -145,12 +151,43 @@ def test_binding_holds_when_imported_local_material_differs_from_matrix(tmp_path
     assert receipt["status"] == "binding_held"
     assert receipt["fully_bound_consequential_operation_count"] == 0
     assert [item["code"] for item in receipt["findings"]] == [
-        "ADAPTER_MATERIALS_DIFFER_FROM_MATRIX"
+        "ADAPTER_MATERIALS_DIFFER_FROM_MATRIX",
+        "RUNTIME_MATERIALS_DIFFER_FROM_MATRIX",
     ]
     race = receipt["bindings"][0]["adapters"]["race"]
     assert race["sha256"] == race["matrix_sha256"]
     assert not race["material_set_matches_matrix"]
     assert not race["matches_matrix"]
+    assert verify_pack(workspace / "binding-pack") == receipt
+
+
+def test_binding_holds_runtime_policy_substitution_with_source_unchanged(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    policy = (
+        workspace
+        / "agent-side-effect-ledger"
+        / "examples"
+        / "reference-runtime-policy.json"
+    )
+    policy.write_text(
+        '{"policy_id":"substituted","environment":"public_synthetic",'
+        '"live_targets_allowed":false}\n'
+    )
+
+    receipt = build_pack(args)
+
+    assert receipt["status"] == "binding_held"
+    assert receipt["fully_bound_consequential_operation_count"] == 0
+    assert [item["code"] for item in receipt["findings"]] == [
+        "RUNTIME_MATERIALS_DIFFER_FROM_MATRIX",
+        "RUNTIME_MATERIALS_DIFFER_FROM_MATRIX",
+        "RUNTIME_MATERIALS_DIFFER_FROM_MATRIX",
+    ]
+    for adapter in receipt["bindings"][0]["adapters"].values():
+        assert adapter["sha256"] == adapter["matrix_sha256"]
+        assert adapter["material_set_matches_matrix"]
+        assert not adapter["runtime_materials_match_matrix"]
+        assert not adapter["matches_matrix"]
     assert verify_pack(workspace / "binding-pack") == receipt
 
 

@@ -57,6 +57,14 @@
   detects imported-module substitution even when entrypoint bytes are unchanged; its 26-file pack
   remains explicit that source capture is not interpreter, environment, container, builder, or live
   workload identity.
+- **Observed-runtime workspace binding** — upgraded Matrix 0.5 with a byte-bound CPython startup
+  observer that accounts for all 109 reference adapter processes and digest-samples 11 workspace
+  reads, including three runtime-only policy reads that static imports cannot discover. It rejects
+  missing traces, workspace writes, symbolic or changing materials, binds the observer bytes, and
+  reports coarse capability-event classes without their arguments. Runtime-only content is not
+  embedded. Release Binding 0.4 now detects policy/configuration substitution while entrypoints and
+  static imports remain unchanged; the 33-file reference pack and explicit Python-hook-not-sandbox
+  boundary keep the contribution useful without overstating containment or workload identity.
 
 ## 1.6.0 - 2026-08-30
 

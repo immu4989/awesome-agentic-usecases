@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-safety-matrix-0.4.json",
-  "title": "AAU Agent Side-Effect Safety Matrix 0.4",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-safety-matrix-0.5.json",
+  "title": "AAU Agent Side-Effect Safety Matrix 0.5",
   "type": "object",
   "additionalProperties": false,
   "required": ["matrix_version", "status", "component_count", "components", "aggregate", "coverage_binding", "adapter_artifacts", "claim_boundary", "matrix_sha256"],
   "properties": {
-    "matrix_version": {"const": "aau-agent-side-effect-safety-matrix/0.4"},
+    "matrix_version": {"const": "aau-agent-side-effect-safety-matrix/0.5"},
     "status": {"enum": ["evidence_passed", "evidence_failed"]},
     "component_count": {"const": 3},
     "components": {
@@ -64,7 +64,7 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["component_id", "source_path", "pack_path", "command_argv_index", "launch_mode", "size_bytes", "sha256", "materials_pack_path", "material_capture_mode", "material_count", "unresolved_import_count", "material_set_sha256"],
+        "required": ["component_id", "source_path", "pack_path", "command_argv_index", "launch_mode", "size_bytes", "sha256", "materials_pack_path", "material_capture_mode", "material_count", "unresolved_import_count", "material_set_sha256", "observation_pack_path", "runtime_capture_mode", "runtime_session_count", "runtime_material_count", "runtime_only_material_count", "unobserved_static_material_count", "runtime_capabilities", "runtime_observation_sha256"],
         "properties": {
           "component_id": {"enum": ["semantics", "crash_recovery", "concurrency"]},
           "source_path": {"type": "string", "minLength": 1, "maxLength": 500},
@@ -77,14 +77,26 @@
           "material_capture_mode": {"enum": ["static_local_python_imports", "entrypoint_only_non_python"]},
           "material_count": {"type": "integer", "minimum": 1, "maximum": 200},
           "unresolved_import_count": {"type": "integer", "minimum": 0, "maximum": 200},
-          "material_set_sha256": {"$ref": "#/$defs/digest"}
+          "material_set_sha256": {"$ref": "#/$defs/digest"},
+          "observation_pack_path": {"enum": ["semantic-adapter.observation.json", "crash-adapter.observation.json", "race-adapter.observation.json"]},
+          "runtime_capture_mode": {"enum": ["cpython_audit_workspace_reads", "not_observed_non_python"]},
+          "runtime_session_count": {"type": "integer", "minimum": 0, "maximum": 250},
+          "runtime_material_count": {"type": "integer", "minimum": 0, "maximum": 200},
+          "runtime_only_material_count": {"type": "integer", "minimum": 0, "maximum": 200},
+          "unobserved_static_material_count": {"type": "integer", "minimum": 0, "maximum": 200},
+          "runtime_capabilities": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"enum": ["dynamic_code", "native_or_extension_load", "network", "runtime_instrumentation_change", "subprocess"]}
+          },
+          "runtime_observation_sha256": {"$ref": "#/$defs/digest"}
         }
       }
     },
     "claim_boundary": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["all_adapter_requests_withhold_expected_answers", "component_metrics_remain_separate", "unresolved_can_be_correct_safe_behavior", "commands_are_trusted_local_code", "public_synthetic_staging_only", "crash_and_race_bind_one_semantic_tool_operation", "matrix_does_not_imply_every_semantic_tool_has_crash_race_coverage", "command_argument_references_declared_artifact", "declared_artifact_is_executable_or_supported_interpreter_target", "declared_artifact_path_normalized_before_execution", "adapter_artifact_same_before_and_after_matrix_run", "captured_materials_same_before_and_after_matrix_run", "command_text_not_recorded", "static_local_python_import_materials_captured", "unresolved_imports_remain_explicit", "not_interpreter_installed_dependency_config_environment_container_or_runtime_identity", "passing_not_atomicity_linearizability_exactly_once_or_deployment_authority"],
+      "required": ["all_adapter_requests_withhold_expected_answers", "component_metrics_remain_separate", "unresolved_can_be_correct_safe_behavior", "commands_are_trusted_local_code", "public_synthetic_staging_only", "crash_and_race_bind_one_semantic_tool_operation", "matrix_does_not_imply_every_semantic_tool_has_crash_race_coverage", "command_argument_references_declared_artifact", "declared_artifact_is_executable_or_supported_interpreter_target", "declared_artifact_path_normalized_before_execution", "adapter_artifact_same_before_and_after_matrix_run", "captured_materials_same_before_and_after_matrix_run", "command_text_not_recorded", "static_local_python_import_materials_captured", "unresolved_imports_remain_explicit", "runtime_workspace_reads_observed_for_cpython", "runtime_observer_bytes_bound", "runtime_only_content_not_embedded", "python_audit_hook_not_a_sandbox", "not_interpreter_installed_dependency_environment_container_or_runtime_identity", "passing_not_atomicity_linearizability_exactly_once_or_deployment_authority"],
       "properties": {
         "all_adapter_requests_withhold_expected_answers": {"const": true},
         "component_metrics_remain_separate": {"const": true},
@@ -101,7 +113,11 @@
         "command_text_not_recorded": {"const": true},
         "static_local_python_import_materials_captured": {"const": true},
         "unresolved_imports_remain_explicit": {"const": true},
-        "not_interpreter_installed_dependency_config_environment_container_or_runtime_identity": {"const": true},
+        "runtime_workspace_reads_observed_for_cpython": {"const": true},
+        "runtime_observer_bytes_bound": {"const": true},
+        "runtime_only_content_not_embedded": {"const": true},
+        "python_audit_hook_not_a_sandbox": {"const": true},
+        "not_interpreter_installed_dependency_environment_container_or_runtime_identity": {"const": true},
         "passing_not_atomicity_linearizability_exactly_once_or_deployment_authority": {"const": true}
       }
     },

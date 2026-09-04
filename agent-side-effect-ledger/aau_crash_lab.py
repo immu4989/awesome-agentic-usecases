@@ -204,7 +204,13 @@ def _validate_response(value: Any, case: dict[str, Any]) -> dict[str, Any]:
     return response
 
 
-def _invoke(argv: list[str], request: dict[str, Any], timeout: float, expect_crash: bool) -> bytes:
+def _invoke(
+    argv: list[str],
+    request: dict[str, Any],
+    timeout: float,
+    expect_crash: bool,
+    adapter_env: dict[str, str] | None = None,
+) -> bytes:
     try:
         completed = subprocess.run(
             argv,
@@ -213,6 +219,7 @@ def _invoke(argv: list[str], request: dict[str, Any], timeout: float, expect_cra
             stderr=subprocess.PIPE,
             timeout=timeout,
             check=False,
+            env=adapter_env,
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise SideEffectError(f"crash adapter execution failed: {exc}") from exc
@@ -226,7 +233,12 @@ def _invoke(argv: list[str], request: dict[str, Any], timeout: float, expect_cra
     return completed.stdout
 
 
-def run_suite(suite: dict[str, Any], command: str, timeout: float = 10.0) -> dict[str, Any]:
+def run_suite(
+    suite: dict[str, Any],
+    command: str,
+    timeout: float = 10.0,
+    adapter_env: dict[str, str] | None = None,
+) -> dict[str, Any]:
     validate_suite(suite)
     argv = shlex.split(command)
     if not argv:
@@ -242,8 +254,20 @@ def run_suite(suite: dict[str, Any], command: str, timeout: float = 10.0) -> dic
     for case in suite["cases"]:
         with tempfile.TemporaryDirectory(prefix="aau-crash-") as directory:
             state_dir = Path(directory)
-            _invoke(argv, adapter_request(suite, case, "inject", state_dir), timeout, True)
-            raw = _invoke(argv, adapter_request(suite, case, "recover", state_dir), timeout, False)
+            _invoke(
+                argv,
+                adapter_request(suite, case, "inject", state_dir),
+                timeout,
+                True,
+                adapter_env,
+            )
+            raw = _invoke(
+                argv,
+                adapter_request(suite, case, "recover", state_dir),
+                timeout,
+                False,
+                adapter_env,
+            )
         try:
             actual = _validate_response(json.loads(raw), case)
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:

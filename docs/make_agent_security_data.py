@@ -110,7 +110,7 @@ def build() -> dict:
     pilot = assess_pilot(pilot_record)
 
     return {
-        "data_version": "aau-agent-security-commons-data/0.4",
+        "data_version": "aau-agent-security-commons-data/0.5",
         "generated_on": "2026-09-04",
         "runtime": {
             "event_count": runtime["event_count"],
@@ -158,6 +158,29 @@ def build() -> dict:
                     item["unresolved_import_count"]
                     for item in side_effect_matrix["adapter_artifacts"]
                 ),
+                "runtime_session_count": sum(
+                    item["runtime_session_count"]
+                    for item in side_effect_matrix["adapter_artifacts"]
+                ),
+                "runtime_material_count": sum(
+                    item["runtime_material_count"]
+                    for item in side_effect_matrix["adapter_artifacts"]
+                ),
+                "runtime_only_material_count": sum(
+                    item["runtime_only_material_count"]
+                    for item in side_effect_matrix["adapter_artifacts"]
+                ),
+                "unobserved_static_material_count": sum(
+                    item["unobserved_static_material_count"]
+                    for item in side_effect_matrix["adapter_artifacts"]
+                ),
+                "runtime_capabilities": sorted(
+                    {
+                        capability
+                        for item in side_effect_matrix["adapter_artifacts"]
+                        for capability in item["runtime_capabilities"]
+                    }
+                ),
             },
             "release_binding": {
                 "status": release_binding["status"],
@@ -175,6 +198,15 @@ def build() -> dict:
                 ),
                 "material_set_match_count": sum(
                     adapter["material_set_matches_matrix"]
+                    for item in release_binding["bindings"]
+                    for adapter in item["adapters"].values()
+                ),
+                "runtime_snapshot_count": sum(
+                    len(item["adapters"])
+                    for item in release_binding["bindings"]
+                ),
+                "runtime_snapshot_match_count": sum(
+                    adapter["runtime_materials_match_matrix"]
                     for item in release_binding["bindings"]
                     for adapter in item["adapters"].values()
                 ),

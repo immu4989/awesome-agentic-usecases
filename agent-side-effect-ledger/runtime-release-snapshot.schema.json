@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/cpython-workspace-release-snapshot-0.1.json",
+  "title": "AAU CPython Workspace Release Snapshot 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["snapshot_version", "tested_observation_sha256", "materials", "all_materials_match", "boundaries", "snapshot_sha256"],
+  "properties": {
+    "snapshot_version": {"const": "aau-cpython-workspace-release-snapshot/0.1"},
+    "tested_observation_sha256": {"$ref": "#/$defs/digest"},
+    "materials": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "size_bytes", "sha256", "tested_size_bytes", "tested_sha256", "matches_tested"],
+        "properties": {
+          "path": {"$ref": "#/$defs/path"},
+          "size_bytes": {"type": "integer", "minimum": 1, "maximum": 2000000},
+          "sha256": {"$ref": "#/$defs/digest"},
+          "tested_size_bytes": {"type": "integer", "minimum": 1, "maximum": 2000000},
+          "tested_sha256": {"$ref": "#/$defs/digest"},
+          "matches_tested": {"type": "boolean"}
+        }
+      }
+    },
+    "all_materials_match": {"type": "boolean"},
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest_only_no_runtime_reexecution", "not_live_workload_identity", "runtime_only_bytes_not_embedded"],
+      "properties": {
+        "digest_only_no_runtime_reexecution": {"const": true},
+        "not_live_workload_identity": {"const": true},
+        "runtime_only_bytes_not_embedded": {"const": true}
+      }
+    },
+    "snapshot_sha256": {"$ref": "#/$defs/digest"}
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"}
+  }
+}

@@ -35,14 +35,15 @@ useful retry guard into a false exactly-once claim.
 9. **Adapter evidence is not target evidence.** Running a staging policy adapter shows how that
    command answered the declared cases. It does not prove the production binary, configuration,
    identity system, journal, target API, or deployment follows the same path.
-10. **A command label is not artifact evidence.** Matrix 0.4 requires `argv[0]` or the `argv[1]`
+10. **A command label is not artifact evidence.** Matrix 0.5 requires `argv[0]` or the `argv[1]`
     supported-interpreter target to resolve to a declared workspace-relative entrypoint, records the position,
     normalizes that token to the declared absolute path, hashes the file on both sides of execution,
     and copies its original bytes. Python targets also capture transitive static-local imports,
     reject obvious dynamic loading, and expose unresolved names. Equal observations do not prove
-    continuous immutability, and static local source does not capture the interpreter, installed
-    packages, import hooks, data/configuration, environment variables, container, builder, or live
-    runtime identity.
+    continuous immutability. CPython targets separately digest workspace reads across every expected
+    process and expose runtime-only paths without embedding their content. Python audit hooks remain
+    bypassable and neither static nor observed material captures the interpreter, installed packages,
+    outside-workspace access, environment variables, container, builder, or live runtime identity.
 
 ## Official sources
 
@@ -53,3 +54,4 @@ useful retry guard into a false exactly-once claim.
 - [Expired IETF HTTPAPI Idempotency-Key draft 07](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/)
 - [Python language reference — the import system](https://docs.python.org/3/reference/import.html)
 - [SLSA 1.2 build provenance](https://slsa.dev/spec/v1.2/build-provenance)
+- [Python runtime audit hooks](https://docs.python.org/3/library/sys.html#sys.addaudithook)

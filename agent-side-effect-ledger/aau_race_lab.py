@@ -164,7 +164,12 @@ def inspect_request(suite: dict[str, Any], case: dict[str, Any], state_dir: Path
     }
 
 
-def _invoke(argv: list[str], request: dict[str, Any], timeout: float) -> dict[str, Any]:
+def _invoke(
+    argv: list[str],
+    request: dict[str, Any],
+    timeout: float,
+    adapter_env: dict[str, str] | None = None,
+) -> dict[str, Any]:
     try:
         completed = subprocess.run(
             argv,
@@ -173,6 +178,7 @@ def _invoke(argv: list[str], request: dict[str, Any], timeout: float) -> dict[st
             stderr=subprocess.PIPE,
             timeout=timeout,
             check=False,
+            env=adapter_env,
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise SideEffectError(f"race adapter execution failed: {exc}") from exc
@@ -210,7 +216,11 @@ def _validate_inspection(value: Any, case_id: str) -> dict[str, Any]:
 
 
 def _run_case(
-    suite: dict[str, Any], case: dict[str, Any], argv: list[str], timeout: float
+    suite: dict[str, Any],
+    case: dict[str, Any],
+    argv: list[str],
+    timeout: float,
+    adapter_env: dict[str, str] | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     attempts = case["attempts"]
     barrier = threading.Barrier(len(attempts))
@@ -219,19 +229,35 @@ def _run_case(
 
         def run_attempt(attempt: dict[str, Any]) -> dict[str, Any]:
             barrier.wait(timeout=timeout)
-            response = _invoke(argv, attempt_request(suite, case, attempt, state_dir), timeout)
+            response = _invoke(
+                argv,
+                attempt_request(suite, case, attempt, state_dir),
+                timeout,
+                adapter_env,
+            )
             return _validate_attempt_response(response, attempt["attempt_id"])
 
         with ThreadPoolExecutor(max_workers=len(attempts)) as executor:
             futures = [executor.submit(run_attempt, attempt) for attempt in attempts]
             responses = [future.result() for future in futures]
         inspection = _validate_inspection(
-            _invoke(argv, inspect_request(suite, case, state_dir), timeout), case["case_id"]
+            _invoke(
+                argv,
+                inspect_request(suite, case, state_dir),
+                timeout,
+                adapter_env,
+            ),
+            case["case_id"],
         )
     return sorted(responses, key=lambda row: row["attempt_id"]), inspection
 
 
-def run_suite(suite: dict[str, Any], command: str, timeout: float = 15.0) -> dict[str, Any]:
+def run_suite(
+    suite: dict[str, Any],
+    command: str,
+    timeout: float = 15.0,
+    adapter_env: dict[str, str] | None = None,
+) -> dict[str, Any]:
     validate_suite(suite)
     argv = shlex.split(command)
     if not argv:
@@ -246,7 +272,9 @@ def run_suite(suite: dict[str, Any], command: str, timeout: float = 15.0) -> dic
     response_state_mismatch_count = 0
     attempt_count = 0
     for case in suite["cases"]:
-        responses, inspection = _run_case(suite, case, argv, timeout)
+        responses, inspection = _run_case(
+            suite, case, argv, timeout, adapter_env
+        )
         counts = {outcome: 0 for outcome in OUTCOMES}
         grouped: dict[tuple[str, tuple[str, ...]], int] = {}
         for response in responses:

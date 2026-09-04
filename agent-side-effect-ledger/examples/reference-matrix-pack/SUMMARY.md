@@ -10,9 +10,11 @@
 
 Crash and concurrency evidence bind **`notification-service` / `send_synthetic_notice`**. The semantic suite covers 2 tool-operation pairs; only the named pair has all three gates.
 
-Adapter entrypoint artifacts: `semantics:383ba97b9b39` · `crash_recovery:2d8e4e44c260` · `concurrency:c3c35c77fd72`
+Adapter entrypoint artifacts: `semantics:f3bc78226a2a` · `crash_recovery:7a17dd8f7a2c` · `concurrency:cd0ee65036f7`
 
 Captured execution materials: **8** files · **42** unresolved standard-library or installed-package import names remain explicit.
+
+Observed CPython workspace reads: **11** digest-bound materials across **109** fresh processes · **3** runtime-only paths · capability classes: dynamic_code.
 
 Expected answers were not sent to adapters. Every command is trusted local code and must be restricted to public-synthetic staging state.
 

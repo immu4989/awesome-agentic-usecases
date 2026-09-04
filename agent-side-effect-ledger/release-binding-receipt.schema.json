@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-release-binding-receipt-0.3.json",
-  "title": "AAU Agent Side-Effect Release Binding Receipt 0.3",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-release-binding-receipt-0.4.json",
+  "title": "AAU Agent Side-Effect Release Binding Receipt 0.4",
   "type": "object",
   "additionalProperties": false,
   "required": ["receipt_version", "binding_id", "agent_id", "release_id", "status", "aabom_sha256", "plan_sha256", "matrix_manifest_sha256", "matrix_sha256", "matrix_status", "matrix_boundary", "consequential_operation_count", "fully_bound_consequential_operation_count", "bindings", "findings", "claim_boundary", "receipt_sha256"],
   "properties": {
-    "receipt_version": {"const": "aau-agent-side-effect-release-binding-receipt/0.3"},
+    "receipt_version": {"const": "aau-agent-side-effect-release-binding-receipt/0.4"},
     "binding_id": {"$ref": "#/$defs/text160"},
     "agent_id": {"$ref": "#/$defs/text160"},
     "release_id": {"$ref": "#/$defs/text160"},
@@ -63,13 +63,15 @@
     "claim_boundary": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["hashes_bind_pack_bytes_not_runtime_identity", "source_paths_are_declarations_not_provenance", "adapter_byte_mismatches_are_binding_holds", "execution_material_mismatches_are_binding_holds", "static_local_python_imports_not_complete_runtime_dependency_graph", "public_synthetic_staging_only", "valid_binding_not_deployment_approval_or_authority", "passing_matrix_not_production_equivalence"],
+      "required": ["hashes_bind_pack_bytes_not_runtime_identity", "source_paths_are_declarations_not_provenance", "adapter_byte_mismatches_are_binding_holds", "execution_material_mismatches_are_binding_holds", "runtime_material_mismatches_are_binding_holds", "runtime_observation_is_digest_only_and_not_a_sandbox", "static_and_observed_materials_not_complete_runtime_dependency_graph", "public_synthetic_staging_only", "valid_binding_not_deployment_approval_or_authority", "passing_matrix_not_production_equivalence"],
       "properties": {
         "hashes_bind_pack_bytes_not_runtime_identity": {"const": true},
         "source_paths_are_declarations_not_provenance": {"const": true},
         "adapter_byte_mismatches_are_binding_holds": {"const": true},
         "execution_material_mismatches_are_binding_holds": {"const": true},
-        "static_local_python_imports_not_complete_runtime_dependency_graph": {"const": true},
+        "runtime_material_mismatches_are_binding_holds": {"const": true},
+        "runtime_observation_is_digest_only_and_not_a_sandbox": {"const": true},
+        "static_and_observed_materials_not_complete_runtime_dependency_graph": {"const": true},
         "public_synthetic_staging_only": {"const": true},
         "valid_binding_not_deployment_approval_or_authority": {"const": true},
         "passing_matrix_not_production_equivalence": {"const": true}
@@ -89,7 +91,7 @@
     "artifact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source_path", "pack_path", "size_bytes", "sha256", "matrix_sha256", "materials_pack_path", "material_capture_mode", "material_count", "unresolved_import_count", "material_set_sha256", "matrix_material_set_sha256", "material_set_matches_matrix", "matches_matrix"],
+      "required": ["source_path", "pack_path", "size_bytes", "sha256", "matrix_sha256", "materials_pack_path", "material_capture_mode", "material_count", "unresolved_import_count", "material_set_sha256", "matrix_material_set_sha256", "material_set_matches_matrix", "runtime_observation_pack_path", "runtime_capture_mode", "runtime_session_count", "runtime_material_count", "runtime_only_material_count", "runtime_capabilities", "runtime_observation_sha256", "runtime_snapshot_pack_path", "runtime_snapshot_sha256", "runtime_materials_match_matrix", "matches_matrix"],
       "properties": {
         "source_path": {"type": "string", "minLength": 1, "maxLength": 500},
         "pack_path": {"type": "string", "minLength": 1, "maxLength": 500},
@@ -103,6 +105,20 @@
         "material_set_sha256": {"$ref": "#/$defs/digest"},
         "matrix_material_set_sha256": {"$ref": "#/$defs/digest"},
         "material_set_matches_matrix": {"type": "boolean"},
+        "runtime_observation_pack_path": {"type": "string", "minLength": 1, "maxLength": 500},
+        "runtime_capture_mode": {"enum": ["cpython_audit_workspace_reads", "not_observed_non_python"]},
+        "runtime_session_count": {"type": "integer", "minimum": 0, "maximum": 250},
+        "runtime_material_count": {"type": "integer", "minimum": 0, "maximum": 200},
+        "runtime_only_material_count": {"type": "integer", "minimum": 0, "maximum": 200},
+        "runtime_capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["dynamic_code", "native_or_extension_load", "network", "runtime_instrumentation_change", "subprocess"]}
+        },
+        "runtime_observation_sha256": {"$ref": "#/$defs/digest"},
+        "runtime_snapshot_pack_path": {"type": "string", "minLength": 1, "maxLength": 500},
+        "runtime_snapshot_sha256": {"$ref": "#/$defs/digest"},
+        "runtime_materials_match_matrix": {"type": "boolean"},
         "matches_matrix": {"type": "boolean"}
       }
     }

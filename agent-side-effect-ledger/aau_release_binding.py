@@ -21,8 +21,8 @@ import aau_side_effect_matrix  # noqa: E402
 
 
 PLAN_VERSION = "aau-agent-side-effect-release-binding-plan/0.1"
-RECEIPT_VERSION = "aau-agent-side-effect-release-binding-receipt/0.3"
-PACK_VERSION = "aau-agent-side-effect-release-binding-pack/0.3"
+RECEIPT_VERSION = "aau-agent-side-effect-release-binding-receipt/0.4"
+PACK_VERSION = "aau-agent-side-effect-release-binding-pack/0.4"
 MAX_BYTES = 2_000_000
 ROLES = ("semantic", "crash", "race")
 MATRIX_COMPONENT = {
@@ -186,12 +186,17 @@ def _adapter_material_pack_path(binding_index: int, role: str) -> str:
     return f"adapters/{binding_index + 1:03d}-{role}.materials.json"
 
 
+def _adapter_runtime_snapshot_path(binding_index: int, role: str) -> str:
+    return f"adapters/{binding_index + 1:03d}-{role}.runtime-snapshot.json"
+
+
 def _expected_files(plan: dict[str, Any]) -> set[str]:
     files = set(BASE_FILES)
     files.update(f"matrix/{name}" for name in aau_side_effect_matrix.PACK_FILES)
     for index, _binding in enumerate(plan["bindings"]):
         files.update(_adapter_pack_path(index, role) for role in ROLES)
         files.update(_adapter_material_pack_path(index, role) for role in ROLES)
+        files.update(_adapter_runtime_snapshot_path(index, role) for role in ROLES)
     return files
 
 
@@ -229,6 +234,18 @@ def _load_material(path: Path) -> dict[str, Any]:
     return value
 
 
+def _load_runtime_value(path: Path, label: str) -> dict[str, Any]:
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_BYTES:
+        raise BindingError(f"{label} must be a bounded regular file")
+    try:
+        value = json.loads(path.read_bytes())
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise BindingError(f"{label} must contain one JSON object") from exc
+    if not isinstance(value, dict):
+        raise BindingError(f"{label} must contain one JSON object")
+    return value
+
+
 def _authority_ids(
     bom: dict[str, Any], tool_id: str, operation: str
 ) -> tuple[list[str], bool]:
@@ -253,6 +270,8 @@ def _receipt(
     matrix_manifest_bytes: bytes,
     adapter_payloads: dict[tuple[int, str], bytes],
     adapter_materials: dict[tuple[int, str], dict[str, Any]],
+    matrix_observations: dict[str, dict[str, Any]],
+    adapter_runtime_snapshots: dict[tuple[int, str], dict[str, Any]],
 ) -> dict[str, Any]:
     validate_bom(bom)
     validate_plan(plan)
@@ -290,6 +309,19 @@ def _receipt(
             matrix_artifact = matrix_artifacts[MATRIX_COMPONENT[role]]
             material_pack = adapter_materials[(index, role)]
             material_payloads = _validate_materials(material_pack)
+            runtime_observation = matrix_observations[MATRIX_COMPONENT[role]]
+            runtime_snapshot = adapter_runtime_snapshots[(index, role)]
+            try:
+                runtime_materials = (
+                    aau_side_effect_matrix.aau_runtime_observation.validate_observation(
+                        runtime_observation, set(material_payloads)
+                    )
+                )
+                aau_side_effect_matrix.aau_runtime_observation.validate_release_snapshot(
+                    runtime_snapshot, runtime_observation
+                )
+            except aau_side_effect_matrix.aau_runtime_observation.ObservationError as exc:
+                raise BindingError(f"invalid runtime material binding: {exc}") from exc
             path_matches = binding[f"{role}_adapter"] == matrix_artifact["source_path"]
             bytes_match = sha256 == matrix_artifact["sha256"]
             material_entrypoint_matches = (
@@ -302,11 +334,13 @@ def _receipt(
                 and material_pack["material_set_sha256"]
                 == matrix_artifact["material_set_sha256"]
             )
+            runtime_materials_match = runtime_snapshot["all_materials_match"]
             matches_matrix = (
                 path_matches
                 and bytes_match
                 and material_entrypoint_matches
                 and material_set_matches
+                and runtime_materials_match
             )
             all_adapters_match = all_adapters_match and matches_matrix
             adapters[role] = {
@@ -322,6 +356,24 @@ def _receipt(
                 "material_set_sha256": material_pack["material_set_sha256"],
                 "matrix_material_set_sha256": matrix_artifact["material_set_sha256"],
                 "material_set_matches_matrix": material_set_matches,
+                "runtime_observation_pack_path": (
+                    f"matrix/{aau_side_effect_matrix.OBSERVATIONS[MATRIX_COMPONENT[role]]}"
+                ),
+                "runtime_capture_mode": runtime_observation["capture_mode"],
+                "runtime_session_count": runtime_observation["observed_session_count"],
+                "runtime_material_count": len(runtime_materials),
+                "runtime_only_material_count": len(
+                    runtime_observation["runtime_only_paths"]
+                ),
+                "runtime_capabilities": runtime_observation["capabilities"],
+                "runtime_observation_sha256": runtime_observation[
+                    "observation_sha256"
+                ],
+                "runtime_snapshot_pack_path": _adapter_runtime_snapshot_path(
+                    index, role
+                ),
+                "runtime_snapshot_sha256": runtime_snapshot["snapshot_sha256"],
+                "runtime_materials_match_matrix": runtime_materials_match,
                 "matches_matrix": matches_matrix,
             }
             if not path_matches:
@@ -347,6 +399,12 @@ def _receipt(
                     "ADAPTER_MATERIALS_DIFFER_FROM_MATRIX",
                     f"{tool_id} / {operation} / {role}",
                     "The release execution-material set differs from the one captured during the matrix run.",
+                )
+            if not runtime_materials_match:
+                add(
+                    "RUNTIME_MATERIALS_DIFFER_FROM_MATRIX",
+                    f"{tool_id} / {operation} / {role}",
+                    "At least one workspace material observed during the matrix run differs at release binding.",
                 )
         binding_matches[(tool_id, operation)] = all_adapters_match
         rows.append(
@@ -463,7 +521,9 @@ def _receipt(
             "source_paths_are_declarations_not_provenance": True,
             "adapter_byte_mismatches_are_binding_holds": True,
             "execution_material_mismatches_are_binding_holds": True,
-            "static_local_python_imports_not_complete_runtime_dependency_graph": True,
+            "runtime_material_mismatches_are_binding_holds": True,
+            "runtime_observation_is_digest_only_and_not_a_sandbox": True,
+            "static_and_observed_materials_not_complete_runtime_dependency_graph": True,
             "public_synthetic_staging_only": True,
             "valid_binding_not_deployment_approval_or_authority": True,
             "passing_matrix_not_production_equivalence": True,
@@ -495,16 +555,17 @@ def _summary(receipt: dict[str, Any]) -> str:
             f"Matrix boundary: `{receipt['matrix_boundary']['tool_id']} / "
             f"{receipt['matrix_boundary']['operation']}`",
             "",
-            "Each adapter binding compares both the entrypoint bytes and its captured static-local "
-            "Python execution-material set with the matrix evidence.",
+            "Each adapter binding compares the entrypoint bytes, static-local Python material set, "
+            "and every digest-only workspace material observed during the matrix run.",
             "",
             "## Holds",
             "",
             *finding_lines,
             "",
-            "The manifest binds these copied bytes. Source paths are declarations; static local "
-            "imports are not the interpreter, installed dependencies, configuration, environment, "
-            "container, or runtime identity. Neither a valid binding nor a passing matrix proves "
+            "The manifest binds these copied bytes and digest-only runtime snapshots. Source paths "
+            "are declarations; Python-level audit hooks are bypassable observation, not a sandbox. "
+            "This does not bind the interpreter, installed dependencies, environment, container, "
+            "or live workload identity. Neither a valid binding nor a passing matrix proves "
             "production equivalence, authorization, safety, compliance, certification, deployment "
             "approval, or an ATO.",
             "",
@@ -552,9 +613,17 @@ def build_pack(args: argparse.Namespace) -> dict[str, Any]:
     matrix_artifacts = {
         item["component_id"]: item for item in matrix["adapter_artifacts"]
     }
+    matrix_observations = {
+        component_id: _load_runtime_value(
+            matrix_path / aau_side_effect_matrix.OBSERVATIONS[component_id],
+            f"{component_id} runtime observation",
+        )
+        for component_id in aau_side_effect_matrix.OBSERVATIONS
+    }
     adapter_sources: dict[tuple[int, str], Path] = {}
     adapter_payloads: dict[tuple[int, str], bytes] = {}
     adapter_materials: dict[tuple[int, str], dict[str, Any]] = {}
+    adapter_runtime_snapshots: dict[tuple[int, str], dict[str, Any]] = {}
     for index, binding in enumerate(plan["bindings"]):
         for role in ROLES:
             source = _inside_file(
@@ -568,6 +637,16 @@ def build_pack(args: argparse.Namespace) -> dict[str, Any]:
             adapter_materials[(index, role)] = _capture_materials(
                 workspace, source, capture_mode
             )
+            try:
+                adapter_runtime_snapshots[(index, role)] = (
+                    aau_side_effect_matrix.aau_runtime_observation.capture_release_snapshot(
+                        workspace, matrix_observations[MATRIX_COMPONENT[role]]
+                    )
+                )
+            except aau_side_effect_matrix.aau_runtime_observation.ObservationError as exc:
+                raise BindingError(
+                    f"cannot snapshot {role} runtime materials: {exc}"
+                ) from exc
     receipt = _receipt(
         bom,
         plan,
@@ -577,6 +656,8 @@ def build_pack(args: argparse.Namespace) -> dict[str, Any]:
         (matrix_path / "manifest.json").read_bytes(),
         adapter_payloads,
         adapter_materials,
+        matrix_observations,
+        adapter_runtime_snapshots,
     )
 
     scratch = Path(tempfile.mkdtemp(prefix=".aau-binding-", dir=output.parent))
@@ -592,6 +673,10 @@ def build_pack(args: argparse.Namespace) -> dict[str, Any]:
             _write_json(
                 scratch / _adapter_material_pack_path(index, role),
                 adapter_materials[(index, role)],
+            )
+            _write_json(
+                scratch / _adapter_runtime_snapshot_path(index, role),
+                adapter_runtime_snapshots[(index, role)],
             )
         _write_json(scratch / "binding-receipt.json", receipt)
         (scratch / "README.md").write_text(_summary(receipt))
@@ -638,6 +723,13 @@ def verify_pack(root: Path) -> dict[str, Any]:
     if actual_directories != {"adapters", "matrix"}:
         raise BindingError("binding pack has missing or extra directories")
     matrix = aau_side_effect_matrix.verify_pack(root / "matrix")
+    matrix_observations = {
+        component_id: _load_runtime_value(
+            root / "matrix" / aau_side_effect_matrix.OBSERVATIONS[component_id],
+            f"{component_id} runtime observation",
+        )
+        for component_id in aau_side_effect_matrix.OBSERVATIONS
+    }
     payloads = {
         (index, role): (root / _adapter_pack_path(index, role)).read_bytes()
         for index, _binding in enumerate(plan["bindings"])
@@ -646,6 +738,14 @@ def verify_pack(root: Path) -> dict[str, Any]:
     materials = {
         (index, role): _load_material(
             root / _adapter_material_pack_path(index, role)
+        )
+        for index, _binding in enumerate(plan["bindings"])
+        for role in ROLES
+    }
+    runtime_snapshots = {
+        (index, role): _load_runtime_value(
+            root / _adapter_runtime_snapshot_path(index, role),
+            f"{role} runtime release snapshot",
         )
         for index, _binding in enumerate(plan["bindings"])
         for role in ROLES
@@ -659,6 +759,8 @@ def verify_pack(root: Path) -> dict[str, Any]:
         (root / "matrix" / "manifest.json").read_bytes(),
         payloads,
         materials,
+        matrix_observations,
+        runtime_snapshots,
     )
     if _load(root / "binding-receipt.json") != expected:
         raise BindingError("binding receipt does not recompute")

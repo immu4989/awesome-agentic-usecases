@@ -37,6 +37,10 @@ def _workspace(tmp_path: Path) -> tuple[Path, argparse.Namespace]:
     }
     for name, source in adapters.items():
         shutil.copyfile(source, adapter_root / name)
+    shutil.copyfile(
+        ROOT / "examples" / "reference-runtime-policy.json",
+        adapter_root / "reference-runtime-policy.json",
+    )
     for name in ("aau_side_effect.py", "aau_crash_lab.py", "aau_race_lab.py"):
         shutil.copyfile(ROOT / name, workspace / "agent-side-effect-ledger" / name)
     semantic_adapter = adapter_root / "reference_adapter.py"
@@ -101,6 +105,26 @@ def test_reference_matrix_is_exact_self_contained_and_reproducible(tmp_path):
     ) == 42
     assert all(
         len(item["material_set_sha256"]) == 64
+        for item in matrix["adapter_artifacts"]
+    )
+    assert {
+        item["runtime_capture_mode"] for item in matrix["adapter_artifacts"]
+    } == {"cpython_audit_workspace_reads"}
+    assert sum(
+        item["runtime_session_count"] for item in matrix["adapter_artifacts"]
+    ) == 109
+    assert sum(
+        item["runtime_material_count"] for item in matrix["adapter_artifacts"]
+    ) == 11
+    assert sum(
+        item["runtime_only_material_count"] for item in matrix["adapter_artifacts"]
+    ) == 3
+    assert sum(
+        item["unobserved_static_material_count"]
+        for item in matrix["adapter_artifacts"]
+    ) == 0
+    assert all(
+        len(item["runtime_observation_sha256"]) == 64
         for item in matrix["adapter_artifacts"]
     )
     assert verify_pack(workspace / "pack") == matrix
@@ -194,7 +218,7 @@ def test_matrix_rejects_adapter_artifact_changed_during_run(tmp_path):
     )
     args.semantic_adapter_command = _command(mutating)
     args.semantic_adapter_artifact = Path("mutating_adapter.py")
-    with pytest.raises(MatrixError, match="changed during the matrix run"):
+    with pytest.raises(MatrixError, match="runtime material changed"):
         run_pack(args)
 
 
@@ -218,7 +242,7 @@ def test_matrix_rejects_imported_material_changed_during_run(tmp_path):
     args.semantic_adapter_command = _command(adapter)
     args.semantic_adapter_artifact = adapter.relative_to(workspace)
 
-    with pytest.raises(MatrixError, match="execution material changed"):
+    with pytest.raises(MatrixError, match="runtime material changed"):
         run_pack(args)
 
 
@@ -284,6 +308,15 @@ def test_valid_evidence_failure_pack_remains_verifiable(tmp_path):
     assert verify_pack(workspace / "pack") == matrix
 
 
+def test_matrix_rejects_runtime_observer_substitution(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    run_pack(args)
+    observer = workspace / "pack/runtime-observer.artifact"
+    observer.write_bytes(observer.read_bytes() + b"\n# substituted\n")
+    with pytest.raises(MatrixError, match="packed observer bytes"):
+        verify_pack(workspace / "pack")
+
+
 def test_composite_action_preserves_diagnostics_and_avoids_context_interpolation():
     action = (ROOT.parent / ".github" / "actions" / "aau-side-effect-safety" / "action.yml").read_text()
     assert "set +e" in action
@@ -296,3 +329,48 @@ def test_composite_action_preserves_diagnostics_and_avoids_context_interpolation
     assert "crash_adapter_artifact" in action
     assert "race_adapter_command" in action
     assert "race_adapter_artifact" in action
+
+
+def test_matrix_observes_runtime_only_workspace_input_without_embedding_bytes(
+    tmp_path,
+):
+    workspace, args = _workspace(tmp_path)
+    config = workspace / "synthetic-policy.txt"
+    config.write_text("public-synthetic-policy\n")
+    adapter = workspace / "agent-side-effect-ledger/examples/reference_adapter.py"
+    adapter.write_text(
+        adapter.read_text().replace(
+            "from __future__ import annotations\n",
+            "from __future__ import annotations\n\n"
+            "from pathlib import Path\n"
+            f"Path({str(config)!r}).read_text()\n",
+        )
+    )
+    matrix = run_pack(args)
+    semantic = matrix["adapter_artifacts"][0]
+    assert semantic["runtime_material_count"] == 4
+    assert semantic["runtime_only_material_count"] == 2
+    observation = json.loads(
+        (workspace / "pack/semantic-adapter.observation.json").read_text()
+    )
+    assert "synthetic-policy.txt" in observation["runtime_only_paths"]
+    runtime_row = next(
+        row for row in observation["materials"] if row["path"] == "synthetic-policy.txt"
+    )
+    assert set(runtime_row) == {"path", "size_bytes", "sha256", "event_kinds"}
+
+
+def test_matrix_rejects_workspace_write_observed_during_run(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    adapter = workspace / "agent-side-effect-ledger/examples/reference_adapter.py"
+    output = workspace / "unexpected-output.txt"
+    adapter.write_text(
+        adapter.read_text().replace(
+            "from __future__ import annotations\n",
+            "from __future__ import annotations\n\n"
+            "from pathlib import Path\n"
+            f"Path({str(output)!r}).write_text('not allowed')\n",
+        )
+    )
+    with pytest.raises(MatrixError, match="workspace_write_attempt"):
+        run_pack(args)

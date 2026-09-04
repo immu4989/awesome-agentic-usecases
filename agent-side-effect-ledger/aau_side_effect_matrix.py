@@ -7,17 +7,19 @@ import json
 import shlex
 import shutil
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
 import aau_crash_lab
 import aau_execution_materials
 import aau_race_lab
+import aau_runtime_observation
 import aau_side_effect
 
 
-MATRIX_VERSION = "aau-agent-side-effect-safety-matrix/0.4"
-MANIFEST_VERSION = "aau-agent-side-effect-safety-manifest/0.3"
+MATRIX_VERSION = "aau-agent-side-effect-safety-matrix/0.5"
+MANIFEST_VERSION = "aau-agent-side-effect-safety-manifest/0.4"
 MAX_BYTES = 2_000_000
 SUPPORTED_INTERPRETERS = {
     "bash",
@@ -52,13 +54,21 @@ MATERIALS = {
     "crash_recovery": "crash-adapter.materials.json",
     "concurrency": "race-adapter.materials.json",
 }
+OBSERVATIONS = {
+    "semantics": "semantic-adapter.observation.json",
+    "crash_recovery": "crash-adapter.observation.json",
+    "concurrency": "race-adapter.observation.json",
+}
+OBSERVER_ARTIFACT = "runtime-observer.artifact"
 PACK_FILES = (
     set(SUITES.values())
     | set(RECEIPTS.values())
     | set(ARTIFACTS.values())
     | set(MATERIALS.values())
+    | set(OBSERVATIONS.values())
     | {
     "matrix-receipt.json",
+    OBSERVER_ARTIFACT,
     "SUMMARY.md",
     "manifest.json",
     }
@@ -182,6 +192,31 @@ def _validate_materials(value: dict[str, Any]) -> dict[str, bytes]:
         raise MatrixError(f"invalid adapter execution materials: {exc}") from exc
 
 
+def _validate_observation(
+    value: dict[str, Any], static_paths: set[str] | None = None
+) -> dict[str, tuple[int, str]]:
+    try:
+        return aau_runtime_observation.validate_observation(value, static_paths)
+    except aau_runtime_observation.ObservationError as exc:
+        raise MatrixError(f"invalid adapter runtime observation: {exc}") from exc
+
+
+def _runtime_fields(
+    value: dict[str, Any], component_id: str
+) -> dict[str, Any]:
+    materials = _validate_observation(value)
+    return {
+        "observation_pack_path": OBSERVATIONS[component_id],
+        "runtime_capture_mode": value["capture_mode"],
+        "runtime_session_count": value["observed_session_count"],
+        "runtime_material_count": len(materials),
+        "runtime_only_material_count": len(value["runtime_only_paths"]),
+        "unobserved_static_material_count": len(value["unobserved_static_paths"]),
+        "runtime_capabilities": value["capabilities"],
+        "runtime_observation_sha256": value["observation_sha256"],
+    }
+
+
 def _capture_materials(
     workspace: Path, entrypoint: Path, capture_mode: str
 ) -> dict[str, Any]:
@@ -200,6 +235,8 @@ def _packed_artifacts(
     if not isinstance(rows, list) or len(rows) != len(ARTIFACTS):
         raise MatrixError("matrix adapter artifact inventory is invalid")
     expected_components = list(ARTIFACTS)
+    observer_payload = (output / OBSERVER_ARTIFACT).read_bytes()
+    expected_observer = aau_runtime_observation.observer_descriptor(observer_payload)
     result = []
     for index, row in enumerate(rows):
         if not isinstance(row, dict) or set(row) != {
@@ -215,6 +252,14 @@ def _packed_artifacts(
             "material_count",
             "unresolved_import_count",
             "material_set_sha256",
+            "observation_pack_path",
+            "runtime_capture_mode",
+            "runtime_session_count",
+            "runtime_material_count",
+            "runtime_only_material_count",
+            "unobserved_static_material_count",
+            "runtime_capabilities",
+            "runtime_observation_sha256",
         }:
             raise MatrixError("matrix adapter artifact fields are invalid")
         component_id = row["component_id"]
@@ -255,6 +300,16 @@ def _packed_artifacts(
         material_payloads = _validate_materials(material_value)
         if material_payloads.get(source) != payload:
             raise MatrixError("adapter artifact differs from its execution-material entrypoint")
+        observation_value = _load(
+            output / OBSERVATIONS[component_id],
+            aau_runtime_observation.MAX_TRACE_BYTES,
+        )
+        _validate_observation(observation_value, set(material_payloads))
+        if observation_value["observer"] != expected_observer:
+            raise MatrixError("runtime observation does not bind the packed observer bytes")
+        runtime_fields = _runtime_fields(observation_value, component_id)
+        if any(row[key] != value for key, value in runtime_fields.items()):
+            raise MatrixError("matrix adapter runtime-observation binding is invalid")
         result.append(
             {
                 "component_id": component_id,
@@ -265,6 +320,7 @@ def _packed_artifacts(
                 "size_bytes": len(payload),
                 "sha256": aau_side_effect.digest(payload),
                 **material_fields,
+                **runtime_fields,
             }
         )
     return result
@@ -390,7 +446,11 @@ def _matrix(
             "command_text_not_recorded": True,
             "static_local_python_import_materials_captured": True,
             "unresolved_imports_remain_explicit": True,
-            "not_interpreter_installed_dependency_config_environment_container_or_runtime_identity": True,
+            "runtime_workspace_reads_observed_for_cpython": True,
+            "runtime_observer_bytes_bound": True,
+            "runtime_only_content_not_embedded": True,
+            "python_audit_hook_not_a_sandbox": True,
+            "not_interpreter_installed_dependency_environment_container_or_runtime_identity": True,
             "passing_not_atomicity_linearizability_exactly_once_or_deployment_authority": True,
         },
     }
@@ -442,6 +502,27 @@ def _summary(matrix: dict[str, Any]) -> str:
             f"**{sum(item['unresolved_import_count'] for item in matrix['adapter_artifacts'])}** "
             "unresolved standard-library or installed-package import names remain explicit.",
             "",
+            "Observed CPython workspace reads: "
+            f"**{sum(item['runtime_material_count'] for item in matrix['adapter_artifacts'])}** "
+            "digest-bound materials across "
+            f"**{sum(item['runtime_session_count'] for item in matrix['adapter_artifacts'])}** "
+            "fresh processes · "
+            f"**{sum(item['runtime_only_material_count'] for item in matrix['adapter_artifacts'])}** "
+            "runtime-only paths · capability classes: "
+            + (
+                ", ".join(
+                    sorted(
+                        {
+                            capability
+                            for item in matrix["adapter_artifacts"]
+                            for capability in item["runtime_capabilities"]
+                        }
+                    )
+                )
+                or "none observed"
+            )
+            + ".",
+            "",
             "Expected answers were not sent to adapters. Every command is trusted local code and "
             "must be restricted to public-synthetic staging state.",
             "",
@@ -492,6 +573,7 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
     artifact_commands = {}
     material_packs = {}
     material_source_payloads = {}
+    python_targets = {}
     for component_id, artifact, command in artifact_inputs:
         row, path, payload, normalized_command, material_capture_mode = _artifact_binding(
             workspace, artifact, command, component_id
@@ -504,18 +586,107 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
         artifact_commands[component_id] = normalized_command
         material_packs[component_id] = material_pack
         material_source_payloads[component_id] = _validate_materials(material_pack)
+        python_targets[component_id] = (
+            material_capture_mode == "static_local_python_imports"
+        )
     semantic_suite = aau_side_effect.load_json(semantic_path)
     crash_suite = aau_side_effect.load_json(crash_path)
     race_suite = aau_side_effect.load_json(race_path)
-    semantic_receipt = aau_side_effect.run_conformance(
-        semantic_suite, artifact_commands["semantics"], args.timeout
-    )
-    crash_receipt = aau_crash_lab.run_suite(
-        crash_suite, artifact_commands["crash_recovery"], args.timeout
-    )
-    race_receipt = aau_race_lab.run_suite(
-        race_suite, artifact_commands["concurrency"], args.timeout
-    )
+    expected_sessions = {
+        "semantics": len(semantic_suite["cases"]),
+        "crash_recovery": len(crash_suite["cases"]) * 2,
+        "concurrency": len(race_suite["cases"])
+        + sum(len(case["attempts"]) for case in race_suite["cases"]),
+    }
+    runtime_observations = {}
+    try:
+        with tempfile.TemporaryDirectory(prefix="aau-runtime-observer-") as directory:
+            root = Path(directory)
+            observer_directory = root / "observer"
+            _observer_path, observer_payload = aau_runtime_observation.prepare_observer(
+                observer_directory
+            )
+
+            def environment(component_id: str) -> tuple[dict[str, str] | None, Path]:
+                trace = root / component_id
+                trace.mkdir()
+                if not python_targets[component_id]:
+                    return None, trace
+                return (
+                    aau_runtime_observation.instrumentation_environment(
+                        workspace, trace, observer_directory
+                    ),
+                    trace,
+                )
+
+            semantic_env, semantic_trace = environment("semantics")
+            semantic_receipt = aau_side_effect.run_conformance(
+                semantic_suite,
+                artifact_commands["semantics"],
+                args.timeout,
+                semantic_env,
+            )
+            runtime_observations["semantics"] = (
+                aau_runtime_observation.capture_observation(
+                    workspace,
+                    semantic_trace,
+                    expected_sessions["semantics"],
+                    material_source_payloads["semantics"],
+                    observer_payload,
+                )
+                if python_targets["semantics"]
+                else aau_runtime_observation.unobserved_non_python(
+                    material_source_payloads["semantics"], observer_payload
+                )
+            )
+
+            crash_env, crash_trace = environment("crash_recovery")
+            crash_receipt = aau_crash_lab.run_suite(
+                crash_suite,
+                artifact_commands["crash_recovery"],
+                args.timeout,
+                crash_env,
+            )
+            runtime_observations["crash_recovery"] = (
+                aau_runtime_observation.capture_observation(
+                    workspace,
+                    crash_trace,
+                    expected_sessions["crash_recovery"],
+                    material_source_payloads["crash_recovery"],
+                    observer_payload,
+                )
+                if python_targets["crash_recovery"]
+                else aau_runtime_observation.unobserved_non_python(
+                    material_source_payloads["crash_recovery"], observer_payload
+                )
+            )
+
+            race_env, race_trace = environment("concurrency")
+            race_receipt = aau_race_lab.run_suite(
+                race_suite,
+                artifact_commands["concurrency"],
+                args.timeout,
+                race_env,
+            )
+            runtime_observations["concurrency"] = (
+                aau_runtime_observation.capture_observation(
+                    workspace,
+                    race_trace,
+                    expected_sessions["concurrency"],
+                    material_source_payloads["concurrency"],
+                    observer_payload,
+                )
+                if python_targets["concurrency"]
+                else aau_runtime_observation.unobserved_non_python(
+                    material_source_payloads["concurrency"], observer_payload
+                )
+            )
+    except aau_runtime_observation.ObservationError as exc:
+        raise MatrixError(f"runtime observation failed: {exc}") from exc
+    for row in artifact_rows:
+        row.update(
+            _runtime_fields(runtime_observations[row["component_id"]], row["component_id"])
+        )
     aau_side_effect.verify_conformance_receipt(semantic_receipt, semantic_suite)
     aau_crash_lab.verify_receipt(crash_receipt, crash_suite)
     aau_race_lab.verify_receipt(race_receipt, race_suite)
@@ -559,6 +730,9 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
         (output / name).write_bytes(artifact_payloads[component_id])
     for component_id, name in MATERIALS.items():
         _write_json(output / name, material_packs[component_id])
+    for component_id, name in OBSERVATIONS.items():
+        _write_json(output / name, runtime_observations[component_id])
+    (output / OBSERVER_ARTIFACT).write_bytes(observer_payload)
     _write_json(output / "matrix-receipt.json", matrix)
     (output / "SUMMARY.md").write_text(_summary(matrix))
     _write_json(output / "manifest.json", _manifest(output))
@@ -648,6 +822,7 @@ def main() -> int:
         MatrixError,
         OSError,
         aau_execution_materials.MaterialError,
+        aau_runtime_observation.ObservationError,
         aau_side_effect.SideEffectError,
         ValueError,
     ) as exc:

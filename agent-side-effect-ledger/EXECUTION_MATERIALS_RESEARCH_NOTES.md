@@ -37,6 +37,9 @@ tool's bounded search model, and are those exact bytes preserved with the behavi
    set to the tested set closes one substitution path. It does not observe a deployment, process,
    container, configuration, environment variable, credential, package resolver, or target system.
 
+Matrix 0.5 adds a separate CPython workspace-read observation rather than inflating this static
+contract. See [RUNTIME_OBSERVATION_RESEARCH_NOTES.md](RUNTIME_OBSERVATION_RESEARCH_NOTES.md).
+
 ## Official sources
 
 - [Python language reference — the import system](https://docs.python.org/3/reference/import.html)
