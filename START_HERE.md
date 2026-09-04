@@ -53,6 +53,17 @@ python3 agent-side-effect-ledger/aau_side_effect.py verify \
 
 An unknown response must be reconciled before retry. The ledger is adapter-scoped test evidence,
 not exactly-once delivery, a production transaction, legal authority, certification, or an ATO.
+To challenge your own staging implementation without receiving the oracle, run:
+
+```bash
+python3 agent-side-effect-ledger/aau_side_effect.py run-conformance \
+  agent-side-effect-ledger/examples/reference-suite.json \
+  --command "python3 path/to/your_adapter.py" \
+  --out /tmp/aau-side-effect-conformance.json
+```
+
+The request contains the public synthetic sequence and profile, but removes every expected outcome
+and expected reason code. Run only a local adapter command you trust.
 
 If you are outside the maintainer workflow and want to test a public claim, choose one of the
 four [Fork-to-Reproduce challenges](reproduction-challenges/). You receive six or eight tasks and an

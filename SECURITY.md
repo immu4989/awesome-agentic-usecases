@@ -74,14 +74,17 @@ and does not accept or upload operational input.
 ## Agent Side-Effect Ledger boundary
 
 The Agent Side-Effect Ledger accepts bounded public-synthetic JSON, rejects symbolic links and
-oversized inputs, refuses to overwrite receipts or packs, never opens the network, and never calls
-a tool or target. Its journal is an in-memory reference state machine. Adapter-scoped duplicate
+oversized inputs, refuses to overwrite receipts or packs, and never calls a declared business tool
+or target. Its journal is an in-memory reference state machine. The optional oracle-free
+conformance runner executes the explicitly named local command without a shell; that adapter is
+trusted code and must be reviewed and sandboxed with staging-only access. Adapter-scoped duplicate
 prevention does not prove exactly-once delivery or atomic persistence with a production system.
 The trace identifier is correlation metadata, not identity or authority; compensation remains a
 separate effect and never erases the original. Review the dedicated
 [threat model](agent-side-effect-ledger/THREAT_MODEL.md) before adapting it. Do not place real
 payments, notices, account records, credentials, personal data, private traces, controlled
-information, or classified information in a public suite, receipt, issue, fork, or pull request.
+information, or classified information in a public suite, adapter request, receipt, issue, fork,
+or pull request.
 
 ## Portable Agent Assurance boundary
 

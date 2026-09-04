@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-conformance-receipt-0.1.json",
+  "title": "AAU Agent Side-Effect Command Conformance Receipt 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receipt_version",
+    "adapter_protocol_version",
+    "suite_id",
+    "suite_sha256",
+    "adapter_kind",
+    "status",
+    "summary",
+    "cases",
+    "final_result_sha256",
+    "claim_boundary",
+    "receipt_sha256"
+  ],
+  "properties": {
+    "receipt_version": {"const": "aau-agent-side-effect-conformance-receipt/0.1"},
+    "adapter_protocol_version": {"const": "aau-agent-side-effect-adapter/0.1"},
+    "suite_id": {"type": "string", "minLength": 1, "maxLength": 120},
+    "suite_sha256": {"$ref": "#/$defs/digest"},
+    "adapter_kind": {"const": "command"},
+    "status": {"enum": ["evidence_passed", "evidence_failed"]},
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_count",
+        "event_count",
+        "exact_outcome_count",
+        "exact_reason_count",
+        "exact_outcome_rate",
+        "exact_reason_rate",
+        "unsafe_effect_outcome_count",
+        "unknown_retry_violation_count",
+        "legitimate_effect_block_count"
+      ],
+      "properties": {
+        "case_count": {"type": "integer", "minimum": 1},
+        "event_count": {"type": "integer", "minimum": 1},
+        "exact_outcome_count": {"type": "integer", "minimum": 0},
+        "exact_reason_count": {"type": "integer", "minimum": 0},
+        "exact_outcome_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "exact_reason_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "unsafe_effect_outcome_count": {"type": "integer", "minimum": 0},
+        "unknown_retry_violation_count": {"type": "integer", "minimum": 0},
+        "legitimate_effect_block_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "results"],
+        "properties": {
+          "case_id": {"type": "string", "minLength": 1, "maxLength": 100},
+          "results": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "event_id",
+                "actual_outcome",
+                "actual_reason_codes",
+                "outcome_exact",
+                "reasons_exact",
+                "previous_result_sha256",
+                "result_sha256"
+              ],
+              "properties": {
+                "event_id": {"type": "string", "minLength": 1, "maxLength": 100},
+                "actual_outcome": {
+                  "enum": [
+                    "prepared",
+                    "approved",
+                    "committed",
+                    "duplicate_replayed",
+                    "blocked",
+                    "reconcile_required",
+                    "reconciled_committed",
+                    "reconciled_absent",
+                    "compensated"
+                  ]
+                },
+                "actual_reason_codes": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {"type": "string", "minLength": 1, "maxLength": 100}
+                },
+                "outcome_exact": {"type": "boolean"},
+                "reasons_exact": {"type": "boolean"},
+                "previous_result_sha256": {"$ref": "#/$defs/digest"},
+                "result_sha256": {"$ref": "#/$defs/digest"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "final_result_sha256": {"$ref": "#/$defs/digest"},
+    "claim_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "oracle_withheld_from_adapter",
+        "synthetic_case_data_only",
+        "runner_does_not_invoke_declared_tools",
+        "trusted_adapter_command_executes_locally",
+        "adapter_behavior_not_target_system_evidence",
+        "passing_not_production_safety_or_certification"
+      ],
+      "properties": {
+        "oracle_withheld_from_adapter": {"const": true},
+        "synthetic_case_data_only": {"const": true},
+        "runner_does_not_invoke_declared_tools": {"const": true},
+        "trusted_adapter_command_executes_locally": {"const": true},
+        "adapter_behavior_not_target_system_evidence": {"const": true},
+        "passing_not_production_safety_or_certification": {"const": true}
+      }
+    },
+    "receipt_sha256": {"$ref": "#/$defs/digest"}
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

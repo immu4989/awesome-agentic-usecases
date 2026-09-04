@@ -22,7 +22,10 @@ from aau_incident import evaluate_incident, load_json as load_incident_json  # n
 from aau_observatory import evaluate_experiment, load_json as load_experiment_json  # noqa: E402
 from aau_pilot_network import assess_pilot, load_json as load_pilot_json  # noqa: E402
 from aau_runtime import evaluate_suite as evaluate_runtime_suite  # noqa: E402
-from aau_side_effect import evaluate_suite as evaluate_side_effect_suite  # noqa: E402
+from aau_side_effect import (  # noqa: E402
+    evaluate_suite as evaluate_side_effect_suite,
+    verify_conformance_receipt as verify_side_effect_conformance,
+)
 from aau_defender import assess_kit, load_json as load_kit_json  # noqa: E402
 
 
@@ -37,6 +40,10 @@ def build() -> dict:
         ROOT / "agent-side-effect-ledger/examples/reference-suite.json"
     )
     side_effects = evaluate_side_effect_suite(side_effect_suite)
+    side_effect_conformance = load_boundary_json(
+        ROOT / "agent-side-effect-ledger/examples/reference-conformance-receipt.json"
+    )
+    verify_side_effect_conformance(side_effect_conformance, side_effect_suite)
 
     incident_record = load_incident_json(
         ROOT / "agent-incident-regression-commons/examples/public-agent-boundary-incident.json"
@@ -97,6 +104,14 @@ def build() -> dict:
             "suite_id": side_effects["suite_id"],
             "receipt_sha256": side_effects["receipt_sha256"],
             "summary": side_effects["summary"],
+            "conformance": {
+                "status": side_effect_conformance["status"],
+                "receipt_sha256": side_effect_conformance["receipt_sha256"],
+                "summary": side_effect_conformance["summary"],
+                "oracle_withheld": side_effect_conformance["claim_boundary"][
+                    "oracle_withheld_from_adapter"
+                ],
+            },
             "failure_shapes": [
                 "unknown_outcome_requires_reconciliation",
                 "changed_intent_key_conflict",

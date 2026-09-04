@@ -29,6 +29,12 @@ useful retry guard into a false exactly-once claim.
    presence cannot authorize a side effect.
 7. **Atomicity remains local.** The reference runner never claims that the journal and an external
    system commit atomically. Production adapters must prove or disclose that boundary.
+8. **A visible test needs oracle isolation.** Conformance requests expose the transparent synthetic
+   scenario but remove expected outcomes and reason codes. This catches accidental echo adapters;
+   it does not make the public suite a secret benchmark or prevent deliberate overfitting.
+9. **Adapter evidence is not target evidence.** Running a staging policy adapter shows how that
+   command answered the declared cases. It does not prove the production binary, configuration,
+   identity system, journal, target API, or deployment follows the same path.
 
 ## Official sources
 

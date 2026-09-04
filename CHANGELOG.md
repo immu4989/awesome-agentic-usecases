@@ -8,10 +8,15 @@
   duplicate effects, blocks changed-intent key reuse and self-approval, preserves timeout
   uncertainty, and keeps compensation as a second recorded effect.
 - **Portable retry-safety evidence** — added deterministic evaluation and verification, exact
-  reason codes, hash-chained result rows, a non-overwriting evidence pack, seven adversarial tests,
+  reason codes, hash-chained result rows, a non-overwriting evidence pack, thirteen adversarial tests,
   source/premise notes, and a threat model. The feature explicitly does not claim exactly-once
   delivery, production execution, identity, compliance, certification, deployment approval, or an
   ATO.
+- **Oracle-free side-effect adapter conformance** — added a shell-free command protocol that sends
+  complete synthetic sequences while withholding expected answers, scores exact outcomes and reason
+  codes, distinguishes unsafe effects from legitimate blocks, detects retry-after-unknown behavior,
+  and emits a deterministic tamper-evident receipt. A public reference adapter and strict schema make
+  the protocol directly forkable without presenting adapter evidence as production target evidence.
 
 ## 1.6.0 - 2026-08-30
 

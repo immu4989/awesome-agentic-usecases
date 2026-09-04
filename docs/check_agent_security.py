@@ -40,6 +40,17 @@ def main() -> None:
         or side_effects["exact_reason_rate"] != 1
     ):
         raise SystemExit("side-effect ledger reference evidence drifted")
+    conformance = expected["side_effects"]["conformance"]
+    if (
+        conformance["status"] != "evidence_passed"
+        or conformance["summary"]["event_count"] != 48
+        or conformance["summary"]["exact_outcome_count"] != 48
+        or conformance["summary"]["exact_reason_count"] != 48
+        or conformance["summary"]["unsafe_effect_outcome_count"] != 0
+        or conformance["summary"]["unknown_retry_violation_count"] != 0
+        or conformance["oracle_withheld"] is not True
+    ):
+        raise SystemExit("side-effect command conformance evidence drifted")
     if len(expected["defender_kits"]) != 5 or len({item["sector"] for item in expected["defender_kits"]}) != 5:
         raise SystemExit("essential-service defender coverage drifted")
     if expected["controls"]["case_count"] != 12 or expected["controls"]["control_count"] != 8:
@@ -56,6 +67,7 @@ def main() -> None:
         ROOT / "public-value-pilot-network/pilot.schema.json",
         ROOT / "agent-side-effect-ledger/side-effect-suite.schema.json",
         ROOT / "agent-side-effect-ledger/side-effect-receipt.schema.json",
+        ROOT / "agent-side-effect-ledger/side-effect-conformance-receipt.schema.json",
     ):
         schema = json.loads(schema_path.read_text())
         if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema" or not schema.get("$id"):
@@ -67,13 +79,15 @@ def main() -> None:
         'id="agent-side-effect-ledger"',
         'id="asc-effect-duplicate-count"',
         'id="asc-effect-receipt"',
+        'id="asc-effect-conformance-exact"',
+        'id="asc-effect-conformance-receipt"',
         "Agent Security Commons",
         "Authorization is a live condition",
     ):
         if required not in html:
             raise SystemExit(f"site is missing Agent Security Commons marker: {required}")
     js = (DOCS / "agent-security.js").read_text()
-    if "agent-security-data.json?v=2" not in js:
+    if "agent-security-data.json?v=3" not in js:
         raise SystemExit("Agent Security Commons browser data is not source-bound")
     subprocess.run(["node", "--check", str(DOCS / "agent-security.js")], check=True)
     print("Agent Security Commons contracts, evidence, and browser surface are current")

@@ -6,7 +6,9 @@ import argparse
 import hashlib
 import json
 import re
+import shlex
 import shutil
+import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -16,7 +18,10 @@ from typing import Any
 SUITE_VERSION = "aau-agent-side-effect-suite/0.1"
 RECEIPT_VERSION = "aau-agent-side-effect-receipt/0.1"
 PACK_VERSION = "aau-agent-side-effect-pack/0.1"
+CONFORMANCE_RECEIPT_VERSION = "aau-agent-side-effect-conformance-receipt/0.1"
+ADAPTER_PROTOCOL_VERSION = "aau-agent-side-effect-adapter/0.1"
 MAX_BYTES = 2_000_000
+MAX_ADAPTER_BYTES = 1_000_000
 ZERO_HASH = "0" * 64
 TRACEPARENT = re.compile(r"^00-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$")
 EVENT_KINDS = {"prepare", "approve", "commit", "reconcile", "compensate"}
@@ -496,6 +501,322 @@ def _run_event(event: dict[str, Any], profile: dict[str, Any], state: CaseState)
     return handlers[event["kind"]](event, profile, state)
 
 
+def evaluate_case(profile: dict[str, Any], case: dict[str, Any]) -> list[dict[str, Any]]:
+    """Evaluate one already-validated synthetic case without retaining its oracle."""
+    state = CaseState()
+    results = []
+    for event in case["events"]:
+        outcome, reason_codes, _intent_sha = _run_event(event, profile, state)
+        results.append(
+            {
+                "event_id": event["event_id"],
+                "outcome": outcome,
+                "reason_codes": reason_codes,
+            }
+        )
+    return results
+
+
+def adapter_request(suite: dict[str, Any], case: dict[str, Any]) -> dict[str, Any]:
+    """Build the complete adapter request while deliberately excluding expected answers."""
+    return {
+        "protocol_version": ADAPTER_PROTOCOL_VERSION,
+        "suite_id": suite["suite_id"],
+        "profile": suite["profile"],
+        "case": {
+            "case_id": case["case_id"],
+            "title": case["title"],
+            "events": [
+                {key: value for key, value in event.items() if key != "expected"}
+                for event in case["events"]
+            ],
+        },
+    }
+
+
+def _command_adapter(command: str, timeout: float):
+    argv = shlex.split(command)
+    if not argv:
+        raise SideEffectError("adapter command is empty")
+    if not 0 < timeout <= 300:
+        raise SideEffectError("adapter timeout must be greater than 0 and at most 300 seconds")
+
+    def invoke(request: dict[str, Any]) -> dict[str, Any]:
+        try:
+            completed = subprocess.run(
+                argv,
+                input=canonical(request),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                timeout=timeout,
+                check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            raise SideEffectError(f"adapter execution failed: {exc}") from exc
+        if completed.returncode != 0:
+            raise SideEffectError(f"adapter exited with status {completed.returncode}")
+        if len(completed.stdout) > MAX_ADAPTER_BYTES:
+            raise SideEffectError(f"adapter response exceeds {MAX_ADAPTER_BYTES} bytes")
+        try:
+            response = json.loads(completed.stdout)
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise SideEffectError("adapter returned invalid JSON") from exc
+        return _validate_adapter_response(response, request["case"])
+
+    return invoke
+
+
+def _validate_adapter_response(response: Any, case: dict[str, Any]) -> dict[str, Any]:
+    response = _exact(response, {"case_id", "results"}, "adapter response")
+    if response["case_id"] != case["case_id"]:
+        raise SideEffectError("adapter response case_id does not match the request")
+    results = response["results"]
+    if not isinstance(results, list) or len(results) != len(case["events"]):
+        raise SideEffectError("adapter response must cover every event exactly once")
+    expected_ids = [event["event_id"] for event in case["events"]]
+    observed_ids = []
+    for index, result in enumerate(results):
+        result = _exact(
+            result,
+            {"event_id", "outcome", "reason_codes"},
+            f"adapter response.results[{index}]",
+        )
+        observed_ids.append(_text(result["event_id"], "adapter result event_id", 100))
+        if result["outcome"] not in OUTCOMES:
+            raise SideEffectError("adapter result outcome is unsupported")
+        reasons = result["reason_codes"]
+        if not isinstance(reasons, list):
+            raise SideEffectError("adapter result reason_codes must be a list")
+        for reason in reasons:
+            _text(reason, "adapter result reason code", 100)
+        if reasons != sorted(set(reasons)):
+            raise SideEffectError("adapter result reason_codes must be sorted and unique")
+    if observed_ids != expected_ids:
+        raise SideEffectError("adapter response event order or coverage differs from the request")
+    return response
+
+
+def run_conformance(suite: dict[str, Any], command: str, timeout: float = 10.0) -> dict[str, Any]:
+    """Run oracle-free synthetic case sequences through a trusted local command adapter."""
+    validate_suite(suite)
+    invoke = _command_adapter(command, timeout)
+    previous = ZERO_HASH
+    case_rows = []
+    event_count = 0
+    exact_outcome_count = 0
+    exact_reason_count = 0
+    unsafe_effect_outcome_count = 0
+    unknown_retry_violation_count = 0
+    legitimate_effect_block_count = 0
+    effect_outcomes = {"committed", "reconciled_committed", "compensated"}
+    for case in suite["cases"]:
+        request = adapter_request(suite, case)
+        response = invoke(request)
+        rows = []
+        for event, actual in zip(case["events"], response["results"], strict=True):
+            expected = event["expected"]
+            outcome_exact = actual["outcome"] == expected["outcome"]
+            reasons_exact = actual["reason_codes"] == expected["reason_codes"]
+            event_count += 1
+            exact_outcome_count += int(outcome_exact)
+            exact_reason_count += int(reasons_exact)
+            unsafe_effect_outcome_count += int(
+                actual["outcome"] in effect_outcomes and expected["outcome"] not in effect_outcomes
+            )
+            unknown_retry_violation_count += int(
+                expected["outcome"] == "reconcile_required"
+                and actual["outcome"] in effect_outcomes
+            )
+            legitimate_effect_block_count += int(
+                expected["outcome"] in effect_outcomes
+                and actual["outcome"] in {"blocked", "reconcile_required"}
+            )
+            row = {
+                "event_id": event["event_id"],
+                "actual_outcome": actual["outcome"],
+                "actual_reason_codes": actual["reason_codes"],
+                "outcome_exact": outcome_exact,
+                "reasons_exact": reasons_exact,
+                "previous_result_sha256": previous,
+            }
+            row["result_sha256"] = digest(row)
+            previous = row["result_sha256"]
+            rows.append(row)
+        case_rows.append({"case_id": case["case_id"], "results": rows})
+    summary = {
+        "case_count": len(case_rows),
+        "event_count": event_count,
+        "exact_outcome_count": exact_outcome_count,
+        "exact_reason_count": exact_reason_count,
+        "exact_outcome_rate": round(exact_outcome_count / event_count, 6),
+        "exact_reason_rate": round(exact_reason_count / event_count, 6),
+        "unsafe_effect_outcome_count": unsafe_effect_outcome_count,
+        "unknown_retry_violation_count": unknown_retry_violation_count,
+        "legitimate_effect_block_count": legitimate_effect_block_count,
+    }
+    receipt = {
+        "receipt_version": CONFORMANCE_RECEIPT_VERSION,
+        "adapter_protocol_version": ADAPTER_PROTOCOL_VERSION,
+        "suite_id": suite["suite_id"],
+        "suite_sha256": digest(suite),
+        "adapter_kind": "command",
+        "status": (
+            "evidence_passed"
+            if exact_outcome_count == event_count and exact_reason_count == event_count
+            else "evidence_failed"
+        ),
+        "summary": summary,
+        "cases": case_rows,
+        "final_result_sha256": previous,
+        "claim_boundary": {
+            "oracle_withheld_from_adapter": True,
+            "synthetic_case_data_only": True,
+            "runner_does_not_invoke_declared_tools": True,
+            "trusted_adapter_command_executes_locally": True,
+            "adapter_behavior_not_target_system_evidence": True,
+            "passing_not_production_safety_or_certification": True,
+        },
+    }
+    receipt["receipt_sha256"] = digest(receipt)
+    return receipt
+
+
+def verify_conformance_receipt(receipt: dict[str, Any], suite: dict[str, Any]) -> None:
+    validate_suite(suite)
+    receipt = _exact(
+        receipt,
+        {
+            "receipt_version",
+            "adapter_protocol_version",
+            "suite_id",
+            "suite_sha256",
+            "adapter_kind",
+            "status",
+            "summary",
+            "cases",
+            "final_result_sha256",
+            "claim_boundary",
+            "receipt_sha256",
+        },
+        "conformance receipt",
+    )
+    if receipt["receipt_version"] != CONFORMANCE_RECEIPT_VERSION:
+        raise SideEffectError("unsupported conformance receipt_version")
+    if receipt["adapter_protocol_version"] != ADAPTER_PROTOCOL_VERSION:
+        raise SideEffectError("unsupported adapter_protocol_version")
+    if receipt["adapter_kind"] != "command":
+        raise SideEffectError("conformance adapter_kind must be command")
+    unsigned = dict(receipt)
+    supplied = unsigned.pop("receipt_sha256", None)
+    if supplied != digest(unsigned):
+        raise SideEffectError("conformance receipt digest mismatch")
+    if receipt.get("suite_id") != suite["suite_id"] or receipt.get("suite_sha256") != digest(suite):
+        raise SideEffectError("conformance receipt suite binding mismatch")
+    case_map = {case["case_id"]: case for case in suite["cases"]}
+    if [row.get("case_id") for row in receipt.get("cases", [])] != list(case_map):
+        raise SideEffectError("conformance receipt case coverage or order is invalid")
+    previous = ZERO_HASH
+    outcome_exact = 0
+    reason_exact = 0
+    unsafe = 0
+    unknown_retry = 0
+    legitimate_block = 0
+    event_count = 0
+    effect_outcomes = {"committed", "reconciled_committed", "compensated"}
+    for case_row in receipt["cases"]:
+        case_row = _exact(case_row, {"case_id", "results"}, "conformance case result")
+        source_events = case_map[case_row["case_id"]]["events"]
+        results = case_row.get("results")
+        if not isinstance(results, list) or len(results) != len(source_events):
+            raise SideEffectError("conformance receipt event coverage is invalid")
+        for source, row in zip(source_events, results, strict=True):
+            row = _exact(
+                row,
+                {
+                    "event_id",
+                    "actual_outcome",
+                    "actual_reason_codes",
+                    "outcome_exact",
+                    "reasons_exact",
+                    "previous_result_sha256",
+                    "result_sha256",
+                },
+                "conformance result",
+            )
+            if row.get("event_id") != source["event_id"]:
+                raise SideEffectError("conformance receipt event order is invalid")
+            if row["actual_outcome"] not in OUTCOMES:
+                raise SideEffectError("conformance receipt outcome is invalid")
+            reasons = row["actual_reason_codes"]
+            if not isinstance(reasons, list):
+                raise SideEffectError("conformance receipt reason codes are invalid")
+            for reason in reasons:
+                _text(reason, "conformance receipt reason code", 100)
+            if reasons != sorted(set(reasons)):
+                raise SideEffectError("conformance receipt reason codes are invalid")
+            if row.get("previous_result_sha256") != previous:
+                raise SideEffectError("conformance receipt result chain is broken")
+            unsigned_row = dict(row)
+            row_hash = unsigned_row.pop("result_sha256", None)
+            if row_hash != digest(unsigned_row):
+                raise SideEffectError("conformance receipt result digest mismatch")
+            previous = row_hash
+            expected = source["expected"]
+            expected_outcome_exact = row.get("actual_outcome") == expected["outcome"]
+            expected_reasons_exact = row.get("actual_reason_codes") == expected["reason_codes"]
+            if row.get("outcome_exact") is not expected_outcome_exact:
+                raise SideEffectError("conformance outcome exactness does not recompute")
+            if row.get("reasons_exact") is not expected_reasons_exact:
+                raise SideEffectError("conformance reason exactness does not recompute")
+            event_count += 1
+            outcome_exact += int(expected_outcome_exact)
+            reason_exact += int(expected_reasons_exact)
+            unsafe += int(
+                row["actual_outcome"] in effect_outcomes
+                and expected["outcome"] not in effect_outcomes
+            )
+            unknown_retry += int(
+                expected["outcome"] == "reconcile_required"
+                and row["actual_outcome"] in effect_outcomes
+            )
+            legitimate_block += int(
+                expected["outcome"] in effect_outcomes
+                and row["actual_outcome"] in {"blocked", "reconcile_required"}
+            )
+    expected_summary = {
+        "case_count": len(case_map),
+        "event_count": event_count,
+        "exact_outcome_count": outcome_exact,
+        "exact_reason_count": reason_exact,
+        "exact_outcome_rate": round(outcome_exact / event_count, 6),
+        "exact_reason_rate": round(reason_exact / event_count, 6),
+        "unsafe_effect_outcome_count": unsafe,
+        "unknown_retry_violation_count": unknown_retry,
+        "legitimate_effect_block_count": legitimate_block,
+    }
+    if receipt["summary"] != expected_summary:
+        raise SideEffectError("conformance receipt summary does not recompute")
+    expected_status = (
+        "evidence_passed"
+        if outcome_exact == event_count and reason_exact == event_count
+        else "evidence_failed"
+    )
+    if receipt["status"] != expected_status:
+        raise SideEffectError("conformance receipt status does not recompute")
+    if receipt["final_result_sha256"] != previous:
+        raise SideEffectError("conformance receipt final digest mismatch")
+    expected_boundary = {
+        "oracle_withheld_from_adapter": True,
+        "synthetic_case_data_only": True,
+        "runner_does_not_invoke_declared_tools": True,
+        "trusted_adapter_command_executes_locally": True,
+        "adapter_behavior_not_target_system_evidence": True,
+        "passing_not_production_safety_or_certification": True,
+    }
+    if receipt["claim_boundary"] != expected_boundary:
+        raise SideEffectError("conformance receipt claim boundary is invalid")
+
+
 def evaluate_suite(suite: dict[str, Any]) -> dict[str, Any]:
     validate_suite(suite)
     profile = suite["profile"]
@@ -640,6 +961,18 @@ def _parser() -> argparse.ArgumentParser:
     verify = sub.add_parser("verify", help="verify a receipt and optionally recompute it")
     verify.add_argument("receipt", type=Path)
     verify.add_argument("--suite", type=Path)
+    conformance = sub.add_parser(
+        "run-conformance", help="run oracle-free synthetic sequences through a command adapter"
+    )
+    conformance.add_argument("suite", type=Path)
+    conformance.add_argument("--command", dest="adapter_command", required=True)
+    conformance.add_argument("--timeout", type=float, default=10.0)
+    conformance.add_argument("--out", type=Path, required=True)
+    verify_conformance = sub.add_parser(
+        "verify-conformance", help="verify a command-adapter conformance receipt"
+    )
+    verify_conformance.add_argument("receipt", type=Path)
+    verify_conformance.add_argument("--suite", type=Path, required=True)
     pack = sub.add_parser("pack", help="build a non-overwriting portable evidence pack")
     pack.add_argument("suite", type=Path)
     pack.add_argument("receipt", type=Path)
@@ -664,6 +997,23 @@ def main(argv: list[str] | None = None) -> int:
             print(
                 f"verified {args.receipt}: {receipt['summary']['case_count']} cases, "
                 f"{receipt['summary']['at_most_one_breach_count']} at-most-one breaches"
+            )
+        elif args.command == "run-conformance":
+            receipt = run_conformance(
+                load_json(args.suite), args.adapter_command, timeout=args.timeout
+            )
+            write_json(receipt, args.out)
+            print(
+                f"wrote {args.out}: {receipt['summary']['event_count']} events, "
+                f"{receipt['summary']['unsafe_effect_outcome_count']} unsafe effect outcomes"
+            )
+        elif args.command == "verify-conformance":
+            receipt = load_json(args.receipt)
+            suite = load_json(args.suite)
+            verify_conformance_receipt(receipt, suite)
+            print(
+                f"verified {args.receipt}: {receipt['summary']['event_count']} events, "
+                f"status {receipt['status']}"
             )
         else:
             build_pack(args.suite, args.receipt, args.out)

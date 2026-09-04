@@ -127,9 +127,12 @@ python3 agent-side-effect-ledger/aau_side_effect.py verify \
 The 12-case, 48-event synthetic suite prevents three duplicate effects, blocks a reused key whose
 amount and target changed, reconciles both committed and absent timeout outcomes, rejects agent
 self-approval and stale authority, and treats compensation as a separately approved second effect.
-It produces zero adapter-scoped at-most-one breaches. This is a transaction-safety contract and
-portable test—not an exactly-once claim, a real payment or notice, production authorization,
-certification, compliance result, or ATO.
+It produces zero adapter-scoped at-most-one breaches. Organizations can now run the same sequences
+through a trusted staging adapter using the oracle-free command protocol; the adapter never receives
+the expected outcomes or reason codes. The committed command-adapter receipt is 48/48 exact with
+zero unsafe effect outcomes and zero retry-after-unknown violations. This is a transaction-safety
+contract and portable test—not an exactly-once claim, a real payment or notice, production
+authorization, certification, compliance result, or ATO.
 
 Four **[oracle-free reproduction challenges](reproduction-challenges/)** now let outside forks test
 portable agent authority, distribution restoration, pharmaceutical batch disposition, and the

@@ -99,6 +99,62 @@ and test crash points between every state transition. If the target cannot suppo
 queryable effect record, keep that limitation visible; this profile cannot manufacture exactly-once
 delivery.
 
+## Challenge your own adapter without receiving the answers
+
+The command conformance runner sends each complete synthetic event sequence to a trusted local
+adapter. It deliberately removes every `expected` field before invocation. That matters: an adapter
+must carry state across prepare, approval, uncertainty, reconciliation, replay, and compensation;
+it cannot pass by echoing the public oracle one event at a time.
+
+```bash
+python3 agent-side-effect-ledger/aau_side_effect.py run-conformance \
+  agent-side-effect-ledger/examples/reference-suite.json \
+  --command "python3 path/to/your_adapter.py" \
+  --out /tmp/aau-side-effect-conformance.json
+
+python3 agent-side-effect-ledger/aau_side_effect.py verify-conformance \
+  /tmp/aau-side-effect-conformance.json \
+  --suite agent-side-effect-ledger/examples/reference-suite.json
+```
+
+The adapter reads one JSON request from standard input and writes one JSON response to standard
+output. The command is parsed without a shell. It receives the suite ID, public-synthetic profile,
+case ID, title, and ordered events—but no expected outcomes or expected reason codes.
+
+```json
+{
+  "protocol_version": "aau-agent-side-effect-adapter/0.1",
+  "suite_id": "...",
+  "profile": {"...": "public synthetic policy"},
+  "case": {"case_id": "...", "title": "...", "events": ["oracle-free events"]}
+}
+```
+
+It returns one ordered result for every event:
+
+```json
+{
+  "case_id": "...",
+  "results": [
+    {"event_id": "...", "outcome": "prepared", "reason_codes": []}
+  ]
+}
+```
+
+The committed [reference adapter](examples/reference_adapter.py) and
+[conformance receipt](examples/reference-conformance-receipt.json) produce 48/48 exact outcomes,
+48/48 exact reason-code sets, zero unsafe effect outcomes, zero retry-after-unknown violations,
+and zero legitimate-effect blocks. The
+[conformance receipt schema](side-effect-conformance-receipt.schema.json) publishes the portable
+result shape. Verification binds every result to the suite digest, recomputes both asymmetric
+failure counts, checks exact event coverage and ordering, and validates the tamper-evident chain.
+
+Only run an adapter command you trust: the runner starts that local program, even though the runner
+itself never invokes a declared business tool. Use a staging-only adapter that interprets the
+public-synthetic profile and cannot reach production targets. A pass is evidence about the adapter's
+answers to this bounded contract—not evidence that a target system is atomic, queryable, correctly
+configured, authorized, or safe in production.
+
 ## Why these fields exist
 
 - [RFC 9110 §9.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) says a client should

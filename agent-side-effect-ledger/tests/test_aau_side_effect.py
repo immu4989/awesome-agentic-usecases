@@ -1,15 +1,20 @@
 import copy
 import json
+import shlex
+import sys
 from pathlib import Path
 
 import pytest
 
 from aau_side_effect import (
     SideEffectError,
+    adapter_request,
     build_pack,
     evaluate_suite,
     load_json,
+    run_conformance,
     validate_suite,
+    verify_conformance_receipt,
     verify_receipt,
     write_json,
 )
@@ -17,6 +22,8 @@ from aau_side_effect import (
 
 ROOT = Path(__file__).parents[1]
 SUITE = ROOT / "examples" / "reference-suite.json"
+ADAPTER = ROOT / "examples" / "reference_adapter.py"
+CONFORMANCE_RECEIPT = ROOT / "examples" / "reference-conformance-receipt.json"
 
 
 def test_reference_suite_is_exact_and_prevents_duplicate_effects():
@@ -103,3 +110,64 @@ def test_write_and_pack_refuse_overwrite(tmp_path):
     }
     with pytest.raises(SideEffectError, match="overwrite"):
         build_pack(SUITE, receipt_path, pack)
+
+
+def test_command_adapter_receipt_is_exact_and_verifiable():
+    suite = load_json(SUITE)
+    command = shlex.join([sys.executable, str(ADAPTER)])
+    receipt = run_conformance(suite, command)
+    summary = receipt["summary"]
+    assert receipt["status"] == "evidence_passed"
+    assert summary["event_count"] == 48
+    assert summary["exact_outcome_count"] == 48
+    assert summary["exact_reason_count"] == 48
+    assert summary["unsafe_effect_outcome_count"] == 0
+    assert summary["unknown_retry_violation_count"] == 0
+    assert summary["legitimate_effect_block_count"] == 0
+    verify_conformance_receipt(receipt, suite)
+    assert receipt == load_json(CONFORMANCE_RECEIPT)
+
+
+def test_adapter_request_never_contains_the_oracle():
+    suite = load_json(SUITE)
+    request = adapter_request(suite, suite["cases"][0])
+    encoded = json.dumps(request)
+    assert '"expected"' not in encoded
+    assert set(request) == {"protocol_version", "suite_id", "profile", "case"}
+
+
+def test_malformed_or_incomplete_adapter_fails_closed(tmp_path):
+    adapter = tmp_path / "bad_adapter.py"
+    adapter.write_text(
+        "import json, sys\n"
+        "r=json.load(sys.stdin)\n"
+        "json.dump({'case_id': r['case']['case_id'], 'results': []}, sys.stdout)\n"
+    )
+    command = shlex.join([sys.executable, str(adapter)])
+    with pytest.raises(SideEffectError, match="cover every event"):
+        run_conformance(load_json(SUITE), command)
+
+
+def test_commit_everything_adapter_exposes_unsafe_retry_shape(tmp_path):
+    adapter = tmp_path / "unsafe_adapter.py"
+    adapter.write_text(
+        "import json, sys\n"
+        "r=json.load(sys.stdin)\n"
+        "rows=[{'event_id': e['event_id'], 'outcome': 'committed', "
+        "'reason_codes': []} for e in r['case']['events']]\n"
+        "json.dump({'case_id': r['case']['case_id'], 'results': rows}, sys.stdout)\n"
+    )
+    command = shlex.join([sys.executable, str(adapter)])
+    receipt = run_conformance(load_json(SUITE), command)
+    assert receipt["status"] == "evidence_failed"
+    assert receipt["summary"]["unsafe_effect_outcome_count"] > 0
+    assert receipt["summary"]["unknown_retry_violation_count"] > 0
+
+
+def test_conformance_tampering_breaks_verification():
+    suite = load_json(SUITE)
+    command = shlex.join([sys.executable, str(ADAPTER)])
+    receipt = run_conformance(suite, command)
+    receipt["summary"]["unsafe_effect_outcome_count"] = 1
+    with pytest.raises(SideEffectError, match="digest mismatch"):
+        verify_conformance_receipt(receipt, suite)
