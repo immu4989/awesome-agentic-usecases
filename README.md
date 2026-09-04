@@ -155,6 +155,13 @@ evidence names the same tool-operation pair and that pair exists in semantic con
 receipt also exposes semantic tools that did not receive all three gates. It does not upload
 artifacts or grant release authority.
 
+The companion **Side-Effect Release Binding** closes the next evidence-substitution gap. It packages
+the exact AABOM agent and release IDs, the fully stressed tool-operation pair, the complete matrix,
+the human-approval declaration, and byte snapshots of all three adapters. The committed reference
+pack verifies 1/1 consequential operations; missing coverage becomes an inspectable hold rather
+than a misleading pass. Hashes bind copied files, not workload identity, production provenance, or
+deployment authority.
+
 Four **[oracle-free reproduction challenges](reproduction-challenges/)** now let outside forks test
 portable agent authority, distribution restoration, pharmaceutical batch disposition, and the
 A2A-to-MCP authority relay without receiving gold answers. The hidden source suites and oracles

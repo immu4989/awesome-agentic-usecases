@@ -96,6 +96,22 @@ diagnostics are preserved. Matrix 0.2 also rejects crash/race tool-operation mis
 which semantic pair received all three gates, so untested tools do not inherit coverage by
 association. Keep adapter commands staging-only and pin the Action to a reviewed full commit SHA.
 
+Before attaching that matrix to a release claim, build the byte-bound pack:
+
+```bash
+python3 agent-side-effect-ledger/aau_release_binding.py pack \
+  --workspace . \
+  --bom agent-side-effect-ledger/examples/release-binding/agent-capability-bom.json \
+  --matrix agent-side-effect-ledger/examples/reference-matrix-pack \
+  --plan agent-side-effect-ledger/examples/release-binding/binding-plan.json \
+  --out side-effect-release-binding
+python3 agent-side-effect-ledger/aau_release_binding.py verify side-effect-release-binding
+```
+
+This checks that every AABOM write or irreversible operation is represented, the one fully stressed
+pair agrees with the matrix, matching authority requires human approval, and the exact adapter bytes
+travel with the evidence. It does not identify a live workload or authorize deployment.
+
 If you are outside the maintainer workflow and want to test a public claim, choose one of the
 four [Fork-to-Reproduce challenges](reproduction-challenges/). You receive six or eight tasks and an
 oracle commitment—not the gold outcomes. The manual workflow builds and attests your exact

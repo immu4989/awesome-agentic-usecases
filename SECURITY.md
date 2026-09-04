@@ -105,6 +105,13 @@ commands through quoted environment variables and adds no remote Action dependen
 still execute with the runner's inherited authority; do not expose credentials or production access
 to untrusted pull requests.
 
+The Side-Effect Release Binding copies the exact AABOM, matrix, and adapter snapshots into a
+non-overwriting pack and confines every source and output to the declared workspace. Treat the
+source adapter paths as untrusted declarations and review the copied bytes before sharing. The
+manifest detects later substitution but is unsigned, has no builder or workload identity, and does
+not prove those bytes ran in staging or production. Do not include proprietary adapters, secrets,
+credentials, personal data, controlled information, or production configuration in a public pack.
+
 ## Portable Agent Assurance boundary
 
 The Portable Agent Assurance verifier accepts bounded JSON, rejects symbolic links and oversized

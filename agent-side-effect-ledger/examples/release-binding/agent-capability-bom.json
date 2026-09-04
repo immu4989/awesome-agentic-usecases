@@ -1,0 +1,76 @@
+{
+  "bom_version": "aau-agent-capability-bom/1.0",
+  "bom_id": "aabom-synthetic-benefit-coordinator-0.1.0",
+  "agent_id": "agent:benefit-coordinator",
+  "release_id": "synthetic-benefit-coordinator-0.1.0",
+  "generated_at": "2026-09-03T15:00:00Z",
+  "generation_context": "build",
+  "accountability": {
+    "owner_role": "Synthetic Benefit Service Owner",
+    "human_release_authority_preserved": true,
+    "production_identity_verified": false
+  },
+  "models": [
+    {
+      "component_id": "synthetic-coordination-model",
+      "provider": "public-synthetic-reference",
+      "model_ref": "no-model-call-reference-state-machine",
+      "digest": "1111111111111111111111111111111111111111111111111111111111111111",
+      "role": "describe a model position without invoking a model"
+    }
+  ],
+  "tools": [
+    {
+      "component_id": "notification-service",
+      "protocol": "CLI",
+      "operations": ["send_synthetic_notice"],
+      "side_effect": "write",
+      "resource_scopes": ["synthetic-benefit-cases/notices/*"]
+    }
+  ],
+  "authorities": [
+    {
+      "authority_id": "synthetic-notice-write-lease",
+      "subject": "spiffe://example.test/agent/benefit-coordinator",
+      "tool_ids": ["notification-service"],
+      "operations": ["send_synthetic_notice"],
+      "resource_scopes": ["synthetic-benefit-cases/notices/*"],
+      "delegation_depth": 0,
+      "not_before": "2026-09-03T15:00:00Z",
+      "expires_at": "2026-09-03T15:15:00Z",
+      "revocation_channel": "urn:synthetic:control-plane:benefit-notice",
+      "human_approval_required": true
+    }
+  ],
+  "data_routes": [
+    {
+      "route_id": "synthetic-notice-route",
+      "source": "public-synthetic-case-fixture",
+      "destination": "local-synthetic-notice-store",
+      "data_classes": ["public_synthetic_benefit_case"],
+      "egress_allowed": false,
+      "retention_days": 1
+    }
+  ],
+  "controls": {
+    "monitor_ids": ["side-effect-reconciliation", "idempotency-conflict"],
+    "safe_stop": "hold unresolved effects and revoke the synthetic notice lease",
+    "restart_authority": "Synthetic Benefit Service Owner",
+    "rollback": "restore the prior reviewed adapter bytes and reissue the binding pack"
+  },
+  "evidence": [
+    {
+      "evidence_id": "side-effect-safety-matrix-0.2",
+      "kind": "evaluation_receipt",
+      "sha256": "8c7063e612e85c51698eab620bf175c0655b4a468725c15e7d8e1e747dd85d09",
+      "uri": "agent-side-effect-ledger/examples/reference-matrix-pack/manifest.json"
+    }
+  ],
+  "sharing": {
+    "public_or_synthetic_only": true,
+    "contains_personal_data": false,
+    "contains_credentials": false,
+    "contains_nonpublic_configuration": false,
+    "contains_controlled_information": false
+  }
+}

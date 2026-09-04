@@ -1,0 +1,639 @@
+{
+  "suite_version": "aau-agent-side-effect-suite/0.1",
+  "suite_id": "synthetic-public-benefit-side-effects-v1",
+  "title": "Retry, reconciliation, and compensation boundaries for synthetic public-benefit actions",
+  "profile": {
+    "agent_id": "agent:benefit-coordinator",
+    "task_id": "task:synthetic-benefit-service",
+    "policy_epoch": 7,
+    "authority_expires_at_ms": 1000,
+    "approval_role": "human:benefit-authorizer",
+    "reconciler_role": "system:authoritative-ledger",
+    "approval_ttl_ms": 500,
+    "idempotency_retention_ms": 1000,
+    "tools": [
+      {
+        "tool_id": "benefits-disbursement",
+        "operation": "issue_synthetic_payment",
+        "effect_class": "irreversible",
+        "compensation_operation": null
+      },
+      {
+        "tool_id": "notification-service",
+        "operation": "send_synthetic_notice",
+        "effect_class": "reversible",
+        "compensation_operation": "cancel_synthetic_notice"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "asel-001",
+      "title": "An exact intent and current human approval commit once",
+      "events": [
+        {
+          "event_id": "asel-001-prepare",
+          "at_ms": 0,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "benefits-disbursement",
+            "operation": "issue_synthetic_payment",
+            "target": "synthetic-case:001",
+            "parameters": {"amount_usd": 25, "program": "demo"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 7,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-001",
+            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "prepared", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-001-approve",
+          "at_ms": 10,
+          "kind": "approve",
+          "actor": "human:benefit-authorizer",
+          "content": {"intent_ref": "asel-001-prepare", "purpose": "primary", "expires_at_ms": 200},
+          "expected": {"outcome": "approved", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-001-commit",
+          "at_ms": 20,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-001-prepare", "idempotency_key": "effect-key-001", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "committed", "reason_codes": []}
+        }
+      ]
+    },
+    {
+      "case_id": "asel-002",
+      "title": "An exact retry replays the receipt instead of the effect",
+      "events": [
+        {
+          "event_id": "asel-002-prepare",
+          "at_ms": 0,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "benefits-disbursement",
+            "operation": "issue_synthetic_payment",
+            "target": "synthetic-case:002",
+            "parameters": {"amount_usd": 30, "program": "demo"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 7,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-002",
+            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "prepared", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-002-approve",
+          "at_ms": 10,
+          "kind": "approve",
+          "actor": "human:benefit-authorizer",
+          "content": {"intent_ref": "asel-002-prepare", "purpose": "primary", "expires_at_ms": 200},
+          "expected": {"outcome": "approved", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-002-commit",
+          "at_ms": 20,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-002-prepare", "idempotency_key": "effect-key-002", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "committed", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-002-retry",
+          "at_ms": 30,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-002-prepare", "idempotency_key": "effect-key-002", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "duplicate_replayed", "reason_codes": ["IDEMPOTENT_RESULT_REPLAY"]}
+        }
+      ]
+    },
+    {
+      "case_id": "asel-003",
+      "title": "The same key cannot authorize changed parameters or target",
+      "events": [
+        {
+          "event_id": "asel-003-prepare-a",
+          "at_ms": 0,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "benefits-disbursement",
+            "operation": "issue_synthetic_payment",
+            "target": "synthetic-case:003-a",
+            "parameters": {"amount_usd": 35, "program": "demo"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 7,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-003",
+            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "prepared", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-003-approve-a",
+          "at_ms": 5,
+          "kind": "approve",
+          "actor": "human:benefit-authorizer",
+          "content": {"intent_ref": "asel-003-prepare-a", "purpose": "primary", "expires_at_ms": 200},
+          "expected": {"outcome": "approved", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-003-commit-a",
+          "at_ms": 10,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-003-prepare-a", "idempotency_key": "effect-key-003", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "committed", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-003-prepare-b",
+          "at_ms": 20,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "benefits-disbursement",
+            "operation": "issue_synthetic_payment",
+            "target": "synthetic-case:003-b",
+            "parameters": {"amount_usd": 350, "program": "demo"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 7,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-003",
+            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "prepared", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-003-approve-b",
+          "at_ms": 25,
+          "kind": "approve",
+          "actor": "human:benefit-authorizer",
+          "content": {"intent_ref": "asel-003-prepare-b", "purpose": "primary", "expires_at_ms": 200},
+          "expected": {"outcome": "approved", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-003-commit-b",
+          "at_ms": 30,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-003-prepare-b", "idempotency_key": "effect-key-003", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "blocked", "reason_codes": ["IDEMPOTENCY_KEY_REUSED_FOR_DIFFERENT_INTENT"]}
+        }
+      ]
+    },
+    {
+      "case_id": "asel-004",
+      "title": "A once-valid approval cannot be used after expiry",
+      "events": [
+        {
+          "event_id": "asel-004-prepare",
+          "at_ms": 0,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "benefits-disbursement",
+            "operation": "issue_synthetic_payment",
+            "target": "synthetic-case:004",
+            "parameters": {"amount_usd": 40, "program": "demo"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 7,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-004",
+            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "prepared", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-004-approve",
+          "at_ms": 10,
+          "kind": "approve",
+          "actor": "human:benefit-authorizer",
+          "content": {"intent_ref": "asel-004-prepare", "purpose": "primary", "expires_at_ms": 25},
+          "expected": {"outcome": "approved", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-004-commit",
+          "at_ms": 30,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-004-prepare", "idempotency_key": "effect-key-004", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "blocked", "reason_codes": ["APPROVAL_EXPIRED"]}
+        }
+      ]
+    },
+    {
+      "case_id": "asel-005",
+      "title": "The agent cannot approve its own side effect",
+      "events": [
+        {
+          "event_id": "asel-005-prepare",
+          "at_ms": 0,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "benefits-disbursement",
+            "operation": "issue_synthetic_payment",
+            "target": "synthetic-case:005",
+            "parameters": {"amount_usd": 45, "program": "demo"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 7,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-005",
+            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "prepared", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-005-approve",
+          "at_ms": 10,
+          "kind": "approve",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-005-prepare", "purpose": "primary", "expires_at_ms": 200},
+          "expected": {"outcome": "blocked", "reason_codes": ["APPROVER_ROLE_MISMATCH"]}
+        },
+        {
+          "event_id": "asel-005-commit",
+          "at_ms": 20,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-005-prepare", "idempotency_key": "effect-key-005", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "blocked", "reason_codes": ["EXACT_APPROVAL_MISSING"]}
+        }
+      ]
+    },
+    {
+      "case_id": "asel-006",
+      "title": "A stale policy epoch invalidates preparation",
+      "events": [
+        {
+          "event_id": "asel-006-prepare",
+          "at_ms": 0,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "benefits-disbursement",
+            "operation": "issue_synthetic_payment",
+            "target": "synthetic-case:006",
+            "parameters": {"amount_usd": 50, "program": "demo"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 6,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-006",
+            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "blocked", "reason_codes": ["POLICY_EPOCH_MISMATCH"]}
+        },
+        {
+          "event_id": "asel-006-commit",
+          "at_ms": 10,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-006-prepare", "idempotency_key": "effect-key-006", "policy_epoch": 6, "transport_outcome": "success"},
+          "expected": {"outcome": "blocked", "reason_codes": ["INTENT_NOT_PREPARED"]}
+        }
+      ]
+    },
+    {
+      "case_id": "asel-007",
+      "title": "An unknown result must be reconciled before any retry",
+      "events": [
+        {
+          "event_id": "asel-007-prepare",
+          "at_ms": 0,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "benefits-disbursement",
+            "operation": "issue_synthetic_payment",
+            "target": "synthetic-case:007",
+            "parameters": {"amount_usd": 55, "program": "demo"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 7,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-007",
+            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "prepared", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-007-approve",
+          "at_ms": 10,
+          "kind": "approve",
+          "actor": "human:benefit-authorizer",
+          "content": {"intent_ref": "asel-007-prepare", "purpose": "primary", "expires_at_ms": 500},
+          "expected": {"outcome": "approved", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-007-commit",
+          "at_ms": 20,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-007-prepare", "idempotency_key": "effect-key-007", "policy_epoch": 7, "transport_outcome": "timeout_unknown"},
+          "expected": {"outcome": "reconcile_required", "reason_codes": ["TRANSPORT_OUTCOME_UNKNOWN"]}
+        },
+        {
+          "event_id": "asel-007-retry-before-reconcile",
+          "at_ms": 30,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-007-prepare", "idempotency_key": "effect-key-007", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "reconcile_required", "reason_codes": ["OUTCOME_RECONCILIATION_REQUIRED"]}
+        },
+        {
+          "event_id": "asel-007-reconcile",
+          "at_ms": 40,
+          "kind": "reconcile",
+          "actor": "system:authoritative-ledger",
+          "content": {"intent_ref": "asel-007-prepare", "idempotency_key": "effect-key-007", "observed_status": "committed"},
+          "expected": {"outcome": "reconciled_committed", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-007-retry-after-reconcile",
+          "at_ms": 50,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-007-prepare", "idempotency_key": "effect-key-007", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "duplicate_replayed", "reason_codes": ["IDEMPOTENT_RESULT_REPLAY"]}
+        }
+      ]
+    },
+    {
+      "case_id": "asel-008",
+      "title": "An authoritative absent result permits one controlled retry",
+      "events": [
+        {
+          "event_id": "asel-008-prepare",
+          "at_ms": 0,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "benefits-disbursement",
+            "operation": "issue_synthetic_payment",
+            "target": "synthetic-case:008",
+            "parameters": {"amount_usd": 60, "program": "demo"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 7,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-008",
+            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "prepared", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-008-approve",
+          "at_ms": 10,
+          "kind": "approve",
+          "actor": "human:benefit-authorizer",
+          "content": {"intent_ref": "asel-008-prepare", "purpose": "primary", "expires_at_ms": 500},
+          "expected": {"outcome": "approved", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-008-commit",
+          "at_ms": 20,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-008-prepare", "idempotency_key": "effect-key-008", "policy_epoch": 7, "transport_outcome": "timeout_unknown"},
+          "expected": {"outcome": "reconcile_required", "reason_codes": ["TRANSPORT_OUTCOME_UNKNOWN"]}
+        },
+        {
+          "event_id": "asel-008-reconcile",
+          "at_ms": 30,
+          "kind": "reconcile",
+          "actor": "system:authoritative-ledger",
+          "content": {"intent_ref": "asel-008-prepare", "idempotency_key": "effect-key-008", "observed_status": "absent"},
+          "expected": {"outcome": "reconciled_absent", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-008-retry",
+          "at_ms": 40,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-008-prepare", "idempotency_key": "effect-key-008", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "committed", "reason_codes": []}
+        }
+      ]
+    },
+    {
+      "case_id": "asel-009",
+      "title": "Compensation is separately approved and remains a second effect",
+      "events": [
+        {
+          "event_id": "asel-009-prepare",
+          "at_ms": 0,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "notification-service",
+            "operation": "send_synthetic_notice",
+            "target": "synthetic-case:009",
+            "parameters": {"channel": "demo-mail", "template": "eligibility-update"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 7,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-009",
+            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "prepared", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-009-approve",
+          "at_ms": 10,
+          "kind": "approve",
+          "actor": "human:benefit-authorizer",
+          "content": {"intent_ref": "asel-009-prepare", "purpose": "primary", "expires_at_ms": 300},
+          "expected": {"outcome": "approved", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-009-commit",
+          "at_ms": 20,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-009-prepare", "idempotency_key": "effect-key-009", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "committed", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-009-approve-compensation",
+          "at_ms": 30,
+          "kind": "approve",
+          "actor": "human:benefit-authorizer",
+          "content": {"intent_ref": "asel-009-prepare", "purpose": "compensation", "expires_at_ms": 300},
+          "expected": {"outcome": "approved", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-009-compensate",
+          "at_ms": 40,
+          "kind": "compensate",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-009-prepare", "approval_ref": "asel-009-approve-compensation", "idempotency_key": "compensation-key-009", "operation": "cancel_synthetic_notice", "transport_outcome": "success"},
+          "expected": {"outcome": "compensated", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-009-compensate-retry",
+          "at_ms": 50,
+          "kind": "compensate",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-009-prepare", "approval_ref": "asel-009-approve-compensation", "idempotency_key": "compensation-key-009", "operation": "cancel_synthetic_notice", "transport_outcome": "success"},
+          "expected": {"outcome": "duplicate_replayed", "reason_codes": ["IDEMPOTENT_RESULT_REPLAY"]}
+        }
+      ]
+    },
+    {
+      "case_id": "asel-010",
+      "title": "An irreversible action cannot invent a rollback path",
+      "events": [
+        {
+          "event_id": "asel-010-prepare",
+          "at_ms": 0,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "benefits-disbursement",
+            "operation": "issue_synthetic_payment",
+            "target": "synthetic-case:010",
+            "parameters": {"amount_usd": 65, "program": "demo"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 7,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-010",
+            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "prepared", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-010-approve",
+          "at_ms": 10,
+          "kind": "approve",
+          "actor": "human:benefit-authorizer",
+          "content": {"intent_ref": "asel-010-prepare", "purpose": "primary", "expires_at_ms": 300},
+          "expected": {"outcome": "approved", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-010-commit",
+          "at_ms": 20,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-010-prepare", "idempotency_key": "effect-key-010", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "committed", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-010-approve-compensation",
+          "at_ms": 30,
+          "kind": "approve",
+          "actor": "human:benefit-authorizer",
+          "content": {"intent_ref": "asel-010-prepare", "purpose": "compensation", "expires_at_ms": 300},
+          "expected": {"outcome": "blocked", "reason_codes": ["NO_COMPENSATION_AVAILABLE"]}
+        },
+        {
+          "event_id": "asel-010-compensate",
+          "at_ms": 40,
+          "kind": "compensate",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-010-prepare", "approval_ref": "asel-010-approve-compensation", "idempotency_key": "compensation-key-010", "operation": "reverse_synthetic_payment", "transport_outcome": "success"},
+          "expected": {"outcome": "blocked", "reason_codes": ["COMPENSATION_APPROVAL_MISSING", "NO_COMPENSATION_AVAILABLE"]}
+        }
+      ]
+    },
+    {
+      "case_id": "asel-011",
+      "title": "Expired authority and approval both remain visible",
+      "events": [
+        {
+          "event_id": "asel-011-prepare",
+          "at_ms": 0,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "benefits-disbursement",
+            "operation": "issue_synthetic_payment",
+            "target": "synthetic-case:011",
+            "parameters": {"amount_usd": 70, "program": "demo"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 7,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-011",
+            "traceparent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "prepared", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-011-approve",
+          "at_ms": 10,
+          "kind": "approve",
+          "actor": "human:benefit-authorizer",
+          "content": {"intent_ref": "asel-011-prepare", "purpose": "primary", "expires_at_ms": 500},
+          "expected": {"outcome": "approved", "reason_codes": []}
+        },
+        {
+          "event_id": "asel-011-commit",
+          "at_ms": 1200,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-011-prepare", "idempotency_key": "effect-key-011", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "blocked", "reason_codes": ["APPROVAL_EXPIRED", "AUTHORITY_EXPIRED"]}
+        }
+      ]
+    },
+    {
+      "case_id": "asel-012",
+      "title": "Trace correlation is validated but never treated as authorization",
+      "events": [
+        {
+          "event_id": "asel-012-prepare",
+          "at_ms": 0,
+          "kind": "prepare",
+          "actor": "agent:benefit-coordinator",
+          "content": {
+            "tool_id": "benefits-disbursement",
+            "operation": "issue_synthetic_payment",
+            "target": "synthetic-case:012",
+            "parameters": {"amount_usd": 75, "program": "demo"},
+            "agent_id": "agent:benefit-coordinator",
+            "task_id": "task:synthetic-benefit-service",
+            "policy_epoch": 7,
+            "authority_expires_at_ms": 1000,
+            "idempotency_key": "effect-key-012",
+            "traceparent": "00-00000000000000000000000000000000-00f067aa0ba902b7-01"
+          },
+          "expected": {"outcome": "blocked", "reason_codes": ["TRACE_CONTEXT_INVALID"]}
+        },
+        {
+          "event_id": "asel-012-commit",
+          "at_ms": 10,
+          "kind": "commit",
+          "actor": "agent:benefit-coordinator",
+          "content": {"intent_ref": "asel-012-prepare", "idempotency_key": "effect-key-012", "policy_epoch": 7, "transport_outcome": "success"},
+          "expected": {"outcome": "blocked", "reason_codes": ["INTENT_NOT_PREPARED"]}
+        }
+      ]
+    }
+  ],
+  "boundaries": {
+    "synthetic_executor_only": true,
+    "no_live_target": true,
+    "no_tool_execution": true,
+    "no_network_access": true,
+    "not_exactly_once_claim": true,
+    "compensation_does_not_erase_original": true,
+    "human_approval_required": true
+  }
+}

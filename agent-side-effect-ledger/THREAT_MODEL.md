@@ -14,6 +14,9 @@
 | Malformed or partial adapter output | Missing failures disappear from the score | Exact event order, coverage, outcome vocabulary, and sorted reason codes fail closed | Schema-valid output can still be dishonest |
 | Untrusted command adapter | Local code steals data or performs an unintended action | Commands are shell-free and must receive public-synthetic staging data only | The runner executes the named program; users must trust and sandbox it |
 | Adapter/target substitution | A test double passes while production behaves differently | Receipt identifies command-adapter evidence and rejects production claims | Independent deployment binding and target evidence remain necessary |
+| Tested/deployed adapter substitution | A passing matrix is attached to different source bytes or a different release label | Release binding copies and hashes all three adapter snapshots with the exact AABOM, release, matrix manifest, tool, and operation | The unsigned pack does not identify or observe a live workload |
+| Coverage inheritance by association | One tested operation makes every operation in the tool or AABOM appear covered | Every write or irreversible AABOM operation is checked separately; only the exact three-gate pair is fully bound | Organizations need additional matrices for additional consequential operations |
+| Workspace path presented as provenance | A declared filename is mistaken for proof of origin or execution | The receipt labels source paths as declarations and binds only copied bytes | Builder identity, signatures, deployment attestations, and runtime observation remain separate |
 | Crash after target commit but before result persistence | A restarted worker repeats an already-applied effect | Two-process crash cases require target reconciliation and result replay | The synthetic files do not prove distributed atomicity |
 | Lost journal, unavailable lookup, or expired retention | Recovery invents certainty and resumes unsafely | Unknown effect counts remain visible and the next action is a manual hold | An operator still needs an authorized system-specific recovery procedure |
 | Process-exit result presented as power-loss proof | Reviewers over-trust a green crash test | Receipt states that exit code 86 does not prove storage durability | Hardware, filesystems, database failover, and replication need separate fault testing |
@@ -22,8 +25,9 @@
 | Deny-all concurrency guard | Duplication is prevented by destroying availability | Distinct-key and mixed-authority cases require legitimate commits | Workload coverage remains bounded to the public synthetic suite |
 
 The reference evaluator accepts only public-synthetic input, never opens the network, never invokes
-a tool, and never performs a side effect. The conformance runner starts the explicitly named local
-adapter command; it does not constrain what that program can do. Run only a trusted, staging-only
-adapter in an appropriate sandbox. Do not place credentials, personal data, protected records,
-production targets, private traces, controlled information, or classified information in a public
-suite, adapter request, or receipt.
+a tool, and never performs a side effect. The conformance runners start explicitly named local
+adapter commands; they do not constrain what those programs can do. The release binder reads and
+copies the declared adapter files but does not execute them. Run only trusted, staging-only adapters
+in an appropriate sandbox. Do not place credentials, personal data, protected records, production
+targets, proprietary adapter code, private traces, controlled information, or classified
+information in a public suite, adapter request, receipt, or binding pack.

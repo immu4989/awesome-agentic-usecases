@@ -90,10 +90,14 @@ jobs:
           python agent-side-effect-ledger/aau_side_effect_matrix.py run --workspace . --out .aau-ci-side-effect-matrix --semantic-suite agent-side-effect-ledger/examples/reference-suite.json --semantic-adapter-command "python agent-side-effect-ledger/examples/reference_adapter.py" --crash-suite agent-side-effect-ledger/examples/crash-suite.json --crash-adapter-command "python agent-side-effect-ledger/examples/reference_crash_adapter.py" --race-suite agent-side-effect-ledger/examples/race-suite.json --race-adapter-command "python agent-side-effect-ledger/examples/reference_race_adapter.py"
           diff -r .aau-ci-side-effect-matrix agent-side-effect-ledger/examples/reference-matrix-pack
           python agent-side-effect-ledger/aau_side_effect_matrix.py verify agent-side-effect-ledger/examples/reference-matrix-pack
+          python agent-side-effect-ledger/aau_release_binding.py pack --workspace . --bom agent-side-effect-ledger/examples/release-binding/agent-capability-bom.json --matrix .aau-ci-side-effect-matrix --plan agent-side-effect-ledger/examples/release-binding/binding-plan.json --out .aau-ci-side-effect-release-binding
+          diff -r .aau-ci-side-effect-release-binding agent-side-effect-ledger/examples/reference-release-binding-pack
+          python agent-side-effect-ledger/aau_release_binding.py verify agent-side-effect-ledger/examples/reference-release-binding-pack
           python docs/make_agent_security_data.py
           python docs/check_agent_security.py
           ruff check agent-side-effect-ledger agentic-cyber-resilience agent-incident-regression-commons essential-services-defender-kits agent-control-observatory public-value-pilot-network docs/make_agent_security_data.py docs/check_agent_security.py
           git diff --exit-code docs/agent-security-data.json
+          rm -rf .aau-ci-side-effect-matrix .aau-ci-side-effect-release-binding
       - name: Portable Agent Assurance and TEVV evidence are reproducible
         run: |
           pytest portable-agent-assurance/tests tev-v-athlon-profile/tests -q

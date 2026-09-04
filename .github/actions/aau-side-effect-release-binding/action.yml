@@ -1,0 +1,58 @@
+name: AAU side-effect release binding
+description: Bind an AABOM release and exact adapter bytes to a verified side-effect matrix.
+branding:
+  icon: link
+  color: blue
+inputs:
+  bom:
+    description: Workspace-relative Agent Capability and Authority BOM path.
+    required: true
+  matrix:
+    description: Workspace-relative verified Side-Effect Safety Matrix pack.
+    required: true
+  plan:
+    description: Workspace-relative release binding plan path.
+    required: true
+  output:
+    description: Workspace-relative, non-existing output directory for the binding pack.
+    required: false
+    default: aau-side-effect-release-binding
+outputs:
+  evidence_pack:
+    description: Workspace-relative path to the verified release binding pack.
+    value: ${{ inputs.output }}
+runs:
+  using: composite
+  steps:
+    - name: Bind, verify, and summarize release evidence
+      shell: bash
+      env:
+        AAU_BINDING_BOM: ${{ inputs.bom }}
+        AAU_BINDING_MATRIX: ${{ inputs.matrix }}
+        AAU_BINDING_OUTPUT: ${{ inputs.output }}
+        AAU_BINDING_PLAN: ${{ inputs.plan }}
+      run: |
+        set +e
+        python "$GITHUB_ACTION_PATH/../../../agent-side-effect-ledger/aau_release_binding.py" pack \
+          --workspace "$GITHUB_WORKSPACE" \
+          --bom "$AAU_BINDING_BOM" \
+          --matrix "$AAU_BINDING_MATRIX" \
+          --plan "$AAU_BINDING_PLAN" \
+          --out "$AAU_BINDING_OUTPUT"
+        binding_status=$?
+        set -e
+        if [[ "$binding_status" -eq 2 ]]; then
+          exit 2
+        fi
+        set +e
+        python "$GITHUB_ACTION_PATH/../../../agent-side-effect-ledger/aau_release_binding.py" verify \
+          "$AAU_BINDING_OUTPUT"
+        verify_status=$?
+        set -e
+        if [[ "$verify_status" -eq 2 || "$verify_status" -ne "$binding_status" ]]; then
+          exit 2
+        fi
+        if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+          cat "$AAU_BINDING_OUTPUT/README.md" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        exit "$binding_status"

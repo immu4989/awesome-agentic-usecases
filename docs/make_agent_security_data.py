@@ -23,6 +23,7 @@ from aau_incident import evaluate_incident, load_json as load_incident_json  # n
 from aau_observatory import evaluate_experiment, load_json as load_experiment_json  # noqa: E402
 from aau_pilot_network import assess_pilot, load_json as load_pilot_json  # noqa: E402
 from aau_race_lab import verify_receipt as verify_race_receipt  # noqa: E402
+from aau_release_binding import verify_pack as verify_release_binding_pack  # noqa: E402
 from aau_runtime import evaluate_suite as evaluate_runtime_suite  # noqa: E402
 from aau_side_effect import (  # noqa: E402
     evaluate_suite as evaluate_side_effect_suite,
@@ -59,6 +60,9 @@ def build() -> dict:
     verify_race_receipt(race_receipt, race_suite)
     side_effect_matrix = verify_side_effect_matrix_pack(
         ROOT / "agent-side-effect-ledger/examples/reference-matrix-pack"
+    )
+    release_binding = verify_release_binding_pack(
+        ROOT / "agent-side-effect-ledger/examples/reference-release-binding-pack"
     )
 
     incident_record = load_incident_json(
@@ -106,7 +110,7 @@ def build() -> dict:
     pilot = assess_pilot(pilot_record)
 
     return {
-        "data_version": "aau-agent-security-commons-data/0.1",
+        "data_version": "aau-agent-security-commons-data/0.2",
         "generated_on": "2026-09-03",
         "runtime": {
             "event_count": runtime["event_count"],
@@ -144,6 +148,18 @@ def build() -> dict:
                 "component_count": side_effect_matrix["component_count"],
                 "aggregate": side_effect_matrix["aggregate"],
                 "coverage_binding": side_effect_matrix["coverage_binding"],
+            },
+            "release_binding": {
+                "status": release_binding["status"],
+                "release_id": release_binding["release_id"],
+                "consequential_operation_count": release_binding[
+                    "consequential_operation_count"
+                ],
+                "fully_bound_consequential_operation_count": release_binding[
+                    "fully_bound_consequential_operation_count"
+                ],
+                "finding_count": len(release_binding["findings"]),
+                "receipt_sha256": release_binding["receipt_sha256"],
             },
             "failure_shapes": [
                 "unknown_outcome_requires_reconciliation",

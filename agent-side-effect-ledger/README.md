@@ -306,6 +306,37 @@ tampering returns exit code 2. The Action adds no remote dependency and uploads 
 The caller must pin the Action to a reviewed full commit SHA and choose whether and how long to
 retain the pack.
 
+## Bind the test evidence to an exact release
+
+A passing matrix still leaves a substitution gap: the AABOM could name one release while the
+receipt came from different adapter bytes. The **Side-Effect Release Binding** joins one exact AABOM,
+release ID, consequential `tool_id + operation`, complete matrix pack, human-approval declaration,
+and the three adapter snapshots in a self-contained, tamper-evident pack.
+
+```bash
+python3 agent-side-effect-ledger/aau_release_binding.py pack \
+  --workspace . \
+  --bom agent-side-effect-ledger/examples/release-binding/agent-capability-bom.json \
+  --matrix agent-side-effect-ledger/examples/reference-matrix-pack \
+  --plan agent-side-effect-ledger/examples/release-binding/binding-plan.json \
+  --out side-effect-release-binding
+
+python3 agent-side-effect-ledger/aau_release_binding.py verify side-effect-release-binding
+```
+
+The committed [reference binding pack](examples/reference-release-binding-pack/) verifies **1/1
+consequential operations** with no holds. A valid incomplete result is `binding_held` and remains
+verifiable; malformed or tampered input is rejected. The [plan](release-binding-plan.schema.json),
+[receipt](release-binding-receipt.schema.json), and [manifest](release-binding-manifest.schema.json)
+schemas make the boundary portable. The reusable
+[Release Binding Action](../.github/actions/aau-side-effect-release-binding/) preserves diagnostics
+before failing CI.
+
+Hashes bind the copied files, not a running workload. Source paths are declarations. This pack has
+no signature or builder identity and does not prove provenance, production equivalence, live
+authority, safety, compliance, certification, deployment approval, or an ATO. See the
+[release-binding research notes](RELEASE_BINDING_RESEARCH_NOTES.md).
+
 ## Why these fields exist
 
 - [RFC 9110 §9.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) says a client should

@@ -89,6 +89,14 @@ def main() -> None:
         or matrix["coverage_binding"]["fully_stressed_tool_operation_count"] != 1
     ):
         raise SystemExit("side-effect safety matrix evidence drifted")
+    binding = expected["side_effects"]["release_binding"]
+    if (
+        binding["status"] != "evidence_bound"
+        or binding["consequential_operation_count"] != 1
+        or binding["fully_bound_consequential_operation_count"] != 1
+        or binding["finding_count"] != 0
+    ):
+        raise SystemExit("side-effect release binding evidence drifted")
     if len(expected["defender_kits"]) != 5 or len({item["sector"] for item in expected["defender_kits"]}) != 5:
         raise SystemExit("essential-service defender coverage drifted")
     if expected["controls"]["case_count"] != 12 or expected["controls"]["control_count"] != 8:
@@ -111,6 +119,9 @@ def main() -> None:
         ROOT / "agent-side-effect-ledger/race-suite.schema.json",
         ROOT / "agent-side-effect-ledger/race-receipt.schema.json",
         ROOT / "agent-side-effect-ledger/side-effect-safety-matrix.schema.json",
+        ROOT / "agent-side-effect-ledger/release-binding-plan.schema.json",
+        ROOT / "agent-side-effect-ledger/release-binding-receipt.schema.json",
+        ROOT / "agent-side-effect-ledger/release-binding-manifest.schema.json",
     ):
         schema = json.loads(schema_path.read_text())
         if schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema" or not schema.get("$id"):
@@ -130,6 +141,9 @@ def main() -> None:
         'id="asc-effect-race-duplicates"',
         'id="asc-effect-matrix-exact"',
         'id="asc-effect-matrix-boundary"',
+        'id="asc-effect-binding-count"',
+        'id="asc-effect-binding-release"',
+        'id="asc-effect-binding-hash"',
         'id="asc-effect-matrix-hash"',
         "Agent Security Commons",
         "Authorization is a live condition",
@@ -137,8 +151,10 @@ def main() -> None:
         if required not in html:
             raise SystemExit(f"site is missing Agent Security Commons marker: {required}")
     js = (DOCS / "agent-security.js").read_text()
-    if "agent-security-data.json?v=7" not in js:
+    if "agent-security-data.json?v=8" not in js:
         raise SystemExit("Agent Security Commons browser data is not source-bound")
+    if 'agent-security.css?v=7' not in html or 'agent-security.js?v=7' not in html:
+        raise SystemExit("Agent Security Commons browser assets are not cache-busted")
     subprocess.run(["node", "--check", str(DOCS / "agent-security.js")], check=True)
     print("Agent Security Commons contracts, evidence, and browser surface are current")
 

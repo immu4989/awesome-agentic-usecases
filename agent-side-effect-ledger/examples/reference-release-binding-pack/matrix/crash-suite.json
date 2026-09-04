@@ -1,0 +1,238 @@
+{
+  "suite_version": "aau-agent-side-effect-crash-suite/0.1",
+  "suite_id": "asel-crash-boundaries-2026-09",
+  "title": "Public-synthetic side-effect crash and restart boundaries",
+  "profile": {
+    "tool_id": "notification-service",
+    "operation_id": "send_synthetic_notice",
+    "idempotency_key": "synthetic-task-4989-notice-v1",
+    "intent_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "cases": [
+    {
+      "case_id": "CRASH-PREPARED",
+      "title": "Crash after intent is durable but before approval",
+      "crash_after": "prepare_durable",
+      "target_outcome": "not_attempted",
+      "recovery_at_ms": 1200,
+      "approval_expires_at_ms": 5000,
+      "authority_expires_at_ms": 10000,
+      "retention_expires_at_ms": 20000,
+      "local_journal_available": true,
+      "target_lookup_available": true,
+      "expected": {
+        "recovered_outcome": "recovery_held",
+        "next_action": "request_approval",
+        "known_effect_count": 0,
+        "reason_codes": ["APPROVAL_REQUIRED"]
+      }
+    },
+    {
+      "case_id": "CRASH-APPROVED",
+      "title": "Crash after exact approval is durable but before dispatch",
+      "crash_after": "approval_durable",
+      "target_outcome": "not_attempted",
+      "recovery_at_ms": 1300,
+      "approval_expires_at_ms": 5000,
+      "authority_expires_at_ms": 10000,
+      "retention_expires_at_ms": 20000,
+      "local_journal_available": true,
+      "target_lookup_available": true,
+      "expected": {
+        "recovered_outcome": "recovery_ready",
+        "next_action": "dispatch_once",
+        "known_effect_count": 0,
+        "reason_codes": []
+      }
+    },
+    {
+      "case_id": "CRASH-DISPATCH-MARKER",
+      "title": "Crash after dispatch marker but before the synthetic target",
+      "crash_after": "dispatch_recorded",
+      "target_outcome": "not_attempted",
+      "recovery_at_ms": 1400,
+      "approval_expires_at_ms": 5000,
+      "authority_expires_at_ms": 10000,
+      "retention_expires_at_ms": 20000,
+      "local_journal_available": true,
+      "target_lookup_available": true,
+      "expected": {
+        "recovered_outcome": "reconciled_absent",
+        "next_action": "retry_once",
+        "known_effect_count": 0,
+        "reason_codes": ["TARGET_CONFIRMED_ABSENT"]
+      }
+    },
+    {
+      "case_id": "CRASH-TARGET-COMMITTED",
+      "title": "Crash after target commit but before local result persistence",
+      "crash_after": "target_resolved",
+      "target_outcome": "committed",
+      "recovery_at_ms": 1500,
+      "approval_expires_at_ms": 5000,
+      "authority_expires_at_ms": 10000,
+      "retention_expires_at_ms": 20000,
+      "local_journal_available": true,
+      "target_lookup_available": true,
+      "expected": {
+        "recovered_outcome": "reconciled_committed",
+        "next_action": "replay",
+        "known_effect_count": 1,
+        "reason_codes": ["TARGET_CONFIRMED_COMMITTED"]
+      }
+    },
+    {
+      "case_id": "CRASH-TARGET-ABSENT",
+      "title": "Crash after target reports absence but before local persistence",
+      "crash_after": "target_resolved",
+      "target_outcome": "absent",
+      "recovery_at_ms": 1500,
+      "approval_expires_at_ms": 5000,
+      "authority_expires_at_ms": 10000,
+      "retention_expires_at_ms": 20000,
+      "local_journal_available": true,
+      "target_lookup_available": true,
+      "expected": {
+        "recovered_outcome": "reconciled_absent",
+        "next_action": "retry_once",
+        "known_effect_count": 0,
+        "reason_codes": ["TARGET_CONFIRMED_ABSENT"]
+      }
+    },
+    {
+      "case_id": "CRASH-RESULT-DURABLE",
+      "title": "Crash after committed result is durable but before response",
+      "crash_after": "result_durable",
+      "target_outcome": "committed",
+      "recovery_at_ms": 1600,
+      "approval_expires_at_ms": 5000,
+      "authority_expires_at_ms": 10000,
+      "retention_expires_at_ms": 20000,
+      "local_journal_available": true,
+      "target_lookup_available": true,
+      "expected": {
+        "recovered_outcome": "replay_committed",
+        "next_action": "replay",
+        "known_effect_count": 1,
+        "reason_codes": ["DURABLE_RESULT_REPLAY"]
+      }
+    },
+    {
+      "case_id": "CRASH-RESPONSE-RETURNED",
+      "title": "Duplicate arrival after a response was already returned",
+      "crash_after": "response_returned",
+      "target_outcome": "committed",
+      "recovery_at_ms": 1700,
+      "approval_expires_at_ms": 5000,
+      "authority_expires_at_ms": 10000,
+      "retention_expires_at_ms": 20000,
+      "local_journal_available": true,
+      "target_lookup_available": true,
+      "expected": {
+        "recovered_outcome": "replay_committed",
+        "next_action": "replay",
+        "known_effect_count": 1,
+        "reason_codes": ["DURABLE_RESULT_REPLAY"]
+      }
+    },
+    {
+      "case_id": "CRASH-JOURNAL-LOST",
+      "title": "Target committed but the local binding record is unavailable",
+      "crash_after": "target_resolved",
+      "target_outcome": "committed",
+      "recovery_at_ms": 1800,
+      "approval_expires_at_ms": 5000,
+      "authority_expires_at_ms": 10000,
+      "retention_expires_at_ms": 20000,
+      "local_journal_available": false,
+      "target_lookup_available": true,
+      "expected": {
+        "recovered_outcome": "manual_recovery_required",
+        "next_action": "hold_manual",
+        "known_effect_count": null,
+        "reason_codes": ["LOCAL_JOURNAL_UNAVAILABLE"]
+      }
+    },
+    {
+      "case_id": "CRASH-LOOKUP-UNAVAILABLE",
+      "title": "Unknown dispatch cannot query the authoritative target",
+      "crash_after": "dispatch_recorded",
+      "target_outcome": "not_attempted",
+      "recovery_at_ms": 1900,
+      "approval_expires_at_ms": 5000,
+      "authority_expires_at_ms": 10000,
+      "retention_expires_at_ms": 20000,
+      "local_journal_available": true,
+      "target_lookup_available": false,
+      "expected": {
+        "recovered_outcome": "manual_recovery_required",
+        "next_action": "hold_manual",
+        "known_effect_count": null,
+        "reason_codes": ["TARGET_LOOKUP_UNAVAILABLE"]
+      }
+    },
+    {
+      "case_id": "CRASH-RETENTION-EXPIRED",
+      "title": "Unknown dispatch outlives the target deduplication window",
+      "crash_after": "target_resolved",
+      "target_outcome": "committed",
+      "recovery_at_ms": 2500,
+      "approval_expires_at_ms": 5000,
+      "authority_expires_at_ms": 10000,
+      "retention_expires_at_ms": 2000,
+      "local_journal_available": true,
+      "target_lookup_available": true,
+      "expected": {
+        "recovered_outcome": "manual_recovery_required",
+        "next_action": "hold_manual",
+        "known_effect_count": null,
+        "reason_codes": ["IDEMPOTENCY_RETENTION_EXPIRED"]
+      }
+    },
+    {
+      "case_id": "CRASH-APPROVAL-EXPIRED",
+      "title": "Target absence is known but approval expired during recovery",
+      "crash_after": "target_resolved",
+      "target_outcome": "absent",
+      "recovery_at_ms": 2500,
+      "approval_expires_at_ms": 2000,
+      "authority_expires_at_ms": 10000,
+      "retention_expires_at_ms": 20000,
+      "local_journal_available": true,
+      "target_lookup_available": true,
+      "expected": {
+        "recovered_outcome": "recovery_held",
+        "next_action": "request_approval",
+        "known_effect_count": 0,
+        "reason_codes": ["APPROVAL_EXPIRED", "TARGET_CONFIRMED_ABSENT"]
+      }
+    },
+    {
+      "case_id": "CRASH-AUTHORITY-EXPIRED",
+      "title": "Target absence is known but authority expired during recovery",
+      "crash_after": "target_resolved",
+      "target_outcome": "absent",
+      "recovery_at_ms": 2500,
+      "approval_expires_at_ms": 5000,
+      "authority_expires_at_ms": 2000,
+      "retention_expires_at_ms": 20000,
+      "local_journal_available": true,
+      "target_lookup_available": true,
+      "expected": {
+        "recovered_outcome": "recovery_held",
+        "next_action": "reauthorize",
+        "known_effect_count": 0,
+        "reason_codes": ["AUTHORITY_EXPIRED", "TARGET_CONFIRMED_ABSENT"]
+      }
+    }
+  ],
+  "boundaries": {
+    "public_synthetic_only": true,
+    "fresh_process_recovery": true,
+    "oracle_withheld_from_adapter": true,
+    "no_production_target": true,
+    "crash_exit_is_not_power_loss": true,
+    "fsync_is_not_storage_proof": true,
+    "not_exactly_once_claim": true
+  }
+}

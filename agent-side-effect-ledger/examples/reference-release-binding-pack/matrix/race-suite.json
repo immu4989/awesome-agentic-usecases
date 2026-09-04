@@ -1,0 +1,615 @@
+{
+  "suite_version": "aau-agent-side-effect-race-suite/0.1",
+  "suite_id": "asel-concurrent-workers-2026-09",
+  "title": "Public-synthetic concurrent side-effect attempts",
+  "profile": {
+    "tool_id": "notification-service",
+    "operation_id": "send_synthetic_notice"
+  },
+  "cases": [
+    {
+      "case_id": "RACE-TWO-IDENTICAL",
+      "title": "Two authorized workers submit the same exact intent and key",
+      "attempts": [
+        {
+          "attempt_id": "RACE-TWO-IDENTICAL-W01",
+          "idempotency_key": "shared-two",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-TWO-IDENTICAL-W02",
+          "idempotency_key": "shared-two",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        }
+      ],
+      "expected": {
+        "effect_count": 1,
+        "key_count": 1,
+        "committed_count": 1,
+        "replayed_count": 1,
+        "conflict_count": 0,
+        "blocked_count": 0
+      }
+    },
+    {
+      "case_id": "RACE-FOUR-IDENTICAL",
+      "title": "Four authorized workers submit the same exact intent and key",
+      "attempts": [
+        {
+          "attempt_id": "RACE-FOUR-IDENTICAL-W01",
+          "idempotency_key": "shared-four",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-FOUR-IDENTICAL-W02",
+          "idempotency_key": "shared-four",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-FOUR-IDENTICAL-W03",
+          "idempotency_key": "shared-four",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-FOUR-IDENTICAL-W04",
+          "idempotency_key": "shared-four",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        }
+      ],
+      "expected": {
+        "effect_count": 1,
+        "key_count": 1,
+        "committed_count": 1,
+        "replayed_count": 3,
+        "conflict_count": 0,
+        "blocked_count": 0
+      }
+    },
+    {
+      "case_id": "RACE-EIGHT-IDENTICAL",
+      "title": "Eight authorized workers submit the same exact intent and key",
+      "attempts": [
+        {
+          "attempt_id": "RACE-EIGHT-IDENTICAL-W01",
+          "idempotency_key": "shared-eight",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-EIGHT-IDENTICAL-W02",
+          "idempotency_key": "shared-eight",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-EIGHT-IDENTICAL-W03",
+          "idempotency_key": "shared-eight",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-EIGHT-IDENTICAL-W04",
+          "idempotency_key": "shared-eight",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-EIGHT-IDENTICAL-W05",
+          "idempotency_key": "shared-eight",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-EIGHT-IDENTICAL-W06",
+          "idempotency_key": "shared-eight",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-EIGHT-IDENTICAL-W07",
+          "idempotency_key": "shared-eight",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-EIGHT-IDENTICAL-W08",
+          "idempotency_key": "shared-eight",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        }
+      ],
+      "expected": {
+        "effect_count": 1,
+        "key_count": 1,
+        "committed_count": 1,
+        "replayed_count": 7,
+        "conflict_count": 0,
+        "blocked_count": 0
+      }
+    },
+    {
+      "case_id": "RACE-CHANGED-INTENT",
+      "title": "Two intent variants collide on one idempotency key",
+      "attempts": [
+        {
+          "attempt_id": "RACE-CHANGED-INTENT-W01",
+          "idempotency_key": "changed-intent",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-CHANGED-INTENT-W02",
+          "idempotency_key": "changed-intent",
+          "intent_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-CHANGED-INTENT-W03",
+          "idempotency_key": "changed-intent",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-CHANGED-INTENT-W04",
+          "idempotency_key": "changed-intent",
+          "intent_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "authority_valid": true,
+          "approval_valid": true
+        }
+      ],
+      "expected": {
+        "effect_count": 1,
+        "key_count": 1,
+        "committed_count": 1,
+        "replayed_count": 1,
+        "conflict_count": 2,
+        "blocked_count": 0
+      }
+    },
+    {
+      "case_id": "RACE-UNIQUE-KEYS",
+      "title": "Four distinct authorized keys preserve legitimate parallel effects",
+      "attempts": [
+        {
+          "attempt_id": "RACE-UNIQUE-KEYS-W01",
+          "idempotency_key": "unique-1",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-UNIQUE-KEYS-W02",
+          "idempotency_key": "unique-2",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-UNIQUE-KEYS-W03",
+          "idempotency_key": "unique-3",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-UNIQUE-KEYS-W04",
+          "idempotency_key": "unique-4",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        }
+      ],
+      "expected": {
+        "effect_count": 4,
+        "key_count": 4,
+        "committed_count": 4,
+        "replayed_count": 0,
+        "conflict_count": 0,
+        "blocked_count": 0
+      }
+    },
+    {
+      "case_id": "RACE-APPROVAL-MISSING",
+      "title": "Concurrent attempts share a key but no valid approval",
+      "attempts": [
+        {
+          "attempt_id": "RACE-APPROVAL-MISSING-W01",
+          "idempotency_key": "approval-missing",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": false
+        },
+        {
+          "attempt_id": "RACE-APPROVAL-MISSING-W02",
+          "idempotency_key": "approval-missing",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": false
+        },
+        {
+          "attempt_id": "RACE-APPROVAL-MISSING-W03",
+          "idempotency_key": "approval-missing",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": false
+        },
+        {
+          "attempt_id": "RACE-APPROVAL-MISSING-W04",
+          "idempotency_key": "approval-missing",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": false
+        }
+      ],
+      "expected": {
+        "effect_count": 0,
+        "key_count": 0,
+        "committed_count": 0,
+        "replayed_count": 0,
+        "conflict_count": 0,
+        "blocked_count": 4
+      }
+    },
+    {
+      "case_id": "RACE-AUTHORITY-INVALID",
+      "title": "Concurrent attempts share a key but authority is invalid",
+      "attempts": [
+        {
+          "attempt_id": "RACE-AUTHORITY-INVALID-W01",
+          "idempotency_key": "authority-invalid",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": false,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-AUTHORITY-INVALID-W02",
+          "idempotency_key": "authority-invalid",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": false,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-AUTHORITY-INVALID-W03",
+          "idempotency_key": "authority-invalid",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": false,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-AUTHORITY-INVALID-W04",
+          "idempotency_key": "authority-invalid",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": false,
+          "approval_valid": true
+        }
+      ],
+      "expected": {
+        "effect_count": 0,
+        "key_count": 0,
+        "committed_count": 0,
+        "replayed_count": 0,
+        "conflict_count": 0,
+        "blocked_count": 4
+      }
+    },
+    {
+      "case_id": "RACE-MIXED-AUTHORITY",
+      "title": "One authorized attempt races three invalid-authority attempts",
+      "attempts": [
+        {
+          "attempt_id": "RACE-MIXED-AUTHORITY-W01",
+          "idempotency_key": "mixed-authority",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-MIXED-AUTHORITY-W02",
+          "idempotency_key": "mixed-authority",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": false,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-MIXED-AUTHORITY-W03",
+          "idempotency_key": "mixed-authority",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": false,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-MIXED-AUTHORITY-W04",
+          "idempotency_key": "mixed-authority",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": false,
+          "approval_valid": true
+        }
+      ],
+      "expected": {
+        "effect_count": 1,
+        "key_count": 1,
+        "committed_count": 1,
+        "replayed_count": 0,
+        "conflict_count": 0,
+        "blocked_count": 3
+      }
+    },
+    {
+      "case_id": "RACE-DISTINCT-KEYS-SAME-INTENT",
+      "title": "The same intent under two distinct keys remains two effects",
+      "attempts": [
+        {
+          "attempt_id": "RACE-DISTINCT-KEYS-SAME-INTENT-W01",
+          "idempotency_key": "intent-copy-a",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-DISTINCT-KEYS-SAME-INTENT-W02",
+          "idempotency_key": "intent-copy-b",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        }
+      ],
+      "expected": {
+        "effect_count": 2,
+        "key_count": 2,
+        "committed_count": 2,
+        "replayed_count": 0,
+        "conflict_count": 0,
+        "blocked_count": 0
+      }
+    },
+    {
+      "case_id": "RACE-SIXTEEN-IDENTICAL",
+      "title": "Sixteen fresh workers contend on one exact key and intent",
+      "attempts": [
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W01",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W02",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W03",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W04",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W05",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W06",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W07",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W08",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W09",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W10",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W11",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W12",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W13",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W14",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W15",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-SIXTEEN-IDENTICAL-W16",
+          "idempotency_key": "shared-sixteen",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        }
+      ],
+      "expected": {
+        "effect_count": 1,
+        "key_count": 1,
+        "committed_count": 1,
+        "replayed_count": 15,
+        "conflict_count": 0,
+        "blocked_count": 0
+      }
+    },
+    {
+      "case_id": "RACE-THREE-INTENTS-ONE-KEY",
+      "title": "Three different intents collide on one idempotency key",
+      "attempts": [
+        {
+          "attempt_id": "RACE-THREE-INTENTS-ONE-KEY-W01",
+          "idempotency_key": "three-intents",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-THREE-INTENTS-ONE-KEY-W02",
+          "idempotency_key": "three-intents",
+          "intent_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-THREE-INTENTS-ONE-KEY-W03",
+          "idempotency_key": "three-intents",
+          "intent_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "authority_valid": true,
+          "approval_valid": true
+        }
+      ],
+      "expected": {
+        "effect_count": 1,
+        "key_count": 1,
+        "committed_count": 1,
+        "replayed_count": 0,
+        "conflict_count": 2,
+        "blocked_count": 0
+      }
+    },
+    {
+      "case_id": "RACE-TWO-GROUPS",
+      "title": "Two independent keys each receive three concurrent attempts",
+      "attempts": [
+        {
+          "attempt_id": "RACE-TWO-GROUPS-W01",
+          "idempotency_key": "group-a",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-TWO-GROUPS-W02",
+          "idempotency_key": "group-a",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-TWO-GROUPS-W03",
+          "idempotency_key": "group-a",
+          "intent_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-TWO-GROUPS-W04",
+          "idempotency_key": "group-b",
+          "intent_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-TWO-GROUPS-W05",
+          "idempotency_key": "group-b",
+          "intent_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "authority_valid": true,
+          "approval_valid": true
+        },
+        {
+          "attempt_id": "RACE-TWO-GROUPS-W06",
+          "idempotency_key": "group-b",
+          "intent_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "authority_valid": true,
+          "approval_valid": true
+        }
+      ],
+      "expected": {
+        "effect_count": 2,
+        "key_count": 2,
+        "committed_count": 2,
+        "replayed_count": 4,
+        "conflict_count": 0,
+        "blocked_count": 0
+      }
+    }
+  ],
+  "boundaries": {
+    "public_synthetic_only": true,
+    "oracle_withheld_from_adapter": true,
+    "fresh_process_per_attempt": true,
+    "post_race_state_inspection": true,
+    "no_production_target": true,
+    "concurrent_launch_is_not_scheduler_proof": true,
+    "adapter_scoped_not_exactly_once": true
+  }
+}

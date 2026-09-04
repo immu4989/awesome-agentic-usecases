@@ -36,6 +36,11 @@
   `notification-service / send_synthetic_notice` semantic boundary and upgraded Matrix 0.2 to
   reject mismatched tool-operation evidence. Receipts now distinguish the one pair exercised by
   all three gates from additional tools covered only by semantic conformance.
+- **Side-Effect Release Binding** — added a fail-closed bridge from AABOM release inventory to the
+  exact Matrix 0.2 boundary and semantic, crash, and race adapter bytes. Its self-contained 17-file
+  reference pack verifies 1/1 consequential operations, emits portable holds for missing coverage
+  or approval, detects byte substitution, and explicitly stops short of workload identity,
+  production provenance, deployment approval, compliance, certification, or an ATO.
 
 ## 1.6.0 - 2026-08-30
 

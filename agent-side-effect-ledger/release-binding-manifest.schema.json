@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-release-binding-pack-0.1.json",
+  "title": "AAU Agent Side-Effect Release Binding Pack Manifest 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["pack_version", "files", "manifest_sha256"],
+  "properties": {
+    "pack_version": {"const": "aau-agent-side-effect-release-binding-pack/0.1"},
+    "files": {
+      "type": "array",
+      "minItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "size_bytes", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1, "maxLength": 500},
+          "size_bytes": {"type": "integer", "minimum": 1, "maximum": 2000000},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
