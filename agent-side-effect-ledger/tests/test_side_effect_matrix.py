@@ -1,4 +1,5 @@
 import argparse
+import json
 import shlex
 import shutil
 import sys
@@ -53,6 +54,14 @@ def test_reference_matrix_is_exact_self_contained_and_reproducible(tmp_path):
         "availability_loss_count": 0,
         "unresolved_count": 3,
     }
+    assert matrix["coverage_binding"] == {
+        "tool_id": "notification-service",
+        "operation": "send_synthetic_notice",
+        "semantic_boundary_present": True,
+        "crash_race_same_boundary": True,
+        "semantic_tool_operation_count": 2,
+        "fully_stressed_tool_operation_count": 1,
+    }
     assert verify_pack(workspace / "pack") == matrix
     assert {path.name for path in (workspace / "pack").iterdir()} == PACK_FILES
     for name in PACK_FILES:
@@ -70,6 +79,24 @@ def test_matrix_rejects_output_escape(tmp_path):
     _workspace_path, args = _workspace(tmp_path)
     args.out = Path("../escaped")
     with pytest.raises(MatrixError, match="inside the workspace"):
+        run_pack(args)
+
+
+def test_matrix_rejects_mismatched_tool_operation_coverage(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    race = json.loads((workspace / "race.json").read_text())
+    race["profile"]["operation_id"] = "different_operation"
+    (workspace / "race.json").write_text(json.dumps(race))
+    with pytest.raises(MatrixError, match="same tool_id and operation"):
+        run_pack(args)
+
+
+def test_matrix_rejects_boundary_absent_from_semantic_suite(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    semantic = json.loads((workspace / "semantic.json").read_text())
+    semantic["profile"]["tools"] = semantic["profile"]["tools"][:1]
+    (workspace / "semantic.json").write_text(json.dumps(semantic))
+    with pytest.raises(MatrixError, match="must exist in the semantic suite"):
         run_pack(args)
 
 

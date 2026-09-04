@@ -1,7 +1,8 @@
 # AAU side-effect safety matrix action
 
-This dependency-free composite Action runs three answer-blind, staging-only contracts against the
-same agent action boundary:
+This dependency-free composite Action runs three answer-blind, staging-only contracts. It refuses
+to combine their evidence unless crash and race suites name the same exact `tool_id + operation`
+and that pair exists in the semantic suite:
 
 1. exact intent, authority, approval, idempotency, reconciliation, and compensation semantics;
 2. recovery in a fresh process after six crash boundaries; and
@@ -57,10 +58,12 @@ GitHub-hosted or appropriately isolated runners, and no production target access
 through quoted environment variables; event titles, branch names, commit messages, and other
 untrusted GitHub context are not interpolated into the script.
 
-The runner groups nondeterministic race winners, keeps each component's metrics separate, and does
-not treat intentionally unresolved crash states as failures. Passing is bounded evidence for the
-exact suites and adapter commands—not atomicity, linearizability, exactly-once execution, safety,
-compliance, certification, deployment approval, government endorsement, or an ATO.
+The runner groups nondeterministic race winners, keeps each component's metrics separate, records
+which one semantic tool-operation pair received all three gates, and does not treat intentionally
+unresolved crash states as failures. Other tools in a semantic suite do not inherit crash or race
+coverage. Passing is bounded evidence for the exact suites and adapter commands—not atomicity,
+linearizability, exactly-once execution, safety, compliance, certification, deployment approval,
+government endorsement, or an ATO.
 
 See the [full Side-Effect Ledger guide](../../../agent-side-effect-ledger/README.md) and its
 [threat model](../../../agent-side-effect-ledger/THREAT_MODEL.md).

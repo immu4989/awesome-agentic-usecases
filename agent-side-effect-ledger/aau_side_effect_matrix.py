@@ -14,7 +14,7 @@ import aau_race_lab
 import aau_side_effect
 
 
-MATRIX_VERSION = "aau-agent-side-effect-safety-matrix/0.1"
+MATRIX_VERSION = "aau-agent-side-effect-safety-matrix/0.2"
 MANIFEST_VERSION = "aau-agent-side-effect-safety-manifest/0.1"
 MAX_BYTES = 2_000_000
 SUITES = {
@@ -69,7 +69,38 @@ def _matrix(
     semantic_receipt: dict[str, Any],
     crash_receipt: dict[str, Any],
     race_receipt: dict[str, Any],
+    semantic_suite: dict[str, Any],
+    crash_suite: dict[str, Any],
+    race_suite: dict[str, Any],
 ) -> dict[str, Any]:
+    crash_boundary = (
+        crash_suite["profile"]["tool_id"],
+        crash_suite["profile"]["operation_id"],
+    )
+    race_boundary = (
+        race_suite["profile"]["tool_id"],
+        race_suite["profile"]["operation_id"],
+    )
+    semantic_boundaries = {
+        (tool["tool_id"], tool["operation"])
+        for tool in semantic_suite["profile"]["tools"]
+    }
+    if crash_boundary != race_boundary:
+        raise MatrixError(
+            "crash and race suites must bind the same tool_id and operation"
+        )
+    if crash_boundary not in semantic_boundaries:
+        raise MatrixError(
+            "crash/race tool_id and operation must exist in the semantic suite"
+        )
+    coverage_binding = {
+        "tool_id": crash_boundary[0],
+        "operation": crash_boundary[1],
+        "semantic_boundary_present": True,
+        "crash_race_same_boundary": True,
+        "semantic_tool_operation_count": len(semantic_boundaries),
+        "fully_stressed_tool_operation_count": 1,
+    }
     semantic = semantic_receipt["summary"]
     crash = crash_receipt["summary"]
     race = race_receipt["summary"]
@@ -135,12 +166,15 @@ def _matrix(
         "component_count": len(components),
         "components": components,
         "aggregate": aggregate,
+        "coverage_binding": coverage_binding,
         "claim_boundary": {
             "all_adapter_requests_withhold_expected_answers": True,
             "component_metrics_remain_separate": True,
             "unresolved_can_be_correct_safe_behavior": True,
             "commands_are_trusted_local_code": True,
             "public_synthetic_staging_only": True,
+            "crash_and_race_bind_one_semantic_tool_operation": True,
+            "matrix_does_not_imply_every_semantic_tool_has_crash_race_coverage": True,
             "passing_not_atomicity_linearizability_exactly_once_or_deployment_authority": True,
         },
     }
@@ -175,6 +209,11 @@ def _summary(matrix: dict[str, Any]) -> str:
         )
     lines.extend(
         [
+            "",
+            f"Crash and concurrency evidence bind **`{matrix['coverage_binding']['tool_id']}` / "
+            f"`{matrix['coverage_binding']['operation']}`**. The semantic suite covers "
+            f"{matrix['coverage_binding']['semantic_tool_operation_count']} tool-operation pairs; "
+            "only the named pair has all three gates.",
             "",
             "Expected answers were not sent to adapters. Every command is trusted local code and "
             "must be restricted to public-synthetic staging state.",
@@ -228,7 +267,14 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
     aau_side_effect.verify_conformance_receipt(semantic_receipt, semantic_suite)
     aau_crash_lab.verify_receipt(crash_receipt, crash_suite)
     aau_race_lab.verify_receipt(race_receipt, race_suite)
-    matrix = _matrix(semantic_receipt, crash_receipt, race_receipt)
+    matrix = _matrix(
+        semantic_receipt,
+        crash_receipt,
+        race_receipt,
+        semantic_suite,
+        crash_suite,
+        race_suite,
+    )
     output.mkdir(parents=True)
     for source, name in (
         (semantic_path, SUITES["semantics"]),
@@ -267,7 +313,14 @@ def verify_pack(output: Path) -> dict[str, Any]:
     aau_side_effect.verify_conformance_receipt(semantic_receipt, semantic_suite)
     aau_crash_lab.verify_receipt(crash_receipt, crash_suite)
     aau_race_lab.verify_receipt(race_receipt, race_suite)
-    matrix = _matrix(semantic_receipt, crash_receipt, race_receipt)
+    matrix = _matrix(
+        semantic_receipt,
+        crash_receipt,
+        race_receipt,
+        semantic_suite,
+        crash_suite,
+        race_suite,
+    )
     if _load(output / "matrix-receipt.json") != matrix:
         raise MatrixError("matrix receipt does not recompute")
     if (output / "SUMMARY.md").read_text() != _summary(matrix):

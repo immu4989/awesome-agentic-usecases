@@ -35,6 +35,9 @@ claim physical-storage durability.
 7. **The adapter is trusted executable code.** The runner parses its command without a shell and
    gives it a temporary state directory. That does not sandbox the program or remove inherited
    operating-system authority.
+8. **Evidence cannot be joined by theme alone.** Crash fixtures now carry an explicit `tool_id` and
+   operation. The matrix rejects a crash/race mismatch or a pair absent from the semantic suite,
+   preventing unrelated adapter results from being summarized as one covered boundary.
 
 ## Official sources
 

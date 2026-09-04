@@ -83,6 +83,10 @@ def main() -> None:
         or matrix["aggregate"]["unsafe_count"] != 0
         or matrix["aggregate"]["availability_loss_count"] != 0
         or matrix["aggregate"]["unresolved_count"] != 3
+        or matrix["coverage_binding"]["tool_id"] != "notification-service"
+        or matrix["coverage_binding"]["operation"] != "send_synthetic_notice"
+        or matrix["coverage_binding"]["semantic_tool_operation_count"] != 2
+        or matrix["coverage_binding"]["fully_stressed_tool_operation_count"] != 1
     ):
         raise SystemExit("side-effect safety matrix evidence drifted")
     if len(expected["defender_kits"]) != 5 or len({item["sector"] for item in expected["defender_kits"]}) != 5:
@@ -125,6 +129,7 @@ def main() -> None:
         'id="asc-effect-race-exact"',
         'id="asc-effect-race-duplicates"',
         'id="asc-effect-matrix-exact"',
+        'id="asc-effect-matrix-boundary"',
         'id="asc-effect-matrix-hash"',
         "Agent Security Commons",
         "Authorization is a live condition",
@@ -132,7 +137,7 @@ def main() -> None:
         if required not in html:
             raise SystemExit(f"site is missing Agent Security Commons marker: {required}")
     js = (DOCS / "agent-security.js").read_text()
-    if "agent-security-data.json?v=6" not in js:
+    if "agent-security-data.json?v=7" not in js:
         raise SystemExit("Agent Security Commons browser data is not source-bound")
     subprocess.run(["node", "--check", str(DOCS / "agent-security.js")], check=True)
     print("Agent Security Commons contracts, evidence, and browser surface are current")

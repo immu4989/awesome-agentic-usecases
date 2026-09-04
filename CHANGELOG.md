@@ -32,6 +32,10 @@
   reference matrix records 72/72 exact checked outcomes, preserves three valid uncertainties, and
   separates structural errors from verifiable behavioral failures so diagnostics survive a failed
   pull-request gate.
+- **Exact matrix coverage identity** — corrected crash and race fixtures to name the real
+  `notification-service / send_synthetic_notice` semantic boundary and upgraded Matrix 0.2 to
+  reject mismatched tool-operation evidence. Receipts now distinguish the one pair exercised by
+  all three gates from additional tools covered only by semantic conformance.
 
 ## 1.6.0 - 2026-08-30
 

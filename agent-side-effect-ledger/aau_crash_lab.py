@@ -89,9 +89,10 @@ def validate_suite(suite: dict[str, Any]) -> None:
     _text(suite["title"], "title", 240)
     profile = _exact(
         suite["profile"],
-        {"operation_id", "idempotency_key", "intent_sha256"},
+        {"tool_id", "operation_id", "idempotency_key", "intent_sha256"},
         "crash profile",
     )
+    _text(profile["tool_id"], "profile.tool_id", 120)
     _text(profile["operation_id"], "profile.operation_id", 160)
     _text(profile["idempotency_key"], "profile.idempotency_key", 200)
     if not isinstance(profile["intent_sha256"], str) or len(profile["intent_sha256"]) != 64:

@@ -33,6 +33,9 @@ portable concurrency challenge, not a formal linearizability proof.
    network partitions, database failover, and the real target's atomic boundary.
 7. **The command is trusted code.** Shell-free parsing prevents shell expansion by the runner but
    does not sandbox the adapter or remove inherited credentials and network access.
+8. **A shared test label is not a shared action boundary.** The matrix now requires the race
+   `tool_id + operation` to equal the crash pair and to appear verbatim in the semantic profile.
+   It records that binding and the number of semantic pairs not fully stressed by all three gates.
 
 ## Official sources
 

@@ -150,8 +150,10 @@ nondeterministic winner identity so valid reruns remain byte-identical.
 Teams can now adopt all three layers through the dependency-free
 **[Side-Effect Safety Matrix Action](.github/actions/aau-side-effect-safety/)**. Its self-contained
 reference pack combines 72 checked outcomes across 36 cases, preserves valid failure diagnostics,
-and can be reverified without rerunning an adapter. It does not upload artifacts or grant release
-authority.
+and can be reverified without rerunning an adapter. Matrix 0.2 fails closed unless crash and race
+evidence names the same tool-operation pair and that pair exists in semantic conformance; the
+receipt also exposes semantic tools that did not receive all three gates. It does not upload
+artifacts or grant release authority.
 
 Four **[oracle-free reproduction challenges](reproduction-challenges/)** now let outside forks test
 portable agent authority, distribution restoration, pharmaceutical batch disposition, and the

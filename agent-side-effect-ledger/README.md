@@ -292,6 +292,13 @@ uncertainties correctly preserved. It includes exact copies of all three suites,
 the [matrix receipt](side-effect-safety-matrix.schema.json), a readable summary, and a byte manifest.
 Verification needs no adapter command, model, account, network, or package install.
 
+Matrix 0.2 also enforces a coverage identity before it runs: crash and race suites must name the
+same `tool_id + operation`, and that pair must exist in the semantic suite. The reference fully
+stresses `notification-service / send_synthetic_notice`. Its semantic suite additionally exercises
+`benefits-disbursement / issue_synthetic_payment`; the matrix does **not** imply crash or race
+coverage for that second pair. This distinction is encoded in the receipt rather than left to
+README interpretation.
+
 Use the reusable [local composite Action](../.github/actions/aau-side-effect-safety/) to make the
 matrix a pull-request gate. A valid behavioral mismatch leaves a verified diagnostic pack and then
 returns exit code 1; malformed input, adapter failure, path escape, overwrite, unexpected files, or

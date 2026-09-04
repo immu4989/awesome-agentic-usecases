@@ -146,7 +146,10 @@ def build() -> dict:
         "suite_version": "aau-agent-side-effect-race-suite/0.1",
         "suite_id": "asel-concurrent-workers-2026-09",
         "title": "Public-synthetic concurrent side-effect attempts",
-        "profile": {"operation_id": "synthetic-benefit-notice-create"},
+        "profile": {
+            "tool_id": "notification-service",
+            "operation_id": "send_synthetic_notice",
+        },
         "cases": cases,
         "boundaries": {
             "public_synthetic_only": True,

@@ -92,8 +92,9 @@ effects and deny-all availability loss separately; it is not a linearizability o
 For continuous integration, use the
 [Side-Effect Safety Matrix Action](.github/actions/aau-side-effect-safety/). It runs all three gates,
 verifies the nine-file pack, appends a concise job summary, and fails only after valid behavioral
-diagnostics are preserved. Keep adapter commands staging-only and pin the Action to a reviewed full
-commit SHA.
+diagnostics are preserved. Matrix 0.2 also rejects crash/race tool-operation mismatches and reports
+which semantic pair received all three gates, so untested tools do not inherit coverage by
+association. Keep adapter commands staging-only and pin the Action to a reviewed full commit SHA.
 
 If you are outside the maintainer workflow and want to test a public claim, choose one of the
 four [Fork-to-Reproduce challenges](reproduction-challenges/). You receive six or eight tasks and an

@@ -74,7 +74,8 @@ def validate_suite(suite: dict[str, Any]) -> None:
         raise SideEffectError(f"race suite_version must be {SUITE_VERSION}")
     _text(suite["suite_id"], "suite_id", 120)
     _text(suite["title"], "title")
-    profile = _exact(suite["profile"], {"operation_id"}, "race profile")
+    profile = _exact(suite["profile"], {"tool_id", "operation_id"}, "race profile")
+    _text(profile["tool_id"], "profile.tool_id", 120)
     _text(profile["operation_id"], "profile.operation_id", 160)
     boundaries = _exact(suite["boundaries"], BOUNDARY_KEYS, "race boundaries")
     if any(boundaries[key] is not True for key in BOUNDARY_KEYS):

@@ -143,6 +143,7 @@ def build() -> dict:
                 "matrix_sha256": side_effect_matrix["matrix_sha256"],
                 "component_count": side_effect_matrix["component_count"],
                 "aggregate": side_effect_matrix["aggregate"],
+                "coverage_binding": side_effect_matrix["coverage_binding"],
             },
             "failure_shapes": [
                 "unknown_outcome_requires_reconciliation",

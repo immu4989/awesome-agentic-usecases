@@ -48,6 +48,7 @@
     byId("asc-effect-matrix-components").textContent = matrix.component_count;
     byId("asc-effect-matrix-unsafe").textContent = matrix.aggregate.unsafe_count;
     byId("asc-effect-matrix-hash").textContent = matrix.matrix_sha256.slice(0, 12);
+    byId("asc-effect-matrix-boundary").textContent = `${matrix.coverage_binding.tool_id} / ${matrix.coverage_binding.operation}`;
   }
 
   function renderKits(data) {
@@ -113,7 +114,7 @@
     byId("asc-pilot-gaps").textContent = `${data.pilot.visible_gaps.length} evidence gaps remain visible: ${data.pilot.visible_gaps.join(", ").replaceAll("_", " ")}.`;
   }
 
-  fetch("agent-security-data.json?v=6", { cache: "no-store" })
+  fetch("agent-security-data.json?v=7", { cache: "no-store" })
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();
