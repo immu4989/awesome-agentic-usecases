@@ -8,7 +8,7 @@ and that pair exists in the semantic suite:
 2. recovery in a fresh process after six crash boundaries; and
 3. 2-to-16-process races followed by a separate durable-state inspection.
 
-It writes and re-verifies a self-contained nine-file evidence pack before returning the gate result.
+It writes and re-verifies a self-contained 12-file evidence pack before returning the gate result.
 A behavioral mismatch returns exit code 1 after preserving a valid diagnostic pack. Structural,
 adapter, or tamper failures return exit code 2. The Action never uploads evidence; the caller owns
 retention.
@@ -36,10 +36,13 @@ jobs:
         with:
           semantic_suite: safety/semantic-suite.json
           semantic_adapter_command: python safety/semantic_adapter.py
+          semantic_adapter_artifact: safety/semantic_adapter.py
           crash_suite: safety/crash-suite.json
           crash_adapter_command: python safety/crash_adapter.py
+          crash_adapter_artifact: safety/crash_adapter.py
           race_suite: safety/race-suite.json
           race_adapter_command: python safety/race_adapter.py
+          race_adapter_artifact: safety/race_adapter.py
           output: safety-result/matrix
 
       - name: Preserve verified diagnostics
@@ -58,8 +61,14 @@ GitHub-hosted or appropriately isolated runners, and no production target access
 through quoted environment variables; event titles, branch names, commit messages, and other
 untrusted GitHub context are not interpolated into the script.
 
-The runner groups nondeterministic race winners, keeps each component's metrics separate, records
-which one semantic tool-operation pair received all three gates, and does not treat intentionally
+The runner requires each command to place a declared workspace-relative entrypoint artifact at
+`argv[0]` or a supported `argv[1]` interpreter target, normalizes that token to the declared
+absolute path, hashes it before and after execution, and carries those three exact files in the
+pack without recording the command text. It does not capture the interpreter or dependency closure.
+Python, Node.js, Bash, POSIX shell, Zsh, Ruby, Perl, and PHP launchers are accepted at `argv[0]`;
+interpreter flags before the artifact are intentionally unsupported. The runner groups
+nondeterministic race winners, keeps each component's metrics separate, records which one semantic
+tool-operation pair received all three gates, and does not treat intentionally
 unresolved crash states as failures. Other tools in a semantic suite do not inherit crash or race
 coverage. Passing is bounded evidence for the exact suites and adapter commands—not atomicity,
 linearizability, exactly-once execution, safety, compliance, certification, deployment approval,

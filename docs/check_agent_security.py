@@ -87,6 +87,14 @@ def main() -> None:
         or matrix["coverage_binding"]["operation"] != "send_synthetic_notice"
         or matrix["coverage_binding"]["semantic_tool_operation_count"] != 2
         or matrix["coverage_binding"]["fully_stressed_tool_operation_count"] != 1
+        or [item["component_id"] for item in matrix["adapter_artifacts"]]
+        != ["semantics", "crash_recovery", "concurrency"]
+        or any(item["command_argv_index"] != 1 for item in matrix["adapter_artifacts"])
+        or any(len(item["sha256"]) != 64 for item in matrix["adapter_artifacts"])
+        or len(matrix["adapter_artifacts"]) != 3
+        or {item["component_id"] for item in matrix["adapter_artifacts"]}
+        != {"semantics", "crash_recovery", "concurrency"}
+        or any(len(item["sha256"]) != 64 for item in matrix["adapter_artifacts"])
     ):
         raise SystemExit("side-effect safety matrix evidence drifted")
     binding = expected["side_effects"]["release_binding"]
@@ -140,7 +148,9 @@ def main() -> None:
         'id="asc-effect-race-exact"',
         'id="asc-effect-race-duplicates"',
         'id="asc-effect-matrix-exact"',
+        'id="asc-effect-matrix-artifacts"',
         'id="asc-effect-matrix-boundary"',
+        'id="asc-effect-matrix-artifacts"',
         'id="asc-effect-binding-count"',
         'id="asc-effect-binding-release"',
         'id="asc-effect-binding-hash"',
@@ -151,9 +161,9 @@ def main() -> None:
         if required not in html:
             raise SystemExit(f"site is missing Agent Security Commons marker: {required}")
     js = (DOCS / "agent-security.js").read_text()
-    if "agent-security-data.json?v=8" not in js:
+    if "agent-security-data.json?v=9" not in js:
         raise SystemExit("Agent Security Commons browser data is not source-bound")
-    if 'agent-security.css?v=7' not in html or 'agent-security.js?v=7' not in html:
+    if 'agent-security.css?v=7' not in html or 'agent-security.js?v=8' not in html:
         raise SystemExit("Agent Security Commons browser assets are not cache-busted")
     subprocess.run(["node", "--check", str(DOCS / "agent-security.js")], check=True)
     print("Agent Security Commons contracts, evidence, and browser surface are current")

@@ -11,7 +11,7 @@ operation, or adapter. It binds copied bytes; it does not establish what is actu
 | SLSA 1.2 defines provenance as verifiable information for tracing an artifact through the supply chain | The pack hashes the AABOM, binding plan, complete matrix manifest, matrix receipt, and three exact adapter snapshots | The pack is not SLSA provenance and has no builder identity or signature |
 | NIST SP 800-53 Rev. 5 AC-6 applies least privilege to users and processes acting for users | Every AABOM write or irreversible operation must have a declared binding and matching authority | A declared authority is not a verified live credential or authorization decision |
 | NIST SP 800-53 Rev. 5 CM controls treat configuration and change evidence as an organizational responsibility | Agent ID, release ID, tool ID, operation, authority, evidence digest, and adapter bytes are joined in one recomputable receipt | A byte match is not production equivalence, change approval, compliance, or an ATO |
-| The matrix separately tests semantics, crash recovery, and concurrency | A consequential operation is fully bound only when it is the exact pair covered by all three matrix gates | Other semantic-suite tools do not inherit crash or race coverage |
+| The matrix separately tests semantics, crash recovery, and concurrency and now carries the declared entrypoint artifact for each command | A consequential operation is fully bound only when it is the exact pair covered by all three matrix gates and every release path plus digest agrees with those captured artifacts | Other semantic-suite tools do not inherit crash or race coverage; a single entrypoint is not dependency closure |
 
 ## Premise checks
 
@@ -29,6 +29,10 @@ operation, or adapter. It binds copied bytes; it does not establish what is actu
 6. **The matrix remains bounded.** Even a byte-perfect binding to a passing public-synthetic matrix
    is not evidence about real data, target atomicity, workload identity, production equivalence,
    safety, compliance, certification, release approval, or an Authorization to Operate.
+7. **Test-to-release binding is byte equality, not execution identity.** Matrix 0.3 proves its
+   command referenced one declared entrypoint and carries those original bytes. Release Binding 0.2
+   compares both the declared path and digest. It does not prove the packaged file was deployed or
+   capture interpreters, imports, transitive dependencies, configuration, containers, or builders.
 
 ## Official sources
 

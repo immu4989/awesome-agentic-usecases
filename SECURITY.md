@@ -99,17 +99,22 @@ passing is not independent proof of target state, linearizability, cross-host be
 exactly-once execution.
 
 The Side-Effect Safety Matrix confines suite and output paths to the declared workspace, refuses
-symbolic or oversized inputs, refuses output overwrite, accepts only an exact nine-file pack, and
-recomputes every component receipt, aggregate, summary, and manifest. Its composite Action passes
-commands through quoted environment variables and adds no remote Action dependency. The commands
-still execute with the runner's inherited authority; do not expose credentials or production access
-to untrusted pull requests.
+symbolic or oversized inputs, refuses output overwrite, accepts only an exact 12-file pack, and
+recomputes every component receipt, adapter-entrypoint digest, aggregate, summary, and manifest.
+Each command must place its declared artifact at `argv[0]` or a supported `argv[1]` interpreter
+target; its token is normalized to the declared absolute path before execution, and its bytes must
+agree at the before and after observations. This does not prove continuous immutability between
+those observations. Its composite Action passes commands through quoted environment variables and
+adds no remote Action dependency. The commands still execute with the runner's inherited authority;
+do not expose credentials or production access to untrusted pull requests. A captured entrypoint is
+not proof of its interpreter, imports, dependency closure, container, configuration, or runtime.
 
 The Side-Effect Release Binding copies the exact AABOM, matrix, and adapter snapshots into a
 non-overwriting pack and confines every source and output to the declared workspace. Treat the
 source adapter paths as untrusted declarations and review the copied bytes before sharing. The
-manifest detects later substitution but is unsigned, has no builder or workload identity, and does
-not prove those bytes ran in staging or production. Do not include proprietary adapters, secrets,
+manifest detects later substitution, and the binder now holds when release paths or bytes differ
+from the matrix-captured entrypoints. It remains unsigned, has no builder or workload identity, and
+does not prove those bytes ran in staging or production. Do not include proprietary adapters, secrets,
 credentials, personal data, controlled information, or production configuration in a public pack.
 
 ## Portable Agent Assurance boundary

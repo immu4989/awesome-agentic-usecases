@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 import shutil
 import sys
 from pathlib import Path
@@ -14,9 +15,21 @@ import aau_race_lab
 import aau_side_effect
 
 
-MATRIX_VERSION = "aau-agent-side-effect-safety-matrix/0.2"
-MANIFEST_VERSION = "aau-agent-side-effect-safety-manifest/0.1"
+MATRIX_VERSION = "aau-agent-side-effect-safety-matrix/0.3"
+MANIFEST_VERSION = "aau-agent-side-effect-safety-manifest/0.2"
 MAX_BYTES = 2_000_000
+SUPPORTED_INTERPRETERS = {
+    "bash",
+    "node",
+    "nodejs",
+    "perl",
+    "php",
+    "python",
+    "python3",
+    "ruby",
+    "sh",
+    "zsh",
+}
 SUITES = {
     "semantics": "semantic-suite.json",
     "crash_recovery": "crash-suite.json",
@@ -27,7 +40,12 @@ RECEIPTS = {
     "crash_recovery": "crash-receipt.json",
     "concurrency": "race-receipt.json",
 }
-PACK_FILES = set(SUITES.values()) | set(RECEIPTS.values()) | {
+ARTIFACTS = {
+    "semantics": "semantic-adapter.artifact",
+    "crash_recovery": "crash-adapter.artifact",
+    "concurrency": "race-adapter.artifact",
+}
+PACK_FILES = set(SUITES.values()) | set(RECEIPTS.values()) | set(ARTIFACTS.values()) | {
     "matrix-receipt.json",
     "SUMMARY.md",
     "manifest.json",
@@ -65,6 +83,132 @@ def _inside(workspace: Path, value: Path, label: str, *, exists: bool) -> Path:
     return resolved
 
 
+def _artifact_binding(
+    workspace: Path, value: Path, command: str, component_id: str
+) -> tuple[dict[str, Any], Path, bytes, str]:
+    path = _inside(workspace, value, f"{component_id} adapter artifact", exists=True)
+    try:
+        argv = shlex.split(command)
+    except ValueError as exc:
+        raise MatrixError(f"{component_id} adapter command cannot be parsed") from exc
+    if not argv:
+        raise MatrixError(f"{component_id} adapter command is empty")
+    referenced_index = None
+    for index, token in enumerate(argv):
+        candidate = Path(token)
+        candidates = (
+            [candidate]
+            if candidate.is_absolute()
+            else [Path.cwd() / candidate, workspace / candidate]
+        )
+        for possible in candidates:
+            try:
+                if possible.resolve(strict=True) == path:
+                    referenced_index = index
+                    break
+            except (OSError, RuntimeError):
+                continue
+        if referenced_index is not None:
+            break
+    if referenced_index is None:
+        raise MatrixError(
+            f"{component_id} adapter command must reference its declared artifact as an argv token"
+        )
+    if referenced_index not in {0, 1}:
+        raise MatrixError(
+            f"{component_id} adapter artifact must be argv[0] or the argv[1] interpreter target"
+        )
+    launch_mode = "direct_executable"
+    if referenced_index == 1:
+        launcher = Path(argv[0]).name
+        supported = launcher in SUPPORTED_INTERPRETERS or (
+            launcher.startswith("python3.")
+            and launcher.removeprefix("python3.").replace(".", "").isdigit()
+        )
+        if not supported:
+            raise MatrixError(
+                f"{component_id} argv[1] artifact requires a supported script interpreter"
+            )
+        launch_mode = "supported_interpreter_target"
+    payload = path.read_bytes()
+    if not payload or len(payload) > MAX_BYTES:
+        raise MatrixError(
+            f"{component_id} adapter artifact must contain 1 to {MAX_BYTES} bytes"
+        )
+    row = {
+        "component_id": component_id,
+        "source_path": path.relative_to(workspace).as_posix(),
+        "pack_path": ARTIFACTS[component_id],
+        "command_argv_index": referenced_index,
+        "launch_mode": launch_mode,
+        "size_bytes": len(payload),
+        "sha256": aau_side_effect.digest(payload),
+    }
+    argv[referenced_index] = str(path)
+    return row, path, payload, shlex.join(argv)
+
+
+def _packed_artifacts(
+    output: Path, stored_matrix: dict[str, Any]
+) -> list[dict[str, Any]]:
+    rows = stored_matrix.get("adapter_artifacts")
+    if not isinstance(rows, list) or len(rows) != len(ARTIFACTS):
+        raise MatrixError("matrix adapter artifact inventory is invalid")
+    expected_components = list(ARTIFACTS)
+    result = []
+    for index, row in enumerate(rows):
+        if not isinstance(row, dict) or set(row) != {
+            "component_id",
+            "source_path",
+            "pack_path",
+            "command_argv_index",
+            "launch_mode",
+            "size_bytes",
+            "sha256",
+        }:
+            raise MatrixError("matrix adapter artifact fields are invalid")
+        component_id = row["component_id"]
+        if component_id != expected_components[index]:
+            raise MatrixError("matrix adapter artifacts are missing or out of order")
+        source = row["source_path"]
+        if (
+            not isinstance(source, str)
+            or not source
+            or len(source) > 500
+            or Path(source).is_absolute()
+            or ".." in Path(source).parts
+        ):
+            raise MatrixError("matrix adapter source_path is invalid")
+        if row["pack_path"] != ARTIFACTS[component_id]:
+            raise MatrixError("matrix adapter pack_path is invalid")
+        if not isinstance(row["command_argv_index"], int) or row[
+            "command_argv_index"
+        ] not in {0, 1}:
+            raise MatrixError("matrix adapter command_argv_index is invalid")
+        expected_mode = (
+            "direct_executable"
+            if row["command_argv_index"] == 0
+            else "supported_interpreter_target"
+        )
+        if row["launch_mode"] != expected_mode:
+            raise MatrixError("matrix adapter launch_mode is invalid")
+        payload = (output / row["pack_path"]).read_bytes()
+        if not payload:
+            raise MatrixError("matrix adapter artifact cannot be empty")
+        result.append(
+            {
+                "component_id": component_id,
+                "source_path": source,
+                "pack_path": row["pack_path"],
+                "command_argv_index": row["command_argv_index"],
+                "launch_mode": row["launch_mode"],
+                "size_bytes": len(payload),
+                "sha256": aau_side_effect.digest(payload),
+            }
+        )
+    return result
+
+
 def _matrix(
     semantic_receipt: dict[str, Any],
     crash_receipt: dict[str, Any],
@@ -72,6 +216,7 @@ def _matrix(
     semantic_suite: dict[str, Any],
     crash_suite: dict[str, Any],
     race_suite: dict[str, Any],
+    adapter_artifacts: list[dict[str, Any]],
 ) -> dict[str, Any]:
     crash_boundary = (
         crash_suite["profile"]["tool_id"],
@@ -167,6 +312,7 @@ def _matrix(
         "components": components,
         "aggregate": aggregate,
         "coverage_binding": coverage_binding,
+        "adapter_artifacts": adapter_artifacts,
         "claim_boundary": {
             "all_adapter_requests_withhold_expected_answers": True,
             "component_metrics_remain_separate": True,
@@ -175,6 +321,12 @@ def _matrix(
             "public_synthetic_staging_only": True,
             "crash_and_race_bind_one_semantic_tool_operation": True,
             "matrix_does_not_imply_every_semantic_tool_has_crash_race_coverage": True,
+            "command_argument_references_declared_artifact": True,
+            "declared_artifact_is_executable_or_supported_interpreter_target": True,
+            "declared_artifact_path_normalized_before_execution": True,
+            "adapter_artifact_same_before_and_after_matrix_run": True,
+            "command_text_not_recorded": True,
+            "single_adapter_artifact_not_dependency_closure": True,
             "passing_not_atomicity_linearizability_exactly_once_or_deployment_authority": True,
         },
     }
@@ -215,6 +367,12 @@ def _summary(matrix: dict[str, Any]) -> str:
             f"{matrix['coverage_binding']['semantic_tool_operation_count']} tool-operation pairs; "
             "only the named pair has all three gates.",
             "",
+            "Adapter entrypoint artifacts: "
+            + " · ".join(
+                f"`{item['component_id']}:{item['sha256'][:12]}`"
+                for item in matrix["adapter_artifacts"]
+            ),
+            "",
             "Expected answers were not sent to adapters. Every command is trusted local code and "
             "must be restricted to public-synthetic staging state.",
             "",
@@ -254,19 +412,41 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
     ):
         if not isinstance(command, str) or not command.strip():
             raise MatrixError(f"{label} adapter command is empty")
+    artifact_inputs = (
+        ("semantics", args.semantic_adapter_artifact, args.semantic_adapter_command),
+        ("crash_recovery", args.crash_adapter_artifact, args.crash_adapter_command),
+        ("concurrency", args.race_adapter_artifact, args.race_adapter_command),
+    )
+    artifact_rows = []
+    artifact_sources = {}
+    artifact_payloads = {}
+    artifact_commands = {}
+    for component_id, artifact, command in artifact_inputs:
+        row, path, payload, normalized_command = _artifact_binding(
+            workspace, artifact, command, component_id
+        )
+        artifact_rows.append(row)
+        artifact_sources[component_id] = path
+        artifact_payloads[component_id] = payload
+        artifact_commands[component_id] = normalized_command
     semantic_suite = aau_side_effect.load_json(semantic_path)
     crash_suite = aau_side_effect.load_json(crash_path)
     race_suite = aau_side_effect.load_json(race_path)
     semantic_receipt = aau_side_effect.run_conformance(
-        semantic_suite, args.semantic_adapter_command, args.timeout
+        semantic_suite, artifact_commands["semantics"], args.timeout
     )
     crash_receipt = aau_crash_lab.run_suite(
-        crash_suite, args.crash_adapter_command, args.timeout
+        crash_suite, artifact_commands["crash_recovery"], args.timeout
     )
-    race_receipt = aau_race_lab.run_suite(race_suite, args.race_adapter_command, args.timeout)
+    race_receipt = aau_race_lab.run_suite(
+        race_suite, artifact_commands["concurrency"], args.timeout
+    )
     aau_side_effect.verify_conformance_receipt(semantic_receipt, semantic_suite)
     aau_crash_lab.verify_receipt(crash_receipt, crash_suite)
     aau_race_lab.verify_receipt(race_receipt, race_suite)
+    for component_id, path in artifact_sources.items():
+        if path.read_bytes() != artifact_payloads[component_id]:
+            raise MatrixError(f"{component_id} adapter artifact changed during the matrix run")
     matrix = _matrix(
         semantic_receipt,
         crash_receipt,
@@ -274,6 +454,7 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
         semantic_suite,
         crash_suite,
         race_suite,
+        artifact_rows,
     )
     output.mkdir(parents=True)
     for source, name in (
@@ -288,6 +469,8 @@ def run_pack(args: argparse.Namespace) -> dict[str, Any]:
         (race_receipt, RECEIPTS["concurrency"]),
     ):
         _write_json(output / name, receipt)
+    for component_id, name in ARTIFACTS.items():
+        (output / name).write_bytes(artifact_payloads[component_id])
     _write_json(output / "matrix-receipt.json", matrix)
     (output / "SUMMARY.md").write_text(_summary(matrix))
     _write_json(output / "manifest.json", _manifest(output))
@@ -304,6 +487,8 @@ def verify_pack(output: Path) -> dict[str, Any]:
         for path in output.iterdir()
     ):
         raise MatrixError("matrix pack has missing, extra, or symbolic-link files")
+    stored_matrix = _load(output / "matrix-receipt.json")
+    adapter_artifacts = _packed_artifacts(output, stored_matrix)
     semantic_suite = _load(output / SUITES["semantics"])
     crash_suite = _load(output / SUITES["crash_recovery"])
     race_suite = _load(output / SUITES["concurrency"])
@@ -320,8 +505,9 @@ def verify_pack(output: Path) -> dict[str, Any]:
         semantic_suite,
         crash_suite,
         race_suite,
+        adapter_artifacts,
     )
-    if _load(output / "matrix-receipt.json") != matrix:
+    if stored_matrix != matrix:
         raise MatrixError("matrix receipt does not recompute")
     if (output / "SUMMARY.md").read_text() != _summary(matrix):
         raise MatrixError("matrix summary does not recompute")
@@ -335,10 +521,13 @@ def _run_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--semantic-suite", type=Path, required=True)
     parser.add_argument("--semantic-adapter-command", required=True)
+    parser.add_argument("--semantic-adapter-artifact", type=Path, required=True)
     parser.add_argument("--crash-suite", type=Path, required=True)
     parser.add_argument("--crash-adapter-command", required=True)
+    parser.add_argument("--crash-adapter-artifact", type=Path, required=True)
     parser.add_argument("--race-suite", type=Path, required=True)
     parser.add_argument("--race-adapter-command", required=True)
+    parser.add_argument("--race-adapter-artifact", type=Path, required=True)
     parser.add_argument("--timeout", type=float, default=15.0)
 
 

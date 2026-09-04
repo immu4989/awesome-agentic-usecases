@@ -28,7 +28,7 @@
   is deterministic across reruns; deliberately naive and deny-all adapters fail for different
   reasons. The experiment does not claim scheduler overlap, linearizability, or production safety.
 - **Side-Effect Safety Matrix Action** — combined semantic, crash, and race gates into a
-  dependency-free composite Action and a self-contained nine-file evidence pack. The 36-case
+  dependency-free composite Action and a self-contained 12-file evidence pack. The 36-case
   reference matrix records 72/72 exact checked outcomes, preserves three valid uncertainties, and
   separates structural errors from verifiable behavioral failures so diagnostics survive a failed
   pull-request gate.
@@ -37,10 +37,18 @@
   reject mismatched tool-operation evidence. Receipts now distinguish the one pair exercised by
   all three gates from additional tools covered only by semantic conformance.
 - **Side-Effect Release Binding** — added a fail-closed bridge from AABOM release inventory to the
-  exact Matrix 0.2 boundary and semantic, crash, and race adapter bytes. Its self-contained 17-file
+  exact Matrix boundary and semantic, crash, and race adapter bytes. Its self-contained 20-file
   reference pack verifies 1/1 consequential operations, emits portable holds for missing coverage
   or approval, detects byte substitution, and explicitly stops short of workload identity,
   production provenance, deployment approval, compliance, certification, or an ATO.
+- **Executed adapter artifact binding** — upgraded Matrix 0.3 to require each adapter command to
+  place one declared workspace-relative entrypoint at `argv[0]` or a supported `argv[1]` interpreter target,
+  normalize that token to the declared absolute path, hash it before and after execution, and
+  preserve the original bytes without storing command text.
+  Release Binding 0.2 now compares
+  release paths and bytes to those matrix artifacts and turns any substitution into a portable hold.
+  The contract is deliberately one-file evidence, not interpreter, dependency, container, builder,
+  configuration, or runtime identity. Equal observations do not prove continuous immutability.
 
 ## 1.6.0 - 2026-08-30
 

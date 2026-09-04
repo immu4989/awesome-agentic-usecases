@@ -21,10 +21,15 @@ import aau_side_effect_matrix  # noqa: E402
 
 
 PLAN_VERSION = "aau-agent-side-effect-release-binding-plan/0.1"
-RECEIPT_VERSION = "aau-agent-side-effect-release-binding-receipt/0.1"
-PACK_VERSION = "aau-agent-side-effect-release-binding-pack/0.1"
+RECEIPT_VERSION = "aau-agent-side-effect-release-binding-receipt/0.2"
+PACK_VERSION = "aau-agent-side-effect-release-binding-pack/0.2"
 MAX_BYTES = 2_000_000
 ROLES = ("semantic", "crash", "race")
+MATRIX_COMPONENT = {
+    "semantic": "semantics",
+    "crash": "crash_recovery",
+    "race": "concurrency",
+}
 BOUNDARY_KEYS = {
     "public_synthetic_staging_only",
     "adapter_paths_workspace_relative",
@@ -217,7 +222,16 @@ def _receipt(
         raise BindingError("binding plan release_id does not match the AABOM")
 
     tools = {item["component_id"]: item for item in bom["tools"]}
+    findings: list[dict[str, str]] = []
+
+    def add(code: str, subject: str, detail: str) -> None:
+        findings.append({"code": code, "subject": subject, "detail": detail})
+
+    matrix_artifacts = {
+        item["component_id"]: item for item in matrix["adapter_artifacts"]
+    }
     plan_pairs: set[tuple[str, str]] = set()
+    binding_matches: dict[tuple[str, str], bool] = {}
     rows: list[dict[str, Any]] = []
     for index, binding in enumerate(plan["bindings"]):
         tool_id, operation = binding["tool_id"], binding["operation"]
@@ -229,14 +243,36 @@ def _receipt(
         plan_pairs.add((tool_id, operation))
         authority_ids, approval_required = _authority_ids(bom, tool_id, operation)
         adapters = {}
+        all_adapters_match = True
         for role in ROLES:
             payload = adapter_payloads[(index, role)]
+            sha256 = _digest(payload)
+            matrix_artifact = matrix_artifacts[MATRIX_COMPONENT[role]]
+            path_matches = binding[f"{role}_adapter"] == matrix_artifact["source_path"]
+            bytes_match = sha256 == matrix_artifact["sha256"]
+            matches_matrix = path_matches and bytes_match
+            all_adapters_match = all_adapters_match and matches_matrix
             adapters[role] = {
                 "source_path": binding[f"{role}_adapter"],
                 "pack_path": _adapter_pack_path(index, role),
                 "size_bytes": len(payload),
-                "sha256": _digest(payload),
+                "sha256": sha256,
+                "matrix_sha256": matrix_artifact["sha256"],
+                "matches_matrix": matches_matrix,
             }
+            if not path_matches:
+                add(
+                    "ADAPTER_PATH_DIFFERS_FROM_MATRIX",
+                    f"{tool_id} / {operation} / {role}",
+                    "The release plan path differs from the artifact path declared during the matrix run.",
+                )
+            if not bytes_match:
+                add(
+                    "ADAPTER_BYTES_DIFFER_FROM_MATRIX",
+                    f"{tool_id} / {operation} / {role}",
+                    "The release adapter bytes differ from the artifact hashed during the matrix run.",
+                )
+        binding_matches[(tool_id, operation)] = all_adapters_match
         rows.append(
             {
                 "tool_id": tool_id,
@@ -244,6 +280,7 @@ def _receipt(
                 "side_effect": tool["side_effect"],
                 "authority_ids": authority_ids,
                 "human_approval_required": approval_required,
+                "all_adapters_match_matrix": all_adapters_match,
                 "adapters": adapters,
             }
         )
@@ -258,11 +295,6 @@ def _receipt(
         matrix["coverage_binding"]["tool_id"],
         matrix["coverage_binding"]["operation"],
     )
-    findings: list[dict[str, str]] = []
-
-    def add(code: str, subject: str, detail: str) -> None:
-        findings.append({"code": code, "subject": subject, "detail": detail})
-
     if matrix["status"] != "evidence_passed":
         add("MATRIX_NOT_PASSING", "side-effect matrix", matrix["status"])
     if not consequential:
@@ -331,6 +363,7 @@ def _receipt(
         and _authority_ids(bom, *pair)[1]
         and matrix["status"] == "evidence_passed"
         and matrix_evidence_bound
+        and binding_matches.get(pair, False)
         for pair in consequential
     )
     result = {
@@ -352,6 +385,7 @@ def _receipt(
         "claim_boundary": {
             "hashes_bind_pack_bytes_not_runtime_identity": True,
             "source_paths_are_declarations_not_provenance": True,
+            "adapter_byte_mismatches_are_binding_holds": True,
             "public_synthetic_staging_only": True,
             "valid_binding_not_deployment_approval_or_authority": True,
             "passing_matrix_not_production_equivalence": True,

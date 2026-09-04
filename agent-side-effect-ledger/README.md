@@ -269,7 +269,7 @@ universal storage recommendation. Read the [race-lab research notes](RACE_LAB_RE
 ## Put all three boundaries in one CI gate
 
 The **Side-Effect Safety Matrix** runs semantic conformance, fresh-process recovery, and
-multi-process races, then writes a self-contained nine-file pack. It keeps each component's metrics
+multi-process races, then writes a self-contained 12-file pack. It keeps each component's metrics
 separate while providing one release signal and one digest-bound summary.
 
 ```bash
@@ -278,26 +278,43 @@ python3 agent-side-effect-ledger/aau_side_effect_matrix.py run \
   --out safety-result/matrix \
   --semantic-suite safety/semantic-suite.json \
   --semantic-adapter-command "python3 safety/semantic_adapter.py" \
+  --semantic-adapter-artifact safety/semantic_adapter.py \
   --crash-suite safety/crash-suite.json \
   --crash-adapter-command "python3 safety/crash_adapter.py" \
+  --crash-adapter-artifact safety/crash_adapter.py \
   --race-suite safety/race-suite.json \
-  --race-adapter-command "python3 safety/race_adapter.py"
+  --race-adapter-command "python3 safety/race_adapter.py" \
+  --race-adapter-artifact safety/race_adapter.py
 
 python3 agent-side-effect-ledger/aau_side_effect_matrix.py verify safety-result/matrix
 ```
 
 The committed [reference matrix pack](examples/reference-matrix-pack/) reports **72/72 exact
 checked outcomes across 36 cases**, zero unsafe outcomes, zero availability losses, and three
-uncertainties correctly preserved. It includes exact copies of all three suites, all three receipts,
-the [matrix receipt](side-effect-safety-matrix.schema.json), a readable summary, and a byte manifest.
+uncertainties correctly preserved. Matrix 0.3 includes exact copies of all three suites, receipts,
+and declared adapter entrypoint artifacts, plus the
+[matrix receipt](side-effect-safety-matrix.schema.json), readable summary, and byte manifest.
 Verification needs no adapter command, model, account, network, or package install.
 
-Matrix 0.2 also enforces a coverage identity before it runs: crash and race suites must name the
+Matrix 0.3 retains the coverage identity introduced in 0.2: crash and race suites must name the
 same `tool_id + operation`, and that pair must exist in the semantic suite. The reference fully
 stresses `notification-service / send_synthetic_notice`. Its semantic suite additionally exercises
 `benefits-disbursement / issue_synthetic_payment`; the matrix does **not** imply crash or race
 coverage for that second pair. This distinction is encoded in the receipt rather than left to
 README interpretation.
+
+Matrix 0.3 requires each command to place its declared entrypoint artifact at `argv[0]` or the
+`argv[1]` supported-interpreter target. It records that position, replaces the token with the declared
+artifact's absolute path before execution, hashes the file before execution, rejects a different
+after-run byte sequence, copies the original bytes into the pack, and omits the command text so an
+accidental token is not published. This binds one declared file—not its interpreter, imports,
+container, configuration, dependency closure,
+builder identity, or running workload. Equal before/after bytes do not prove the file was immutable
+between those observations.
+
+Supported `argv[1]` launchers are Python, Node.js, Bash, POSIX shell, Zsh, Ruby, Perl, and PHP.
+Interpreter flags before the artifact are deliberately rejected; use a direct executable wrapper
+when a launch sequence cannot fit this auditable shape.
 
 Use the reusable [local composite Action](../.github/actions/aau-side-effect-safety/) to make the
 matrix a pull-request gate. A valid behavioral mismatch leaves a verified diagnostic pack and then
@@ -331,6 +348,12 @@ verifiable; malformed or tampered input is rejected. The [plan](release-binding-
 schemas make the boundary portable. The reusable
 [Release Binding Action](../.github/actions/aau-side-effect-release-binding/) preserves diagnostics
 before failing CI.
+
+Release Binding 0.2 compares every declared release adapter path and SHA-256 digest with its Matrix
+0.3 artifact record. A different path or even a one-byte change produces
+`ADAPTER_PATH_DIFFERS_FROM_MATRIX` or `ADAPTER_BYTES_DIFFER_FROM_MATRIX`, reduces the fully bound
+count, and remains inspectable in a valid hold pack. This closes substitution between the tested
+entrypoint and the packaged release entrypoint; it does not expand the evidence beyond that file.
 
 Hashes bind the copied files, not a running workload. Source paths are declarations. This pack has
 no signature or builder identity and does not prove provenance, production equivalence, live

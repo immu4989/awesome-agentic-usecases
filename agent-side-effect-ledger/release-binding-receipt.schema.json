@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-release-binding-receipt-0.1.json",
-  "title": "AAU Agent Side-Effect Release Binding Receipt 0.1",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-release-binding-receipt-0.2.json",
+  "title": "AAU Agent Side-Effect Release Binding Receipt 0.2",
   "type": "object",
   "additionalProperties": false,
   "required": ["receipt_version", "binding_id", "agent_id", "release_id", "status", "aabom_sha256", "plan_sha256", "matrix_manifest_sha256", "matrix_sha256", "matrix_status", "matrix_boundary", "consequential_operation_count", "fully_bound_consequential_operation_count", "bindings", "findings", "claim_boundary", "receipt_sha256"],
   "properties": {
-    "receipt_version": {"const": "aau-agent-side-effect-release-binding-receipt/0.1"},
+    "receipt_version": {"const": "aau-agent-side-effect-release-binding-receipt/0.2"},
     "binding_id": {"$ref": "#/$defs/text160"},
     "agent_id": {"$ref": "#/$defs/text160"},
     "release_id": {"$ref": "#/$defs/text160"},
@@ -26,13 +26,14 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["tool_id", "operation", "side_effect", "authority_ids", "human_approval_required", "adapters"],
+        "required": ["tool_id", "operation", "side_effect", "authority_ids", "human_approval_required", "all_adapters_match_matrix", "adapters"],
         "properties": {
           "tool_id": {"type": "string", "minLength": 1, "maxLength": 120},
           "operation": {"$ref": "#/$defs/text160"},
           "side_effect": {"enum": ["read", "prepare", "write", "irreversible"]},
           "authority_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 120}},
           "human_approval_required": {"type": "boolean"},
+          "all_adapters_match_matrix": {"type": "boolean"},
           "adapters": {
             "type": "object",
             "additionalProperties": false,
@@ -62,10 +63,11 @@
     "claim_boundary": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["hashes_bind_pack_bytes_not_runtime_identity", "source_paths_are_declarations_not_provenance", "public_synthetic_staging_only", "valid_binding_not_deployment_approval_or_authority", "passing_matrix_not_production_equivalence"],
+      "required": ["hashes_bind_pack_bytes_not_runtime_identity", "source_paths_are_declarations_not_provenance", "adapter_byte_mismatches_are_binding_holds", "public_synthetic_staging_only", "valid_binding_not_deployment_approval_or_authority", "passing_matrix_not_production_equivalence"],
       "properties": {
         "hashes_bind_pack_bytes_not_runtime_identity": {"const": true},
         "source_paths_are_declarations_not_provenance": {"const": true},
+        "adapter_byte_mismatches_are_binding_holds": {"const": true},
         "public_synthetic_staging_only": {"const": true},
         "valid_binding_not_deployment_approval_or_authority": {"const": true},
         "passing_matrix_not_production_equivalence": {"const": true}
@@ -85,12 +87,14 @@
     "artifact": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source_path", "pack_path", "size_bytes", "sha256"],
+      "required": ["source_path", "pack_path", "size_bytes", "sha256", "matrix_sha256", "matches_matrix"],
       "properties": {
         "source_path": {"type": "string", "minLength": 1, "maxLength": 500},
         "pack_path": {"type": "string", "minLength": 1, "maxLength": 500},
         "size_bytes": {"type": "integer", "minimum": 1, "maximum": 2000000},
-        "sha256": {"$ref": "#/$defs/digest"}
+        "sha256": {"$ref": "#/$defs/digest"},
+        "matrix_sha256": {"$ref": "#/$defs/digest"},
+        "matches_matrix": {"type": "boolean"}
       }
     }
   }

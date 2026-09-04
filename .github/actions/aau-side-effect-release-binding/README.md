@@ -12,10 +12,13 @@ Run the matrix Action first, then bind its pack:
   with:
     semantic_suite: safety/semantic-suite.json
     semantic_adapter_command: python safety/semantic_adapter.py
+    semantic_adapter_artifact: safety/semantic_adapter.py
     crash_suite: safety/crash-suite.json
     crash_adapter_command: python safety/crash_adapter.py
+    crash_adapter_artifact: safety/crash_adapter.py
     race_suite: safety/race-suite.json
     race_adapter_command: python safety/race_adapter.py
+    race_adapter_artifact: safety/race_adapter.py
     output: safety-result/matrix
 
 - uses: immu4989/awesome-agentic-usecases/.github/actions/aau-side-effect-release-binding@<FULL_COMMIT_SHA>
@@ -32,7 +35,9 @@ another structural failure. The Action uploads nothing; preserve the output in a
 records policy allows it.
 
 Adapter paths are workspace-relative declarations. Their exact copied bytes are hashed, but the
-pack has no signature or builder identity and does not establish live workload identity, production
+release pack is accepted only when each path and digest agrees with the artifact captured by the
+matrix. The pack has no signature or builder identity and does not establish interpreter or
+dependency closure, live workload identity, production
 provenance, authority, safety, compliance, certification, deployment approval, or an ATO. Pin this
 Action and every third-party Action to a reviewed full commit SHA, use synthetic staging adapters,
 and do not expose production credentials to the runner.

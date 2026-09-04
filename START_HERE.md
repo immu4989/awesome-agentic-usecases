@@ -91,10 +91,12 @@ effects and deny-all availability loss separately; it is not a linearizability o
 
 For continuous integration, use the
 [Side-Effect Safety Matrix Action](.github/actions/aau-side-effect-safety/). It runs all three gates,
-verifies the nine-file pack, appends a concise job summary, and fails only after valid behavioral
-diagnostics are preserved. Matrix 0.2 also rejects crash/race tool-operation mismatches and reports
-which semantic pair received all three gates, so untested tools do not inherit coverage by
-association. Keep adapter commands staging-only and pin the Action to a reviewed full commit SHA.
+verifies the 12-file pack, appends a concise job summary, and fails only after valid behavioral
+diagnostics are preserved. Matrix 0.3 rejects crash/race tool-operation mismatches, requires every
+command to place its declared adapter at `argv[0]` or the `argv[1]` supported-interpreter target, preserves
+and executes its normalized absolute path, preserves those exact bytes, and reports which
+semantic pair received all three gates. Untested tools do not inherit coverage by association. Keep
+adapter commands staging-only and pin the Action to a reviewed full commit SHA.
 
 Before attaching that matrix to a release claim, build the byte-bound pack:
 
@@ -109,8 +111,9 @@ python3 agent-side-effect-ledger/aau_release_binding.py verify side-effect-relea
 ```
 
 This checks that every AABOM write or irreversible operation is represented, the one fully stressed
-pair agrees with the matrix, matching authority requires human approval, and the exact adapter bytes
-travel with the evidence. It does not identify a live workload or authorize deployment.
+pair agrees with the matrix, matching authority requires human approval, and the release adapter
+paths and bytes exactly match the artifacts captured during the matrix run. It does not capture an
+interpreter or dependency closure, identify a live workload, or authorize deployment.
 
 If you are outside the maintainer workflow and want to test a public claim, choose one of the
 four [Fork-to-Reproduce challenges](reproduction-challenges/). You receive six or eight tasks and an

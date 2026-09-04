@@ -110,8 +110,8 @@ def build() -> dict:
     pilot = assess_pilot(pilot_record)
 
     return {
-        "data_version": "aau-agent-security-commons-data/0.2",
-        "generated_on": "2026-09-03",
+        "data_version": "aau-agent-security-commons-data/0.3",
+        "generated_on": "2026-09-04",
         "runtime": {
             "event_count": runtime["event_count"],
             "run_count": runtime["run_count"],
@@ -148,6 +148,7 @@ def build() -> dict:
                 "component_count": side_effect_matrix["component_count"],
                 "aggregate": side_effect_matrix["aggregate"],
                 "coverage_binding": side_effect_matrix["coverage_binding"],
+                "adapter_artifacts": side_effect_matrix["adapter_artifacts"],
             },
             "release_binding": {
                 "status": release_binding["status"],

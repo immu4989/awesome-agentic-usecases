@@ -28,15 +28,30 @@ def _workspace(tmp_path: Path) -> tuple[Path, argparse.Namespace]:
     }
     for name, source in sources.items():
         shutil.copyfile(source, workspace / name)
+    adapter_root = workspace / "agent-side-effect-ledger" / "examples"
+    adapter_root.mkdir(parents=True)
+    adapters = {
+        "reference_adapter.py": ROOT / "examples" / "reference_adapter.py",
+        "reference_crash_adapter.py": ROOT / "examples" / "reference_crash_adapter.py",
+        "reference_race_adapter.py": ROOT / "examples" / "reference_race_adapter.py",
+    }
+    for name, source in adapters.items():
+        shutil.copyfile(source, adapter_root / name)
+    semantic_adapter = adapter_root / "reference_adapter.py"
+    crash_adapter = adapter_root / "reference_crash_adapter.py"
+    race_adapter = adapter_root / "reference_race_adapter.py"
     args = argparse.Namespace(
         workspace=workspace,
         out=Path("pack"),
         semantic_suite=Path("semantic.json"),
-        semantic_adapter_command=_command(ROOT / "examples" / "reference_adapter.py"),
+        semantic_adapter_command=_command(semantic_adapter),
+        semantic_adapter_artifact=semantic_adapter.relative_to(workspace),
         crash_suite=Path("crash.json"),
-        crash_adapter_command=_command(ROOT / "examples" / "reference_crash_adapter.py"),
+        crash_adapter_command=_command(crash_adapter),
+        crash_adapter_artifact=crash_adapter.relative_to(workspace),
         race_suite=Path("race.json"),
-        race_adapter_command=_command(ROOT / "examples" / "reference_race_adapter.py"),
+        race_adapter_command=_command(race_adapter),
+        race_adapter_artifact=race_adapter.relative_to(workspace),
         timeout=15.0,
     )
     return workspace, args
@@ -61,6 +76,19 @@ def test_reference_matrix_is_exact_self_contained_and_reproducible(tmp_path):
         "crash_race_same_boundary": True,
         "semantic_tool_operation_count": 2,
         "fully_stressed_tool_operation_count": 1,
+    }
+    assert [item["component_id"] for item in matrix["adapter_artifacts"]] == [
+        "semantics",
+        "crash_recovery",
+        "concurrency",
+    ]
+    assert [item["command_argv_index"] for item in matrix["adapter_artifacts"]] == [
+        1,
+        1,
+        1,
+    ]
+    assert {item["launch_mode"] for item in matrix["adapter_artifacts"]} == {
+        "supported_interpreter_target"
     }
     assert verify_pack(workspace / "pack") == matrix
     assert {path.name for path in (workspace / "pack").iterdir()} == PACK_FILES
@@ -88,6 +116,78 @@ def test_matrix_rejects_mismatched_tool_operation_coverage(tmp_path):
     race["profile"]["operation_id"] = "different_operation"
     (workspace / "race.json").write_text(json.dumps(race))
     with pytest.raises(MatrixError, match="same tool_id and operation"):
+        run_pack(args)
+
+
+def test_matrix_requires_command_to_reference_declared_artifact(tmp_path):
+    _workspace_path, args = _workspace(tmp_path)
+    args.semantic_adapter_artifact = Path(
+        "agent-side-effect-ledger/examples/reference_crash_adapter.py"
+    )
+    with pytest.raises(MatrixError, match="must reference its declared artifact"):
+        run_pack(args)
+
+
+def test_matrix_rejects_declared_artifact_as_decoy_trailing_argument(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    semantic = workspace / "agent-side-effect-ledger/examples/reference_adapter.py"
+    decoy = workspace / "agent-side-effect-ledger/examples/reference_crash_adapter.py"
+    args.semantic_adapter_command = shlex.join(
+        [sys.executable, str(semantic), str(decoy)]
+    )
+    args.semantic_adapter_artifact = decoy.relative_to(workspace)
+    with pytest.raises(MatrixError, match=r"must be argv\[0\] or the argv\[1\]"):
+        run_pack(args)
+
+
+def test_matrix_rejects_argv_one_artifact_behind_unknown_launcher(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    artifact = workspace / "agent-side-effect-ledger/examples/reference_adapter.py"
+    args.semantic_adapter_command = shlex.join(["echo", str(artifact)])
+    with pytest.raises(MatrixError, match="requires a supported script interpreter"):
+        run_pack(args)
+
+
+def test_matrix_executes_workspace_artifact_not_same_named_cwd_file(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    declared = workspace / "agent-side-effect-ledger/examples/reference_adapter.py"
+    declared.write_text(
+        "import json, sys\n"
+        "r=json.load(sys.stdin)\n"
+        "rows=[{'event_id':e['event_id'],'outcome':'committed','reason_codes':[]} "
+        "for e in r['case']['events']]\n"
+        "json.dump({'case_id':r['case']['case_id'],'results':rows},sys.stdout)\n"
+    )
+    args.semantic_adapter_command = (
+        "python3 agent-side-effect-ledger/examples/reference_adapter.py"
+    )
+    matrix = run_pack(args)
+    assert matrix["status"] == "evidence_failed"
+    assert matrix["aggregate"]["unsafe_count"] > 0
+
+
+def test_matrix_rejects_adapter_artifact_changed_during_run(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    mutating = workspace / "mutating_adapter.py"
+    target = ROOT / "examples" / "reference_adapter.py"
+    mutating.write_text(
+        "import runpy\n"
+        "from pathlib import Path\n"
+        "p=Path(__file__)\n"
+        "p.write_text(p.read_text()+'# changed\\n')\n"
+        f"runpy.run_path({str(target)!r}, run_name='__main__')\n"
+    )
+    args.semantic_adapter_command = _command(mutating)
+    args.semantic_adapter_artifact = Path("mutating_adapter.py")
+    with pytest.raises(MatrixError, match="changed during the matrix run"):
+        run_pack(args)
+
+
+def test_matrix_rejects_empty_adapter_artifact(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    artifact = workspace / args.semantic_adapter_artifact
+    artifact.write_bytes(b"")
+    with pytest.raises(MatrixError, match="must contain 1 to"):
         run_pack(args)
 
 
@@ -127,6 +227,7 @@ def test_valid_evidence_failure_pack_remains_verifiable(tmp_path):
         "json.dump({'case_id':r['case']['case_id'],'results':rows},sys.stdout)\n"
     )
     args.semantic_adapter_command = _command(unsafe)
+    args.semantic_adapter_artifact = unsafe
     matrix = run_pack(args)
     assert matrix["status"] == "evidence_failed"
     assert matrix["aggregate"]["unsafe_count"] > 0
@@ -140,5 +241,8 @@ def test_composite_action_preserves_diagnostics_and_avoids_context_interpolation
     assert 'exit "$matrix_status"' in action
     assert "github.event" not in action
     assert "semantic_adapter_command" in action
+    assert "semantic_adapter_artifact" in action
     assert "crash_adapter_command" in action
+    assert "crash_adapter_artifact" in action
     assert "race_adapter_command" in action
+    assert "race_adapter_artifact" in action

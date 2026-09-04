@@ -47,6 +47,7 @@
     byId("asc-effect-matrix-exact").textContent = `${matrix.aggregate.exact_count}/${matrix.aggregate.checked_outcome_count}`;
     byId("asc-effect-matrix-components").textContent = matrix.component_count;
     byId("asc-effect-matrix-unsafe").textContent = matrix.aggregate.unsafe_count;
+    byId("asc-effect-matrix-artifacts").textContent = matrix.adapter_artifacts.length;
     byId("asc-effect-matrix-hash").textContent = matrix.matrix_sha256.slice(0, 12);
     byId("asc-effect-matrix-boundary").textContent = `${matrix.coverage_binding.tool_id} / ${matrix.coverage_binding.operation}`;
     const binding = data.side_effects.release_binding;
@@ -119,7 +120,7 @@
     byId("asc-pilot-gaps").textContent = `${data.pilot.visible_gaps.length} evidence gaps remain visible: ${data.pilot.visible_gaps.join(", ").replaceAll("_", " ")}.`;
   }
 
-  fetch("agent-security-data.json?v=8", { cache: "no-store" })
+  fetch("agent-security-data.json?v=9", { cache: "no-store" })
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();

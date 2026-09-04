@@ -10,17 +10,26 @@ inputs:
   semantic_adapter_command:
     description: Trusted staging command implementing the oracle-free semantic adapter protocol.
     required: true
+  semantic_adapter_artifact:
+    description: Workspace-relative entrypoint artifact referenced by the semantic command.
+    required: true
   crash_suite:
     description: Workspace-relative Two-Process Crash Lab suite path.
     required: true
   crash_adapter_command:
     description: Trusted staging command implementing inject and recover phases.
     required: true
+  crash_adapter_artifact:
+    description: Workspace-relative entrypoint artifact referenced by the crash command.
+    required: true
   race_suite:
     description: Workspace-relative Multi-Process Race Lab suite path.
     required: true
   race_adapter_command:
     description: Trusted staging command implementing attempt and inspect phases.
+    required: true
+  race_adapter_artifact:
+    description: Workspace-relative entrypoint artifact referenced by the race command.
     required: true
   output:
     description: Workspace-relative, non-existing output directory for the evidence pack.
@@ -41,12 +50,15 @@ runs:
       shell: bash
       env:
         AAU_CRASH_ADAPTER: ${{ inputs.crash_adapter_command }}
+        AAU_CRASH_ARTIFACT: ${{ inputs.crash_adapter_artifact }}
         AAU_CRASH_SUITE: ${{ inputs.crash_suite }}
         AAU_MATRIX_OUTPUT: ${{ inputs.output }}
         AAU_MATRIX_TIMEOUT: ${{ inputs.timeout }}
         AAU_RACE_ADAPTER: ${{ inputs.race_adapter_command }}
+        AAU_RACE_ARTIFACT: ${{ inputs.race_adapter_artifact }}
         AAU_RACE_SUITE: ${{ inputs.race_suite }}
         AAU_SEMANTIC_ADAPTER: ${{ inputs.semantic_adapter_command }}
+        AAU_SEMANTIC_ARTIFACT: ${{ inputs.semantic_adapter_artifact }}
         AAU_SEMANTIC_SUITE: ${{ inputs.semantic_suite }}
       run: |
         set +e
@@ -55,10 +67,13 @@ runs:
           --out "$AAU_MATRIX_OUTPUT" \
           --semantic-suite "$AAU_SEMANTIC_SUITE" \
           --semantic-adapter-command "$AAU_SEMANTIC_ADAPTER" \
+          --semantic-adapter-artifact "$AAU_SEMANTIC_ARTIFACT" \
           --crash-suite "$AAU_CRASH_SUITE" \
           --crash-adapter-command "$AAU_CRASH_ADAPTER" \
+          --crash-adapter-artifact "$AAU_CRASH_ARTIFACT" \
           --race-suite "$AAU_RACE_SUITE" \
           --race-adapter-command "$AAU_RACE_ADAPTER" \
+          --race-adapter-artifact "$AAU_RACE_ARTIFACT" \
           --timeout "$AAU_MATRIX_TIMEOUT"
         matrix_status=$?
         set -e

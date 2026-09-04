@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from aau_release_binding import BindingError, build_pack, verify_pack
+from aau_release_binding import BindingError, build_pack, validate_plan, verify_pack
 
 
 ROOT = Path(__file__).parents[1]
@@ -109,6 +109,29 @@ def test_binding_holds_when_aabom_does_not_hash_exact_matrix_manifest(tmp_path):
     ]
 
 
+def test_binding_holds_when_release_adapter_bytes_differ_from_matrix(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    adapter = (
+        workspace
+        / "agent-side-effect-ledger"
+        / "examples"
+        / "reference_race_adapter.py"
+    )
+    adapter.write_bytes(adapter.read_bytes() + b"\n# release substitution\n")
+    receipt = build_pack(args)
+    assert receipt["status"] == "binding_held"
+    assert receipt["fully_bound_consequential_operation_count"] == 0
+    assert [item["code"] for item in receipt["findings"]] == [
+        "ADAPTER_BYTES_DIFFER_FROM_MATRIX"
+    ]
+    binding = receipt["bindings"][0]
+    assert not binding["all_adapters_match_matrix"]
+    assert not binding["adapters"]["race"]["matches_matrix"]
+    assert binding["adapters"]["semantic"]["matches_matrix"]
+    assert binding["adapters"]["crash"]["matches_matrix"]
+    assert verify_pack(workspace / "binding-pack") == receipt
+
+
 def test_one_executable_may_implement_all_three_adapter_roles(tmp_path):
     workspace, args = _workspace(tmp_path)
     plan = json.loads((workspace / "plan.json").read_text())
@@ -116,12 +139,7 @@ def test_one_executable_may_implement_all_three_adapter_roles(tmp_path):
     plan["bindings"][0]["crash_adapter"] = shared
     plan["bindings"][0]["race_adapter"] = shared
     (workspace / "plan.json").write_text(json.dumps(plan, indent=2) + "\n")
-    receipt = build_pack(args)
-    assert receipt["status"] == "evidence_bound"
-    hashes = {
-        item["sha256"] for item in receipt["bindings"][0]["adapters"].values()
-    }
-    assert len(hashes) == 1
+    validate_plan(plan)
 
 
 def test_binding_rejects_plan_release_mismatch_and_output_escape(tmp_path):

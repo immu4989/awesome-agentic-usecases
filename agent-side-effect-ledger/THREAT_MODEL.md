@@ -14,6 +14,7 @@
 | Malformed or partial adapter output | Missing failures disappear from the score | Exact event order, coverage, outcome vocabulary, and sorted reason codes fail closed | Schema-valid output can still be dishonest |
 | Untrusted command adapter | Local code steals data or performs an unintended action | Commands are shell-free and must receive public-synthetic staging data only | The runner executes the named program; users must trust and sandbox it |
 | Adapter/target substitution | A test double passes while production behaves differently | Receipt identifies command-adapter evidence and rejects production claims | Independent deployment binding and target evidence remain necessary |
+| Command names one adapter while evidence hashes a decoy argument or same-named file outside the workspace | Reviewers retain bytes that were never the declared executable entrypoint | Matrix 0.3 requires the artifact at `argv[0]` or a supported `argv[1]` interpreter target, replaces that token with the declared absolute path, records the position, compares before/after bytes, and carries the original bytes | Equal observations do not prove continuous immutability; one file does not capture its interpreter, imports, dependency closure, container, configuration, builder, or runtime identity |
 | Tested/deployed adapter substitution | A passing matrix is attached to different source bytes or a different release label | Release binding copies and hashes all three adapter snapshots with the exact AABOM, release, matrix manifest, tool, and operation | The unsigned pack does not identify or observe a live workload |
 | Coverage inheritance by association | One tested operation makes every operation in the tool or AABOM appear covered | Every write or irreversible AABOM operation is checked separately; only the exact three-gate pair is fully bound | Organizations need additional matrices for additional consequential operations |
 | Workspace path presented as provenance | A declared filename is mistaken for proof of origin or execution | The receipt labels source paths as declarations and binds only copied bytes | Builder identity, signatures, deployment attestations, and runtime observation remain separate |
@@ -27,7 +28,8 @@
 The reference evaluator accepts only public-synthetic input, never opens the network, never invokes
 a tool, and never performs a side effect. The conformance runners start explicitly named local
 adapter commands; they do not constrain what those programs can do. The release binder reads and
-copies the declared adapter files but does not execute them. Run only trusted, staging-only adapters
+copies the declared adapter files but does not execute them. Matrix and release packs deliberately
+bind one entrypoint artifact per gate, not its complete execution environment. Run only trusted, staging-only adapters
 in an appropriate sandbox. Do not place credentials, personal data, protected records, production
 targets, proprietary adapter code, private traces, controlled information, or classified
 information in a public suite, adapter request, receipt, or binding pack.
