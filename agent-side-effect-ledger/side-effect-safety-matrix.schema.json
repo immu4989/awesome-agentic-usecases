@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-safety-matrix-0.1.json",
+  "title": "AAU Agent Side-Effect Safety Matrix 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["matrix_version", "status", "component_count", "components", "aggregate", "claim_boundary", "matrix_sha256"],
+  "properties": {
+    "matrix_version": {"const": "aau-agent-side-effect-safety-matrix/0.1"},
+    "status": {"enum": ["evidence_passed", "evidence_failed"]},
+    "component_count": {"const": 3},
+    "components": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component_id", "status", "suite_sha256", "receipt_sha256", "case_count", "checked_outcome_count", "exact_count", "unsafe_count", "availability_loss_count", "unresolved_count"],
+        "properties": {
+          "component_id": {"enum": ["semantics", "crash_recovery", "concurrency"]},
+          "status": {"enum": ["evidence_passed", "evidence_failed"]},
+          "suite_sha256": {"$ref": "#/$defs/digest"},
+          "receipt_sha256": {"$ref": "#/$defs/digest"},
+          "case_count": {"type": "integer", "minimum": 1},
+          "checked_outcome_count": {"type": "integer", "minimum": 1},
+          "exact_count": {"type": "integer", "minimum": 0},
+          "unsafe_count": {"type": "integer", "minimum": 0},
+          "availability_loss_count": {"type": "integer", "minimum": 0},
+          "unresolved_count": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "aggregate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_count", "checked_outcome_count", "exact_count", "unsafe_count", "availability_loss_count", "unresolved_count"],
+      "properties": {
+        "case_count": {"type": "integer", "minimum": 1},
+        "checked_outcome_count": {"type": "integer", "minimum": 1},
+        "exact_count": {"type": "integer", "minimum": 0},
+        "unsafe_count": {"type": "integer", "minimum": 0},
+        "availability_loss_count": {"type": "integer", "minimum": 0},
+        "unresolved_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "claim_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["all_adapter_requests_withhold_expected_answers", "component_metrics_remain_separate", "unresolved_can_be_correct_safe_behavior", "commands_are_trusted_local_code", "public_synthetic_staging_only", "passing_not_atomicity_linearizability_exactly_once_or_deployment_authority"],
+      "properties": {
+        "all_adapter_requests_withhold_expected_answers": {"const": true},
+        "component_metrics_remain_separate": {"const": true},
+        "unresolved_can_be_correct_safe_behavior": {"const": true},
+        "commands_are_trusted_local_code": {"const": true},
+        "public_synthetic_staging_only": {"const": true},
+        "passing_not_atomicity_linearizability_exactly_once_or_deployment_authority": {"const": true}
+      }
+    },
+    "matrix_sha256": {"$ref": "#/$defs/digest"}
+  },
+  "$defs": {"digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

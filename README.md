@@ -147,6 +147,12 @@ changed-intent key reuse, response/state disagreement, duplicate effects, and av
 The reference adapter is 12/12 exact with zero duplicate or missing effects, while receipts discard
 nondeterministic winner identity so valid reruns remain byte-identical.
 
+Teams can now adopt all three layers through the dependency-free
+**[Side-Effect Safety Matrix Action](.github/actions/aau-side-effect-safety/)**. Its self-contained
+reference pack combines 72 checked outcomes across 36 cases, preserves valid failure diagnostics,
+and can be reverified without rerunning an adapter. It does not upload artifacts or grant release
+authority.
+
 Four **[oracle-free reproduction challenges](reproduction-challenges/)** now let outside forks test
 portable agent authority, distribution restoration, pharmaceutical batch disposition, and the
 A2A-to-MCP authority relay without receiving gold answers. The hidden source suites and oracles

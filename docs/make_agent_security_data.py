@@ -28,6 +28,7 @@ from aau_side_effect import (  # noqa: E402
     evaluate_suite as evaluate_side_effect_suite,
     verify_conformance_receipt as verify_side_effect_conformance,
 )
+from aau_side_effect_matrix import verify_pack as verify_side_effect_matrix_pack  # noqa: E402
 from aau_defender import assess_kit, load_json as load_kit_json  # noqa: E402
 
 
@@ -56,6 +57,9 @@ def build() -> dict:
         ROOT / "agent-side-effect-ledger/examples/reference-race-receipt.json"
     )
     verify_race_receipt(race_receipt, race_suite)
+    side_effect_matrix = verify_side_effect_matrix_pack(
+        ROOT / "agent-side-effect-ledger/examples/reference-matrix-pack"
+    )
 
     incident_record = load_incident_json(
         ROOT / "agent-incident-regression-commons/examples/public-agent-boundary-incident.json"
@@ -133,6 +137,12 @@ def build() -> dict:
                 "status": race_receipt["status"],
                 "receipt_sha256": race_receipt["receipt_sha256"],
                 "summary": race_receipt["summary"],
+            },
+            "matrix": {
+                "status": side_effect_matrix["status"],
+                "matrix_sha256": side_effect_matrix["matrix_sha256"],
+                "component_count": side_effect_matrix["component_count"],
+                "aggregate": side_effect_matrix["aggregate"],
             },
             "failure_shapes": [
                 "unknown_outcome_requires_reconciliation",

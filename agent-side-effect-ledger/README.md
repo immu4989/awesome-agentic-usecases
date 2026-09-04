@@ -266,6 +266,39 @@ overlap, linearizability, behavior on multiple hosts, target atomicity, exactly-
 production equivalence. The reference adapter demonstrates one SQLite transaction pattern, not a
 universal storage recommendation. Read the [race-lab research notes](RACE_LAB_RESEARCH_NOTES.md).
 
+## Put all three boundaries in one CI gate
+
+The **Side-Effect Safety Matrix** runs semantic conformance, fresh-process recovery, and
+multi-process races, then writes a self-contained nine-file pack. It keeps each component's metrics
+separate while providing one release signal and one digest-bound summary.
+
+```bash
+python3 agent-side-effect-ledger/aau_side_effect_matrix.py run \
+  --workspace . \
+  --out safety-result/matrix \
+  --semantic-suite safety/semantic-suite.json \
+  --semantic-adapter-command "python3 safety/semantic_adapter.py" \
+  --crash-suite safety/crash-suite.json \
+  --crash-adapter-command "python3 safety/crash_adapter.py" \
+  --race-suite safety/race-suite.json \
+  --race-adapter-command "python3 safety/race_adapter.py"
+
+python3 agent-side-effect-ledger/aau_side_effect_matrix.py verify safety-result/matrix
+```
+
+The committed [reference matrix pack](examples/reference-matrix-pack/) reports **72/72 exact
+checked outcomes across 36 cases**, zero unsafe outcomes, zero availability losses, and three
+uncertainties correctly preserved. It includes exact copies of all three suites, all three receipts,
+the [matrix receipt](side-effect-safety-matrix.schema.json), a readable summary, and a byte manifest.
+Verification needs no adapter command, model, account, network, or package install.
+
+Use the reusable [local composite Action](../.github/actions/aau-side-effect-safety/) to make the
+matrix a pull-request gate. A valid behavioral mismatch leaves a verified diagnostic pack and then
+returns exit code 1; malformed input, adapter failure, path escape, overwrite, unexpected files, or
+tampering returns exit code 2. The Action adds no remote dependency and uploads nothing by itself.
+The caller must pin the Action to a reviewed full commit SHA and choose whether and how long to
+retain the pack.
+
 ## Why these fields exist
 
 - [RFC 9110 §9.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) says a client should

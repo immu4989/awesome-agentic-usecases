@@ -89,6 +89,12 @@ python3 agent-side-effect-ledger/aau_race_lab.py run \
 The runner uses fresh processes and inspects adapter state after every race. It exposes duplicate
 effects and deny-all availability loss separately; it is not a linearizability or production test.
 
+For continuous integration, use the
+[Side-Effect Safety Matrix Action](.github/actions/aau-side-effect-safety/). It runs all three gates,
+verifies the nine-file pack, appends a concise job summary, and fails only after valid behavioral
+diagnostics are preserved. Keep adapter commands staging-only and pin the Action to a reviewed full
+commit SHA.
+
 If you are outside the maintainer workflow and want to test a public claim, choose one of the
 four [Fork-to-Reproduce challenges](reproduction-challenges/). You receive six or eight tasks and an
 oracle commitment—not the gold outcomes. The manual workflow builds and attests your exact

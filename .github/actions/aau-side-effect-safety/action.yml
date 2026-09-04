@@ -1,0 +1,79 @@
+name: AAU side-effect safety matrix
+description: Test agent action semantics, fresh-process recovery, and concurrent-worker deduplication.
+branding:
+  icon: repeat
+  color: green
+inputs:
+  semantic_suite:
+    description: Workspace-relative ASEL semantic suite path.
+    required: true
+  semantic_adapter_command:
+    description: Trusted staging command implementing the oracle-free semantic adapter protocol.
+    required: true
+  crash_suite:
+    description: Workspace-relative Two-Process Crash Lab suite path.
+    required: true
+  crash_adapter_command:
+    description: Trusted staging command implementing inject and recover phases.
+    required: true
+  race_suite:
+    description: Workspace-relative Multi-Process Race Lab suite path.
+    required: true
+  race_adapter_command:
+    description: Trusted staging command implementing attempt and inspect phases.
+    required: true
+  output:
+    description: Workspace-relative, non-existing output directory for the evidence pack.
+    required: false
+    default: aau-side-effect-safety
+  timeout:
+    description: Per-adapter invocation timeout in seconds, greater than 0 and at most 300.
+    required: false
+    default: "15"
+outputs:
+  evidence_pack:
+    description: Workspace-relative path to the verified matrix evidence pack.
+    value: ${{ inputs.output }}
+runs:
+  using: composite
+  steps:
+    - name: Run, verify, and summarize the side-effect safety matrix
+      shell: bash
+      env:
+        AAU_CRASH_ADAPTER: ${{ inputs.crash_adapter_command }}
+        AAU_CRASH_SUITE: ${{ inputs.crash_suite }}
+        AAU_MATRIX_OUTPUT: ${{ inputs.output }}
+        AAU_MATRIX_TIMEOUT: ${{ inputs.timeout }}
+        AAU_RACE_ADAPTER: ${{ inputs.race_adapter_command }}
+        AAU_RACE_SUITE: ${{ inputs.race_suite }}
+        AAU_SEMANTIC_ADAPTER: ${{ inputs.semantic_adapter_command }}
+        AAU_SEMANTIC_SUITE: ${{ inputs.semantic_suite }}
+      run: |
+        set +e
+        python "$GITHUB_ACTION_PATH/../../../agent-side-effect-ledger/aau_side_effect_matrix.py" run \
+          --workspace "$GITHUB_WORKSPACE" \
+          --out "$AAU_MATRIX_OUTPUT" \
+          --semantic-suite "$AAU_SEMANTIC_SUITE" \
+          --semantic-adapter-command "$AAU_SEMANTIC_ADAPTER" \
+          --crash-suite "$AAU_CRASH_SUITE" \
+          --crash-adapter-command "$AAU_CRASH_ADAPTER" \
+          --race-suite "$AAU_RACE_SUITE" \
+          --race-adapter-command "$AAU_RACE_ADAPTER" \
+          --timeout "$AAU_MATRIX_TIMEOUT"
+        matrix_status=$?
+        set -e
+        if [[ "$matrix_status" -eq 2 ]]; then
+          exit 2
+        fi
+        set +e
+        python "$GITHUB_ACTION_PATH/../../../agent-side-effect-ledger/aau_side_effect_matrix.py" verify \
+          "$AAU_MATRIX_OUTPUT"
+        verify_status=$?
+        set -e
+        if [[ "$verify_status" -eq 2 || "$verify_status" -ne "$matrix_status" ]]; then
+          exit 2
+        fi
+        if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+          cat "$AAU_MATRIX_OUTPUT/SUMMARY.md" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        exit "$matrix_status"

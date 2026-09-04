@@ -27,6 +27,11 @@
   duplicate-effect, missing-effect, and response/state mismatch counts. The reference SQLite adapter
   is deterministic across reruns; deliberately naive and deny-all adapters fail for different
   reasons. The experiment does not claim scheduler overlap, linearizability, or production safety.
+- **Side-Effect Safety Matrix Action** — combined semantic, crash, and race gates into a
+  dependency-free composite Action and a self-contained nine-file evidence pack. The 36-case
+  reference matrix records 72/72 exact checked outcomes, preserves three valid uncertainties, and
+  separates structural errors from verifiable behavioral failures so diagnostics survive a failed
+  pull-request gate.
 
 ## 1.6.0 - 2026-08-30
 

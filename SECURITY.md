@@ -98,6 +98,13 @@ barrier does not guarantee scheduler overlap, and the adapter controls both acti
 passing is not independent proof of target state, linearizability, cross-host behavior, or
 exactly-once execution.
 
+The Side-Effect Safety Matrix confines suite and output paths to the declared workspace, refuses
+symbolic or oversized inputs, refuses output overwrite, accepts only an exact nine-file pack, and
+recomputes every component receipt, aggregate, summary, and manifest. Its composite Action passes
+commands through quoted environment variables and adds no remote Action dependency. The commands
+still execute with the runner's inherited authority; do not expose credentials or production access
+to untrusted pull requests.
+
 ## Portable Agent Assurance boundary
 
 The Portable Agent Assurance verifier accepts bounded JSON, rejects symbolic links and oversized
