@@ -156,8 +156,8 @@ nondeterministic winner identity so valid reruns remain byte-identical.
 Teams can now adopt all three layers through the dependency-free
 **[Side-Effect Safety Matrix Action](.github/actions/aau-side-effect-safety/)**. Its self-contained
 reference pack combines 72 checked outcomes across 36 cases, preserves valid failure diagnostics,
-and can be reverified without rerunning an adapter. Matrix 0.5 fails closed unless crash and race
-evidence names the same tool-operation pair, that pair exists in semantic conformance, and each
+and can be reverified without rerunning an adapter. Matrix 0.6 fails closed unless semantic,
+crash, and race evidence name the same exact `tool + operation + resource scope` relationship and each
 command places a declared workspace-relative entrypoint at `argv[0]` or a supported interpreter target at
 `argv[1]`. It normalizes that token to the declared absolute path before execution, captures those
 three files plus **8 statically reachable local Python material records**, rejects a before/after
@@ -170,11 +170,13 @@ evidence—not a sandbox—and do not prove the interpreter, installed packages,
 reads, environment, container, runtime identity, or a complete dependency graph.
 
 The companion **Side-Effect Release Binding** closes the next evidence-substitution gap. It packages
-the exact AABOM agent and release IDs, the fully stressed tool-operation pair, the complete matrix,
+the exact AABOM agent and release IDs, the fully stressed tool-operation-scope relationship, the complete matrix,
 the human-approval declaration, and byte snapshots of all three adapters plus their captured local
-material sets. Release Binding 0.4 also re-hashes every workspace material observed during the
+material sets. Release Binding 0.5 also re-hashes every workspace material observed during the
 matrix run, so a substituted policy file fails even when entrypoints and static imports are
-unchanged. The committed 33-file reference pack verifies 1/1 consequential operations; missing
+unchanged. It matches authority only through AABOM 1.1 exact relationships—separate operation and
+scope membership can no longer create a false match. The committed 33-file reference pack verifies
+1/1 consequential relationships; missing
 coverage or substitution
 becomes an inspectable hold rather than a misleading pass. Hashes bind copied files, not workload
 identity, production provenance, or deployment authority.

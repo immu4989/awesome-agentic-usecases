@@ -18,8 +18,8 @@ import aau_runtime_observation
 import aau_side_effect
 
 
-MATRIX_VERSION = "aau-agent-side-effect-safety-matrix/0.5"
-MANIFEST_VERSION = "aau-agent-side-effect-safety-manifest/0.4"
+MATRIX_VERSION = "aau-agent-side-effect-safety-matrix/0.6"
+MANIFEST_VERSION = "aau-agent-side-effect-safety-manifest/0.5"
 MAX_BYTES = 2_000_000
 SUPPORTED_INTERPRETERS = {
     "bash",
@@ -338,30 +338,53 @@ def _matrix(
     crash_boundary = (
         crash_suite["profile"]["tool_id"],
         crash_suite["profile"]["operation_id"],
+        crash_suite["profile"]["resource_scope"],
     )
     race_boundary = (
         race_suite["profile"]["tool_id"],
         race_suite["profile"]["operation_id"],
+        race_suite["profile"]["resource_scope"],
     )
-    semantic_boundaries = {
-        (tool["tool_id"], tool["operation"])
+    semantic_declared_relationships = {
+        (tool["tool_id"], tool["operation"], tool["resource_scope"])
         for tool in semantic_suite["profile"]["tools"]
+    }
+    semantic_exercised_relationships = {
+        (
+            event["content"]["tool_id"],
+            event["content"]["operation"],
+            event["content"]["resource_scope"],
+        )
+        for case in semantic_suite["cases"]
+        for event in case["events"]
+        if event["kind"] == "prepare"
+        and event["expected"]["outcome"] == "prepared"
     }
     if crash_boundary != race_boundary:
         raise MatrixError(
-            "crash and race suites must bind the same tool_id and operation"
+            "crash and race suites must bind the same tool_id, operation, and resource_scope"
         )
-    if crash_boundary not in semantic_boundaries:
+    if crash_boundary not in semantic_declared_relationships:
         raise MatrixError(
-            "crash/race tool_id and operation must exist in the semantic suite"
+            "crash/race tool_id, operation, and resource_scope must exist in the semantic suite"
+        )
+    if crash_boundary not in semantic_exercised_relationships:
+        raise MatrixError(
+            "crash/race relationship must have a legitimate prepared semantic event"
         )
     coverage_binding = {
         "tool_id": crash_boundary[0],
         "operation": crash_boundary[1],
+        "resource_scope": crash_boundary[2],
         "semantic_boundary_present": True,
         "crash_race_same_boundary": True,
-        "semantic_tool_operation_count": len(semantic_boundaries),
-        "fully_stressed_tool_operation_count": 1,
+        "semantic_declared_relationship_count": len(
+            semantic_declared_relationships
+        ),
+        "semantic_exercised_relationship_count": len(
+            semantic_exercised_relationships
+        ),
+        "fully_stressed_relationship_count": 1,
     }
     semantic = semantic_receipt["summary"]
     crash = crash_receipt["summary"]
@@ -436,8 +459,9 @@ def _matrix(
             "unresolved_can_be_correct_safe_behavior": True,
             "commands_are_trusted_local_code": True,
             "public_synthetic_staging_only": True,
-            "crash_and_race_bind_one_semantic_tool_operation": True,
-            "matrix_does_not_imply_every_semantic_tool_has_crash_race_coverage": True,
+            "crash_and_race_bind_one_semantic_relationship": True,
+            "matrix_boundary_has_legitimate_prepared_semantic_event": True,
+            "matrix_does_not_imply_every_semantic_relationship_has_crash_race_coverage": True,
             "command_argument_references_declared_artifact": True,
             "declared_artifact_is_executable_or_supported_interpreter_target": True,
             "declared_artifact_path_normalized_before_execution": True,
@@ -487,9 +511,11 @@ def _summary(matrix: dict[str, Any]) -> str:
         [
             "",
             f"Crash and concurrency evidence bind **`{matrix['coverage_binding']['tool_id']}` / "
-            f"`{matrix['coverage_binding']['operation']}`**. The semantic suite covers "
-            f"{matrix['coverage_binding']['semantic_tool_operation_count']} tool-operation pairs; "
-            "only the named pair has all three gates.",
+            f"`{matrix['coverage_binding']['operation']}` / "
+            f"`{matrix['coverage_binding']['resource_scope']}`**. The semantic suite covers "
+            f"{matrix['coverage_binding']['semantic_exercised_relationship_count']} exact "
+            "tool-operation-scope relationships in legitimate prepared events; only the named "
+            "relationship has all three gates.",
             "",
             "Adapter entrypoint artifacts: "
             + " · ".join(

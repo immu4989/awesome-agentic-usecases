@@ -35,7 +35,7 @@ useful retry guard into a false exactly-once claim.
 9. **Adapter evidence is not target evidence.** Running a staging policy adapter shows how that
    command answered the declared cases. It does not prove the production binary, configuration,
    identity system, journal, target API, or deployment follows the same path.
-10. **A command label is not artifact evidence.** Matrix 0.5 requires `argv[0]` or the `argv[1]`
+10. **A command label is not artifact evidence.** Matrix 0.6 requires `argv[0]` or the `argv[1]`
     supported-interpreter target to resolve to a declared workspace-relative entrypoint, records the position,
     normalizes that token to the declared absolute path, hashes the file on both sides of execution,
     and copies its original bytes. Python targets also capture transitive static-local imports,

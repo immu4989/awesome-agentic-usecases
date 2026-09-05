@@ -143,12 +143,13 @@ def build() -> dict:
         _expected(2, 2, 4, 0, 0),
     )
     return {
-        "suite_version": "aau-agent-side-effect-race-suite/0.1",
+        "suite_version": "aau-agent-side-effect-race-suite/0.2",
         "suite_id": "asel-concurrent-workers-2026-09",
         "title": "Public-synthetic concurrent side-effect attempts",
         "profile": {
             "tool_id": "notification-service",
             "operation_id": "send_synthetic_notice",
+            "resource_scope": "synthetic-benefit-cases/notices/*",
         },
         "cases": cases,
         "boundaries": {

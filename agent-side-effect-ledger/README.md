@@ -40,7 +40,10 @@ python3 agent-side-effect-ledger/aau_side_effect.py verify \
   --suite agent-side-effect-ledger/examples/reference-suite.json
 ```
 
-The committed public-synthetic suite contains **12 cases and 48 ordered events**. The reference
+The committed public-synthetic suite contains **12 cases and 48 ordered events**. Every prepared
+intent now carries an exact `resource_scope`, and the reference evaluator accepts only exact scopes
+or one terminal prefix wildcard; a target outside that declared scope is blocked before approval.
+The reference
 ledger resolves all 48 outcomes and exact reason-code sets, records seven known primary effects,
 preserves one separately approved compensation as a second effect, reconciles two uncertain
 outcomes, prevents three duplicate effects, blocks one changed-intent key collision, and produces
@@ -123,7 +126,7 @@ case ID, title, and ordered events—but no expected outcomes or expected reason
 
 ```json
 {
-  "protocol_version": "aau-agent-side-effect-adapter/0.1",
+  "protocol_version": "aau-agent-side-effect-adapter/0.2",
   "suite_id": "...",
   "profile": {"...": "public synthetic policy"},
   "case": {"case_id": "...", "title": "...", "events": ["oracle-free events"]}
@@ -291,19 +294,20 @@ python3 agent-side-effect-ledger/aau_side_effect_matrix.py verify safety-result/
 
 The committed [reference matrix pack](examples/reference-matrix-pack/) reports **72/72 exact
 checked outcomes across 36 cases**, zero unsafe outcomes, zero availability losses, and three
-uncertainties correctly preserved. Matrix 0.5 includes exact copies of all three suites, receipts,
+uncertainties correctly preserved. Matrix 0.6 includes exact copies of all three suites, receipts,
 declared adapter entrypoints, and three self-contained execution-material sets, plus the
 [matrix receipt](side-effect-safety-matrix.schema.json), readable summary, and byte manifest.
 Verification needs no adapter command, model, account, network, or package install.
 
-Matrix 0.5 retains the coverage identity introduced in 0.2: crash and race suites must name the
-same `tool_id + operation`, and that pair must exist in the semantic suite. The reference fully
-stresses `notification-service / send_synthetic_notice`. Its semantic suite additionally exercises
+Matrix 0.6 strengthens the coverage identity introduced in 0.2: crash and race suites must name the
+same `tool_id + operation + resource_scope`, and that exact relationship must exist in the semantic
+suite. The reference fully stresses `notification-service / send_synthetic_notice /
+synthetic-benefit-cases/notices/*`. Its semantic suite additionally exercises
 `benefits-disbursement / issue_synthetic_payment`; the matrix does **not** imply crash or race
-coverage for that second pair. This distinction is encoded in the receipt rather than left to
+coverage for that second relationship. This distinction is encoded in the receipt rather than left to
 README interpretation.
 
-Matrix 0.5 requires each command to place its declared entrypoint artifact at `argv[0]` or the
+Matrix 0.6 requires each command to place its declared entrypoint artifact at `argv[0]` or the
 `argv[1]` supported-interpreter target. It records that position, replaces the token with the declared
 artifact's absolute path before execution, hashes the file before execution, rejects a different
 after-run byte sequence, copies the original bytes into the pack, and omits the command text so an
@@ -314,7 +318,7 @@ rejects obvious dynamic loading. The reference matrix binds **8 material records
 adapters and explicitly exposes **42 per-adapter unresolved import names** rather than silently
 calling them captured. Every captured file must retain the same bytes after the matrix run.
 
-For CPython targets, Matrix 0.5 also injects one byte-bound startup observer before the adapter
+For CPython targets, Matrix 0.6 also injects one byte-bound startup observer before the adapter
 script and requires a trace from every expected process. The reference run accounts for **109/109
 processes** and records **11 workspace-read material instances**, including three observations of
 the shared `reference-runtime-policy.json` file that static import parsing cannot discover.
@@ -368,8 +372,9 @@ retain the pack.
 ## Bind the test evidence to an exact release
 
 A passing matrix still leaves a substitution gap: the AABOM could name one release while the
-receipt came from different adapter bytes. The **Side-Effect Release Binding** joins one exact AABOM,
-release ID, consequential `tool_id + operation`, complete matrix pack, human-approval declaration,
+receipt came from different adapter bytes or a different resource boundary. The **Side-Effect
+Release Binding** joins one exact AABOM, release ID, consequential
+`tool_id + operation + resource_scope`, complete matrix pack, human-approval declaration,
 and the three adapter snapshots in a self-contained, tamper-evident pack.
 
 ```bash
@@ -384,16 +389,18 @@ python3 agent-side-effect-ledger/aau_release_binding.py verify side-effect-relea
 ```
 
 The committed [reference binding pack](examples/reference-release-binding-pack/) verifies **1/1
-consequential operations** with no holds. A valid incomplete result is `binding_held` and remains
+consequential relationships** with no holds. A valid incomplete result is `binding_held` and remains
 verifiable; malformed or tampered input is rejected. The [plan](release-binding-plan.schema.json),
 [receipt](release-binding-receipt.schema.json), and [manifest](release-binding-manifest.schema.json)
 schemas make the boundary portable. The reusable
 [Release Binding Action](../.github/actions/aau-side-effect-release-binding/) preserves diagnostics
 before failing CI.
 
-Release Binding 0.4 compares every declared release adapter path, entrypoint digest, captured
+Release Binding 0.5 first requires the plan, semantic suite, crash suite, race suite, Matrix 0.6,
+tool declaration, and authority lease to agree on the exact operation-scope relationship. It then
+compares every declared release adapter path, entrypoint digest, captured
 execution-material-set digest, and digest-only snapshot of every workspace path observed by Matrix
-0.5. A different path, a one-byte entrypoint change, a changed statically imported local module,
+0.6. A different path, a one-byte entrypoint change, a changed statically imported local module,
 or a substituted runtime policy produces
 `ADAPTER_PATH_DIFFERS_FROM_MATRIX`, `ADAPTER_BYTES_DIFFER_FROM_MATRIX`,
 `ADAPTER_MATERIALS_DIFFER_FROM_MATRIX`, or `RUNTIME_MATERIALS_DIFFER_FROM_MATRIX`, reduces the

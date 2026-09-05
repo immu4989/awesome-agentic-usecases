@@ -110,8 +110,8 @@ def build() -> dict:
     pilot = assess_pilot(pilot_record)
 
     return {
-        "data_version": "aau-agent-security-commons-data/0.5",
-        "generated_on": "2026-09-04",
+        "data_version": "aau-agent-security-commons-data/0.6",
+        "generated_on": "2026-09-05",
         "runtime": {
             "event_count": runtime["event_count"],
             "run_count": runtime["run_count"],
@@ -185,11 +185,11 @@ def build() -> dict:
             "release_binding": {
                 "status": release_binding["status"],
                 "release_id": release_binding["release_id"],
-                "consequential_operation_count": release_binding[
-                    "consequential_operation_count"
+                "consequential_relationship_count": release_binding[
+                    "consequential_relationship_count"
                 ],
-                "fully_bound_consequential_operation_count": release_binding[
-                    "fully_bound_consequential_operation_count"
+                "fully_bound_consequential_relationship_count": release_binding[
+                    "fully_bound_consequential_relationship_count"
                 ],
                 "finding_count": len(release_binding["findings"]),
                 "material_set_count": sum(
@@ -217,6 +217,7 @@ def build() -> dict:
                 "changed_intent_key_conflict",
                 "self_or_expired_approval",
                 "compensation_is_a_second_effect",
+                "resource_scope_relationship_substitution",
             ],
         },
         "incident": {

@@ -79,6 +79,9 @@ or target. Its journal is an in-memory reference state machine. The optional ora
 conformance runner executes the explicitly named local command without a shell; that adapter is
 trusted code and must be reviewed and sandboxed with staging-only access. Adapter-scoped duplicate
 prevention does not prove exactly-once delivery or atomic persistence with a production system.
+The 0.2 semantic profile accepts only an exact resource scope or one terminal prefix wildcard and
+blocks prepared targets outside it. That small matcher is not a production policy engine and does
+not establish live object attributes, canonicalization, tenancy, or authorization.
 The trace identifier is correlation metadata, not identity or authority; compensation remains a
 separate effect and never erases the original. Review the dedicated
 [threat model](agent-side-effect-ledger/THREAT_MODEL.md) before adapting it. Do not place real

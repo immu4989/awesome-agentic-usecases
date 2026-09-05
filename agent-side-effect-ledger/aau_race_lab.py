@@ -16,9 +16,9 @@ from typing import Any
 from aau_side_effect import SideEffectError, canonical, digest, load_json, write_json
 
 
-SUITE_VERSION = "aau-agent-side-effect-race-suite/0.1"
-RECEIPT_VERSION = "aau-agent-side-effect-race-receipt/0.1"
-PROTOCOL_VERSION = "aau-agent-side-effect-race-adapter/0.1"
+SUITE_VERSION = "aau-agent-side-effect-race-suite/0.2"
+RECEIPT_VERSION = "aau-agent-side-effect-race-receipt/0.2"
+PROTOCOL_VERSION = "aau-agent-side-effect-race-adapter/0.2"
 MAX_ADAPTER_BYTES = 1_000_000
 OUTCOMES = {"committed", "replayed", "conflict", "blocked"}
 BOUNDARY_KEYS = {
@@ -34,7 +34,7 @@ BOUNDARY_KEYS = {
 
 def _exact(value: Any, keys: set[str], label: str) -> dict[str, Any]:
     if not isinstance(value, dict) or set(value) != keys:
-        raise SideEffectError(f"{label} fields differ from the 0.1 contract")
+        raise SideEffectError(f"{label} fields differ from the 0.2 contract")
     return value
 
 
@@ -74,9 +74,14 @@ def validate_suite(suite: dict[str, Any]) -> None:
         raise SideEffectError(f"race suite_version must be {SUITE_VERSION}")
     _text(suite["suite_id"], "suite_id", 120)
     _text(suite["title"], "title")
-    profile = _exact(suite["profile"], {"tool_id", "operation_id"}, "race profile")
+    profile = _exact(
+        suite["profile"],
+        {"tool_id", "operation_id", "resource_scope"},
+        "race profile",
+    )
     _text(profile["tool_id"], "profile.tool_id", 120)
     _text(profile["operation_id"], "profile.operation_id", 160)
+    _text(profile["resource_scope"], "profile.resource_scope", 300)
     boundaries = _exact(suite["boundaries"], BOUNDARY_KEYS, "race boundaries")
     if any(boundaries[key] is not True for key in BOUNDARY_KEYS):
         raise SideEffectError("every race-lab boundary must be true")

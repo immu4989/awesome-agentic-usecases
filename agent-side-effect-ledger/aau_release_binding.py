@@ -20,9 +20,9 @@ from aau_harness.agent_bom import AgentBomError, validate_bom  # noqa: E402
 import aau_side_effect_matrix  # noqa: E402
 
 
-PLAN_VERSION = "aau-agent-side-effect-release-binding-plan/0.1"
-RECEIPT_VERSION = "aau-agent-side-effect-release-binding-receipt/0.4"
-PACK_VERSION = "aau-agent-side-effect-release-binding-pack/0.4"
+PLAN_VERSION = "aau-agent-side-effect-release-binding-plan/0.2"
+RECEIPT_VERSION = "aau-agent-side-effect-release-binding-receipt/0.5"
+PACK_VERSION = "aau-agent-side-effect-release-binding-pack/0.5"
 MAX_BYTES = 2_000_000
 ROLES = ("semantic", "crash", "race")
 MATRIX_COMPONENT = {
@@ -33,7 +33,7 @@ MATRIX_COMPONENT = {
 BOUNDARY_KEYS = {
     "public_synthetic_staging_only",
     "adapter_paths_workspace_relative",
-    "all_consequential_operations_must_be_bound",
+    "all_consequential_relationships_must_be_bound",
     "human_approval_required_for_consequential_authority",
     "no_production_identity_or_deployment_claim",
 }
@@ -63,7 +63,7 @@ def _digest(value: Any) -> str:
 
 def _exact(value: Any, keys: set[str], label: str) -> dict[str, Any]:
     if not isinstance(value, dict) or set(value) != keys:
-        raise BindingError(f"{label} fields differ from the 0.1 contract")
+        raise BindingError(f"{label} fields differ from the 0.2 contract")
     return value
 
 
@@ -111,26 +111,35 @@ def validate_plan(plan: dict[str, Any]) -> None:
     bindings = plan["bindings"]
     if not isinstance(bindings, list) or not 1 <= len(bindings) <= 50:
         raise BindingError("bindings must contain 1 to 50 entries")
-    pairs: set[tuple[str, str]] = set()
+    relationships: set[tuple[str, str, str]] = set()
     for index, binding in enumerate(bindings):
         binding = _exact(
             binding,
             {
                 "tool_id",
                 "operation",
+                "resource_scope",
                 "semantic_adapter",
                 "crash_adapter",
                 "race_adapter",
             },
             f"bindings[{index}]",
         )
-        pair = (
+        relationship = (
             _text(binding["tool_id"], f"bindings[{index}].tool_id", 120),
             _text(binding["operation"], f"bindings[{index}].operation", 160),
+            _text(
+                binding["resource_scope"],
+                f"bindings[{index}].resource_scope",
+                300,
+            ),
         )
-        if pair in pairs:
-            raise BindingError(f"duplicate tool-operation binding: {pair[0]} / {pair[1]}")
-        pairs.add(pair)
+        if relationship in relationships:
+            raise BindingError(
+                "duplicate tool-operation-scope binding: "
+                f"{relationship[0]} / {relationship[1]} / {relationship[2]}"
+            )
+        relationships.add(relationship)
         for role in ROLES:
             key = f"{role}_adapter"
             value = _text(binding[key], f"bindings[{index}].{key}", 500)
@@ -247,12 +256,17 @@ def _load_runtime_value(path: Path, label: str) -> dict[str, Any]:
 
 
 def _authority_ids(
-    bom: dict[str, Any], tool_id: str, operation: str
+    bom: dict[str, Any], tool_id: str, operation: str, resource_scope: str
 ) -> tuple[list[str], bool]:
     authorities = [
         item
         for item in bom["authorities"]
-        if tool_id in item["tool_ids"] and operation in item["operations"]
+        if any(
+            binding["tool_id"] == tool_id
+            and binding["operation"] == operation
+            and resource_scope in binding["resource_scopes"]
+            for binding in item["operation_scope_bindings"]
+        )
     ]
     return (
         sorted(item["authority_id"] for item in authorities),
@@ -289,18 +303,31 @@ def _receipt(
     matrix_artifacts = {
         item["component_id"]: item for item in matrix["adapter_artifacts"]
     }
-    plan_pairs: set[tuple[str, str]] = set()
-    binding_matches: dict[tuple[str, str], bool] = {}
+    plan_relationships: set[tuple[str, str, str]] = set()
+    binding_matches: dict[tuple[str, str, str], bool] = {}
     rows: list[dict[str, Any]] = []
     for index, binding in enumerate(plan["bindings"]):
-        tool_id, operation = binding["tool_id"], binding["operation"]
+        tool_id = binding["tool_id"]
+        operation = binding["operation"]
+        resource_scope = binding["resource_scope"]
         tool = tools.get(tool_id)
-        if tool is None or operation not in tool["operations"]:
+        tool_relationships = (
+            {
+                (row["operation"], scope)
+                for row in tool["operation_scope_bindings"]
+                for scope in row["resource_scopes"]
+            }
+            if tool is not None
+            else set()
+        )
+        if (operation, resource_scope) not in tool_relationships:
             raise BindingError(
-                f"binding references an undeclared AABOM operation: {tool_id} / {operation}"
+                "binding references an undeclared AABOM operation-scope relationship: "
+                f"{tool_id} / {operation} / {resource_scope}"
             )
-        plan_pairs.add((tool_id, operation))
-        authority_ids, approval_required = _authority_ids(bom, tool_id, operation)
+        relationship = (tool_id, operation, resource_scope)
+        plan_relationships.add(relationship)
+        authority_ids, approval_required = _authority_ids(bom, *relationship)
         adapters = {}
         all_adapters_match = True
         for role in ROLES:
@@ -379,38 +406,39 @@ def _receipt(
             if not path_matches:
                 add(
                     "ADAPTER_PATH_DIFFERS_FROM_MATRIX",
-                    f"{tool_id} / {operation} / {role}",
+                    f"{tool_id} / {operation} / {resource_scope} / {role}",
                     "The release plan path differs from the artifact path declared during the matrix run.",
                 )
             if not bytes_match:
                 add(
                     "ADAPTER_BYTES_DIFFER_FROM_MATRIX",
-                    f"{tool_id} / {operation} / {role}",
+                    f"{tool_id} / {operation} / {resource_scope} / {role}",
                     "The release adapter bytes differ from the artifact hashed during the matrix run.",
                 )
             if not material_entrypoint_matches:
                 add(
                     "ADAPTER_MATERIAL_ENTRYPOINT_DIFFERS",
-                    f"{tool_id} / {operation} / {role}",
+                    f"{tool_id} / {operation} / {resource_scope} / {role}",
                     "The release material set does not contain the exact declared adapter entrypoint bytes.",
                 )
             if not material_set_matches:
                 add(
                     "ADAPTER_MATERIALS_DIFFER_FROM_MATRIX",
-                    f"{tool_id} / {operation} / {role}",
+                    f"{tool_id} / {operation} / {resource_scope} / {role}",
                     "The release execution-material set differs from the one captured during the matrix run.",
                 )
             if not runtime_materials_match:
                 add(
                     "RUNTIME_MATERIALS_DIFFER_FROM_MATRIX",
-                    f"{tool_id} / {operation} / {role}",
+                    f"{tool_id} / {operation} / {resource_scope} / {role}",
                     "At least one workspace material observed during the matrix run differs at release binding.",
                 )
-        binding_matches[(tool_id, operation)] = all_adapters_match
+        binding_matches[relationship] = all_adapters_match
         rows.append(
             {
                 "tool_id": tool_id,
                 "operation": operation,
+                "resource_scope": resource_scope,
                 "side_effect": tool["side_effect"],
                 "authority_ids": authority_ids,
                 "human_approval_required": approval_required,
@@ -420,55 +448,58 @@ def _receipt(
         )
 
     consequential = {
-        (tool["component_id"], operation)
+        (tool["component_id"], binding["operation"], resource_scope)
         for tool in bom["tools"]
         if tool["side_effect"] in {"write", "irreversible"}
-        for operation in tool["operations"]
+        for binding in tool["operation_scope_bindings"]
+        for resource_scope in binding["resource_scopes"]
     }
-    matrix_pair = (
+    matrix_relationship = (
         matrix["coverage_binding"]["tool_id"],
         matrix["coverage_binding"]["operation"],
+        matrix["coverage_binding"]["resource_scope"],
     )
     if matrix["status"] != "evidence_passed":
         add("MATRIX_NOT_PASSING", "side-effect matrix", matrix["status"])
     if not consequential:
         add(
-            "NO_CONSEQUENTIAL_OPERATIONS",
+            "NO_CONSEQUENTIAL_RELATIONSHIPS",
             "AABOM tools",
-            "The release declares no write or irreversible operation to bind.",
+            "The release declares no write or irreversible operation-scope relationship to bind.",
         )
-    if matrix_pair not in plan_pairs:
+    if matrix_relationship not in plan_relationships:
         add(
             "MATRIX_BOUNDARY_NOT_IN_PLAN",
-            f"{matrix_pair[0]} / {matrix_pair[1]}",
+            " / ".join(matrix_relationship),
             "The three-gate matrix boundary is absent from the release binding plan.",
         )
-    if matrix_pair not in consequential:
+    if matrix_relationship not in consequential:
         add(
             "MATRIX_BOUNDARY_NOT_CONSEQUENTIAL_IN_AABOM",
-            f"{matrix_pair[0]} / {matrix_pair[1]}",
-            "The matrix boundary is not a declared write or irreversible AABOM operation.",
+            " / ".join(matrix_relationship),
+            "The matrix boundary is not a declared write or irreversible AABOM operation-scope relationship.",
         )
-    for tool_id, operation in sorted(consequential):
-        subject = f"{tool_id} / {operation}"
-        if (tool_id, operation) not in plan_pairs:
+    for tool_id, operation, resource_scope in sorted(consequential):
+        relationship = (tool_id, operation, resource_scope)
+        subject = " / ".join(relationship)
+        if relationship not in plan_relationships:
             add(
-                "CONSEQUENTIAL_OPERATION_NOT_IN_PLAN",
+                "CONSEQUENTIAL_RELATIONSHIP_NOT_IN_PLAN",
                 subject,
-                "Every AABOM write or irreversible operation requires an adapter binding.",
+                "Every AABOM write or irreversible operation-scope relationship requires an adapter binding.",
             )
-        if (tool_id, operation) != matrix_pair:
+        if relationship != matrix_relationship:
             add(
-                "CONSEQUENTIAL_OPERATION_NOT_FULLY_STRESSED",
+                "CONSEQUENTIAL_RELATIONSHIP_NOT_FULLY_STRESSED",
                 subject,
-                "This operation is not the matrix's semantic + crash + race boundary.",
+                "This exact relationship is not the matrix's semantic + crash + race boundary.",
             )
-        authority_ids, approval_required = _authority_ids(bom, tool_id, operation)
+        authority_ids, approval_required = _authority_ids(bom, *relationship)
         if not authority_ids:
             add(
-                "CONSEQUENTIAL_AUTHORITY_MISSING",
+                "CONSEQUENTIAL_RELATIONSHIP_AUTHORITY_MISSING",
                 subject,
-                "No AABOM authority names this tool and operation.",
+                "No AABOM authority grants this exact tool-operation-scope relationship.",
             )
         elif not approval_required:
             add(
@@ -491,14 +522,14 @@ def _receipt(
 
     findings.sort(key=lambda item: (item["code"], item["subject"], item["detail"]))
     fully_bound = sum(
-        pair in plan_pairs
-        and pair == matrix_pair
-        and bool(_authority_ids(bom, *pair)[0])
-        and _authority_ids(bom, *pair)[1]
+        relationship in plan_relationships
+        and relationship == matrix_relationship
+        and bool(_authority_ids(bom, *relationship)[0])
+        and _authority_ids(bom, *relationship)[1]
         and matrix["status"] == "evidence_passed"
         and matrix_evidence_bound
-        and binding_matches.get(pair, False)
-        for pair in consequential
+        and binding_matches.get(relationship, False)
+        for relationship in consequential
     )
     result = {
         "receipt_version": RECEIPT_VERSION,
@@ -511,9 +542,13 @@ def _receipt(
         "matrix_manifest_sha256": matrix_manifest_sha256,
         "matrix_sha256": matrix["matrix_sha256"],
         "matrix_status": matrix["status"],
-        "matrix_boundary": {"tool_id": matrix_pair[0], "operation": matrix_pair[1]},
-        "consequential_operation_count": len(consequential),
-        "fully_bound_consequential_operation_count": fully_bound,
+        "matrix_boundary": {
+            "tool_id": matrix_relationship[0],
+            "operation": matrix_relationship[1],
+            "resource_scope": matrix_relationship[2],
+        },
+        "consequential_relationship_count": len(consequential),
+        "fully_bound_consequential_relationship_count": fully_bound,
         "bindings": rows,
         "findings": findings,
         "claim_boundary": {
@@ -524,6 +559,7 @@ def _receipt(
             "runtime_material_mismatches_are_binding_holds": True,
             "runtime_observation_is_digest_only_and_not_a_sandbox": True,
             "static_and_observed_materials_not_complete_runtime_dependency_graph": True,
+            "exact_resource_scope_is_bound_across_all_three_suites": True,
             "public_synthetic_staging_only": True,
             "valid_binding_not_deployment_approval_or_authority": True,
             "passing_matrix_not_production_equivalence": True,
@@ -548,12 +584,13 @@ def _summary(receipt: dict[str, Any]) -> str:
             f"**{receipt['status'].replace('_', ' ').upper()}** · agent "
             f"`{receipt['agent_id']}` · release `{receipt['release_id']}`",
             "",
-            f"Fully bound consequential operations: "
-            f"**{receipt['fully_bound_consequential_operation_count']}/"
-            f"{receipt['consequential_operation_count']}**",
+            f"Fully bound consequential relationships: "
+            f"**{receipt['fully_bound_consequential_relationship_count']}/"
+            f"{receipt['consequential_relationship_count']}**",
             "",
             f"Matrix boundary: `{receipt['matrix_boundary']['tool_id']} / "
-            f"{receipt['matrix_boundary']['operation']}`",
+            f"{receipt['matrix_boundary']['operation']} / "
+            f"{receipt['matrix_boundary']['resource_scope']}`",
             "",
             "Each adapter binding compares the entrypoint bytes, static-local Python material set, "
             "and every digest-only workspace material observed during the matrix run.",
@@ -791,8 +828,8 @@ def main() -> int:
         receipt = build_pack(args) if args.action == "pack" else verify_pack(args.pack)
         print(
             f"verified release binding: "
-            f"{receipt['fully_bound_consequential_operation_count']}/"
-            f"{receipt['consequential_operation_count']} consequential operations"
+            f"{receipt['fully_bound_consequential_relationship_count']}/"
+            f"{receipt['consequential_relationship_count']} consequential relationships"
         )
         return 0 if receipt["status"] == "evidence_bound" else 1
     except (BindingError, AgentBomError, OSError, ValueError) as exc:

@@ -58,11 +58,12 @@ def test_reference_release_binding_is_exact_and_reproducible(tmp_path):
     workspace, args = _workspace(tmp_path)
     receipt = build_pack(args)
     assert receipt["status"] == "evidence_bound"
-    assert receipt["consequential_operation_count"] == 1
-    assert receipt["fully_bound_consequential_operation_count"] == 1
+    assert receipt["consequential_relationship_count"] == 1
+    assert receipt["fully_bound_consequential_relationship_count"] == 1
     assert receipt["matrix_boundary"] == {
         "tool_id": "notification-service",
         "operation": "send_synthetic_notice",
+        "resource_scope": "synthetic-benefit-cases/notices/*",
     }
     assert receipt["findings"] == []
     adapters = receipt["bindings"][0]["adapters"].values()
@@ -80,14 +81,14 @@ def test_binding_holds_when_consequential_authority_omits_approval(tmp_path):
     (workspace / "bom.json").write_text(json.dumps(bom, indent=2) + "\n")
     receipt = build_pack(args)
     assert receipt["status"] == "binding_held"
-    assert receipt["fully_bound_consequential_operation_count"] == 0
+    assert receipt["fully_bound_consequential_relationship_count"] == 0
     assert [item["code"] for item in receipt["findings"]] == [
         "HUMAN_APPROVAL_NOT_REQUIRED"
     ]
     assert verify_pack(workspace / "binding-pack") == receipt
 
 
-def test_binding_holds_when_aabom_operation_is_not_fully_stressed(tmp_path):
+def test_binding_holds_when_aabom_relationship_is_not_fully_stressed(tmp_path):
     workspace, args = _workspace(tmp_path)
     bom = json.loads((workspace / "bom.json").read_text())
     bom["tools"][0]["operations"].append("send_other_notice")
@@ -108,12 +109,39 @@ def test_binding_holds_when_aabom_operation_is_not_fully_stressed(tmp_path):
     (workspace / "bom.json").write_text(json.dumps(bom, indent=2) + "\n")
     receipt = build_pack(args)
     assert receipt["status"] == "binding_held"
-    assert receipt["consequential_operation_count"] == 2
-    assert receipt["fully_bound_consequential_operation_count"] == 1
+    assert receipt["consequential_relationship_count"] == 2
+    assert receipt["fully_bound_consequential_relationship_count"] == 1
     assert {item["code"] for item in receipt["findings"]} == {
-        "CONSEQUENTIAL_OPERATION_NOT_FULLY_STRESSED",
-        "CONSEQUENTIAL_OPERATION_NOT_IN_PLAN",
+        "CONSEQUENTIAL_RELATIONSHIP_NOT_FULLY_STRESSED",
+        "CONSEQUENTIAL_RELATIONSHIP_NOT_IN_PLAN",
     }
+
+
+def test_binding_does_not_infer_authority_from_separate_operation_and_scope_lists(
+    tmp_path,
+):
+    workspace, args = _workspace(tmp_path)
+    bom = json.loads((workspace / "bom.json").read_text())
+    second_scope = "synthetic-benefit-cases/notices/restricted/*"
+    bom["tools"][0]["resource_scopes"].append(second_scope)
+    bom["tools"][0]["operation_scope_bindings"][0]["resource_scopes"].append(
+        second_scope
+    )
+    (workspace / "bom.json").write_text(json.dumps(bom, indent=2) + "\n")
+    plan = json.loads((workspace / "plan.json").read_text())
+    plan["bindings"][0]["resource_scope"] = second_scope
+    (workspace / "plan.json").write_text(json.dumps(plan, indent=2) + "\n")
+
+    receipt = build_pack(args)
+
+    assert receipt["status"] == "binding_held"
+    assert receipt["bindings"][0]["authority_ids"] == []
+    assert {
+        "CONSEQUENTIAL_RELATIONSHIP_AUTHORITY_MISSING",
+        "CONSEQUENTIAL_RELATIONSHIP_NOT_FULLY_STRESSED",
+        "CONSEQUENTIAL_RELATIONSHIP_NOT_IN_PLAN",
+        "MATRIX_BOUNDARY_NOT_IN_PLAN",
+    } <= {item["code"] for item in receipt["findings"]}
 
 
 def test_binding_holds_when_aabom_does_not_hash_exact_matrix_manifest(tmp_path):
@@ -123,7 +151,7 @@ def test_binding_holds_when_aabom_does_not_hash_exact_matrix_manifest(tmp_path):
     (workspace / "bom.json").write_text(json.dumps(bom, indent=2) + "\n")
     receipt = build_pack(args)
     assert receipt["status"] == "binding_held"
-    assert receipt["fully_bound_consequential_operation_count"] == 0
+    assert receipt["fully_bound_consequential_relationship_count"] == 0
     assert [item["code"] for item in receipt["findings"]] == [
         "AABOM_MATRIX_EVIDENCE_NOT_BOUND"
     ]
@@ -140,7 +168,7 @@ def test_binding_holds_when_release_adapter_bytes_differ_from_matrix(tmp_path):
     adapter.write_bytes(adapter.read_bytes() + b"\n# release substitution\n")
     receipt = build_pack(args)
     assert receipt["status"] == "binding_held"
-    assert receipt["fully_bound_consequential_operation_count"] == 0
+    assert receipt["fully_bound_consequential_relationship_count"] == 0
     assert [item["code"] for item in receipt["findings"]] == [
         "ADAPTER_BYTES_DIFFER_FROM_MATRIX",
         "ADAPTER_MATERIALS_DIFFER_FROM_MATRIX",
@@ -162,7 +190,7 @@ def test_binding_holds_when_imported_local_material_differs_from_matrix(tmp_path
     receipt = build_pack(args)
 
     assert receipt["status"] == "binding_held"
-    assert receipt["fully_bound_consequential_operation_count"] == 0
+    assert receipt["fully_bound_consequential_relationship_count"] == 0
     assert [item["code"] for item in receipt["findings"]] == [
         "ADAPTER_MATERIALS_DIFFER_FROM_MATRIX",
         "RUNTIME_MATERIALS_DIFFER_FROM_MATRIX",
@@ -190,7 +218,7 @@ def test_binding_holds_runtime_policy_substitution_with_source_unchanged(tmp_pat
     receipt = build_pack(args)
 
     assert receipt["status"] == "binding_held"
-    assert receipt["fully_bound_consequential_operation_count"] == 0
+    assert receipt["fully_bound_consequential_relationship_count"] == 0
     assert [item["code"] for item in receipt["findings"]] == [
         "RUNTIME_MATERIALS_DIFFER_FROM_MATRIX",
         "RUNTIME_MATERIALS_DIFFER_FROM_MATRIX",

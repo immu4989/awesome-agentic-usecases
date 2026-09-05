@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-suite-0.1.json",
-  "title": "AAU Agent Side-Effect Suite 0.1",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-suite-0.2.json",
+  "title": "AAU Agent Side-Effect Suite 0.2",
   "type": "object",
   "additionalProperties": false,
   "required": ["suite_version", "suite_id", "title", "profile", "cases", "boundaries"],
   "properties": {
-    "suite_version": {"const": "aau-agent-side-effect-suite/0.1"},
+    "suite_version": {"const": "aau-agent-side-effect-suite/0.2"},
     "suite_id": {"type": "string", "minLength": 1, "maxLength": 120},
     "title": {"type": "string", "minLength": 1, "maxLength": 240},
     "profile": {
@@ -29,10 +29,11 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["tool_id", "operation", "effect_class", "compensation_operation"],
+            "required": ["tool_id", "operation", "resource_scope", "effect_class", "compensation_operation"],
             "properties": {
               "tool_id": {"type": "string", "minLength": 1},
               "operation": {"type": "string", "minLength": 1},
+              "resource_scope": {"type": "string", "minLength": 1, "maxLength": 300, "pattern": "^[^*?\\[\\]]+\\*?$"},
               "effect_class": {"enum": ["reversible", "irreversible"]},
               "compensation_operation": {"type": ["string", "null"]}
             }

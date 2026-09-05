@@ -78,10 +78,12 @@ def test_reference_matrix_is_exact_self_contained_and_reproducible(tmp_path):
     assert matrix["coverage_binding"] == {
         "tool_id": "notification-service",
         "operation": "send_synthetic_notice",
+        "resource_scope": "synthetic-benefit-cases/notices/*",
         "semantic_boundary_present": True,
         "crash_race_same_boundary": True,
-        "semantic_tool_operation_count": 2,
-        "fully_stressed_tool_operation_count": 1,
+        "semantic_declared_relationship_count": 2,
+        "semantic_exercised_relationship_count": 2,
+        "fully_stressed_relationship_count": 1,
     }
     assert [item["component_id"] for item in matrix["adapter_artifacts"]] == [
         "semantics",
@@ -147,12 +149,21 @@ def test_matrix_rejects_output_escape(tmp_path):
         run_pack(args)
 
 
-def test_matrix_rejects_mismatched_tool_operation_coverage(tmp_path):
+def test_matrix_rejects_mismatched_exact_relationship_coverage(tmp_path):
     workspace, args = _workspace(tmp_path)
     race = json.loads((workspace / "race.json").read_text())
     race["profile"]["operation_id"] = "different_operation"
     (workspace / "race.json").write_text(json.dumps(race))
-    with pytest.raises(MatrixError, match="same tool_id and operation"):
+    with pytest.raises(MatrixError, match="same tool_id, operation, and resource_scope"):
+        run_pack(args)
+
+
+def test_matrix_rejects_resource_scope_substitution(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    race = json.loads((workspace / "race.json").read_text())
+    race["profile"]["resource_scope"] = "synthetic-benefit-cases/payments/*"
+    (workspace / "race.json").write_text(json.dumps(race))
+    with pytest.raises(MatrixError, match="same tool_id, operation, and resource_scope"):
         run_pack(args)
 
 
@@ -271,6 +282,28 @@ def test_matrix_rejects_boundary_absent_from_semantic_suite(tmp_path):
     semantic["profile"]["tools"] = semantic["profile"]["tools"][:1]
     (workspace / "semantic.json").write_text(json.dumps(semantic))
     with pytest.raises(MatrixError, match="must exist in the semantic suite"):
+        run_pack(args)
+
+
+def test_matrix_rejects_declared_relationship_without_legitimate_semantic_event(
+    tmp_path,
+):
+    workspace, args = _workspace(tmp_path)
+    semantic = json.loads((workspace / "semantic.json").read_text())
+    notification_prepare = next(
+        event
+        for case in semantic["cases"]
+        for event in case["events"]
+        if event["kind"] == "prepare"
+        and event["content"]["tool_id"] == "notification-service"
+    )
+    notification_prepare["expected"] = {
+        "outcome": "blocked",
+        "reason_codes": ["TOOL_NOT_ALLOWED"],
+    }
+    (workspace / "semantic.json").write_text(json.dumps(semantic))
+
+    with pytest.raises(MatrixError, match="legitimate prepared semantic event"):
         run_pack(args)
 
 

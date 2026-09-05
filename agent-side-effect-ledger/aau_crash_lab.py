@@ -14,9 +14,9 @@ from typing import Any
 from aau_side_effect import SideEffectError, canonical, digest, load_json, write_json
 
 
-SUITE_VERSION = "aau-agent-side-effect-crash-suite/0.1"
-RECEIPT_VERSION = "aau-agent-side-effect-crash-receipt/0.1"
-PROTOCOL_VERSION = "aau-agent-side-effect-crash-adapter/0.1"
+SUITE_VERSION = "aau-agent-side-effect-crash-suite/0.2"
+RECEIPT_VERSION = "aau-agent-side-effect-crash-receipt/0.2"
+PROTOCOL_VERSION = "aau-agent-side-effect-crash-adapter/0.2"
 CRASH_EXIT = 86
 MAX_ADAPTER_BYTES = 1_000_000
 CRASH_POINTS = {
@@ -57,7 +57,7 @@ BOUNDARY_KEYS = {
 
 def _exact(value: Any, keys: set[str], label: str) -> dict[str, Any]:
     if not isinstance(value, dict) or set(value) != keys:
-        raise SideEffectError(f"{label} fields differ from the 0.1 contract")
+        raise SideEffectError(f"{label} fields differ from the 0.2 contract")
     return value
 
 
@@ -89,11 +89,18 @@ def validate_suite(suite: dict[str, Any]) -> None:
     _text(suite["title"], "title", 240)
     profile = _exact(
         suite["profile"],
-        {"tool_id", "operation_id", "idempotency_key", "intent_sha256"},
+        {
+            "tool_id",
+            "operation_id",
+            "resource_scope",
+            "idempotency_key",
+            "intent_sha256",
+        },
         "crash profile",
     )
     _text(profile["tool_id"], "profile.tool_id", 120)
     _text(profile["operation_id"], "profile.operation_id", 160)
+    _text(profile["resource_scope"], "profile.resource_scope", 300)
     _text(profile["idempotency_key"], "profile.idempotency_key", 200)
     if not isinstance(profile["intent_sha256"], str) or len(profile["intent_sha256"]) != 64:
         raise SideEffectError("profile.intent_sha256 must be a lowercase SHA-256 digest")

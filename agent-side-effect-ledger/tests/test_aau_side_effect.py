@@ -85,6 +85,38 @@ def test_all_zero_trace_parent_identifier_is_rejected():
     assert event["reason_codes"] == ["TRACE_CONTEXT_INVALID"]
 
 
+def test_prepare_outside_the_tools_exact_resource_scope_is_blocked():
+    suite = load_json(SUITE)
+    prepare = suite["cases"][0]["events"][0]
+    prepare["content"]["resource_scope"] = "synthetic-benefit-cases/notices/*"
+
+    receipt = evaluate_suite(suite)
+
+    event = receipt["cases"][0]["events"][0]
+    assert event["outcome"] == "blocked"
+    assert event["reason_codes"] == ["RESOURCE_SCOPE_NOT_ALLOWED"]
+
+
+def test_prepare_target_outside_its_declared_resource_scope_is_blocked():
+    suite = load_json(SUITE)
+    prepare = suite["cases"][0]["events"][0]
+    prepare["content"]["target"] = "synthetic-benefit-cases/notices/001"
+
+    receipt = evaluate_suite(suite)
+
+    event = receipt["cases"][0]["events"][0]
+    assert event["outcome"] == "blocked"
+    assert event["reason_codes"] == ["TARGET_OUTSIDE_RESOURCE_SCOPE"]
+
+
+def test_bare_wildcard_resource_scope_is_rejected():
+    suite = load_json(SUITE)
+    suite["profile"]["tools"][0]["resource_scope"] = "*"
+
+    with pytest.raises(SideEffectError, match="terminal prefix wildcard"):
+        validate_suite(suite)
+
+
 def test_tampering_breaks_verification():
     receipt = evaluate_suite(load_json(SUITE))
     altered = copy.deepcopy(receipt)

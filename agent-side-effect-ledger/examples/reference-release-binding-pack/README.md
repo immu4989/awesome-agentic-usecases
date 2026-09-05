@@ -2,9 +2,9 @@
 
 **EVIDENCE BOUND** · agent `agent:benefit-coordinator` · release `synthetic-benefit-coordinator-0.1.0`
 
-Fully bound consequential operations: **1/1**
+Fully bound consequential relationships: **1/1**
 
-Matrix boundary: `notification-service / send_synthetic_notice`
+Matrix boundary: `notification-service / send_synthetic_notice / synthetic-benefit-cases/notices/*`
 
 Each adapter binding compares the entrypoint bytes, static-local Python material set, and every digest-only workspace material observed during the matrix run.
 

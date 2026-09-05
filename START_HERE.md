@@ -38,7 +38,8 @@ verified identity, certification, deployment approval, compliance result, or ATO
 
 If the agent can trigger a payment, notice, order, access change, or another non-idempotent action,
 use the **[Agent Side-Effect Ledger](agent-side-effect-ledger/)** before connecting the tool. Its
-synthetic state machine binds exact intent, approval, policy epoch, authority, idempotency key,
+synthetic state machine binds exact intent, tool, operation, resource scope, target, approval,
+policy epoch, authority, idempotency key,
 unknown-outcome reconciliation, and compensation into one recomputable receipt. The reference
 suite tests 48 ordered events without calling a target:
 
@@ -91,11 +92,12 @@ effects and deny-all availability loss separately; it is not a linearizability o
 
 For continuous integration, use the
 [Side-Effect Safety Matrix Action](.github/actions/aau-side-effect-safety/). It runs all three gates,
-verifies the 12-file pack, appends a concise job summary, and fails only after valid behavioral
-diagnostics are preserved. Matrix 0.3 rejects crash/race tool-operation mismatches, requires every
+verifies the 19-file pack, appends a concise job summary, and fails only after valid behavioral
+diagnostics are preserved. Matrix 0.6 rejects crash/race tool-operation-scope mismatches, requires a
+legitimate prepared semantic event for that exact relationship, and requires every
 command to place its declared adapter at `argv[0]` or the `argv[1]` supported-interpreter target, preserves
 and executes its normalized absolute path, preserves those exact bytes, and reports which
-semantic pair received all three gates. Untested tools do not inherit coverage by association. Keep
+semantic relationship received all three gates. Untested tools or scopes do not inherit coverage by association. Keep
 adapter commands staging-only and pin the Action to a reviewed full commit SHA.
 
 Before attaching that matrix to a release claim, build the byte-bound pack:
@@ -110,8 +112,9 @@ python3 agent-side-effect-ledger/aau_release_binding.py pack \
 python3 agent-side-effect-ledger/aau_release_binding.py verify side-effect-release-binding
 ```
 
-This checks that every AABOM write or irreversible operation is represented, the one fully stressed
-pair agrees with the matrix, matching authority requires human approval, and the release adapter
+This checks that every AABOM write or irreversible operation-scope relationship is represented, the
+one fully stressed relationship agrees with the matrix, matching exact authority requires human
+approval, and the release adapter
 paths and bytes exactly match the artifacts captured during the matrix run. It does not capture an
 interpreter or dependency closure, identify a live workload, or authorize deployment.
 

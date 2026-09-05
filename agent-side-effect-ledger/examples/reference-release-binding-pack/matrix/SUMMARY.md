@@ -8,7 +8,7 @@
 | Fresh-process crash recovery | 12/12 | 12 | 0 | 0 | 3 |
 | Multi-process concurrency | 12/12 | 12 | 0 | 0 | 0 |
 
-Crash and concurrency evidence bind **`notification-service` / `send_synthetic_notice`**. The semantic suite covers 2 tool-operation pairs; only the named pair has all three gates.
+Crash and concurrency evidence bind **`notification-service` / `send_synthetic_notice` / `synthetic-benefit-cases/notices/*`**. The semantic suite covers 2 exact tool-operation-scope relationships in legitimate prepared events; only the named relationship has all three gates.
 
 Adapter entrypoint artifacts: `semantics:f3bc78226a2a` · `crash_recovery:7a17dd8f7a2c` · `concurrency:cd0ee65036f7`
 

@@ -1,8 +1,9 @@
 # AAU side-effect safety matrix action
 
 This dependency-free composite Action runs three answer-blind, staging-only contracts. It refuses
-to combine their evidence unless crash and race suites name the same exact `tool_id + operation`
-and that pair exists in the semantic suite:
+to combine their evidence unless crash and race suites name the same exact
+`tool_id + operation + resource_scope` relationship and that relationship exists in the semantic
+suite:
 
 1. exact intent, authority, approval, idempotency, reconciliation, and compensation semantics;
 2. recovery in a fresh process after six crash boundaries; and
@@ -75,7 +76,7 @@ reads, environment, or container. Python, Node.js, Bash,
 POSIX shell, Zsh, Ruby, Perl, and PHP launchers are accepted at `argv[0]`;
 interpreter flags before the artifact are intentionally unsupported. The runner groups
 nondeterministic race winners, keeps each component's metrics separate, records which one semantic
-tool-operation pair received all three gates, and does not treat intentionally
+tool-operation-scope relationship received all three gates, and does not treat intentionally
 unresolved crash states as failures. Other tools in a semantic suite do not inherit crash or race
 coverage. Passing is bounded evidence for the exact suites and adapter commands—not atomicity,
 linearizability, exactly-once execution, safety, compliance, certification, deployment approval,

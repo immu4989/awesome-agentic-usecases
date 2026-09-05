@@ -54,9 +54,9 @@
     byId("asc-effect-matrix-runtime-materials").textContent = matrix.runtime_material_count;
     byId("asc-effect-matrix-runtime-only").textContent = matrix.runtime_only_material_count;
     byId("asc-effect-matrix-hash").textContent = matrix.matrix_sha256.slice(0, 12);
-    byId("asc-effect-matrix-boundary").textContent = `${matrix.coverage_binding.tool_id} / ${matrix.coverage_binding.operation}`;
+    byId("asc-effect-matrix-boundary").textContent = `${matrix.coverage_binding.tool_id} / ${matrix.coverage_binding.operation} / ${matrix.coverage_binding.resource_scope}`;
     const binding = data.side_effects.release_binding;
-    byId("asc-effect-binding-count").textContent = `${binding.fully_bound_consequential_operation_count}/${binding.consequential_operation_count}`;
+    byId("asc-effect-binding-count").textContent = `${binding.fully_bound_consequential_relationship_count}/${binding.consequential_relationship_count}`;
     byId("asc-effect-binding-release").textContent = binding.release_id;
     byId("asc-effect-binding-holds").textContent = binding.finding_count;
     byId("asc-effect-binding-materials").textContent = `${binding.material_set_match_count}/${binding.material_set_count}`;
@@ -127,7 +127,7 @@
     byId("asc-pilot-gaps").textContent = `${data.pilot.visible_gaps.length} evidence gaps remain visible: ${data.pilot.visible_gaps.join(", ").replaceAll("_", " ")}.`;
   }
 
-  fetch("agent-security-data.json?v=11", { cache: "no-store" })
+  fetch("agent-security-data.json?v=12", { cache: "no-store" })
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();

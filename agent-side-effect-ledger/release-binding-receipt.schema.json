@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-release-binding-receipt-0.4.json",
-  "title": "AAU Agent Side-Effect Release Binding Receipt 0.4",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-release-binding-receipt-0.5.json",
+  "title": "AAU Agent Side-Effect Release Binding Receipt 0.5",
   "type": "object",
   "additionalProperties": false,
-  "required": ["receipt_version", "binding_id", "agent_id", "release_id", "status", "aabom_sha256", "plan_sha256", "matrix_manifest_sha256", "matrix_sha256", "matrix_status", "matrix_boundary", "consequential_operation_count", "fully_bound_consequential_operation_count", "bindings", "findings", "claim_boundary", "receipt_sha256"],
+  "required": ["receipt_version", "binding_id", "agent_id", "release_id", "status", "aabom_sha256", "plan_sha256", "matrix_manifest_sha256", "matrix_sha256", "matrix_status", "matrix_boundary", "consequential_relationship_count", "fully_bound_consequential_relationship_count", "bindings", "findings", "claim_boundary", "receipt_sha256"],
   "properties": {
-    "receipt_version": {"const": "aau-agent-side-effect-release-binding-receipt/0.4"},
+    "receipt_version": {"const": "aau-agent-side-effect-release-binding-receipt/0.5"},
     "binding_id": {"$ref": "#/$defs/text160"},
     "agent_id": {"$ref": "#/$defs/text160"},
     "release_id": {"$ref": "#/$defs/text160"},
@@ -16,9 +16,9 @@
     "matrix_manifest_sha256": {"$ref": "#/$defs/digest"},
     "matrix_sha256": {"$ref": "#/$defs/digest"},
     "matrix_status": {"enum": ["evidence_passed", "evidence_failed"]},
-    "matrix_boundary": {"$ref": "#/$defs/pair"},
-    "consequential_operation_count": {"type": "integer", "minimum": 0},
-    "fully_bound_consequential_operation_count": {"type": "integer", "minimum": 0},
+    "matrix_boundary": {"$ref": "#/$defs/relationship"},
+    "consequential_relationship_count": {"type": "integer", "minimum": 0},
+    "fully_bound_consequential_relationship_count": {"type": "integer", "minimum": 0},
     "bindings": {
       "type": "array",
       "minItems": 1,
@@ -26,10 +26,11 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["tool_id", "operation", "side_effect", "authority_ids", "human_approval_required", "all_adapters_match_matrix", "adapters"],
+        "required": ["tool_id", "operation", "resource_scope", "side_effect", "authority_ids", "human_approval_required", "all_adapters_match_matrix", "adapters"],
         "properties": {
           "tool_id": {"type": "string", "minLength": 1, "maxLength": 120},
           "operation": {"$ref": "#/$defs/text160"},
+          "resource_scope": {"type": "string", "minLength": 1, "maxLength": 300},
           "side_effect": {"enum": ["read", "prepare", "write", "irreversible"]},
           "authority_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 120}},
           "human_approval_required": {"type": "boolean"},
@@ -63,7 +64,7 @@
     "claim_boundary": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["hashes_bind_pack_bytes_not_runtime_identity", "source_paths_are_declarations_not_provenance", "adapter_byte_mismatches_are_binding_holds", "execution_material_mismatches_are_binding_holds", "runtime_material_mismatches_are_binding_holds", "runtime_observation_is_digest_only_and_not_a_sandbox", "static_and_observed_materials_not_complete_runtime_dependency_graph", "public_synthetic_staging_only", "valid_binding_not_deployment_approval_or_authority", "passing_matrix_not_production_equivalence"],
+      "required": ["hashes_bind_pack_bytes_not_runtime_identity", "source_paths_are_declarations_not_provenance", "adapter_byte_mismatches_are_binding_holds", "execution_material_mismatches_are_binding_holds", "runtime_material_mismatches_are_binding_holds", "runtime_observation_is_digest_only_and_not_a_sandbox", "static_and_observed_materials_not_complete_runtime_dependency_graph", "exact_resource_scope_is_bound_across_all_three_suites", "public_synthetic_staging_only", "valid_binding_not_deployment_approval_or_authority", "passing_matrix_not_production_equivalence"],
       "properties": {
         "hashes_bind_pack_bytes_not_runtime_identity": {"const": true},
         "source_paths_are_declarations_not_provenance": {"const": true},
@@ -72,6 +73,7 @@
         "runtime_material_mismatches_are_binding_holds": {"const": true},
         "runtime_observation_is_digest_only_and_not_a_sandbox": {"const": true},
         "static_and_observed_materials_not_complete_runtime_dependency_graph": {"const": true},
+        "exact_resource_scope_is_bound_across_all_three_suites": {"const": true},
         "public_synthetic_staging_only": {"const": true},
         "valid_binding_not_deployment_approval_or_authority": {"const": true},
         "passing_matrix_not_production_equivalence": {"const": true}
@@ -82,11 +84,15 @@
   "$defs": {
     "text160": {"type": "string", "minLength": 1, "maxLength": 160},
     "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "pair": {
+    "relationship": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["tool_id", "operation"],
-      "properties": {"tool_id": {"type": "string", "minLength": 1, "maxLength": 120}, "operation": {"$ref": "#/$defs/text160"}}
+      "required": ["tool_id", "operation", "resource_scope"],
+      "properties": {
+        "tool_id": {"type": "string", "minLength": 1, "maxLength": 120},
+        "operation": {"$ref": "#/$defs/text160"},
+        "resource_scope": {"type": "string", "minLength": 1, "maxLength": 300}
+      }
     },
     "artifact": {
       "type": "object",

@@ -15,11 +15,11 @@ from pathlib import Path
 from typing import Any
 
 
-SUITE_VERSION = "aau-agent-side-effect-suite/0.1"
-RECEIPT_VERSION = "aau-agent-side-effect-receipt/0.1"
-PACK_VERSION = "aau-agent-side-effect-pack/0.1"
-CONFORMANCE_RECEIPT_VERSION = "aau-agent-side-effect-conformance-receipt/0.1"
-ADAPTER_PROTOCOL_VERSION = "aau-agent-side-effect-adapter/0.1"
+SUITE_VERSION = "aau-agent-side-effect-suite/0.2"
+RECEIPT_VERSION = "aau-agent-side-effect-receipt/0.2"
+PACK_VERSION = "aau-agent-side-effect-pack/0.2"
+CONFORMANCE_RECEIPT_VERSION = "aau-agent-side-effect-conformance-receipt/0.2"
+ADAPTER_PROTOCOL_VERSION = "aau-agent-side-effect-adapter/0.2"
 MAX_BYTES = 2_000_000
 MAX_ADAPTER_BYTES = 1_000_000
 ZERO_HASH = "0" * 64
@@ -49,6 +49,7 @@ CONTENT_FIELDS = {
     "prepare": {
         "tool_id",
         "operation",
+        "resource_scope",
         "target",
         "parameters",
         "agent_id",
@@ -105,7 +106,7 @@ def write_json(value: dict[str, Any], out: Path) -> None:
 
 def _exact(value: Any, keys: set[str], label: str) -> dict[str, Any]:
     if not isinstance(value, dict) or set(value) != keys:
-        raise SideEffectError(f"{label} fields differ from the 0.1 contract")
+        raise SideEffectError(f"{label} fields differ from the 0.2 contract")
     return value
 
 
@@ -113,6 +114,21 @@ def _text(value: Any, label: str, limit: int = 400) -> str:
     if not isinstance(value, str) or not value.strip() or len(value) > limit:
         raise SideEffectError(f"{label} must be non-empty text of at most {limit} characters")
     return value
+
+
+def _resource_scope(value: Any, label: str) -> str:
+    scope = _text(value, label, 300)
+    if scope == "*" or any(character in scope for character in "?[]") or (
+        "*" in scope and (scope.count("*") != 1 or not scope.endswith("*"))
+    ):
+        raise SideEffectError(
+            f"{label} must be exact or use one terminal prefix wildcard"
+        )
+    return scope
+
+
+def _target_in_scope(target: str, scope: str) -> bool:
+    return target.startswith(scope[:-1]) if scope.endswith("*") else target == scope
 
 
 def validate_suite(suite: dict[str, Any]) -> None:
@@ -161,7 +177,13 @@ def validate_suite(suite: dict[str, Any]) -> None:
     for index, tool in enumerate(tools):
         tool = _exact(
             tool,
-            {"tool_id", "operation", "effect_class", "compensation_operation"},
+            {
+                "tool_id",
+                "operation",
+                "resource_scope",
+                "effect_class",
+                "compensation_operation",
+            },
             f"profile.tools[{index}]",
         )
         tool_id = _text(tool["tool_id"], f"profile.tools[{index}].tool_id", 120)
@@ -169,6 +191,9 @@ def validate_suite(suite: dict[str, Any]) -> None:
             raise SideEffectError(f"duplicate tool_id: {tool_id}")
         tool_ids.add(tool_id)
         _text(tool["operation"], f"profile.tools[{index}].operation", 160)
+        _resource_scope(
+            tool["resource_scope"], f"profile.tools[{index}].resource_scope"
+        )
         if tool["effect_class"] not in {"reversible", "irreversible"}:
             raise SideEffectError("tool effect_class must be reversible or irreversible")
         compensation = tool["compensation_operation"]
@@ -229,7 +254,16 @@ def validate_suite(suite: dict[str, Any]) -> None:
 
 def _validate_content(content: dict[str, Any], kind: str, local_ids: set[str], label: str) -> None:
     if kind == "prepare":
-        for key in ("tool_id", "operation", "target", "agent_id", "task_id", "idempotency_key", "traceparent"):
+        for key in (
+            "tool_id",
+            "operation",
+            "resource_scope",
+            "target",
+            "agent_id",
+            "task_id",
+            "idempotency_key",
+            "traceparent",
+        ):
             _text(content[key], f"{label}.content.{key}", 300)
         if not isinstance(content["parameters"], dict):
             raise SideEffectError(f"{label}.content.parameters must be an object")
@@ -290,6 +324,10 @@ def _prepare(event: dict[str, Any], profile: dict[str, Any], state: CaseState) -
     tool = _tool_map(profile).get(content["tool_id"])
     if tool is None or tool["operation"] != content["operation"]:
         reasons.append("TOOL_NOT_ALLOWED")
+    elif tool["resource_scope"] != content["resource_scope"]:
+        reasons.append("RESOURCE_SCOPE_NOT_ALLOWED")
+    elif not _target_in_scope(content["target"], content["resource_scope"]):
+        reasons.append("TARGET_OUTSIDE_RESOURCE_SCOPE")
     if content["agent_id"] != profile["agent_id"]:
         reasons.append("AGENT_BINDING_MISMATCH")
     if content["task_id"] != profile["task_id"]:

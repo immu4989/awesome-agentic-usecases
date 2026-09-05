@@ -27,7 +27,7 @@ def main() -> None:
     actual = json.loads((DOCS / "agent-security-data.json").read_text())
     if actual != expected:
         raise SystemExit("docs/agent-security-data.json is stale; run docs/make_agent_security_data.py")
-    if expected["data_version"] != "aau-agent-security-commons-data/0.5":
+    if expected["data_version"] != "aau-agent-security-commons-data/0.6":
         raise SystemExit("Agent Security Commons data version drifted")
     if expected["runtime"]["event_count"] != 50 or expected["runtime"]["adapter_count"] != 6:
         raise SystemExit("ABP runtime reference coverage drifted")
@@ -77,7 +77,7 @@ def main() -> None:
         raise SystemExit("side-effect race-lab evidence drifted")
     matrix = expected["side_effects"]["matrix"]
     if (
-        matrix["matrix_version"] != "aau-agent-side-effect-safety-matrix/0.5"
+        matrix["matrix_version"] != "aau-agent-side-effect-safety-matrix/0.6"
         or matrix["status"] != "evidence_passed"
         or matrix["component_count"] != 3
         or matrix["aggregate"]["case_count"] != 36
@@ -88,8 +88,11 @@ def main() -> None:
         or matrix["aggregate"]["unresolved_count"] != 3
         or matrix["coverage_binding"]["tool_id"] != "notification-service"
         or matrix["coverage_binding"]["operation"] != "send_synthetic_notice"
-        or matrix["coverage_binding"]["semantic_tool_operation_count"] != 2
-        or matrix["coverage_binding"]["fully_stressed_tool_operation_count"] != 1
+        or matrix["coverage_binding"]["resource_scope"]
+        != "synthetic-benefit-cases/notices/*"
+        or matrix["coverage_binding"]["semantic_declared_relationship_count"] != 2
+        or matrix["coverage_binding"]["semantic_exercised_relationship_count"] != 2
+        or matrix["coverage_binding"]["fully_stressed_relationship_count"] != 1
         or [item["component_id"] for item in matrix["adapter_artifacts"]]
         != ["semantics", "crash_recovery", "concurrency"]
         or any(item["command_argv_index"] != 1 for item in matrix["adapter_artifacts"])
@@ -117,8 +120,8 @@ def main() -> None:
     binding = expected["side_effects"]["release_binding"]
     if (
         binding["status"] != "evidence_bound"
-        or binding["consequential_operation_count"] != 1
-        or binding["fully_bound_consequential_operation_count"] != 1
+        or binding["consequential_relationship_count"] != 1
+        or binding["fully_bound_consequential_relationship_count"] != 1
         or binding["finding_count"] != 0
         or binding["material_set_count"] != 3
         or binding["material_set_match_count"] != 3
@@ -191,7 +194,7 @@ def main() -> None:
         if required not in html:
             raise SystemExit(f"site is missing Agent Security Commons marker: {required}")
     js = (DOCS / "agent-security.js").read_text()
-    if "agent-security-data.json?v=11" not in js:
+    if "agent-security-data.json?v=12" not in js:
         raise SystemExit("Agent Security Commons browser data is not source-bound")
     if 'agent-security.css?v=7' not in html or 'agent-security.js?v=10' not in html:
         raise SystemExit("Agent Security Commons browser assets are not cache-busted")

@@ -38,7 +38,7 @@
   all three gates from additional tools covered only by semantic conformance.
 - **Side-Effect Release Binding** — added a fail-closed bridge from AABOM release inventory to the
   exact Matrix boundary and semantic, crash, and race adapter bytes. Its self-contained 20-file
-  reference pack verifies 1/1 consequential operations, emits portable holds for missing coverage
+  reference pack originally verified 1/1 consequential operations, emitted portable holds for missing coverage
   or approval, detects byte substitution, and explicitly stops short of workload identity,
   production provenance, deployment approval, compliance, certification, or an ATO.
 - **Executed adapter artifact binding** — upgraded Matrix 0.3 to require each adapter command to
@@ -71,6 +71,13 @@
   relationship non-use without removing permissions, and the conformance compiler adds adversarial
   twins for independently valid but unbound combinations. The refreshed 19-case reference has 3
   legitimate clean twins, 16 single-boundary violations, and 19/19 exact command-adapter results.
+- **End-to-end side-effect scope binding** — upgraded the semantic, crash, and race suite contracts,
+  Matrix 0.6, and Release Binding 0.5 so evidence names one exact
+  `tool + operation + resource_scope` relationship from prepared target through AABOM authority.
+  The semantic gate blocks a target outside an exact or terminal-prefix scope; the matrix rejects
+  cross-suite scope substitution; and the release binder no longer treats separate operation and
+  scope membership as authority. The refreshed 33-file pack verifies 1/1 consequential
+  relationships while preserving its 72/72 outcome, 109-process, and runtime-material evidence.
 
 ## 1.6.0 - 2026-08-30
 

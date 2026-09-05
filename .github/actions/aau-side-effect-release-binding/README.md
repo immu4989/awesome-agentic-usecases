@@ -3,8 +3,8 @@
 This dependency-free local composite Action joins a verified Side-Effect Safety Matrix to an exact
 Agent Capability and Authority BOM release plus byte snapshots of the semantic, crash, and race
 adapters, their static-local Python material sets, and digest-only snapshots of workspace paths
-observed during the matrix run. It fails closed when the matrix boundary,
-AABOM consequential operations, binding plan, authority approval requirement, entrypoint digest,
+observed during the matrix run. It fails closed when the exact matrix boundary,
+AABOM consequential operation-scope relationships, binding plan, authority approval requirement, entrypoint digest,
 material-set digest, observed-runtime digest, or evidence digest does not agree.
 
 Run the matrix Action first, then bind its pack:
@@ -31,7 +31,7 @@ Run the matrix Action first, then bind its pack:
     output: safety-result/release-binding
 ```
 
-Exit code 0 means all consequential operations are bound. Exit code 1 means a structurally valid,
+Exit code 0 means all consequential tool-operation-scope relationships are bound. Exit code 1 means a structurally valid,
 reverifiable hold pack was produced. Exit code 2 means malformed input, tampering, unsafe paths, or
 another structural failure. The Action uploads nothing; preserve the output in a later step if your
 records policy allows it.
