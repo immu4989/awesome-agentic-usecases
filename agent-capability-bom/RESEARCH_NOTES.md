@@ -65,6 +65,12 @@ conformance claim.
 
 ## Transfer-failure checks
 
+- Duplicate JSON object names can give parsers conflicting interpretations of the same evidence.
+  RFC 8259 section 4 recommends unique names and describes differing duplicate-name behavior;
+  section 6 excludes Infinity and NaN. AABOM file and command-response parsing rejects both
+  duplicate names and these numeric constants before semantic validation. This is a scoped
+  parser boundary, not a claim that every repository JSON consumer applies the same checks.
+
 - Descriptive case IDs leak test labels even when expected answers are omitted. The original
   command transport passed identifiers containing `legitimate_clean_twin` or the violation shape.
   Command requests now replace those identifiers with fresh UUIDs, while receipts keep readable
@@ -92,6 +98,8 @@ conformance claim.
   immutability, builder identity, runtime dependency closure, or deployment.
 
 ## Primary sources
+
+- IETF, [RFC 8259: The JSON Data Interchange Format](https://www.rfc-editor.org/rfc/rfc8259.html), sections 4 and 6, December 2017.
 
 - NIST, [AI Agent Standards Initiative](https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative), updated 2026-08-14.
 - NIST NCCoE, [Accelerating the Adoption of Software and AI Agent Identity and Authorization](https://www.nccoe.nist.gov/publications/other/accelerating-adoption-software-and-ai-agent-identity-and-authorization-concept), draft published 2026-02-05.

@@ -103,6 +103,10 @@
   substitute fresh UUIDs for descriptive test identifiers. Request facts and readable receipt
   labels remain intact; all three committed reference receipts remain reproducible.
 
+- **Unambiguous AABOM JSON** — evidence files and adapter responses now reject nested duplicate
+  object keys and non-standard numeric constants before validation. A regression adapter returning
+  conflicting block/allow decisions is rejected instead of silently keeping its final value.
+
 ## 1.6.0 - 2026-08-30
 
 - Added the Agent Release Gate: exact component snapshots, before/after impact selection,

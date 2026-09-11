@@ -208,7 +208,12 @@ linkage only—not who generated, reviewed, or authorized the deployment.
   drift, receipt identity/digest mismatch, command/artifact substitution, artifact byte drift, and
   non-recomputable exactness or failure counts.
 
-The strict CLI is the normative 1.1 validator. The readable
+The strict CLI is the normative AABOM 1.1 validator.
+JSON evidence files and command responses reject duplicate object keys at every nesting level and
+non-standard numeric constants (`NaN`, `Infinity`, and `-Infinity`). Contradictory repeated decision
+or approval fields therefore fail before semantic validation instead of silently retaining one value.
+
+The readable
 [`agent-capability-bom.schema.json`](agent-capability-bom.schema.json) publishes the transport
 shape; cross-reference, interval, and authority-subset invariants are enforced by the CLI.
 

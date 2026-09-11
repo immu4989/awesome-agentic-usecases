@@ -40,6 +40,31 @@ CONFORMANCE_SCHEMAS = (
 )
 
 
+@pytest.mark.parametrize("payload", [
+    '{"decision":"block","decision":"allow"}',
+    '{"nested":{"approval":false,"approval":true}}',
+    '{"value":NaN}', '{"value":Infinity}', '{"value":-Infinity}',
+])
+def test_evidence_loader_rejects_ambiguous_json(tmp_path, payload):
+    path = tmp_path / "evidence.json"
+    path.write_text(payload)
+    with pytest.raises(AgentBomError, match="duplicate JSON|non-standard JSON"):
+        load_json(path)
+
+
+def test_adapter_rejects_conflicting_duplicate_decisions(tmp_path):
+    adapter = tmp_path / "ambiguous.py"
+    adapter.write_text(
+        "print('{\"decision\":\"block\",\"decision\":\"allow\",\"reason_codes\":[]}')\n"
+    )
+    bom = load_json(CANDIDATE)
+    with pytest.raises(AgentBomError, match="duplicate JSON"):
+        run_conformance(
+            bom, generate_conformance_suite(bom), "command",
+            f"{sys.executable} {adapter}", adapter_artifact=adapter, workspace=tmp_path,
+        )
+
+
 def fixtures():
     return load_json(BASELINE), load_json(CANDIDATE)
 

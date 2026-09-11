@@ -192,13 +192,30 @@ def _sha(value: Any, label: str) -> str:
     return value
 
 
+def _json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise AgentBomError("duplicate JSON object key")
+        result[key] = value
+    return result
+
+
+def _json_constant(value: str) -> Any:
+    raise AgentBomError("non-standard JSON numeric constant")
+
+
+def _parse_json(payload: bytes) -> Any:
+    return json.loads(payload, object_pairs_hook=_json_object, parse_constant=_json_constant)
+
+
 def load_json(path: Path) -> dict[str, Any]:
     if path.is_symlink() or not path.is_file():
         raise AgentBomError(f"invalid or symbolic-link file: {path}")
     if path.stat().st_size > MAX_JSON_BYTES:
         raise AgentBomError(f"file exceeds {MAX_JSON_BYTES} bytes: {path}")
     try:
-        value = json.loads(path.read_bytes())
+        value = _parse_json(path.read_bytes())
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise AgentBomError(f"invalid JSON in {path}: {exc}") from exc
     if not isinstance(value, dict):
@@ -1350,7 +1367,7 @@ def _command_conformance_adapter(argv: list[str], timeout: float):
         if len(completed.stdout) > 1_000_000:
             raise AgentBomError("adapter response exceeds 1000000 bytes")
         try:
-            response = json.loads(completed.stdout)
+            response = _parse_json(completed.stdout)
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:
             raise AgentBomError("adapter returned invalid JSON") from exc
         response = _exact(response, {"decision", "reason_codes"}, "adapter response")
