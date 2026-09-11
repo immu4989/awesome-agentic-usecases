@@ -531,8 +531,10 @@ def main() -> int:
             print(f"wrote {args.out} ({receipt['metrics']['exact_count']}/{receipt['metrics']['case_count']} exact)")
             return 0 if receipt["status"] == "evidence_passed" else 1
         else:
-            verify_receipt(load_json(args.receipt), load_json(args.profile), load_json(args.suite))
-            print(f"verified {args.receipt}")
+            receipt = load_json(args.receipt)
+            verify_receipt(receipt, load_json(args.profile), load_json(args.suite))
+            print(f"verified {args.receipt} ({receipt['status']})")
+            return 0 if receipt["status"] == "evidence_passed" else 1
         return 0
     except (McpDeltaError, OSError) as exc:
         print(f"mcp 2026 delta: {exc}", file=sys.stderr)

@@ -95,6 +95,10 @@
   so CI cannot confuse a structurally valid failure with passing evidence. Passing receipts return
   0 and malformed or mismatched receipts return 2; CLI regression coverage checks all three.
 
+- **Protocol verifier CI consistency** — MCP, A2A, and authority-relay verification now return
+  exit 1 for valid failed evidence, matching their run commands. Cross-protocol CLI tests exercise
+  deny-all failures, tampered metrics, and passing receipts independently.
+
 ## 1.6.0 - 2026-08-30
 
 - Added the Agent Release Gate: exact component snapshots, before/after impact selection,

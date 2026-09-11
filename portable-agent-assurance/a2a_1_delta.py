@@ -505,8 +505,10 @@ def main() -> int:
             print(f"wrote {args.out} ({receipt['metrics']['exact_count']}/{receipt['metrics']['case_count']} exact)")
             return 0 if receipt["status"] == "evidence_passed" else 1
         else:
-            verify_receipt(load_json(args.receipt), load_json(args.profile), load_json(args.suite))
-            print(f"OK: {args.receipt} is digest-bound to its A2A profile and suite.")
+            receipt = load_json(args.receipt)
+            verify_receipt(receipt, load_json(args.profile), load_json(args.suite))
+            print(f"verified {args.receipt} ({receipt['status']})")
+            return 0 if receipt["status"] == "evidence_passed" else 1
         return 0
     except A2aDeltaError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

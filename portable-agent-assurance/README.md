@@ -155,6 +155,12 @@ non-claims](AUTHORITY_RELAY_RESEARCH_NOTES.md), or test the claim from an outsid
 
 ## Run all current gates in one CI matrix
 
+The MCP delta, A2A delta, and authority-relay `run` and `verify` commands use the same CI contract:
+exit **0** means passing evidence, **1** means valid evidence containing failed evaluations, and
+**2** means malformed or mismatched input. Verification checks the recorded results against their
+profile and suite; it does not rerun the adapter. Keep valid failed receipts for diagnosis, while
+requiring exit 0 to pass a gate. Reference-adapter results remain protocol self-tests.
+
 The [local composite GitHub Action](../.github/actions/aau-assurance/) can now run the historical
 envelope plus all three current command-adapter gates. Its matrix runner writes three receipts, one
 aggregate receipt, a human-readable job summary, and a SHA-256 manifest into a non-overwriting
