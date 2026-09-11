@@ -107,6 +107,10 @@
   object keys and non-standard numeric constants before validation. A regression adapter returning
   conflicting block/allow decisions is rejected instead of silently keeping its final value.
 
+- **Unambiguous protocol JSON** — MCP, A2A, and relay evidence and command-response loaders now
+  reject duplicate keys and non-standard numeric constants, with cross-protocol regression tests
+  covering conflicting decisions, nested approvals, NaN, and infinities.
+
 ## 1.6.0 - 2026-08-30
 
 - Added the Agent Release Gate: exact component snapshots, before/after impact selection,

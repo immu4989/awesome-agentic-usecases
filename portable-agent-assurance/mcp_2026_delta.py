@@ -71,11 +71,28 @@ def _strings(value: Any, label: str, *, empty: bool = False) -> list[str]:
     return value
 
 
+def _json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise McpDeltaError("duplicate JSON object key")
+        result[key] = value
+    return result
+
+
+def _json_constant(value: str) -> Any:
+    raise McpDeltaError("non-standard JSON numeric constant")
+
+
+def _parse_json(payload: bytes) -> Any:
+    return json.loads(payload, object_pairs_hook=_json_object, parse_constant=_json_constant)
+
+
 def load_json(path: Path) -> dict[str, Any]:
     if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_BYTES:
         raise McpDeltaError(f"invalid, oversized, or symbolic-link file: {path}")
     try:
-        value = json.loads(path.read_bytes())
+        value = _parse_json(path.read_bytes())
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise McpDeltaError(f"invalid JSON: {path}") from exc
     if not isinstance(value, dict):
@@ -344,7 +361,7 @@ def _command_adapter(command: str, timeout: float):
         if completed.returncode != 0 or len(completed.stdout) > MAX_BYTES:
             raise McpDeltaError("adapter failed or returned an oversized response")
         try:
-            response = json.loads(completed.stdout)
+            response = _parse_json(completed.stdout)
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:
             raise McpDeltaError("adapter returned invalid JSON") from exc
         _exact(response, {"decision", "reason_codes"}, "adapter response")

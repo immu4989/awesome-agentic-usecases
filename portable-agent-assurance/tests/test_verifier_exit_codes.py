@@ -14,6 +14,26 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 
+@pytest.mark.parametrize("module_name", ["mcp_2026_delta", "a2a_1_delta", "authority_relay"])
+@pytest.mark.parametrize("payload", [
+    b'{"decision":"block","decision":"allow","reason_codes":[]}',
+    b'{"nested":{"approval":false,"approval":true}}',
+    b'{"value":NaN}', b'{"value":Infinity}', b'{"value":-Infinity}',
+])
+def test_protocol_inputs_reject_ambiguous_json(module_name, payload, tmp_path, monkeypatch):
+    spec = importlib.util.spec_from_file_location(module_name, ROOT / f"{module_name}.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    source = tmp_path / "input.json"
+    source.write_bytes(payload)
+    with pytest.raises(ValueError, match="duplicate JSON|non-standard JSON"):
+        module.load_json(source)
+    monkeypatch.setattr(module.subprocess, "run", lambda *args, **kwargs:
+                        SimpleNamespace(returncode=0, stdout=payload))
+    with pytest.raises(ValueError, match="duplicate JSON|non-standard JSON"):
+        module._command_adapter("unused", 5)("case", {})
+
+
 @pytest.mark.parametrize("module_name,stem", [
     ("mcp_2026_delta", "mcp-2026-authorization"),
     ("a2a_1_delta", "a2a-1-interface-authorization"),

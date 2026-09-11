@@ -155,6 +155,11 @@ non-claims](AUTHORITY_RELAY_RESEARCH_NOTES.md), or test the claim from an outsid
 
 ## Run all current gates in one CI matrix
 
+The MCP, A2A, and relay loaders reject duplicate JSON object keys, including nested duplicates,
+and non-standard numeric constants in both evidence files and command responses. Conflicting
+decision fields cannot silently overwrite one another. This follows the interoperability concerns
+described in [RFC 8259 sections 4 and 6](https://www.rfc-editor.org/rfc/rfc8259.html).
+
 MCP, A2A, and relay command requests use fresh random UUIDs for `case_id`. Descriptive suite IDs
 can expose expected failure labels, so those IDs stay in the readable receipts only. Adapters must
 evaluate the request facts, not classify the transport ID. UUIDs are not retained in receipts;
