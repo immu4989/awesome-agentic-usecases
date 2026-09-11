@@ -379,6 +379,42 @@ def test_conformance_verification_rejects_oversized_adapter_before_digest(tmp_pa
         verify_conformance_receipt(receipt, bom, suite, adapter, tmp_path)
 
 
+@pytest.mark.parametrize("index", [True, False, 1.0, "1", [], None])
+def test_conformance_rejects_non_integer_launch_positions(index):
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+    receipt = load_json(ROOT / "agent-capability-bom/examples/reference-conformance-receipt.json")
+    receipt["adapter_artifact"]["command_argv_index"] = index
+    with pytest.raises(AgentBomError, match="command index is invalid"):
+        verify_conformance_receipt(receipt, bom, suite)
+
+
+def test_conformance_rejects_symlink_replacement_even_with_equal_bytes(tmp_path, monkeypatch):
+    import aau_harness.agent_bom as module
+
+    adapter = tmp_path / "adapter.py"
+    replacement = tmp_path / "replacement.py"
+    adapter.write_text("# identical bytes\n")
+    replacement.write_bytes(adapter.read_bytes())
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+
+    def factory(argv, timeout):
+        def invoke(case_id, case_input):
+            if not adapter.is_symlink():
+                adapter.unlink()
+                adapter.symlink_to(replacement)
+            return module.evaluate_authority_case(bom, case_input)
+        return invoke
+
+    monkeypatch.setattr(module, "_command_conformance_adapter", factory)
+    with pytest.raises(AgentBomError, match="non-regular file during conformance"):
+        run_conformance(
+            bom, suite, "command", f"{sys.executable} {adapter}",
+            adapter_artifact=adapter, workspace=tmp_path,
+        )
+
+
 def test_conformance_suite_and_receipt_drift_fail_closed():
     bom = load_json(CANDIDATE)
     suite = generate_conformance_suite(bom)

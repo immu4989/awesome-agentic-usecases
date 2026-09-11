@@ -63,6 +63,18 @@ def _workspace(tmp_path: Path) -> tuple[Path, argparse.Namespace]:
     return workspace, args
 
 
+@pytest.mark.parametrize("index", [True, False, 1.0, "1", [], None])
+def test_matrix_rejects_non_integer_launch_positions(tmp_path, index):
+    pack = tmp_path / "pack"
+    shutil.copytree(REFERENCE_PACK, pack)
+    path = pack / "matrix-receipt.json"
+    receipt = json.loads(path.read_text())
+    receipt["adapter_artifacts"][0]["command_argv_index"] = index
+    path.write_text(json.dumps(receipt))
+    with pytest.raises(MatrixError, match="command_argv_index is invalid"):
+        verify_pack(pack)
+
+
 def test_reference_matrix_is_exact_self_contained_and_reproducible(tmp_path):
     workspace, args = _workspace(tmp_path)
     matrix = run_pack(args)

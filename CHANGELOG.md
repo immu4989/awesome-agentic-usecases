@@ -79,8 +79,8 @@
   scope membership as authority. The refreshed 33-file pack verifies 1/1 consequential
   relationships while preserving its 72/72 outcome, 109-process, and runtime-material evidence.
 - **Artifact-bound authority conformance** — upgraded AABOM command Receipt 1.2 to require the
-  declared workspace artifact at the actual launch position, hash it before and after every
-  inventory-derived twin, and reject command/artifact or verification-time byte substitution.
+  declared workspace artifact at the actual launch position, hash it before and after the full
+  inventory-derived suite, and reject command/artifact or verification-time byte substitution.
   Release Binding 0.6 now embeds the 8/8 exact authority suite and receipt, copies the authority
   adapter, and requires an exact passing clean twin for every consequential relationship. The
   36-file reference pack remains explicitly unsigned and does not claim token, workload, builder,

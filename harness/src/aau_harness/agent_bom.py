@@ -1294,6 +1294,8 @@ def _command_artifact(
         raise AgentBomError("adapter artifact must remain inside the workspace")
     if candidate.is_symlink() or not resolved.is_file():
         raise AgentBomError("adapter artifact must be a regular non-symbolic-link file")
+    if not 1 <= resolved.stat().st_size <= MAX_ADAPTER_BYTES:
+        raise AgentBomError("adapter artifact must contain 1 to 1000000 bytes")
     payload = resolved.read_bytes()
     if not payload or len(payload) > MAX_ADAPTER_BYTES:
         raise AgentBomError("adapter artifact must contain 1 to 1000000 bytes")
@@ -1409,6 +1411,10 @@ def run_conformance(
         )
     if artifact_path is not None:
         try:
+            if artifact_path.is_symlink() or not artifact_path.is_file():
+                raise AgentBomError("adapter artifact became a non-regular file during conformance")
+            if not 1 <= artifact_path.stat().st_size <= MAX_ADAPTER_BYTES:
+                raise AgentBomError("adapter artifact size changed during conformance")
             artifact_after = artifact_path.read_bytes()
         except OSError as exc:
             raise AgentBomError("adapter artifact disappeared during conformance") from exc
@@ -1485,7 +1491,10 @@ def _validate_conformance_artifact(value: Any) -> dict[str, Any]:
         or set(artifact["sha256"]) - HEX
     ):
         raise AgentBomError("adapter artifact receipt digest is invalid")
-    if artifact["command_argv_index"] not in {0, 1}:
+    if (
+        type(artifact["command_argv_index"]) is not int
+        or artifact["command_argv_index"] not in {0, 1}
+    ):
         raise AgentBomError("adapter artifact command index is invalid")
     expected_mode = (
         "direct_executable"

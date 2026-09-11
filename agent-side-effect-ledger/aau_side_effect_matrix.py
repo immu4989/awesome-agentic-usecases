@@ -276,7 +276,7 @@ def _packed_artifacts(
             raise MatrixError("matrix adapter source_path is invalid")
         if row["pack_path"] != ARTIFACTS[component_id]:
             raise MatrixError("matrix adapter pack_path is invalid")
-        if not isinstance(row["command_argv_index"], int) or row[
+        if type(row["command_argv_index"]) is not int or row[
             "command_argv_index"
         ] not in {0, 1}:
             raise MatrixError("matrix adapter command_argv_index is invalid")
