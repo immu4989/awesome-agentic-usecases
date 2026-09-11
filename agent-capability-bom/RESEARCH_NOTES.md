@@ -65,6 +65,13 @@ conformance claim.
 
 ## Transfer-failure checks
 
+- Descriptive case IDs leak test labels even when expected answers are omitted. The original
+  command transport passed identifiers containing `legitimate_clean_twin` or the violation shape.
+  Command requests now replace those identifiers with fresh UUIDs, while receipts keep readable
+  source IDs. A regression adapter that classifies solely from the clean-twin label now blocks all
+  three legitimate cases. This is label isolation only: fixed ordering and the public suite remain
+  observable, so it is not an unseen evaluation or protection against deliberate memorization.
+
 - A model card can identify a model but not every runtime tool entitlement.
 - An SBOM can identify software components but not prove current agent authority.
 - A workload identity can identify a subject but not prove that a specific operation is still in

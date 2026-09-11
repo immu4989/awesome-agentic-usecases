@@ -137,7 +137,12 @@ returns 19/19 exact decisions with zero
 unsafe allows and zero legitimate blocks. A deny-all adapter fails because the clean twins catch
 availability destruction; an allow-all adapter fails on the violation twins.
 
-The adapter receives only `protocol_version`, `case_id`, and the normalized authority input. It
+The adapter receives only `protocol_version`, `case_id`, and the normalized authority input.
+The request `case_id` is a fresh random UUID: it never carries the suite's readable failure label,
+and adapters must not use it as an answer lookup key. The receipt retains the original readable
+suite ID so reviewers can trace failures. Request IDs are not retained and do not affect receipt
+reproducibility. This removes a label shortcut; the public inputs and suite remain visible, so it
+does not create a hidden benchmark or prevent deliberate memorization. The adapter
 never receives expected answers, credentials, arguments, results, prompts, or tool payloads, and
 the compiler never invokes a tool. The command is parsed without a shell. The committed
 [`reference-conformance-suite.json`](examples/reference-conformance-suite.json) and

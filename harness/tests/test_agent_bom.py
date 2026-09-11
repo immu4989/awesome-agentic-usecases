@@ -2,6 +2,7 @@ import copy
 import hashlib
 import json
 import sys
+import uuid
 from pathlib import Path
 
 import pytest
@@ -296,6 +297,55 @@ def test_reference_and_command_conformance_are_exact_and_privacy_bounded():
         CONFORMANCE_ADAPTER,
         ROOT,
     )
+
+
+def test_command_requests_withhold_descriptive_case_ids(monkeypatch):
+    import aau_harness.agent_bom as module
+    from types import SimpleNamespace
+
+    requests = []
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+
+    def execute(argv, **kwargs):
+        request = json.loads(kwargs["input"])
+        requests.append(request)
+        decision, reasons = evaluate_authority_case(bom, request["input"])
+        return SimpleNamespace(returncode=0, stdout=json.dumps({
+            "decision": decision, "reason_codes": reasons,
+        }).encode())
+
+    monkeypatch.setattr(module.subprocess, "run", execute)
+    receipt = run_conformance(
+        bom, suite, "command", f"{sys.executable} {CONFORMANCE_ADAPTER}",
+        adapter_artifact=CONFORMANCE_ADAPTER, workspace=ROOT,
+    )
+    assert receipt["status"] == "evidence_passed"
+    assert len({request["case_id"] for request in requests}) == len(suite["cases"])
+    for request, case, result in zip(requests, suite["cases"], receipt["results"]):
+        assert set(request) == {"protocol_version", "case_id", "input"}
+        assert uuid.UUID(request["case_id"]).version == 4
+        assert request["input"] == case["input"]
+        assert request["case_id"] != case["case_id"]
+        assert result["case_id"] == case["case_id"]
+
+
+def test_adapter_cannot_identify_clean_twins_from_case_labels(tmp_path):
+    adapter = tmp_path / "label_shortcut.py"
+    adapter.write_text(
+        "import json,sys\n"
+        "request=json.load(sys.stdin)\n"
+        "decision='allow' if 'legitimate_clean_twin' in request['case_id'] else 'block'\n"
+        "json.dump({'decision':decision,'reason_codes':[]},sys.stdout)\n"
+    )
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+    receipt = run_conformance(
+        bom, suite, "command", f"{sys.executable} {adapter}",
+        adapter_artifact=adapter, workspace=tmp_path,
+    )
+    assert receipt["status"] == "evidence_failed"
+    assert receipt["metrics"]["legitimate_block_count"] == 3
 
 
 def test_deny_all_is_caught_by_legitimate_twins(tmp_path):

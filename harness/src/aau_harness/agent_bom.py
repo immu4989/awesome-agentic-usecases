@@ -1328,10 +1328,11 @@ def _command_artifact(
 
 
 def _command_conformance_adapter(argv: list[str], timeout: float):
-    def invoke(case_id: str, case_input: dict[str, Any]) -> tuple[str, list[str]]:
+    def invoke(_case_id: str, case_input: dict[str, Any]) -> tuple[str, list[str]]:
         request = {
             "protocol_version": "aau-agent-authority-adapter/1.1",
-            "case_id": case_id,
+            # Suite IDs describe the expected failure; keep them out of requests.
+            "case_id": str(uuid.uuid4()),
             "input": case_input,
         }
         try:

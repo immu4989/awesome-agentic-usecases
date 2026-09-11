@@ -86,6 +86,11 @@
   36-file reference pack remains explicitly unsigned and does not claim token, workload, builder,
   provenance, deployment, certification, compliance, or ATO evidence.
 
+- **Authority request label isolation** — command adapters receive fresh UUIDs instead of case IDs
+  containing expected failure labels. Readable receipt IDs and deterministic evidence stay intact;
+  regression tests demonstrate that label-based shortcuts lose legitimate clean twins. Public
+  suites remain transparent and are not presented as secret benchmarks.
+
 ## 1.6.0 - 2026-08-30
 
 - Added the Agent Release Gate: exact component snapshots, before/after impact selection,
