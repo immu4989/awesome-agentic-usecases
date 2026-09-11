@@ -20,6 +20,8 @@ conformance claim.
 | MCP authorization requires audience-bound tokens and prohibits token passthrough; OAuth security guidance recommends sender-constrained, audience-restricted access tokens. | Test exact tool/scope/time/delegation bindings at the adapter boundary rather than accepting a bearer token as sufficient proof. | This generic compiler establishes MCP or OAuth conformance. |
 | RFC 9396 says values combined inside one authorization-details object form a product, and demonstrates multiple objects for finer control. | Bind exact tool-operation-scope relationships instead of inferring every combination from flat lists. | AABOM is an OAuth authorization-details type or access token. |
 | NIST SP 800-205 describes access decisions in terms of subject, object, requested operation, environment, and policy relationships. | Preserve operation and object-scope relationships as first-class inventory and test inputs. | This experimental profile implements a NIST access-control system. |
+| NIST SSDF 1.1 protects software components from tampering, provides release-integrity verification, and calls for collecting provenance data for release components. | Bind command conformance to the exact adapter artifact observed before and after the run. | A local hash proves who built, signed, reviewed, or deployed the artifact. |
+| SLSA 1.2 verification checks that an attestation subject matches the digest of the artifact being evaluated. | Recheck the declared adapter file against the receipt digest instead of trusting a command label. | The unsigned AAU receipt is SLSA provenance or establishes a trusted builder. |
 
 ## Design decisions
 
@@ -57,6 +59,9 @@ conformance claim.
 12. **Flat unions are summaries, not grants.** Version 1.1 requires exact relationships at both the
     tool and authority layers. Flat operation and scope fields must equal their relationship unions,
     while evaluation and conformance use only the exact triples.
+13. **Behavior must bind to bytes.** Receipt 1.2 requires command evidence to name one
+    workspace-contained, non-symbolic artifact at the actual launch position, hashes it before the
+    cases, and rejects a different after-run byte sequence. The command text is not retained.
 
 ## Transfer-failure checks
 
@@ -75,6 +80,9 @@ conformance claim.
 - Independent operation and scope declarations can produce a Cartesian permission expansion.
   Version 1.1 blocks those implicit combinations and generates explicit relationship-violation
   twins, but still does not model arbitrary attribute or environment policy.
+- A passing command receipt without adapter identity can be paired with different reviewed policy
+  code. Receipt 1.2 closes that local substitution path, but equal hashes do not prove continuous
+  immutability, builder identity, runtime dependency closure, or deployment.
 
 ## Primary sources
 
@@ -94,3 +102,5 @@ conformance claim.
 - IETF, [RFC 9700: Best Current Practice for OAuth 2.0 Security](https://www.rfc-editor.org/rfc/rfc9700), January 2025.
 - IETF, [RFC 9396: OAuth 2.0 Rich Authorization Requests](https://www.rfc-editor.org/rfc/rfc9396), May 2023.
 - NIST, [SP 800-205: Attribute Considerations for Access Control Systems](https://csrc.nist.gov/pubs/sp/800/205/final), June 2019.
+- NIST, [SP 800-218: Secure Software Development Framework 1.1](https://csrc.nist.gov/pubs/sp/800/218/final), February 2022.
+- SLSA, [Build: Verifying artifacts, specification 1.2](https://slsa.dev/spec/v1.2/verifying-artifacts), accessed 2026-09-05.

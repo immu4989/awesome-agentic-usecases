@@ -125,7 +125,9 @@ non-overwriting pack and confines every source and output to the declared worksp
 source adapter paths as untrusted declarations and review the copied bytes before sharing. The
 manifest detects later substitution, and the binder now holds when release paths, entrypoint bytes,
 captured static-local Python material sets, or digest-only observed workspace materials differ from
-the matrix evidence. It remains unsigned,
+the matrix evidence. The authority-conformance receipt also binds the command adapter observed
+before and after its clean and violation twins, but this is a local byte observation—not trusted
+build or deployment provenance. It remains unsigned,
 has no builder or workload identity, and
 does not prove those bytes ran in staging or production. Do not include proprietary adapters, secrets,
 credentials, personal data, controlled information, or production configuration in a public pack.

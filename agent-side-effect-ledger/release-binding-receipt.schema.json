@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-release-binding-receipt-0.5.json",
-  "title": "AAU Agent Side-Effect Release Binding Receipt 0.5",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/agent-side-effect-release-binding-receipt-0.6.json",
+  "title": "AAU Agent Side-Effect Release Binding Receipt 0.6",
   "type": "object",
   "additionalProperties": false,
-  "required": ["receipt_version", "binding_id", "agent_id", "release_id", "status", "aabom_sha256", "plan_sha256", "matrix_manifest_sha256", "matrix_sha256", "matrix_status", "matrix_boundary", "consequential_relationship_count", "fully_bound_consequential_relationship_count", "bindings", "findings", "claim_boundary", "receipt_sha256"],
+  "required": ["receipt_version", "binding_id", "agent_id", "release_id", "status", "aabom_sha256", "plan_sha256", "matrix_manifest_sha256", "matrix_sha256", "matrix_status", "matrix_boundary", "authority_conformance", "consequential_relationship_count", "fully_bound_consequential_relationship_count", "bindings", "findings", "claim_boundary", "receipt_sha256"],
   "properties": {
-    "receipt_version": {"const": "aau-agent-side-effect-release-binding-receipt/0.5"},
+    "receipt_version": {"const": "aau-agent-side-effect-release-binding-receipt/0.6"},
     "binding_id": {"$ref": "#/$defs/text160"},
     "agent_id": {"$ref": "#/$defs/text160"},
     "release_id": {"$ref": "#/$defs/text160"},
@@ -17,6 +17,31 @@
     "matrix_sha256": {"$ref": "#/$defs/digest"},
     "matrix_status": {"enum": ["evidence_passed", "evidence_failed"]},
     "matrix_boundary": {"$ref": "#/$defs/relationship"},
+    "authority_conformance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receipt_version", "status", "adapter_kind", "suite_pack_path", "suite_sha256", "receipt_pack_path", "receipt_sha256", "adapter_source_path", "adapter_receipt_path", "adapter_pack_path", "adapter_sha256", "receipt_adapter_sha256", "adapter_path_matches_receipt", "adapter_bytes_match_receipt", "case_count", "exact_count", "clean_twin_relationship_count", "matrix_relationship_clean_twin_exact"],
+      "properties": {
+        "receipt_version": {"const": "aau-agent-authority-conformance-receipt/1.2"},
+        "status": {"enum": ["evidence_passed", "evidence_failed"]},
+        "adapter_kind": {"enum": ["reference", "command"]},
+        "suite_pack_path": {"const": "authority/authority-conformance-suite.json"},
+        "suite_sha256": {"$ref": "#/$defs/digest"},
+        "receipt_pack_path": {"const": "authority/authority-conformance-receipt.json"},
+        "receipt_sha256": {"$ref": "#/$defs/digest"},
+        "adapter_source_path": {"type": "string", "minLength": 1, "maxLength": 500},
+        "adapter_receipt_path": {"type": ["string", "null"], "maxLength": 500},
+        "adapter_pack_path": {"const": "authority/authority-adapter.artifact"},
+        "adapter_sha256": {"$ref": "#/$defs/digest"},
+        "receipt_adapter_sha256": {"oneOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]},
+        "adapter_path_matches_receipt": {"type": "boolean"},
+        "adapter_bytes_match_receipt": {"type": "boolean"},
+        "case_count": {"type": "integer", "minimum": 1, "maximum": 2000},
+        "exact_count": {"type": "integer", "minimum": 0, "maximum": 2000},
+        "clean_twin_relationship_count": {"type": "integer", "minimum": 0, "maximum": 2000},
+        "matrix_relationship_clean_twin_exact": {"type": "boolean"}
+      }
+    },
     "consequential_relationship_count": {"type": "integer", "minimum": 0},
     "fully_bound_consequential_relationship_count": {"type": "integer", "minimum": 0},
     "bindings": {
@@ -64,7 +89,7 @@
     "claim_boundary": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["hashes_bind_pack_bytes_not_runtime_identity", "source_paths_are_declarations_not_provenance", "adapter_byte_mismatches_are_binding_holds", "execution_material_mismatches_are_binding_holds", "runtime_material_mismatches_are_binding_holds", "runtime_observation_is_digest_only_and_not_a_sandbox", "static_and_observed_materials_not_complete_runtime_dependency_graph", "exact_resource_scope_is_bound_across_all_three_suites", "public_synthetic_staging_only", "valid_binding_not_deployment_approval_or_authority", "passing_matrix_not_production_equivalence"],
+      "required": ["hashes_bind_pack_bytes_not_runtime_identity", "source_paths_are_declarations_not_provenance", "adapter_byte_mismatches_are_binding_holds", "execution_material_mismatches_are_binding_holds", "runtime_material_mismatches_are_binding_holds", "runtime_observation_is_digest_only_and_not_a_sandbox", "static_and_observed_materials_not_complete_runtime_dependency_graph", "exact_resource_scope_is_bound_across_all_three_suites", "authority_decision_adapter_bytes_are_bound", "authority_receipt_not_live_token_or_policy_provenance", "public_synthetic_staging_only", "valid_binding_not_deployment_approval_or_authority", "passing_matrix_not_production_equivalence"],
       "properties": {
         "hashes_bind_pack_bytes_not_runtime_identity": {"const": true},
         "source_paths_are_declarations_not_provenance": {"const": true},
@@ -74,6 +99,8 @@
         "runtime_observation_is_digest_only_and_not_a_sandbox": {"const": true},
         "static_and_observed_materials_not_complete_runtime_dependency_graph": {"const": true},
         "exact_resource_scope_is_bound_across_all_three_suites": {"const": true},
+        "authority_decision_adapter_bytes_are_bound": {"const": true},
+        "authority_receipt_not_live_token_or_policy_provenance": {"const": true},
         "public_synthetic_staging_only": {"const": true},
         "valid_binding_not_deployment_approval_or_authority": {"const": true},
         "passing_matrix_not_production_equivalence": {"const": true}

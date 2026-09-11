@@ -44,8 +44,8 @@ def build() -> dict:
         if path.name != "manifest.json" and path.name != "exchange.json"
     )
     return {
-        "data_version": "aau-release-operations-live-data/1.1",
-        "generated_on": "2026-09-04",
+        "data_version": "aau-release-operations-live-data/1.2",
+        "generated_on": "2026-09-05",
         "release": {
             "release_id": decision["release_id"],
             "status": decision["status"],
@@ -127,6 +127,11 @@ def build() -> dict:
                 "exact_count": conformance_receipt["metrics"]["exact_count"],
                 "unsafe_allow_count": conformance_receipt["metrics"]["unsafe_allow_count"],
                 "legitimate_block_count": conformance_receipt["metrics"]["legitimate_block_count"],
+                "adapter_artifact_path": conformance_receipt["adapter_artifact"]["path"],
+                "adapter_artifact_sha256": conformance_receipt["adapter_artifact"]["sha256"],
+                "adapter_artifact_observed_before_and_after_equal": conformance_receipt[
+                    "adapter_artifact"
+                ]["observed_before_and_after_equal"],
                 "shape_count": len({row["shape"] for row in conformance_suite["cases"]}),
                 "expected_answers_sent_to_adapter": False,
                 "tools_executed": 0,

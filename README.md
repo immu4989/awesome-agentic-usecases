@@ -172,10 +172,12 @@ reads, environment, container, runtime identity, or a complete dependency graph.
 The companion **Side-Effect Release Binding** closes the next evidence-substitution gap. It packages
 the exact AABOM agent and release IDs, the fully stressed tool-operation-scope relationship, the complete matrix,
 the human-approval declaration, and byte snapshots of all three adapters plus their captured local
-material sets. Release Binding 0.5 also re-hashes every workspace material observed during the
+material sets. Release Binding 0.6 also requires an 8/8 exact AABOM authority-conformance receipt
+and binds it to the exact policy adapter bytes that answered those clean and violation twins. It
+re-hashes every workspace material observed during the
 matrix run, so a substituted policy file fails even when entrypoints and static imports are
 unchanged. It matches authority only through AABOM 1.1 exact relationships—separate operation and
-scope membership can no longer create a false match. The committed 33-file reference pack verifies
+scope membership can no longer create a false match. The committed 36-file reference pack verifies
 1/1 consequential relationships; missing
 coverage or substitution
 becomes an inspectable hold rather than a misleading pass. Hashes bind copied files, not workload
@@ -247,10 +249,14 @@ aau bom generate-conformance agent-capability-bom/examples/candidate.json \
   --out /tmp/authority-suite.json
 aau bom run-conformance agent-capability-bom/examples/candidate.json \
   /tmp/authority-suite.json --command "python my_authority_adapter.py" \
+  --adapter-artifact my_authority_adapter.py --workspace . \
   --out /tmp/authority-receipt.json
 ```
 
-The receipt is digest-bound and fully recomputable. Passing remains evidence against this declared
+Receipt 1.2 accepts only a regular, non-symlink artifact inside the declared workspace, requires
+that exact file at command `argv[0]` or a supported interpreter's `argv[1]`, and records its size,
+SHA-256, launch position, and before/after byte equality. The receipt is digest-bound and fully
+recomputable. Passing remains evidence against this declared
 synthetic contract—not proof of production enforcement, identity, safety, compliance,
 certification, deployment approval, or an ATO.
 

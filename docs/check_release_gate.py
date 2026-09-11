@@ -85,6 +85,14 @@ def main() -> None:
     conformance = expected["capability_bom"]["conformance"]
     if conformance["adapter_kind"] != "command":
         raise SystemExit("authority conformance evidence must come from a command adapter")
+    if (
+        len(conformance["adapter_artifact_sha256"]) != 64
+        or not conformance["adapter_artifact_path"].endswith(
+            "reference_conformance_adapter.py"
+        )
+        or not conformance["adapter_artifact_observed_before_and_after_equal"]
+    ):
+        raise SystemExit("authority conformance is not bound to exact adapter bytes")
     if conformance["status"] != "evidence_passed":
         raise SystemExit("reference authority conformance must remain exact")
     if conformance["exact_count"] != conformance["case_count"]:
@@ -112,10 +120,11 @@ def main() -> None:
         "Ship evidence,",
         "not confidence.",
         'href="release-gate.css?v=5"',
-        'src="release-gate.js?v=10"',
+        'src="release-gate.js?v=11"',
         'id="agent-capability-bom"',
         'id="release-bom-conformance-status"',
         'id="authority-conformance"',
+        'id="release-bom-conformance-artifact"',
         'id="release-migration-count"',
         'id="release-a2a-path"',
         'id="release-challenge-inline"',
@@ -130,7 +139,7 @@ def main() -> None:
         if marker not in html:
             raise SystemExit(f"site is missing release-operations marker: {marker}")
     browser_js = (DOCS / "release-gate.js").read_text()
-    if 'fetch("release-gate-data.json?v=3", { cache: "no-store" })' not in browser_js:
+    if 'fetch("release-gate-data.json?v=4", { cache: "no-store" })' not in browser_js:
         raise SystemExit("release-operations browser surface is not bound to generated evidence")
     if "Copy prepare command" not in browser_js or "submit.py prepare --challenge-id" not in browser_js:
         raise SystemExit("open challenge cards are missing the oracle-free prepare command")

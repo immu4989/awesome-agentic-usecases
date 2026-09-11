@@ -114,8 +114,9 @@ python3 agent-side-effect-ledger/aau_release_binding.py verify side-effect-relea
 
 This checks that every AABOM write or irreversible operation-scope relationship is represented, the
 one fully stressed relationship agrees with the matrix, matching exact authority requires human
-approval, and the release adapter
-paths and bytes exactly match the artifacts captured during the matrix run. It does not capture an
+approval and a passing clean twin, the command authority adapter matches its conformance receipt,
+and the release adapter paths and bytes exactly match the artifacts captured during the matrix run.
+It does not capture an
 interpreter or dependency closure, identify a live workload, or authorize deployment.
 
 If you are outside the maintainer workflow and want to test a public claim, choose one of the

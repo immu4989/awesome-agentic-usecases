@@ -1,18 +1,24 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/authority-conformance-receipt-1.1.json",
-  "title": "AAU Agent Authority Conformance Receipt 1.1",
+  "$id": "https://immu4989.github.io/awesome-agentic-usecases/schemas/authority-conformance-receipt-1.2.json",
+  "title": "AAU Agent Authority Conformance Receipt 1.2",
   "type": "object",
   "additionalProperties": false,
-  "required": ["receipt_version", "suite_id", "agent_id", "release_id", "bom_sha256", "suite_sha256", "adapter_kind", "status", "metrics", "results", "boundary"],
+  "required": ["receipt_version", "suite_id", "agent_id", "release_id", "bom_sha256", "suite_sha256", "adapter_kind", "adapter_artifact", "status", "metrics", "results", "boundary"],
   "properties": {
-    "receipt_version": { "const": "aau-agent-authority-conformance-receipt/1.1" },
+    "receipt_version": { "const": "aau-agent-authority-conformance-receipt/1.2" },
     "suite_id": { "$ref": "#/$defs/text" },
     "agent_id": { "$ref": "#/$defs/text" },
     "release_id": { "$ref": "#/$defs/text" },
     "bom_sha256": { "$ref": "#/$defs/sha256" },
     "suite_sha256": { "$ref": "#/$defs/sha256" },
     "adapter_kind": { "enum": ["reference", "command"] },
+    "adapter_artifact": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/adapterArtifact"}
+      ]
+    },
     "status": { "enum": ["evidence_passed", "evidence_failed"] },
     "metrics": {
       "type": "object",
@@ -36,19 +42,41 @@
     "boundary": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["aggregate_and_reason_codes_only", "no_request_payload_response_or_reasoning_retained", "reference_adapter_is_protocol_self_test_only", "passing_not_certification_compliance_or_deployment_authority"],
+      "required": ["aggregate_and_reason_codes_only", "no_request_payload_response_or_reasoning_retained", "reference_adapter_is_protocol_self_test_only", "command_text_not_recorded", "artifact_digest_not_execution_or_deployment_provenance", "passing_not_certification_compliance_or_deployment_authority"],
       "properties": {
         "aggregate_and_reason_codes_only": { "const": true },
         "no_request_payload_response_or_reasoning_retained": { "const": true },
         "reference_adapter_is_protocol_self_test_only": { "type": "boolean" },
+        "command_text_not_recorded": { "const": true },
+        "artifact_digest_not_execution_or_deployment_provenance": { "const": true },
         "passing_not_certification_compliance_or_deployment_authority": { "const": true }
       }
     }
   },
+  "allOf": [
+    {
+      "if": {"properties": {"adapter_kind": {"const": "command"}}},
+      "then": {"properties": {"adapter_artifact": {"$ref": "#/$defs/adapterArtifact"}}},
+      "else": {"properties": {"adapter_artifact": {"type": "null"}}}
+    }
+  ],
   "$defs": {
     "text": { "type": "string", "minLength": 1, "maxLength": 200 },
     "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
     "count": { "type": "integer", "minimum": 0, "maximum": 2000 },
+    "adapterArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "size_bytes", "sha256", "command_argv_index", "launch_mode", "observed_before_and_after_equal"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1, "maxLength": 500, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+        "size_bytes": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "command_argv_index": {"enum": [0, 1]},
+        "launch_mode": {"enum": ["direct_executable", "supported_interpreter_target"]},
+        "observed_before_and_after_equal": {"const": true}
+      }
+    },
     "reasonCodes": {
       "type": "array",
       "maxItems": 200,

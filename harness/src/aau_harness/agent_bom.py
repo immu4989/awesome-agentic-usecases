@@ -27,13 +27,14 @@ PACK_VERSION = "aau-agent-capability-pack/1.1"
 OBSERVATION_VERSION = "aau-agent-authority-observation/1.1"
 REDUCTION_PLAN_VERSION = "aau-agent-authority-reduction-plan/1.1"
 CONFORMANCE_SUITE_VERSION = "aau-agent-authority-conformance-suite/1.1"
-CONFORMANCE_RECEIPT_VERSION = "aau-agent-authority-conformance-receipt/1.1"
+CONFORMANCE_RECEIPT_VERSION = "aau-agent-authority-conformance-receipt/1.2"
 STATEMENT_TYPE = "https://in-toto.io/Statement/v1"
 PREDICATE_TYPE = (
     "https://immu4989.github.io/awesome-agentic-usecases/"
     "predicates/agent-capability-bom/v1.1"
 )
 MAX_JSON_BYTES = 2_000_000
+MAX_ADAPTER_BYTES = 1_000_000
 MAX_ITEMS = 200
 HEX = set("0123456789abcdef")
 SIDE_EFFECT_RANK = {"read": 0, "prepare": 1, "write": 2, "irreversible": 3}
@@ -54,6 +55,22 @@ SHARING_KEYS = {
     "contains_credentials",
     "contains_nonpublic_configuration",
     "contains_controlled_information",
+}
+SUPPORTED_INTERPRETERS = {
+    "bash",
+    "node",
+    "perl",
+    "php",
+    "pypy",
+    "pypy3",
+    "python",
+    "python3",
+    "python3.10",
+    "python3.11",
+    "python3.12",
+    "python3.13",
+    "ruby",
+    "sh",
 }
 
 
@@ -1259,11 +1276,56 @@ def generate_conformance_suite(bom: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _command_conformance_adapter(command: str, timeout: float):
+def _command_artifact(
+    command: str,
+    adapter_artifact: Path,
+    workspace: Path,
+) -> tuple[list[str], Path, bytes, dict[str, Any]]:
     argv = shlex.split(command)
     if not argv:
         raise AgentBomError("adapter command is empty")
+    workspace = workspace.resolve(strict=True)
+    requested = adapter_artifact
+    if not requested.is_absolute() and ".." in requested.parts:
+        raise AgentBomError("adapter artifact path must be traversal-free")
+    candidate = requested if requested.is_absolute() else workspace / requested
+    resolved = candidate.resolve(strict=True)
+    if not resolved.is_relative_to(workspace):
+        raise AgentBomError("adapter artifact must remain inside the workspace")
+    if candidate.is_symlink() or not resolved.is_file():
+        raise AgentBomError("adapter artifact must be a regular non-symbolic-link file")
+    payload = resolved.read_bytes()
+    if not payload or len(payload) > MAX_ADAPTER_BYTES:
+        raise AgentBomError("adapter artifact must contain 1 to 1000000 bytes")
 
+    interpreter = Path(argv[0]).name
+    if interpreter in SUPPORTED_INTERPRETERS:
+        index, launch_mode = 1, "supported_interpreter_target"
+    else:
+        index, launch_mode = 0, "direct_executable"
+    if len(argv) <= index:
+        raise AgentBomError("adapter command does not name its declared artifact")
+    command_path = Path(argv[index])
+    command_candidate = (
+        command_path if command_path.is_absolute() else workspace / command_path
+    )
+    if command_candidate.resolve(strict=True) != resolved:
+        raise AgentBomError(
+            "adapter command must execute the declared artifact at argv[0] or a supported argv[1]"
+        )
+    argv[index] = str(resolved)
+    record = {
+        "path": resolved.relative_to(workspace).as_posix(),
+        "size_bytes": len(payload),
+        "sha256": digest(payload),
+        "command_argv_index": index,
+        "launch_mode": launch_mode,
+        "observed_before_and_after_equal": True,
+    }
+    return argv, resolved, payload, record
+
+
+def _command_conformance_adapter(argv: list[str], timeout: float):
     def invoke(case_id: str, case_input: dict[str, Any]) -> tuple[str, list[str]]:
         request = {
             "protocol_version": "aau-agent-authority-adapter/1.1",
@@ -1307,17 +1369,32 @@ def run_conformance(
     adapter_kind: str,
     command: str | None = None,
     timeout: float = 10.0,
+    adapter_artifact: Path | None = None,
+    workspace: Path | None = None,
 ) -> dict[str, Any]:
     expected_suite = generate_conformance_suite(bom)
     if suite != expected_suite:
         raise AgentBomError("conformance suite does not recompute from the AABOM")
+    artifact_record: dict[str, Any] | None = None
+    artifact_path: Path | None = None
+    artifact_before: bytes | None = None
     if adapter_kind == "reference":
+        if command is not None or adapter_artifact is not None:
+            raise AgentBomError("reference conformance does not accept a command artifact")
+
         def invoke(_case_id: str, case_input: dict[str, Any]) -> tuple[str, list[str]]:
             return evaluate_authority_case(bom, case_input)
-    elif adapter_kind == "command" and command:
-        invoke = _command_conformance_adapter(command, timeout)
+    elif adapter_kind == "command" and command and adapter_artifact is not None:
+        argv, artifact_path, artifact_before, artifact_record = _command_artifact(
+            command,
+            adapter_artifact,
+            workspace or Path.cwd(),
+        )
+        invoke = _command_conformance_adapter(argv, timeout)
     else:
-        raise AgentBomError("choose the reference adapter or provide a command")
+        raise AgentBomError(
+            "choose the reference adapter or provide both a command and adapter artifact"
+        )
     results = []
     for case in suite["cases"]:
         decision, reasons = invoke(case["case_id"], case["input"])
@@ -1330,6 +1407,13 @@ def run_conformance(
                 and reasons == case["expected_reason_codes"],
             }
         )
+    if artifact_path is not None:
+        try:
+            artifact_after = artifact_path.read_bytes()
+        except OSError as exc:
+            raise AgentBomError("adapter artifact disappeared during conformance") from exc
+        if artifact_after != artifact_before:
+            raise AgentBomError("adapter artifact changed during conformance")
     exact_count = sum(row["exact"] for row in results)
     expected = _by_id(suite["cases"], "case_id")
     unsafe_allow_count = sum(
@@ -1351,6 +1435,7 @@ def run_conformance(
         "bom_sha256": digest(bom),
         "suite_sha256": digest(suite),
         "adapter_kind": adapter_kind,
+        "adapter_artifact": artifact_record,
         "status": status,
         "metrics": {
             "case_count": len(results),
@@ -1365,13 +1450,61 @@ def run_conformance(
             "aggregate_and_reason_codes_only": True,
             "no_request_payload_response_or_reasoning_retained": True,
             "reference_adapter_is_protocol_self_test_only": adapter_kind == "reference",
+            "command_text_not_recorded": True,
+            "artifact_digest_not_execution_or_deployment_provenance": True,
             "passing_not_certification_compliance_or_deployment_authority": True,
         },
     }
 
 
+def _validate_conformance_artifact(value: Any) -> dict[str, Any]:
+    artifact = _exact(
+        value,
+        {
+            "path",
+            "size_bytes",
+            "sha256",
+            "command_argv_index",
+            "launch_mode",
+            "observed_before_and_after_equal",
+        },
+        "conformance adapter artifact",
+    )
+    relative = Path(_text(artifact["path"], "adapter artifact path", 500))
+    if relative.is_absolute() or ".." in relative.parts:
+        raise AgentBomError("adapter artifact receipt path must be workspace-relative")
+    if (
+        not isinstance(artifact["size_bytes"], int)
+        or isinstance(artifact["size_bytes"], bool)
+        or not 1 <= artifact["size_bytes"] <= MAX_ADAPTER_BYTES
+    ):
+        raise AgentBomError("adapter artifact receipt size is invalid")
+    if (
+        not isinstance(artifact["sha256"], str)
+        or len(artifact["sha256"]) != 64
+        or set(artifact["sha256"]) - HEX
+    ):
+        raise AgentBomError("adapter artifact receipt digest is invalid")
+    if artifact["command_argv_index"] not in {0, 1}:
+        raise AgentBomError("adapter artifact command index is invalid")
+    expected_mode = (
+        "direct_executable"
+        if artifact["command_argv_index"] == 0
+        else "supported_interpreter_target"
+    )
+    if artifact["launch_mode"] != expected_mode:
+        raise AgentBomError("adapter artifact launch mode is invalid")
+    if artifact["observed_before_and_after_equal"] is not True:
+        raise AgentBomError("adapter artifact must be unchanged across conformance")
+    return artifact
+
+
 def verify_conformance_receipt(
-    receipt: dict[str, Any], bom: dict[str, Any], suite: dict[str, Any]
+    receipt: dict[str, Any],
+    bom: dict[str, Any],
+    suite: dict[str, Any],
+    adapter_artifact: Path | None = None,
+    workspace: Path | None = None,
 ) -> None:
     _exact(
         receipt,
@@ -1383,6 +1516,7 @@ def verify_conformance_receipt(
             "bom_sha256",
             "suite_sha256",
             "adapter_kind",
+            "adapter_artifact",
             "status",
             "metrics",
             "results",
@@ -1456,10 +1590,41 @@ def verify_conformance_receipt(
         raise AgentBomError("conformance receipt status does not recompute")
     if receipt.get("adapter_kind") not in {"reference", "command"}:
         raise AgentBomError("conformance receipt adapter_kind is invalid")
+    artifact = receipt.get("adapter_artifact")
+    if receipt["adapter_kind"] == "reference":
+        if artifact is not None or adapter_artifact is not None:
+            raise AgentBomError("reference conformance cannot claim an adapter artifact")
+    else:
+        artifact = _validate_conformance_artifact(artifact)
+        if adapter_artifact is not None:
+            check_workspace = (workspace or Path.cwd()).resolve(strict=True)
+            requested = adapter_artifact
+            candidate = (
+                requested if requested.is_absolute() else check_workspace / requested
+            )
+            resolved = candidate.resolve(strict=True)
+            if (
+                not resolved.is_relative_to(check_workspace)
+                or candidate.is_symlink()
+                or not resolved.is_file()
+            ):
+                raise AgentBomError("verification adapter artifact is invalid")
+            if not 1 <= resolved.stat().st_size <= MAX_ADAPTER_BYTES:
+                raise AgentBomError("verification adapter artifact size is invalid")
+            payload = resolved.read_bytes()
+            if artifact["path"] != resolved.relative_to(check_workspace).as_posix():
+                raise AgentBomError("conformance adapter artifact path mismatch")
+            if (
+                artifact["size_bytes"] != len(payload)
+                or artifact["sha256"] != digest(payload)
+            ):
+                raise AgentBomError("conformance adapter artifact bytes mismatch")
     expected_boundary = {
         "aggregate_and_reason_codes_only": True,
         "no_request_payload_response_or_reasoning_retained": True,
         "reference_adapter_is_protocol_self_test_only": receipt["adapter_kind"] == "reference",
+        "command_text_not_recorded": True,
+        "artifact_digest_not_execution_or_deployment_provenance": True,
         "passing_not_certification_compliance_or_deployment_authority": True,
     }
     if receipt.get("boundary") != expected_boundary:
@@ -1513,6 +1678,8 @@ def build_parser() -> argparse.ArgumentParser:
     adapter = run.add_mutually_exclusive_group(required=True)
     adapter.add_argument("--reference", action="store_true")
     adapter.add_argument("--command", dest="adapter_command")
+    run.add_argument("--adapter-artifact", type=Path)
+    run.add_argument("--workspace", type=Path, default=Path("."))
     run.add_argument("--timeout", type=float, default=10.0)
     run.add_argument("--out", type=Path, required=True)
     verify_run = sub.add_parser(
@@ -1521,6 +1688,8 @@ def build_parser() -> argparse.ArgumentParser:
     verify_run.add_argument("receipt", type=Path)
     verify_run.add_argument("bom", type=Path)
     verify_run.add_argument("suite", type=Path)
+    verify_run.add_argument("--adapter-artifact", type=Path)
+    verify_run.add_argument("--workspace", type=Path, default=Path("."))
     return parser
 
 
@@ -1582,6 +1751,8 @@ def main(argv: list[str] | None = None) -> int:
                 "reference" if args.reference else "command",
                 args.adapter_command,
                 args.timeout,
+                args.adapter_artifact,
+                args.workspace,
             )
             write_json(receipt, args.out)
             print(
@@ -1589,8 +1760,17 @@ def main(argv: list[str] | None = None) -> int:
                 f"{receipt['metrics']['case_count']} exact; {receipt['status']})"
             )
             return 0 if receipt["status"] == "evidence_passed" else 1
+        receipt = load_json(args.receipt)
+        if receipt.get("adapter_kind") == "command" and args.adapter_artifact is None:
+            raise AgentBomError(
+                "command conformance verification requires --adapter-artifact"
+            )
         verify_conformance_receipt(
-            load_json(args.receipt), load_json(args.bom), load_json(args.suite)
+            receipt,
+            load_json(args.bom),
+            load_json(args.suite),
+            args.adapter_artifact,
+            args.workspace,
         )
         print(f"verified {args.receipt}")
         return 0

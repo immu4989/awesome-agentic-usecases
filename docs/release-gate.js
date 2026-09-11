@@ -105,7 +105,7 @@
     });
   }
 
-  fetch("release-gate-data.json?v=3", { cache: "no-store" })
+  fetch("release-gate-data.json?v=4", { cache: "no-store" })
     .then((response) => { if (!response.ok) throw new Error("release data unavailable"); return response.json(); })
     .then((data) => {
       const release = data.release;
@@ -165,6 +165,7 @@
       set("release-bom-conformance-unsafe", conformance.unsafe_allow_count);
       set("release-bom-conformance-shapes", conformance.shape_count);
       set("release-bom-conformance-blocks", conformance.legitimate_block_count);
+      set("release-bom-conformance-artifact", `${conformance.adapter_artifact_sha256.slice(0, 12)}…`);
       renderBomFindings(data.capability_bom.findings);
     })
     .catch((error) => set("release-data-status", `Evidence view unavailable: ${error.message}`));

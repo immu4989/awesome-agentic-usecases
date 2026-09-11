@@ -110,7 +110,7 @@ def build() -> dict:
     pilot = assess_pilot(pilot_record)
 
     return {
-        "data_version": "aau-agent-security-commons-data/0.6",
+        "data_version": "aau-agent-security-commons-data/0.7",
         "generated_on": "2026-09-05",
         "runtime": {
             "event_count": runtime["event_count"],
@@ -210,6 +210,21 @@ def build() -> dict:
                     for item in release_binding["bindings"]
                     for adapter in item["adapters"].values()
                 ),
+                "authority_conformance_status": release_binding[
+                    "authority_conformance"
+                ]["status"],
+                "authority_conformance_exact_count": release_binding[
+                    "authority_conformance"
+                ]["exact_count"],
+                "authority_conformance_case_count": release_binding[
+                    "authority_conformance"
+                ]["case_count"],
+                "authority_adapter_match": release_binding[
+                    "authority_conformance"
+                ]["adapter_bytes_match_receipt"],
+                "authority_adapter_sha256": release_binding[
+                    "authority_conformance"
+                ]["adapter_sha256"],
                 "receipt_sha256": release_binding["receipt_sha256"],
             },
             "failure_shapes": [

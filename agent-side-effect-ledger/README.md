@@ -389,28 +389,33 @@ python3 agent-side-effect-ledger/aau_release_binding.py verify side-effect-relea
 ```
 
 The committed [reference binding pack](examples/reference-release-binding-pack/) verifies **1/1
-consequential relationships** with no holds. A valid incomplete result is `binding_held` and remains
+consequential relationships** with no holds across **36 files**. A valid incomplete result is
+`binding_held` and remains
 verifiable; malformed or tampered input is rejected. The [plan](release-binding-plan.schema.json),
 [receipt](release-binding-receipt.schema.json), and [manifest](release-binding-manifest.schema.json)
 schemas make the boundary portable. The reusable
 [Release Binding Action](../.github/actions/aau-side-effect-release-binding/) preserves diagnostics
 before failing CI.
 
-Release Binding 0.5 first requires the plan, semantic suite, crash suite, race suite, Matrix 0.6,
+Release Binding 0.6 first requires the plan, semantic suite, crash suite, race suite, Matrix 0.6,
 tool declaration, and authority lease to agree on the exact operation-scope relationship. It then
-compares every declared release adapter path, entrypoint digest, captured
+requires an AABOM-derived authority suite and command receipt, verifies an exact allow clean twin
+for the consequential relationship, and compares the declared authority adapter with the path and
+digest recorded by conformance Receipt 1.2. It also compares every declared release adapter path,
+entrypoint digest, captured
 execution-material-set digest, and digest-only snapshot of every workspace path observed by Matrix
 0.6. A different path, a one-byte entrypoint change, a changed statically imported local module,
 or a substituted runtime policy produces
 `ADAPTER_PATH_DIFFERS_FROM_MATRIX`, `ADAPTER_BYTES_DIFFER_FROM_MATRIX`,
 `ADAPTER_MATERIALS_DIFFER_FROM_MATRIX`, or `RUNTIME_MATERIALS_DIFFER_FROM_MATRIX`, reduces the
-fully bound count, and remains inspectable in a valid 33-file hold pack. This closes a local-import
+fully bound count, and remains inspectable in a valid 36-file hold pack. This closes a local-import
 and observed-configuration substitution gap without relabeling Python audit evidence as live
 workload identity.
 
 Hashes bind the copied files, not a running workload. Source paths are declarations. This pack has
-no signature or builder identity and does not prove provenance, production equivalence, live
-authority, safety, compliance, certification, deployment approval, or an ATO. See the
+no signature or builder identity and does not prove provenance, production equivalence, a live
+token decision, current authority, safety, compliance, certification, deployment approval, or an
+ATO. See the
 [release-binding research notes](RELEASE_BINDING_RESEARCH_NOTES.md).
 
 ## Why these fields exist

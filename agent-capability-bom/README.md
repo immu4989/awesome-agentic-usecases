@@ -118,12 +118,16 @@ aau bom run-conformance \
   agent-capability-bom/examples/candidate.json \
   /tmp/authority-suite.json \
   --command "python my_authority_adapter.py" \
+  --adapter-artifact my_authority_adapter.py \
+  --workspace . \
   --out /tmp/authority-receipt.json
 
 aau bom verify-conformance \
   /tmp/authority-receipt.json \
   agent-capability-bom/examples/candidate.json \
-  /tmp/authority-suite.json
+  /tmp/authority-suite.json \
+  --adapter-artifact my_authority_adapter.py \
+  --workspace .
 ```
 
 The committed synthetic candidate compiles to **19 cases**: 3 legitimate clean twins and 16
@@ -138,14 +142,19 @@ never receives expected answers, credentials, arguments, results, prompts, or to
 the compiler never invokes a tool. The command is parsed without a shell. The committed
 [`reference-conformance-suite.json`](examples/reference-conformance-suite.json) and
 [`reference-conformance-receipt.json`](examples/reference-conformance-receipt.json) are bound to
-the exact BOM and suite digests; verification recomputes case coverage, expected decisions,
-reason codes, exactness, and both asymmetric failure counts.
+the exact BOM, suite, and executed adapter bytes. Receipt 1.2 records a workspace-relative artifact
+path, SHA-256, byte length, launch position, and before/after equality; the runner rejects a command
+that names some other file, a symbolic/out-of-workspace artifact, or an adapter that changes while
+the cases run. Verification recomputes case coverage, expected decisions, reason codes, exactness,
+both asymmetric failure counts, and the current artifact digest.
 
 The readable suite and receipt schemas publish their transport shapes. The strict CLI remains the
 normative validator because it also recomputes cross-file and semantic invariants. Reference
 adapter success is a protocol self-test. Command-adapter success is bounded evidence against the
 declared synthetic contract—not proof of production enforcement, policy correctness, safety,
-identity, compliance, certification, deployment approval, or an ATO.
+identity, provenance, compliance, certification, deployment approval, or an ATO. The command text
+is deliberately omitted; equal file observations before and after a run do not prove continuous
+immutability or that those bytes were deployed.
 
 ## Build a portable evidence pack
 
@@ -185,7 +194,8 @@ linkage only—not who generated, reviewed, or authorized the deployment.
 - allowed observation events outside the declared authority, noncontiguous run sequences, false
   run/scenario counts, and observation/BOM release mismatches.
 - stale or hand-edited conformance suites, duplicate/missing case coverage, adapter answer-shape
-  drift, receipt identity/digest mismatch, and non-recomputable exactness or failure counts.
+  drift, receipt identity/digest mismatch, command/artifact substitution, artifact byte drift, and
+  non-recomputable exactness or failure counts.
 
 The strict CLI is the normative 1.1 validator. The readable
 [`agent-capability-bom.schema.json`](agent-capability-bom.schema.json) publishes the transport
@@ -223,6 +233,9 @@ make short-window non-use sufficient evidence for removal.
 The exact relationship profile is informed by NIST SP 800-205's subject/object/operation model and
 RFC 9396's explicit treatment of combined fields as a product; it does not claim conformance to
 either source.
+The command-artifact binding is informed by NIST SSDF's release-integrity and provenance practices
+and SLSA's requirement to verify that an attestation subject matches the artifact digest. It is a
+local unsigned observation, not SSDF or SLSA conformance and not builder or deployment provenance.
 The AABOM is an experimental AAU profile, not a NIST, CISA, OWASP, Ecma, CycloneDX, SPDX, or
 government standard and not an assertion of conformance by those organizations.
 

@@ -61,6 +61,8 @@
     byId("asc-effect-binding-holds").textContent = binding.finding_count;
     byId("asc-effect-binding-materials").textContent = `${binding.material_set_match_count}/${binding.material_set_count}`;
     byId("asc-effect-binding-runtime").textContent = binding.runtime_snapshot_match_count + "/" + binding.runtime_snapshot_count;
+    byId("asc-effect-binding-authority").textContent = `${binding.authority_conformance_exact_count}/${binding.authority_conformance_case_count}`;
+    byId("asc-effect-binding-authority-sha").textContent = binding.authority_adapter_sha256.slice(0, 12);
     byId("asc-effect-binding-hash").textContent = binding.receipt_sha256.slice(0, 12);
   }
 
@@ -127,7 +129,7 @@
     byId("asc-pilot-gaps").textContent = `${data.pilot.visible_gaps.length} evidence gaps remain visible: ${data.pilot.visible_gaps.join(", ").replaceAll("_", " ")}.`;
   }
 
-  fetch("agent-security-data.json?v=12", { cache: "no-store" })
+  fetch("agent-security-data.json?v=13", { cache: "no-store" })
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();

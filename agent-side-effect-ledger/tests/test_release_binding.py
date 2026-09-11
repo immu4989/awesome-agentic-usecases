@@ -1,10 +1,12 @@
 import argparse
 import json
 import shutil
+import sys
 from pathlib import Path
 
 import pytest
 
+from aau_harness.agent_bom import generate_conformance_suite, run_conformance
 from aau_release_binding import BindingError, build_pack, validate_plan, verify_pack
 
 
@@ -27,23 +29,52 @@ def _workspace(tmp_path: Path) -> tuple[Path, argparse.Namespace]:
         )
     for name in ("aau_side_effect.py", "aau_crash_lab.py", "aau_race_lab.py"):
         shutil.copyfile(ROOT / name, workspace / "agent-side-effect-ledger" / name)
-    shutil.copyfile(
-        ROOT / "examples" / "release-binding" / "agent-capability-bom.json",
-        workspace / "bom.json",
+    release_source = ROOT / "examples" / "release-binding"
+    release_target = (
+        workspace / "agent-side-effect-ledger" / "examples" / "release-binding"
     )
-    shutil.copyfile(
-        ROOT / "examples" / "release-binding" / "binding-plan.json",
-        workspace / "plan.json",
-    )
+    release_target.mkdir()
+    for name in (
+        "agent-capability-bom.json",
+        "authority-conformance-suite.json",
+        "authority-conformance-receipt.json",
+        "binding-plan.json",
+        "reference_authority_adapter.py",
+    ):
+        shutil.copyfile(release_source / name, release_target / name)
     shutil.copytree(ROOT / "examples" / "reference-matrix-pack", workspace / "matrix")
     args = argparse.Namespace(
         workspace=workspace,
-        bom=Path("bom.json"),
+        bom=Path(
+            "agent-side-effect-ledger/examples/release-binding/agent-capability-bom.json"
+        ),
         matrix=Path("matrix"),
-        plan=Path("plan.json"),
+        plan=Path("agent-side-effect-ledger/examples/release-binding/binding-plan.json"),
         out=Path("binding-pack"),
     )
     return workspace, args
+
+
+def _refresh_authority_conformance(
+    workspace: Path, args: argparse.Namespace
+) -> None:
+    bom_path = workspace / args.bom
+    root = bom_path.parent
+    suite_path = root / "authority-conformance-suite.json"
+    receipt_path = root / "authority-conformance-receipt.json"
+    adapter_path = root / "reference_authority_adapter.py"
+    bom = json.loads(bom_path.read_text())
+    suite = generate_conformance_suite(bom)
+    receipt = run_conformance(
+        bom,
+        suite,
+        "command",
+        f"{sys.executable} {adapter_path}",
+        adapter_artifact=adapter_path,
+        workspace=workspace,
+    )
+    suite_path.write_text(json.dumps(suite, indent=2) + "\n")
+    receipt_path.write_text(json.dumps(receipt, indent=2) + "\n")
 
 
 def _files(root: Path) -> dict[str, bytes]:
@@ -65,6 +96,20 @@ def test_reference_release_binding_is_exact_and_reproducible(tmp_path):
         "operation": "send_synthetic_notice",
         "resource_scope": "synthetic-benefit-cases/notices/*",
     }
+    expected_authority = {
+        "receipt_version": "aau-agent-authority-conformance-receipt/1.2",
+        "status": "evidence_passed",
+        "adapter_kind": "command",
+        "case_count": 8,
+        "exact_count": 8,
+        "clean_twin_relationship_count": 1,
+        "matrix_relationship_clean_twin_exact": True,
+        "adapter_path_matches_receipt": True,
+        "adapter_bytes_match_receipt": True,
+    }
+    assert {
+        key: receipt["authority_conformance"][key] for key in expected_authority
+    } == expected_authority
     assert receipt["findings"] == []
     adapters = receipt["bindings"][0]["adapters"].values()
     assert sum(adapter["runtime_material_count"] for adapter in adapters) == 11
@@ -76,9 +121,11 @@ def test_reference_release_binding_is_exact_and_reproducible(tmp_path):
 
 def test_binding_holds_when_consequential_authority_omits_approval(tmp_path):
     workspace, args = _workspace(tmp_path)
-    bom = json.loads((workspace / "bom.json").read_text())
+    bom_path = workspace / args.bom
+    bom = json.loads(bom_path.read_text())
     bom["authorities"][0]["human_approval_required"] = False
-    (workspace / "bom.json").write_text(json.dumps(bom, indent=2) + "\n")
+    bom_path.write_text(json.dumps(bom, indent=2) + "\n")
+    _refresh_authority_conformance(workspace, args)
     receipt = build_pack(args)
     assert receipt["status"] == "binding_held"
     assert receipt["fully_bound_consequential_relationship_count"] == 0
@@ -88,9 +135,69 @@ def test_binding_holds_when_consequential_authority_omits_approval(tmp_path):
     assert verify_pack(workspace / "binding-pack") == receipt
 
 
+def test_binding_holds_when_authority_adapter_bytes_differ_from_receipt(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    adapter = (
+        workspace
+        / "agent-side-effect-ledger"
+        / "examples"
+        / "release-binding"
+        / "reference_authority_adapter.py"
+    )
+    adapter.write_text(adapter.read_text() + "\n# substituted after conformance\n")
+
+    receipt = build_pack(args)
+
+    assert receipt["status"] == "binding_held"
+    assert receipt["fully_bound_consequential_relationship_count"] == 0
+    assert [item["code"] for item in receipt["findings"]] == [
+        "AUTHORITY_ADAPTER_BYTES_DIFFER_FROM_RECEIPT"
+    ]
+    assert not receipt["authority_conformance"]["adapter_bytes_match_receipt"]
+    assert verify_pack(workspace / "binding-pack") == receipt
+
+
+def test_binding_holds_when_bound_authority_adapter_fails_twins(tmp_path):
+    workspace, args = _workspace(tmp_path)
+    root = (workspace / args.bom).parent
+    adapter = root / "reference_authority_adapter.py"
+    adapter.write_text(
+        "import json,sys\njson.load(sys.stdin)\n"
+        "json.dump({'decision':'block','reason_codes':['DENY_ALL']},sys.stdout)\n"
+    )
+    bom = json.loads((workspace / args.bom).read_text())
+    suite = json.loads((root / "authority-conformance-suite.json").read_text())
+    failed = run_conformance(
+        bom,
+        suite,
+        "command",
+        f"{sys.executable} {adapter}",
+        adapter_artifact=adapter,
+        workspace=workspace,
+    )
+    (root / "authority-conformance-receipt.json").write_text(
+        json.dumps(failed, indent=2) + "\n"
+    )
+
+    receipt = build_pack(args)
+
+    assert receipt["status"] == "binding_held"
+    assert receipt["fully_bound_consequential_relationship_count"] == 0
+    assert {item["code"] for item in receipt["findings"]} == {
+        "AUTHORITY_CONFORMANCE_NOT_PASSING",
+        "CONSEQUENTIAL_RELATIONSHIP_AUTHORITY_CLEAN_TWIN_MISSING",
+    }
+    assert receipt["authority_conformance"]["adapter_bytes_match_receipt"]
+    assert not receipt["authority_conformance"][
+        "matrix_relationship_clean_twin_exact"
+    ]
+    assert verify_pack(workspace / "binding-pack") == receipt
+
+
 def test_binding_holds_when_aabom_relationship_is_not_fully_stressed(tmp_path):
     workspace, args = _workspace(tmp_path)
-    bom = json.loads((workspace / "bom.json").read_text())
+    bom_path = workspace / args.bom
+    bom = json.loads(bom_path.read_text())
     bom["tools"][0]["operations"].append("send_other_notice")
     bom["tools"][0]["operation_scope_bindings"].append(
         {
@@ -106,7 +213,8 @@ def test_binding_holds_when_aabom_relationship_is_not_fully_stressed(tmp_path):
             "resource_scopes": ["synthetic-benefit-cases/notices/*"],
         }
     )
-    (workspace / "bom.json").write_text(json.dumps(bom, indent=2) + "\n")
+    bom_path.write_text(json.dumps(bom, indent=2) + "\n")
+    _refresh_authority_conformance(workspace, args)
     receipt = build_pack(args)
     assert receipt["status"] == "binding_held"
     assert receipt["consequential_relationship_count"] == 2
@@ -121,16 +229,19 @@ def test_binding_does_not_infer_authority_from_separate_operation_and_scope_list
     tmp_path,
 ):
     workspace, args = _workspace(tmp_path)
-    bom = json.loads((workspace / "bom.json").read_text())
+    bom_path = workspace / args.bom
+    bom = json.loads(bom_path.read_text())
     second_scope = "synthetic-benefit-cases/notices/restricted/*"
     bom["tools"][0]["resource_scopes"].append(second_scope)
     bom["tools"][0]["operation_scope_bindings"][0]["resource_scopes"].append(
         second_scope
     )
-    (workspace / "bom.json").write_text(json.dumps(bom, indent=2) + "\n")
-    plan = json.loads((workspace / "plan.json").read_text())
+    bom_path.write_text(json.dumps(bom, indent=2) + "\n")
+    _refresh_authority_conformance(workspace, args)
+    plan_path = workspace / args.plan
+    plan = json.loads(plan_path.read_text())
     plan["bindings"][0]["resource_scope"] = second_scope
-    (workspace / "plan.json").write_text(json.dumps(plan, indent=2) + "\n")
+    plan_path.write_text(json.dumps(plan, indent=2) + "\n")
 
     receipt = build_pack(args)
 
@@ -146,9 +257,11 @@ def test_binding_does_not_infer_authority_from_separate_operation_and_scope_list
 
 def test_binding_holds_when_aabom_does_not_hash_exact_matrix_manifest(tmp_path):
     workspace, args = _workspace(tmp_path)
-    bom = json.loads((workspace / "bom.json").read_text())
+    bom_path = workspace / args.bom
+    bom = json.loads(bom_path.read_text())
     bom["evidence"][0]["sha256"] = "0" * 64
-    (workspace / "bom.json").write_text(json.dumps(bom, indent=2) + "\n")
+    bom_path.write_text(json.dumps(bom, indent=2) + "\n")
+    _refresh_authority_conformance(workspace, args)
     receipt = build_pack(args)
     assert receipt["status"] == "binding_held"
     assert receipt["fully_bound_consequential_relationship_count"] == 0
@@ -234,19 +347,21 @@ def test_binding_holds_runtime_policy_substitution_with_source_unchanged(tmp_pat
 
 def test_one_executable_may_implement_all_three_adapter_roles(tmp_path):
     workspace, args = _workspace(tmp_path)
-    plan = json.loads((workspace / "plan.json").read_text())
+    plan_path = workspace / args.plan
+    plan = json.loads(plan_path.read_text())
     shared = plan["bindings"][0]["semantic_adapter"]
     plan["bindings"][0]["crash_adapter"] = shared
     plan["bindings"][0]["race_adapter"] = shared
-    (workspace / "plan.json").write_text(json.dumps(plan, indent=2) + "\n")
+    plan_path.write_text(json.dumps(plan, indent=2) + "\n")
     validate_plan(plan)
 
 
 def test_binding_rejects_plan_release_mismatch_and_output_escape(tmp_path):
     workspace, args = _workspace(tmp_path)
-    plan = json.loads((workspace / "plan.json").read_text())
+    plan_path = workspace / args.plan
+    plan = json.loads(plan_path.read_text())
     plan["release_id"] = "different-release"
-    (workspace / "plan.json").write_text(json.dumps(plan))
+    plan_path.write_text(json.dumps(plan))
     with pytest.raises(BindingError, match="release_id does not match"):
         build_pack(args)
 

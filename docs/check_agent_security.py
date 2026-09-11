@@ -27,7 +27,7 @@ def main() -> None:
     actual = json.loads((DOCS / "agent-security-data.json").read_text())
     if actual != expected:
         raise SystemExit("docs/agent-security-data.json is stale; run docs/make_agent_security_data.py")
-    if expected["data_version"] != "aau-agent-security-commons-data/0.6":
+    if expected["data_version"] != "aau-agent-security-commons-data/0.7":
         raise SystemExit("Agent Security Commons data version drifted")
     if expected["runtime"]["event_count"] != 50 or expected["runtime"]["adapter_count"] != 6:
         raise SystemExit("ABP runtime reference coverage drifted")
@@ -127,6 +127,11 @@ def main() -> None:
         or binding["material_set_match_count"] != 3
         or binding["runtime_snapshot_count"] != 3
         or binding["runtime_snapshot_match_count"] != 3
+        or binding["authority_conformance_status"] != "evidence_passed"
+        or binding["authority_conformance_exact_count"] != 8
+        or binding["authority_conformance_case_count"] != 8
+        or not binding["authority_adapter_match"]
+        or len(binding["authority_adapter_sha256"]) != 64
     ):
         raise SystemExit("side-effect release binding evidence drifted")
     if len(expected["defender_kits"]) != 5 or len({item["sector"] for item in expected["defender_kits"]}) != 5:
@@ -182,6 +187,8 @@ def main() -> None:
         'id="asc-effect-binding-count"',
         'id="asc-effect-binding-materials"',
         'id="asc-effect-binding-runtime"',
+        'id="asc-effect-binding-authority"',
+        'id="asc-effect-binding-authority-sha"',
         'id="asc-effect-binding-release"',
         'id="asc-effect-binding-hash"',
         'id="asc-effect-matrix-hash"',
@@ -194,9 +201,9 @@ def main() -> None:
         if required not in html:
             raise SystemExit(f"site is missing Agent Security Commons marker: {required}")
     js = (DOCS / "agent-security.js").read_text()
-    if "agent-security-data.json?v=12" not in js:
+    if "agent-security-data.json?v=13" not in js:
         raise SystemExit("Agent Security Commons browser data is not source-bound")
-    if 'agent-security.css?v=7' not in html or 'agent-security.js?v=10' not in html:
+    if 'agent-security.css?v=7' not in html or 'agent-security.js?v=11' not in html:
         raise SystemExit("Agent Security Commons browser assets are not cache-busted")
     subprocess.run(["node", "--check", str(DOCS / "agent-security.js")], check=True)
     print("Agent Security Commons contracts, evidence, and browser surface are current")

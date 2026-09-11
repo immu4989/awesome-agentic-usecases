@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -271,11 +272,30 @@ def test_reference_and_command_conformance_are_exact_and_privacy_bounded():
     }
     verify_conformance_receipt(reference, bom, suite)
     command = run_conformance(
-        bom, suite, "command", f"{sys.executable} {CONFORMANCE_ADAPTER}"
+        bom,
+        suite,
+        "command",
+        f"{sys.executable} {CONFORMANCE_ADAPTER}",
+        adapter_artifact=CONFORMANCE_ADAPTER,
+        workspace=ROOT,
     )
     assert command["metrics"] == reference["metrics"]
     assert command["boundary"]["reference_adapter_is_protocol_self_test_only"] is False
-    verify_conformance_receipt(command, bom, suite)
+    assert command["adapter_artifact"] == {
+        "path": "agent-capability-bom/examples/reference_conformance_adapter.py",
+        "size_bytes": CONFORMANCE_ADAPTER.stat().st_size,
+        "sha256": hashlib.sha256(CONFORMANCE_ADAPTER.read_bytes()).hexdigest(),
+        "command_argv_index": 1,
+        "launch_mode": "supported_interpreter_target",
+        "observed_before_and_after_equal": True,
+    }
+    verify_conformance_receipt(
+        command,
+        bom,
+        suite,
+        CONFORMANCE_ADAPTER,
+        ROOT,
+    )
 
 
 def test_deny_all_is_caught_by_legitimate_twins(tmp_path):
@@ -286,10 +306,77 @@ def test_deny_all_is_caught_by_legitimate_twins(tmp_path):
     )
     bom = load_json(CANDIDATE)
     suite = generate_conformance_suite(bom)
-    receipt = run_conformance(bom, suite, "command", f"{sys.executable} {adapter}")
+    receipt = run_conformance(
+        bom,
+        suite,
+        "command",
+        f"{sys.executable} {adapter}",
+        adapter_artifact=adapter,
+        workspace=tmp_path,
+    )
     assert receipt["status"] == "evidence_failed"
     assert receipt["metrics"]["legitimate_block_count"] == 3
-    verify_conformance_receipt(receipt, bom, suite)
+    verify_conformance_receipt(receipt, bom, suite, adapter, tmp_path)
+
+
+def test_command_conformance_rejects_adapter_substitution(tmp_path):
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+    executed = tmp_path / "executed.py"
+    substitute = tmp_path / "substitute.py"
+    executed.write_text(CONFORMANCE_ADAPTER.read_text())
+    substitute.write_text(CONFORMANCE_ADAPTER.read_text())
+
+    with pytest.raises(AgentBomError, match="must execute the declared artifact"):
+        run_conformance(
+            bom,
+            suite,
+            "command",
+            f"{sys.executable} {executed}",
+            adapter_artifact=substitute,
+            workspace=tmp_path,
+        )
+
+
+def test_conformance_verification_detects_adapter_byte_drift(tmp_path):
+    adapter = tmp_path / "adapter.py"
+    adapter.write_text(CONFORMANCE_ADAPTER.read_text())
+    (tmp_path / "candidate.json").write_text(CANDIDATE.read_text())
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+    receipt = run_conformance(
+        bom,
+        suite,
+        "command",
+        f"{sys.executable} {adapter}",
+        adapter_artifact=adapter,
+        workspace=tmp_path,
+    )
+    adapter.write_text(adapter.read_text() + "\n# changed after evidence\n")
+
+    with pytest.raises(AgentBomError, match="artifact bytes mismatch"):
+        verify_conformance_receipt(receipt, bom, suite, adapter, tmp_path)
+
+
+def test_conformance_verification_rejects_oversized_adapter_before_digest(tmp_path):
+    adapter = tmp_path / "adapter.py"
+    adapter.write_text(CONFORMANCE_ADAPTER.read_text())
+    (tmp_path / "candidate.json").write_text(CANDIDATE.read_text())
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+    receipt = run_conformance(
+        bom,
+        suite,
+        "command",
+        f"{sys.executable} {adapter}",
+        adapter_artifact=adapter,
+        workspace=tmp_path,
+    )
+    with adapter.open("wb") as handle:
+        handle.truncate(1_000_001)
+
+    with pytest.raises(AgentBomError, match="artifact size is invalid"):
+        verify_conformance_receipt(receipt, bom, suite, adapter, tmp_path)
 
 
 def test_conformance_suite_and_receipt_drift_fail_closed():

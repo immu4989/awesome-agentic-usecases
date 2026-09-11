@@ -164,9 +164,9 @@ jobs:
           python -m aau_harness.agent_bom verify-reduction-plan agent-capability-bom/examples/reference-reduction-plan.json agent-capability-bom/examples/candidate.json agent-capability-bom/examples/authority-observation.json
           python -m aau_harness.agent_bom generate-conformance agent-capability-bom/examples/candidate.json --out "$RUNNER_TEMP/aau-authority-conformance-suite.json"
           cmp "$RUNNER_TEMP/aau-authority-conformance-suite.json" agent-capability-bom/examples/reference-conformance-suite.json
-          python -m aau_harness.agent_bom run-conformance agent-capability-bom/examples/candidate.json agent-capability-bom/examples/reference-conformance-suite.json --command "python agent-capability-bom/examples/reference_conformance_adapter.py" --out "$RUNNER_TEMP/aau-authority-conformance-receipt.json"
+          python -m aau_harness.agent_bom run-conformance agent-capability-bom/examples/candidate.json agent-capability-bom/examples/reference-conformance-suite.json --command "python agent-capability-bom/examples/reference_conformance_adapter.py" --adapter-artifact agent-capability-bom/examples/reference_conformance_adapter.py --workspace . --out "$RUNNER_TEMP/aau-authority-conformance-receipt.json"
           cmp "$RUNNER_TEMP/aau-authority-conformance-receipt.json" agent-capability-bom/examples/reference-conformance-receipt.json
-          python -m aau_harness.agent_bom verify-conformance agent-capability-bom/examples/reference-conformance-receipt.json agent-capability-bom/examples/candidate.json agent-capability-bom/examples/reference-conformance-suite.json
+          python -m aau_harness.agent_bom verify-conformance agent-capability-bom/examples/reference-conformance-receipt.json agent-capability-bom/examples/candidate.json agent-capability-bom/examples/reference-conformance-suite.json --adapter-artifact agent-capability-bom/examples/reference_conformance_adapter.py --workspace .
           python reproduction-challenges/submit.py verify-campaign
           PYTHONPATH=agent-incident-exchange pytest agent-incident-exchange/tests -q
           python agent-incident-exchange/make_exchange.py

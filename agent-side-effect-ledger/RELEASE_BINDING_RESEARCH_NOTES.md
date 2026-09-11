@@ -12,9 +12,10 @@ running.
 | SLSA 1.2 defines provenance as verifiable information for tracing an artifact through the supply chain | The pack hashes the AABOM, binding plan, complete matrix manifest, matrix receipt, and three exact adapter snapshots | The pack is not SLSA provenance and has no builder identity or signature |
 | NIST SP 800-53 Rev. 5 AC-6 applies least privilege to users and processes acting for users | Every AABOM write or irreversible operation must have a declared binding and matching authority | A declared authority is not a verified live credential or authorization decision |
 | NIST SP 800-205 describes access decisions in terms of subject, object, requested operation, environment, and policy relationships | Semantic, crash, race, matrix, release plan, tool inventory, and authority matching now carry one exact `tool + operation + resource_scope` relationship | Repeated strings are not live subject identity, object attributes, or policy enforcement |
-| RFC 9396 warns that values in combined authorization fields form a product and uses separate objects for finer rights | Release Binding 0.5 never infers a grant from independent operation and scope membership; it matches the exact AABOM 1.1 relationship | This profile is not an OAuth authorization-details type, token, authorization server, or resource server |
+| RFC 9396 warns that values in combined authorization fields form a product and uses separate objects for finer rights | Release Binding 0.6 never infers a grant from independent operation and scope membership; it matches the exact AABOM 1.1 relationship | This profile is not an OAuth authorization-details type, token, authorization server, or resource server |
+| NIST SSDF 1.1 protects software components from tampering and calls for release-integrity verification and component provenance | Authority conformance Receipt 1.2 hashes the executed command adapter, and Release Binding 0.6 copies and re-hashes those bytes | Local unsigned hashes do not establish a trusted builder, signature, provenance, or deployment |
 | NIST SP 800-53 Rev. 5 CM controls treat configuration and change evidence as an organizational responsibility | Agent ID, release ID, tool ID, operation, authority, evidence digest, and adapter bytes are joined in one recomputable receipt | A byte match is not production equivalence, change approval, compliance, or an ATO |
-| The matrix separately tests semantics, crash recovery, and concurrency and carries the entrypoint, static-local Python materials, and CPython-observed workspace reads for each command | A consequential operation is fully bound only when it is the exact pair covered by all three matrix gates and every release path, entrypoint digest, static material-set digest, and observed-runtime digest agrees | Other semantic-suite tools do not inherit crash or race coverage; static plus observed workspace inputs are not a complete runtime dependency graph |
+| The matrix separately tests semantics, crash recovery, and concurrency and carries the entrypoint, static-local Python materials, and CPython-observed workspace reads for each command | A consequential relationship is fully bound only when all three matrix gates, an exact authority clean twin, authority-adapter bytes, release paths, entrypoint digests, static material-set digests, and observed-runtime digests agree | Other semantic-suite tools do not inherit crash or race coverage; static plus observed workspace inputs are not a complete runtime dependency graph |
 | SLSA 1.2 records known resolved dependencies while describing dependency completeness as best effort | The binding pack preserves matrix-side static material sets and digest-only release snapshots for observed runtime paths, then holds on any mismatch | This unsigned pack is not SLSA provenance and has no builder or workload identity |
 
 ## Premise checks
@@ -27,7 +28,8 @@ running.
    `tool_id + operation + resource_scope` relationship. Every consequential AABOM relationship is
    evaluated separately.
 4. **Inventory cannot grant authority.** AABOM authority fields are checked for complete references
-   and human-approval requirements, but the binder never mints, validates, or exercises credentials.
+   and human-approval requirements. The command adapter must pass AABOM-derived clean and violation
+   twins, but the binder never mints, validates, or exercises credentials or tokens.
 5. **A valid failure remains portable evidence.** Missing coverage or human approval produces a
    deterministic `binding_held` pack and exit code 1. Malformed structure or tampering uses exit
    code 2, so CI can preserve behavioral diagnostics without accepting them.
@@ -36,7 +38,7 @@ running.
    safety, compliance, certification, release approval, or an Authorization to Operate.
 7. **Test-to-release binding is byte equality, not execution identity.** Matrix 0.6 proves its
    command referenced one declared entrypoint and carries those original bytes plus a static-local
-   Python material set and a digest-only CPython workspace-read observation. Release Binding 0.5
+   Python material set and a digest-only CPython workspace-read observation. Release Binding 0.6
    compares the path, entrypoint digest, material-set digest, and every observed workspace digest.
    It does not prove the packaged files were deployed or capture interpreters, installed packages,
    outside-workspace access, containers, or builders.
@@ -49,6 +51,9 @@ running.
     only exact target equality or one terminal prefix wildcard and rejects a target outside that
     scope. Production resource matching, canonicalization, aliases, tenancy, and object attributes
     remain the enforcement point's responsibility.
+11. **An authority receipt must identify its adapter.** A command label alone can be paired with
+    different reviewed code. The conformance runner now binds the actual launch artifact before and
+    after its cases; the release pack copies those bytes and holds on a path or digest mismatch.
 
 ## Official sources
 
@@ -58,6 +63,7 @@ running.
 - [Python documentation — runtime audit hooks](https://docs.python.org/3/library/sys.html#sys.addaudithook)
 - [NIST SP 800-53 Rev. 5 — Security and Privacy Controls](https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final)
 - [NIST SP 800-205 — Attribute Considerations for Access Control Systems](https://csrc.nist.gov/pubs/sp/800/205/final)
+- [NIST SP 800-218 — Secure Software Development Framework 1.1](https://csrc.nist.gov/pubs/sp/800/218/final)
 - [RFC 9396 — OAuth 2.0 Rich Authorization Requests](https://www.rfc-editor.org/rfc/rfc9396.html)
 - [NIST NCCoE — Software and AI Agent Identity and Authorization concept paper](https://www.nccoe.nist.gov/publications/other/accelerating-adoption-software-and-ai-agent-identity-and-authorization-concept)
 - [AWS Agentic AI Lens — deterministic idempotency and conditional writes](https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentrel06-bp04.html)

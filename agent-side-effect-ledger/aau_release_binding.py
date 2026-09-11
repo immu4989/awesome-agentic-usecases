@@ -15,14 +15,18 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "harness" / "src"))
 
-from aau_harness.agent_bom import AgentBomError, validate_bom  # noqa: E402
+from aau_harness.agent_bom import (  # noqa: E402
+    AgentBomError,
+    verify_conformance_receipt,
+    validate_bom,
+)
 
 import aau_side_effect_matrix  # noqa: E402
 
 
-PLAN_VERSION = "aau-agent-side-effect-release-binding-plan/0.2"
-RECEIPT_VERSION = "aau-agent-side-effect-release-binding-receipt/0.5"
-PACK_VERSION = "aau-agent-side-effect-release-binding-pack/0.5"
+PLAN_VERSION = "aau-agent-side-effect-release-binding-plan/0.3"
+RECEIPT_VERSION = "aau-agent-side-effect-release-binding-receipt/0.6"
+PACK_VERSION = "aau-agent-side-effect-release-binding-pack/0.6"
 MAX_BYTES = 2_000_000
 ROLES = ("semantic", "crash", "race")
 MATRIX_COMPONENT = {
@@ -35,6 +39,7 @@ BOUNDARY_KEYS = {
     "adapter_paths_workspace_relative",
     "all_consequential_relationships_must_be_bound",
     "human_approval_required_for_consequential_authority",
+    "authority_conformance_must_be_command_artifact_bound",
     "no_production_identity_or_deployment_claim",
 }
 BASE_FILES = {
@@ -63,7 +68,7 @@ def _digest(value: Any) -> str:
 
 def _exact(value: Any, keys: set[str], label: str) -> dict[str, Any]:
     if not isinstance(value, dict) or set(value) != keys:
-        raise BindingError(f"{label} fields differ from the 0.2 contract")
+        raise BindingError(f"{label} fields differ from the 0.3 contract")
     return value
 
 
@@ -99,6 +104,7 @@ def validate_plan(plan: dict[str, Any]) -> None:
             "binding_id",
             "agent_id",
             "release_id",
+            "authority_conformance",
             "bindings",
             "boundaries",
         },
@@ -108,6 +114,18 @@ def validate_plan(plan: dict[str, Any]) -> None:
         raise BindingError(f"binding_version must be {PLAN_VERSION}")
     for key in ("binding_id", "agent_id", "release_id"):
         _text(plan[key], key, 160)
+    authority = _exact(
+        plan["authority_conformance"],
+        {"suite", "receipt", "adapter"},
+        "authority_conformance",
+    )
+    for key in ("suite", "receipt", "adapter"):
+        value = _text(authority[key], f"authority_conformance.{key}", 500)
+        path = Path(value)
+        if path.is_absolute() or ".." in path.parts:
+            raise BindingError(
+                "authority conformance paths must be workspace-relative and traversal-free"
+            )
     bindings = plan["bindings"]
     if not isinstance(bindings, list) or not 1 <= len(bindings) <= 50:
         raise BindingError("bindings must contain 1 to 50 entries")
@@ -199,9 +217,18 @@ def _adapter_runtime_snapshot_path(binding_index: int, role: str) -> str:
     return f"adapters/{binding_index + 1:03d}-{role}.runtime-snapshot.json"
 
 
+def _authority_pack_path(kind: str) -> str:
+    return {
+        "suite": "authority/authority-conformance-suite.json",
+        "receipt": "authority/authority-conformance-receipt.json",
+        "adapter": "authority/authority-adapter.artifact",
+    }[kind]
+
+
 def _expected_files(plan: dict[str, Any]) -> set[str]:
     files = set(BASE_FILES)
     files.update(f"matrix/{name}" for name in aau_side_effect_matrix.PACK_FILES)
+    files.update(_authority_pack_path(kind) for kind in ("suite", "receipt", "adapter"))
     for index, _binding in enumerate(plan["bindings"]):
         files.update(_adapter_pack_path(index, role) for role in ROLES)
         files.update(_adapter_material_pack_path(index, role) for role in ROLES)
@@ -282,6 +309,11 @@ def _receipt(
     bom_bytes: bytes,
     plan_bytes: bytes,
     matrix_manifest_bytes: bytes,
+    authority_suite: dict[str, Any],
+    authority_receipt: dict[str, Any],
+    authority_suite_bytes: bytes,
+    authority_receipt_bytes: bytes,
+    authority_adapter_payload: bytes,
     adapter_payloads: dict[tuple[int, str], bytes],
     adapter_materials: dict[tuple[int, str], dict[str, Any]],
     matrix_observations: dict[str, dict[str, Any]],
@@ -293,6 +325,7 @@ def _receipt(
         raise BindingError("binding plan agent_id does not match the AABOM")
     if plan["release_id"] != bom["release_id"]:
         raise BindingError("binding plan release_id does not match the AABOM")
+    verify_conformance_receipt(authority_receipt, bom, authority_suite)
 
     tools = {item["component_id"]: item for item in bom["tools"]}
     findings: list[dict[str, str]] = []
@@ -303,6 +336,57 @@ def _receipt(
     matrix_artifacts = {
         item["component_id"]: item for item in matrix["adapter_artifacts"]
     }
+    authority_artifact = authority_receipt.get("adapter_artifact")
+    authority_source_path = plan["authority_conformance"]["adapter"]
+    authority_path_matches = (
+        isinstance(authority_artifact, dict)
+        and authority_artifact["path"] == authority_source_path
+    )
+    authority_bytes_match = (
+        isinstance(authority_artifact, dict)
+        and authority_artifact["size_bytes"] == len(authority_adapter_payload)
+        and authority_artifact["sha256"] == _digest(authority_adapter_payload)
+    )
+    authority_command_evidence = authority_receipt["adapter_kind"] == "command"
+    authority_receipt_passed = authority_receipt["status"] == "evidence_passed"
+    authority_results = {
+        row["case_id"]: row for row in authority_receipt["results"]
+    }
+    authority_clean_relationships = {
+        (
+            case["input"]["tool_id"],
+            case["input"]["operation"],
+            case["input"]["resource_scope"],
+        )
+        for case in authority_suite["cases"]
+        if case["clean_twin"]
+        and authority_results[case["case_id"]]["exact"]
+        and authority_results[case["case_id"]]["actual_decision"] == "allow"
+    }
+    if not authority_command_evidence:
+        add(
+            "AUTHORITY_CONFORMANCE_NOT_COMMAND_EVIDENCE",
+            "authority conformance",
+            "Release binding requires a command-adapter authority conformance receipt.",
+        )
+    if not authority_receipt_passed:
+        add(
+            "AUTHORITY_CONFORMANCE_NOT_PASSING",
+            "authority conformance",
+            authority_receipt["status"],
+        )
+    if not authority_path_matches:
+        add(
+            "AUTHORITY_ADAPTER_PATH_DIFFERS_FROM_RECEIPT",
+            authority_source_path,
+            "The release plan authority adapter path differs from the conformance receipt artifact path.",
+        )
+    if not authority_bytes_match:
+        add(
+            "AUTHORITY_ADAPTER_BYTES_DIFFER_FROM_RECEIPT",
+            authority_source_path,
+            "The release authority adapter bytes differ from the artifact observed during conformance.",
+        )
     plan_relationships: set[tuple[str, str, str]] = set()
     binding_matches: dict[tuple[str, str, str], bool] = {}
     rows: list[dict[str, Any]] = []
@@ -507,6 +591,12 @@ def _receipt(
                 subject,
                 "At least one matching AABOM authority omits human approval.",
             )
+        if relationship not in authority_clean_relationships:
+            add(
+                "CONSEQUENTIAL_RELATIONSHIP_AUTHORITY_CLEAN_TWIN_MISSING",
+                subject,
+                "No exact passing clean twin binds this consequential relationship to the authority adapter.",
+            )
     matrix_manifest_sha256 = _digest(matrix_manifest_bytes)
     matrix_evidence_bound = any(
         item["sha256"] == matrix_manifest_sha256
@@ -528,6 +618,11 @@ def _receipt(
         and _authority_ids(bom, *relationship)[1]
         and matrix["status"] == "evidence_passed"
         and matrix_evidence_bound
+        and authority_command_evidence
+        and authority_receipt_passed
+        and authority_path_matches
+        and authority_bytes_match
+        and relationship in authority_clean_relationships
         and binding_matches.get(relationship, False)
         for relationship in consequential
     )
@@ -547,6 +642,36 @@ def _receipt(
             "operation": matrix_relationship[1],
             "resource_scope": matrix_relationship[2],
         },
+        "authority_conformance": {
+            "receipt_version": authority_receipt["receipt_version"],
+            "status": authority_receipt["status"],
+            "adapter_kind": authority_receipt["adapter_kind"],
+            "suite_pack_path": _authority_pack_path("suite"),
+            "suite_sha256": _digest(authority_suite_bytes),
+            "receipt_pack_path": _authority_pack_path("receipt"),
+            "receipt_sha256": _digest(authority_receipt_bytes),
+            "adapter_source_path": authority_source_path,
+            "adapter_receipt_path": (
+                authority_artifact["path"]
+                if isinstance(authority_artifact, dict)
+                else None
+            ),
+            "adapter_pack_path": _authority_pack_path("adapter"),
+            "adapter_sha256": _digest(authority_adapter_payload),
+            "receipt_adapter_sha256": (
+                authority_artifact["sha256"]
+                if isinstance(authority_artifact, dict)
+                else None
+            ),
+            "adapter_path_matches_receipt": authority_path_matches,
+            "adapter_bytes_match_receipt": authority_bytes_match,
+            "case_count": authority_receipt["metrics"]["case_count"],
+            "exact_count": authority_receipt["metrics"]["exact_count"],
+            "clean_twin_relationship_count": len(authority_clean_relationships),
+            "matrix_relationship_clean_twin_exact": (
+                matrix_relationship in authority_clean_relationships
+            ),
+        },
         "consequential_relationship_count": len(consequential),
         "fully_bound_consequential_relationship_count": fully_bound,
         "bindings": rows,
@@ -560,6 +685,8 @@ def _receipt(
             "runtime_observation_is_digest_only_and_not_a_sandbox": True,
             "static_and_observed_materials_not_complete_runtime_dependency_graph": True,
             "exact_resource_scope_is_bound_across_all_three_suites": True,
+            "authority_decision_adapter_bytes_are_bound": True,
+            "authority_receipt_not_live_token_or_policy_provenance": True,
             "public_synthetic_staging_only": True,
             "valid_binding_not_deployment_approval_or_authority": True,
             "passing_matrix_not_production_equivalence": True,
@@ -591,6 +718,10 @@ def _summary(receipt: dict[str, Any]) -> str:
             f"Matrix boundary: `{receipt['matrix_boundary']['tool_id']} / "
             f"{receipt['matrix_boundary']['operation']} / "
             f"{receipt['matrix_boundary']['resource_scope']}`",
+            "",
+            f"Authority conformance: **{receipt['authority_conformance']['exact_count']}/"
+            f"{receipt['authority_conformance']['case_count']} exact** · adapter bytes "
+            f"**{'match' if receipt['authority_conformance']['adapter_bytes_match_receipt'] else 'differ'}**",
             "",
             "Each adapter binding compares the entrypoint bytes, static-local Python material set, "
             "and every digest-only workspace material observed during the matrix run.",
@@ -646,6 +777,17 @@ def build_pack(args: argparse.Namespace) -> dict[str, Any]:
     bom, plan = _load(bom_path), _load(plan_path)
     validate_bom(bom)
     validate_plan(plan)
+    authority_paths = {
+        kind: _inside_file(
+            workspace,
+            Path(plan["authority_conformance"][kind]),
+            f"authority conformance {kind}",
+        )
+        for kind in ("suite", "receipt", "adapter")
+    }
+    authority_suite = _load(authority_paths["suite"])
+    authority_receipt = _load(authority_paths["receipt"])
+    authority_adapter_payload = authority_paths["adapter"].read_bytes()
     matrix = aau_side_effect_matrix.verify_pack(matrix_path)
     matrix_artifacts = {
         item["component_id"]: item for item in matrix["adapter_artifacts"]
@@ -691,6 +833,11 @@ def build_pack(args: argparse.Namespace) -> dict[str, Any]:
         bom_path.read_bytes(),
         plan_path.read_bytes(),
         (matrix_path / "manifest.json").read_bytes(),
+        authority_suite,
+        authority_receipt,
+        authority_paths["suite"].read_bytes(),
+        authority_paths["receipt"].read_bytes(),
+        authority_adapter_payload,
         adapter_payloads,
         adapter_materials,
         matrix_observations,
@@ -700,9 +847,12 @@ def build_pack(args: argparse.Namespace) -> dict[str, Any]:
     scratch = Path(tempfile.mkdtemp(prefix=".aau-binding-", dir=output.parent))
     try:
         (scratch / "adapters").mkdir()
+        (scratch / "authority").mkdir()
         (scratch / "matrix").mkdir()
         shutil.copyfile(bom_path, scratch / "agent-capability-bom.json")
         shutil.copyfile(plan_path, scratch / "binding-plan.json")
+        for kind, source in authority_paths.items():
+            shutil.copyfile(source, scratch / _authority_pack_path(kind))
         for name in aau_side_effect_matrix.PACK_FILES:
             shutil.copyfile(matrix_path / name, scratch / "matrix" / name)
         for (index, role), source in adapter_sources.items():
@@ -757,9 +907,14 @@ def verify_pack(root: Path) -> dict[str, Any]:
     actual_directories = {
         path.relative_to(root).as_posix() for path in paths if path.is_dir()
     }
-    if actual_directories != {"adapters", "matrix"}:
+    if actual_directories != {"adapters", "authority", "matrix"}:
         raise BindingError("binding pack has missing or extra directories")
     matrix = aau_side_effect_matrix.verify_pack(root / "matrix")
+    authority_suite = _load(root / _authority_pack_path("suite"))
+    authority_receipt = _load(root / _authority_pack_path("receipt"))
+    authority_adapter_payload = (
+        root / _authority_pack_path("adapter")
+    ).read_bytes()
     matrix_observations = {
         component_id: _load_runtime_value(
             root / "matrix" / aau_side_effect_matrix.OBSERVATIONS[component_id],
@@ -794,6 +949,11 @@ def verify_pack(root: Path) -> dict[str, Any]:
         (root / "agent-capability-bom.json").read_bytes(),
         (root / "binding-plan.json").read_bytes(),
         (root / "matrix" / "manifest.json").read_bytes(),
+        authority_suite,
+        authority_receipt,
+        (root / _authority_pack_path("suite")).read_bytes(),
+        (root / _authority_pack_path("receipt")).read_bytes(),
+        authority_adapter_payload,
         payloads,
         materials,
         matrix_observations,

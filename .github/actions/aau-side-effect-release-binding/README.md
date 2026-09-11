@@ -3,9 +3,11 @@
 This dependency-free local composite Action joins a verified Side-Effect Safety Matrix to an exact
 Agent Capability and Authority BOM release plus byte snapshots of the semantic, crash, and race
 adapters, their static-local Python material sets, and digest-only snapshots of workspace paths
-observed during the matrix run. It fails closed when the exact matrix boundary,
-AABOM consequential operation-scope relationships, binding plan, authority approval requirement, entrypoint digest,
-material-set digest, observed-runtime digest, or evidence digest does not agree.
+observed during the matrix run. Release Binding 0.6 also embeds an AABOM-derived authority suite,
+command receipt, and exact authority-adapter bytes. It fails closed when the exact matrix boundary,
+AABOM consequential operation-scope relationships, authority clean twin, binding plan, approval
+requirement, authority-adapter digest, entrypoint digest, material-set digest, observed-runtime
+digest, or evidence digest does not agree.
 
 Run the matrix Action first, then bind its pack:
 
@@ -39,7 +41,8 @@ records policy allows it.
 Adapter paths are workspace-relative declarations. Their exact copied bytes are hashed, but the
 release pack is accepted only when each path, entrypoint digest, captured material-set digest, and
 observed workspace-material digest agrees with the matrix. Runtime-only bytes are not embedded;
-Python audit hooks remain bypassable and are not a sandbox. The pack has no signature or builder identity and does not establish the
+Python audit hooks remain bypassable and are not a sandbox. Authority-adapter equality is not a
+live token or policy decision. The pack has no signature or builder identity and does not establish the
 interpreter, installed-package or dynamic dependency closure, live workload identity, production
 provenance, authority, safety, compliance, certification, deployment approval, or an ATO. Pin this
 Action and every third-party Action to a reviewed full commit SHA, use synthetic staging adapters,

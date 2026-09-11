@@ -6,6 +6,8 @@ Fully bound consequential relationships: **1/1**
 
 Matrix boundary: `notification-service / send_synthetic_notice / synthetic-benefit-cases/notices/*`
 
+Authority conformance: **8/8 exact** · adapter bytes **match**
+
 Each adapter binding compares the entrypoint bytes, static-local Python material set, and every digest-only workspace material observed during the matrix run.
 
 ## Holds
