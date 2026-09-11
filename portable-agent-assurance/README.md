@@ -155,6 +155,12 @@ non-claims](AUTHORITY_RELAY_RESEARCH_NOTES.md), or test the claim from an outsid
 
 ## Run all current gates in one CI matrix
 
+MCP, A2A, and relay command requests use fresh random UUIDs for `case_id`. Descriptive suite IDs
+can expose expected failure labels, so those IDs stay in the readable receipts only. Adapters must
+evaluate the request facts, not classify the transport ID. UUIDs are not retained in receipts;
+reference evidence remains reproducible. The suites and case order are public, so this removes a
+label shortcut without claiming a hidden benchmark or resistance to deliberate memorization.
+
 The MCP delta, A2A delta, and authority-relay `run` and `verify` commands use the same CI contract:
 exit **0** means passing evidence, **1** means valid evidence containing failed evaluations, and
 **2** means malformed or mismatched input. Verification checks the recorded results against their

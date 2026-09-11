@@ -13,6 +13,7 @@ import json
 import shlex
 import subprocess
 import sys
+import uuid
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -332,8 +333,8 @@ def _command_adapter(command: str, timeout: float):
     if not argv:
         raise McpDeltaError("adapter command is empty")
 
-    def invoke(case_id: str, request: dict[str, Any]) -> tuple[str, list[str]]:
-        payload = {"protocol_version": "aau-mcp-2026-adapter/1.0", "case_id": case_id, "request": request}
+    def invoke(_case_id: str, request: dict[str, Any]) -> tuple[str, list[str]]:
+        payload = {"protocol_version": "aau-mcp-2026-adapter/1.0", "case_id": str(uuid.uuid4()), "request": request}
         try:
             completed = subprocess.run(
                 argv, input=canonical(payload), capture_output=True, timeout=timeout, check=False

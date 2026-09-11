@@ -99,6 +99,10 @@
   exit 1 for valid failed evidence, matching their run commands. Cross-protocol CLI tests exercise
   deny-all failures, tampered metrics, and passing receipts independently.
 
+- **Protocol request label isolation** — MCP, A2A, and authority-relay command transports now
+  substitute fresh UUIDs for descriptive test identifiers. Request facts and readable receipt
+  labels remain intact; all three committed reference receipts remain reproducible.
+
 ## 1.6.0 - 2026-08-30
 
 - Added the Agent Release Gate: exact component snapshots, before/after impact selection,
