@@ -14,6 +14,7 @@ from aau_harness.agent_bom import (
     evaluate_authority_case,
     generate_conformance_suite,
     load_json,
+    main,
     plan_authority_reduction,
     review_bom,
     run_conformance,
@@ -463,6 +464,33 @@ def test_conformance_rejects_symlink_replacement_even_with_equal_bytes(tmp_path,
             bom, suite, "command", f"{sys.executable} {adapter}",
             adapter_artifact=adapter, workspace=tmp_path,
         )
+
+
+def test_cli_verification_distinguishes_passing_failed_and_invalid_evidence(tmp_path):
+    bom = load_json(CANDIDATE)
+    suite = generate_conformance_suite(bom)
+    adapter = tmp_path / "deny_all.py"
+    adapter.write_text(
+        "import json,sys\njson.load(sys.stdin)\n"
+        "json.dump({'decision':'block','reason_codes':[]},sys.stdout)\n"
+    )
+    receipt = run_conformance(
+        bom, suite, "command", f"{sys.executable} {adapter}",
+        adapter_artifact=adapter, workspace=tmp_path,
+    )
+    receipt_path = tmp_path / "receipt.json"
+    suite_path = tmp_path / "suite.json"
+    receipt_path.write_text(json.dumps(receipt))
+    suite_path.write_text(json.dumps(suite))
+    args = ["verify-conformance", str(receipt_path), str(CANDIDATE), str(suite_path),
+            "--adapter-artifact", str(adapter), "--workspace", str(tmp_path)]
+    assert main(args) == 1
+    receipt["metrics"]["exact_count"] += 1
+    receipt_path.write_text(json.dumps(receipt))
+    assert main(args) == 2
+    reference = run_conformance(bom, suite, "reference")
+    receipt_path.write_text(json.dumps(reference))
+    assert main(args[:4]) == 0
 
 
 def test_conformance_suite_and_receipt_drift_fail_closed():

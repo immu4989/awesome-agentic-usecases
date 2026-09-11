@@ -91,6 +91,10 @@
   regression tests demonstrate that label-based shortcuts lose legitimate clean twins. Public
   suites remain transparent and are not presented as secret benchmarks.
 
+- **Conformance verification exit codes** — verified failing authority receipts now return exit 1,
+  so CI cannot confuse a structurally valid failure with passing evidence. Passing receipts return
+  0 and malformed or mismatched receipts return 2; CLI regression coverage checks all three.
+
 ## 1.6.0 - 2026-08-30
 
 - Added the Agent Release Gate: exact component snapshots, before/after impact selection,

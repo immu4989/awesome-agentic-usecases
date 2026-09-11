@@ -1782,8 +1782,8 @@ def main(argv: list[str] | None = None) -> int:
             args.adapter_artifact,
             args.workspace,
         )
-        print(f"verified {args.receipt}")
-        return 0
+        print(f"verified {args.receipt} ({receipt['status']})")
+        return 0 if receipt["status"] == "evidence_passed" else 1
     except (AgentBomError, OSError) as exc:
         print(f"aau bom: {exc}", file=sys.stderr)
         return 2

@@ -161,6 +161,12 @@ identity, provenance, compliance, certification, deployment approval, or an ATO.
 is deliberately omitted; equal file observations before and after a run do not prove continuous
 immutability or that those bytes were deployed.
 
+For CI, both `run-conformance` and `verify-conformance` exit **0** for passing evidence, **1** for
+a valid receipt recording failed evaluations, and **2** for malformed or mismatched evidence.
+Verification recomputes a receipt; it does not rerun the adapter. Preserve a failed receipt for
+diagnosis, but require exit 0 before accepting the conformance gate. Reference-adapter results
+remain protocol self-tests regardless of exit status.
+
 ## Build a portable evidence pack
 
 ```bash
