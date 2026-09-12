@@ -69,6 +69,13 @@ def fixtures():
     return load_json(BASELINE), load_json(CANDIDATE)
 
 
+@pytest.mark.parametrize("timeout", [0, -1, float('nan'), float('inf'), True, 301, '10'])
+def test_invalid_command_timeout_rejected_before_launch(timeout):
+    from aau_harness.agent_bom import _command_conformance_adapter
+    with pytest.raises(AgentBomError, match="adapter timeout must be finite"):
+        _command_conformance_adapter(["unused"], timeout)
+
+
 def test_reference_boms_are_strict_and_cross_referenced():
     before, after = fixtures()
     validate_bom(before)

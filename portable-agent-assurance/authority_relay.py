@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import shlex
 import subprocess
 import sys
@@ -431,6 +432,12 @@ def generate_suite(profile: dict[str, Any]) -> dict[str, Any]:
 
 
 def _command_adapter(command: str, timeout: float):
+    if (
+        type(timeout) not in (int, float)
+        or not 0 < timeout <= 300
+        or not math.isfinite(timeout)
+    ):
+        raise RelayError("adapter timeout must be finite and greater than 0, up to 300 seconds")
     argv = shlex.split(command)
     if not argv:
         raise RelayError("adapter command is empty")

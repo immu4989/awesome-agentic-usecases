@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import shlex
 import subprocess
 import sys
@@ -1345,6 +1346,12 @@ def _command_artifact(
 
 
 def _command_conformance_adapter(argv: list[str], timeout: float):
+    if (
+        type(timeout) not in (int, float)
+        or not 0 < timeout <= 300
+        or not math.isfinite(timeout)
+    ):
+        raise AgentBomError("adapter timeout must be finite and greater than 0, up to 300 seconds")
     def invoke(_case_id: str, case_input: dict[str, Any]) -> tuple[str, list[str]]:
         request = {
             "protocol_version": "aau-agent-authority-adapter/1.1",

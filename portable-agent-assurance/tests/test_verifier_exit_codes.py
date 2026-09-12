@@ -15,6 +15,16 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 @pytest.mark.parametrize("module_name", ["mcp_2026_delta", "a2a_1_delta", "authority_relay"])
+@pytest.mark.parametrize("timeout", [0, -1, float('nan'), float('inf'), True, 301, '10'])
+def test_invalid_timeout_rejected_before_launch(module_name, timeout):
+    spec = importlib.util.spec_from_file_location(module_name, ROOT / f"{module_name}.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    with pytest.raises(ValueError, match="adapter timeout must be finite"):
+        module._command_adapter("unused", timeout)
+
+
+@pytest.mark.parametrize("module_name", ["mcp_2026_delta", "a2a_1_delta", "authority_relay"])
 @pytest.mark.parametrize("payload", [
     b'{"decision":"block","decision":"allow","reason_codes":[]}',
     b'{"nested":{"approval":false,"approval":true}}',

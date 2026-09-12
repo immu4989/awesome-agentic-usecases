@@ -155,6 +155,10 @@ non-claims](AUTHORITY_RELAY_RESEARCH_NOTES.md), or test the claim from an outsid
 
 ## Run all current gates in one CI matrix
 
+Command `--timeout` values must be finite, greater than zero, and at most 300 seconds per case.
+The default remains 10 seconds. Invalid settings are rejected before launch; this limit is not
+a whole-suite deadline or process-tree containment mechanism.
+
 The MCP, A2A, and relay loaders reject duplicate JSON object keys, including nested duplicates,
 and non-standard numeric constants in both evidence files and command responses. Conflicting
 decision fields cannot silently overwrite one another. This follows the interoperability concerns

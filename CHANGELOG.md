@@ -115,6 +115,10 @@
   reject duplicate keys and non-standard numeric constants, including material and runtime
   snapshot files. Regression packs with conflicting duplicate statuses fail verification.
 
+- **Bounded adapter timeout configuration** — AABOM, MCP, A2A, and relay command runners reject
+  zero, negative, non-finite, boolean, mistyped, and greater-than-300-second timeouts before launch.
+  Defaults remain unchanged, with the per-case scope documented explicitly.
+
 ## 1.6.0 - 2026-08-30
 
 - Added the Agent Release Gate: exact component snapshots, before/after impact selection,

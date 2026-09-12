@@ -167,6 +167,10 @@ Verification recomputes a receipt; it does not rerun the adapter. Preserve a fai
 diagnosis, but require exit 0 before accepting the conformance gate. Reference-adapter results
 remain protocol self-tests regardless of exit status.
 
+Command `--timeout` is a per-case duration in seconds, greater than zero and at most 300.
+Non-finite values and invalid types are rejected before launch. The default remains 10 seconds;
+this is a per-process timeout, not a whole-suite deadline or process-tree sandbox.
+
 ## Build a portable evidence pack
 
 ```bash
