@@ -420,6 +420,11 @@ ATO. See the
 
 ## Why these fields exist
 
+Matrix and release-pack JSON loaders reject duplicate object keys at every nesting level and
+non-standard numeric constants. This includes the release binder's material and runtime snapshot
+loaders. A repeated `status` field cannot hide a conflicting result behind the last value. These
+checks happen before evidence recomputation; valid existing reference packs remain unchanged.
+
 - [RFC 9110 §9.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) says a client should
   not automatically retry a non-idempotent request unless it knows the semantics are idempotent or
   can detect that the original request was never applied.

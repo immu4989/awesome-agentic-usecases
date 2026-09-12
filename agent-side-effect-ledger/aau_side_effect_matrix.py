@@ -79,11 +79,28 @@ class MatrixError(ValueError):
     """Raised when a matrix input or pack violates the public contract."""
 
 
+def _json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise MatrixError("duplicate JSON object key")
+        result[key] = value
+    return result
+
+
+def _json_constant(value: str) -> Any:
+    raise MatrixError("non-standard JSON numeric constant")
+
+
+def _parse_json(payload: bytes) -> Any:
+    return json.loads(payload, object_pairs_hook=_json_object, parse_constant=_json_constant)
+
+
 def _load(path: Path, max_bytes: int = MAX_BYTES) -> dict[str, Any]:
     if path.is_symlink() or not path.is_file() or path.stat().st_size > max_bytes:
         raise MatrixError(f"invalid, oversized, or symbolic-link file: {path}")
     try:
-        value = json.loads(path.read_bytes())
+        value = _parse_json(path.read_bytes())
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise MatrixError(f"invalid JSON: {path}") from exc
     if not isinstance(value, dict):

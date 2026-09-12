@@ -55,6 +55,15 @@ def _workspace(tmp_path: Path) -> tuple[Path, argparse.Namespace]:
     return workspace, args
 
 
+def test_release_pack_rejects_conflicting_duplicate_status(tmp_path):
+    pack = tmp_path / "pack"
+    shutil.copytree(ROOT / "examples/reference-release-binding-pack", pack)
+    path = pack / "binding-receipt.json"
+    path.write_text('{"status":"binding_held",' + path.read_text().lstrip()[1:])
+    with pytest.raises(BindingError, match="duplicate JSON"):
+        verify_pack(pack)
+
+
 def _refresh_authority_conformance(
     workspace: Path, args: argparse.Namespace
 ) -> None:

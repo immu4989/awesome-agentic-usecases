@@ -111,6 +111,10 @@
   reject duplicate keys and non-standard numeric constants, with cross-protocol regression tests
   covering conflicting decisions, nested approvals, NaN, and infinities.
 
+- **Release-pack JSON ambiguity rejection** — safety-matrix and release-binding loaders now
+  reject duplicate keys and non-standard numeric constants, including material and runtime
+  snapshot files. Regression packs with conflicting duplicate statuses fail verification.
+
 ## 1.6.0 - 2026-08-30
 
 - Added the Agent Release Gate: exact component snapshots, before/after impact selection,

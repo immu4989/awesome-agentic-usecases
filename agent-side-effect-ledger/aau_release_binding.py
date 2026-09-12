@@ -80,11 +80,28 @@ def _text(value: Any, label: str, limit: int = 300) -> str:
     return value
 
 
+def _json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise BindingError("duplicate JSON object key")
+        result[key] = value
+    return result
+
+
+def _json_constant(value: str) -> Any:
+    raise BindingError("non-standard JSON numeric constant")
+
+
+def _parse_json(payload: bytes) -> Any:
+    return json.loads(payload, object_pairs_hook=_json_object, parse_constant=_json_constant)
+
+
 def _load(path: Path) -> dict[str, Any]:
     if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_BYTES:
         raise BindingError(f"invalid, oversized, or symbolic-link file: {path}")
     try:
-        value = json.loads(path.read_bytes())
+        value = _parse_json(path.read_bytes())
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise BindingError(f"invalid JSON: {path}") from exc
     if not isinstance(value, dict):
@@ -261,7 +278,7 @@ def _load_material(path: Path) -> dict[str, Any]:
     if path.is_symlink() or not path.is_file() or path.stat().st_size > limit:
         raise BindingError("adapter material pack must be a bounded regular file")
     try:
-        value = json.loads(path.read_bytes())
+        value = _parse_json(path.read_bytes())
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise BindingError("adapter material pack must contain one JSON object") from exc
     if not isinstance(value, dict):
@@ -274,7 +291,7 @@ def _load_runtime_value(path: Path, label: str) -> dict[str, Any]:
     if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_BYTES:
         raise BindingError(f"{label} must be a bounded regular file")
     try:
-        value = json.loads(path.read_bytes())
+        value = _parse_json(path.read_bytes())
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise BindingError(f"{label} must contain one JSON object") from exc
     if not isinstance(value, dict):

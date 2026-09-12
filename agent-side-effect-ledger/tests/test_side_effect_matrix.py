@@ -14,6 +14,15 @@ ROOT = Path(__file__).parents[1]
 REFERENCE_PACK = ROOT / "examples" / "reference-matrix-pack"
 
 
+def test_matrix_rejects_conflicting_duplicate_status(tmp_path):
+    pack = tmp_path / "pack"
+    shutil.copytree(REFERENCE_PACK, pack)
+    path = pack / "matrix-receipt.json"
+    path.write_text('{"status":"evidence_failed",' + path.read_text().lstrip()[1:])
+    with pytest.raises(MatrixError, match="duplicate JSON"):
+        verify_pack(pack)
+
+
 def _command(path: Path) -> str:
     return shlex.join([sys.executable, str(path)])
 
