@@ -153,7 +153,7 @@ jobs:
           git diff --exit-code docs/assurance-data.json portable-agent-assurance/examples/reference-pack tev-v-athlon-profile/examples/reference-pack
       - name: Agent releases, authority BOMs, outside reproduction, incidents, and source freshness are verifiable
         run: |
-          pytest harness/tests/test_release_gate.py harness/tests/test_agent_bom.py -q
+          pytest harness/tests/test_release_gate.py harness/tests/test_agent_bom.py harness/tests/test_authority_starter.py -q
           python -m aau_harness.release_gate verify agent-release-gate/examples/reference-pack
           python -m aau_harness.release_gate assess agent-release-gate/examples/baseline/release-manifest.json agent-release-gate/examples/candidate/release-manifest.json agent-release-gate/examples/release-policy.json agent-release-gate/examples/evidence-plan.json --command "python agent-release-gate/examples/reference_adapter.py" --approval agent-release-gate/examples/approval.json --out "$RUNNER_TEMP/aau-release-pack"
           python -m aau_harness.release_gate verify "$RUNNER_TEMP/aau-release-pack"

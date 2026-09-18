@@ -119,6 +119,11 @@
   zero, negative, non-finite, boolean, mistyped, and greater-than-300-second timeouts before launch.
   Defaults remain unchanged, with the per-case scope documented explicitly.
 
+- **Authority adapter starter** — `aau bom init-adapter` creates a reusable workspace with the
+  inventory, generated suite, unfinished adapter, and adoption guide. The initial run deliberately
+  fails with `ADAPTER_NOT_IMPLEMENTED`; users must connect their staging policy to earn evidence.
+  Integration tests run the generated adapter and protect existing user work.
+
 ## 1.6.0 - 2026-08-30
 
 - Added the Agent Release Gate: exact component snapshots, before/after impact selection,

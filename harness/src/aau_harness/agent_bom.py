@@ -1671,6 +1671,9 @@ def build_parser() -> argparse.ArgumentParser:
         description="Inventory, reduce, and test Agent Capability & Authority BOMs.",
     )
     sub = parser.add_subparsers(dest="command", required=True)
+    starter = sub.add_parser("init-adapter", help="create an unfinished staging authority adapter workspace")
+    starter.add_argument("bom", type=Path)
+    starter.add_argument("--out", type=Path, required=True)
     validate = sub.add_parser("validate", help="validate one strict public AABOM")
     validate.add_argument("bom", type=Path)
     diff = sub.add_parser("diff", help="find authority widening between two AABOMs")
@@ -1730,6 +1733,11 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     try:
         args = build_parser().parse_args(argv)
+        if args.command == "init-adapter":
+            from .authority_starter import create_starter
+            create_starter(load_json(args.bom), args.out)
+            print(f"created {args.out} (adapter not implemented; evaluation expected to fail)")
+            return 0
         if args.command == "validate":
             bom = load_json(args.bom)
             validate_bom(bom)

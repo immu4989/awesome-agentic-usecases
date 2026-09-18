@@ -104,6 +104,17 @@ retains only normalized identifiers, sequence, operation, scope class, and decis
 
 ## Compile the inventory into executable authority twins
 
+To start integrating your own policy engine, generate a workspace:
+
+```bash
+aau bom init-adapter agent-capability-bom/examples/candidate.json --out my-authority-adapter
+```
+
+The workspace includes the copied inventory, generated suite, adapter stub, and runnable commands.
+Implement the stub's `decide()` function using your staging policy. It initially blocks every
+case with `ADAPTER_NOT_IMPLEMENTED`, so creating a starter never manufactures passing evidence.
+Existing directories are not overwritten. Use the current repository harness for this command.
+
 An inventory becomes more useful when its claims can challenge an enforcement point. The
 **Authority Conformance Compiler** deterministically turns every authority/tool intersection into
 legitimate clean twins, then changes one boundary at a time: time window, revocation, delegation
