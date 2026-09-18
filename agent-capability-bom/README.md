@@ -182,6 +182,20 @@ Command `--timeout` is a per-case duration in seconds, greater than zero and at 
 Non-finite values and invalid types are rejected before launch. The default remains 10 seconds;
 this is a per-process timeout, not a whole-suite deadline or process-tree sandbox.
 
+## Diagnose a failed authority evaluation
+
+```bash
+aau bom explain-conformance receipt.json inventory.json suite.json \
+  --adapter-artifact adapter.py --workspace . --out failure-report.json
+```
+
+This verifies the receipt and current adapter bytes before producing a deterministic JSON report.
+It separates unsafe allows, legitimate actions blocked, and reason-code mismatches; each mismatch
+lists missing and unexpected reason codes without copying request inputs. Receipt, inventory, and
+suite digests identify the exact evidence explained. A failed evaluation still exits 1 after
+writing the report; malformed evidence exits 2 without generating a report. It does not rerun the
+adapter or infer production causes. The current repository harness provides this command.
+
 ## Build a portable evidence pack
 
 ```bash

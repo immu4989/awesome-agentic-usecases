@@ -124,6 +124,10 @@
   fails with `ADAPTER_NOT_IMPLEMENTED`; users must connect their staging policy to earn evidence.
   Integration tests run the generated adapter and protect existing user work.
 
+- **Authority failure explanations** — `aau bom explain-conformance` verifies evidence before
+  reporting unsafe allows, legitimate blocks, and reason-code mismatches. Reports preserve source
+  digests, omit request inputs, and retain failing exit codes for CI integration.
+
 ## 1.6.0 - 2026-08-30
 
 - Added the Agent Release Gate: exact component snapshots, before/after impact selection,

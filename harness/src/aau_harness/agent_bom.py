@@ -1727,6 +1727,13 @@ def build_parser() -> argparse.ArgumentParser:
     verify_run.add_argument("suite", type=Path)
     verify_run.add_argument("--adapter-artifact", type=Path)
     verify_run.add_argument("--workspace", type=Path, default=Path("."))
+    explain = sub.add_parser("explain-conformance", help="verify evidence and explain each failed authority case")
+    explain.add_argument("receipt", type=Path)
+    explain.add_argument("bom", type=Path)
+    explain.add_argument("suite", type=Path)
+    explain.add_argument("--adapter-artifact", type=Path)
+    explain.add_argument("--workspace", type=Path, default=Path("."))
+    explain.add_argument("--out", type=Path, required=True)
     return parser
 
 
@@ -1807,6 +1814,15 @@ def main(argv: list[str] | None = None) -> int:
             raise AgentBomError(
                 "command conformance verification requires --adapter-artifact"
             )
+        if args.command == "explain-conformance":
+            from .authority_report import explain_conformance
+            report = explain_conformance(
+                receipt, load_json(args.bom), load_json(args.suite),
+                args.adapter_artifact, args.workspace,
+            )
+            write_json(report, args.out)
+            print(f"wrote {args.out} ({report['mismatch_count']} mismatches)")
+            return 0 if report["status"] == "evidence_passed" else 1
         verify_conformance_receipt(
             receipt,
             load_json(args.bom),
