@@ -182,6 +182,9 @@ Command `--timeout` is a per-case duration in seconds, greater than zero and at 
 Non-finite values and invalid types are rejected before launch. The default remains 10 seconds;
 this is a per-process timeout, not a whole-suite deadline or process-tree sandbox.
 
+New to this workflow? Follow the [end-to-end staging quickstart](STAGING_QUICKSTART.md),
+including the expected first failure and a before/after comparison.
+
 ## Run a complete staging check
 
 ```bash

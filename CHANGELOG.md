@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **End-to-end authority onboarding** — added a front-page staging quickstart that connects
+  adapter creation, expected first failure, complete reports, offline verification, and
+  before/after comparison with explicit sharing and production-evidence limits.
+
 - **Whole-check verification** — `aau bom verify-authority-check` validates every saved staging
   artifact, recomputes the JSON/HTML/JUnit views and completion marker, and checks adapter bytes
   without executing code. Missing, extra, symlinked, oversized, and inconsistent files are rejected;
