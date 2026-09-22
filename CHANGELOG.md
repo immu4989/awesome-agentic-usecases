@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Single-command staging checks** — `aau bom check-authority` generates and evaluates an
+  authority suite and retains its inventory, receipt, JSON findings, HTML review, and JUnit
+  results together. Behavioral failures preserve diagnostics and a failing exit code; a final
+  completion marker distinguishes completed output from interrupted writes. The adapter starter
+  now documents this workflow and its public/synthetic-input boundary.
+
 - **Authority results for CI test viewers** — added `aau bom export-conformance-junit` with
   one test per synthetic case, categorized failures, evidence digest properties, deterministic
   XML escaping, and unchanged failure exit codes. Invalid evidence produces no new report.

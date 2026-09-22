@@ -182,6 +182,30 @@ Command `--timeout` is a per-case duration in seconds, greater than zero and at 
 Non-finite values and invalid types are rejected before launch. The default remains 10 seconds;
 this is a per-process timeout, not a whole-suite deadline or process-tree sandbox.
 
+## Run a complete staging check
+
+```bash
+aau bom check-authority inventory.json --command "python3 adapter.py" \
+  --adapter-artifact adapter.py --workspace . --out check-001
+```
+
+This generates a fresh suite from the inventory, runs the declared local adapter, verifies
+the receipt, and saves seven files: `inventory.json`, `suite.json`, `receipt.json`,
+`report.json`, `review.html`, `results.xml`, and `completion.json`. Use a new output directory
+for each run. An occupied destination is rejected before the adapter executes.
+
+Exit 0 means all synthetic cases matched; exit 1 means behavioral failures with reports saved;
+exit 2 means an input, protocol, or output error. `completion.json` is written last: an absent
+marker means output is incomplete (for example, a disk-write failure). It is not a signed
+manifest or independently verifiable pack. Retain the exact original adapter at its recorded
+workspace-relative path and use `verify-conformance` with the saved inputs to recheck evidence.
+
+**Use only public or synthetic inventory:** unlike the reduced reports, this directory includes
+inventory and generated test inputs. Review it before uploading to CI or sharing. The command
+executes trusted local adapter code; it is not a sandbox or production authorization. No
+adapter source or credentials are copied by the reporting workflow. Available in the current
+repository harness. `--timeout` has the same per-case bounds as `run-conformance`.
+
 ## Diagnose a failed authority evaluation
 
 ```bash

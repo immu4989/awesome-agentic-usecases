@@ -1674,6 +1674,13 @@ def build_parser() -> argparse.ArgumentParser:
     starter = sub.add_parser("init-adapter", help="create an unfinished staging authority adapter workspace")
     starter.add_argument("bom", type=Path)
     starter.add_argument("--out", type=Path, required=True)
+    check = sub.add_parser("check-authority", help="run a staging adapter and save evidence plus JSON, HTML, and JUnit reports")
+    check.add_argument("bom", type=Path)
+    check.add_argument("--command", dest="adapter_command", required=True)
+    check.add_argument("--adapter-artifact", type=Path, required=True)
+    check.add_argument("--workspace", type=Path, default=Path("."))
+    check.add_argument("--timeout", type=float, default=10.0)
+    check.add_argument("--out", type=Path, required=True)
     validate = sub.add_parser("validate", help="validate one strict public AABOM")
     validate.add_argument("bom", type=Path)
     diff = sub.add_parser("diff", help="find authority widening between two AABOMs")
@@ -1758,6 +1765,12 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     try:
         args = build_parser().parse_args(argv)
+        if args.command == "check-authority":
+            from .authority_check import check_authority
+            report = check_authority(load_json(args.bom), args.adapter_command,
+                                     args.adapter_artifact, args.workspace, args.out, args.timeout)
+            print(f"wrote {args.out} ({report['exact_count']}/{report['case_count']} exact; {report['status']})")
+            return 0 if report["status"] == "evidence_passed" else 1
         if args.command == "compare-conformance":
             from .authority_report import compare_conformance
             from .authority_html import write_report

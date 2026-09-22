@@ -43,6 +43,20 @@ or decoding case IDs. The test suite is public, not a hidden benchmark.
 
 From this directory, with the current repository harness installed:
 
+For a single-command check with all reports (use a fresh output directory each run):
+
+```bash
+aau bom check-authority inventory.json --command "python3 adapter.py" \\
+  --adapter-artifact adapter.py --workspace . --out check-001
+```
+
+This writes the inventory, generated suite, receipt, JSON explanation, offline HTML
+review, JUnit XML, and a completion marker. Failures still produce reports and exit 1.
+The inventory and suite are included: use public or synthetic inputs only. This runs
+local adapter code, not a sandbox. Keep the original adapter for re-verification.
+
+Or run and verify individual steps:
+
 ```bash
 aau bom run-conformance inventory.json suite.json \\
   --command "python3 adapter.py" --adapter-artifact adapter.py --workspace . \\
