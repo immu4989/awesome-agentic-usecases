@@ -206,6 +206,20 @@ executes trusted local adapter code; it is not a sandbox or production authoriza
 adapter source or credentials are copied by the reporting workflow. Available in the current
 repository harness. `--timeout` has the same per-case bounds as `run-conformance`.
 
+### Recheck the complete output directory
+
+```bash
+aau bom verify-authority-check check-001 --adapter-artifact adapter.py --workspace .
+```
+
+This reads the saved inventory, suite, and receipt; verifies the current adapter bytes; and
+recomputes the JSON findings, HTML page, JUnit results, and completion marker without running
+adapter code. Missing, extra, symlinked, oversized, or inconsistent files are rejected. Exit 0
+means consistent passing evidence; exit 1 means consistent **failed** evidence; exit 2 means
+invalid or incomplete output. Verification requires the same reporting implementation that
+generated the files; presentation bytes are checked exactly. It proves internal consistency,
+not independent authorship, production execution, or immunity to wholesale evidence replacement.
+
 ## Diagnose a failed authority evaluation
 
 ```bash

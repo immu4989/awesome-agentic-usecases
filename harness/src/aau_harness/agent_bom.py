@@ -1681,6 +1681,10 @@ def build_parser() -> argparse.ArgumentParser:
     check.add_argument("--workspace", type=Path, default=Path("."))
     check.add_argument("--timeout", type=float, default=10.0)
     check.add_argument("--out", type=Path, required=True)
+    verify_check = sub.add_parser("verify-authority-check", help="recompute all saved staging check reports without execution")
+    verify_check.add_argument("directory", type=Path)
+    verify_check.add_argument("--adapter-artifact", type=Path, required=True)
+    verify_check.add_argument("--workspace", type=Path, default=Path("."))
     validate = sub.add_parser("validate", help="validate one strict public AABOM")
     validate.add_argument("bom", type=Path)
     diff = sub.add_parser("diff", help="find authority widening between two AABOMs")
@@ -1765,6 +1769,11 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     try:
         args = build_parser().parse_args(argv)
+        if args.command == "verify-authority-check":
+            from .authority_check import verify_check
+            report = verify_check(args.directory, args.adapter_artifact, args.workspace)
+            print(f"verified {args.directory} ({report['status']})")
+            return 0 if report["status"] == "evidence_passed" else 1
         if args.command == "check-authority":
             from .authority_check import check_authority
             report = check_authority(load_json(args.bom), args.adapter_command,

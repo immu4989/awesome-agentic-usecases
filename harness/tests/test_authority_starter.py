@@ -7,7 +7,7 @@ import pytest
 
 from aau_harness.agent_bom import AgentBomError, load_json, main, run_conformance
 from aau_harness.authority_starter import create_starter
-from aau_harness.authority_check import check_authority
+from aau_harness.authority_check import check_authority, verify_check
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -67,6 +67,8 @@ def test_one_command_check_keeps_failed_reports_and_refuses_existing_output(tmp_
                  str(out / "suite.json"), "--adapter-artifact", str(adapter),
                  "--workspace", str(workspace)]) == 1
     saved = (out / "receipt.json").read_bytes()
+    assert main(["verify-authority-check", str(out), "--adapter-artifact", str(adapter),
+                 "--workspace", str(workspace)]) == 1
     # An invalid command is never executed when the output already exists.
     with pytest.raises(AgentBomError, match="overwrite"):
         check_authority(load_json(BOM), "not-a-command", adapter, workspace, out)
@@ -86,3 +88,25 @@ def test_one_command_check_passes_with_explicit_reference_example(tmp_path):
     completion = load_json(out / "completion.json")
     assert completion["status"] == "evidence_passed"
     assert completion["exact_count"] == completion["case_count"]
+    assert main(["verify-authority-check", str(out), "--adapter-artifact", str(adapter),
+                 "--workspace", str(ROOT)]) == 0
+    for name in ("report.json", "completion.json", "review.html", "results.xml"):
+        path = out / name
+        original = path.read_bytes()
+        path.write_bytes(b"{}" if name.endswith(".json") else b"altered presentation")
+        with pytest.raises(AgentBomError, match="does not recompute"):
+            verify_check(out, adapter, ROOT)
+        path.write_bytes(original)
+    (out / "unexpected.txt").write_text("extra")
+    with pytest.raises(AgentBomError, match="file set"):
+        verify_check(out, adapter, ROOT)
+    (out / "unexpected.txt").unlink()
+    original = (out / "completion.json").read_bytes()
+    (out / "completion.json").unlink()
+    with pytest.raises(AgentBomError, match="file set"):
+        verify_check(out, adapter, ROOT)
+    outside = tmp_path / "marker.json"
+    outside.write_bytes(original)
+    (out / "completion.json").symlink_to(outside)
+    with pytest.raises(AgentBomError, match="invalid check file"):
+        verify_check(out, adapter, ROOT)

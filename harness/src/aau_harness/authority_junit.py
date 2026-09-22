@@ -17,9 +17,7 @@ def _xml_text(value: str) -> str:
                    else f"\\u{ord(char):04x}" for char in value)
 
 
-def export_junit(receipt: dict, bom: dict, suite: dict, out: Path,
-                 adapter_artifact: Path | None = None, workspace: Path | None = None) -> dict:
-    report = explain_conformance(receipt, bom, suite, adapter_artifact, workspace)
+def render_junit(report: dict, suite: dict) -> bytes:
     failures = {row["case_id"]: row for row in report["mismatches"]}
     root = ET.Element("testsuites", tests=str(report["case_count"]),
                       failures=str(report["mismatch_count"]), errors="0", skipped="0")
@@ -39,7 +37,13 @@ def export_junit(receipt: dict, bom: dict, suite: dict, out: Path,
                                     message=mismatch["category"])
             failure.text = json.dumps(mismatch, sort_keys=True, ensure_ascii=True)
     ET.indent(root, space="  ")
-    payload = ET.tostring(root, encoding="utf-8", xml_declaration=True) + b"\n"
+    return ET.tostring(root, encoding="utf-8", xml_declaration=True) + b"\n"
+
+
+def export_junit(receipt: dict, bom: dict, suite: dict, out: Path,
+                 adapter_artifact: Path | None = None, workspace: Path | None = None) -> dict:
+    report = explain_conformance(receipt, bom, suite, adapter_artifact, workspace)
+    payload = render_junit(report, suite)
     if out.exists() or out.is_symlink():
         raise AgentBomError(f"refusing to overwrite: {out}")
     out.parent.mkdir(parents=True, exist_ok=True)

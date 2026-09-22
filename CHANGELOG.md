@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Whole-check verification** — `aau bom verify-authority-check` validates every saved staging
+  artifact, recomputes the JSON/HTML/JUnit views and completion marker, and checks adapter bytes
+  without executing code. Missing, extra, symlinked, oversized, and inconsistent files are rejected;
+  internally consistent failed evaluations still exit 1.
+
 - **Single-command staging checks** — `aau bom check-authority` generates and evaluates an
   authority suite and retains its inventory, receipt, JSON findings, HTML review, and JUnit
   results together. Behavioral failures preserve diagnostics and a failing exit code; a final
