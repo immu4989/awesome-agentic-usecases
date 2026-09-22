@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Authority results for CI test viewers** — added `aau bom export-conformance-junit` with
+  one test per synthetic case, categorized failures, evidence digest properties, deterministic
+  XML escaping, and unchanged failure exit codes. Invalid evidence produces no new report.
+
 - **Offline authority review pages** — failure and comparison commands now support `--format html`:
   script-free, self-contained, print-friendly reports with escaped values, case-level findings,
   evidence hashes, and explicit verification limits. JSON remains the default; failed evidence

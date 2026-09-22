@@ -1745,6 +1745,13 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("--workspace", type=Path, default=Path("."))
     compare.add_argument("--out", type=Path, required=True)
     compare.add_argument("--format", choices=("json", "html"), default="json")
+    junit = sub.add_parser("export-conformance-junit", help="verify authority evidence and export CI test results")
+    junit.add_argument("receipt", type=Path)
+    junit.add_argument("bom", type=Path)
+    junit.add_argument("suite", type=Path)
+    junit.add_argument("--adapter-artifact", type=Path)
+    junit.add_argument("--workspace", type=Path, default=Path("."))
+    junit.add_argument("--out", type=Path, required=True)
     return parser
 
 
@@ -1838,6 +1845,12 @@ def main(argv: list[str] | None = None) -> int:
             raise AgentBomError(
                 "command conformance verification requires --adapter-artifact"
             )
+        if args.command == "export-conformance-junit":
+            from .authority_junit import export_junit
+            report = export_junit(receipt, load_json(args.bom), load_json(args.suite), args.out,
+                                  args.adapter_artifact, args.workspace)
+            print(f"wrote {args.out} ({report['mismatch_count']} failures)")
+            return 0 if report["status"] == "evidence_passed" else 1
         if args.command == "explain-conformance":
             from .authority_report import explain_conformance
             from .authority_html import write_report

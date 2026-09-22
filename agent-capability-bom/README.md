@@ -237,6 +237,26 @@ The page is a readable presentation, **not a signed or independently verified ar
 the original inventory, suite, receipts, and adapter files for CLI verification. Request inputs
 are omitted, but identifiers and reason codes remain visible: review them before sharing.
 
+## Publish results to your CI test viewer
+
+```bash
+aau bom export-conformance-junit receipt.json inventory.json suite.json \
+  --adapter-artifact adapter.py --workspace . --out authority-results.xml
+```
+
+This verifies the recorded evidence and writes deterministic JUnit-style XML with one test case
+for **every** suite case, including passes. Failed cases include the mismatch category and
+expected/observed decisions and reason differences. Suite properties retain source digests,
+adapter-check status, and the synthetic-evidence boundary. No execution time is invented.
+
+Configure your CI system's JUnit consumer to collect `authority-results.xml`, including on
+failed jobs. Export exits 1 after writing behavioral failures, 0 for passing evidence, and 2 for
+invalid evidence (no new report). Do not suppress that exit code just to upload a report; use
+your CI's always-run artifact/test-result collection step. An invalid receipt is a job error,
+not a zero-test success. Existing files are not overwritten. This export does not execute the
+adapter or certify its behavior; retain original evidence for re-verification. Review case IDs
+and reason codes before sharing. Available in the current repository harness.
+
 ## Build a portable evidence pack
 
 ```bash

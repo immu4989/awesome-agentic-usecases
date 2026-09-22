@@ -3,6 +3,7 @@ import shlex
 import sys
 from copy import deepcopy
 from html.parser import HTMLParser
+from xml.etree import ElementTree as ET
 from pathlib import Path
 
 import pytest
@@ -10,6 +11,7 @@ import pytest
 from aau_harness.agent_bom import AgentBomError, generate_conformance_suite, load_json, main, run_conformance
 from aau_harness.authority_report import compare_conformance, explain_conformance
 from aau_harness.authority_html import render_html, write_report
+from aau_harness.authority_junit import _xml_text, export_junit
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -203,3 +205,46 @@ def test_html_pass_does_not_invent_findings():
     html = render_html(explain_conformance(receipt, bom, suite))
     assert "No mismatches" in html
     assert "evidence_passed" in html
+
+
+@pytest.mark.parametrize("failed", [False, True])
+def test_junit_reports_every_case_and_retains_cli_failure_status(tmp_path, failed):
+    bom = load_json(ROOT / "agent-capability-bom/examples/candidate.json")
+    suite = generate_conformance_suite(bom)
+    receipt = run_conformance(bom, suite, "reference")
+    reason = '<failure> & "quoted" \u0001'
+    if failed:
+        _reason_failure(receipt, 0, reason)
+    output = tmp_path / "results.xml"
+    export_junit(receipt, bom, suite, output)
+    root = ET.parse(output).getroot()
+    assert root.attrib == {"tests": str(len(suite["cases"])), "failures": str(int(failed)),
+                           "errors": "0", "skipped": "0"}
+    cases = root.findall("testsuite/testcase")
+    assert {row.attrib["name"] for row in cases} == {row["case_id"] for row in suite["cases"]}
+    assert len(root.findall(".//failure")) == int(failed)
+    assert not root.findall(".//system-out")
+    if failed:
+        assert json.loads(root.find(".//failure").text)["unexpected_reason_codes"] == [reason]
+    saved = output.read_bytes()
+    with pytest.raises(AgentBomError, match="overwrite"):
+        export_junit(receipt, bom, suite, output)
+    assert output.read_bytes() == saved
+    export_junit(receipt, bom, suite, tmp_path / "repeat.xml")
+    assert (tmp_path / "repeat.xml").read_bytes() == saved
+    for name, value in (("bom", bom), ("suite", suite), ("receipt", receipt)):
+        (tmp_path / f"{name}.json").write_text(json.dumps(value))
+    args = ["export-conformance-junit", *(str(tmp_path / f"{name}.json")
+            for name in ("receipt", "bom", "suite")), "--out", str(tmp_path / "cli.xml")]
+    assert main(args) == int(failed)
+    assert (tmp_path / "cli.xml").read_bytes() == saved
+    receipt["metrics"]["exact_count"] = -1
+    (tmp_path / "receipt.json").write_text(json.dumps(receipt))
+    args[-1] = str(tmp_path / "invalid.xml")
+    assert main(args) == 2
+    assert not (tmp_path / "invalid.xml").exists()
+
+
+def test_junit_xml_illegal_characters_are_visible_not_silently_lost():
+    assert _xml_text("a\x00\ud800\ufffeb") == "a\\u0000\\ud800\\ufffeb"
+    assert _xml_text("line\n\t café") == "line\n\t café"
