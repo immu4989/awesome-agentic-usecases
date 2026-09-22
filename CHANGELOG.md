@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Offline authority review pages** — failure and comparison commands now support `--format html`:
+  script-free, self-contained, print-friendly reports with escaped values, case-level findings,
+  evidence hashes, and explicit verification limits. JSON remains the default; failed evidence
+  retains its failing exit code in either format.
+
 - **Authority regression comparison** — `aau bom compare-conformance` verifies two receipts
   against identical inventory and suite inputs, checks command adapter artifacts, and identifies
   introduced, resolved, changed, and persistent failures. Equal aggregate scores cannot hide

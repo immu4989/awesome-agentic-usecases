@@ -218,6 +218,25 @@ rerun, causal explanation, or deployment approval. Changes to the inventory or s
 separate evaluation; they cannot be treated as a like-for-like comparison here. Available in
 the current repository harness.
 
+## Share an offline reviewer report
+
+Both `explain-conformance` and `compare-conformance` accept `--format html`:
+
+```bash
+aau bom explain-conformance receipt.json inventory.json suite.json \
+  --adapter-artifact adapter.py --workspace . --format html --out review.html
+```
+
+Open the file locally in a browser or print it to PDF. The single-file report uses no scripts,
+fonts, images, or external requests. It presents case-level findings, reason differences,
+artifact-check status, evidence digests, and the limits of the evaluation. Supplied values are
+HTML-escaped. JSON remains the default for automation; HTML preserves the same exit codes and
+refusal to overwrite existing files. Invalid evidence cannot generate a new HTML report.
+
+The page is a readable presentation, **not a signed or independently verified artifact**. Keep
+the original inventory, suite, receipts, and adapter files for CLI verification. Request inputs
+are omitted, but identifiers and reason codes remain visible: review them before sharing.
+
 ## Build a portable evidence pack
 
 ```bash

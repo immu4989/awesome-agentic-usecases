@@ -1734,6 +1734,7 @@ def build_parser() -> argparse.ArgumentParser:
     explain.add_argument("--adapter-artifact", type=Path)
     explain.add_argument("--workspace", type=Path, default=Path("."))
     explain.add_argument("--out", type=Path, required=True)
+    explain.add_argument("--format", choices=("json", "html"), default="json")
     compare = sub.add_parser("compare-conformance", help="verify and compare authority receipts on identical inputs")
     compare.add_argument("before", type=Path)
     compare.add_argument("after", type=Path)
@@ -1743,6 +1744,7 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("--after-artifact", type=Path)
     compare.add_argument("--workspace", type=Path, default=Path("."))
     compare.add_argument("--out", type=Path, required=True)
+    compare.add_argument("--format", choices=("json", "html"), default="json")
     return parser
 
 
@@ -1751,6 +1753,7 @@ def main(argv: list[str] | None = None) -> int:
         args = build_parser().parse_args(argv)
         if args.command == "compare-conformance":
             from .authority_report import compare_conformance
+            from .authority_html import write_report
             before, after = load_json(args.before), load_json(args.after)
             for label, receipt, artifact in (("before", before, args.before_artifact),
                                              ("after", after, args.after_artifact)):
@@ -1758,7 +1761,7 @@ def main(argv: list[str] | None = None) -> int:
                     raise AgentBomError(f"command comparison requires --{label}-artifact")
             report = compare_conformance(before, after, load_json(args.bom), load_json(args.suite),
                                          args.before_artifact, args.after_artifact, args.workspace)
-            write_json(report, args.out)
+            write_report(report, args.out, args.format)
             print(f"wrote {args.out} ({report['counts']['introduced']} introduced failures)")
             return 0 if report["status"] == "evidence_passed" else 1
         if args.command == "init-adapter":
@@ -1837,11 +1840,12 @@ def main(argv: list[str] | None = None) -> int:
             )
         if args.command == "explain-conformance":
             from .authority_report import explain_conformance
+            from .authority_html import write_report
             report = explain_conformance(
                 receipt, load_json(args.bom), load_json(args.suite),
                 args.adapter_artifact, args.workspace,
             )
-            write_json(report, args.out)
+            write_report(report, args.out, args.format)
             print(f"wrote {args.out} ({report['mismatch_count']} mismatches)")
             return 0 if report["status"] == "evidence_passed" else 1
         verify_conformance_receipt(

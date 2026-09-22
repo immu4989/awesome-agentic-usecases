@@ -2,12 +2,14 @@ import json
 import shlex
 import sys
 from copy import deepcopy
+from html.parser import HTMLParser
 from pathlib import Path
 
 import pytest
 
 from aau_harness.agent_bom import AgentBomError, generate_conformance_suite, load_json, main, run_conformance
 from aau_harness.authority_report import compare_conformance, explain_conformance
+from aau_harness.authority_html import render_html, write_report
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -150,3 +152,54 @@ def test_comparison_requires_each_command_artifact_and_detects_drift(tmp_path):
     adapter.write_text(adapter.read_text() + "\n# changed\n")
     with pytest.raises(AgentBomError, match="artifact bytes mismatch"):
         compare_conformance(receipt, receipt, bom, suite, adapter, adapter, workspace)
+
+
+@pytest.mark.parametrize("comparison", [False, True])
+def test_html_is_offline_escaped_deterministic_and_preserves_status(tmp_path, comparison):
+    bom = load_json(ROOT / "agent-capability-bom/examples/candidate.json")
+    suite = generate_conformance_suite(bom)
+    receipt = run_conformance(bom, suite, "reference")
+    _reason_failure(receipt, 0, '<script>alert("unsafe")</script>')
+    report = (compare_conformance(receipt, receipt, bom, suite) if comparison
+              else explain_conformance(receipt, bom, suite))
+    html = render_html(report)
+    assert html == render_html(report)
+    assert "&lt;script&gt;" in html
+    assert "<script>" not in html
+    assert "evidence_failed" in html
+    assert report["bom_sha256"] in html
+    assert "Content-Security-Policy" in html
+    class Tags(HTMLParser):
+        def handle_starttag(self, tag, attrs):
+            assert tag not in {"script", "iframe", "img", "link", "object", "form"}
+            assert not any(key.startswith("on") or key in {"src", "href"} for key, _ in attrs)
+    Tags().feed(html)
+    output = tmp_path / "report.html"
+    write_report(report, output, "html")
+    assert output.read_text() == html
+    with pytest.raises(AgentBomError, match="overwrite"):
+        write_report(report, output, "html")
+    for name, value in (("bom", bom), ("suite", suite), ("receipt", receipt)):
+        (tmp_path / f"{name}.json").write_text(json.dumps(value))
+    args = ["compare-conformance" if comparison else "explain-conformance",
+            str(tmp_path / "receipt.json")]
+    if comparison:
+        args.append(str(tmp_path / "receipt.json"))
+    args += [str(tmp_path / "bom.json"), str(tmp_path / "suite.json"),
+             "--format", "html", "--out", str(tmp_path / "cli.html")]
+    assert main(args) == 1
+    assert (tmp_path / "cli.html").read_text() == html
+    receipt["metrics"]["exact_count"] = -1
+    (tmp_path / "receipt.json").write_text(json.dumps(receipt))
+    args[-1] = str(tmp_path / "invalid.html")
+    assert main(args) == 2
+    assert not (tmp_path / "invalid.html").exists()
+
+
+def test_html_pass_does_not_invent_findings():
+    bom = load_json(ROOT / "agent-capability-bom/examples/candidate.json")
+    suite = generate_conformance_suite(bom)
+    receipt = run_conformance(bom, suite, "reference")
+    html = render_html(explain_conformance(receipt, bom, suite))
+    assert "No mismatches" in html
+    assert "evidence_passed" in html
