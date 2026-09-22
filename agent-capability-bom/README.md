@@ -196,6 +196,28 @@ suite digests identify the exact evidence explained. A failed evaluation still e
 writing the report; malformed evidence exits 2 without generating a report. It does not rerun the
 adapter or infer production causes. The current repository harness provides this command.
 
+## Compare a fix against its baseline
+
+```bash
+aau bom compare-conformance before.json after.json inventory.json suite.json \
+  --before-artifact baseline/adapter.py --after-artifact candidate/adapter.py \
+  --workspace . --out comparison.json
+```
+
+Use this after evaluating two adapter versions against the **same inventory and suite**.
+Keep both entrypoints at their recorded workspace-relative paths; command receipts require
+both corresponding artifacts. The comparison verifies each receipt and artifact before writing.
+It lists introduced, resolved, changed, and persistent failures case by case, catching regressions
+that an unchanged aggregate score would hide. Unchanged passing cases are omitted.
+
+The report retains evidence digests and before/after counts, not request payloads. Exit 0 means
+the candidate passed every synthetic case; exit 1 means candidate failures remain, even if no
+new failures appeared. Invalid or mismatched evidence exits 2 without writing a new report.
+Existing output files are never overwritten. This is an offline evidence comparison, not a
+rerun, causal explanation, or deployment approval. Changes to the inventory or suite require a
+separate evaluation; they cannot be treated as a like-for-like comparison here. Available in
+the current repository harness.
+
 ## Build a portable evidence pack
 
 ```bash

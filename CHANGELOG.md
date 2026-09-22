@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Authority regression comparison** — `aau bom compare-conformance` verifies two receipts
+  against identical inventory and suite inputs, checks command adapter artifacts, and identifies
+  introduced, resolved, changed, and persistent failures. Equal aggregate scores cannot hide
+  newly failing cases, and existing candidate failures retain a nonzero CI exit status.
+
 - **Agent Side-Effect Ledger** — added a 12-case, 48-event offline state machine that binds exact
   intent bytes, human approval, agent/task identity, authority expiry, policy epoch, idempotency
   key, trace context, authoritative reconciliation, and compensation. The reference suite prevents

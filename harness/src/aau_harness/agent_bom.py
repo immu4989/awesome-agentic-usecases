@@ -1734,12 +1734,33 @@ def build_parser() -> argparse.ArgumentParser:
     explain.add_argument("--adapter-artifact", type=Path)
     explain.add_argument("--workspace", type=Path, default=Path("."))
     explain.add_argument("--out", type=Path, required=True)
+    compare = sub.add_parser("compare-conformance", help="verify and compare authority receipts on identical inputs")
+    compare.add_argument("before", type=Path)
+    compare.add_argument("after", type=Path)
+    compare.add_argument("bom", type=Path)
+    compare.add_argument("suite", type=Path)
+    compare.add_argument("--before-artifact", type=Path)
+    compare.add_argument("--after-artifact", type=Path)
+    compare.add_argument("--workspace", type=Path, default=Path("."))
+    compare.add_argument("--out", type=Path, required=True)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     try:
         args = build_parser().parse_args(argv)
+        if args.command == "compare-conformance":
+            from .authority_report import compare_conformance
+            before, after = load_json(args.before), load_json(args.after)
+            for label, receipt, artifact in (("before", before, args.before_artifact),
+                                             ("after", after, args.after_artifact)):
+                if receipt.get("adapter_kind") == "command" and artifact is None:
+                    raise AgentBomError(f"command comparison requires --{label}-artifact")
+            report = compare_conformance(before, after, load_json(args.bom), load_json(args.suite),
+                                         args.before_artifact, args.after_artifact, args.workspace)
+            write_json(report, args.out)
+            print(f"wrote {args.out} ({report['counts']['introduced']} introduced failures)")
+            return 0 if report["status"] == "evidence_passed" else 1
         if args.command == "init-adapter":
             from .authority_starter import create_starter
             create_starter(load_json(args.bom), args.out)
