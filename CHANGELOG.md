@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Equal-score instability experiment** — added an intentionally incorrect SQLite-backed
+  adapter and end-to-end campaign test: unchanged adapter bytes and aggregate scores conceal
+  changing per-case reasons. Offline verification is checked not to mutate the fixture state.
+
 - **Offline campaign verification** — `aau bom verify-authority-campaign` verifies every saved
   staging run and recomputes the repeatability summary and completion marker without executing
   adapter code. Missing, extra, substituted, or inconsistent campaign outputs fail verification.

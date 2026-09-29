@@ -300,6 +300,9 @@ and reason codes before sharing. Available in the current repository harness.
 
 ## Check repeatability across recorded runs
 
+Try the [equal-score instability experiment](REPEATABILITY_EXPERIMENT.md): an intentionally
+broken, stateful adapter proves the workflow can detect changing reasons behind unchanged scores.
+
 To collect fresh receipts and all per-run reports in one command:
 
 ```bash

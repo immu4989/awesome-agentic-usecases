@@ -1,6 +1,7 @@
 import json
 import shlex
 import sys
+import sqlite3
 from pathlib import Path
 
 import pytest
@@ -194,3 +195,24 @@ def test_repeated_reference_example_completes_passing_campaign(tmp_path, monkeyp
     (out / "run-002").symlink_to(tmp_path / "moved-run", target_is_directory=True)
     with pytest.raises(AgentBomError, match="real directory"):
         verify_campaign(out, adapter, ROOT)
+
+
+def test_stateful_fixture_exposes_instability_hidden_by_equal_aggregate_scores(tmp_path):
+    adapter = ROOT / "agent-capability-bom/examples/unstable_conformance_adapter.py"
+    database = tmp_path / "disposable.sqlite"
+    out = tmp_path / "unstable-campaign"
+    command = shlex.join([sys.executable, str(adapter), str(database)])
+    report = repeat_authority(load_json(BOM), command, adapter, ROOT, out, 2)
+    assert report["status"] == "evidence_failed"
+    assert report["counts"]["unstable"] == report["case_count"]
+    first = load_json(out / "run-001/receipt.json")
+    second = load_json(out / "run-002/receipt.json")
+    assert first["metrics"] == second["metrics"]
+    assert first["metrics"]["exact_count"] == 0
+    assert first["adapter_artifact"] == second["adapter_artifact"]
+    with sqlite3.connect(database) as connection:
+        before = connection.execute("SELECT sum(count) FROM visits").fetchone()[0]
+    assert before == 2 * report["case_count"]
+    assert verify_campaign(out, adapter, ROOT) == report
+    with sqlite3.connect(database) as connection:
+        assert connection.execute("SELECT sum(count) FROM visits").fetchone()[0] == before
