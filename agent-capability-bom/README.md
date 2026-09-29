@@ -300,6 +300,28 @@ and reason codes before sharing. Available in the current repository harness.
 
 ## Check repeatability across recorded runs
 
+To collect fresh receipts and all per-run reports in one command:
+
+```bash
+aau bom repeat-authority inventory.json --command "python3 adapter.py" \
+  --adapter-artifact adapter.py --workspace . --runs 3 --out campaign-001
+```
+
+This runs 2–10 sequential staging checks (default 3), verifies each seven-file run directory,
+and writes `repeatability.json` and a final `completion.json` at the campaign root. Behavioral
+failures do not stop later runs; they retain exit 1 after all reports finish. A protocol, input,
+verification, or filesystem error stops the campaign with exit 2, preserving completed run
+directories but without claiming a completed campaign. An existing campaign directory is rejected;
+use a fresh path after interruptions. The root completion marker is not a cryptographic attestation.
+
+**Repeated execution is real execution:** use a trusted adapter and isolated synthetic targets.
+The runner does not reset files, service state, or adapter dependencies between runs and is not a
+sandbox. External side effects or API charges can repeat. `--timeout` remains a per-case limit,
+not a campaign deadline; total work grows with run count and suite size. Retain the same adapter
+bytes throughout the campaign. These observations do not establish independent runs or reliability.
+
+If you already have receipts, assess them without executing code:
+
 ```bash
 aau bom assess-repeatability run-001/receipt.json run-002/receipt.json \
   --bom run-001/inventory.json --suite run-001/suite.json \

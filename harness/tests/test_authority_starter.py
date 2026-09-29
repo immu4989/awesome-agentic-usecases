@@ -8,6 +8,7 @@ import pytest
 from aau_harness.agent_bom import AgentBomError, load_json, main, run_conformance
 from aau_harness.authority_starter import create_starter
 from aau_harness.authority_check import check_authority, verify_check
+from aau_harness.authority_campaign import repeat_authority
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -110,3 +111,61 @@ def test_one_command_check_passes_with_explicit_reference_example(tmp_path):
     (out / "completion.json").symlink_to(outside)
     with pytest.raises(AgentBomError, match="invalid check file"):
         verify_check(out, adapter, ROOT)
+
+
+def test_repeated_staging_collects_all_failed_runs_and_checks_bounds(tmp_path):
+    workspace = tmp_path / "workspace"
+    create_starter(load_json(BOM), workspace)
+    adapter = workspace / "adapter.py"
+    out = tmp_path / "campaign"
+    command = shlex.join([sys.executable, str(adapter)])
+    args = ["repeat-authority", str(workspace / "inventory.json"), "--command", command,
+            "--adapter-artifact", str(adapter), "--workspace", str(workspace),
+            "--runs", "2", "--out", str(out)]
+    assert main(args) == 1
+    assert load_json(out / "completion.json")["completed_runs"] == 2
+    report = load_json(out / "repeatability.json")
+    assert report["counts"]["stable_failure"] == report["case_count"]
+    assert report["counts"]["unstable"] == 0
+    for name in ("run-001", "run-002"):
+        assert verify_check(out / name, adapter, workspace)["status"] == "evidence_failed"
+    with pytest.raises(AgentBomError, match="overwrite"):
+        repeat_authority(load_json(BOM), "never execute", adapter, workspace, out, 2)
+    for count in (True, 1, 11):
+        with pytest.raises(AgentBomError, match="2 to 10"):
+            repeat_authority(load_json(BOM), command, adapter, workspace, tmp_path / "invalid", count)
+    assert not (tmp_path / "invalid").exists()
+
+
+def test_repeated_staging_interruption_keeps_completed_runs_without_summary(tmp_path, monkeypatch):
+    import aau_harness.authority_campaign as campaign
+    adapter = ROOT / "agent-capability-bom/examples/reference_conformance_adapter.py"
+    original = campaign.check_authority
+    attempts = []
+    def fail_second(*args):
+        attempts.append(1)
+        if len(attempts) == 2:
+            raise AgentBomError("adapter protocol error")
+        return original(*args)
+    monkeypatch.setattr(campaign, "check_authority", fail_second)
+    out = tmp_path / "interrupted"
+    with pytest.raises(AgentBomError, match="protocol error"):
+        repeat_authority(load_json(BOM), shlex.join([sys.executable, str(adapter)]),
+                         adapter, ROOT, out, 3)
+    assert len(attempts) == 2
+    assert verify_check(out / "run-001", adapter, ROOT)["status"] == "evidence_passed"
+    assert not (out / "repeatability.json").exists()
+    assert not (out / "completion.json").exists()
+
+
+def test_repeated_reference_example_completes_passing_campaign(tmp_path):
+    adapter = ROOT / "agent-capability-bom/examples/reference_conformance_adapter.py"
+    out = tmp_path / "reference-campaign"
+    args = ["repeat-authority", str(BOM), "--command", shlex.join([sys.executable, str(adapter)]),
+            "--adapter-artifact", str(adapter), "--workspace", str(ROOT),
+            "--runs", "2", "--out", str(out)]
+    assert main(args) == 0
+    report = load_json(out / "repeatability.json")
+    assert report["counts"]["stable_pass"] == report["case_count"]
+    assert report["distinct_receipt_count"] == 1
+    assert load_json(out / "completion.json")["status"] == "evidence_passed"

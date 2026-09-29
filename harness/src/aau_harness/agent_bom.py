@@ -1681,6 +1681,14 @@ def build_parser() -> argparse.ArgumentParser:
     check.add_argument("--workspace", type=Path, default=Path("."))
     check.add_argument("--timeout", type=float, default=10.0)
     check.add_argument("--out", type=Path, required=True)
+    campaign = sub.add_parser("repeat-authority", help="collect bounded staging runs and assess repeatability")
+    campaign.add_argument("bom", type=Path)
+    campaign.add_argument("--command", dest="adapter_command", required=True)
+    campaign.add_argument("--adapter-artifact", type=Path, required=True)
+    campaign.add_argument("--workspace", type=Path, default=Path("."))
+    campaign.add_argument("--runs", type=int, default=3)
+    campaign.add_argument("--timeout", type=float, default=10.0)
+    campaign.add_argument("--out", type=Path, required=True)
     verify_check = sub.add_parser("verify-authority-check", help="recompute all saved staging check reports without execution")
     verify_check.add_argument("directory", type=Path)
     verify_check.add_argument("--adapter-artifact", type=Path, required=True)
@@ -1776,6 +1784,12 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     try:
         args = build_parser().parse_args(argv)
+        if args.command == "repeat-authority":
+            from .authority_campaign import repeat_authority
+            report = repeat_authority(load_json(args.bom), args.adapter_command,
+                                      args.adapter_artifact, args.workspace, args.out, args.runs, args.timeout)
+            print(f"wrote {args.out} ({report['receipt_count']} runs; {report['counts']['unstable']} unstable cases)")
+            return 0 if report["status"] == "evidence_passed" else 1
         if args.command == "assess-repeatability":
             from .authority_repeatability import assess_repeatability
             if not 2 <= len(args.receipts) <= 20:

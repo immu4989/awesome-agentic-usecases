@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Bounded repeatability campaigns** — `aau bom repeat-authority` collects 2–10 sequential
+  staging runs with complete per-run reports and a verified repeatability assessment. Behavioral
+  failures retain all diagnostics; interrupted campaigns preserve finished runs without claiming
+  completion. Documentation makes repeated execution, persistent state, and per-case timeout limits explicit.
+
 - **Authority repeatability assessment** — verifies 2–20 same-contract receipts and separates
   stable passes, stable failures, and changing decisions/reasons. Reports retain observed variant
   counts and duplicate-receipt visibility without claiming independent runs or statistical reliability.
