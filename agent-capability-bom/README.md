@@ -320,6 +320,19 @@ sandbox. External side effects or API charges can repeat. `--timeout` remains a 
 not a campaign deadline; total work grows with run count and suite size. Retain the same adapter
 bytes throughout the campaign. These observations do not establish independent runs or reliability.
 
+Verify a completed campaign later without running adapter code:
+
+```bash
+aau bom verify-authority-campaign campaign-001 --adapter-artifact adapter.py --workspace .
+```
+
+This verifies every run directory and its reports, checks the same adapter bytes, and recomputes
+the cross-run assessment and completion marker. Missing or extra runs, symlinked directories,
+and inconsistent summaries are rejected. Exit 0 means consistent passing evidence, 1 means
+consistent failed evidence, and 2 means invalid or incomplete output. Keep the same reporting
+implementation for exact presentation verification. Internal consistency does not establish
+independent execution or protect against replacing an entire coherent evidence set.
+
 If you already have receipts, assess them without executing code:
 
 ```bash

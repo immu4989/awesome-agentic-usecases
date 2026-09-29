@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Offline campaign verification** — `aau bom verify-authority-campaign` verifies every saved
+  staging run and recomputes the repeatability summary and completion marker without executing
+  adapter code. Missing, extra, substituted, or inconsistent campaign outputs fail verification.
+
 - **Bounded repeatability campaigns** — `aau bom repeat-authority` collects 2–10 sequential
   staging runs with complete per-run reports and a verified repeatability assessment. Behavioral
   failures retain all diagnostics; interrupted campaigns preserve finished runs without claiming
