@@ -12,6 +12,7 @@ from aau_harness.agent_bom import AgentBomError, generate_conformance_suite, loa
 from aau_harness.authority_report import compare_conformance, explain_conformance
 from aau_harness.authority_html import render_html, write_report
 from aau_harness.authority_junit import _xml_text, export_junit
+from aau_harness.authority_repeatability import assess_repeatability
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -248,3 +249,78 @@ def test_junit_reports_every_case_and_retains_cli_failure_status(tmp_path, faile
 def test_junit_xml_illegal_characters_are_visible_not_silently_lost():
     assert _xml_text("a\x00\ud800\ufffeb") == "a\\u0000\\ud800\\ufffeb"
     assert _xml_text("line\n\t café") == "line\n\t café"
+
+
+def test_repeatability_distinguishes_stable_failures_from_changing_outcomes():
+    bom = load_json(ROOT / "agent-capability-bom/examples/candidate.json")
+    suite = generate_conformance_suite(bom)
+    first = run_conformance(bom, suite, "reference")
+    second = deepcopy(first)
+    _reason_failure(first, 0)
+    _reason_failure(second, 0)
+    _reason_failure(second, 1)
+    result = assess_repeatability([first, second], bom, suite)
+    assert result["counts"] == {"stable_pass": len(suite["cases"]) - 2, "stable_failure": 1, "unstable": 1}
+    assert result["status"] == "evidence_failed"
+    assert result == assess_repeatability([second, first], bom, suite)
+    assert result["distinct_receipt_count"] == 2
+    changing = next(row for row in result["findings"] if row["state"] == "unstable")
+    assert changing["exact_observation_count"] == 1
+    assert sum(row["count"] for row in changing["variants"]) == 2
+    stable_wrong = assess_repeatability([first, first], bom, suite)
+    assert stable_wrong["status"] == "evidence_failed"
+    assert stable_wrong["counts"]["unstable"] == 0
+    assert stable_wrong["distinct_receipt_count"] == 1
+    second["suite_sha256"] = "0" * 64
+    with pytest.raises(AgentBomError, match="digest mismatch"):
+        assess_repeatability([first, second], bom, suite)
+
+
+@pytest.mark.parametrize("failed", [False, True])
+def test_repeatability_cli_counts_duplicate_receipts_without_claiming_independence(tmp_path, failed):
+    bom = load_json(ROOT / "agent-capability-bom/examples/candidate.json")
+    suite = generate_conformance_suite(bom)
+    receipt = run_conformance(bom, suite, "reference")
+    if failed:
+        _reason_failure(receipt, 0)
+    for name, value in (("bom", bom), ("suite", suite), ("receipt", receipt)):
+        (tmp_path / f"{name}.json").write_text(json.dumps(value))
+    path = str(tmp_path / "receipt.json")
+    out = tmp_path / "repeatability.json"
+    args = ["assess-repeatability", path, path, "--bom", str(tmp_path / "bom.json"),
+            "--suite", str(tmp_path / "suite.json"), "--out", str(out)]
+    assert main(args) == int(failed)
+    result = load_json(out)
+    assert result["receipt_count"] == 2 and result["distinct_receipt_count"] == 1
+    assert "independent execution" in result["boundary"]
+    saved = out.read_bytes()
+    assert main(args) == 2
+    assert out.read_bytes() == saved
+    args[-1] = str(tmp_path / "invalid.json")
+    receipt["metrics"]["exact_count"] = -1
+    (tmp_path / "receipt.json").write_text(json.dumps(receipt))
+    assert main(args) == 2
+    assert not (tmp_path / "invalid.json").exists()
+    for count in (0, 1, 21):
+        with pytest.raises(AgentBomError, match="2 to 20"):
+            assess_repeatability([receipt] * count, bom, suite)
+
+
+def test_repeatability_rejects_changed_adapter_binding_and_requires_command_bytes(tmp_path):
+    base = ROOT / "agent-capability-bom/examples"
+    bom = load_json(base / "candidate.json")
+    suite = load_json(base / "reference-conformance-suite.json")
+    receipt = load_json(base / "reference-conformance-receipt.json")
+    changed = deepcopy(receipt)
+    changed["adapter_artifact"]["sha256"] = "0" * 64
+    with pytest.raises(AgentBomError, match="same adapter"):
+        assess_repeatability([receipt, changed], bom, suite)
+    path = str(base / "reference-conformance-receipt.json")
+    out = tmp_path / "command-report.json"
+    args = ["assess-repeatability", path, path, "--bom", str(base / "candidate.json"),
+            "--suite", str(base / "reference-conformance-suite.json"), "--out", str(out)]
+    assert main(args) == 2
+    assert not out.exists()
+    assert main(args + ["--adapter-artifact", str(base / "reference_conformance_adapter.py"),
+                        "--workspace", str(ROOT)]) == 0
+    assert load_json(out)["adapter_bytes_checked"]

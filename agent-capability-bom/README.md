@@ -298,6 +298,29 @@ not a zero-test success. Existing files are not overwritten. This export does no
 adapter or certify its behavior; retain original evidence for re-verification. Review case IDs
 and reason codes before sharing. Available in the current repository harness.
 
+## Check repeatability across recorded runs
+
+```bash
+aau bom assess-repeatability run-001/receipt.json run-002/receipt.json \
+  --bom run-001/inventory.json --suite run-001/suite.json \
+  --adapter-artifact adapter.py --workspace . --out repeatability.json
+```
+
+Supply 2–20 receipts from repeated runs against the same inventory, generated suite, and
+adapter binding. Every receipt is verified; command receipts require the current original
+adapter file. The report distinguishes stable passes, stable failures, and cases whose
+decision or reason codes changed. It lists observed variants and counts without request inputs.
+Stable but incorrect behavior still exits 1, as does any changing outcome. All supplied
+observations must pass for exit 0; invalid evidence exits 2 without a new report.
+
+Repeated deterministic runs can produce identical receipt bytes, so the report records both
+total and distinct receipt counts rather than pretending duplicates prove independent runs.
+It cannot distinguish genuine repetition from copied evidence, establish a failure probability,
+or bind dependencies and remote service state. This is a descriptive consistency check—not a
+statistical reliability estimate or deployment approval. No adapter is executed by this command.
+Use `compare-conformance` instead when comparing different adapter versions. Available in the
+current repository harness.
+
 ## Build a portable evidence pack
 
 ```bash

@@ -1763,12 +1763,31 @@ def build_parser() -> argparse.ArgumentParser:
     junit.add_argument("--adapter-artifact", type=Path)
     junit.add_argument("--workspace", type=Path, default=Path("."))
     junit.add_argument("--out", type=Path, required=True)
+    repeat = sub.add_parser("assess-repeatability", help="verify repeated receipts and identify changing case outcomes")
+    repeat.add_argument("receipts", nargs="+", type=Path)
+    repeat.add_argument("--bom", type=Path, required=True)
+    repeat.add_argument("--suite", type=Path, required=True)
+    repeat.add_argument("--adapter-artifact", type=Path)
+    repeat.add_argument("--workspace", type=Path, default=Path("."))
+    repeat.add_argument("--out", type=Path, required=True)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     try:
         args = build_parser().parse_args(argv)
+        if args.command == "assess-repeatability":
+            from .authority_repeatability import assess_repeatability
+            if not 2 <= len(args.receipts) <= 20:
+                raise AgentBomError("repeatability requires 2 to 20 receipts")
+            receipts = [load_json(path) for path in args.receipts]
+            if any(row.get("adapter_kind") == "command" for row in receipts) and args.adapter_artifact is None:
+                raise AgentBomError("command repeatability requires --adapter-artifact")
+            report = assess_repeatability(receipts, load_json(args.bom), load_json(args.suite),
+                                          args.adapter_artifact, args.workspace)
+            write_json(report, args.out)
+            print(f"wrote {args.out} ({report['counts']['unstable']} unstable cases)")
+            return 0 if report["status"] == "evidence_passed" else 1
         if args.command == "verify-authority-check":
             from .authority_check import verify_check
             report = verify_check(args.directory, args.adapter_artifact, args.workspace)

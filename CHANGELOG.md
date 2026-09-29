@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Authority repeatability assessment** — verifies 2–20 same-contract receipts and separates
+  stable passes, stable failures, and changing decisions/reasons. Reports retain observed variant
+  counts and duplicate-receipt visibility without claiming independent runs or statistical reliability.
+
 - **End-to-end authority onboarding** — added a front-page staging quickstart that connects
   adapter creation, expected first failure, complete reports, offline verification, and
   before/after comparison with explicit sharing and production-evidence limits.
