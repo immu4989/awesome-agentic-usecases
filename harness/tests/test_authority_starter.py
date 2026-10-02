@@ -216,3 +216,32 @@ def test_stateful_fixture_exposes_instability_hidden_by_equal_aggregate_scores(t
     assert verify_campaign(out, adapter, ROOT) == report
     with sqlite3.connect(database) as connection:
         assert connection.execute("SELECT sum(count) FROM visits").fetchone()[0] == before
+
+
+def test_seed_schedule_is_recorded_and_verified_against_each_run(tmp_path):
+    adapter = ROOT / "agent-capability-bom/examples/reference_conformance_adapter.py"
+    out = tmp_path / "ordered-campaign"
+    command = shlex.join([sys.executable, str(adapter)])
+    assert main(["repeat-authority", str(BOM), "--command", command,
+                 "--adapter-artifact", str(adapter), "--workspace", str(ROOT),
+                 "--runs", "2", "--order-seeds", "7", "19", "--out", str(out)]) == 0
+    marker_path = out / "completion.json"
+    marker = load_json(marker_path)
+    assert marker["version"] == "aau-authority-campaign/1.1"
+    assert marker["order_seeds"] == [7, 19]
+    report = verify_campaign(out, adapter, ROOT)
+    assert report["counts"]["unstable"] == 0
+    assert report["distinct_receipt_count"] == 2
+    marker["order_seeds"] = [19, 7]
+    marker_path.write_text(json.dumps(marker))
+    with pytest.raises(AgentBomError, match="case order"):
+        verify_campaign(out, adapter, ROOT)
+    marker["order_seeds"] = [True, 19]
+    marker_path.write_text(json.dumps(marker))
+    with pytest.raises(AgentBomError, match="one integer per run"):
+        verify_campaign(out, adapter, ROOT)
+    for seeds in ([1], [1, None], [True, 2], [-1, 2], [1, 4294967296]):
+        with pytest.raises(AgentBomError, match="order seed"):
+            repeat_authority(load_json(BOM), "never execute", adapter, ROOT,
+                             tmp_path / "invalid-schedule", 2, order_seeds=seeds)
+    assert not (tmp_path / "invalid-schedule").exists()

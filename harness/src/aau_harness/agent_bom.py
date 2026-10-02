@@ -1390,6 +1390,15 @@ def _command_conformance_adapter(argv: list[str], timeout: float):
     return invoke
 
 
+def ordered_authority_cases(suite: dict[str, Any], order_seed: int | None = None) -> list:
+    if order_seed is not None and (type(order_seed) is not int or not 0 <= order_seed <= 4294967295):
+        raise AgentBomError("order seed must be an integer from 0 to 4294967295")
+    cases = suite["cases"]
+    if order_seed is not None:
+        return sorted(cases, key=lambda case: (digest([order_seed, case["case_id"]]), case["case_id"]))
+    return cases
+
+
 def run_conformance(
     bom: dict[str, Any],
     suite: dict[str, Any],
@@ -1403,11 +1412,7 @@ def run_conformance(
     expected_suite = generate_conformance_suite(bom)
     if suite != expected_suite:
         raise AgentBomError("conformance suite does not recompute from the AABOM")
-    if order_seed is not None and (type(order_seed) is not int or not 0 <= order_seed <= 4294967295):
-        raise AgentBomError("order seed must be an integer from 0 to 4294967295")
-    cases = suite["cases"]
-    if order_seed is not None:
-        cases = sorted(cases, key=lambda case: (digest([order_seed, case["case_id"]]), case["case_id"]))
+    cases = ordered_authority_cases(suite, order_seed)
     artifact_record: dict[str, Any] | None = None
     artifact_path: Path | None = None
     artifact_before: bytes | None = None
@@ -1694,6 +1699,7 @@ def build_parser() -> argparse.ArgumentParser:
     campaign.add_argument("--adapter-artifact", type=Path, required=True)
     campaign.add_argument("--workspace", type=Path, default=Path("."))
     campaign.add_argument("--runs", type=int, default=3)
+    campaign.add_argument("--order-seeds", type=int, nargs="+")
     campaign.add_argument("--timeout", type=float, default=10.0)
     campaign.add_argument("--out", type=Path, required=True)
     verify_campaign = sub.add_parser("verify-authority-campaign", help="verify every campaign run and recompute repeatability offline")
@@ -1804,7 +1810,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "repeat-authority":
             from .authority_campaign import repeat_authority
             report = repeat_authority(load_json(args.bom), args.adapter_command,
-                                      args.adapter_artifact, args.workspace, args.out, args.runs, args.timeout)
+                                      args.adapter_artifact, args.workspace, args.out, args.runs, args.timeout,
+                                      args.order_seeds)
             print(f"wrote {args.out} ({report['receipt_count']} runs; {report['counts']['unstable']} unstable cases)")
             return 0 if report["status"] == "evidence_passed" else 1
         if args.command == "assess-repeatability":

@@ -314,8 +314,23 @@ separately with your experiment notes, outside a strictly verified output direct
 Different seeds are not guaranteed to produce different permutations. Distinct receipt hashes
 can reflect ordering alone, not changed outcomes; repeatability assessment compares by case ID.
 The runner does not reset external state. A changed outcome is evidence to investigate, not
-proof that ordering caused it. The bounded `repeat-authority` command retains its fixed order;
-use separate seeded checks for this experiment.
+proof that ordering caused it.
+
+For a bounded, scheduled set of order probes:
+
+```bash
+aau bom repeat-authority inventory.json --command "python3 adapter.py" \
+  --adapter-artifact adapter.py --workspace . --runs 2 --order-seeds 7 19 \
+  --out ordered-campaign
+aau bom verify-authority-campaign ordered-campaign --adapter-artifact adapter.py --workspace .
+```
+
+Supply exactly one integer seed per requested run. The schedule is validated before adapter
+execution and saved in a version 1.1 campaign completion marker. Verification recomputes the
+expected sequence for each seed and checks it against that run's receipt rows. Repeated seeds
+are permitted for deliberate controls. Without `--order-seeds`, fixed-order campaigns retain
+their version 1.0 marker and remain verifiable. The marker is not signed: matching order is an
+internal consistency check, not proof of independently witnessed execution or causal attribution.
 
 ### Collect repeated observations
 

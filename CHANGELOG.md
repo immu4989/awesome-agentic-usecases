@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Verifiable campaign order schedules** — repeated authority checks accept one explicit seed
+  per run and record a versioned schedule. Offline campaign verification checks each recorded case
+  sequence against its seed. Invalid schedules fail before execution; legacy fixed-order campaigns
+  retain their existing output format.
+
 - **Reproducible case-order probes** — added optional `--order-seed` to single authority runs
   and complete staging checks. Seeded ordering preserves contract hashes and case coverage, records
   execution order in receipt rows, and remains compatible with offline verification and case-keyed
