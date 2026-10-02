@@ -11,6 +11,7 @@ from aau_harness.authority_starter import create_starter
 from aau_harness.authority_check import check_authority, verify_check
 from aau_harness.authority_campaign import repeat_authority, verify_campaign
 from aau_harness.authority_plan import plan_authority
+from aau_harness.authority_campaign_compare import compare_campaigns, _observations
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -301,3 +302,86 @@ def test_workload_preview_and_budget_block_before_execution(tmp_path, monkeypatc
                     {"max_invocations": 0}, {"max_invocations": True}):
         with pytest.raises(AgentBomError):
             plan_authority(bom, **options)
+
+
+def test_campaign_comparison_verifies_both_releases_without_execution(tmp_path, monkeypatch):
+    reference = ROOT / "agent-capability-bom/examples/reference_conformance_adapter.py"
+    unstable = ROOT / "agent-capability-bom/examples/unstable_conformance_adapter.py"
+    before, after = tmp_path / "before", tmp_path / "after"
+    bom = load_json(BOM)
+    repeat_authority(bom, shlex.join([sys.executable, str(reference)]), reference, ROOT, before, 2)
+    repeat_authority(bom, shlex.join([sys.executable, str(unstable), str(tmp_path / "state.sqlite")]),
+                     unstable, ROOT, after, 2)
+    permissive = tmp_path / "allow.py"
+    permissive.write_text('import json\nprint(json.dumps({"decision": "allow", "reason_codes": []}))\n')
+    unsafe = tmp_path / "unsafe"
+    repeat_authority(bom, shlex.join([sys.executable, str(permissive)]), permissive, tmp_path, unsafe, 2)
+    import aau_harness.authority_check as check
+    def forbid_execution(*args, **kwargs):
+        raise AssertionError("comparison must not execute adapter code")
+    monkeypatch.setattr(check, "run_conformance", forbid_execution)
+    report = compare_campaigns(before, after, reference, unstable, ROOT, ROOT)
+    assert report["counts"]["introduced_failure"] == report["case_count"]
+    assert report["counts"]["gained_instability"] == report["case_count"]
+    assert report["status"] == "evidence_failed"
+    assert '"input":' not in json.dumps(report)
+    assert report == compare_campaigns(before, after, reference, unstable, ROOT, ROOT)
+    unsafe_report = compare_campaigns(before, unsafe, reference, permissive, ROOT, tmp_path)
+    violations = sum(not case["clean_twin"] for case in generate_conformance_suite(bom)["cases"])
+    assert unsafe_report["counts"]["increased_unsafe_allow"] == violations
+    assert unsafe_report["counts"]["introduced_failure"] == violations
+    assert all(row["after"]["unsafe_allow"] == 2 for row in unsafe_report["findings"])
+    assert compare_campaigns(unsafe, before, permissive, reference, tmp_path, ROOT)["counts"]["decreased_unsafe_allow"] == violations
+    reverse = compare_campaigns(after, before, unstable, reference, ROOT, ROOT)
+    assert reverse["status"] == "evidence_passed"
+    assert reverse["counts"]["resolved_failure"] == report["case_count"]
+    same = compare_campaigns(after, after, unstable, unstable, ROOT, ROOT)
+    assert same["status"] == "evidence_failed"
+    assert same["counts"]["unchanged_observations"] == report["case_count"]
+    assert len(same["findings"]) == report["case_count"]
+    args = ["compare-authority-campaigns", str(before), str(after),
+            "--before-artifact", str(reference), "--after-artifact", str(unstable),
+            "--before-workspace", str(ROOT), "--after-workspace", str(ROOT),
+            "--out", str(tmp_path / "comparison.json")]
+    assert main(args) == 1
+    assert main(args) == 2  # no overwrite
+    args[1:3] = [str(before), str(before)]
+    args[6] = str(reference)
+    args[-1] = str(tmp_path / "passed.json")
+    assert main(args) == 0
+    saved = (before / "run-001/report.json").read_bytes()
+    (before / "run-001/report.json").write_text("{}")
+    args[-1] = str(tmp_path / "invalid.json")
+    assert main(args) == 2
+    assert not (tmp_path / "invalid.json").exists()
+    (before / "run-001/report.json").write_bytes(saved)
+
+
+def test_campaign_comparison_rejects_unmatched_experiment_design(tmp_path):
+    adapter = ROOT / "agent-capability-bom/examples/reference_conformance_adapter.py"
+    command = shlex.join([sys.executable, str(adapter)])
+    bom = load_json(BOM)
+    repeat_authority(bom, command, adapter, ROOT, tmp_path / "base", 2)
+    repeat_authority(bom, command, adapter, ROOT, tmp_path / "reordered", 2, order_seeds=[7, 19])
+    with pytest.raises(AgentBomError, match="case order"):
+        compare_campaigns(tmp_path / "base", tmp_path / "reordered", adapter, adapter, ROOT, ROOT)
+    repeat_authority(bom, command, adapter, ROOT, tmp_path / "longer", 3)
+    with pytest.raises(AgentBomError, match="receipt_count"):
+        compare_campaigns(tmp_path / "base", tmp_path / "longer", adapter, adapter, ROOT, ROOT)
+    bom["bom_id"] = "different-evaluation-contract"
+    repeat_authority(bom, command, adapter, ROOT, tmp_path / "different", 2)
+    with pytest.raises(AgentBomError, match="bom_sha256"):
+        compare_campaigns(tmp_path / "base", tmp_path / "different", adapter, adapter, ROOT, ROOT)
+
+
+def test_campaign_observation_counts_keep_unsafe_and_reason_failures_separate():
+    case = {"case_id": "synthetic", "expected_decision": "block", "expected_reason_codes": ["DENY"]}
+    receipts = [{"results": [{"case_id": "synthetic", "actual_decision": decision,
+                              "actual_reason_codes": reasons, "exact": exact}]}
+                for decision, reasons, exact in (("allow", [], False), ("block", ["DENY"], True))]
+    observed = _observations(receipts, case)
+    assert observed["unsafe_allow"] == 1
+    assert observed["exact"] == 1
+    assert observed["reason_mismatch"] == 1
+    assert observed["legitimate_block"] == 0
+    assert observed["unstable"]

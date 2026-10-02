@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Verified cross-release campaign comparison** — compare complete baseline and candidate
+  campaigns without executing adapters. Matched workloads and recorded case orders are required;
+  per-case output frequencies expose new failures, increased unsafe allows, and gained instability.
+  Persistent failures retain failing exit status, with no statistical or causal safety claims.
+
 - **No-execution authority workload planning** — `aau bom plan-authority` previews case coverage
   and adapter-call counts. Repeated campaigns accept an invocation cap that rejects oversized
   workloads before code execution, with explicit distinctions from API costs and wall-clock limits.

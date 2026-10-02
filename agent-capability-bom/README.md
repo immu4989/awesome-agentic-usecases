@@ -303,6 +303,52 @@ and reason codes before sharing. Available in the current repository harness.
 
 ## Check repeatability across recorded runs
 
+### Compare releases across complete campaigns
+
+A single receipt can miss a failure seen only in another run. Use the current repository harness
+to compare **all recorded observations** from a baseline and candidate campaign:
+
+```bash
+aau bom compare-authority-campaigns baseline-campaign candidate-campaign \
+  --before-artifact baseline/adapter.py --before-workspace . \
+  --after-artifact candidate/adapter.py --after-workspace . \
+  --out campaign-comparison.json
+```
+
+Keep the original adapter bytes and campaign directories from each release. Separate workspace
+arguments support retained checkouts; each artifact must resolve within its corresponding
+workspace and match the recorded binding. Comparison executes no adapter code. Both complete
+folders are re-verified, including their HTML/JUnit reports and completion records, before a
+comparison is written. Invalid evidence, different inventories/suites, unequal run counts, or
+different recorded case order at any run position produce exit 2 and no new report. Use the same
+seed schedule for both campaigns (or use the default order for both).
+The inventory is a held-fixed evaluation contract here, including its release metadata. If the
+inventory itself changes, review that separately with `aau bom diff`; this command does not
+normalize away contract changes to make different tests appear comparable.
+
+The report separates these observations, per case:
+
+| Signal | Meaning |
+|---|---|
+| Introduced / resolved failure | All observations were exact on one side, but not the other |
+| Increased / decreased unsafe allows | More / fewer observed allows of a forbidden action |
+| Gained / lost instability | Multiple distinct decision/reason outputs appeared / disappeared |
+| Changed observations | The decision/reason frequency table changed |
+
+Every finding includes both sides' exact, unsafe-allow, legitimate-block, and reason-mismatch
+counts plus observed output variants. Counts overlap; do not add them as independent failures.
+Frequency tables do not pair outcomes by run or test time trends. Unchanged failures remain in
+the report. Exit **1** means the candidate contains any failing evidence—even if it improved or
+introduced no new failures. Exit **0** means every candidate observation matched the synthetic
+contract; it is not deployment approval. Existing output files are never overwritten.
+
+Matching workload and order reduces obvious comparison mismatches, but cannot isolate a release's
+causal effect. External state, model settings, dependencies, and services are not bound by the
+entrypoint hash; duplicated evidence is not independent replication. There are no statistical
+significance or production reliability claims. Keep environment/reset notes separately and review
+case identifiers, artifact metadata, and reason codes before sharing the report. Request inputs
+are omitted.
+
 ### Probe case-order dependence
 
 `run-conformance` and `check-authority` accept `--order-seed` (integer 0–4294967295).

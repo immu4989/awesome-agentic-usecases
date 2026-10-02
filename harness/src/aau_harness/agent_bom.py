@@ -1707,6 +1707,14 @@ def build_parser() -> argparse.ArgumentParser:
     verify_campaign.add_argument("directory", type=Path)
     verify_campaign.add_argument("--adapter-artifact", type=Path, required=True)
     verify_campaign.add_argument("--workspace", type=Path, default=Path("."))
+    compare_campaign = sub.add_parser("compare-authority-campaigns", help="compare two verified campaigns with matched workload and case order")
+    compare_campaign.add_argument("before", type=Path)
+    compare_campaign.add_argument("after", type=Path)
+    compare_campaign.add_argument("--before-artifact", type=Path, required=True)
+    compare_campaign.add_argument("--after-artifact", type=Path, required=True)
+    compare_campaign.add_argument("--before-workspace", type=Path, default=Path("."))
+    compare_campaign.add_argument("--after-workspace", type=Path, default=Path("."))
+    compare_campaign.add_argument("--out", type=Path, required=True)
     plan = sub.add_parser("plan-authority", help="preview synthetic workload without executing adapter code")
     plan.add_argument("bom", type=Path)
     plan.add_argument("--runs", type=int, default=1)
@@ -1809,6 +1817,13 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     try:
         args = build_parser().parse_args(argv)
+        if args.command == "compare-authority-campaigns":
+            from .authority_campaign_compare import compare_campaigns
+            report = compare_campaigns(args.before, args.after, args.before_artifact,
+                                       args.after_artifact, args.before_workspace, args.after_workspace)
+            write_json(report, args.out)
+            print(f"wrote {args.out} ({report['counts']['introduced_failure']} cases gained failures)")
+            return 0 if report["status"] == "evidence_passed" else 1
         if args.command == "plan-authority":
             from .authority_plan import plan_authority
             plan = plan_authority(load_json(args.bom), args.runs, args.timeout, args.max_invocations)
