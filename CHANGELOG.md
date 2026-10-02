@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **CI shared-test deduplication** — moved the full harness suite to one explicit catalog-job
+  step instead of repeating it across all 71 lab jobs and focused catalog steps. Every lab retains
+  its integration tests, two-seed scenario reproduction, and three-repeat mock evaluation. A layout
+  regression test guards this coverage partition; no runtime speedup claim is inferred from it.
+
 - **Enforced service-tool input contracts** — the shared Evidence Service runtime now validates
   its declared tool shapes before recording an effect. String/integer booleans, invalid enum values,
   missing/extra fields, and duplicate evidence arrays are rejected rather than coerced. Rejected

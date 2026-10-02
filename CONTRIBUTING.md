@@ -1,5 +1,18 @@
 # Contributing
 
+## CI test coverage
+
+The shared harness unit suite runs once in the `Public catalog integrity` job. Every lab matrix
+job still installs the harness and its own package, runs that lab's integration tests, verifies
+scenario reproduction under two hash seeds, and runs its three-repeat mock evaluation. A shared
+test failure fails CI; the lab jobs do not replace or waive it.
+
+This avoids rerunning the entire shared suite in every lab environment. It does not establish
+compatibility with every possible dependency combination: each lab's own tests and mock run
+exercise its installed integration. Add a domain-specific regression to the affected lab when
+fixing an integration issue, and a shared regression to `harness/tests` for common behavior.
+
+
 Contributions are welcome — the bar is [VERIFICATION.md](VERIFICATION.md), applied
 without exceptions. Please open an issue describing the use case before sending a PR.
 
