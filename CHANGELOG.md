@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Complete-batch public-service review** — declared-case joins reject missing, duplicate,
+  or unexpected traces before reporting. Per-case diagnostics and failing status survive aggregation;
+  required-protection counts keep inapplicable recourse, deadline, and continuity obligations out of
+  delivered-protection denominators. Synthetic examples and offline whole-report verification included.
+
 - **Public Value trace review** — added an offline CLI that explains failed service obligations,
   separates missing, redundant, duplicate, and out-of-contract evidence requests, and distinguishes
   prohibited attempts from executions. Strict inputs, recomputable reports, and synthetic pass/fail

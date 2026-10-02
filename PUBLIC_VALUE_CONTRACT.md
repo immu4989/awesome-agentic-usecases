@@ -115,6 +115,53 @@ observations**; it does not authenticate logs, establish which legal obligations
 real-world accessibility or benefit, authorize a decision, extend a deadline, send a notice, or
 reverse an action. A service owner must define the contract and validate the tool-to-trace mapping.
 
+### Review a complete declared batch
+
+Assessing only the traces that happened to arrive can conceal missing cases. A batch declares
+every expected case and its contract separately from observed traces. The current repository
+harness joins them by exact `case_id`, never by array position:
+
+```bash
+aau public-value assess-batch public-value-review/examples/suite.json \
+  public-value-review/examples/traces.json --out public-value-batch.json
+aau public-value verify-batch public-value-batch.json \
+  public-value-review/examples/suite.json public-value-review/examples/traces.json
+```
+
+Both commands intentionally exit **1**. These two synthetic cases both complete their terminal
+action, but the case that requires recourse does not record it. The other case's contract does
+not require recourse. Consequently:
+
+| Measurement | Expected example result |
+|---|---|
+| Declared cases with supplied traces | 2 of 2 |
+| Completed terminal actions | 2 of 2 |
+| Cases satisfying every obligation | 1 of 2 |
+| Cases requiring recourse | 1 |
+| Required recourse satisfied | 0 of 1 |
+
+`required_protection_counts` provides separate required/satisfied counts for recourse, deadlines,
+and continuity. This prevents inapplicable obligations from being mistaken for protections that
+were delivered. `metric_pass_counts` retains the scorer's semantics: inapplicable obligations
+are satisfied. Zero required cases means **not applicable**, not demonstrated successful delivery.
+
+The report retains every case's full assessment and hashes plus a sorted list of failing IDs.
+Any failing case keeps the entire batch at exit 1; there is no average-based pass threshold.
+Duplicate, missing, or undeclared IDs, invalid individual traces, empty batches, and batches over
+500 cases produce exit **2**, with no new report. Each JSON input and generated report is also
+limited to 2 MB. If the full diagnostics exceed that limit, declare smaller explicit batches;
+do not drop failed cases or present a partial batch as the full population.
+Verification recomputes the whole report; removing a failure or changing a summary is rejected.
+The outer hashes bind the supplied JSON values including array order; whitespace is not bound.
+Per-case assessments are sorted by ID and do not depend on arrival order.
+
+Adapt [suite.json](public-value-review/examples/suite.json) and
+[traces.json](public-value-review/examples/traces.json) using synthetic case IDs. Complete declared
+coverage is **not** proof that the declaration covers every real interaction. These are case counts,
+not population estimates, unique people, independent trials, or evidence of legal compliance.
+Repeated observations need distinct declared IDs and must not be presented as independent users.
+Review each contract and its applicability with the accountable service owner.
+
 ### Integrate the scorer in a service lab
 
 ```python

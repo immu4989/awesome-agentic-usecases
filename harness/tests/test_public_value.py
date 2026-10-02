@@ -7,7 +7,7 @@ import pytest
 from aau_harness import PublicValueContract, PublicValueTrace, score_public_value
 from aau_harness.agent_bom import AgentBomError
 from aau_harness.catalog_cli import main
-from aau_harness.public_value_review import assess_public_value
+from aau_harness.public_value_review import assess_public_value, assess_public_value_batch
 
 
 def contract(**changes):
@@ -185,3 +185,113 @@ def test_committed_public_value_examples_match_documented_outcomes():
         report = assess_public_value(rules, json.loads((examples / f"{name}.json").read_text()))
         assert len(report["findings"]) == expected_count
         assert report["metrics"]["service_completion"] == 1
+
+
+def batch_inputs():
+    return (
+        {"suite_version": "aau-public-value-suite/1.0", "cases": [
+            {"case_id": "required", "contract": payload(contract())},
+            {"case_id": "not-required", "contract": payload(contract(recourse_required=False))},
+        ]},
+        {"trace_version": "aau-public-value-traces/1.0", "observations": [
+            {"case_id": "not-required", "trace": payload(trace(recourse_offered=False))},
+            {"case_id": "required", "trace": payload(trace(recourse_offered=False))},
+        ]},
+    )
+
+
+def test_batch_preserves_case_failures_and_required_protection_denominators():
+    suite, traces = batch_inputs()
+    report = assess_public_value_batch(suite, traces)
+    assert report["case_count"] == 2
+    assert report["failed_case_ids"] == ["required"]
+    assert report["passed_case_count"] == report["failed_case_count"] == 1
+    assert report["metric_pass_counts"]["service_completion"] == 2
+    assert report["metric_pass_counts"]["recourse_preserved"] == 1
+    assert report["required_protection_counts"]["recourse_preserved"] == {
+        "required_case_count": 1, "satisfied_required_case_count": 0,
+    }
+    assert report["status"] == "evidence_failed"
+    assert report == assess_public_value_batch(suite, traces)
+    traces["observations"].reverse()
+    reordered = assess_public_value_batch(suite, traces)
+    assert reordered["cases"] == report["cases"]
+    assert reordered["traces_sha256"] != report["traces_sha256"]
+
+
+def test_committed_batch_example_and_zero_applicability():
+    examples = Path(__file__).resolve().parents[2] / "public-value-review/examples"
+    report = assess_public_value_batch(json.loads((examples / "suite.json").read_text()),
+                                      json.loads((examples / "traces.json").read_text()))
+    assert report["failed_case_ids"] == ["recourse-required"]
+    assert report["metric_pass_counts"]["service_completion"] == 2
+    assert report["required_protection_counts"]["recourse_preserved"] == {
+        "required_case_count": 1, "satisfied_required_case_count": 0,
+    }
+    assert report["required_protection_counts"]["service_continuity_preserved"] == {
+        "required_case_count": 0, "satisfied_required_case_count": 0,
+    }
+
+
+@pytest.mark.parametrize("corruption", ["missing", "unknown", "duplicate-trace", "duplicate-case", "empty", "oversized", "extra", "version", "bad-trace"])
+def test_batch_rejects_incomplete_or_ambiguous_measurements(corruption):
+    suite, traces = batch_inputs()
+    if corruption == "missing":
+        traces["observations"].pop()
+    elif corruption == "unknown":
+        traces["observations"][0]["case_id"] = "undeclared"
+    elif corruption == "duplicate-trace":
+        traces["observations"].append(traces["observations"][0])
+    elif corruption == "duplicate-case":
+        suite["cases"].append(suite["cases"][0])
+    elif corruption == "empty":
+        suite["cases"] = []
+    elif corruption == "oversized":
+        suite["cases"] *= 251
+    elif corruption == "extra":
+        suite["unreviewed"] = True
+    elif corruption == "version":
+        traces["trace_version"] = "unknown"
+    else:
+        traces["observations"][1]["trace"]["submitted"] = "yes"
+    with pytest.raises(AgentBomError):
+        assess_public_value_batch(suite, traces)
+
+
+@pytest.mark.parametrize("failed", [False, True])
+def test_batch_cli_recomputes_every_case_and_rejects_partial_output(tmp_path, failed):
+    suite, traces = batch_inputs()
+    if not failed:
+        traces["observations"][1]["trace"]["recourse_offered"] = True
+    for name, value in (("suite", suite), ("traces", traces)):
+        (tmp_path / f"{name}.json").write_text(json.dumps(value))
+    output = tmp_path / "batch.json"
+    inputs = [str(tmp_path / "suite.json"), str(tmp_path / "traces.json")]
+    args = ["public-value", "assess-batch", *inputs, "--out", str(output)]
+    assert main(args) == int(failed)
+    saved = output.read_bytes()
+    assert main(args) == 2
+    assert output.read_bytes() == saved
+    verify = ["public-value", "verify-batch", str(output), *inputs]
+    assert main(verify) == int(failed)
+    report = json.loads(saved)
+    report["cases"].pop()
+    output.write_text(json.dumps(report))
+    assert main(verify) == 2
+    traces["observations"].pop()
+    (tmp_path / "traces.json").write_text(json.dumps(traces))
+    args[-1] = str(tmp_path / "incomplete.json")
+    assert main(args) == 2
+    assert not (tmp_path / "incomplete.json").exists()
+
+
+def test_batch_cli_never_writes_a_report_too_large_to_verify(tmp_path, monkeypatch):
+    import aau_harness.public_value_review as review
+    suite, traces = batch_inputs()
+    for name, value in (("suite", suite), ("traces", traces)):
+        (tmp_path / f"{name}.json").write_text(json.dumps(value))
+    monkeypatch.setattr(review, "MAX_JSON_BYTES", 100)
+    out = tmp_path / "oversized.json"
+    assert main(["public-value", "assess-batch", str(tmp_path / "suite.json"),
+                 str(tmp_path / "traces.json"), "--out", str(out)]) == 2
+    assert not out.exists()

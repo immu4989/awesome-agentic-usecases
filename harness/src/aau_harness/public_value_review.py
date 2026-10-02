@@ -6,7 +6,7 @@ from collections import Counter
 from dataclasses import asdict
 from pathlib import Path
 
-from .agent_bom import AgentBomError, digest, load_json, rendered, write_json
+from .agent_bom import AgentBomError, MAX_JSON_BYTES, digest, load_json, rendered, write_json
 from .public_value import PublicValueContract, PublicValueTrace, score_public_value
 
 
@@ -93,24 +93,85 @@ def assess_public_value(contract_data: dict, trace_data: dict) -> dict:
     }
 
 
+def assess_public_value_batch(suite: dict, observations: dict) -> dict:
+    """Require complete declared coverage before summarizing any supplied observations."""
+    def index(envelope, version_key, version, collection, payload_key):
+        if (not isinstance(envelope, dict) or set(envelope) != {version_key, collection}
+                or envelope[version_key] != version):
+            raise AgentBomError("invalid public-value batch envelope")
+        rows = envelope[collection]
+        if not isinstance(rows, list) or not 1 <= len(rows) <= 500:
+            raise AgentBomError("public-value batches require 1 to 500 cases")
+        indexed = {}
+        for row in rows:
+            if not isinstance(row, dict) or set(row) != {"case_id", payload_key} or not _label(row["case_id"]):
+                raise AgentBomError("invalid public-value batch case")
+            if row["case_id"] in indexed:
+                raise AgentBomError("duplicate public-value case_id")
+            indexed[row["case_id"]] = row[payload_key]
+        return indexed
+
+    contracts = index(suite, "suite_version", "aau-public-value-suite/1.0", "cases", "contract")
+    traces = index(observations, "trace_version", "aau-public-value-traces/1.0", "observations", "trace")
+    if contracts.keys() != traces.keys():
+        raise AgentBomError("public-value batch requires exactly one trace for every declared case; missing or unexpected case_id")
+    cases = [{"case_id": case_id, "assessment": assess_public_value(contracts[case_id], traces[case_id])}
+             for case_id in sorted(contracts)]
+    failed = [row["case_id"] for row in cases if row["assessment"]["status"] == "evidence_failed"]
+    metrics = cases[0]["assessment"]["metrics"]
+    protections = {}
+    for metric, flag in (("recourse_preserved", "recourse_required"),
+                         ("deadline_protected", "deadline_preservation_required"),
+                         ("service_continuity_preserved", "continuity_preservation_required")):
+        required = [row for row in cases if contracts[row["case_id"]].get(flag, False)]
+        protections[metric] = {
+            "required_case_count": len(required),
+            "satisfied_required_case_count": sum(int(row["assessment"]["metrics"][metric]) for row in required),
+        }
+    return {
+        "report_version": "aau-public-value-batch-review/1.0",
+        "suite_sha256": digest(suite), "traces_sha256": digest(observations),
+        "case_count": len(cases), "passed_case_count": len(cases) - len(failed),
+        "failed_case_count": len(failed), "failed_case_ids": failed,
+        "metric_pass_counts": {name: sum(int(row["assessment"]["metrics"][name]) for row in cases)
+                               for name in metrics},
+        "required_protection_counts": protections,
+        "cases": cases, "status": "evidence_failed" if failed else "evidence_passed",
+        "boundary": "Complete coverage of the supplied declared suite only; neither representative sampling nor authenticated service logs. Counts describe cases, not people, independent runs, statutory compliance, or estimated public benefit. Inapplicable obligations score as satisfied, not as performed protections. Per-case findings and evidence limitations remain authoritative for review.",
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="aau public-value", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
     assess = sub.add_parser("assess", help="explain failed obligations in a supplied service trace")
     verify = sub.add_parser("verify", help="recompute a saved assessment without executing service code")
     verify.add_argument("report", type=Path)
+    batch = sub.add_parser("assess-batch", help="assess every declared case with exact trace coverage")
+    verify_batch = sub.add_parser("verify-batch", help="recompute a complete batch report offline")
+    verify_batch.add_argument("report", type=Path)
+    for command in (batch, verify_batch):
+        command.add_argument("suite", type=Path)
+        command.add_argument("traces", type=Path)
+    batch.add_argument("--out", type=Path, required=True)
     for command in (assess, verify):
         command.add_argument("contract", type=Path)
         command.add_argument("trace", type=Path)
     assess.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        report = assess_public_value(load_json(args.contract), load_json(args.trace))
-        if args.command == "assess":
+        is_batch = args.command.endswith("batch")
+        report = (assess_public_value_batch(load_json(args.suite), load_json(args.traces)) if is_batch
+                  else assess_public_value(load_json(args.contract), load_json(args.trace)))
+        if len(rendered(report)) > MAX_JSON_BYTES:
+            raise AgentBomError("public-value report exceeds verification size limit; use smaller explicitly scoped batches")
+        if args.command.startswith("assess"):
             write_json(report, args.out)
         elif rendered(load_json(args.report)) != rendered(report):
             raise AgentBomError("public-value report does not recompute")
-        print(f"{report['status']}: {len(report['findings'])} failed obligations")
+        summary = (f"{report['failed_case_count']}/{report['case_count']} failed cases" if is_batch
+                   else f"{len(report['findings'])} failed obligations")
+        print(f"{report['status']}: {summary}")
         return 0 if report["status"] == "evidence_passed" else 1
     except (AgentBomError, OSError) as exc:
         print(f"error: {exc}", file=sys.stderr)
