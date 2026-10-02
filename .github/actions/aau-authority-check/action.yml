@@ -1,0 +1,34 @@
+name: AAU staging authority check
+description: Run and verify synthetic authority evidence with JSON, HTML, and JUnit diagnostics.
+inputs:
+  inventory:
+    description: Workspace-relative public or synthetic authority inventory.
+    required: true
+  adapter-command:
+    description: Trusted staging command; never pass untrusted event text.
+    required: true
+  adapter-artifact:
+    description: Workspace-relative adapter entrypoint executed by the command.
+    required: true
+  output:
+    description: New workspace-relative output directory; contains inventory and test inputs.
+    default: aau-authority-results
+  timeout:
+    description: Per-case timeout in seconds, greater than zero and at most 300.
+    default: "10"
+outputs:
+  reports:
+    description: Output directory; inspect completion.json before consuming interrupted runs.
+    value: ${{ inputs.output }}
+runs:
+  using: composite
+  steps:
+    - name: Evaluate and independently recompute saved reports
+      shell: bash
+      env:
+        AAU_AUTHORITY_INVENTORY: ${{ inputs.inventory }}
+        AAU_AUTHORITY_COMMAND: ${{ inputs.adapter-command }}
+        AAU_AUTHORITY_ARTIFACT: ${{ inputs.adapter-artifact }}
+        AAU_AUTHORITY_OUTPUT: ${{ inputs.output }}
+        AAU_AUTHORITY_TIMEOUT: ${{ inputs.timeout }}
+      run: python "$GITHUB_ACTION_PATH/run.py"

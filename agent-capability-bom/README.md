@@ -187,6 +187,9 @@ including the expected first failure and a before/after comparison.
 
 ## Run a complete staging check
 
+For CI integration, use the [staging authority check Action](../.github/actions/aau-authority-check/).
+It runs and re-verifies reports while leaving artifact upload and retention under your control.
+
 ```bash
 aau bom check-authority inventory.json --command "python3 adapter.py" \
   --adapter-artifact adapter.py --workspace . --out check-001

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Staging authority CI Action** — added a repository-pinned, no-install Action that evaluates
+  and re-verifies complete reports, preserves failing diagnostics, and emits an aggregate job
+  summary. Caller-controlled uploads and subprocess tests support adoption without hiding failures.
+
 - **Controlled order-dependence experiment** — added a position-sensitive negative fixture and
   four-run integration test showing that fixed-order repetition can hide changing per-case reasons
   behind identical scores and entrypoint bytes. Separate fresh-state control and probe arms make
