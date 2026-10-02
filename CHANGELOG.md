@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Reproducible case-order probes** — added optional `--order-seed` to single authority runs
+  and complete staging checks. Seeded ordering preserves contract hashes and case coverage, records
+  execution order in receipt rows, and remains compatible with offline verification and case-keyed
+  repeatability assessment. Default execution order and existing receipt schemas remain unchanged.
+
 - **Equal-score instability experiment** — added an intentionally incorrect SQLite-backed
   adapter and end-to-end campaign test: unchanged adapter bytes and aggregate scores conceal
   changing per-case reasons. Offline verification is checked not to mutate the fixture state.

@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from aau_harness.agent_bom import AgentBomError, generate_conformance_suite, load_json, main, run_conformance
+from aau_harness.agent_bom import AgentBomError, generate_conformance_suite, load_json, main, run_conformance, verify_conformance_receipt
 from aau_harness.authority_report import compare_conformance, explain_conformance
 from aau_harness.authority_html import render_html, write_report
 from aau_harness.authority_junit import _xml_text, export_junit
@@ -324,3 +324,40 @@ def test_repeatability_rejects_changed_adapter_binding_and_requires_command_byte
     assert main(args + ["--adapter-artifact", str(base / "reference_conformance_adapter.py"),
                         "--workspace", str(ROOT)]) == 0
     assert load_json(out)["adapter_bytes_checked"]
+
+
+def test_seeded_case_order_is_reproducible_without_changing_the_contract():
+    bom = load_json(ROOT / "agent-capability-bom/examples/candidate.json")
+    suite = generate_conformance_suite(bom)
+    original = deepcopy(suite)
+    baseline = run_conformance(bom, suite, "reference")
+    first = run_conformance(bom, suite, "reference", order_seed=7)
+    second = run_conformance(bom, suite, "reference", order_seed=19)
+    assert first == run_conformance(bom, suite, "reference", order_seed=7)
+    assert first["results"] != second["results"]
+    assert first["suite_sha256"] == baseline["suite_sha256"]
+    assert first["metrics"] == baseline["metrics"]
+    assert suite == original
+    assert [row["case_id"] for row in baseline["results"]] == [case["case_id"] for case in suite["cases"]]
+    verify_conformance_receipt(first, bom, suite)
+    report = assess_repeatability([first, second], bom, suite)
+    assert report["counts"]["unstable"] == 0
+    assert report["status"] == "evidence_passed"
+    for invalid in (True, -1, 4294967296, "7", 1.5):
+        with pytest.raises(AgentBomError, match="order seed"):
+            run_conformance(bom, suite, "command", "never execute", order_seed=invalid)
+
+
+def test_seeded_command_check_is_verifiable(tmp_path):
+    base = ROOT / "agent-capability-bom/examples"
+    adapter = base / "reference_conformance_adapter.py"
+    out = tmp_path / "seeded"
+    assert main(["check-authority", str(base / "candidate.json"),
+                 "--command", shlex.join([sys.executable, str(adapter)]),
+                 "--adapter-artifact", str(adapter), "--workspace", str(ROOT),
+                 "--order-seed", "7", "--out", str(out)]) == 0
+    assert main(["verify-authority-check", str(out), "--adapter-artifact", str(adapter),
+                 "--workspace", str(ROOT)]) == 0
+    bom, suite = load_json(out / "inventory.json"), load_json(out / "suite.json")
+    expected = run_conformance(bom, suite, "reference", order_seed=7)
+    assert load_json(out / "receipt.json")["results"] == expected["results"]

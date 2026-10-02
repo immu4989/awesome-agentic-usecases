@@ -9,12 +9,12 @@ from .authority_report import explain_conformance
 
 
 def check_authority(bom: dict, command: str, adapter: Path, workspace: Path,
-                    out: Path, timeout: float = 10.0) -> dict:
+                    out: Path, timeout: float = 10.0, order_seed: int | None = None) -> dict:
     # Reject an occupied destination before running any user-supplied code.
     if out.exists() or out.is_symlink():
         raise AgentBomError(f"refusing to overwrite: {out}")
     suite = generate_conformance_suite(bom)
-    receipt = run_conformance(bom, suite, "command", command, timeout, adapter, workspace)
+    receipt = run_conformance(bom, suite, "command", command, timeout, adapter, workspace, order_seed)
     report = explain_conformance(receipt, bom, suite, adapter, workspace)
     out.mkdir(parents=True, exist_ok=False)
     write_json(bom, out / "inventory.json")

@@ -300,6 +300,25 @@ and reason codes before sharing. Available in the current repository harness.
 
 ## Check repeatability across recorded runs
 
+### Probe case-order dependence
+
+`run-conformance` and `check-authority` accept `--order-seed` (integer 0–4294967295).
+For example, run two separate checks with seeds 7 and 19 and compare their receipts using
+`assess-repeatability`. The seed changes only execution order, not the generated suite, expected
+answers, or inventory hashes. Cases are ordered by the canonical SHA-256 digest of
+`[seed, case_id]`, with case ID as a tie-breaker; identical inputs and seed reproduce the order.
+Without the flag, the original suite order is unchanged. Receipt result rows record the observed
+case sequence; the seed is not added to the adapter request or receipt. Record the chosen seed
+separately with your experiment notes, outside a strictly verified output directory.
+
+Different seeds are not guaranteed to produce different permutations. Distinct receipt hashes
+can reflect ordering alone, not changed outcomes; repeatability assessment compares by case ID.
+The runner does not reset external state. A changed outcome is evidence to investigate, not
+proof that ordering caused it. The bounded `repeat-authority` command retains its fixed order;
+use separate seeded checks for this experiment.
+
+### Collect repeated observations
+
 Try the [equal-score instability experiment](REPEATABILITY_EXPERIMENT.md): an intentionally
 broken, stateful adapter proves the workflow can detect changing reasons behind unchanged scores.
 

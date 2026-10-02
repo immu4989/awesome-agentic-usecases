@@ -1398,10 +1398,16 @@ def run_conformance(
     timeout: float = 10.0,
     adapter_artifact: Path | None = None,
     workspace: Path | None = None,
+    order_seed: int | None = None,
 ) -> dict[str, Any]:
     expected_suite = generate_conformance_suite(bom)
     if suite != expected_suite:
         raise AgentBomError("conformance suite does not recompute from the AABOM")
+    if order_seed is not None and (type(order_seed) is not int or not 0 <= order_seed <= 4294967295):
+        raise AgentBomError("order seed must be an integer from 0 to 4294967295")
+    cases = suite["cases"]
+    if order_seed is not None:
+        cases = sorted(cases, key=lambda case: (digest([order_seed, case["case_id"]]), case["case_id"]))
     artifact_record: dict[str, Any] | None = None
     artifact_path: Path | None = None
     artifact_before: bytes | None = None
@@ -1423,7 +1429,7 @@ def run_conformance(
             "choose the reference adapter or provide both a command and adapter artifact"
         )
     results = []
-    for case in suite["cases"]:
+    for case in cases:
         decision, reasons = invoke(case["case_id"], case["input"])
         results.append(
             {
@@ -1680,6 +1686,7 @@ def build_parser() -> argparse.ArgumentParser:
     check.add_argument("--adapter-artifact", type=Path, required=True)
     check.add_argument("--workspace", type=Path, default=Path("."))
     check.add_argument("--timeout", type=float, default=10.0)
+    check.add_argument("--order-seed", type=int)
     check.add_argument("--out", type=Path, required=True)
     campaign = sub.add_parser("repeat-authority", help="collect bounded staging runs and assess repeatability")
     campaign.add_argument("bom", type=Path)
@@ -1741,6 +1748,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--adapter-artifact", type=Path)
     run.add_argument("--workspace", type=Path, default=Path("."))
     run.add_argument("--timeout", type=float, default=10.0)
+    run.add_argument("--order-seed", type=int)
     run.add_argument("--out", type=Path, required=True)
     verify_run = sub.add_parser(
         "verify-conformance", help="verify a conformance receipt and exact input coverage"
@@ -1819,7 +1827,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "check-authority":
             from .authority_check import check_authority
             report = check_authority(load_json(args.bom), args.adapter_command,
-                                     args.adapter_artifact, args.workspace, args.out, args.timeout)
+                                     args.adapter_artifact, args.workspace, args.out, args.timeout, args.order_seed)
             print(f"wrote {args.out} ({report['exact_count']}/{report['case_count']} exact; {report['status']})")
             return 0 if report["status"] == "evidence_passed" else 1
         if args.command == "compare-conformance":
@@ -1897,6 +1905,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.timeout,
                 args.adapter_artifact,
                 args.workspace,
+                args.order_seed,
             )
             write_json(receipt, args.out)
             print(
