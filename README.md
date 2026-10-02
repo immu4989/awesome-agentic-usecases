@@ -43,6 +43,7 @@ and observed failure cards with a direct path to reproduction. Start with
 
 | I already have… | Start here | Leave with… |
 |---|---|---|
+| Saved evaluation scores that need a reproducibility check | [Offline metric audit](harness/README.md#audit-a-saved-evaluation-without-rerunning-a-model) | Recomputed averages, scenario-bootstrap intervals, coverage counts, and exact mismatches without model calls |
 | A service trace that completed the task but may have burdened the person | [Public Value trace review](PUBLIC_VALUE_CONTRACT.md#assess-a-trace-without-writing-python) | Offline obligation diagnostics for paperwork, accessibility, recourse, deadlines, continuity, and prohibited actions |
 | A staging policy engine and a need for reviewable test results | [Authority staging quickstart](agent-capability-bom/STAGING_QUICKSTART.md) | A single-command evaluation, verified JSON/HTML/JUnit reports, and a before/after failure comparison |
 | A candidate agent release | [Agent Release Gate](https://immu4989.github.io/awesome-agentic-usecases/#release-gate) | A byte-exact change map, impact-selected tests, fail-closed decision, experimental OSCAL view, and verifiable evidence pack |

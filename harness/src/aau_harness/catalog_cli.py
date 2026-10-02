@@ -264,6 +264,8 @@ def build_parser() -> argparse.ArgumentParser:
         help="inventory and diff agent capabilities, authority, egress, and evidence",
     )
 
+    sub.add_parser("audit-eval", add_help=False,
+                   help="recompute saved evaluation metric summaries without model calls")
     sub.add_parser("public-value", add_help=False,
                    help="assess and explain service obligations from supplied tool traces")
 
@@ -325,6 +327,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_args = list(sys.argv[1:] if argv is None else argv)
+    if raw_args and raw_args[0] == "audit-eval":
+        from .eval_audit import main as audit_main
+
+        return audit_main(raw_args[1:])
     if raw_args and raw_args[0] == "public-value":
         from .public_value_review import main as public_value_main
 

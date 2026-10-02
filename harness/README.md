@@ -422,6 +422,38 @@ These counts describe supplied observations, not population representativeness, 
 or production reliability. Historical reports remain unchanged; regenerate them explicitly from
 their original evidence if new coverage annotations are needed.
 
+### Audit a saved evaluation without rerunning a model
+
+With the current repository harness:
+
+```bash
+aau audit-eval home-field-services/service-visit-readiness-coordinator/results/eval_mock.json \
+  --out metric-audit.json
+aau audit-eval home-field-services/service-visit-readiness-coordinator/results/eval_mock.json \
+  --verify metric-audit.json
+```
+
+The audit requires complete declared scenario-repeat coverage, then recomputes metric means,
+the harness's deterministic scenario-bootstrap intervals, and per-metric coverage from recorded
+observation values. It compares the stored means and intervals at the exporter’s four-decimal
+precision and compares coverage when the source contains it. Older files without coverage get
+derived coverage, clearly marked as not originally recorded. Metrics missing in some observations
+remain excluded rather than imputed as zero.
+
+Exit **0** means the metric summaries are internally consistent—even if every score is zero.
+Exit **1** means the audit was written with exact recorded/recomputed mismatches. Exit **2** means
+invalid or incomplete input, or an audit report that does not recompute. Existing output files
+are never overwritten. Each input/output file is limited to 2 MB; an audit accepts at most 500
+scenarios, 10,000 observations, and 100 metric names. This command makes no model calls.
+
+The source hash binds supplied JSON values. The audit does **not** validate scoring ground truth,
+which scenarios actually ran, provider availability, provenance, costs, latency, statistical power,
+or the authenticity of the observations. Coordinated replacement of observations and summaries
+can still be internally consistent. Partial coverage and repeated observations are not proof of
+applicability or independence. Other evaluation formats or bootstrap methods may be incompatible;
+this command targets the current shared harness format and algorithm. Keep the original evidence
+and harness revision. Review metric names and mismatch values before sharing.
+
 > **Every metric must be present on every scenario.** The runner aggregates by metric name
 > across all results; a metric emitted for only some scenarios will fail. For subgroup
 > analysis, emit `0.0` and record the subgroup in `detail`.

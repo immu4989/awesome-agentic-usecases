@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Offline evaluation metric audit** — `aau audit-eval` recomputes stored averages,
+  scenario-bootstrap intervals, and metric coverage from complete declared observations. It retains
+  exact summary mismatches, supports re-verification, and rejects malformed measurement sets without
+  model calls. Consistency is explicitly separate from score quality, provenance, or ground truth.
+
 - **Per-metric evidence coverage** — JSON and Markdown evaluation reports now expose the
   scenarios and observations that actually report each metric, plus complete-repeat counts and
   partial-repeat warnings. Optional metrics retain existing non-imputation and bootstrap semantics;
