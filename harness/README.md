@@ -387,6 +387,23 @@ backend = make_backend("openrouter", model="nvidia/nemotron-3-super-120b-a12b:fr
 | `EvalAggregate` | `n_scenarios`, `n_repeats`, `metric_means`, `metric_ci95`, `mean_cost_per_scenario_usd`, `total_cost_usd`, `p50_latency_s`, `results`. `as_dict()` serialises it, stamping provenance automatically. |
 | `ScenarioResult` | One run: `scenario_id`, `repeat`, `metrics`, `cost_usd`, `latency_s`, `n_api_calls`, `detail`. Put anything you may want to analyse later in `detail` — per-archetype breakdowns are computed from it. |
 
+`run_eval` rejects empty workloads and nonpositive/noninteger repeat counts before invoking
+the callback. Each scenario position must return a unique, nonblank ID on the first repeat,
+then retain that ID on every later repeat; each result must also record the requested zero-based
+repeat index. This preserves the units used for scenario-level aggregation and bootstrap intervals.
+It does not authenticate the labels or establish that repeated model runs are independent.
+
+Metric values must be finite numbers (not strings or booleans), but need not lie between zero
+and one: signed differences and counts remain supported. Cost and latency must be finite and
+nonnegative, and API-call counts must be nonnegative integers. Metrics may still be omitted where
+they do not apply. Invalid observations raise `ValueError` instead of producing an aggregate;
+earlier callback side effects are not rolled back. Supply trusted callbacks and synthetic inputs.
+
+Each returned result is deep-copied before the next invocation. Reusing a metrics dictionary or
+result object therefore cannot retroactively overwrite earlier observations. Callback details
+must support deep copying; JSON-compatible evidence is the portable choice. Historical result
+files are not changed by these validation rules.
+
 > **Every metric must be present on every scenario.** The runner aggregates by metric name
 > across all results; a metric emitted for only some scenarios will fail. For subgroup
 > analysis, emit `0.0` and record the subgroup in `detail`.

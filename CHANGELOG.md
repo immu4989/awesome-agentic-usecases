@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Evaluation observation integrity** — the repeated-run engine rejects duplicate/drifting
+  scenario IDs, incorrect repeat indices, nonfinite measurements, and invalid workloads instead of
+  silently changing aggregation units. Deep snapshots prevent reused callback objects from
+  overwriting earlier evidence. Signed/count and optional metrics remain supported.
+
 - **Native service-result review** — new shared Evidence Service evaluations emit the same
   normalized public-value trace used for scoring. Offline assessment verifies complete declared
   scenario-repeat coverage and recomputes per-observation service/record scores, retaining distinct

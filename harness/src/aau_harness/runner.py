@@ -9,10 +9,12 @@ each scenario's repeats together).
 from __future__ import annotations
 
 import random
+import math
 import re
 import statistics
 import time
 from dataclasses import dataclass, field
+from copy import deepcopy
 from typing import Callable, Sequence
 
 # Errors that mean "the eval never ran" rather than "the model got it wrong". An expired
@@ -112,11 +114,45 @@ def run_eval(
     `run_one` owns the agent invocation and scoring; the runner owns repetition,
     aggregation, and uncertainty.
     """
+    if type(repeats) is not int or repeats < 1:
+        raise ValueError("repeats must be a positive integer")
+    scenarios = tuple(scenarios)
+    if not scenarios:
+        raise ValueError("evaluation requires at least one scenario")
+    identities: list[str] = []
+    seen_identities: set[str] = set()
     results: list[ScenarioResult] = []
     for rep in range(repeats):
-        for sc in scenarios:
+        for position, sc in enumerate(scenarios):
             t0 = time.monotonic()
             res = run_one(sc, rep)
+            if not isinstance(res, ScenarioResult):
+                raise ValueError("evaluation callback must return ScenarioResult")
+            if not isinstance(res.scenario_id, str) or not res.scenario_id.strip():
+                raise ValueError("scenario result ID must be a nonblank string")
+            if type(res.repeat) is not int or res.repeat != rep:
+                raise ValueError("scenario result repeat does not match the requested repeat")
+            if rep == 0:
+                if res.scenario_id in seen_identities:
+                    raise ValueError("different scenario positions returned a duplicate scenario ID")
+                identities.append(res.scenario_id)
+                seen_identities.add(res.scenario_id)
+            elif res.scenario_id != identities[position]:
+                raise ValueError("scenario result ID changed across repeats")
+            if not isinstance(res.metrics, dict) or any(
+                not isinstance(key, str) or not key.strip()
+                or type(value) not in (int, float) or not math.isfinite(value)
+                for key, value in res.metrics.items()
+            ):
+                raise ValueError("metrics must have nonblank names and finite numeric values")
+            if any(type(value) not in (int, float) or not math.isfinite(value) or value < 0
+                   for value in (res.cost_usd, res.latency_s)):
+                raise ValueError("cost and latency must be finite nonnegative numbers")
+            if type(res.n_api_calls) is not int or res.n_api_calls < 0:
+                raise ValueError("API call count must be a nonnegative integer")
+            # A callback may reuse a mutable result or metrics dict on its next invocation.
+            # Freeze this observation before allowing that next call to change it.
+            res = deepcopy(res)
             if res.latency_s == 0.0:
                 res.latency_s = time.monotonic() - t0
             results.append(res)
