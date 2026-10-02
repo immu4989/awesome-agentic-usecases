@@ -1,11 +1,20 @@
 """Offline internal-consistency audit of evaluation metric summaries."""
 
 import argparse
+import math
 import sys
 from pathlib import Path
 
 from .agent_bom import AgentBomError, MAX_JSON_BYTES, digest, load_json, rendered, write_json
 from .runner import ScenarioResult, run_eval
+
+
+def _rounded_summary(value):
+    if type(value) in (int, float) and math.isfinite(value):
+        return float(round(value, 4))
+    if isinstance(value, list):
+        return [_rounded_summary(item) for item in value]
+    return value
 
 
 def audit_evaluation(source: dict) -> dict:
@@ -60,7 +69,8 @@ def audit_evaluation(source: dict) -> dict:
         for metric in sorted(set(values) | set(supplied)):
             actual, wanted = supplied.get(metric), values.get(metric)
             # JSON comparison distinguishes booleans from numeric scores.
-            if metric not in supplied or metric not in values or rendered(actual) != rendered(wanted):
+            if (metric not in supplied or metric not in values
+                    or rendered(_rounded_summary(actual)) != rendered(_rounded_summary(wanted))):
                 mismatches.append({"field": field, "metric": metric,
                                    "recorded": actual, "recomputed": wanted})
     coverage = aggregate.metric_coverage()

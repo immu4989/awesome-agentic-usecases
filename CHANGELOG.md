@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Reproducible public-corpus audit** — audited 287 saved evaluations: 264 match current
+  metric-summary recomputation and 23 retain disclosed historical differences. A hash-bound
+  companion audit, affected-lab notices, and CI reproduction preserve original observations.
+  Legacy full-precision summaries now compare at the exporter's stated four-decimal precision.
+
 - **Offline evaluation metric audit** — `aau audit-eval` recomputes stored averages,
   scenario-bootstrap intervals, and metric coverage from complete declared observations. It retains
   exact summary mismatches, supports re-verification, and rejects malformed measurement sets without

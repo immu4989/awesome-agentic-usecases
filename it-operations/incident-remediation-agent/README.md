@@ -4,6 +4,10 @@
 </p>
 <!-- README-EXPERIENCE:END -->
 
+> **Historical summary caveat:** 12 saved evaluations have interval differences under current-harness
+> recomputation. Read the [corpus audit](../../EVALUATION_METRIC_AUDIT.md) before relying on historical
+> intervals; original observations remain unchanged.
+
 <p align="center">
   <a href="../../README.md">← all use cases</a> ·
   <img src="https://img.shields.io/badge/shape-policy%20A%2FB-b3261e" alt="policy A/B">

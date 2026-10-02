@@ -4,6 +4,10 @@
 </p>
 <!-- README-EXPERIENCE:END -->
 
+> **Historical summary caveat:** 11 saved evaluations lack an interval for a recorded diagnostic
+> metric under current-harness recomputation. Read the [corpus audit](../../EVALUATION_METRIC_AUDIT.md)
+> before relying on historical intervals; original observations remain unchanged.
+
 <p align="center">
   <a href="../../README.md">← all use cases</a> ·
   <img src="https://img.shields.io/badge/shape-record%20fidelity-b3261e" alt="record fidelity">

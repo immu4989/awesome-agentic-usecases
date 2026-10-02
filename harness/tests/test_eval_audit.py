@@ -1,4 +1,5 @@
 import json
+import importlib.util
 from copy import deepcopy
 from pathlib import Path
 
@@ -86,3 +87,36 @@ def test_existing_committed_lab_result_has_recomputable_metric_summaries():
     path = Path(__file__).resolve().parents[2] / "home-field-services/service-visit-readiness-coordinator/results/eval_mock.json"
     source = json.loads(path.read_text())
     assert audit_evaluation(source)["status"] == "consistent"
+
+
+def test_full_precision_legacy_summaries_are_compared_at_declared_precision():
+    source = run_eval(["one", "two", "three"], lambda scenario, repeat:
+                      ScenarioResult(scenario, repeat, {"accuracy": float(scenario == "one")}, 0, 0.1, 0),
+                      repeats=1).as_dict()
+    source["metric_means"]["accuracy"] = 1 / 3
+    assert audit_evaluation(source)["status"] == "consistent"
+    source["metric_means"]["accuracy"] = True
+    assert audit_evaluation(source)["status"] == "inconsistent"
+
+
+def test_corpus_audit_binds_files_and_excludes_unpublished_assets(tmp_path):
+    script = Path(__file__).resolve().parents[1] / "tools/audit_repository_evals.py"
+    spec = importlib.util.spec_from_file_location("repository_eval_audit", script)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    path = tmp_path / "industry/lab/results/eval_mock.json"
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps(fixture()))
+    original = path.read_bytes()
+    for directory in ("output", "social-assets", "tmp"):
+        excluded = tmp_path / directory / "lab/results/eval_private.json"
+        excluded.parent.mkdir(parents=True)
+        excluded.write_text("private unparsed material")
+    first = module.audit_repository(tmp_path)
+    assert first["file_count"] == 1
+    assert first["counts"] == {"consistent": 1}
+    assert path.read_bytes() == original
+    path.write_bytes(original + b"\n")
+    second = module.audit_repository(tmp_path)
+    assert first["files"][0]["file_sha256"] != second["files"][0]["file_sha256"]
+    assert second["counts"] == {"consistent": 1}

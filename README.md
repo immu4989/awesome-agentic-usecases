@@ -27,6 +27,10 @@
 Most agent collections answer **“what could I build?”** This one answers the harder next
 question: **“how do I know it works?”**
 
+**Evidence transparency:** the [recorded metric audit](EVALUATION_METRIC_AUDIT.md) recomputes all
+287 saved evaluation files and discloses 23 historical summary differences. Original observations
+are preserved; internal consistency is not proof of real-world effectiveness.
+
 Every use case is a complete, production-shaped evaluation lab: seeded scenarios with
 programmatic ground truth, tools and state, repeated model runs, cost from actual token
 usage, confidence intervals, and failure modes that were **observed—not hypothesized**.
