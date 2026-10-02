@@ -43,6 +43,7 @@ and observed failure cards with a direct path to reproduction. Start with
 
 | I already have… | Start here | Leave with… |
 |---|---|---|
+| A service trace that completed the task but may have burdened the person | [Public Value trace review](PUBLIC_VALUE_CONTRACT.md#assess-a-trace-without-writing-python) | Offline obligation diagnostics for paperwork, accessibility, recourse, deadlines, continuity, and prohibited actions |
 | A staging policy engine and a need for reviewable test results | [Authority staging quickstart](agent-capability-bom/STAGING_QUICKSTART.md) | A single-command evaluation, verified JSON/HTML/JUnit reports, and a before/after failure comparison |
 | A candidate agent release | [Agent Release Gate](https://immu4989.github.io/awesome-agentic-usecases/#release-gate) | A byte-exact change map, impact-selected tests, fail-closed decision, experimental OSCAL view, and verifiable evidence pack |
 | A repository whose Action pins need provenance, not just SHA length | [Workflow Dependency Trust Lock](workflow-dependency-trust/) | An exact use inventory, offline drift gate, and live proof that every SHA is a commit in its named repository |

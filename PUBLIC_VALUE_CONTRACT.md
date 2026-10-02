@@ -72,6 +72,51 @@ flowchart LR
 
 ## Use it in another service
 
+### Assess a trace without writing Python
+
+The current repository harness includes an offline review command. From the repository root,
+install with `pip install -e harness`, then use a fresh output path:
+
+```bash
+aau public-value assess public-value-review/examples/contract.json \
+  public-value-review/examples/burden-trace.json --out public-value-failures.json
+aau public-value verify public-value-failures.json \
+  public-value-review/examples/contract.json public-value-review/examples/burden-trace.json
+```
+
+Both commands deliberately exit **1**: the synthetic interaction completed its terminal action,
+but failed **three** obligations—minimum document burden, accessible delivery, and recourse.
+Run the commands separately if your shell stops on nonzero exit codes. The burden finding shows
+the missing loss schedule, repeated request for already-held identity, and out-of-contract password
+request. No password value or actual personal record is present in the example.
+
+Substitute [exact-trace.json](public-value-review/examples/exact-trace.json) and a new output
+filename to obtain a passing synthetic example (exit **0**). This fixture is not evidence that a
+real interaction was repaired. Exit **2** means invalid input or a report that does not recompute.
+Existing output files are not overwritten. Verification retains the evidence's pass/fail status.
+
+The JSON report contains component metrics, obligation-specific observations, human review
+guidance, and canonical hashes of the normalized contract and trace. Missing optional continuity
+flags normalize to false; JSON whitespace is not bound. Attempted and executed forbidden events
+are separate findings: blocking an attempt does not erase it. Unrequired protections are not
+reported as missing. Trace arrays preserve repetitions so duplicate requests and extra terminal
+or delivery events cannot disappear through set conversion.
+
+Use the example files as the input shape: all fields are required except the two continuity
+flags, which retain their existing false default. Booleans must be actual JSON booleans, labels
+must be nonblank strings of at most 200 characters without ASCII control characters, and arrays
+are limited to 1,000 labels. Contract arrays require unique labels; trace arrays allow repetitions.
+Unknown fields and duplicate JSON keys are rejected. The report does not contain raw document
+contents, but copied labels **can still be sensitive**. Use public or synthetic data, not customer
+records, credentials, or personal identifiers.
+
+This command executes no service code and makes no network requests. It assesses **supplied
+observations**; it does not authenticate logs, establish which legal obligations apply, verify
+real-world accessibility or benefit, authorize a decision, extend a deadline, send a notice, or
+reverse an action. A service owner must define the contract and validate the tool-to-trace mapping.
+
+### Integrate the scorer in a service lab
+
 ```python
 from aau_harness import PublicValueContract, PublicValueTrace, score_public_value
 

@@ -264,6 +264,9 @@ def build_parser() -> argparse.ArgumentParser:
         help="inventory and diff agent capabilities, authority, egress, and evidence",
     )
 
+    sub.add_parser("public-value", add_help=False,
+                   help="assess and explain service obligations from supplied tool traces")
+
     forging = sub.add_parser("forge", help="turn a Studio brief into a runnable adaptation lab")
     forging.add_argument("brief", help="evaluation brief downloaded from AAU Studio")
     forging.add_argument("doctor_path", nargs="?", help="lab path when brief is 'doctor'")
@@ -322,6 +325,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_args = list(sys.argv[1:] if argv is None else argv)
+    if raw_args and raw_args[0] == "public-value":
+        from .public_value_review import main as public_value_main
+
+        return public_value_main(raw_args[1:])
     if raw_args and raw_args[0] == "submit":
         from .submission import main as submission_main
 

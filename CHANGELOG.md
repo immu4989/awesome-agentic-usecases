@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Public Value trace review** — added an offline CLI that explains failed service obligations,
+  separates missing, redundant, duplicate, and out-of-contract evidence requests, and distinguishes
+  prohibited attempts from executions. Strict inputs, recomputable reports, and synthetic pass/fail
+  examples support adoption without claiming authentic logs, legal compliance, or real-world benefit.
+
 - **Verified cross-release campaign comparison** — compare complete baseline and candidate
   campaigns without executing adapters. Matched workloads and recorded case orders are required;
   per-case output frequencies expose new failures, increased unsafe allows, and gained instability.
