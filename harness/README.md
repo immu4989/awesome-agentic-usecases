@@ -404,6 +404,24 @@ result object therefore cannot retroactively overwrite earlier observations. Cal
 must support deep copying; JSON-compatible evidence is the portable choice. Historical result
 files are not changed by these validation rules.
 
+### See which observations support a metric
+
+New JSON exports include `metric_coverage`, and Markdown reports show reporting-scenario and
+reporting-observation counts for every metric. `agg.metric_coverage()` also exposes the number
+of scenarios with every declared repeat reporting that metric. A metric observed in one of six
+runs is therefore not presented as if all six supplied evidence, even if its mean is 1.0.
+
+Means and bootstrap calculations are unchanged: each scenario contributes the mean over its
+available repeats, and intervals resample reporting scenarios. Omitted metrics are not silently
+replaced with zero. A Markdown warning identifies metrics missing from some repeats of a reporting
+scenario; investigate that absence before comparing results. Absence might mean a metric did not
+apply, but coverage alone cannot establish that, distinguish it from collection failure, or justify
+missing-at-random assumptions. Repeats are not additional independent scenarios.
+
+These counts describe supplied observations, not population representativeness, statistical power,
+or production reliability. Historical reports remain unchanged; regenerate them explicitly from
+their original evidence if new coverage annotations are needed.
+
 > **Every metric must be present on every scenario.** The runner aggregates by metric name
 > across all results; a metric emitted for only some scenarios will fail. For subgroup
 > analysis, emit `0.0` and record the subgroup in `detail`.

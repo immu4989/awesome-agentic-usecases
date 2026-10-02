@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Per-metric evidence coverage** — JSON and Markdown evaluation reports now expose the
+  scenarios and observations that actually report each metric, plus complete-repeat counts and
+  partial-repeat warnings. Optional metrics retain existing non-imputation and bootstrap semantics;
+  small or incomplete denominators can no longer hide behind the overall evaluation size.
+
 - **Evaluation observation integrity** — the repeated-run engine rejects duplicate/drifting
   scenario IDs, incorrect repeat indices, nonfinite measurements, and invalid workloads instead of
   silently changing aggregation units. Deep snapshots prevent reused callback objects from

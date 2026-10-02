@@ -165,3 +165,37 @@ def test_signed_unbounded_metrics_and_optional_metrics_remain_supported():
     def run_one(scenario, repeat):
         return ScenarioResult(scenario, repeat, {"difference": -5.0, "count": 12.0}, 0, 0.1, 0)
     assert run_eval(["one"], run_one, repeats=2).metric_means == {"count": 12.0, "difference": -5.0}
+
+
+def test_metric_coverage_distinguishes_subset_and_partial_repeat_support():
+    from aau_harness.report import render_report
+    def run_one(scenario, repeat):
+        metrics = {"always": 1.0}
+        if scenario == "one":
+            metrics["subset"] = 1.0
+            if repeat == 0:
+                metrics["partial"] = 1.0
+        return ScenarioResult(scenario, repeat, metrics, 0, 0.1, 0)
+    aggregate = run_eval(["one", "two"], run_one, repeats=3)
+    support = aggregate.metric_coverage()
+    assert support["always"] == {"reporting_scenarios": 2, "reporting_observations": 6,
+                                 "complete_repeat_scenarios": 2, "declared_scenarios": 2,
+                                 "declared_observations": 6}
+    assert support["subset"]["reporting_scenarios"] == support["subset"]["complete_repeat_scenarios"] == 1
+    assert support["subset"]["reporting_observations"] == 3
+    assert support["partial"]["complete_repeat_scenarios"] == 0
+    assert support["partial"]["reporting_observations"] == 1
+    assert aggregate.as_dict()["metric_coverage"] == support
+    assert set(aggregate.metric_means.values()) == {1.0}  # no implicit zero imputation
+    report = render_report(aggregate, "synthetic")
+    assert "| 1/2 | 1/6 |" in report
+    assert "Partial-repeat coverage: `partial`." in report
+    assert "`subset`" not in report
+
+
+def test_all_observation_coverage_has_no_partial_repeat_warning():
+    from aau_harness.report import render_report
+    aggregate = run_eval(["one"], lambda scenario, repeat:
+                         ScenarioResult(scenario, repeat, {"all": 0.0}, 0, 0.1, 0), repeats=2)
+    assert "Partial-repeat coverage:" not in render_report(aggregate, "synthetic")
+    assert aggregate.metric_coverage()["all"]["reporting_observations"] == 2

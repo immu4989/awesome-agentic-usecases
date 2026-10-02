@@ -57,6 +57,25 @@ class EvalAggregate:
     p50_latency_s: float
     results: list[ScenarioResult]
 
+    def metric_coverage(self) -> dict[str, dict[str, int]]:
+        """Describe reported metric availability, not applicability or independent sample size."""
+        coverage = {}
+        for name in sorted(self.metric_means):
+            rows = [row for row in self.results if name in row.metrics]
+            per_scenario = {row.scenario_id for row in rows}
+            complete = sum(
+                {row.repeat for row in rows if row.scenario_id == scenario_id} == set(range(self.n_repeats))
+                for scenario_id in per_scenario
+            )
+            coverage[name] = {
+                "reporting_scenarios": len(per_scenario),
+                "reporting_observations": len(rows),
+                "complete_repeat_scenarios": complete,
+                "declared_scenarios": self.n_scenarios,
+                "declared_observations": self.n_scenarios * self.n_repeats,
+            }
+        return coverage
+
     def as_dict(self) -> dict:
         from .provenance import snapshot
 
@@ -66,6 +85,7 @@ class EvalAggregate:
             "provenance": snapshot(),
             "n_scenarios": self.n_scenarios,
             "n_repeats": self.n_repeats,
+            "metric_coverage": self.metric_coverage(),
             "metric_means": {k: round(v, 4) for k, v in self.metric_means.items()},
             "metric_ci95": {
                 k: [round(lo, 4), round(hi, 4)] for k, (lo, hi) in self.metric_ci95.items()
