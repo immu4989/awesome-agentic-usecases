@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Native service-result review** — new shared Evidence Service evaluations emit the same
+  normalized public-value trace used for scoring. Offline assessment verifies complete declared
+  scenario-repeat coverage and recomputes per-observation service/record scores, retaining distinct
+  operational and closeout failures. Older missing traces, execution errors, and altered metrics
+  are rejected; aggregate statistics and production provenance are not certified.
+
 - **CI shared-test deduplication** — moved the full harness suite to one explicit catalog-job
   step instead of repeating it across all 71 lab jobs and focused catalog steps. Every lab retains
   its integration tests, two-seed scenario reproduction, and three-repeat mock evaluation. A layout

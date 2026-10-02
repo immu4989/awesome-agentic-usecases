@@ -50,6 +50,45 @@ lost rights, or false completion.
 
 ## Runtime input validation
 
+### Review recorded service evaluations
+
+New evaluations with the current repository harness include `detail.public_value_trace`,
+normalized from the same tool-session state used by the scorer. Its `submitted` flag comes from
+the agent run, not from inferred prose or a successful-looking outcome. To review a newly generated
+Evidence Service result file:
+
+```bash
+aau public-value assess-service-results path/to/eval_mock.json --out service-review.json
+aau public-value verify-service-results service-review.json path/to/eval_mock.json
+```
+
+Both commands work offline without running an adapter. Exit **0** means every supplied observation
+passes; **1** preserves observed service failures; **2** rejects incomplete or inconsistent input.
+Choose a fresh output path. Reports and inputs share the reviewer's 2 MB file limit; the declared
+scenario-count × repeat-count is bounded to 500 observations.
+
+The review requires exactly one observation for each scenario-repeat pair, zero-based repeat
+indices within the declared range, and an unchanged contract across repeats of each scenario.
+It recomputes each observation's public-value metrics, record fidelity, outcome accuracy, and
+`service_exact` instead of trusting stored scores. Per-case diagnostics retain separate failures
+of the operational trace and the final record. A correct action with an incorrect completion
+record cannot become a passing service observation. Execution errors are rejected as unreviewable
+measurements rather than scored as ordinary task failures.
+
+The report maps hashed observation IDs back to synthetic scenario IDs and repeat numbers. It
+does not copy prompts, reasoning, rejected payloads, or full tool payloads, but labels and scenario
+IDs can still be sensitive. Review before sharing. The source hash binds the supplied file's JSON
+values, not authenticated execution. Aggregate means, confidence intervals, costs, latency, model
+availability, and provenance are **not** verified by this command. Declared coverage is not proof
+of coverage of an external population or independently repeated execution.
+
+Older committed results lacking the explicit portable trace are intentionally rejected. Rerun
+them in a suitable synthetic environment if needed; do not invent missing submission evidence or
+retroactively rewrite historical measurements. This command applies to the shared Evidence Service
+format, not every evaluation format in the repository.
+
+### Validate tool inputs before effects
+
 The current repository harness enforces the input schemas declared by the shared fictional
 service tools before recording an execution. Required fields must be present, undeclared fields
 are rejected, enum values must be configured, evidence arrays must contain unique permitted

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
+from dataclasses import asdict
 
 import pytest
 
@@ -13,7 +15,12 @@ from aau_harness.evidence_service import (
     generate_service_scenarios,
     gold_contract,
     score_service_run,
+    service_public_value_trace,
+    evaluate_service,
 )
+from aau_harness.agent_bom import AgentBomError
+from aau_harness.service_result_review import review_service_results
+from aau_harness.catalog_cli import main
 
 
 CONFIG = {
@@ -178,3 +185,75 @@ def test_schema_valid_actions_still_measure_policy_errors_instead_of_filtering_t
     run = AgentRun(True, {"outcome": "claim_final_decision"}, 1, [])
     assert score_service_run(scenario, run, session)["rights_safety"] == 0
     assert not session.rejected_calls
+
+
+def service_results_fixture(wrong_record=False):
+    scenario = generate_service_scenarios(CONFIG)[0]
+    session = ServiceToolSession(CONFIG, scenario)
+    session("execute_service_action", action_payload(scenario))
+    run = AgentRun(True, {"outcome": "wrong" if wrong_record else scenario.contract().expected_terminal}, 1, [])
+    row = {"scenario_id": scenario.scenario_id, "repeat": 0,
+           "metrics": score_service_run(scenario, run, session), "detail": {
+               "contract": scenario.contract().as_dict(), "predicted": run.submission,
+               "public_value_trace": asdict(service_public_value_trace(run, session)), "error": None}}
+    return json.loads(json.dumps({"n_scenarios": 1, "n_repeats": 1, "results": [row]}))
+
+
+@pytest.mark.parametrize("wrong_record", [False, True])
+def test_service_review_keeps_record_fidelity_distinct_from_public_value(tmp_path, wrong_record):
+    source = service_results_fixture(wrong_record)
+    report = review_service_results(source)
+    assert report["public_value"]["status"] == "evidence_passed"
+    assert report["status"] == ("evidence_failed" if wrong_record else "evidence_passed")
+    assert len(report["record_findings"]) == int(wrong_record)
+    path, output = tmp_path / "eval.json", tmp_path / "review.json"
+    path.write_text(json.dumps(source))
+    args = ["public-value", "assess-service-results", str(path), "--out", str(output)]
+    assert main(args) == int(wrong_record)
+    assert json.loads(output.read_text()) == report
+    assert main(args) == 2
+    verify = ["public-value", "verify-service-results", str(output), str(path)]
+    assert main(verify) == int(wrong_record)
+    report["observations"] = []
+    output.write_text(json.dumps(report))
+    assert main(verify) == 2
+
+
+@pytest.mark.parametrize("change", ["old", "missing", "duplicate", "metrics", "error", "repeat", "scenarios", "changed-contract"])
+def test_service_review_rejects_incomplete_or_inconsistent_results(change):
+    source = service_results_fixture()
+    row = source["results"][0]
+    if change == "old":
+        del row["detail"]["public_value_trace"]
+    elif change == "missing":
+        source["results"] = []
+    elif change == "duplicate":
+        source["n_repeats"] = 2
+        source["results"].append(deepcopy(row))
+    elif change == "metrics":
+        row["metrics"]["service_exact"] = 0
+    elif change == "error":
+        row["detail"]["error"] = "provider unavailable"
+    elif change == "repeat":
+        row["repeat"] = True
+    elif change == "scenarios":
+        source["n_scenarios"] = 2
+    else:
+        source["n_repeats"] = 2
+        other = deepcopy(row)
+        other["repeat"] = 1
+        other["detail"]["contract"]["required_channel"] = "different"
+        source["results"].append(other)
+    with pytest.raises(AgentBomError):
+        review_service_results(source)
+
+
+def test_actual_mock_service_results_recompute_through_portable_review():
+    aggregate = evaluate_service(CONFIG, generate_service_scenarios(CONFIG, n=8),
+                                 lambda: ServiceMockBackend(CONFIG), repeats=2)
+    source = json.loads(json.dumps(aggregate.as_dict()))
+    report = review_service_results(source)
+    assert report["scenario_count"] == 8
+    assert len(report["observations"]) == 16
+    assert len(report["failed_observation_ids"]) == sum(row["metrics"]["service_exact"] == 0 for row in source["results"])
+    assert report["status"] == "evidence_failed"

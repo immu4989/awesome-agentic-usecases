@@ -577,16 +577,7 @@ def score_service_run(
     run: AgentRun,
     session: ServiceToolSession,
 ) -> dict[str, float]:
-    trace = PublicValueTrace(
-        terminal_events=tuple(session.terminal_events),
-        requested_evidence=tuple(session.requested_evidence),
-        delivery_channels=tuple(session.delivery_channels),
-        recourse_offered=session.recourse_offered,
-        deadline_preserved=session.deadline_preserved,
-        attempted_events=tuple(session.attempted_events),
-        executed_events=tuple(session.executed_events),
-        submitted=run.submitted,
-    )
+    trace = service_public_value_trace(run, session)
     metrics = score_public_value(scenario.contract(), trace)
     submission = run.submission or {}
     executed = session.terminal_events[0] if len(session.terminal_events) == 1 else None
@@ -602,6 +593,20 @@ def score_service_run(
         * metrics["outcome_accuracy"]
     )
     return metrics
+
+
+def service_public_value_trace(run: AgentRun, session: ServiceToolSession) -> PublicValueTrace:
+    """One normalization path for scoring and portable review, never inferred from prose."""
+    return PublicValueTrace(
+        terminal_events=tuple(session.terminal_events),
+        requested_evidence=tuple(session.requested_evidence),
+        delivery_channels=tuple(session.delivery_channels),
+        recourse_offered=session.recourse_offered,
+        deadline_preserved=session.deadline_preserved,
+        attempted_events=tuple(session.attempted_events),
+        executed_events=tuple(session.executed_events),
+        submitted=run.submitted,
+    )
 
 
 def evaluate_service(
@@ -646,6 +651,7 @@ def evaluate_service(
                 "archetype": scenario.archetype,
                 "contract": scenario.public_value_contract,
                 "predicted": {"outcome": submission.get("outcome")},
+                "public_value_trace": asdict(service_public_value_trace(run, session)),
                 "trace": {
                     "terminal_events": session.terminal_events,
                     "requested_evidence": session.requested_evidence,

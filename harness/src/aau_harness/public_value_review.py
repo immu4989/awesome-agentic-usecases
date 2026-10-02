@@ -150,6 +150,12 @@ def main(argv: list[str] | None = None) -> int:
     batch = sub.add_parser("assess-batch", help="assess every declared case with exact trace coverage")
     verify_batch = sub.add_parser("verify-batch", help="recompute a complete batch report offline")
     verify_batch.add_argument("report", type=Path)
+    service = sub.add_parser("assess-service-results", help="recompute current Evidence Service lab results")
+    service.add_argument("results", type=Path)
+    service.add_argument("--out", type=Path, required=True)
+    verify_service = sub.add_parser("verify-service-results", help="recompute a saved service-result review")
+    verify_service.add_argument("report", type=Path)
+    verify_service.add_argument("results", type=Path)
     for command in (batch, verify_batch):
         command.add_argument("suite", type=Path)
         command.add_argument("traces", type=Path)
@@ -161,7 +167,12 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         is_batch = args.command.endswith("batch")
-        report = (assess_public_value_batch(load_json(args.suite), load_json(args.traces)) if is_batch
+        is_service = args.command.endswith("service-results")
+        if is_service:
+            from .service_result_review import review_service_results
+            report = review_service_results(load_json(args.results))
+        else:
+            report = (assess_public_value_batch(load_json(args.suite), load_json(args.traces)) if is_batch
                   else assess_public_value(load_json(args.contract), load_json(args.trace)))
         if len(rendered(report)) > MAX_JSON_BYTES:
             raise AgentBomError("public-value report exceeds verification size limit; use smaller explicitly scoped batches")
@@ -169,7 +180,8 @@ def main(argv: list[str] | None = None) -> int:
             write_json(report, args.out)
         elif rendered(load_json(args.report)) != rendered(report):
             raise AgentBomError("public-value report does not recompute")
-        summary = (f"{report['failed_case_count']}/{report['case_count']} failed cases" if is_batch
+        summary = (f"{len(report['failed_observation_ids'])} failed service observations" if is_service else
+                   f"{report['failed_case_count']}/{report['case_count']} failed cases" if is_batch
                    else f"{len(report['findings'])} failed obligations")
         print(f"{report['status']}: {summary}")
         return 0 if report["status"] == "evidence_passed" else 1
