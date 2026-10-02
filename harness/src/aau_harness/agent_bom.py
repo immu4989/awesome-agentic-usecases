@@ -1700,12 +1700,19 @@ def build_parser() -> argparse.ArgumentParser:
     campaign.add_argument("--workspace", type=Path, default=Path("."))
     campaign.add_argument("--runs", type=int, default=3)
     campaign.add_argument("--order-seeds", type=int, nargs="+")
+    campaign.add_argument("--max-invocations", type=int)
     campaign.add_argument("--timeout", type=float, default=10.0)
     campaign.add_argument("--out", type=Path, required=True)
     verify_campaign = sub.add_parser("verify-authority-campaign", help="verify every campaign run and recompute repeatability offline")
     verify_campaign.add_argument("directory", type=Path)
     verify_campaign.add_argument("--adapter-artifact", type=Path, required=True)
     verify_campaign.add_argument("--workspace", type=Path, default=Path("."))
+    plan = sub.add_parser("plan-authority", help="preview synthetic workload without executing adapter code")
+    plan.add_argument("bom", type=Path)
+    plan.add_argument("--runs", type=int, default=1)
+    plan.add_argument("--timeout", type=float, default=10.0)
+    plan.add_argument("--max-invocations", type=int)
+    plan.add_argument("--out", type=Path, required=True)
     verify_check = sub.add_parser("verify-authority-check", help="recompute all saved staging check reports without execution")
     verify_check.add_argument("directory", type=Path)
     verify_check.add_argument("--adapter-artifact", type=Path, required=True)
@@ -1802,6 +1809,12 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     try:
         args = build_parser().parse_args(argv)
+        if args.command == "plan-authority":
+            from .authority_plan import plan_authority
+            plan = plan_authority(load_json(args.bom), args.runs, args.timeout, args.max_invocations)
+            write_json(plan, args.out)
+            print(f"wrote {args.out} ({plan['planned_adapter_invocations']} planned invocations; {plan['status']})")
+            return 0 if plan["status"] == "within_budget" else 1
         if args.command == "verify-authority-campaign":
             from .authority_campaign import verify_campaign
             report = verify_campaign(args.directory, args.adapter_artifact, args.workspace)
@@ -1811,7 +1824,7 @@ def main(argv: list[str] | None = None) -> int:
             from .authority_campaign import repeat_authority
             report = repeat_authority(load_json(args.bom), args.adapter_command,
                                       args.adapter_artifact, args.workspace, args.out, args.runs, args.timeout,
-                                      args.order_seeds)
+                                      args.order_seeds, args.max_invocations)
             print(f"wrote {args.out} ({report['receipt_count']} runs; {report['counts']['unstable']} unstable cases)")
             return 0 if report["status"] == "evidence_passed" else 1
         if args.command == "assess-repeatability":

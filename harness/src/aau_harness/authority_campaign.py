@@ -5,15 +5,20 @@ from pathlib import Path
 from .agent_bom import AgentBomError, generate_conformance_suite, load_json, ordered_authority_cases, rendered, write_json
 from .authority_check import check_authority, verify_check
 from .authority_repeatability import assess_repeatability
+from .authority_plan import plan_authority
 
 
 def repeat_authority(bom: dict, command: str, adapter: Path, workspace: Path,
                      out: Path, runs: int = 3, timeout: float = 10.0,
-                     order_seeds: list[int] | None = None) -> dict:
+                     order_seeds: list[int] | None = None,
+                     max_invocations: int | None = None) -> dict:
     if type(runs) is not int or not 2 <= runs <= 10:
         raise AgentBomError("repeated staging checks require 2 to 10 runs")
     if out.exists() or out.is_symlink():
         raise AgentBomError(f"refusing to overwrite: {out}")
+    plan = plan_authority(bom, runs, timeout, max_invocations)
+    if plan["status"] == "over_budget":
+        raise AgentBomError(f"campaign requires {plan['planned_adapter_invocations']} adapter invocations; budget is {max_invocations}")
     suite = generate_conformance_suite(bom)
     if order_seeds is not None:
         validate_schedule(order_seeds, runs, suite)

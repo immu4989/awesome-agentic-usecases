@@ -337,6 +337,26 @@ internal consistency check, not proof of independently witnessed execution or ca
 
 ### Collect repeated observations
 
+Preview the workload before running adapter code:
+
+```bash
+aau bom plan-authority inventory.json --runs 3 --timeout 10 \
+  --max-invocations 100 --out workload.json
+```
+
+The plan compiles the inventory-derived suite and reports case counts, clean/violation coverage,
+failure shapes, and total planned adapter invocations. It runs no adapter and needs no command,
+credentials, or endpoint. Exit 0 means within the requested invocation budget; exit 1 saves an
+over-budget plan; exit 2 means invalid input or output. Existing output files are not overwritten.
+Planning supports 1–10 runs; repeated campaigns still require 2–10.
+
+Pass the same optional `--max-invocations 100` to `repeat-authority` to enforce the cap against
+the inventory at execution time. An over-budget campaign exits 2 before executing any adapter
+or creating its output directory. Without the option, the previous run-count bounds apply.
+The cap counts runner invocations, **not** model API requests, retries, side effects, or dollars
+inside an adapter. Summed per-case timeout allowance is not a wall-clock deadline or runtime
+prediction. The plan and cap are not recorded as execution attestations in campaign receipts.
+
 Try the [equal-score instability experiment](REPEATABILITY_EXPERIMENT.md): an intentionally
 broken, stateful adapter proves the workflow can detect changing reasons behind unchanged scores.
 

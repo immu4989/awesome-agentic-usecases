@@ -10,6 +10,7 @@ from aau_harness.agent_bom import AgentBomError, generate_conformance_suite, loa
 from aau_harness.authority_starter import create_starter
 from aau_harness.authority_check import check_authority, verify_check
 from aau_harness.authority_campaign import repeat_authority, verify_campaign
+from aau_harness.authority_plan import plan_authority
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -271,3 +272,32 @@ def test_order_probe_exposes_position_dependence_hidden_by_fixed_repetition(tmp_
     assert all(receipt["metrics"] == receipts[0]["metrics"] for receipt in receipts)
     assert all(receipt["adapter_artifact"] == receipts[0]["adapter_artifact"] for receipt in receipts)
     assert all(receipt["metrics"]["exact_count"] == 0 for receipt in receipts)
+
+
+def test_workload_preview_and_budget_block_before_execution(tmp_path, monkeypatch):
+    import aau_harness.authority_campaign as campaign
+    bom = load_json(BOM)
+    cases = len(generate_conformance_suite(bom)["cases"])
+    plan = plan_authority(bom, runs=3, timeout=2, max_invocations=cases * 3)
+    assert plan["status"] == "within_budget"
+    assert plan["planned_adapter_invocations"] == cases * 3
+    assert plan["summed_case_timeout_allowance_seconds"] == cases * 6
+    assert sum(plan["cases_by_shape"].values()) == cases
+    assert plan["clean_cases_per_run"] + plan["violation_cases_per_run"] == cases
+    def never_run(*args, **kwargs):
+        raise AssertionError("over-budget plans must never execute")
+    monkeypatch.setattr(campaign, "check_authority", never_run)
+    out = tmp_path / "over-budget"
+    with pytest.raises(AgentBomError, match="requires.*invocations"):
+        repeat_authority(bom, "never execute", tmp_path / "missing.py", tmp_path, out,
+                         runs=3, max_invocations=cases * 3 - 1)
+    assert not out.exists()
+    report = tmp_path / "plan.json"
+    assert main(["plan-authority", str(BOM), "--runs", "3", "--max-invocations", "1",
+                 "--out", str(report)]) == 1
+    assert load_json(report)["status"] == "over_budget"
+    assert main(["plan-authority", str(BOM), "--out", str(tmp_path / "ready.json")]) == 0
+    for options in ({"runs": True}, {"runs": 11}, {"timeout": float("nan")},
+                    {"max_invocations": 0}, {"max_invocations": True}):
+        with pytest.raises(AgentBomError):
+            plan_authority(bom, **options)

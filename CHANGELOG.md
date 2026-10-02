@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **No-execution authority workload planning** — `aau bom plan-authority` previews case coverage
+  and adapter-call counts. Repeated campaigns accept an invocation cap that rejects oversized
+  workloads before code execution, with explicit distinctions from API costs and wall-clock limits.
+
 - **Staging authority CI Action** — added a repository-pinned, no-install Action that evaluates
   and re-verifies complete reports, preserves failing diagnostics, and emits an aggregate job
   summary. Caller-controlled uploads and subprocess tests support adoption without hiding failures.
