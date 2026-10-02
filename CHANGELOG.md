@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Public evidence audit view** — the hosted explorer links to a generated, script-free
+  file-by-file audit with source digests, original evaluation links, and exact interval differences.
+  CI checks it against the committed audit so website readers see the same disclosed limitations.
+
 - **Reproducible public-corpus audit** — audited 287 saved evaluations: 264 match current
   metric-summary recomputation and 23 retain disclosed historical differences. A hash-bound
   companion audit, affected-lab notices, and CI reproduction preserve original observations.

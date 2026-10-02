@@ -1,5 +1,8 @@
 # Recorded evaluation metric audit
 
+Browse the [public audit page](https://immu4989.github.io/awesome-agentic-usecases/evaluation-audit.html)
+for expandable file-level findings and original-source links, without scripts or external assets.
+
 The current harness recomputed metric summaries for **287 committed evaluation files**:
 **264 are internally consistent; 23 contain summary differences**. This audit checks saved
 observations, not live model behavior. It does not establish whether old scores or current
@@ -41,6 +44,7 @@ Source changes, new evaluation files, or changed findings require explicit revie
 
 ```bash
 python harness/tools/audit_repository_evals.py
+python harness/tools/render_metric_audit.py
 ```
 
 Review that diff; do not regenerate merely to silence a new inconsistency. The generator excludes

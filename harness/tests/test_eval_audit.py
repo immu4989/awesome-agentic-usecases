@@ -120,3 +120,22 @@ def test_corpus_audit_binds_files_and_excludes_unpublished_assets(tmp_path):
     second = module.audit_repository(tmp_path)
     assert first["files"][0]["file_sha256"] != second["files"][0]["file_sha256"]
     assert second["counts"] == {"consistent": 1}
+
+
+def test_public_audit_page_is_deterministic_escaped_and_script_free():
+    script = Path(__file__).resolve().parents[1] / "tools/render_metric_audit.py"
+    spec = importlib.util.spec_from_file_location("render_metric_audit", script)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    report = {"file_count": 1, "counts": {"inconsistent": 1}, "boundary": "<untrusted>",
+              "files": [{"path": 'test/<script>".json', "status": "inconsistent", "file_sha256": "a" * 64,
+                         "mismatches": [{"metric": "<script>", "field": "metric_ci95",
+                                         "recorded": None, "recomputed": [0.0, 1.0]}]}]}
+    page = module.render(report)
+    assert page == module.render(report)
+    assert "<script" not in page
+    assert "&lt;script&gt;" in page
+    assert "%3Cscript%3E%22.json" in page
+    assert "Content-Security-Policy" in page
+    assert "<caption>Stored and current-harness summaries</caption>" in page
+    assert page.count("<details>") == 1
