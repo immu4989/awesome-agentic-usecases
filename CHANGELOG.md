@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Controlled order-dependence experiment** — added a position-sensitive negative fixture and
+  four-run integration test showing that fixed-order repetition can hide changing per-case reasons
+  behind identical scores and entrypoint bytes. Separate fresh-state control and probe arms make
+  the experiment reproducible without claiming production applicability.
+
 - **Verifiable campaign order schedules** — repeated authority checks accept one explicit seed
   per run and record a versioned schedule. Offline campaign verification checks each recorded case
   sequence against its seed. Invalid schedules fail before execution; legacy fixed-order campaigns

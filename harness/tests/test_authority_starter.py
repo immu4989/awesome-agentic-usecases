@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from aau_harness.agent_bom import AgentBomError, load_json, main, run_conformance
+from aau_harness.agent_bom import AgentBomError, generate_conformance_suite, load_json, main, run_conformance
 from aau_harness.authority_starter import create_starter
 from aau_harness.authority_check import check_authority, verify_check
 from aau_harness.authority_campaign import repeat_authority, verify_campaign
@@ -245,3 +245,29 @@ def test_seed_schedule_is_recorded_and_verified_against_each_run(tmp_path):
             repeat_authority(load_json(BOM), "never execute", adapter, ROOT,
                              tmp_path / "invalid-schedule", 2, order_seeds=seeds)
     assert not (tmp_path / "invalid-schedule").exists()
+
+
+def test_order_probe_exposes_position_dependence_hidden_by_fixed_repetition(tmp_path):
+    bom = load_json(BOM)
+    period = len(generate_conformance_suite(bom)["cases"])
+    adapter = ROOT / "agent-capability-bom/examples/order_sensitive_adapter.py"
+    reports = []
+    receipts = []
+    # Separate fresh databases keep the initial state equal across the two arms.
+    for name, seeds in (("control", [7, 7]), ("probe", [7, 19])):
+        state = tmp_path / f"{name}.sqlite"
+        out = tmp_path / name
+        command = shlex.join([sys.executable, str(adapter), str(state), str(period)])
+        report = repeat_authority(bom, command, adapter, ROOT, out, 2, order_seeds=seeds)
+        assert report["status"] == "evidence_failed"
+        reports.append(report)
+        receipts.extend(load_json(out / f"run-{i:03d}/receipt.json") for i in (1, 2))
+        assert verify_campaign(out, adapter, ROOT) == report
+        with sqlite3.connect(state) as connection:
+            assert connection.execute("SELECT count FROM position WHERE id = 1").fetchone()[0] == 2 * period
+    assert reports[0]["counts"]["unstable"] == 0
+    assert reports[0]["counts"]["stable_failure"] == period
+    assert reports[1]["counts"]["unstable"] > 0
+    assert all(receipt["metrics"] == receipts[0]["metrics"] for receipt in receipts)
+    assert all(receipt["adapter_artifact"] == receipts[0]["adapter_artifact"] for receipt in receipts)
+    assert all(receipt["metrics"]["exact_count"] == 0 for receipt in receipts)

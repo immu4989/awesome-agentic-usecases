@@ -57,4 +57,50 @@ The database contains digests, not raw inputs; digests are not a privacy guarant
 inputs and a disposable database, keep it outside the campaign directory, and review files before
 sharing. The fixture writes only to the explicitly named database and needs no network or API key.
 
+## Controlled extension: stable order can hide position dependence
+
+The separate `examples/order_sensitive_adapter.py` fixture assigns an incorrect reason by
+request position modulo a supplied cycle length. It retains only a counter in SQLite. It never
+reads the suite, expected answers, or case IDs to choose its output. Both fixtures always block:
+these are engineered reason-code failures, not realistic authorization implementations.
+
+Run this from the repository root in a POSIX shell, with the current harness installed:
+
+```bash
+mkdir authority-order-demo
+aau bom generate-conformance agent-capability-bom/examples/candidate.json \
+  --out authority-order-demo/suite.json
+case_count=$(python -c 'import json; print(len(json.load(open("authority-order-demo/suite.json"))["cases"]))')
+
+aau bom repeat-authority agent-capability-bom/examples/candidate.json \
+  --command "python agent-capability-bom/examples/order_sensitive_adapter.py authority-order-demo/control.sqlite $case_count" \
+  --adapter-artifact agent-capability-bom/examples/order_sensitive_adapter.py --workspace . \
+  --runs 2 --order-seeds 7 7 --out authority-order-demo/control
+
+aau bom repeat-authority agent-capability-bom/examples/candidate.json \
+  --command "python agent-capability-bom/examples/order_sensitive_adapter.py authority-order-demo/probe.sqlite $case_count" \
+  --adapter-artifact agent-capability-bom/examples/order_sensitive_adapter.py --workspace . \
+  --runs 2 --order-seeds 7 19 --out authority-order-demo/probe
+```
+
+Run the two campaign commands separately: **both intentionally exit 1**, so a shell configured
+to stop on errors would stop after the first. Each arm uses a different fresh database to start
+from the same counter value. Do not reuse these database paths for a fresh replication.
+
+The integration test runs all four evaluations through real subprocesses and checks:
+
+| Measurement | Control: same order twice | Probe: different orders |
+|---|---|---|
+| Case-level consistency | Stable failures | At least one unstable case |
+| Aggregate exact score | Zero | Zero |
+| Adapter entrypoint bytes | Same across all four runs | Same across all four runs |
+| Starting counter | Fresh database | Separate fresh database |
+
+Offline verification succeeds with failed-evidence status for both arms and does not increment
+their counters. This shows that fixed-order repetition can miss this particular engineered
+position dependence. It does not show that real systems have this failure or that seeded ordering
+isolates every source of variation. The cycle length and database are external configuration,
+not bound by the adapter entrypoint hash; retain these commands and the repository revision with
+the experiment. See the [seed-schedule verification instructions](README.md#probe-case-order-dependence).
+
 Return to [staging onboarding](STAGING_QUICKSTART.md) or the [command guide](README.md).
