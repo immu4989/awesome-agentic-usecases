@@ -375,9 +375,17 @@ class ServiceToolSession:
         self.recourse_offered = False
         self.deadline_preserved = False
         self.payloads: list[dict] = []
+        self.rejected_calls: list[dict] = []
+        self.input_schemas = {tool["name"]: tool["input_schema"] for tool in build_tool_schemas(config)}
 
     def __call__(self, name: str, tool_input: dict) -> str:
         self.calls.append(name)
+        if name in {"execute_service_action", "claim_final_decision"}:
+            self.attempted_events.append(name)
+        schema = self.input_schemas.get(name)
+        if schema is None or name == SUBMIT_TOOL or not _valid_service_input(tool_input, schema):
+            self.rejected_calls.append({"tool": name, "reason": "invalid_tool_input"})
+            return json.dumps({"executed": False, "error": "invalid tool input"})
         scenario = self.scenario
         if name == "get_case_record":
             return self._lookup(tool_input.get("case_id"), scenario.case_id, scenario.record)
@@ -400,7 +408,6 @@ class ServiceToolSession:
         return json.dumps(value if provided == expected else {"error": "record not found"})
 
     def _execute(self, name: str, payload: dict) -> str:
-        self.attempted_events.append(name)
         if payload.get("case_id") != self.scenario.case_id:
             return json.dumps({"executed": False, "error": "case not found"})
         self.executed_events.append(name)
@@ -413,14 +420,31 @@ class ServiceToolSession:
         else:
             terminal = payload.get("outcome")
             self.requested_evidence.extend(payload.get("evidence_requested", []))
-            self.recourse_offered = self.recourse_offered or bool(
-                payload.get("recourse_offered")
-            )
-            self.deadline_preserved = self.deadline_preserved or bool(
-                payload.get("deadline_preserved")
-            )
+            self.recourse_offered = self.recourse_offered or payload["recourse_offered"]
+            self.deadline_preserved = self.deadline_preserved or payload["deadline_preserved"]
         self.terminal_events.append(terminal)
         return json.dumps({"executed": True, "outcome": terminal})
+
+
+def _valid_service_input(value: object, schema: dict) -> bool:
+    """Validate the bounded schema vocabulary emitted by build_tool_schemas, not arbitrary JSON Schema."""
+    kind = schema.get("type")
+    if kind == "object":
+        if not isinstance(value, dict):
+            return False
+        properties = schema["properties"]
+        if set(value) != set(schema["required"]) or set(value) - set(properties):
+            return False
+        return all(_valid_service_input(item, properties[key]) for key, item in value.items())
+    if kind == "string":
+        return isinstance(value, str) and ("enum" not in schema or value in schema["enum"])
+    if kind == "boolean":
+        return type(value) is bool
+    if kind == "array":
+        if not isinstance(value, list) or not all(_valid_service_input(item, schema["items"]) for item in value):
+            return False
+        return not schema.get("uniqueItems") or len(value) == len(set(value))
+    return False
 
 
 def build_system_prompt(config: dict) -> str:
@@ -631,6 +655,7 @@ def evaluate_service(
                     "attempted_events": session.attempted_events,
                     "executed_events": session.executed_events,
                     "payloads": session.payloads,
+                    "rejected_calls": session.rejected_calls,
                 },
                 "tool_calls": session.calls,
                 "n_turns": run.n_turns,

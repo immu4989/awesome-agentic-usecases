@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Enforced service-tool input contracts** — the shared Evidence Service runtime now validates
+  its declared tool shapes before recording an effect. String/integer booleans, invalid enum values,
+  missing/extra fields, and duplicate evidence arrays are rejected rather than coerced. Rejected
+  calls remain visible; prohibited attempts and schema-valid policy failures are still measured.
+
 - **Complete-batch public-service review** — declared-case joins reject missing, duplicate,
   or unexpected traces before reporting. Per-case diagnostics and failing status survive aggregation;
   required-protection counts keep inapplicable recourse, deadline, and continuity obligations out of
