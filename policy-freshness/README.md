@@ -10,6 +10,34 @@ stable documents or a versioned visible-text fingerprint of dynamic HTML pages. 
 unreachable source, elapsed review date, or declared implementation/revision mismatch opens one
 consolidated maintainer-review issue.
 
+The issue now reconciles **changed findings**, rather than stopping when an open issue already
+exists. This closes a real monitoring gap: an initial unreachable-source notice could previously
+prevent later source changes or revision-migration findings from appearing in the same issue.
+
+Only a marked automated section is replaced. Human text outside that section is preserved, and
+an older unmarked notice is retained in full beneath the new section. The updater includes both
+source-freshness and standards-compatibility findings; it checks their report hashes, finding
+counts, shared registry/date, and rendered issue text before publishing. These checks establish
+internal consistency, not authenticity or policy meaning.
+
+Identical findings do not trigger repeated edits merely because the scan date or report hash
+changed. The displayed date therefore belongs to the **latest changed finding**, not a heartbeat
+claim that every later scan ran. Exact scan reports remain workflow artifacts, including when
+issue reconciliation fails. Changes in source content, failure status, affected paths, registry
+fingerprint, or compatibility evidence can update the notice.
+
+A later all-clear scan updates an existing notice but **never closes the issue** or marks human
+review complete. Owners must inspect earlier findings, retained notes, and scan artifacts before
+deciding whether any policy, baseline, implementation, or evidence update is warranted. No source
+baseline or compatibility binding is changed by this notifier.
+
+The workflow serializes its own runs. Duplicate review issues, malformed managed markers,
+oversized bodies, and a detected intervening edit/closure fail closed without truncating notes or
+choosing an arbitrary issue. A final read detects edits made since listing; this is a best-effort
+race check, not an atomic lock against simultaneous human/GitHub edits. Keep owner notes outside
+the marked section. The updater uses argument arrays and stdin for bodies, never shell-evaluated
+issue content, and never posts repetitive comments.
+
 ```bash
 # Structural and owner-path verification: offline, deterministic
 python3 policy-freshness/aau_freshness.py validate policy-freshness/sources.json --root .
