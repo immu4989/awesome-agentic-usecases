@@ -27,7 +27,42 @@ def archive(payloads: dict[str, bytes]) -> bytes:
     return output.getvalue()
 
 
-def render_index(reports: dict) -> str:
+def cohort_story(reports: dict) -> str:
+    cards = []
+    for name, label in (("cohort-regressed", "Aggregate gain · assisted channel regresses"),
+                        ("cohort-repaired", "Repaired twin · assisted channel preserved")):
+        report = reports[name]
+        comparisons = [("Overall", report["comparisons"][0])] + [
+            (group["cohort_id"].capitalize(), group["comparisons"][0]) for group in report["cohort_reviews"]]
+        rows = []
+        for scope, comparison in comparisons:
+            before = statistics.fmean(row["baseline_mean"] for row in comparison["scenarios"])
+            after = statistics.fmean(row["candidate_mean"] for row in comparison["scenarios"])
+            rows.append(f'<tr><th scope="row">{escape(scope)}<br><small>{comparison["scenario_count"]} scenario(s)</small></th>'
+                        f'<td>{before:.0%}</td><td>{after:.0%}</td></tr>')
+        status = "Constraints met" if report["status"] == "constraints_met" else "Constraints not met"
+        cards.append(f'<article><p class="kicker">{label}</p><h3>{status}</h3>'
+                     '<table><caption>Completion by declared group</caption><thead><tr><th scope="col">Scope</th>'
+                     '<th scope="col">Baseline</th><th scope="col">Candidate</th></tr></thead>'
+                     f'<tbody>{"".join(rows)}</tbody></table><p>{len(report["failed_constraints"])} failed constraints. '
+                     'Group gains do not compensate for another group’s failed constraint.</p>'
+                     f'<a class="button" href="{name}/review.html">Inspect the cohort review</a>'
+                     f'<a class="download" href="{name}.zip" download>Download the six-file pack ↓</a></article>')
+    return ('<section id="cohort-story" class="cohort-story"><p class="kicker">A second failure shape · declared cohorts</p>'
+            '<h2>A stronger average.<br>A service channel left behind.</h2>'
+            '<p>The next synthetic candidate completes more scenarios overall, yet stops completing the assisted-service case. '
+            'Its global constraints pass. The explicit assisted-group limits fail. The repaired twin preserves that channel.</p>'
+            f'<div class="twins">{"".join(cards)}</div>'
+            '<p class="notice">These are deliberately tiny, constructed groups—not measured people or service outcomes. '
+            'A one-scenario cohort has a degenerate interval; it cannot establish population performance or fairness. '
+            'Membership and limits are supplied assumptions, not independently verified labels.</p>'
+            '<p>The regressed twin exits <strong>1</strong> when verified; the repaired twin exits <strong>0</strong>. '
+            'Both packs retain all cases, repeated observations, declared groups, limits, and scoped findings. '
+            '<a href="https://github.com/immu4989/awesome-agentic-usecases/blob/main/harness/README.md#catch-regressions-concentrated-in-a-declared-cohort">'
+            'Adapt a cohort policy for your own independently reviewed cases.</a></p></section>')
+
+
+def render_index(reports: dict, cohorts: dict) -> str:
     cards = []
     for name, label in (("legitimate", "Candidate A · obligations preserved"), ("unsafe", "Candidate B · authorization missed")):
         report = reports[name]
@@ -64,6 +99,7 @@ th,td{text-align:left;border-bottom:1px solid #dce2e4;padding:12px 8px}thead th{
 .button{display:inline-block;padding:9px 15px;border:1px solid #224c60;border-radius:5px;font-weight:600;text-decoration:none}
 .download{display:block;margin-top:18px;font-size:.95rem}section{margin:48px 0;max-width:880px}pre{overflow-x:auto;background:#202d35;color:#f4f6f7;padding:24px;border-radius:8px;line-height:1.7}
 code{font-size:.9rem}li{margin:10px 0}footer{border-top:1px solid #cbd4d7;padding:24px 0;color:#52636b}
+.cohort-story{max-width:none;border-top:1px solid #cbd4d7;padding-top:32px}.cohort-story h3{font-size:1.4rem;line-height:1.2}small{font-weight:400;color:#52636b}
 @media(max-width:700px){.twins{grid-template-columns:1fr}header{padding-top:32px}article{padding:20px}nav{flex-wrap:wrap}}
 @media print{body{background:white}pre{white-space:pre-wrap}.button{border:none;padding:0}}
 </style></head><body><nav><a href="../index.html">← Explore the repository</a>
@@ -75,7 +111,7 @@ Both candidates improve completion from 50% to 100%. Candidate B skips authoriza
 The review keeps that failure visible instead of trading it against a better headline score.</p>
 <p class="notice">These numbers are constructed fixtures, not measured model or government-service performance.
 No person, agency, provider, or real transaction is involved. Cost and latency fields in the downloads are placeholders.</p></header>
-<div class="twins">''' + "".join(cards) + '''</div>
+<div class="twins">''' + "".join(cards) + '</div>' + cohort_story(cohorts) + '''
 <section><h2>Inspect it. Download it. Recompute it.</h2>
 <ol><li>Read either review in your browser. Expand the scenario details to see what changed.</li>
 <li>Download its pack and extract all six files into one folder.</li>
@@ -112,7 +148,17 @@ def build_assets() -> dict[str, bytes]:
         reports[name] = report
         assets.update({f"{name}/{filename}": value for filename, value in payloads.items()})
         assets[f"{name}.zip"] = archive(payloads)
-    assets["index.html"] = render_index(reports).encode("utf-8")
+    spec = importlib.util.spec_from_file_location("public_cohort_demo", ROOT / "harness/examples/evaluation-review/cohorts.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    policy, baseline, regressed, repaired = module.demo_inputs()
+    cohorts = {}
+    for name, candidate in (("cohort-regressed", regressed), ("cohort-repaired", repaired)):
+        report, payloads = pack_payloads(policy, baseline, candidate)
+        cohorts[name] = report
+        assets.update({f"{name}/{filename}": value for filename, value in payloads.items()})
+        assets[f"{name}.zip"] = archive(payloads)
+    assets["index.html"] = render_index(reports, cohorts).encode("utf-8")
     return assets
 
 
@@ -130,7 +176,7 @@ def main():
             target = TARGET / name
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(payload)
-    print("Public synthetic evaluation twins reproduce: 15 files, two complete packs.")
+    print(f"Public synthetic evaluation twins reproduce: {len(assets)} files, four complete packs.")
 
 
 if __name__ == "__main__":

@@ -21,8 +21,9 @@ def test_public_assets_are_deterministic_and_archives_match_complete_verifiable_
     module = generator()
     assets = module.build_assets()
     assert assets == module.build_assets()
-    assert len(assets) == 15
-    for name, expected in (("legitimate", "constraints_met"), ("unsafe", "constraints_not_met")):
+    assert len(assets) == 29
+    for name, expected in (("legitimate", "constraints_met"), ("unsafe", "constraints_not_met"),
+                           ("cohort-regressed", "constraints_not_met"), ("cohort-repaired", "constraints_met")):
         directory = tmp_path / name
         directory.mkdir()
         with zipfile.ZipFile(BytesIO(assets[f"{name}.zip"])) as bundle:
@@ -38,7 +39,8 @@ def test_public_assets_are_deterministic_and_archives_match_complete_verifiable_
             source = json.loads(assets[f"{name}/{filename}"])
             assert source["provenance"]["evidence_kind"] == "synthetic_fixture"
             assert "placeholders" in source["provenance"]["measurement_boundary"]
-            assert {row["scenario_id"] for row in source["results"]} == {"routine", "needs-authorization"}
+            expected_ids = {"routine-1", "routine-2", "routine-3", "assisted"} if name.startswith("cohort-") else {"routine", "needs-authorization"}
+            assert {row["scenario_id"] for row in source["results"]} == expected_ids
 
 
 def test_public_page_has_honest_boundaries_complete_paths_and_no_scripts():
@@ -49,13 +51,26 @@ def test_public_page_has_honest_boundaries_complete_paths_and_no_scripts():
     assert "constructed fixtures" in page
     assert "not measured model" in page
     assert "unsaf" not in page.split("<h1>")[1].split("</h1>")[0]
-    for name in ("legitimate", "unsafe"):
+    for name in ("legitimate", "unsafe", "cohort-regressed", "cohort-repaired"):
         assert f'href="{name}/review.html"' in page
         assert f'href="{name}.zip" download' in page
     assert "75%" in page
     assert "100%" in page
     assert "exits <strong>1</strong>" in page
     assert "inspect sensitive information before sharing" in page.lower()
+    assert 'id="cohort-story"' in page
+    assert "degenerate interval" in page
+
+
+def test_public_cohort_story_reports_real_fixture_relationship_not_a_marketing_claim():
+    assets = generator().build_assets()
+    report = json.loads(assets["cohort-regressed/review.json"])
+    assert report["comparisons"][0]["mean_delta"] == 0.5
+    assert all(check["passed"] for check in report["metric_checks"][0]["checks"])
+    assert {failure["cohort_id"] for failure in report["failed_constraints"]} == {"assisted"}
+    assisted = next(group for group in report["cohort_reviews"] if group["cohort_id"] == "assisted")
+    assert assisted["comparisons"][0]["mean_delta"] == -1
+    assert json.loads(assets["cohort-repaired/review.json"])["status"] == "constraints_met"
 
 
 def test_committed_public_snapshot_matches_current_generator():
