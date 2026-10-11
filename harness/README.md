@@ -422,6 +422,60 @@ These counts describe supplied observations, not population representativeness, 
 or production reliability. Historical reports remain unchanged; regenerate them explicitly from
 their original evidence if new coverage annotations are needed.
 
+### Import recorded scores from your existing evaluation system
+
+You do not need to rerun an agent through AAU to use its metric audit, paired comparisons,
+multi-metric/cohort policies, and offline reviewer packs. The current repository harness adds
+`aau import-eval`: a standard-library-only, offline importer for **already scored observations**.
+It executes no model, evaluator, adapter, network request, or scoring code. Install the repository
+harness with `python -m pip install -e harness`; do not assume an older PyPI release has this command.
+
+Try the committed synthetic fixture (choose unused output paths):
+
+```bash
+aau import-eval harness/examples/evaluation-review/recorded-observations.json \
+  --out /tmp/imported-evaluation.json
+aau import-eval harness/examples/evaluation-review/recorded-observations.json \
+  --verify /tmp/imported-evaluation.json
+aau audit-eval /tmp/imported-evaluation.json --out /tmp/imported-audit.json
+```
+
+Map your own export explicitly to the fixture's small JSON contract. This is a neutral interchange
+format, not an automatic parser for arbitrary framework exports or a conversion of AAU public
+aggregate receipts back into observations. Required fields:
+
+| Field | Meaning |
+|---|---|
+| `format_version` | Exactly `aau-recorded-observations/1.0` |
+| `source_label` | Your nonblank description, at most 200 characters; not authenticated |
+| `scenario_ids` | The complete declared census, 1–500 unique nonblank IDs |
+| `n_repeats` | Positive integer; total observations cannot exceed 10,000 |
+| `observations` | Exactly one row per scenario/repeat; each row has only `scenario_id`, zero-based `repeat`, and `metrics` |
+| `evaluation_context` | Optional existing context fingerprint object covering exactly the census |
+
+Metric values must be finite numbers, not booleans or numeric strings. At most 100 metric names
+are accepted and at least one metric must be recorded. Duplicate observations, missing repeats,
+unknown cases, unsupported fields, nonfinite aggregates, and files over 2 MB fail closed. The
+importer does not infer scores from text or treat provider errors as task failures: distinguish
+those in your original collection process. Declaring a smaller census can still conceal missing
+cases; independent reviewers must approve the expected scenario set.
+
+Summaries use the same per-scenario repeat averages and scenario bootstrap as AAU's metric audit.
+Missing optional metrics stay absent, with explicit coverage; they are never filled with zero.
+Review policies still require every selected metric in every observation. No cost, latency, API
+call counts, timestamp, or execution provenance is invented. The export is labeled
+`imported_unverified_observations` and includes a canonical-JSON source hash; this is not a hash of
+the original file bytes or a signature. Keep the original recording for `--verify`, which detects
+altered observations, summaries, context, or provenance. Exit 0 means normalization/verification
+succeeded, not good performance; exit 2 means invalid input or a failed verification.
+
+An optional context is copied and validated, never synthesized. Without it, comparisons explicitly
+report unavailable context and the pinned-input evaluation Action refuses the evidence. Matching
+supplied fingerprints do not establish authenticity. Do not graft today's code hashes onto old
+observations whose collection context is unknown. Imported IDs, labels, and scores remain visible;
+this is not anonymization or a public-sharing approval. Existing source files and output paths are
+never overwritten.
+
 ### Audit a saved evaluation without rerunning a model
 
 With the current repository harness:

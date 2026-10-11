@@ -264,6 +264,8 @@ def build_parser() -> argparse.ArgumentParser:
         help="inventory and diff agent capabilities, authority, egress, and evidence",
     )
 
+    sub.add_parser("import-eval", add_help=False,
+                   help="normalize recorded metric observations without executing an evaluator")
     sub.add_parser("audit-eval", add_help=False,
                    help="recompute saved evaluation metric summaries without model calls")
     sub.add_parser("compare-evals", add_help=False,
@@ -333,6 +335,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_args = list(sys.argv[1:] if argv is None else argv)
+    if raw_args and raw_args[0] == "import-eval":
+        from .eval_import import main as import_main
+
+        return import_main(raw_args[1:])
     if raw_args and raw_args[0] == "evaluation-pack":
         from .eval_pack import main as pack_main
 

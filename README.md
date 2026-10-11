@@ -51,6 +51,7 @@ and observed failure cards with a direct path to reproduction. Start with
 
 | I already have… | Start here | Leave with… |
 |---|---|---|
+| Recorded scores from my existing evaluation system | [Offline observation importer](harness/README.md#import-recorded-scores-from-your-existing-evaluation-system) | Auditable summaries and comparison-ready evidence without rerunning an agent or inventing runtime measurements |
 | Two saved evaluations and non-negotiable service obligations | [Multi-metric evaluation review](harness/README.md#review-several-metrics-without-trading-away-obligations) | Paired scenario comparisons, per-observation limits, explicit failed constraints, and offline verification |
 | Saved evaluation scores that need a reproducibility check | [Offline metric audit](harness/README.md#audit-a-saved-evaluation-without-rerunning-a-model) | Recomputed averages, scenario-bootstrap intervals, coverage counts, and exact mismatches without model calls |
 | A service trace that completed the task but may have burdened the person | [Public Value trace review](PUBLIC_VALUE_CONTRACT.md#assess-a-trace-without-writing-python) | Offline obligation diagnostics for paperwork, accessibility, recourse, deadlines, continuity, and prohibited actions |

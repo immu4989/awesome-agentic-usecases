@@ -62,6 +62,28 @@ def test_action_enforces_cohort_policy_and_exports_verifiable_pack(tmp_path, can
         assert {failure["cohort_id"] for failure in report["failed_constraints"]} == {"assisted"}
 
 
+@pytest.mark.parametrize("include_context,code", [(True, 0), (False, 2)])
+def test_imported_observations_require_explicit_context_in_action(tmp_path, include_context, code):
+    from aau_harness.eval_import import import_observations
+
+    workspace, env = setup(tmp_path)
+    for name in ("baseline", "legitimate"):
+        path = workspace / f"{name}.json"
+        original = json.loads(path.read_text())
+        source = {"format_version": "aau-recorded-observations/1.0", "source_label": "synthetic import",
+                  "scenario_ids": sorted({row["scenario_id"] for row in original["results"]}),
+                  "n_repeats": original["n_repeats"],
+                  "observations": [{key: row[key] for key in ("scenario_id", "repeat", "metrics")}
+                                   for row in original["results"]]}
+        if include_context:
+            source["evaluation_context"] = original["evaluation_context"]
+        path.write_text(json.dumps(import_observations(source)))
+    env["AAU_EVAL_BASELINE_SHA256"] = hashlib.sha256((workspace / "baseline.json").read_bytes()).hexdigest()
+    result = run(env)
+    assert result.returncode == code, result.stderr
+    assert (workspace / "review pack").exists() == include_context
+
+
 @pytest.mark.parametrize("source", ["policy", "baseline"])
 def test_approved_source_byte_change_refused_before_output(tmp_path, source):
     workspace, env = setup(tmp_path)
