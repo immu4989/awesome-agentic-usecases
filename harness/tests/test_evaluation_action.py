@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[2]
 DRIVER = ROOT / ".github/actions/aau-evaluation-review/run.py"
 
 
-def setup(tmp_path, candidate="legitimate"):
-    script = ROOT / "harness/examples/evaluation-review/demo.py"
+def setup(tmp_path, candidate="legitimate", demo="demo.py"):
+    script = ROOT / "harness/examples/evaluation-review" / demo
     spec = importlib.util.spec_from_file_location("action_eval_demo", script)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -44,6 +44,22 @@ def test_action_runs_offline_and_preserves_both_review_outcomes(tmp_path, candid
     assert "needs-authorization" not in summary
     assert "inspect before uploading" in summary
     assert run(env).returncode == 2
+
+
+@pytest.mark.parametrize("candidate,code", [("regressed", 1), ("repaired", 0)])
+def test_action_enforces_cohort_policy_and_exports_verifiable_pack(tmp_path, candidate, code):
+    from aau_harness.eval_pack import verify_pack
+
+    workspace, env = setup(tmp_path, candidate, demo="cohorts.py")
+    result = run(env)
+    assert result.returncode == code, result.stderr
+    report = verify_pack(workspace / "review pack")
+    assert report["report_version"] == "aau-evaluation-policy-review/1.1"
+    assert report["status"] == ("constraints_met" if code == 0 else "constraints_not_met")
+    assert {group["cohort_id"] for group in report["cohort_reviews"]} == {"routine", "assisted"}
+    if code:
+        assert all(check["passed"] for check in report["metric_checks"][0]["checks"])
+        assert {failure["cohort_id"] for failure in report["failed_constraints"]} == {"assisted"}
 
 
 @pytest.mark.parametrize("source", ["policy", "baseline"])

@@ -51,6 +51,13 @@ context fails closed here; use the descriptive CLI for separately reviewed legac
 Fingerprint equality does not prove execution, dependency completeness, or authentic measurements.
 Synthetic fixtures and freely chosen limits do not establish production suitability.
 
+For service-channel or workflow-specific limits, approve a
+[version-1.1 cohort policy](../../../harness/README.md#catch-regressions-concentrated-in-a-declared-cohort).
+It declares group membership and constraints explicitly. The Action checks every global and cohort
+constraint; a global improvement cannot override a failed group constraint. Policy approval must
+include the memberships and limits, not just the metric names. These checks do not authenticate
+group labels, infer sensitive attributes, or certify fairness. Version-1.0 policies remain supported.
+
 ## Results and sharing
 
 - Exit **0**: approved pins and context matched, all supplied constraints met, pack verified.

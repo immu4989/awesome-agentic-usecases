@@ -612,6 +612,50 @@ Constraint checks use observed point estimates, not a statistical noninferiority
 intervals remain descriptive and uncorrected for multiple comparisons. Passing cannot establish
 production safety, representativeness, real-world benefit, or deployment approval.
 
+### Catch regressions concentrated in a declared cohort
+
+Policy version **`aau-evaluation-review-policy/1.1`** adds explicit `cohorts` alongside the existing
+global rules. Use it when an overall gain could conceal a regression in a service channel, workflow
+variant, or other deliberately selected case group. It does not infer personal or protected
+attributes, decide which groups matter, or certify fairness.
+
+Run the synthetic channel-regression twins in a new directory:
+
+```bash
+python harness/examples/evaluation-review/cohorts.py --out /tmp/aau-cohort-demo
+aau evaluation-pack verify /tmp/aau-cohort-demo/regressed-pack
+aau evaluation-pack verify /tmp/aau-cohort-demo/repaired-pack
+```
+
+The first verification exits **1**, the second **0**. The candidate improves overall completion
+from 25% to 75%, within the illustrative global policy's regression budget, but its assisted-service
+case falls from 100% to 0%. The declared cohort limits catch that deterioration. The repaired twin
+preserves assisted completion as well. These are constructed fixtures, not measurements of people,
+providers, accessibility outcomes, or real service quality.
+
+Every cohort has three fields: a unique `cohort_id`, explicit `scenario_ids`, and `metrics` containing
+the same five-field rules used globally. Cohort metrics must already be selected globally and use
+the same preferred direction; their limits can differ. There may be 1–20 cohorts. They must collectively
+cover every declared scenario at least once and cannot include unknown or duplicate member IDs.
+Overlapping cohorts are allowed and disclosed: each is reviewed separately, without counting those
+members again in the global average. A missing required observation still invalidates the review.
+
+All global and cohort constraints must hold. No global gain or gain in another group compensates
+for a failed cohort constraint. The report records each failed cohort/metric/constraint, complete
+membership, scoped paired deltas and intervals, and individual observations outside their limits.
+The offline HTML includes the same scoped findings and uncertainty warnings. The pinned-input
+GitHub Action supports these policies without new permissions or uploads.
+
+Declare and independently review membership and thresholds **before** examining candidate results.
+A policy hash does not prove that happened or that labels accurately represent users. Use minimal,
+non-sensitive group names; the exported policy includes all declared memberships. Tiny cohorts
+produce weak or degenerate uncertainty estimates, and intervals are not adjusted for multiple
+comparisons. Constraint checks are on observed point estimates, not a statistical fairness or
+noninferiority test. This cannot establish performance for unmeasured populations.
+
+Version-1.0 policies retain their original behavior and byte-reproducible report shape. They make
+no cohort-level claim. Version-1.1 reviews identify themselves as `aau-evaluation-policy-review/1.1`.
+
 ### Share an offline evaluation review pack
 
 After generating the synthetic twins above, create a self-contained reviewer folder:

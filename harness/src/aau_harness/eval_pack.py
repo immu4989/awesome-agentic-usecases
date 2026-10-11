@@ -37,9 +37,14 @@ def render_review(report: dict) -> str:
     """Only render reports freshly computed from their source evidence."""
     status = "Constraints met" if report["status"] == "constraints_met" else "Constraints not met"
     failures = _table("Failed constraints", ("Metric or source", "Constraint"), [
-        (row.get("metric", row.get("source")), CONSTRAINT_LABELS[row["constraint"]]) for row in report["failed_constraints"]])
+        ((f"Cohort {row['cohort_id']} · " if "cohort_id" in row else "") + row.get("metric", row.get("source")),
+         CONSTRAINT_LABELS[row["constraint"]]) for row in report["failed_constraints"]])
     sections = []
-    for checks, comparison in zip(report["metric_checks"], report["comparisons"]):
+    views = [(checks, comparison, None) for checks, comparison in zip(report["metric_checks"], report["comparisons"])]
+    for cohort in report.get("cohort_reviews", []):
+        views.extend((checks, comparison, cohort["cohort_id"])
+                     for checks, comparison in zip(cohort["metric_checks"], cohort["comparisons"]))
+    for checks, comparison, cohort_id in views:
         rows = [(CONSTRAINT_LABELS[row["constraint"]], "Met" if row["passed"] else "Not met", row["limit"],
                  row.get("observed", f"{len(row.get('violations', []))} violating observations"))
                 for row in checks["checks"]]
@@ -50,8 +55,9 @@ def render_review(report: dict) -> str:
                           for row in scenarios])
         warnings = "".join(f'<li>{_text(value)}</li>' for value in comparison["warnings"])
         sections.append(
-            f'<section><h2>{_text(checks["metric"])}</h2>'
-            f'<p>Preferred direction: <strong>{_text(comparison["preferred_direction"])}</strong>. '
+            f'<section><h2>{_text((f"Cohort {cohort_id} · " if cohort_id is not None else "") + checks["metric"])}</h2>'
+            + (f'<p class="notice">{_text(report["cohort_boundary"])}</p>' if cohort_id is not None else "")
+            + f'<p>Preferred direction: <strong>{_text(comparison["preferred_direction"])}</strong>. '
             f'Mean delta (candidate minus baseline): <strong>{_text(comparison["mean_delta"])}</strong>. '
             f'Descriptive 95% interval: {_text(comparison["delta_ci95"])}.</p>'
             f'<p>{_text(comparison["scenario_count"])} scenarios; baseline repeats: '
