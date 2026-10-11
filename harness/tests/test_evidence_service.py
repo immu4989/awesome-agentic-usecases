@@ -252,6 +252,12 @@ def test_actual_mock_service_results_recompute_through_portable_review():
     aggregate = evaluate_service(CONFIG, generate_service_scenarios(CONFIG, n=8),
                                  lambda: ServiceMockBackend(CONFIG), repeats=2)
     source = json.loads(json.dumps(aggregate.as_dict()))
+    from aau_harness.evaluation_context import capture_runtime_context
+    from aau_harness import evidence_service
+
+    expected_context = capture_runtime_context(generate_service_scenarios(CONFIG, n=8), CONFIG, evidence_service.__file__)
+    assert source["evaluation_context"] == expected_context
+    assert "public_value.py" in source["evaluation_context"]["scoring_sha256"]
     report = review_service_results(source)
     assert report["scenario_count"] == 8
     assert len(report["observations"]) == 16

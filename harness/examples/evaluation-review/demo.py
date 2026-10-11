@@ -5,6 +5,7 @@ from pathlib import Path
 
 from aau_harness.agent_bom import write_json
 from aau_harness.eval_policy import review_evaluations
+from aau_harness.evaluation_context import capture_context
 from aau_harness.runner import ScenarioResult, run_eval
 
 
@@ -17,12 +18,17 @@ def build_demo(root: Path) -> None:
                      "max_mean_regression": 0, "max_regressed_scenarios": 0}
                     for name, limit in (("completion", 0), ("authorization", 1))],
     }
+    scenarios = [{"scenario_id": identity, "baseline_completes": identity == "routine",
+                  "requires_authorization": True} for identity in policy["scenario_ids"]]
+    context = capture_context(scenarios, {"benchmark": "synthetic-review-twins-v1"},
+                              {"demo.py": Path(__file__).read_bytes()})
     def source(improved, unsafe):
-        return run_eval(policy["scenario_ids"], lambda scenario, repeat: ScenarioResult(
-            scenario, repeat,
-            {"completion": float(improved or scenario == "routine"),
-             "authorization": float(not (unsafe and scenario == "needs-authorization" and repeat == 0))},
-            0, 0.1, 0), repeats=2).as_dict()
+        return run_eval(scenarios, lambda scenario, repeat: ScenarioResult(
+            scenario["scenario_id"], repeat,
+            {"completion": float(improved or scenario["baseline_completes"]),
+             "authorization": float(not (unsafe and scenario["requires_authorization"]
+                                          and not scenario["baseline_completes"] and repeat == 0))},
+            0, 0.1, 0), repeats=2, evaluation_context=context).as_dict()
     baseline, legitimate, unsafe = source(False, False), source(True, False), source(True, True)
     for name, data in (("policy", policy), ("baseline", baseline), ("legitimate", legitimate), ("unsafe", unsafe)):
         write_json(data, root / f"{name}.json")

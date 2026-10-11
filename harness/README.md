@@ -499,6 +499,57 @@ can contain scenario IDs and supplied mismatch values: review them before sharin
 > inapplicable cases. The runner reports coverage. This paired comparison deliberately requires
 > a fully observed selected metric; it does not infer applicability or missing-at-random behavior.
 
+### Bind new evaluations to their declared benchmark context
+
+New runs through the shared **Decision Gate**, **Evidence Service**, and **Forge contract**
+engines now include `evaluation_context`. Before scenario execution, the engine fingerprints:
+
+- Each complete scenario object, keyed by scenario ID, using canonical finite JSON values.
+- The domain configuration, including its declared rules and vocabulary.
+- Named source-file bytes for the shared engine, runner, agent loop, and context encoder;
+  Evidence Service also includes its Public Value scorer.
+
+This records hashes, not an extra copy of potentially sensitive case content. It does not change
+scores, rerun models, or retrofit historical files. Model/provider selection is deliberately not
+part of this benchmark fingerprint so different agents can be evaluated against the same declared
+cases. Provider metadata remains separate. File fingerprints are conservative: even a comment-only
+change can make two contexts differ and require human review rather than automatic comparison.
+
+`compare-evals`, `review-evals`, and evaluation review packs reject **conflicting** contexts or a
+malformed present context. A context must cover exactly the observed scenario IDs. If either source
+lacks context, comparison remains available for legacy evidence, but `context_match` is explicitly
+`unavailable` and a warning explains the gap. This is not a match and does not prove comparability.
+The original 1.0 review policy does not require context; a `constraints_met` result with unavailable
+context still needs independent comparability review. Never delete a conflicting context to
+silence an error or invent historical fingerprints from today's files.
+
+Custom evaluators can opt in without changing their measurement callback:
+
+```python
+from aau_harness.evaluation_context import capture_context
+from aau_harness.runner import run_eval
+
+context = capture_context(
+    scenario_objects,  # JSON-compatible dictionaries with unique scenario_id fields
+    benchmark_config,
+    {"scorer.py": scorer_source_bytes},
+)
+aggregate = run_eval(scenarios, run_one, repeats=3, evaluation_context=context)
+```
+
+The runner snapshots supplied context before callbacks and copies it on export. It checks declared
+scenario counts and result IDs. Context capture supports 1–500 scenarios, 1–20 named source files,
+and a 2 MB limit per scenario/configuration serialization or source file. Object keys must be strings;
+nonfinite numbers and unsupported values are refused. Keep the exact scenario definitions and named source bytes alongside
+the evidence to reproduce the fingerprint; hashes alone cannot reconstruct inputs.
+
+**Boundary:** these are declared-input fingerprints, not signatures or execution attestations.
+They do not prove that the supplied objects or source files were executed, that loaded code matches
+disk bytes, or that omitted dependencies, provider state, runtime conditions, or external services
+were identical. The named files are not a complete dependency closure. A deliberately forged or
+coordinately replaced context may still match. Hashes are not anonymization and can reveal equality
+or support guessing low-entropy inputs; follow the same privacy review as for the source evidence.
+
 ### Review several metrics without trading away obligations
 
 `aau review-evals` applies a supplied policy to both saved evaluations. All selected constraints

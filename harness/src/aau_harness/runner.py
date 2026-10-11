@@ -56,6 +56,7 @@ class EvalAggregate:
     total_cost_usd: float
     p50_latency_s: float
     results: list[ScenarioResult]
+    evaluation_context: dict | None = None
 
     def metric_coverage(self) -> dict[str, dict[str, int]]:
         """Describe reported metric availability, not applicability or independent sample size."""
@@ -80,6 +81,7 @@ class EvalAggregate:
         from .provenance import snapshot
 
         return {
+            **({"evaluation_context": deepcopy(self.evaluation_context)} if self.evaluation_context is not None else {}),
             # Stamped here rather than in each use case's save_results, so every result
             # in the repo carries its provenance whether or not its author thought about it.
             "provenance": snapshot(),
@@ -128,6 +130,7 @@ def run_eval(
     run_one: Callable[[object, int], ScenarioResult],
     repeats: int = 3,
     progress: Callable[[str], None] | None = None,
+    evaluation_context: dict | None = None,
 ) -> EvalAggregate:
     """Run `run_one(scenario, repeat)` for every scenario x repeat and aggregate.
 
@@ -139,6 +142,13 @@ def run_eval(
     scenarios = tuple(scenarios)
     if not scenarios:
         raise ValueError("evaluation requires at least one scenario")
+    if evaluation_context is not None:
+        from .evaluation_context import validate_context
+
+        validate_context(evaluation_context)
+        if len(evaluation_context["scenario_sha256"]) != len(scenarios):
+            raise ValueError("evaluation context scenario count differs from the requested run")
+        evaluation_context = deepcopy(evaluation_context)
     identities: list[str] = []
     seen_identities: set[str] = set()
     results: list[ScenarioResult] = []
@@ -150,6 +160,8 @@ def run_eval(
                 raise ValueError("evaluation callback must return ScenarioResult")
             if not isinstance(res.scenario_id, str) or not res.scenario_id.strip():
                 raise ValueError("scenario result ID must be a nonblank string")
+            if evaluation_context is not None and res.scenario_id not in evaluation_context["scenario_sha256"]:
+                raise ValueError("result scenario ID is absent from the evaluation context")
             if type(res.repeat) is not int or res.repeat != rep:
                 raise ValueError("scenario result repeat does not match the requested repeat")
             if rep == 0:
@@ -217,6 +229,7 @@ def run_eval(
         total_cost_usd=sum(costs),
         p50_latency_s=statistics.median(latencies) if latencies else 0.0,
         results=results,
+        evaluation_context=evaluation_context,
     )
 
 

@@ -56,6 +56,8 @@ def render_review(report: dict) -> str:
             f'Descriptive 95% interval: {_text(comparison["delta_ci95"])}.</p>'
             f'<p>{_text(comparison["scenario_count"])} scenarios; baseline repeats: '
             f'{_text(comparison["baseline_repeat_count"])}; candidate repeats: {_text(comparison["candidate_repeat_count"])}.</p>'
+            f'<p>Declared evaluation context: <strong>{_text(comparison["context_match"]["status"])}</strong>. '
+            'Matching fingerprints are not execution attestations.</p>'
             + _table("Policy checks", ("Constraint", "Result", "Limit", "Observed"), rows)
             + _table("Observations outside the candidate limit", ("Scenario", "Repeat", "Value"),
                      [(row["scenario_id"], row["repeat"], row["value"]) for row in violations])

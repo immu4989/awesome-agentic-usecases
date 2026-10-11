@@ -144,6 +144,9 @@ def test_documented_synthetic_twins_reproduce_without_overwriting(tmp_path):
     spec.loader.exec_module(module)
     destination = tmp_path / "demo"
     module.build_demo(destination)
+    for name in ("legitimate", "unsafe"):
+        report = json.loads((destination / f"{name}-review.json").read_text())
+        assert all(item["context_match"]["status"] == "matched" for item in report["comparisons"])
     for name, expected in (("legitimate", 0), ("unsafe", 1)):
         assert main(["review-evals", str(destination / "policy.json"), str(destination / "baseline.json"),
                      str(destination / f"{name}.json"), "--verify", str(destination / f"{name}-review.json")]) == expected

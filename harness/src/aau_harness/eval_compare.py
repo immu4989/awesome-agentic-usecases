@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .agent_bom import AgentBomError, MAX_JSON_BYTES, digest, load_json, rendered, write_json
 from .eval_audit import audit_evaluation
+from .evaluation_context import compare_contexts
 from .runner import _bootstrap_ci
 
 
@@ -17,6 +18,7 @@ def compare_evaluations(baseline: dict, candidate: dict, *, metric: str, directi
     if direction not in ("higher", "lower"):
         raise AgentBomError("direction must be higher or lower")
     audits = [audit_evaluation(source) for source in (baseline, candidate)]
+    context_match = compare_contexts(baseline, candidate)
     groups = []
     for source in (baseline, candidate):
         grouped = {}
@@ -49,6 +51,9 @@ def compare_evaluations(baseline: dict, candidate: dict, *, metric: str, directi
     except (ValueError, OverflowError) as exc:
         raise AgentBomError("comparison arithmetic exceeds finite numeric range") from exc
     warnings = []
+    if context_match["status"] == "unavailable":
+        warnings.append("Evaluation context unavailable for " + ", ".join(context_match["missing_sources"])
+                        + "; matching scenario IDs alone do not establish comparable cases or scoring.")
     if len(rows) < 2:
         warnings.append("One scenario cannot estimate between-scenario variation; its interval is degenerate.")
     if len(set(deltas)) == 1:
@@ -60,6 +65,7 @@ def compare_evaluations(baseline: dict, candidate: dict, *, metric: str, directi
             warnings.append(f"{label} stored summaries differ from current recomputation; comparison uses observations, not those summaries.")
     return {
         "report_version": "aau-paired-evaluation-comparison/1.0",
+        "context_match": context_match,
         "baseline_sha256": digest(baseline), "candidate_sha256": digest(candidate),
         "metric": metric, "preferred_direction": direction,
         "scenario_count": len(rows),

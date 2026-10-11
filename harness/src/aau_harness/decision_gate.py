@@ -19,6 +19,7 @@ from dataclasses import asdict, dataclass, field
 
 from .agent_loop import AgentRun, Block, MockUsage, make_backend, run_tool_agent
 from .cost import CostTracker
+from .evaluation_context import capture_runtime_context
 from .report import render_report
 from .runner import EvalAggregate, ScenarioResult, run_eval
 
@@ -694,7 +695,8 @@ def evaluate_gate(
             },
         )
 
-    return run_eval(scenarios, run_one, repeats=repeats, progress=progress)
+    return run_eval(scenarios, run_one, repeats=repeats, progress=progress,
+                    evaluation_context=capture_runtime_context(scenarios, config, __file__))
 
 
 def save_gate_results(
