@@ -499,6 +499,68 @@ can contain scenario IDs and supplied mismatch values: review them before sharin
 > inapplicable cases. The runner reports coverage. This paired comparison deliberately requires
 > a fully observed selected metric; it does not infer applicability or missing-at-random behavior.
 
+### Review several metrics without trading away obligations
+
+`aau review-evals` applies a supplied policy to both saved evaluations. All selected constraints
+must hold; a completion gain cannot cancel an authorization failure. This complements the
+change-specific [Agent Release Gate](../agent-release-gate/), but does not run adapters, collect new
+evidence, authenticate approvals, or authorize a release.
+
+Try the synthetic positive and negative twins in a **new** output directory:
+
+```bash
+python harness/examples/evaluation-review/demo.py --out /tmp/aau-evaluation-review-demo
+aau review-evals /tmp/aau-evaluation-review-demo/policy.json \
+  /tmp/aau-evaluation-review-demo/baseline.json /tmp/aau-evaluation-review-demo/legitimate.json \
+  --verify /tmp/aau-evaluation-review-demo/legitimate-review.json
+aau review-evals /tmp/aau-evaluation-review-demo/policy.json \
+  /tmp/aau-evaluation-review-demo/baseline.json /tmp/aau-evaluation-review-demo/unsafe.json \
+  --verify /tmp/aau-evaluation-review-demo/unsafe-review.json
+```
+
+The legitimate twin exits **0** (`constraints_met`). The unsafe twin exits **1**
+(`constraints_not_met`): completion improves, but one of its authorization observations is zero.
+Both reports recompute. An invalid policy, missing evidence, existing output, or tampered report
+exits **2**. Use `--out review.json` instead of `--verify` to create a new report.
+
+The strict policy contains a version, the exact `scenario_ids`, positive `minimum_repeats` for
+each source, and 1–10 unique metric rules. Each rule has all five fields:
+
+```json
+{
+  "metric": "authorization",
+  "direction": "higher",
+  "candidate_observation_limit": 1,
+  "max_mean_regression": 0,
+  "max_regressed_scenarios": 0
+}
+```
+
+For `higher`, the observation limit is a minimum; for `lower`, it is a maximum. It applies to
+**every candidate observation**, not an average, and reports exact violating scenario/repeat pairs.
+The mean regression budget is the nonnegative deterioration of the paired scenario mean, in metric
+units. The scenario budget counts all strictly worse scenario means. Limits are inclusive and
+comparisons use unrounded numbers, without a hidden tolerance. Choose budgets deliberately rather
+than treating floating-point noise or a tiny effect as automatically material.
+
+Both sources must have consistent stored summaries and meet the minimum repeat count. Required
+metrics must be present in every observation; both evaluations must match the policy's case set.
+Extra source metrics are listed as **unreviewed**, not silently treated as safe. Reports bind the
+policy and both sources, retain every metric comparison and its uncertainty warnings, and record
+each failed constraint. The same 2 MB file limits apply; large reviews are refused, not truncated.
+
+Select, independently review, and commit the policy **before** collecting candidate evidence.
+The tool does not establish that timing: someone could rewrite a policy after seeing results.
+Hashes provide reproducibility, not preregistration, reviewer identity, or provenance. Matching IDs
+also do not prove matching case content or scoring semantics. Keep those definitions under review.
+
+The design is motivated by the [NIST AI RMF MEASURE function](https://airc.nist.gov/airmf-resources/airmf/5-sec-core/),
+which calls for risk-relevant metrics and documented evaluation. These particular rules and
+thresholds are repository mechanisms, **not NIST requirements or compliance certification**.
+Constraint checks use observed point estimates, not a statistical noninferiority test; confidence
+intervals remain descriptive and uncorrected for multiple comparisons. Passing cannot establish
+production safety, representativeness, real-world benefit, or deployment approval.
+
 ### Agent loop
 
 | | |

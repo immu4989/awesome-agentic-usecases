@@ -268,6 +268,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="recompute saved evaluation metric summaries without model calls")
     sub.add_parser("compare-evals", add_help=False,
                    help="compare matched scenarios in two saved evaluations without model calls")
+    sub.add_parser("review-evals", add_help=False,
+                   help="review saved evaluations against explicit multi-metric constraints")
     sub.add_parser("public-value", add_help=False,
                    help="assess and explain service obligations from supplied tool traces")
 
@@ -329,6 +331,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_args = list(sys.argv[1:] if argv is None else argv)
+    if raw_args and raw_args[0] == "review-evals":
+        from .eval_policy import main as review_main
+
+        return review_main(raw_args[1:])
     if raw_args and raw_args[0] == "compare-evals":
         from .eval_compare import main as compare_main
 
