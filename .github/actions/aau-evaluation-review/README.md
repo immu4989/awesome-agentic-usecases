@@ -58,6 +58,24 @@ context fails closed here; use the descriptive CLI for separately reviewed legac
 Fingerprint equality does not prove execution, dependency completeness, or authentic measurements.
 Synthetic fixtures and freely chosen limits do not establish production suitability.
 
+### Review recorded observations without a separate import job
+
+Set `input-format: recordings` when `baseline` and `candidate` use the
+[`aau-recorded-observations/1.0` contract](../../../harness/README.md#import-recorded-scores-from-your-existing-evaluation-system).
+The default remains `evaluations`; unknown formats fail rather than being guessed. The baseline
+approval hash must match the **original recording file bytes**, not a precomputed normalized export.
+The policy hash is unchanged. Approve those pins independently, as above.
+
+Both recordings must explicitly carry matching evaluation context. The Action never invents
+context, scoring, or runtime measurements. It imports locally, checks the same constraints, and
+preserves an eight-file version-1.1 pack containing the original recording values and normalized
+evaluations. Verification recomputes both conversions and the entire review. Outside the Action,
+use `aau evaluation-pack verify PATH --require-recordings` when that chain is required.
+
+The pack reserializes recording JSON values; it does not retain original input whitespace or byte
+encoding. Preserve the original files separately for independent comparison against approved
+file-byte hashes. No provenance, signer, collector identity, or actual execution is authenticated.
+
 For service-channel or workflow-specific limits, approve a
 [version-1.1 cohort policy](../../../harness/README.md#catch-regressions-concentrated-in-a-declared-cohort).
 It declares group membership and constraints explicitly. The Action checks every global and cohort
@@ -76,7 +94,8 @@ interrupted or invalid run may leave no complete pack; run `aau evaluation-pack 
 consumption. Do not treat `continue-on-error` as passing policy review. Configure any required PR
 check separately; this Action does not change branch protection or grant deployment authority.
 
-Open `review.html` locally for readable findings. Keep all six pack files for verification.
+Open `review.html` locally for readable findings. Keep all six pack files for verification
+(eight in recordings mode).
 **The pack contains complete unsanitized evaluation details.** Nothing is uploaded automatically.
 If your organization elects to upload an artifact, review its privacy and retention first, use a
 reviewed pinned upload Action, and account for repository and artifact access permissions.

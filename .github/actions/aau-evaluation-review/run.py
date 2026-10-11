@@ -11,6 +11,7 @@ from aau_harness.agent_bom import AgentBomError, MAX_JSON_BYTES, _parse_json  # 
 from aau_harness.eval_pack import create_pack, verify_pack  # noqa: E402
 from aau_harness.evaluation_context import compare_contexts  # noqa: E402
 from aau_harness.eval_audit import audit_evaluation  # noqa: E402
+from aau_harness.eval_import import import_observations  # noqa: E402
 
 
 def workspace_path(workspace: Path, raw: str) -> Path:
@@ -59,13 +60,19 @@ def main() -> int:
         policy = read_source(paths["policy"], os.environ["AAU_EVAL_POLICY_SHA256"])
         baseline = read_source(paths["baseline"], os.environ["AAU_EVAL_BASELINE_SHA256"])
         candidate = read_source(paths["candidate"])
+        input_format = os.environ.get("AAU_EVAL_INPUT_FORMAT", "evaluations")
+        if input_format not in ("evaluations", "recordings"):
+            raise AgentBomError("input format must be evaluations or recordings")
+        recordings = input_format == "recordings"
+        reviewed_baseline, reviewed_candidate = (
+            (import_observations(baseline), import_observations(candidate)) if recordings else (baseline, candidate))
         # Validate observation shapes before the context checker inspects IDs.
-        audit_evaluation(baseline)
-        audit_evaluation(candidate)
-        if compare_contexts(baseline, candidate)["status"] != "matched":
+        audit_evaluation(reviewed_baseline)
+        audit_evaluation(reviewed_candidate)
+        if compare_contexts(reviewed_baseline, reviewed_candidate)["status"] != "matched":
             raise AgentBomError("Action requires matching declared context on both evaluations; legacy evidence needs separate review")
-        report = create_pack(policy, baseline, candidate, paths["output"])
-        if verify_pack(paths["output"]) != report:
+        report = create_pack(policy, baseline, candidate, paths["output"], recordings=recordings)
+        if verify_pack(paths["output"], require_recordings=recordings) != report:
             raise AgentBomError("saved review pack does not match computed evidence")
         summary = os.environ.get("GITHUB_STEP_SUMMARY")
         if summary:

@@ -84,6 +84,40 @@ def test_imported_observations_require_explicit_context_in_action(tmp_path, incl
     assert (workspace / "review pack").exists() == include_context
 
 
+@pytest.mark.parametrize("candidate,context,code", [("legitimate", True, 0), ("unsafe", True, 1), ("legitimate", False, 2)])
+def test_action_can_pin_recordings_and_reproduce_their_conversion(tmp_path, candidate, context, code):
+    from aau_harness.eval_pack import verify_pack
+
+    workspace, env = setup(tmp_path, candidate)
+    for name in ("baseline", candidate):
+        path = workspace / f"{name}.json"
+        original = json.loads(path.read_text())
+        source = {"format_version": "aau-recorded-observations/1.0", "source_label": "synthetic recording",
+                  "scenario_ids": sorted({row["scenario_id"] for row in original["results"]}),
+                  "n_repeats": original["n_repeats"],
+                  "observations": [{key: row[key] for key in ("scenario_id", "repeat", "metrics")}
+                                   for row in original["results"]]}
+        if context:
+            source["evaluation_context"] = original["evaluation_context"]
+        path.write_text(json.dumps(source))
+    env["AAU_EVAL_INPUT_FORMAT"] = "recordings"
+    env["AAU_EVAL_BASELINE_SHA256"] = hashlib.sha256((workspace / "baseline.json").read_bytes()).hexdigest()
+    result = run(env)
+    assert result.returncode == code, result.stderr
+    if code == 2:
+        assert not (workspace / "review pack").exists()
+    else:
+        report = verify_pack(workspace / "review pack", require_recordings=True)
+        assert report["status"] == ("constraints_met" if code == 0 else "constraints_not_met")
+
+
+def test_action_refuses_unknown_input_format(tmp_path):
+    workspace, env = setup(tmp_path)
+    env["AAU_EVAL_INPUT_FORMAT"] = "guess"
+    assert run(env).returncode == 2
+    assert not (workspace / "review pack").exists()
+
+
 @pytest.mark.parametrize("source", ["policy", "baseline"])
 def test_approved_source_byte_change_refused_before_output(tmp_path, source):
     workspace, env = setup(tmp_path)

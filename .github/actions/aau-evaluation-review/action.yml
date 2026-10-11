@@ -1,6 +1,9 @@
 name: AAU saved evaluation review
 description: Verify approved inputs and benchmark context, review metric constraints, and preserve an offline pack.
 inputs:
+  input-format:
+    description: evaluations (normalized exports) or recordings (recorded observations retained in the pack).
+    default: evaluations
   policy:
     description: Workspace-relative reviewed policy JSON.
     required: true
@@ -8,13 +11,13 @@ inputs:
     description: Approved policy file byte SHA-256, from a trusted review process.
     required: true
   baseline:
-    description: Workspace-relative approved baseline evaluation JSON.
+    description: Workspace-relative approved baseline JSON in the selected input format.
     required: true
   baseline-sha256:
     description: Approved baseline file byte SHA-256, from a trusted review process.
     required: true
   candidate:
-    description: Workspace-relative candidate evaluation JSON.
+    description: Workspace-relative candidate JSON in the selected input format.
     required: true
   output:
     description: New workspace-relative directory; includes complete unsanitized evaluation details.
@@ -29,6 +32,7 @@ runs:
     - name: Validate approved evidence, review constraints, and verify the pack
       shell: bash
       env:
+        AAU_EVAL_INPUT_FORMAT: ${{ inputs.input-format }}
         AAU_EVAL_POLICY: ${{ inputs.policy }}
         AAU_EVAL_POLICY_SHA256: ${{ inputs.policy-sha256 }}
         AAU_EVAL_BASELINE: ${{ inputs.baseline }}

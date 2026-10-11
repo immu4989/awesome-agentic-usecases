@@ -784,6 +784,45 @@ of sources and all derived outputs can still verify. Retain the matching harness
 reproduction; the verifier uses its current renderer and scoring implementation. A readable report
 and matching hashes do not grant deployment approval.
 
+### Keep the recording-to-review evidence chain in one pack
+
+For imported measurements, `from-recordings` retains both supplied recordings as well as their
+normalized exports. Recipients can then reproduce the conversion, metric summaries, policy
+review, HTML, and manifest without your original workspace or an external evaluation service.
+
+```bash
+aau evaluation-pack from-recordings \
+  harness/examples/evaluation-review/policy-original.json \
+  harness/examples/evaluation-review/recorded-observations.json \
+  harness/examples/evaluation-review/recorded-observations.json \
+  --out /tmp/aau-recording-pack
+aau evaluation-pack verify /tmp/aau-recording-pack --require-recordings
+```
+
+This deliberately compares the same synthetic fixture to itself: it demonstrates packaging,
+not improvement. Both commands exit 0. A failed policy review still produces a complete pack
+and exits 1; malformed recordings fail before a destination is created. Existing destinations
+are never overwritten.
+
+The new **pack version 1.1** has eight files: the six normal review-pack members plus
+`baseline-recording.json` and `candidate-recording.json`. Recording **JSON values** are preserved
+and deterministically reserialized; original file whitespace and byte encoding are not retained.
+Verification recomputes the normalized exports from these recordings before checking the review
+and every member's exact bytes. Rehashing a modified normalized export in the manifest cannot
+hide a conversion mismatch. Keep original files separately when their original byte hashes are
+part of your approval process.
+
+`--require-recordings` is an explicit evidence requirement: it rejects an otherwise valid
+normalized-only version-1.0 pack. Normal verification supports both versions, and old six-file
+packs remain unchanged. Neither format proves who collected the observations, that an agent ran,
+that scoring was valid, or that a source file was independently approved. Coordinated replacement
+of original and derived evidence can still verify; these packs are not signed attestations.
+
+The recordings add another copy of potentially sensitive IDs, labels, and numeric measurements.
+This is a private reviewer bundle until you inspect its contents and authorize sharing—not a
+privacy filter. The Action supports the same full chain with `input-format: recordings`; it still
+requires matching declared context and pins the original baseline input file's exact bytes.
+
 ### Use saved-evaluation review in GitHub Actions
 
 The [AAU evaluation review Action](../.github/actions/aau-evaluation-review/) adds a no-model,
