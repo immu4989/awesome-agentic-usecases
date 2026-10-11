@@ -51,6 +51,7 @@ and observed failure cards with a direct path to reproduction. Start with
 
 | I already have… | Start here | Leave with… |
 |---|---|---|
+| A proposed change to evaluation thresholds or covered groups | [Policy obligation comparison](harness/README.md#review-changed-obligations-before-approving-a-replacement-policy) | Explicit relaxed limits, removed obligations, scope changes, and a recomputable review report |
 | Recorded scores from my existing evaluation system | [Offline observation importer](harness/README.md#import-recorded-scores-from-your-existing-evaluation-system) | Auditable summaries and comparison-ready evidence without rerunning an agent or inventing runtime measurements |
 | Two saved evaluations and non-negotiable service obligations | [Multi-metric evaluation review](harness/README.md#review-several-metrics-without-trading-away-obligations) | Paired scenario comparisons, per-observation limits, explicit failed constraints, and offline verification |
 | Saved evaluation scores that need a reproducibility check | [Offline metric audit](harness/README.md#audit-a-saved-evaluation-without-rerunning-a-model) | Recomputed averages, scenario-bootstrap intervals, coverage counts, and exact mismatches without model calls |

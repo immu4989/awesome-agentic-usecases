@@ -40,6 +40,13 @@ inside a review. Calculate them during review with `sha256sum` on Linux or `shas
 then store the approved values in a workflow-controlled location such as protected repository
 variables. Whitespace changes invalidate these pins. Deliberately review and approve replacements.
 
+Before replacing a policy pin, use
+[`aau compare-eval-policies`](../../../harness/README.md#review-changed-obligations-before-approving-a-replacement-policy)
+to identify relaxed limits, removed metrics/cohorts, changed membership, or reversed metric
+directions. Exit 1 requests review; exit 0 is not approval. This diagnostic never changes the
+approved variables or grants authority to update them. Review the complete policy as well as
+the structural differences, including any newly added obligations.
+
 **Do not compute the approved hashes from candidate-controlled files in the same production job.**
 That merely blesses whatever the candidate supplies. The repository smoke test does this only to
 exercise plumbing with synthetic fixtures, not to demonstrate independent approval. Protect the

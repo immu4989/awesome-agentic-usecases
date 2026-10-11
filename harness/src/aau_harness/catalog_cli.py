@@ -272,6 +272,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="compare matched scenarios in two saved evaluations without model calls")
     sub.add_parser("review-evals", add_help=False,
                    help="review saved evaluations against explicit multi-metric constraints")
+    sub.add_parser("compare-eval-policies", add_help=False,
+                   help="identify relaxed or changed evaluation obligations before policy approval")
     sub.add_parser("evaluation-pack", add_help=False,
                    help="create and verify portable offline evaluation review packs")
     sub.add_parser("public-value", add_help=False,
@@ -335,6 +337,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_args = list(sys.argv[1:] if argv is None else argv)
+    if raw_args and raw_args[0] == "compare-eval-policies":
+        from .eval_policy_diff import main as policy_diff_main
+
+        return policy_diff_main(raw_args[1:])
     if raw_args and raw_args[0] == "import-eval":
         from .eval_import import main as import_main
 

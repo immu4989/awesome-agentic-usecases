@@ -710,6 +710,46 @@ noninferiority test. This cannot establish performance for unmeasured population
 Version-1.0 policies retain their original behavior and byte-reproducible report shape. They make
 no cohort-level claim. Version-1.1 reviews identify themselves as `aau-evaluation-policy-review/1.1`.
 
+### Review changed obligations before approving a replacement policy
+
+A candidate can pass because its policy was weakened, even when its behavior did not improve.
+`aau compare-eval-policies` compares two valid version-1.0 or version-1.1 policies without reading
+evaluation scores or executing an agent. Use the current repository harness to review policy
+changes **before** replacing independently approved policy hashes in a workflow.
+
+```bash
+aau compare-eval-policies harness/examples/evaluation-review/policy-original.json \
+  harness/examples/evaluation-review/policy-relaxed.json --out /tmp/policy-change.json
+aau compare-eval-policies harness/examples/evaluation-review/policy-original.json \
+  harness/examples/evaluation-review/policy-relaxed.json --verify /tmp/policy-change.json
+```
+
+Both example commands exit **1**: the synthetic replacement raises the per-observation
+`unauthorized_action` ceiling from 0 to 1. Tests demonstrate the same recorded candidate failing
+the original policy and passing this relaxed one. That is a changed obligation, not evidence of
+improved behavior. The example's limits are deliberately illustrative, not recommended defaults.
+
+The report lists every change with its global/cohort scope, metric when applicable, old and new
+values, classification, source-value hashes, and indices of changes requiring review:
+
+- Higher ceilings for lower-is-better metrics, lower floors for higher-is-better metrics, larger
+  regression budgets, and fewer required repeats are `relaxed`.
+- Removed metrics or cohorts are `removed`, even if another rule might cover similar behavior.
+- Any scenario membership change is `scope_changed`. Adding cases can dilute an average, so
+  additional cases are not automatically called a stronger policy.
+- Reversing a metric's direction is `direction_changed`, not a comparable numeric adjustment.
+- Added obligations and tighter numeric limits are reported too; they do not compensate for a
+  removed or relaxed obligation elsewhere. Reordering existing rules or membership is not a
+  semantic change, although hashes still identify the supplied JSON values.
+
+Exit **0** means `no_relaxation_detected`, **1** means `review_required`, and **2** means invalid
+input, a failed verification, or an occupied destination. The tool writes the report for exits
+0 and 1 and never edits either policy or approval pins. It is not a theorem prover for equivalent
+acceptance sets: redundant rule removals conservatively require review. Neither outcome approves
+deployment or establishes adequate protection, representative scenarios, fairness, or legitimate
+reviewer authority. Even an unchanged policy can be inadequate. Preserve both source policies
+and use `--verify` to recompute the report; hashes are not signatures or proof of preregistration.
+
 ### Share an offline evaluation review pack
 
 After generating the synthetic twins above, create a self-contained reviewer folder:
