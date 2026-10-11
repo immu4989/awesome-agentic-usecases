@@ -31,6 +31,10 @@ question: **“how do I know it works?”**
 287 saved evaluation files and discloses 23 historical summary differences. Original observations
 are preserved; internal consistency is not proof of real-world effectiveness.
 
+**Try it without an API key:** [Better averages are not enough](https://immu4989.github.io/awesome-agentic-usecases/evaluation-review/)
+compares two synthetic candidates, exposes an authorization failure hidden by improved completion,
+and provides complete downloadable evidence packs you can verify offline.
+
 Every use case is a complete, production-shaped evaluation lab: seeded scenarios with
 programmatic ground truth, tools and state, repeated model runs, cost from actual token
 usage, confidence intervals, and failure modes that were **observed—not hypothesized**.

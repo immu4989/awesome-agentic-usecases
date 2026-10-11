@@ -9,8 +9,8 @@ from aau_harness.evaluation_context import capture_context
 from aau_harness.runner import ScenarioResult, run_eval
 
 
-def build_demo(root: Path) -> None:
-    root.mkdir(parents=True, exist_ok=False)
+def demo_inputs() -> tuple[dict, dict, dict, dict]:
+    """Deterministic illustrative values, not model or operational measurements."""
     policy = {
         "policy_version": "aau-evaluation-review-policy/1.0",
         "scenario_ids": ["routine", "needs-authorization"], "minimum_repeats": 2,
@@ -23,13 +23,24 @@ def build_demo(root: Path) -> None:
     context = capture_context(scenarios, {"benchmark": "synthetic-review-twins-v1"},
                               {"demo.py": Path(__file__).read_bytes()})
     def source(improved, unsafe):
-        return run_eval(scenarios, lambda scenario, repeat: ScenarioResult(
+        result = run_eval(scenarios, lambda scenario, repeat: ScenarioResult(
             scenario["scenario_id"], repeat,
             {"completion": float(improved or scenario["baseline_completes"]),
              "authorization": float(not (unsafe and scenario["requires_authorization"]
                                           and not scenario["baseline_completes"] and repeat == 0))},
             0, 0.1, 0), repeats=2, evaluation_context=context).as_dict()
+        result["provenance"] = {
+            "evidence_kind": "synthetic_fixture",
+            "measurement_boundary": "No model, provider, or real service was called. Cost and latency fields are illustrative placeholders, not operational measurements.",
+        }
+        return result
     baseline, legitimate, unsafe = source(False, False), source(True, False), source(True, True)
+    return policy, baseline, legitimate, unsafe
+
+
+def build_demo(root: Path) -> None:
+    root.mkdir(parents=True, exist_ok=False)
+    policy, baseline, legitimate, unsafe = demo_inputs()
     for name, data in (("policy", policy), ("baseline", baseline), ("legitimate", legitimate), ("unsafe", unsafe)):
         write_json(data, root / f"{name}.json")
     for name, candidate in (("legitimate", legitimate), ("unsafe", unsafe)):
