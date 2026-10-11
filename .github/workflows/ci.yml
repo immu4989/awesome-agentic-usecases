@@ -44,6 +44,28 @@ jobs:
         run: |
           python harness/tools/audit_repository_evals.py --check
           python harness/tools/render_metric_audit.py --check
+      - name: Prepare synthetic evaluation Action fixtures (not independent approval)
+        id: eval-review-fixtures
+        run: |
+          python harness/examples/evaluation-review/demo.py --out .aau-ci-evaluation-inputs
+          python - <<'PY'
+          import hashlib
+          import os
+          from pathlib import Path
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              for name in ("policy", "baseline"):
+                  payload = Path(f".aau-ci-evaluation-inputs/{name}.json").read_bytes()
+                  output.write(f"{name}={hashlib.sha256(payload).hexdigest()}\n")
+          PY
+      - name: Saved evaluation Action entrypoint positive twin
+        env:
+          AAU_EVAL_POLICY: .aau-ci-evaluation-inputs/policy.json
+          AAU_EVAL_POLICY_SHA256: ${{ steps.eval-review-fixtures.outputs.policy }}
+          AAU_EVAL_BASELINE: .aau-ci-evaluation-inputs/baseline.json
+          AAU_EVAL_BASELINE_SHA256: ${{ steps.eval-review-fixtures.outputs.baseline }}
+          AAU_EVAL_CANDIDATE: .aau-ci-evaluation-inputs/legitimate.json
+          AAU_EVAL_OUTPUT: .aau-ci-evaluation-review
+        run: python .github/actions/aau-evaluation-review/run.py
       - name: AAU Forge creates and verifies a runnable lab
         run: |
           for spec in decision-gate rights-continuity critical-event-fanout; do

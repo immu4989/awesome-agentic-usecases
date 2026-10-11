@@ -1,0 +1,38 @@
+name: AAU saved evaluation review
+description: Verify approved inputs and benchmark context, review metric constraints, and preserve an offline pack.
+inputs:
+  policy:
+    description: Workspace-relative reviewed policy JSON.
+    required: true
+  policy-sha256:
+    description: Approved policy file byte SHA-256, from a trusted review process.
+    required: true
+  baseline:
+    description: Workspace-relative approved baseline evaluation JSON.
+    required: true
+  baseline-sha256:
+    description: Approved baseline file byte SHA-256, from a trusted review process.
+    required: true
+  candidate:
+    description: Workspace-relative candidate evaluation JSON.
+    required: true
+  output:
+    description: New workspace-relative directory; includes complete unsanitized evaluation details.
+    default: aau-evaluation-review
+outputs:
+  reports:
+    description: Pack directory; verify before consuming, and inspect source privacy before uploading.
+    value: ${{ inputs.output }}
+runs:
+  using: composite
+  steps:
+    - name: Validate approved evidence, review constraints, and verify the pack
+      shell: bash
+      env:
+        AAU_EVAL_POLICY: ${{ inputs.policy }}
+        AAU_EVAL_POLICY_SHA256: ${{ inputs.policy-sha256 }}
+        AAU_EVAL_BASELINE: ${{ inputs.baseline }}
+        AAU_EVAL_BASELINE_SHA256: ${{ inputs.baseline-sha256 }}
+        AAU_EVAL_CANDIDATE: ${{ inputs.candidate }}
+        AAU_EVAL_OUTPUT: ${{ inputs.output }}
+      run: python "$GITHUB_ACTION_PATH/run.py"

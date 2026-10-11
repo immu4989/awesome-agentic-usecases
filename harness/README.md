@@ -646,6 +646,19 @@ of sources and all derived outputs can still verify. Retain the matching harness
 reproduction; the verifier uses its current renderer and scoring implementation. A readable report
 and matching hashes do not grant deployment approval.
 
+### Use saved-evaluation review in GitHub Actions
+
+The [AAU evaluation review Action](../.github/actions/aau-evaluation-review/) adds a no-model,
+no-install CI path. It requires independently approved byte hashes for policy and baseline,
+requires matching evaluation contexts on both sides, and creates and verifies the offline pack.
+Constraint failures preserve diagnostics and fail the step. Missing context, changed approval
+pins, unsafe paths, or invalid evidence fail closed before a successful pack can be consumed.
+
+Pin the Action to a reviewed full commit SHA, protect the approval hashes separately from
+candidate-controlled changes, and use read-only permissions. The Action does not upload source
+evidence, configure branch protection, or authorize deployments. Its summary includes only status
+and counts; inspect the complete pack for sensitive details before any deliberate artifact upload.
+
 ### Agent loop
 
 | | |
