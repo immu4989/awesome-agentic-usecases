@@ -561,6 +561,40 @@ Constraint checks use observed point estimates, not a statistical noninferiority
 intervals remain descriptive and uncorrected for multiple comparisons. Passing cannot establish
 production safety, representativeness, real-world benefit, or deployment approval.
 
+### Share an offline evaluation review pack
+
+After generating the synthetic twins above, create a self-contained reviewer folder:
+
+```bash
+aau evaluation-pack create /tmp/aau-evaluation-review-demo/policy.json \
+  /tmp/aau-evaluation-review-demo/baseline.json /tmp/aau-evaluation-review-demo/unsafe.json \
+  --out /tmp/aau-evaluation-review-pack
+aau evaluation-pack verify /tmp/aau-evaluation-review-pack
+```
+
+Both commands intentionally exit **1** for this unsafe twin: the pack is complete and verifies,
+but the supplied constraints are not met. Use `legitimate.json` and another new output directory
+for a passing twin (exit **0**). Invalid, modified, incomplete, or unexpected files exit **2**.
+
+Open `review.html` to read the failed constraints, individual violating observations, all matched
+scenario changes, descriptive intervals, source-summary differences, and unreviewed metrics.
+The page uses no scripts, external fonts, tracking, or network resources. It is printable and
+escapes supplied text; it does not run adapters or models. The page cannot verify itself.
+
+Keep all six files together: `policy.json`, `baseline.json`, `candidate.json`, `review.json`,
+`review.html`, and `manifest.json`. Creation refuses an existing destination and writes the manifest
+last; an interrupted pack will not verify. Verification rejects extra/missing files, directories in
+place of files, and symlinks. Every member is limited to 2 MB. It recomputes the review and HTML from
+the included sources and compares all six files byte-for-byte to the expected generated form.
+Source JSON values are preserved in normalized formatting, not as original file bytes.
+
+**This is not a privacy export.** Complete evaluations—including free-text `detail` fields—are
+included. Use synthetic/public data for demonstrations and inspect every source before sharing.
+Verification does not authenticate execution, policy timing, or approvers. Coordinated replacement
+of sources and all derived outputs can still verify. Retain the matching harness revision for
+reproduction; the verifier uses its current renderer and scoring implementation. A readable report
+and matching hashes do not grant deployment approval.
+
 ### Agent loop
 
 | | |
