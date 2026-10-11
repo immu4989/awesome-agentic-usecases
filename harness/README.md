@@ -454,9 +454,50 @@ applicability or independence. Other evaluation formats or bootstrap methods may
 this command targets the current shared harness format and algorithm. Keep the original evidence
 and harness revision. Review metric names and mismatch values before sharing.
 
-> **Every metric must be present on every scenario.** The runner aggregates by metric name
-> across all results; a metric emitted for only some scenarios will fail. For subgroup
-> analysis, emit `0.0` and record the subgroup in `detail`.
+### Compare two saved evaluations by matched scenario
+
+Use the current repository harness to compare a selected metric without API calls:
+
+```bash
+aau compare-evals baseline.json candidate.json --metric service_exact --direction higher \
+  --out comparison.json
+aau compare-evals baseline.json candidate.json --metric service_exact --direction higher \
+  --verify comparison.json
+```
+
+Both files must use the shared evaluation format. Verify that matching scenario IDs actually
+describe the same cases, scorer, and evaluation conditions before interpreting the comparison;
+matching names alone cannot establish that. The command requires exactly the same scenario-ID
+set and complete selected-metric coverage on both sides. It refuses missing observations, duplicate
+scenario/repeat pairs, nonnumeric scores, and partial metric coverage instead of silently keeping
+only favorable intersections or filling omissions with zero. Use `lower` for metrics such as an
+error rate: direction is never guessed from a name.
+
+The report averages each scenario's repeats on each side, subtracts baseline from candidate,
+and resamples those **paired scenario deltas** with the existing deterministic percentile bootstrap
+(2,000 samples, seed 0). It reports the mean delta, a 95% interval, and every scenario that
+improved, regressed, or stayed unchanged. A zero average can conceal both improvements and
+regressions; the report keeps both visible. Repeats are not additional independent scenarios.
+Different repeat counts are allowed and disclosed. Stored summary inconsistencies remain visible
+in `source_audits`; comparison uses recorded observations, never repairs historical summaries.
+
+This pairing follows the [paired-resampling principle documented by SciPy](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html):
+the same scenario is retained on both sides of each resample. It uses the repository's existing
+percentile implementation, not SciPy's default BCa method, and adds no statistical dependency.
+Intervals capture variation across supplied scenario deltas, not within-scenario stochastic
+uncertainty. Small or identical samples may yield degenerate intervals; warnings explain this.
+The method assumes exchangeable scenario units and does not establish population representativeness.
+
+Exit **0** means a descriptive report was produced or verified, **not** that the candidate passed
+a release gate. Exit **2** means invalid input/output or failed reverification. There is no automatic
+significance verdict, multiple-comparison correction, practical-effect threshold, or deployment
+approval. Source-value hashes bind both inputs, but do not authenticate execution or scoring.
+Inputs/outputs retain the audit's 2 MB limits; output files are never overwritten. JSON reports
+can contain scenario IDs and supplied mismatch values: review them before sharing externally.
+
+> Optional metrics remain omitted where unavailable; do not emit a fabricated `0.0` for
+> inapplicable cases. The runner reports coverage. This paired comparison deliberately requires
+> a fully observed selected metric; it does not infer applicability or missing-at-random behavior.
 
 ### Agent loop
 
