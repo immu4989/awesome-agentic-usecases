@@ -268,6 +268,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="normalize recorded metric observations without executing an evaluator")
     sub.add_parser("csv-eval", add_help=False,
                    help="convert explicitly mapped scored CSV rows into a verifiable source-retaining pack")
+    sub.add_parser("csv-review", add_help=False,
+                   help="retain two CSV exports and verify their complete policy and diagnostic review handoff")
     sub.add_parser("audit-eval", add_help=False,
                    help="recompute saved evaluation metric summaries without model calls")
     sub.add_parser("compare-evals", add_help=False,
@@ -347,6 +349,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_args = list(sys.argv[1:] if argv is None else argv)
+    if raw_args and raw_args[0] == "csv-review":
+        from .eval_csv_review import main as csv_review_main
+
+        return csv_review_main(raw_args[1:])
     if raw_args and raw_args[0] == "csv-eval":
         from .eval_csv import main as csv_main
 

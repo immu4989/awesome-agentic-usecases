@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **One-command CSV review handoff** — `aau csv-review` turns two explicitly mapped scored
+  exports into a 28-file portable policy, cost, and repeatability dossier. A single verifier
+  recomputes both source conversions and all downstream outputs, rejecting individually valid but
+  unrelated component substitutions. Failed policy evidence is retained with exit 1; malformed
+  evidence fails with exit 2. No execution, score authenticity, or deployment approval is claimed.
+
 - **Source-retaining CSV evidence import** — explicit column maps and complete declared
   scenario-repeat coverage convert scored CSV exports into reproducible six-file packs. Original
   bytes, missing measurements, mapping assumptions, and downstream-evaluation binding stay visible;

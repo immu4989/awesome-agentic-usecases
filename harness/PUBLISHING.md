@@ -60,7 +60,8 @@ python harness/tools/smoke_installed_wheel.py harness/dist/aau_harness-*.whl
 ```
 
 The check exercises the packaged `evaluation-demo`, both policy outcomes, complete recorded
-diagnostic-pack verification, operating-measurement and CSV import, context comparison, overwrite refusal,
+diagnostic-pack verification, operating-measurement and CSV import, a complete CSV review handoff,
+context comparison, overwrite refusal,
 and rejection of a modified operating report. It adds no package-index fallback, credentials,
 model calls, or external Action dependency. Temporary test files are cleaned up on completion.
 Use it only on a locally built wheel you trust: installation and CLI smoke testing execute code.

@@ -584,7 +584,8 @@ rejected before destination creation; existing output paths are never overwritte
 packs without their complete contents cannot verify. Exit 0 means the conversion verifies, not
 that the observations pass a policy; exit 2 means invalid input or failed verification.
 
-For a complete handoff, retain this conversion pack alongside the downstream review dossier.
+For an automatic two-export handoff, use [CSV review](#hand-off-two-csv-exports-as-one-verifiable-review)
+below. For a manual handoff, retain this conversion pack alongside the downstream review dossier.
 Create that dossier with this pack's `recording.json` as the appropriate baseline or candidate.
 Then check both the link and the dossier itself:
 
@@ -601,6 +602,76 @@ smaller census can still misrepresent collection; reviewers must inspect the map
 Coordinated replacement of all source and derived files can verify because hashes are not signatures.
 The retained CSV is **not sanitized**. Identifiers can contain sensitive data or spreadsheet
 formulas; do not open untrusted source files in spreadsheet software. Review the whole pack before sharing.
+
+### Hand off two CSV exports as one verifiable review
+
+`aau csv-review` closes the gap between CSV conversion and a reviewer-ready dossier. Teams can
+retain a baseline and candidate export, their explicit mappings, policy, diagnostics, and the
+complete review in **one 28-file folder**. One verification command recomputes the entire chain;
+it does not merely check whether the three component folders are individually valid.
+
+Requires the **current repository harness or a wheel built from it**, not published PyPI 1.6.0.
+From the repository checkout:
+
+```bash
+pip install -e harness
+aau csv-review create \
+  harness/examples/evaluation-review/csv-review-policy.json \
+  harness/examples/evaluation-review/csv-plan.json \
+  harness/examples/evaluation-review/scored-observations.csv \
+  harness/examples/evaluation-review/csv-plan.json \
+  harness/examples/evaluation-review/scored-observations-repaired.csv \
+  --diagnostics harness/examples/evaluation-review/csv-review-diagnostics.json \
+  --out /tmp/aau-csv-review
+aau csv-review verify /tmp/aau-csv-review
+```
+
+Open `/tmp/aau-csv-review/review/review.html` in a browser. These are **synthetic scored rows**,
+not model runs or measured service outcomes. Both exports record completion on every attempt;
+the baseline includes an unauthorized action and one missing cost. The repaired candidate passes
+the example policy and has $0.25 per jointly passing attempt. The baseline's total cost remains
+unknown. Collection context is absent and disclosed; matching scenario labels do not establish
+that test conditions were the same.
+
+To exercise the negative twin, repeat `create` with `scored-observations.csv` as **both** inputs
+and a fresh output destination. Creation and verification return **1**, retaining the complete
+failed review. Do not hide this result with `|| true` in a deployment gate.
+
+```text
+handoff/
+  baseline/      6 files: original CSV, mapping, conversion, recording, evaluation, manifest
+  candidate/     6 files: original CSV, mapping, conversion, recording, evaluation, manifest
+  review/       13 files: both recordings, policy, diagnostics, evaluations, reports, HTML, manifest
+  handoff.json   source links, coverage, policy status, and declared boundaries
+  README.txt     offline reviewer instructions and sharing warnings
+  manifest.json  exact byte hashes of the other 27 files
+```
+
+The baseline and candidate may use different explicit column maps; their full scenario census
+must still satisfy the shared policy and existing comparison rules. A diagnostics plan is
+mandatory. Policy and diagnostics remain separate: a descriptive result never overrides a policy
+failure. Original CSV bytes, including BOMs and line endings, are retained unchanged.
+
+Exit **0** means all supplied policy constraints are met and the source chain verifies; **1**
+means the chain verifies but constraints are not met; **2** means invalid input or failed
+verification. All inputs and expanded outputs are validated before creating the destination.
+Existing paths are refused. Each file is limited to 2 MB; all CSV census and numeric limits still
+apply. The root manifest is written last, and interrupted/partial output fails verification.
+Move the entire folder; no original input path, checkout, API key, or network is required to
+verify it with the matching installed harness.
+
+The verifier reparses both exports and reconstructs every derived byte, including the source
+recordings inside the review. Substituting a valid but unrelated component fails, even if the
+outer hashes are updated. The component `csv-eval` and `evaluation-pack` verifiers still work,
+but only `csv-review verify` checks the **whole handoff**. This is not a signed attestation:
+coordinated replacement of all inputs and outputs can still verify. Scoring correctness,
+collection completeness beyond the declared census, policy timing, and authenticity are not proven.
+
+This supports documentation and reproducibility, consistent with the voluntary evaluation focus
+of the [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework);
+it is **not NIST certification, compliance, an ATO, or deployment approval**. Packs are not
+sanitized: inspect every file before sharing, and do not open untrusted CSV in spreadsheet
+software. No models, agents, external tools, or upload services are invoked.
 
 ### Audit a saved evaluation without rerunning a model
 

@@ -8,6 +8,14 @@ agent do this?”:
 
 You do not need an API key to begin. Pick the route that matches the job you are doing.
 
+Already have scored evaluation exports? Use the
+**[CSV review handoff](harness/README.md#hand-off-two-csv-exports-as-one-verifiable-review)**
+to turn baseline and candidate CSVs into one portable offline review. It retains both original
+files and explicit column maps, checks policy constraints, shows repeated-run and operating
+diagnostics, and verifies the complete source-to-report chain. No model calls or uploads are
+needed; missing measurements stay unknown, and failed policies remain failed evidence.
+This needs the current repository harness, not the older published PyPI package.
+
 If you are preparing an agent change for release, start with the
 **[Agent Release Gate](https://immu4989.github.io/awesome-agentic-usecases/#release-gate)**. It
 captures exact model, policy, tool, identity, authority, dependency, egress, monitoring, and

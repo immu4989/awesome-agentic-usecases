@@ -58,12 +58,28 @@ def smoke(wheel: Path) -> None:
         (root / "source.csv").write_bytes(b"case,repeat,score,usd\ncase,0,1,0.1\n")
         run([cli, "csv-eval", "create", "csv-plan.json", "source.csv", "--out", "converted"])
         run([cli, "csv-eval", "verify", "converted", "--evaluation", "converted/evaluation.json"])
+        policy = {"policy_version": "aau-evaluation-review-policy/1.0", "scenario_ids": ["case"],
+                  "minimum_repeats": 1, "metrics": [{"metric": "completion", "direction": "higher",
+                  "candidate_observation_limit": 1, "max_mean_regression": 0, "max_regressed_scenarios": 0}]}
+        diagnostics = {"plan_version": "aau-evaluation-diagnostics/1.0",
+                       "criteria": [{"metric": "completion", "direction": "higher", "limit": 1}],
+                       "draw_sizes": [1], "cost_basis": {"baseline": "synthetic", "candidate": "synthetic"}}
+        (root / "csv-policy.json").write_text(json.dumps(policy))
+        (root / "csv-diagnostics.json").write_text(json.dumps(diagnostics))
+        (root / "failed.csv").write_bytes(b"case,repeat,score,usd\ncase,0,0,0.1\n")
+        for filename, code in (("source.csv", 0), ("failed.csv", 1)):
+            destination = "handoff-" + filename
+            run([cli, "csv-review", "create", "csv-policy.json", "csv-plan.json", "source.csv",
+                 "csv-plan.json", filename, "--diagnostics", "csv-diagnostics.json", "--out", destination], code)
+            run([cli, "csv-review", "verify", destination], code)
+        (root / "handoff-source.csv/candidate/source.csv").write_bytes(b"case,repeat,score,usd\ncase,0,0,0.1\n")
+        run([cli, "csv-review", "verify", "handoff-source.csv"], expected=2)
         report_path = repaired / "candidate-operations.json"
         report = json.loads(report_path.read_text())
         report["overall"]["cost"]["total_usd"] = 999
         report_path.write_text(json.dumps(report))
         run([cli, "evaluation-pack", "verify", repaired, "--require-recordings", "--require-diagnostics"], expected=2)
-    print("Installed wheel verified outside checkout: demo, both policy outcomes, recording and CSV import, context review, overwrite refusal, and tamper rejection.")
+    print("Installed wheel verified outside checkout: demo, both policy outcomes, recording and CSV import, CSV review handoff, context review, overwrite refusal, and tamper rejection.")
 
 
 def main():
