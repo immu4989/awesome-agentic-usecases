@@ -270,6 +270,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="recompute saved evaluation metric summaries without model calls")
     sub.add_parser("compare-evals", add_help=False,
                    help="compare matched scenarios in two saved evaluations without model calls")
+    sub.add_parser("compare-eval-contexts", add_help=False,
+                   help="explain changed scenario, configuration, and scoring fingerprints without pairing scores")
     sub.add_parser("repeatability-eval", add_help=False,
                    help="expose intermittent joint-constraint failures across recorded repeats")
     sub.add_parser("operating-eval", add_help=False,
@@ -341,6 +343,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_args = list(sys.argv[1:] if argv is None else argv)
+    if raw_args and raw_args[0] == "compare-eval-contexts":
+        from .eval_context_diff import main as context_diff_main
+
+        return context_diff_main(raw_args[1:])
     if raw_args and raw_args[0] == "operating-eval":
         from .eval_operations import main as operations_main
 

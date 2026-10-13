@@ -809,6 +809,64 @@ input/output or failed reverification. Criteria, declared basis, and source JSON
 bound to the report. The CLI refuses overwrites and enforces 2 MB input/report limits.
 Review scenario identifiers, costs, timings, and audit details before external sharing.
 
+### Explain benchmark drift before comparing evaluation scores
+
+`aau compare-eval-contexts` identifies **which test definitions changed** when a comparison is
+blocked. It inspects complete supplied evaluations independently, so different scenario censuses
+can be reviewed without pairing scores from only their intersection. It makes no model calls,
+rewrites no fingerprints, and does not relax `compare-evals` or review-policy checks.
+
+```bash
+python harness/examples/evaluation-review/context-drift.py --out /tmp/context-drift-demo
+aau compare-eval-contexts /tmp/context-drift-demo/baseline.json \
+  /tmp/context-drift-demo/matched.json \
+  --verify /tmp/context-drift-demo/matched-context-review.json
+# Expected exit 1: the report verifies, but changed definitions require review.
+aau compare-eval-contexts /tmp/context-drift-demo/baseline.json \
+  /tmp/context-drift-demo/changed.json \
+  --verify /tmp/context-drift-demo/changed-context-review.json
+```
+
+All three example files have the same constructed 100% completion headline. The changed twin
+removes the assisted case, adds a replacement case, and changes the routine case's authorization
+requirement under the same ID. The report exposes all three changes; matching scores are not
+evidence that the benchmarks mean the same thing.
+
+For your own saved evaluations, use `--out /path/to/new-context-review.json`, then `--verify`
+against the retained originals. Add `--input-format recordings` for either supported recorded-
+observation format; the report binds both original and normalized JSON-value hashes.
+
+| Report view | What it establishes |
+|---|---|
+| Scenario census | Observed IDs added, removed, and shared; no renaming or equivalence inferred |
+| Scenario fingerprints | Exact declared hashes changed under the same ID, including unchanged and unknown entries |
+| Scoring fingerprints | Named scoring components added, removed, changed, or unchanged when both declarations exist |
+| Configuration | Both declared hashes and whether they differ; not a semantic explanation of a changed rule |
+| Missing context | Which source lacks a declaration; absence is not treated as a component removal or a match |
+| Source metric audits | Summary-consistency status and mismatch count; original values remain untouched |
+| Repeat counts | Differences are disclosed, not treated as context drift or extra independent scenarios |
+
+Exit **0** (`declared_context_matched`) means present, valid context fingerprints match and
+metric summaries recompute. It does **not** mean that scores are good, policy checks pass, or
+execution is authenticated. Exit **1** (`review_required`) means missing context, changed census,
+changed scenario/scorer/configuration hashes, or inconsistent metric summaries. Exit **2** means
+invalid input, malformed present context, invalid coverage, or failed report verification.
+The output retains exact digests and machine-readable reason codes; the console does not print
+scenario IDs, component names, or score values. Files remain bounded to 2 MB and outputs cannot
+overwrite an existing path.
+
+Review actual case/configuration/scoring sources to understand a digest difference. Comment-only
+scorer edits can change a digest without changing behavior; identical digests still do not prove
+execution, dependency closure, preregistration, or population coverage. Recover contemporaneous
+context where possible. Never remove conflicting context, graft today's hashes onto old runs,
+rename cases, or discard difficult cases to force a match. If definitions intentionally change,
+review the new benchmark and collect comparable evidence under a common approved context.
+Inspect scenario IDs and component names for sensitive information before sharing the report.
+
+This design is informed by [NIST AI RMF Playbook MEASURE 2.1](https://airc.nist.gov/airmf-resources/playbook/measure/),
+which emphasizes documenting test sets and evaluation tools. This inventory is one supporting
+engineering tool, not a NIST assessment, compliance certification, or authorization to deploy.
+
 ### Bind new evaluations to their declared benchmark context
 
 New runs through the shared **Decision Gate**, **Evidence Service**, and **Forge contract**
