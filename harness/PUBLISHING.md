@@ -38,9 +38,34 @@ git push origin harness-vX.Y.Z
 ```
 
 The tag must exactly match the package version. GitHub Actions runs all harness tests, builds
-the wheel and source distribution, checks metadata, creates build-provenance attestations,
+the wheel and source distribution, checks metadata, tests the installed wheel outside the checkout,
+creates build-provenance attestations,
 publishes through the trusted PyPI identity, and attaches both distributions to a GitHub
 release.
 
 Do not push a release tag until the trusted publisher and GitHub environment exist; package
 publication is intentionally fail-closed.
+
+## Installed-artifact adoption check
+
+The release workflow must pass `tools/smoke_installed_wheel.py` before distributions are uploaded,
+attested, or made available to publishing jobs. It creates a temporary Python 3.11+ virtual
+environment, installs only the locally built wheel with `--no-index --no-deps`, clears inherited
+Python source-path overrides, and runs from a temporary directory outside the repository.
+It also checks that the imported module resolves inside that new environment.
+
+```bash
+python -m build harness
+python harness/tools/smoke_installed_wheel.py harness/dist/aau_harness-*.whl
+```
+
+The check exercises the packaged `evaluation-demo`, both policy outcomes, complete recorded
+diagnostic-pack verification, operating-measurement import, context comparison, overwrite refusal,
+and rejection of a modified operating report. It adds no package-index fallback, credentials,
+model calls, or external Action dependency. Temporary test files are cleaned up on completion.
+Use it only on a locally built wheel you trust: installation and CLI smoke testing execute code.
+
+This check targets the release workflow's Python 3.12 runner; it is not a complete operating-system
+or minimum-Python-version compatibility matrix. Python 3.10's separately declared `tomli` dependency
+still applies. Source tests and metadata checks remain separate requirements. A local smoke pass
+does not publish a package; the signed-tag and trusted-publisher process above is still required.

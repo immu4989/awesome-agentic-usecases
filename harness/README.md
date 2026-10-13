@@ -659,6 +659,37 @@ explicit criteria, and draw sizes bind reverification. Outputs are never overwri
 keeps the 2 MB input/report limit. Review scenario IDs, scores, and mismatch details before sharing.
 No network access, model execution, or new dependency is required.
 
+### Try the evaluation workflow from an installed package
+
+`aau evaluation-demo --out /path/to/new-demo` creates two complete synthetic review dossiers
+using only the installed harness. No checkout lookup, downloaded fixture, API key, provider,
+agent execution, or network request is required by the command.
+
+**Availability:** this command is new in the repository. Install the current checkout with
+`python -m pip install -e harness`, or install a wheel built from that checkout. The previously
+published PyPI 1.6.0 package does not contain it; no new PyPI publication is implied here.
+
+```bash
+aau evaluation-demo --out /tmp/aau-installed-demo
+aau evaluation-pack verify /tmp/aau-installed-demo/repaired \
+  --require-recordings --require-diagnostics
+# Expected exit 1: valid evidence of a failed policy, not a broken demo.
+aau evaluation-pack verify /tmp/aau-installed-demo/intermittent \
+  --require-recordings --require-diagnostics
+```
+
+Open either folder's `review.html` and the top-level `README.txt`. Each dossier retains thirteen
+files: supplied synthetic recordings, normalized evaluations, policy, diagnostic plan, review,
+operating and repeated-run views, and a byte manifest. The intermittent fixture exposes three
+authorization failures hidden by 100% completion; the repaired twin preserves authorization.
+Failure costs remain included. Every score, cost, timing, and API-call count is constructed.
+
+Creation exits 0 only after both packs verify with their expected opposite policy outcomes;
+this is not a claim about a real system. An existing destination is rejected without overwriting
+it. The guide is written last; interrupted partial output is not a completed walkthrough. Keep
+the matching harness revision to reverify, and independently design your own cases and thresholds
+before adapting the format to real evidence.
+
 ### Hand off one complete offline review dossier
 
 Add `--diagnostics plan.json` to `aau evaluation-pack create` or `from-recordings` to combine

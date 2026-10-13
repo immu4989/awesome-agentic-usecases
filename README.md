@@ -53,6 +53,7 @@ and observed failure cards with a direct path to reproduction. Start with
 
 | I already have… | Start here | Leave with… |
 |---|---|---|
+| An installed current harness and a need to learn the workflow | [No-key packaged walkthrough](harness/README.md#try-the-evaluation-workflow-from-an-installed-package) | Two complete synthetic dossiers, expected pass/fail results, and offline verification—no repository fixtures required at runtime |
 | Evaluation results to hand off to a reviewer | [Offline review dossier](harness/README.md#hand-off-one-complete-offline-review-dossier) | One readable page with policy, repeated-run, and operating evidence; a complete source-bound folder that recomputes offline |
 | A blocked comparison or suspected change to the benchmark | [Evaluation-context drift review](harness/README.md#explain-benchmark-drift-before-comparing-evaluation-scores) | Exact added, removed, and changed scenario/scorer fingerprints, missing-context gaps, and a recomputable investigation report |
 | A proposed change to evaluation thresholds or covered groups | [Policy obligation comparison](harness/README.md#review-changed-obligations-before-approving-a-replacement-policy) | Explicit relaxed limits, removed obligations, scope changes, and a recomputable review report |

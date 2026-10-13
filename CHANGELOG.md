@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Packaged evaluation walkthrough and installed-wheel gate** — `aau evaluation-demo` creates
+  and verifies synthetic pass/fail diagnostic dossiers without repository fixtures or API keys.
+  Releases now test the actual wheel in a fresh environment outside the checkout before uploading
+  or attesting distributions, including failure evidence and tamper rejection. Not yet published
+  as a new PyPI version.
+
 - **Public evidence audit view** — the hosted explorer links to a generated, script-free
   file-by-file audit with source digests, original evaluation links, and exact interval differences.
   CI checks it against the committed audit so website readers see the same disclosed limitations.

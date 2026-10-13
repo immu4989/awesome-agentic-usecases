@@ -282,6 +282,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="identify relaxed or changed evaluation obligations before policy approval")
     sub.add_parser("evaluation-pack", add_help=False,
                    help="create and verify portable offline evaluation review packs")
+    sub.add_parser("evaluation-demo", add_help=False,
+                   help="create verified synthetic review dossiers without a checkout or API key")
     sub.add_parser("public-value", add_help=False,
                    help="assess and explain service obligations from supplied tool traces")
 
@@ -343,6 +345,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_args = list(sys.argv[1:] if argv is None else argv)
+    if raw_args and raw_args[0] == "evaluation-demo":
+        from .eval_demo import main as demo_main
+
+        return demo_main(raw_args[1:])
     if raw_args and raw_args[0] == "compare-eval-contexts":
         from .eval_context_diff import main as context_diff_main
 
