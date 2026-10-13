@@ -36,6 +36,8 @@ compares synthetic candidates, exposes authorization failures and assisted-chann
 and provides complete downloadable evidence packs you can verify offline.
 The [cost-and-repeatability demonstration](https://immu4989.github.io/awesome-agentic-usecases/evaluation-review/#operating-story)
 also shows how failed attempts change cost per passing attempt and how a good median hides slow runs—with eleven-file diagnostic dossiers, not just screenshots.
+The [operating-budget lab](https://immu4989.github.io/awesome-agentic-usecases/evaluation-review/budget-lab.html)
+shows a slow, expensive service route hidden by acceptable aggregate results—with downloadable combined-gate dossiers and a budget-aware candidate matrix.
 
 Every use case is a complete, production-shaped evaluation lab: seeded scenarios with
 programmatic ground truth, tools and state, repeated model runs, cost from actual token

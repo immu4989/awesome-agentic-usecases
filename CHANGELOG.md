@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Public operating-budget lab** — a script-free, report-generated lesson exposes a slow,
+  expensive service route hidden by passing aggregate cost and p95. Download two complete
+  combined-gate dossiers and a candidate matrix for offline verification. CI reproduces the
+  original and new public assets byte-for-byte; all values are disclosed synthetic fixtures.
+
 - **Approved combined policy and budget gates** — normalized, recording, and CSV dossiers can
   retain independently computed quality and operating verdicts plus a combined failing gate.
   CI requires an independently approved budget byte pin; unknown budget evidence cannot pass.

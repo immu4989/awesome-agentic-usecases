@@ -784,6 +784,10 @@ fully loaded cost accounting, forecast accuracy, fairness certification, or depl
 
 ### Enforce policy and operating limits in one reviewer dossier
 
+First, [try the public operating-budget lab](https://immu4989.github.io/awesome-agentic-usecases/evaluation-review/budget-lab.html):
+inspect the complete synthetic trap, repaired twin, and candidate matrix in your browser, then
+download their 14-file packs for offline verification. No API key or model call is required.
+
 Use `--operating-budget` with `evaluation-pack create`, `evaluation-pack from-recordings`,
 or `csv-review create` to produce a **combined failing gate**, not just descriptive cost views.
 A diagnostics plan is required; its candidate cost-basis declaration supplies the budget check's

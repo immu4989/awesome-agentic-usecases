@@ -24,7 +24,7 @@ def test_public_assets_are_deterministic_and_archives_match_complete_verifiable_
     module = generator()
     assets = module.build_assets()
     assert assets == module.build_assets()
-    assert len(assets) == 53
+    assert len(assets) == 99
     for name, expected in (("legitimate", "constraints_met"), ("unsafe", "constraints_not_met"),
                            ("cohort-regressed", "constraints_not_met"), ("cohort-repaired", "constraints_met")):
         directory = tmp_path / name
@@ -135,3 +135,74 @@ def test_operating_story_renders_report_values_not_hardcoded_marketing_numbers()
     dossiers["dossier-intermittent"]["candidate-operations.json"]["overall"]["cost"]["total_per_passing_attempt_usd"] = 7.89
     assert '$7.89' in module.operating_story(dossiers)
     assert '$0.40' not in module.operating_story(dossiers)
+
+
+@pytest.mark.parametrize("name,status", [("budget-aggregate-trap", "constraints_not_met"),
+                                         ("budget-repaired", "constraints_met"), ("budget-matrix", None)])
+def test_public_budget_archives_recompute_all_sources_and_refuse_tampering(tmp_path, name, status):
+    from aau_harness.eval_matrix import verify_matrix
+
+    assets = generator().build_assets()
+    with zipfile.ZipFile(BytesIO(assets[f"{name}.zip"])) as bundle:
+        assert len(bundle.namelist()) == 14
+        assert len(set(bundle.namelist())) == 14
+        for item in bundle.infolist():
+            assert '/' not in item.filename and '..' not in item.filename
+            assert item.date_time == (1980, 1, 1, 0, 0, 0)
+            data = bundle.read(item.filename)
+            assert data == assets[f"{name}/{item.filename}"]
+            (tmp_path / item.filename).write_bytes(data)
+    if status is not None:
+        result = verify_pack(tmp_path, require_budget=True)
+        assert result["status"] == status
+        assert result["policy_status"] == "constraints_met"
+        assert json.loads((tmp_path / "operating-budget.json").read_text())["cost_basis"] == "synthetic"
+        path = tmp_path / "candidate-budget.json"
+    else:
+        result = verify_matrix(tmp_path)
+        assert result["operating_groups"][0]["eligible_candidates"] == ["repaired"]
+        assert result["candidates"][0]["exclusion_reasons"] == ["operating_budget_not_met_or_verified"]
+        path = tmp_path / "candidate-01-budget.json"
+    path.write_bytes(path.read_bytes() + b" ")
+    with pytest.raises(AgentBomError):
+        verify_pack(tmp_path, require_budget=True) if status is not None else verify_matrix(tmp_path)
+
+
+def test_budget_page_distribution_matches_the_recorded_quantile_trap_and_download_contract():
+    assets = generator().build_assets()
+    page = assets["budget-lab.html"].decode()
+    source = json.loads(assets["budget-aggregate-trap/candidate.json"])
+    budget = json.loads(assets["budget-aggregate-trap/candidate-budget.json"])
+    assert source["n_scenarios"] == 20 and source["n_repeats"] == 4
+    ordered = sorted(row["latency_s"] for row in source["results"])
+    assert ordered[:76] == [1] * 76 and ordered[76:] == [30] * 4
+    assert page.count('class="cell') == 80
+    assert page.count('class="cell tail"') == 4
+    assert page.count('class="cell rank"') == 1
+    assert "attempt 76, at 1 s" in page
+    assert 'role="img"' in page and 'aria-label=' in page
+    assert budget["scopes"][0]["summary"]["cost"]["total_per_passing_attempt_usd"] == .495
+    assert all(c["status"] == "met" for c in budget["scopes"][0]["checks"])
+    assert all(c["status"] == "exceeded" for c in budget["scopes"][2]["checks"])
+    assert '$0.495' in page and '$8' in page and '30 s' in page
+    assert '<script' not in page and 'Content-Security-Policy' in page
+    assert "No fairness, production SLO" in page and "not measured users" in page.lower()
+    assert "matrix verification is descriptive" in page
+    assert "--require-budget" in page and "not in published PyPI 1.6.0" in page
+    assert 'href="budget-lab.html"' in assets["index.html"].decode()
+    for name in ("budget-aggregate-trap", "budget-repaired", "budget-matrix"):
+        assert f'href="{name}.zip" download' in page
+
+
+def test_budget_page_numbers_and_eligibility_are_generated_from_reports():
+    module = generator()
+    assets = module.build_assets()
+    dossiers = {name: {filename: json.loads(assets[f"{name}/{filename}"]) for filename in (
+        "candidate.json", "candidate-budget.json", "operating-budget.json", "gate.json")}
+        for name in ("budget-aggregate-trap", "budget-repaired")}
+    matrix = json.loads(assets["budget-matrix/matrix.json"])
+    dossiers["budget-aggregate-trap"]["candidate-budget.json"]["scopes"][2]["summary"]["cost"]["total_per_passing_attempt_usd"] = 9.75
+    matrix["operating_groups"][0]["eligible_candidates"] = []
+    page = module.render_budget_lab(dossiers, matrix)
+    assert '$9.75' in page and '<strong>None</strong>' in page
+    assert '$8</td>' not in page
