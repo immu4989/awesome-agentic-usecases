@@ -49,12 +49,21 @@ def smoke(wheel: Path) -> None:
         run([cli, "compare-eval-contexts", baseline, candidate, "--input-format", "recordings", "--verify", "context.json"])
         run([cli, "import-eval", candidate, "--out", "imported.json"])
         run([cli, "import-eval", candidate, "--verify", "imported.json"])
+        # These tiny fixtures are created outside the checkout, not loaded from repository examples.
+        csv_plan = {"plan_version": "aau-csv-observation-import/1.0", "source_label": "synthetic wheel smoke",
+                    "scenario_ids": ["case"], "n_repeats": 1,
+                    "columns": {"scenario_id": "case", "repeat": "repeat", "metrics": {"completion": "score"},
+                                "operating": {"cost_usd": "usd"}}}
+        (root / "csv-plan.json").write_text(json.dumps(csv_plan))
+        (root / "source.csv").write_bytes(b"case,repeat,score,usd\ncase,0,1,0.1\n")
+        run([cli, "csv-eval", "create", "csv-plan.json", "source.csv", "--out", "converted"])
+        run([cli, "csv-eval", "verify", "converted", "--evaluation", "converted/evaluation.json"])
         report_path = repaired / "candidate-operations.json"
         report = json.loads(report_path.read_text())
         report["overall"]["cost"]["total_usd"] = 999
         report_path.write_text(json.dumps(report))
         run([cli, "evaluation-pack", "verify", repaired, "--require-recordings", "--require-diagnostics"], expected=2)
-    print("Installed wheel verified outside checkout: demo, both policy outcomes, recording import, context review, overwrite refusal, and tamper rejection.")
+    print("Installed wheel verified outside checkout: demo, both policy outcomes, recording and CSV import, context review, overwrite refusal, and tamper rejection.")
 
 
 def main():

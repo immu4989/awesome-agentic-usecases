@@ -528,6 +528,80 @@ end-to-end elapsed time with a sum of overlapping spans. Supply a reviewed `esti
 authenticate that declaration or establish fully loaded cost. IDs, costs, and timings may still be
 sensitive even though free-text details are excluded. Review before sharing.
 
+### Convert scored CSV exports without losing the original evidence
+
+`aau csv-eval` converts an explicitly mapped CSV export into a **six-file, source-retaining pack**.
+It does not infer scores, units, case coverage, repeat numbering, or column meanings. Use the
+current repository harness; this command is not in the previously published PyPI 1.6.0 package.
+
+```bash
+aau csv-eval create harness/examples/evaluation-review/csv-plan.json \
+  harness/examples/evaluation-review/scored-observations.csv --out /tmp/csv-evidence
+aau csv-eval verify /tmp/csv-evidence
+aau operating-eval /tmp/csv-evidence/evaluation.json \
+  --criterion completion higher 1 --criterion unauthorized lower 0 \
+  --cost-basis synthetic --out /tmp/csv-operating-review.json
+```
+
+The synthetic fixture deliberately omits one attempt's cost. Its cost coverage remains partial;
+full cost and cost per passing attempt stay unavailable, while complete timing remains usable.
+One recorded authorization failure also remains visible. Nothing is rerun or sent to a service.
+
+Adapt [the mapping plan](examples/evaluation-review/csv-plan.json), then supply your reviewed
+complete scenario-ID census and repeat count. `columns` must map `scenario_id`, `repeat`, a
+nonempty `metrics` map, and an `operating` map (which may be empty). For example,
+`"metrics": {"completion": "completed"}` maps the CSV header `completed` to metric `completion`.
+Every mapped header must be distinct, and every CSV header must be mapped: no extra columns are
+silently retained as unreviewed metadata or dropped. Column order is immaterial; names are exact.
+
+The accepted dialect is UTF-8, optional UTF-8 BOM, comma delimiter, and double-quoted fields with
+doubled internal quotes. Newlines follow the standard-library [CSV reader](https://docs.python.org/3/library/csv.html)
+rules; no heuristic delimiter or header detection is performed. Malformed quoting, duplicate
+headers, blank rows, inconsistent row widths, non-UTF-8 data, and NUL characters are rejected.
+
+Repeat cells must be zero-based integers. Score and operating cells use JSON numeric syntax;
+formulas, booleans, currency symbols, decimal commas, `null`, numeric text wrappers, nonfinite
+values, and inappropriate negative operating values fail validation. Surrounding numeric whitespace
+is ignored; scenario IDs are preserved exactly. Blank metric/operating cells stay absent, not zero.
+Entirely unreported mapped metrics are listed explicitly. Unknown timing should be blank—not `0`.
+Only `cost_usd`, `latency_s`, and `n_api_calls` may be mapped as operating fields, with their existing
+USD/seconds/count semantics; no currency, time-unit, token-price, or aggregation conversion occurs.
+Complete scenario-repeat coverage and existing import validation still apply.
+
+| Retained file | Purpose |
+|---|---|
+| `source.csv` | Exact original bytes, including BOM and line endings |
+| `plan.json` | Complete supplied mapping, census, source label, and optional contemporaneous context |
+| `recording.json` | Version-1.1 observation contract for `evaluation-pack from-recordings` |
+| `evaluation.json` | Normalized input for audits, comparisons, operating reviews, and policy reviews |
+| `conversion.json` | Source/plan/derived-value hashes, measurement coverage, and interpretation limits |
+| `manifest.json` | Exact member inventory and unsigned byte hashes; written last |
+
+Verification reparses the retained CSV and recomputes every derived file, not just manifest hashes.
+Missing, extra, symlinked, oversized, or modified members fail. Each member is bounded to 2 MB;
+there may be at most 10,000 observations, 500 scenarios, and 100 mapped metrics. Invalid input is
+rejected before destination creation; existing output paths are never overwritten. Interrupted
+packs without their complete contents cannot verify. Exit 0 means the conversion verifies, not
+that the observations pass a policy; exit 2 means invalid input or failed verification.
+
+For a complete handoff, retain this conversion pack alongside the downstream review dossier.
+Create that dossier with this pack's `recording.json` as the appropriate baseline or candidate.
+Then check both the link and the dossier itself:
+
+```bash
+aau csv-eval verify /tmp/csv-evidence --evaluation /path/to/dossier/candidate.json
+aau evaluation-pack verify /path/to/dossier --require-recordings --require-diagnostics
+```
+
+The optional `--evaluation` checks that the downstream normalized JSON matches the verified
+conversion; it does not verify the rest of that dossier. Never replace a failed dossier check
+with a successful conversion check. An absent context is not synthesized: recover the original
+collection context or keep the comparability limitation visible. A renamed header or a chosen
+smaller census can still misrepresent collection; reviewers must inspect the mapping and scope.
+Coordinated replacement of all source and derived files can verify because hashes are not signatures.
+The retained CSV is **not sanitized**. Identifiers can contain sensitive data or spreadsheet
+formulas; do not open untrusted source files in spreadsheet software. Review the whole pack before sharing.
+
 ### Audit a saved evaluation without rerunning a model
 
 With the current repository harness:

@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Source-retaining CSV evidence import** — explicit column maps and complete declared
+  scenario-repeat coverage convert scored CSV exports into reproducible six-file packs. Original
+  bytes, missing measurements, mapping assumptions, and downstream-evaluation binding stay visible;
+  no model calls, unit inference, malformed-row skipping, or fabricated context.
+
 - **Packaged evaluation walkthrough and installed-wheel gate** — `aau evaluation-demo` creates
   and verifies synthetic pass/fail diagnostic dossiers without repository fixtures or API keys.
   Releases now test the actual wheel in a fresh environment outside the checkout before uploading
