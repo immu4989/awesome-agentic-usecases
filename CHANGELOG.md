@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Group-aware operating budgets** — enforce explicit recorded cost, latency, and API-call limits
+  for complete workloads and declared overlapping groups. Missing measurements, insufficient
+  repeats, and mismatched cost bases cannot pass. Budget-aware candidate matrices retain failures
+  and exclude candidates whose attractive aggregate hides a failing group. Includes an offline
+  synthetic adoption example; not production SLO certification, forecasting, or deployment approval.
+
 - **Multi-candidate evidence matrix** — compare 2–10 normalized evaluations under one baseline
   and policy, retaining full per-candidate checks and a script-free review page. Policy failures,
   missing operating data, and unknown cost bases stay excluded from recorded cost/latency trade-offs;

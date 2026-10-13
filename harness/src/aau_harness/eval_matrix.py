@@ -8,6 +8,8 @@ import sys
 from .agent_bom import AgentBomError, MAX_JSON_BYTES, digest, load_json, rendered
 from .authority_html import STYLE
 from .eval_operations import COST_BASES, review_operations
+from .eval_budget import review_budget, validate_budget
+from .eval_repeatability import _criteria
 from .eval_pack import _table, _text
 from .eval_policy import review_evaluations
 from .evaluation_context import compare_contexts
@@ -26,10 +28,18 @@ BOUNDARY = ("Descriptive comparison of supplied observations, not vendor selecti
 
 
 def validate_plan(plan: dict) -> list[str]:
-    if not isinstance(plan, dict) or set(plan) != {"plan_version", "candidate_ids", "criteria", "cost_basis"}:
-        raise AgentBomError("matrix plan requires plan_version, candidate_ids, criteria, and cost_basis")
-    if plan["plan_version"] != "aau-candidate-matrix/1.0":
+    version = plan.get("plan_version") if isinstance(plan, dict) else None
+    fields = {"plan_version", "candidate_ids", "criteria", "cost_basis"}
+    if version == "aau-candidate-matrix/1.1":
+        fields.add("operating_budget")
+    if not isinstance(plan, dict) or set(plan) != fields:
+        raise AgentBomError("matrix plan fields differ from the selected version's contract")
+    if version not in ("aau-candidate-matrix/1.0", "aau-candidate-matrix/1.1"):
         raise AgentBomError("unsupported matrix plan version")
+    if version == "aau-candidate-matrix/1.1":
+        validate_budget(plan["operating_budget"])
+        if _criteria(plan["criteria"]) != _criteria(plan["operating_budget"]["criteria"]):
+            raise AgentBomError("matrix and operating budget must use the same joint-pass criteria")
     ids = plan["candidate_ids"]
     if (not isinstance(ids, list) or not 2 <= len(ids) <= 10
             or any(not isinstance(name, str) or not name.strip() or len(name) > 120 or "=" in name for name in ids)
@@ -72,6 +82,12 @@ def matrix_payloads(plan: dict, policy: dict, baseline: dict, candidates: dict) 
         if plan["cost_basis"][name] == "unknown":
             reasons.append("unknown_cost_basis")
         stem = prefix(index)
+        budget = None
+        if "operating_budget" in plan:
+            budget = review_budget(plan["operating_budget"], source, cost_basis=plan["cost_basis"][name])
+            files[f"{stem}-budget.json"] = rendered(budget)
+            if budget["status"] != "constraints_met":
+                reasons.append("operating_budget_not_met_or_verified")
         files.update({f"{stem}.json": rendered(source), f"{stem}-policy.json": rendered(review),
                       f"{stem}-operations.json": rendered(operations)})
         rows.append({"candidate_id": name, "source_file": f"{stem}.json",
@@ -80,6 +96,8 @@ def matrix_payloads(plan: dict, policy: dict, baseline: dict, candidates: dict) 
                      "failed_constraints": review["failed_constraints"], "cost_basis": plan["cost_basis"][name],
                      "operating_comparison_eligible": not reasons, "exclusion_reasons": reasons,
                      "overall": overall})
+        if budget is not None:
+            rows[-1].update(budget_status=budget["status"], budget_file=f"{stem}-budget.json")
     pairs, dominated = [], set()
     for left, right in combinations(rows, 2):
         if not left["operating_comparison_eligible"] or not right["operating_comparison_eligible"]:
@@ -114,11 +132,14 @@ def matrix_payloads(plan: dict, policy: dict, baseline: dict, candidates: dict) 
               "joint_pass_criteria": plan["criteria"],
               "candidates": rows, "pairwise_comparisons": pairs, "operating_groups": groups,
               "boundary": BOUNDARY}
+    if "operating_budget" in plan:
+        report.update(report_version="aau-candidate-matrix-report/1.1",
+                      operating_budget_sha256=digest(plan["operating_budget"]))
     files["matrix.json"] = rendered(report)
     files["matrix.html"] = render_matrix(report).encode("utf-8")
     if any(len(value) > MAX_JSON_BYTES for value in files.values()):
         raise AgentBomError("candidate matrix member exceeds 2 MB")
-    files["manifest.json"] = rendered({"pack_version": "aau-candidate-matrix-pack/1.0",
+    files["manifest.json"] = rendered({"pack_version": "aau-candidate-matrix-pack/1.1" if "operating_budget" in plan else "aau-candidate-matrix-pack/1.0",
         "files": {name: digest(value) for name, value in sorted(files.items())}})
     return report, files
 
@@ -130,7 +151,8 @@ def render_matrix(report: dict) -> str:
                      "incomplete_cost_coverage": "Incomplete cost coverage",
                      "incomplete_latency_coverage": "Incomplete latency coverage",
                      "no_jointly_passing_attempts": "No jointly passing attempts",
-                     "unknown_cost_basis": "Unknown cost basis"}
+                     "unknown_cost_basis": "Unknown cost basis",
+                     "operating_budget_not_met_or_verified": "Operating budget not met or not verified"}
     table = _table("All supplied candidates — alphabetical, not ranked",
                    ("Candidate", "Policy", "Declared cost basis", "Jointly passing / attempts",
                     "USD / jointly passing attempt", "p95 seconds", "Excluded from operating comparison"), [
@@ -148,6 +170,18 @@ def render_matrix(report: dict) -> str:
     links = "".join(f'<li>{_text(r["candidate_id"])}: <a href="{r["policy_file"]}">full policy checks</a> · '
                     f'<a href="{r["operations_file"]}">operating coverage and per-scenario detail</a></li>'
                     for r in report["candidates"])
+    budgets = ""
+    if "operating_budget_sha256" in report:
+        labels = {"constraints_met": "Met", "constraints_not_met": "Exceeded",
+                  "constraints_not_verified": "Not verified"}
+        budgets = _table("Declared operating budget — every group must meet its limits",
+                         ("Candidate", "Recorded budget status"),
+                         [(r["candidate_id"], labels[r["budget_status"]]) for r in report["candidates"]])
+        budgets += ('<p>Missing measurements and insufficient repeats cannot pass. A known exceedance takes '
+                    'precedence in the status; inspect each report for additional unverified checks. '
+                    'Group membership and thresholds are declared, not production SLO or fairness certification.</p><ul>'
+                    + "".join(f'<li><a href="{r["budget_file"]}">{_text(r["candidate_id"])}: all budget checks</a></li>'
+                              for r in report["candidates"]) + '</ul>')
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width, initial-scale=1">'
             '<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; '
@@ -159,7 +193,7 @@ def render_matrix(report: dict) -> str:
             f'<p>Declared scenarios: {_text(report["scenario_count"])}; '
             f'{_text(report["repeats_per_scenario"])} repeats per scenario on every source. '
             'Declared context matches; actual execution conditions remain unverified.</p>'
-            f'{table}{criteria}{groups}<p>Not dominated means no other eligible candidate in the same declared cost basis '
+            f'{table}{criteria}{budgets}{groups}<p>Not dominated means no other eligible candidate in the same declared cost basis '
             'is no worse on both recorded axes and strictly better on at least one. Equal points remain tied. '
             'A group may contain only one eligible candidate. This is not statistical or future superiority.</p>'
             f'<h2>Inspect the evidence</h2><ul>{links}</ul><p>{_text(report["boundary"])}</p>'
@@ -186,6 +220,8 @@ def verify_matrix(directory: Path) -> dict:
     ids = validate_plan(plan)
     names = {"plan.json", "policy.json", "baseline.json", "matrix.json", "matrix.html", "manifest.json"}
     names.update(f"{prefix(i)}{suffix}.json" for i in range(1, len(ids) + 1) for suffix in ("", "-policy", "-operations"))
+    if "operating_budget" in plan:
+        names.update(f"{prefix(i)}-budget.json" for i in range(1, len(ids) + 1))
     if {path.name for path in directory.iterdir()} != names:
         raise AgentBomError("candidate matrix requires its exact file set")
     for path in directory.iterdir():

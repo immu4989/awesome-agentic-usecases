@@ -60,6 +60,24 @@ def smoke(wheel: Path) -> None:
         matrix = json.loads((root / "matrix/matrix.json").read_text())
         if matrix["operating_groups"][0]["eligible_candidates"] != ["repaired"]:
             raise RuntimeError("installed matrix allowed failed policy to enter operating comparisons")
+        budget = {"plan_version": "aau-operating-budget/1.0",
+                  "scenario_ids": json.loads((repaired / "policy.json").read_text())["scenario_ids"],
+                  "minimum_repeats": 4, "criteria": matrix_plan["criteria"], "cost_basis": "synthetic",
+                  "limits": {"p95_latency_s": 2, "cost_per_passing_attempt_usd": .25}, "groups": []}
+        (root / "budget.json").write_text(json.dumps(budget))
+        for name, code in (("intermittent", 1), ("repaired", 0)):
+            args = [cli, "operating-budget", "budget.json", f"demo/{name}/candidate.json", "--cost-basis", "synthetic"]
+            run([*args, "--out", f"{name}-budget.json"], code)
+            run([*args, "--verify", f"{name}-budget.json"], code)
+        matrix_plan.update(plan_version="aau-candidate-matrix/1.1", operating_budget=budget)
+        (root / "budget-matrix-plan.json").write_text(json.dumps(matrix_plan))
+        run([cli, "candidate-matrix", "create", "budget-matrix-plan.json", repaired / "policy.json", repaired / "baseline.json",
+             "--candidate", "intermittent=demo/intermittent/candidate.json",
+             "--candidate", "repaired=demo/repaired/candidate.json", "--out", "budget-matrix"])
+        run([cli, "candidate-matrix", "verify", "budget-matrix"])
+        budget_matrix = json.loads((root / "budget-matrix/matrix.json").read_text())
+        if [r["budget_status"] for r in budget_matrix["candidates"]] != ["constraints_not_met", "constraints_met"]:
+            raise RuntimeError("installed matrix omitted recorded operating budget checks")
         baseline, candidate = repaired / "baseline-recording.json", repaired / "candidate-recording.json"
         run([cli, "compare-eval-contexts", baseline, candidate, "--input-format", "recordings", "--out", "context.json"])
         run([cli, "compare-eval-contexts", baseline, candidate, "--input-format", "recordings", "--verify", "context.json"])
@@ -95,7 +113,7 @@ def smoke(wheel: Path) -> None:
         report["overall"]["cost"]["total_usd"] = 999
         report_path.write_text(json.dumps(report))
         run([cli, "evaluation-pack", "verify", repaired, "--require-recordings", "--require-diagnostics"], expected=2)
-    print("Installed wheel verified outside checkout: demo, both policy outcomes, recording and CSV import, CSV review handoff, context review, overwrite refusal, and tamper rejection.")
+    print("Installed wheel verified outside checkout: demo, policy and operating budget outcomes, candidate matrices, recording and CSV import, CSV review handoff, context review, overwrite refusal, and tamper rejection.")
 
 
 def main():

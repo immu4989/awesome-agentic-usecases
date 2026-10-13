@@ -691,6 +691,97 @@ passed policy. Exit **2** means invalid input or verification failure. Do not us
 success as a deployment gate. All supplied evaluation details are retained and **not sanitized**;
 review before sharing. Hashes do not authenticate execution, scoring, timestamps, or approval.
 
+### Check operating budgets without hiding a slow or expensive group
+
+`aau operating-budget` checks explicit limits on the recorded workload and up to 20 declared
+groups. Every limit is non-compensating: an inexpensive routine route cannot offset an expensive
+specialist route. The command does not infer production traffic, recommend thresholds, or certify
+an SLO. It requires the current checkout or a locally built wheel, not published PyPI 1.6.0.
+
+Try the constructed 20-scenario, four-repeat example:
+
+```bash
+python harness/examples/evaluation-review/operating_budget.py --out /tmp/aau-budget-demo
+aau operating-budget /tmp/aau-budget-demo/budget.json /tmp/aau-budget-demo/aggregate-trap.json \
+  --cost-basis synthetic --verify /tmp/aau-budget-demo/aggregate-trap-budget.json
+# Expected exit 1: verified evidence of failed group limits, not broken verification.
+aau operating-budget /tmp/aau-budget-demo/budget.json /tmp/aau-budget-demo/repaired.json \
+  --cost-basis synthetic --verify /tmp/aau-budget-demo/repaired-budget.json
+# Expected exit 0: every declared recorded limit met.
+aau candidate-matrix verify /tmp/aau-budget-demo/matrix
+```
+
+The synthetic aggregate has a $0.495 cost per jointly passing attempt and a 1-second nearest-rank
+p95. Both meet the example's $0.50 and 2-second limits. But its specialist group costs $8 per
+passing attempt and takes 30 seconds. That group fails; the candidate is excluded from the
+budget-aware matrix even though every task-completion policy check passes. Open the generated
+`matrix/matrix.html`, then follow the budget-report links for every scope and check. These are
+constructed values, not measured improvements, real service performance, or recommended budgets.
+
+A plan has exactly these fields (replace the illustrative IDs, criteria, and thresholds):
+
+```json
+{
+  "plan_version": "aau-operating-budget/1.0",
+  "scenario_ids": ["routine", "specialist"],
+  "minimum_repeats": 4,
+  "criteria": [{"metric": "completion", "direction": "higher", "limit": 1}],
+  "cost_basis": "estimate",
+  "limits": {"cost_per_passing_attempt_usd": 0.5, "p95_latency_s": 2},
+  "groups": [
+    {"group_id": "routine", "scenario_ids": ["routine"], "limits": {"p95_latency_s": 2}},
+    {"group_id": "specialist", "scenario_ids": ["specialist"], "limits": {"p95_latency_s": 2}}
+  ]
+}
+```
+
+```bash
+aau operating-budget budget.json evaluation.json --cost-basis estimate --out budget-review.json
+aau operating-budget budget.json evaluation.json --cost-basis estimate --verify budget-review.json
+```
+
+Supported inclusive upper limits are `total_cost_usd`, `cost_per_passing_attempt_usd`,
+`p95_latency_s`, `max_latency_s`, and `total_api_calls`. Select at least one overall and at least
+one per group; omitted measures are not checked. Limits must be finite and nonnegative; API-call
+limits are integers. Costs include failed attempts. Passing attempts satisfy all supplied
+criteria on the same observation; these criteria are an accounting denominator, **not a quality
+gate**. Run a separate policy review or use the integrated matrix below.
+
+The exact declared scenario census and valid complete repeat records are required. `groups: []`
+checks only the overall workload. If groups are supplied, they must cover every scenario and
+may overlap; their totals must not be added. Membership is declared, not inferred from personal
+attributes. Scopes use equal recorded attempts, not population or production-traffic weights.
+P95 uses sorted latency at one-based `ceil(0.95 × attempts)`; small samples often yield the maximum.
+An overall percentile can hide a small group, and even a group's p95 can hide its slowest attempts;
+choose a separate `max_latency_s` limit where that distinction matters.
+
+Every check reports `met`, `exceeded`, or `not_verified`. Missing measurements, an undefined
+zero-success unit cost, or a mismatched declared cost basis cannot pass the affected check.
+The CLI cost-basis declaration must match the plan's `estimate`, `charge`, or `synthetic` basis
+for cost checks; it does not verify invoices. Too few repeats or inconsistent saved metric
+summaries also prevent a passing report. Known exceedances take precedence in overall status,
+but **all** unverified checks remain visible. No complete-case substitution or zero imputation.
+
+Exit **0** means every recorded check and prerequisite is met; **1** means at least one failed
+or is not verified, with the report retained; **2** means malformed input, an existing output,
+or a report that fails recomputation. Verification uses the original plan and evaluation and
+returns the same outcome code. Keep those inputs with the report. Reports are bounded to 2 MB
+and contain unsanitized scenario IDs and source-audit details; inspect before sharing.
+
+For a portable multi-candidate review, change the matrix plan to `aau-candidate-matrix/1.1`
+and add `operating_budget` containing the entire budget plan above. Its joint criteria must
+match the matrix criteria. Every candidate receives a recomputed `candidate-NN-budget.json`;
+failed **or unverified** budgets exclude it from the operating comparison alongside existing
+policy and coverage gates. The resulting pack has **6 + 4 × candidate count** files. Version 1.0
+plans retain their existing behavior and byte layout. Matrix exit 0 still means descriptive
+pack verification, **not** that candidates passed their budgets; inspect the reports or run
+`operating-budget` for a failing gate exit code.
+
+This design is motivated by [Google SRE's guidance on distributions and aggregation](https://sre.google/sre-book/service-level-objectives/)
+and [FinOps unit-economics guidance](https://www.finops.org/framework/capabilities/unit-economics/).
+The implementation checks declared offline measurements; it is not production SLO monitoring,
+fully loaded cost accounting, forecast accuracy, fairness certification, or deployment approval.
+
 ### Identify the harness implementation used for a review
 
 The version label alone is insufficient for unreleased checkouts and local wheels: different
