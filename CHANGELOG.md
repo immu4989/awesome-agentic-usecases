@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Operating-budget change review** — compare approved and proposed limits, group obligations,
+  memberships, repeat requirements, cost bases, and success definitions before changing a CI pin.
+  Every semantic change requests review, including tighter thresholds. Controlled examples show
+  unchanged evidence passing only after a denominator edit or group removal; no approval or savings
+  claim is inferred, and no protected settings are updated.
+
 - **Public operating-budget lab** — a script-free, report-generated lesson exposes a slow,
   expensive service route hidden by passing aggregate cost and p95. Download two complete
   combined-gate dossiers and a candidate matrix for offline verification. CI reproduces the

@@ -87,6 +87,9 @@ def smoke(wheel: Path) -> None:
         run([cli, "evaluation-pack", "verify", repaired, "--require-budget"], expected=2)
         budget["limits"]["p95_latency_s"] = 1
         (root / "strict-budget.json").write_text(json.dumps(budget))
+        run([cli, "compare-operating-budgets", "budget.json", "strict-budget.json", "--out", "budget-changes.json"], 1)
+        run([cli, "compare-operating-budgets", "budget.json", "strict-budget.json", "--verify", "budget-changes.json"], 1)
+        run([cli, "compare-operating-budgets", "budget.json", "budget.json", "--out", "unchanged-budget.json"])
         run([cli, "evaluation-pack", "create", repaired / "policy.json", repaired / "baseline.json", repaired / "candidate.json",
              "--diagnostics", repaired / "diagnostics.json", "--operating-budget", "strict-budget.json", "--out", "budget-only-failure"], 1)
         run([cli, "evaluation-pack", "verify", "budget-only-failure", "--require-budget"], 1)

@@ -848,6 +848,66 @@ members are reserialized values, not original whitespace; preserve original appr
 for independent byte-pin checks. CSV originals remain byte-exact. Nothing is uploaded automatically.
 All source details remain unsanitized, and a passing combined gate is not deployment approval.
 
+### Review operating-budget changes before approving replacement limits
+
+`aau compare-operating-budgets` compares two valid budget plans before an accountable reviewer
+approves a replacement. It does not run an evaluation, change an approval pin, or infer that
+an agent improved because a new plan passes. Requires the current checkout or locally built
+wheel, not published PyPI 1.6.0.
+
+```bash
+aau compare-operating-budgets approved-budget.json proposed-budget.json --out budget-changes.json
+aau compare-operating-budgets approved-budget.json proposed-budget.json --verify budget-changes.json
+```
+
+The report includes exact before/after values for:
+
+- Raised, lowered, added, and removed upper limits, globally and for each named group.
+- Added/removed groups, renamed groups as a removal plus addition, and changed scenario membership.
+- Changed minimum repeats, cost-basis declarations, and **every** joint-pass criterion change.
+
+A criterion edit changes the defined accounting unit, even when it looks like a stricter
+quality rule. Added cases can dilute ratios or move percentiles. Raised/lowered labels describe
+the numeric threshold only, not net plan strength when other assumptions also change. Removed
+obligations remain visible even if another group covers the same scenarios; tighter limits
+elsewhere never cancel them from the report. Groups are matched by exact ID, not inferred meaning.
+
+Try two controlled counterexamples:
+
+```bash
+python harness/examples/evaluation-review/budget_changes.py --out /tmp/aau-budget-changes
+aau compare-operating-budgets /tmp/aau-budget-changes/denominator-before.json \
+  /tmp/aau-budget-changes/denominator-after.json \
+  --verify /tmp/aau-budget-changes/denominator-changes.json
+# Expected exit 1: the definition changed; no evaluation observations changed.
+aau compare-operating-budgets /tmp/aau-budget-changes/removed-group-before.json \
+  /tmp/aau-budget-changes/removed-group-after.json \
+  --verify /tmp/aau-budget-changes/removed-group-changes.json
+# Expected exit 1: a named group obligation was removed.
+```
+
+| Same synthetic evaluation | Plan edit | Apparent result |
+|---|---|---|
+| Four $0.10 attempts, only one meets the original authorization criterion | Permit the recorded unauthorized attempts in the accounting criterion | Unit cost changes from $0.40 to $0.10; the budget now passes |
+| Overall unit-cost limit passes, but a stricter group limit fails | Remove that group | The budget now passes with exactly the same scores and costs |
+
+Neither result is an agent repair, verified saving, or a reason to waive authorization. Keep the
+independent quality-policy review; the combined gate still requires it. The fixture writes both
+plans, both budget assessments, and a recomputable change report for each example, alongside the
+single unchanged evaluation.
+
+Exit **1** means any enumerated obligation or assumption changed and requires review—including
+added groups, lower limits, and higher minimum repeats. Exit **0** means no such change was
+detected, **not approval or equivalent acceptance sets proved**. List/dictionary ordering and
+numerically equal limits are ignored as obligation changes; source-value hashes still identify
+the supplied plans. Exit **2** means invalid plans, an existing output, an oversized report, or
+failed recomputation. Verification uses the original two plans and returns the same outcome code.
+
+Reports retain unsanitized plan labels and limits; inspect before sharing. JSON value hashes are
+not the exact-file byte pins required by CI. Review the complete plans and change report, then
+approve any replacement pin through your independently controlled process. This command never
+updates files, repository variables, workflow settings, or approval records on your behalf.
+
 ### Identify the harness implementation used for a review
 
 The version label alone is insufficient for unreleased checkouts and local wheels: different

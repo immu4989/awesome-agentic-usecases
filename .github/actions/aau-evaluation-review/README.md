@@ -255,6 +255,14 @@ or a budget without diagnostics fail before output creation. The Action pins **e
 plan bytes**; the pack reserializes JSON values, so keep original approved files when independently
 checking approval hashes. No policy or budget approval is created by this tool.
 
+Before approving a replacement budget pin, run
+[`aau compare-operating-budgets`](../../../harness/README.md#review-operating-budget-changes-before-approving-replacement-limits)
+on the old and proposed plans. It exposes removed groups, changed memberships, altered limits,
+minimum-repeat changes, cost-basis changes, and changes to the definition of a passing attempt.
+**Every** enumerated change requests review, including tighter limits; an unchanged report is
+not approval. Use the report alongside the complete plans and a separately reviewed diagnostics
+plan. The comparison does not change your approved hash or accept a candidate-controlled pin.
+
 The GitHub summary reports the combined outcome and separate status labels, not group names,
 thresholds, costs, timings, or raw source values. No new permissions, credentials, remote calls,
 installations, or uploads are introduced. These commands require the current repository harness
