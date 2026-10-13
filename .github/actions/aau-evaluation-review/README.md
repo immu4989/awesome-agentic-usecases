@@ -61,7 +61,8 @@ Synthetic fixtures and freely chosen limits do not establish production suitabil
 ### Review recorded observations without a separate import job
 
 Set `input-format: recordings` when `baseline` and `candidate` use the
-[`aau-recorded-observations/1.0` contract](../../../harness/README.md#import-recorded-scores-from-your-existing-evaluation-system).
+[`aau-recorded-observations` contract](../../../harness/README.md#import-recorded-scores-from-your-existing-evaluation-system)
+(1.0 for scores only; 1.1 also retains optional per-attempt USD costs, elapsed seconds, and API-call counts).
 The default remains `evaluations`; unknown formats fail rather than being guessed. The baseline
 approval hash must match the **original recording file bytes**, not a precomputed normalized export.
 The policy hash is unchanged. Approve those pins independently, as above.
@@ -116,7 +117,10 @@ selects policy-only mode, so a reviewer requiring a dossier should verify with
 
 The Action produces and recomputes all eleven version-2.0 dossier files before success/failure
 is reported. With `input-format: recordings`, it retains thirteen files and rechecks the complete
-recording-to-review chain; the metric-only recordings do not acquire fabricated operating data.
+recording-to-review chain. Metric-only recordings do not acquire fabricated operating data;
+version-1.1 measurements are validated and retained, with missing values kept unknown. The cost
+bases in the approved diagnostic plan remain declarations, not invoice verification. Invalid
+operating fields fail before a pack is created, including when diagnostics are omitted.
 Use `--require-recordings --require-diagnostics` when both are required outside the Action.
 
 **Diagnostics never override the policy gate.** The Action still exits 1 and retains failure

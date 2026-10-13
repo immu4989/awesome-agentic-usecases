@@ -8,6 +8,7 @@ from aau_harness.agent_bom import AgentBomError, digest
 from aau_harness.catalog_cli import main
 from aau_harness.eval_audit import audit_evaluation
 from aau_harness.eval_import import import_observations
+from aau_harness.eval_operations import review_operations
 from aau_harness.eval_pack import create_pack, verify_pack
 from aau_harness.evaluation_context import capture_context
 
@@ -48,8 +49,10 @@ def test_optional_metrics_remain_missing_instead_of_being_imputed():
 @pytest.mark.parametrize("defect", ["duplicate", "missing", "unknown", "duplicate-census", "unused-census",
                                      "extra-field", "unrecorded-detail", "bool-repeat", "bool-metric", "nan",
                                      "infinity", "no-metrics", "unsupported", "nonfinite-summary"])
-def test_import_rejects_invalid_or_incomplete_recordings(defect):
+@pytest.mark.parametrize("version", ["1.0", "1.1"])
+def test_import_rejects_invalid_or_incomplete_recordings(defect, version):
     source = recorded()
+    source["format_version"] = f"aau-recorded-observations/{version}"
     rows = source["observations"]
     if defect == "duplicate":
         rows[-1] = deepcopy(rows[0])
@@ -131,3 +134,139 @@ def test_documented_fixture_imports_and_audits_without_a_model(tmp_path):
     assert main(["import-eval", str(source), "--verify", str(output)]) == 0
     assert main(["audit-eval", str(output), "--out", str(audit)]) == 0
     assert json.loads(output.read_text())["metric_means"] == {"completion": 0.75, "unauthorized_action": 0.0}
+
+
+def operating_recording():
+    return json.loads((Path(__file__).resolve().parents[1]
+                       / "examples/evaluation-review/recorded-operations.json").read_text())
+
+
+CRITERIA = [{"metric": "completion", "direction": "higher", "limit": 1},
+            {"metric": "unauthorized", "direction": "lower", "limit": 0}]
+
+
+def test_import_preserves_supplied_operating_measurements_and_counts_failure_costs():
+    source = operating_recording()
+    original = deepcopy(source)
+    result = import_observations(source)
+    assert source == original
+    assert result["results"] == source["observations"]
+    assert result["provenance"]["import_format"].endswith("/1.1")
+    assert result["provenance"]["source_sha256"] == digest(source)
+    assert "not measured, rounded, unit-converted" in result["provenance"]["boundary"]
+    assert audit_evaluation(result)["status"] == "consistent"
+    report = review_operations(result, criteria=CRITERIA, cost_basis="synthetic")["overall"]
+    assert report["passing_attempt_count"] == 1
+    assert report["cost"]["total_usd"] == .4
+    assert report["cost"]["total_per_passing_attempt_usd"] == .4
+    assert report["cost"]["spent_on_failed_attempts_usd"] == pytest.approx(.3)
+    assert report["latency"]["p95_s"] == 12
+    assert report["api_calls"]["total"] == 8
+    source["observations"][0]["cost_usd"] = 999
+    assert result["results"][0]["cost_usd"] == .1
+
+
+@pytest.mark.parametrize("field,section,summary", [("cost_usd", "cost", "total_usd"),
+                                                  ("latency_s", "latency", "p95_s"),
+                                                  ("n_api_calls", "api_calls", "total")])
+@pytest.mark.parametrize("missing_count", [1, 4])
+def test_missing_operating_values_remain_unknown_per_field(field, section, summary, missing_count):
+    source = operating_recording()
+    for row in source["observations"][:missing_count]:
+        del row[field]
+    result = import_observations(source)
+    assert all(field not in row for row in result["results"][:missing_count])
+    overall = review_operations(result, criteria=CRITERIA, cost_basis="unknown")["overall"]
+    assert overall[section]["status"] == ("partial" if missing_count == 1 else "unavailable")
+    assert overall[section]["reporting_observations"] == 4 - missing_count
+    assert overall[section][summary] is None
+    assert all(overall[key]["status"] == "complete" for key in ("cost", "latency", "api_calls") if key != section)
+
+
+@pytest.mark.parametrize("field", ["cost_usd", "latency_s", "n_api_calls"])
+@pytest.mark.parametrize("value", [None, True, "0.1", -1, float("nan"), float("inf"), {}, []])
+def test_import_rejects_invalid_optional_operating_values(field, value):
+    source = operating_recording()
+    source["observations"][0][field] = value
+    with pytest.raises(AgentBomError, match=field):
+        import_observations(source)
+
+
+@pytest.mark.parametrize("value", [1.0, .1, 10**12 + 1])
+def test_import_call_counts_require_bounded_integers(value):
+    source = operating_recording()
+    source["observations"][0]["n_api_calls"] = value
+    with pytest.raises(AgentBomError, match="n_api_calls"):
+        import_observations(source)
+
+
+def test_import_does_not_round_zero_or_precise_supplied_measurements():
+    source = operating_recording()
+    source["observations"][0].update(cost_usd=.000000123456, latency_s=0, n_api_calls=0)
+    result = import_observations(source)
+    assert result["results"][0] == source["observations"][0]
+    assert "total_cost_usd" not in result
+    assert "p50_latency_s" not in result
+
+
+@pytest.mark.parametrize("field,value", [("latency_ms", 1000), ("currency", "EUR"),
+                                        ("detail", {"private": "text"}), ("tokens", 100)])
+def test_new_import_version_still_rejects_unknown_fields(field, value):
+    source = operating_recording()
+    source["observations"][0][field] = value
+    with pytest.raises(AgentBomError):
+        import_observations(source)
+
+
+def test_old_import_version_does_not_silently_accept_operating_fields():
+    source = operating_recording()
+    source["format_version"] = "aau-recorded-observations/1.0"
+    with pytest.raises(AgentBomError):
+        import_observations(source)
+
+
+@pytest.mark.parametrize("repaired", [False, True])
+def test_operating_recordings_roundtrip_through_complete_dossier_and_cli(tmp_path, repaired):
+    baseline = operating_recording()
+    candidate = deepcopy(baseline)
+    if repaired:
+        for row in candidate["observations"]:
+            row["metrics"]["unauthorized"] = 0
+            row["cost_usd"] = .25
+    policy = {"policy_version": "aau-evaluation-review-policy/1.0", "scenario_ids": ["service"],
+              "minimum_repeats": 4, "metrics": [{"metric": rule["metric"], "direction": rule["direction"],
+                  "candidate_observation_limit": rule["limit"], "max_mean_regression": 0,
+                  "max_regressed_scenarios": 0} for rule in CRITERIA]}
+    plan = {"plan_version": "aau-evaluation-diagnostics/1.0", "criteria": CRITERIA, "draw_sizes": [1, 4],
+            "cost_basis": {"baseline": "synthetic", "candidate": "synthetic"}}
+    for name, value in (("baseline", baseline), ("candidate", candidate), ("policy", policy), ("plan", plan)):
+        (tmp_path / f"{name}.json").write_text(json.dumps(value))
+    pack = tmp_path / "pack"
+    code = 0 if repaired else 1
+    assert main(["evaluation-pack", "from-recordings", str(tmp_path / "policy.json"),
+                 str(tmp_path / "baseline.json"), str(tmp_path / "candidate.json"),
+                 "--diagnostics", str(tmp_path / "plan.json"), "--out", str(pack)]) == code
+    assert main(["evaluation-pack", "verify", str(pack), "--require-recordings", "--require-diagnostics"]) == code
+    assert len(list(pack.iterdir())) == 13
+    assert json.loads((pack / "candidate-recording.json").read_text()) == candidate
+    operating = json.loads((pack / "candidate-operations.json").read_text())
+    assert operating["overall"]["cost"]["total_per_passing_attempt_usd"] == (.25 if repaired else .4)
+    changed = json.loads((pack / "candidate.json").read_text())
+    changed["results"][0]["cost_usd"] = 0
+    (pack / "candidate.json").write_text(json.dumps(changed))
+    assert main(["evaluation-pack", "verify", str(pack), "--require-recordings", "--require-diagnostics"]) == 2
+
+
+def test_operating_import_cli_detects_changed_measurements_and_avoids_partial_output(tmp_path):
+    source, output = tmp_path / "recorded.json", tmp_path / "evaluation.json"
+    data = operating_recording()
+    source.write_text(json.dumps(data))
+    assert main(["import-eval", str(source), "--out", str(output)]) == 0
+    assert main(["import-eval", str(source), "--verify", str(output)]) == 0
+    data["observations"][0]["cost_usd"] = 0
+    source.write_text(json.dumps(data))
+    assert main(["import-eval", str(source), "--verify", str(output)]) == 2
+    data["observations"][0]["latency_s"] = "INVALID_PRIVATE_VALUE"
+    source.write_text(json.dumps(data))
+    assert main(["import-eval", str(source), "--out", str(tmp_path / "invalid.json")]) == 2
+    assert not (tmp_path / "invalid.json").exists()

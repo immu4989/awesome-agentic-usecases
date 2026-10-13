@@ -1,4 +1,4 @@
-"""Import explicitly recorded metric observations without executing an evaluator."""
+"""Import recorded scores and optional operating measurements without executing an evaluator."""
 
 import argparse
 from copy import deepcopy
@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .agent_bom import AgentBomError, MAX_JSON_BYTES, digest, load_json, rendered, write_json
 from .eval_audit import audit_evaluation
+from .eval_operations import validate_operating_measurements
 from .evaluation_context import validate_context
 
 
@@ -15,7 +16,8 @@ def import_observations(source: dict) -> dict:
     required = {"format_version", "source_label", "scenario_ids", "n_repeats", "observations"}
     if not isinstance(source, dict) or not required <= set(source) or set(source) - required - {"evaluation_context"}:
         raise AgentBomError("recorded observations require the documented fields only")
-    if source["format_version"] != "aau-recorded-observations/1.0":
+    version = source["format_version"]
+    if version not in ("aau-recorded-observations/1.0", "aau-recorded-observations/1.1"):
         raise AgentBomError("unsupported recorded observation version")
     label = source["source_label"]
     if not isinstance(label, str) or not label.strip() or len(label) > 200:
@@ -26,10 +28,13 @@ def import_observations(source: dict) -> dict:
             or len(set(ids)) != len(ids)):
         raise AgentBomError("scenario_ids must declare 1 to 500 unique nonblank IDs")
     rows = source["observations"]
+    row_required = {"scenario_id", "repeat", "metrics"}
+    optional = {"cost_usd", "latency_s", "n_api_calls"} if version == "aau-recorded-observations/1.1" else set()
     if not isinstance(rows, list) or any(
-        not isinstance(row, dict) or set(row) != {"scenario_id", "repeat", "metrics"} for row in rows
+        not isinstance(row, dict) or not row_required <= set(row) or set(row) - row_required - optional for row in rows
     ):
-        raise AgentBomError("each observation requires exactly scenario_id, repeat, and metrics")
+        raise AgentBomError("each observation requires scenario_id, repeat, metrics and only the version's documented optional fields")
+    validate_operating_measurements(rows)
     if any(not isinstance(row["scenario_id"], str) or row["scenario_id"] not in ids for row in rows):
         raise AgentBomError("observation scenario ID is outside the declared census")
     if "evaluation_context" in source:
@@ -59,6 +64,12 @@ def import_observations(source: dict) -> dict:
         "results": deepcopy(sorted(rows, key=lambda row: (row["scenario_id"], row["repeat"]))),
         **({"evaluation_context": deepcopy(source["evaluation_context"])} if "evaluation_context" in source else {}),
     }
+    if version == "aau-recorded-observations/1.1":
+        result["provenance"]["boundary"] += (
+            " Optional per-attempt USD costs, elapsed seconds, and API-call counts are copied as supplied,"
+            " not measured, rounded, unit-converted, price-checked, or authenticated by this importer."
+            " Omitted fields remain unknown. Zero is a supplied value, not an assertion of free or instantaneous execution."
+            " Cost basis and measurement scope require separate review; no operating totals are inferred here.")
     try:
         json.dumps(result, allow_nan=False)
         if len(rendered(result)) > MAX_JSON_BYTES:

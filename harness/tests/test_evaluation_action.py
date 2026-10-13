@@ -190,7 +190,7 @@ def test_invalid_source_does_not_echo_payload_to_action_logs(tmp_path):
     assert "SENSITIVE_EXAMPLE" not in result.stdout + result.stderr
 
 
-def setup_diagnostics(tmp_path, candidate="repaired", recordings=False):
+def setup_diagnostics(tmp_path, candidate="repaired", recordings=False, operating=False):
     workspace, env = setup(tmp_path, candidate, demo="dossier.py")
     env.update(AAU_EVAL_DIAGNOSTICS="diagnostics.json",
                AAU_EVAL_DIAGNOSTICS_SHA256=hashlib.sha256((workspace / "diagnostics.json").read_bytes()).hexdigest())
@@ -198,10 +198,12 @@ def setup_diagnostics(tmp_path, candidate="repaired", recordings=False):
         for name in sorted({"baseline", candidate}):
             path = workspace / f"{name}.json"
             original = json.loads(path.read_text())
-            recording = {"format_version": "aau-recorded-observations/1.0", "source_label": "synthetic CI recording",
+            keys = ("scenario_id", "repeat", "metrics") + (("cost_usd", "latency_s", "n_api_calls") if operating else ())
+            recording = {"format_version": "aau-recorded-observations/1.1" if operating else "aau-recorded-observations/1.0",
+                         "source_label": "synthetic CI recording",
                          "scenario_ids": sorted({row["scenario_id"] for row in original["results"]}),
                          "n_repeats": original["n_repeats"], "evaluation_context": original["evaluation_context"],
-                         "observations": [{key: row[key] for key in ("scenario_id", "repeat", "metrics")}
+                         "observations": [{key: row[key] for key in keys}
                                           for row in original["results"]]}
             path.write_text(json.dumps(recording))
         env.update(AAU_EVAL_INPUT_FORMAT="recordings",
@@ -226,6 +228,36 @@ def test_action_preserves_verified_diagnostic_dossiers_for_both_outcomes(tmp_pat
     assert "synthetic-service" not in summary
     assert "unauthorized" not in summary
     assert run(env).returncode == 2
+
+
+@pytest.mark.parametrize("candidate,code", [("repaired", 0), ("baseline", 1)])
+def test_action_preserves_operating_recordings_and_diagnostics(tmp_path, candidate, code):
+    from aau_harness.eval_pack import verify_pack
+
+    workspace, env = setup_diagnostics(tmp_path, candidate, recordings=True, operating=True)
+    result = run(env)
+    assert result.returncode == code, result.stderr
+    pack = workspace / "review pack"
+    verify_pack(pack, require_recordings=True, require_diagnostics=True)
+    operations = json.loads((pack / "candidate-operations.json").read_text())["overall"]
+    assert operations["cost"]["total_per_passing_attempt_usd"] == (.25 if code == 0 else .4)
+    assert operations["latency"]["p95_s"] == (2 if code == 0 else 12)
+    assert operations["cost"]["status"] == "complete"
+
+
+@pytest.mark.parametrize("diagnostics", [False, True])
+def test_action_rejects_invalid_imported_operating_fields_before_output(tmp_path, diagnostics):
+    workspace, env = setup_diagnostics(tmp_path, recordings=True, operating=True)
+    if not diagnostics:
+        env.update(AAU_EVAL_DIAGNOSTICS="", AAU_EVAL_DIAGNOSTICS_SHA256="")
+    path = workspace / "repaired.json"
+    candidate = json.loads(path.read_text())
+    candidate["observations"][0]["cost_usd"] = "PRIVATE_INVALID_COST"
+    path.write_text(json.dumps(candidate))
+    result = run(env)
+    assert result.returncode == 2
+    assert "PRIVATE_INVALID_COST" not in result.stdout + result.stderr
+    assert not (workspace / "review pack").exists()
 
 
 @pytest.mark.parametrize("missing", ["AAU_EVAL_DIAGNOSTICS", "AAU_EVAL_DIAGNOSTICS_SHA256"])

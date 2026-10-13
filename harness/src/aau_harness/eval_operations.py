@@ -14,6 +14,21 @@ from .eval_repeatability import review_repeatability
 COST_BASES = ("estimate", "charge", "synthetic", "unknown")
 
 
+def validate_operating_measurements(rows: list[dict]) -> None:
+    """Validate supplied values only; an absent field remains unknown, including on import."""
+    for row in rows:
+        for field in ("cost_usd", "latency_s", "n_api_calls"):
+            if field not in row:
+                continue
+            value = row[field]
+            if field == "n_api_calls":
+                valid = type(value) is int and 0 <= value <= 10**12
+            else:
+                valid = type(value) in (int, float) and 0 <= value <= sys.float_info.max
+            if not valid:
+                raise AgentBomError(f"{field} must be finite nonnegative numeric data (API calls: integer up to 10^12); omit unknown fields")
+
+
 def _coverage(rows: list[dict], field: str) -> dict:
     count = sum(field in row for row in rows)
     return {"status": "complete" if count == len(rows) else "partial" if count else "unavailable",
@@ -59,17 +74,7 @@ def review_operations(source: dict, *, criteria: list[dict], cost_basis: str) ->
         raise AgentBomError("cost_basis must be estimate, charge, synthetic, or unknown")
     repeat_review = review_repeatability(source, criteria=criteria, draw_sizes=[1])
     rows = sorted(source["results"], key=lambda row: (row["scenario_id"], row["repeat"]))
-    for row in rows:
-        for field in ("cost_usd", "latency_s", "n_api_calls"):
-            if field not in row:
-                continue  # Absent means unknown, never zero.
-            value = row[field]
-            if field == "n_api_calls":
-                valid = type(value) is int and 0 <= value <= 10**12
-            else:
-                valid = type(value) in (int, float) and 0 <= value <= sys.float_info.max
-            if not valid:
-                raise AgentBomError(f"{field} must be finite nonnegative numeric data (API calls: integer up to 10^12); omit unknown fields")
+    validate_operating_measurements(rows)
     passing = {(row["scenario_id"], repeat) for row in repeat_review["scenarios"] for repeat in row["passing_repeat_ids"]}
     overall = _summary(rows, passing)
     scenarios = []

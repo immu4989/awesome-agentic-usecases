@@ -446,11 +446,11 @@ aggregate receipts back into observations. Required fields:
 
 | Field | Meaning |
 |---|---|
-| `format_version` | Exactly `aau-recorded-observations/1.0` |
+| `format_version` | `aau-recorded-observations/1.0` for scores only; `aau-recorded-observations/1.1` also accepts optional operating measurements |
 | `source_label` | Your nonblank description, at most 200 characters; not authenticated |
 | `scenario_ids` | The complete declared census, 1–500 unique nonblank IDs |
 | `n_repeats` | Positive integer; total observations cannot exceed 10,000 |
-| `observations` | Exactly one row per scenario/repeat; each row has only `scenario_id`, zero-based `repeat`, and `metrics` |
+| `observations` | Exactly one row per scenario/repeat, with `scenario_id`, zero-based `repeat`, and `metrics`; version 1.1 optionally adds the three operating fields below |
 | `evaluation_context` | Optional existing context fingerprint object covering exactly the census |
 
 Metric values must be finite numbers, not booleans or numeric strings. At most 100 metric names
@@ -475,6 +475,58 @@ supplied fingerprints do not establish authenticity. Do not graft today's code h
 observations whose collection context is unknown. Imported IDs, labels, and scores remain visible;
 this is not anonymization or a public-sharing approval. Existing source files and output paths are
 never overwritten.
+
+#### Bring existing cost and timing measurements with your scores
+
+Version **1.1** adds three optional fields **on each observation**, not inside `metrics`.
+Everything else—the census, score validation, context rules, source binding, offline behavior,
+and size limits—stays the same. Version 1.0 remains strict and byte-compatible: it still rejects
+operating fields instead of silently dropping them.
+
+| Observation field | Meaning and accepted values |
+|---|---|
+| `cost_usd` | Supplied cost for that scored attempt in USD; finite nonnegative JSON number |
+| `latency_s` | Supplied elapsed time for that attempt in seconds; finite nonnegative JSON number |
+| `n_api_calls` | Supplied number of API calls for that attempt; integer from 0 through 1,000,000,000,000 |
+
+**Omit a field when unknown.** `null`, booleans, numeric strings, negative values, and nonfinite
+numbers are errors. Zero stays zero; it is not converted to wall-clock time or inferred to mean
+free execution. The importer copies supplied numeric values without display rounding, currency
+conversion, price lookup, timestamp subtraction, or token-to-cost estimation. Other fields,
+including prompts, traces, provider credentials, and arbitrary details, remain rejected.
+
+Try the separate [synthetic operating fixture](examples/evaluation-review/recorded-operations.json):
+
+```bash
+aau import-eval harness/examples/evaluation-review/recorded-operations.json \
+  --out /tmp/imported-operating-evaluation.json
+aau import-eval harness/examples/evaluation-review/recorded-operations.json \
+  --verify /tmp/imported-operating-evaluation.json
+aau operating-eval /tmp/imported-operating-evaluation.json \
+  --criterion completion higher 1 --criterion unauthorized lower 0 \
+  --cost-basis synthetic --out /tmp/imported-operating-review.json
+```
+
+Its four constructed attempts cost $0.10 each; only one meets both criteria. The review reports
+$0.40 per passing attempt, including failure costs, and a 12-second nearest-rank p95. These are
+fixture values, not measured model performance. Deleting one supplied cost makes cost coverage
+partial: the complete total and per-pass ratio become unavailable, not artificially cheaper.
+Timing and API-call coverage are tracked independently. No operating summary is fabricated by
+the importer; use `operating-eval` or a diagnostic dossier to derive them.
+
+`evaluation-pack from-recordings` and the pinned-input Action accept both recording versions.
+With version 1.1 and a diagnostic plan, a thirteen-file dossier retains the original recordings,
+normalized observations, and recomputable operating reports. Require both `--require-recordings`
+and `--require-diagnostics` at handoff. Invalid operating fields are rejected even when no diagnostic
+plan is requested. A valid operating report does not change the policy verdict.
+
+Before mapping your real exports, document what an attempt includes: retries, tool calls, queueing,
+parallel work, and human review can make units incomparable. Do not copy a provider-call histogram,
+an account-wide invoice, or aggregate p95 into individual attempt rows. Do not replace actual
+end-to-end elapsed time with a sum of overlapping spans. Supply a reviewed `estimate`, `charge`,
+`synthetic`, or `unknown` cost basis to the operating review/diagnostic plan; the importer does not
+authenticate that declaration or establish fully loaded cost. IDs, costs, and timings may still be
+sensitive even though free-text details are excluded. Review before sharing.
 
 ### Audit a saved evaluation without rerunning a model
 
@@ -657,8 +709,9 @@ are retained, not downsampled. Cost fields may be unavailable; this stays visibl
 
 This is an eleven-file `aau-evaluation-review-pack/2.0` folder. The `from-recordings` form
 adds both original recording JSON values for thirteen files and records its input format.
-That recording format contains metric scores, not operational measurements, so the operating
-views correctly show unavailable cost, timing, and API-call statistics rather than inventing them.
+Version-1.0 recordings contain metric scores only, so their operating views correctly show
+unavailable measurements. Version-1.1 recordings can retain supplied per-attempt cost, timing,
+and API-call values; absent values remain unknown, with field-specific coverage.
 Use both `--require-diagnostics` and `--require-recordings` when the handoff requires both.
 
 Verification recomputes normalization where applicable, the policy review, all four diagnostic
