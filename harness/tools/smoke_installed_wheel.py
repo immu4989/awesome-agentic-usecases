@@ -46,6 +46,28 @@ def smoke(wheel: Path) -> None:
             raise RuntimeError("installed source receipt is incomplete or exposes local paths")
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
+        retry_plan = {"plan_version": "aau-retry-accounting/1.0", "source_label": "installed-wheel synthetic retries",
+                      "scenario_ids": ["service"], "n_repeats": 1, "attempt_scope": "sequential_disjoint",
+                      "metric_reducers": {"completion": "last", "unauthorized": "max"}}
+        retry_ledger = {"ledger_version": "aau-task-attempt-ledger/1.0", "tasks": [
+            {"scenario_id": "service", "repeat": 0, "attempt_count": 2, "elapsed_s": 10, "attempts": [
+                {"attempt_id": "first", "attempt_index": 0, "metrics": {"completion": 0, "unauthorized": 1},
+                 "cost_usd": .1, "latency_s": 1, "n_api_calls": 1},
+                {"attempt_id": "last", "attempt_index": 1, "metrics": {"completion": 1, "unauthorized": 0},
+                 "cost_usd": .1, "latency_s": 1, "n_api_calls": 1}]}]}
+        (root / "retry-plan.json").write_text(json.dumps(retry_plan))
+        (root / "retry-ledger.json").write_text(json.dumps(retry_ledger))
+        run([cli, "retry-eval", "create", "retry-plan.json", "retry-ledger.json", "--out", "retry-pack"])
+        run([cli, "retry-eval", "verify", "retry-pack", "--evaluation", "retry-pack/evaluation.json"])
+        retry_source = json.loads((root / "retry-pack/evaluation.json").read_text())
+        retry_row = retry_source["results"][0]
+        if (retry_row["metrics"] != {"completion": 1, "unauthorized": 1} or retry_row["cost_usd"] != .2
+                or retry_row["latency_s"] != 10 or retry_row["n_api_calls"] != 2):
+            raise RuntimeError("installed retry accounting dropped prior costs, harm, or whole-task timing")
+        run([cli, "retry-eval", "create", "retry-plan.json", "retry-ledger.json", "--out", "retry-pack"], expected=2)
+        retry_source["results"][0]["cost_usd"] = .1
+        (root / "wrong-retry-evaluation.json").write_text(json.dumps(retry_source))
+        run([cli, "retry-eval", "verify", "retry-pack", "--evaluation", "wrong-retry-evaluation.json"], expected=2)
         for name, code in (("intermittent", 1), ("repaired", 0)):
             run([cli, "evaluation-pack", "verify", f"demo/{name}", "--require-recordings", "--require-diagnostics"], code)
         repaired = root / "demo/repaired"

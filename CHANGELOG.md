@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Source-retaining retry accounting** — normalize sequential retries into logical task
+  observations without dropping earlier costs or replacing end-to-end time with the last call.
+  Explicit metric reducers retain earlier harms when configured for the complete trajectory;
+  missing measurements stay unknown. Six-file packs recompute and bind to downstream dossiers.
+  A synthetic counterexample demonstrates distorted cost, timing, and authorization results
+  in a final-call-only export. No retries are executed or authorized.
+
 - **Operating-budget change review** — compare approved and proposed limits, group obligations,
   memberships, repeat requirements, cost bases, and success definitions before changing a CI pin.
   Every semantic change requests review, including tighter thresholds. Controlled examples show

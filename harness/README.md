@@ -603,6 +603,94 @@ Coordinated replacement of all source and derived files can verify because hashe
 The retained CSV is **not sanitized**. Identifiers can contain sensitive data or spreadsheet
 formulas; do not open untrusted source files in spreadsheet software. Review the whole pack before sharing.
 
+### Account for retries without hiding earlier costs or failures
+
+`aau retry-eval` converts an explicit **sequential retry ledger** into one scored observation
+per logical task (scenario + repeat), retaining the plan and every declared attempt. Use this
+before operating reviews or policy/budget dossiers when your service retries work. Requires
+the current checkout or a locally built wheel, not published PyPI 1.6.0.
+
+```bash
+pip install -e harness
+aau retry-eval create harness/examples/evaluation-review/retry-plan.json \
+  harness/examples/evaluation-review/retry-ledger.json --out /tmp/aau-retry-evidence
+aau retry-eval verify /tmp/aau-retry-evidence
+aau operating-eval /tmp/aau-retry-evidence/evaluation.json \
+  --criterion completion higher 1 --criterion unauthorized lower 0 \
+  --cost-basis synthetic --out /tmp/aau-retry-operations.json
+```
+
+The included fixture has two logical tasks and four underlying attempts. Both final calls
+complete, but one task's earlier attempt records an authorization violation. The plan uses
+`last` for completion and `max` for unauthorized behavior, so eventual completion cannot erase
+that earlier violation. Choose reducers for your own scoring semantics; this is not a universal
+prescription for authorization or evidence that retries are safe.
+
+| Same synthetic activity | Final-call-only export | Complete declared retry accounting |
+|---|---|---|
+| Logical tasks scored | 2 | 2 |
+| Tasks meeting both criteria | 2 | 1 |
+| Recorded costs included | $0.20 | $0.40 |
+| Cost per jointly passing task | $0.10 | $0.40 |
+| Whole-task p95 | Misreported as 1 second | 10 seconds supplied by the fixture |
+
+These values demonstrate an accounting error, not measured production performance or savings.
+No real agent is run. The operating report's scenario-repeat "attempt" now means **one logical
+task**, not a transport call. Do not compare it with call-level observations or incompatible
+retry/scoring configurations; declare the task boundary and reducers in your collection context.
+
+**Contract.** The [plan](examples/evaluation-review/retry-plan.json) declares a complete scenario
+census, repeat count, source label, `attempt_scope: "sequential_disjoint"`, and 1–100 metric reducers.
+An optional `evaluation_context` is preserved, never fabricated. The
+[ledger](examples/evaluation-review/retry-ledger.json) declares every task's `attempt_count` and
+attempts numbered `0..count-1`, each with a globally unique `attempt_id`, `attempt_index`, `metrics`,
+and optional `cost_usd`, `n_api_calls`, `latency_s`. Task-level `elapsed_s` is optional.
+
+- `min` and `max` require the metric on **every** attempt; otherwise the task metric stays absent.
+- `last` uses only the highest-index attempt and can hide earlier failures. These metrics are
+  explicitly listed in the accounting report. A missing final value stays absent.
+- Task cost and API calls sum **all** declared attempts, including failures, only with complete
+  field coverage. Partial observed sums remain visible in `accounting.json` but never become
+  complete evaluation totals. Omit unknowns; do not write zero, `null`, or an empty string.
+- Whole-task latency comes only from `elapsed_s`, which must include the intended end-to-end
+  boundary. No last-call substitution, summing of call durations, or invented backoff time.
+  Supplied elapsed time shorter than known sequential call durations is rejected (floating-point
+  equality tolerance: `1e-12` absolute/relative). Missing elapsed time stays unknown.
+- At most 500 scenarios, 10,000 logical tasks, 100 attempts per task, and 10,000 attempts total.
+  Complete task API-call totals must also fit the existing observation limit of `10^12`.
+  Every input and pack member is bounded to 2 MB. Unknown fields, duplicate identities, missing
+  declared rows, malformed numbers, and nonfinite sums are rejected before output creation.
+
+Keep all six files: `plan.json`, `ledger.json`, `recording.json`, `evaluation.json`,
+`accounting.json`, `manifest.json`. Verification recomputes the entire source-to-evaluation chain,
+not just hashes. Outputs are never overwritten. Exit **0** means accounting verifies, not that
+any task passes a policy; exit **2** means invalid input or failed verification.
+
+For a downstream dossier, use `recording.json` with `evaluation-pack from-recordings`, or
+`evaluation.json` with `evaluation-pack create`. Retain the retry pack alongside it, then run:
+
+```bash
+aau retry-eval verify /tmp/aau-retry-evidence --evaluation /path/to/dossier/candidate.json
+aau evaluation-pack verify /path/to/dossier
+```
+
+The first command binds only the candidate evaluation; the second verifies the dossier and
+returns its policy/gate outcome. Verify a baseline's retry pack separately if it has one.
+Approvals for the plan, reducers, scenarios, and operating budgets remain independent reviewer
+responsibilities. No new Action input or automated retry execution is introduced.
+
+**Measurement limits.** Do not flatten nested spans, parallel/hedged work, overlapping charge
+totals, mixed currencies, or mixed cost bases into this format. It checks declared identities and
+coverage, not whether external events were omitted, invoices are accurate, or elapsed time was
+measured correctly. Retained JSON preserves values, not original whitespace. Source data is not
+sanitized, and coordinated replacement of all files can verify: hashes are not signatures.
+
+**Research basis:** AWS explains that retries can increase load and latency, backoff introduces
+waiting, and timeouts do not establish that no side effect occurred.
+[Timeouts, retries, and backoff with jitter](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/).
+The explicit task boundary and conservative aggregation rules above are this repository's design
+response, not an AWS standard, endorsement, or proof that a retry is authorized.
+
 ### Compare several candidates without hiding policy failures
 
 `aau candidate-matrix` reviews **2–10 normalized evaluations** against one baseline and one policy.
