@@ -607,6 +607,74 @@ explicit criteria, and draw sizes bind reverification. Outputs are never overwri
 keeps the 2 MB input/report limit. Review scenario IDs, scores, and mismatch details before sharing.
 No network access, model execution, or new dependency is required.
 
+### Understand operating cost without excluding failed attempts
+
+`aau operating-eval` connects recorded cost and latency to **jointly passing attempts**.
+It counts all supplied attempts, including failed ones, and never fetches prices, makes model
+calls, fills missing measurements with zero, or rewrites the original evaluation.
+
+```bash
+# Current repository checkout; this example contains constructed values, not real savings.
+python harness/examples/evaluation-review/operations.py --out /tmp/aau-operations-demo
+aau operating-eval /tmp/aau-operations-demo/cheap-attempt.json \
+  --criterion completion higher 1 --criterion unauthorized lower 0 \
+  --cost-basis synthetic --out /tmp/operating-review.json
+aau operating-eval /tmp/aau-operations-demo/cheap-attempt.json \
+  --criterion completion higher 1 --criterion unauthorized lower 0 \
+  --cost-basis synthetic --verify /tmp/operating-review.json
+```
+
+Both synthetic versions record 100% completion across four attempts at one case. Only one
+attempt in the cheaper version meets the authorization criterion; all four in the repaired
+version meet both criteria. Looking only at cost per attempt reverses the apparent preference:
+
+| Constructed measurement | Cheap attempt | Repaired twin |
+|---|---:|---:|
+| Mean cost per attempt | $0.10 | $0.25 |
+| Jointly passing attempts | 1 of 4 | 4 of 4 |
+| Cost of **all** attempts / passing attempt count | $0.40 | $0.25 |
+| Median recorded latency | 1 second | 2 seconds |
+| Nearest-rank p95 recorded latency | 12 seconds | 2 seconds |
+
+This is a diagnostic example, not a measured vendor comparison, recommendation, or proof of
+production savings. Failed attempts may have caused effects; a cheaper ratio never permits
+retrying an unauthorized operation. A passing attempt is a scored repeat, not a unique user
+served, a resolved real-world case, or a verified business outcome.
+
+The report includes overall and per-scenario attempt counts, exact failed criteria, recorded
+costs spent on failing attempts, mean cost per attempt, cost per passing attempt, median and
+p95 latency, maximum latency, and API-call totals. Costs are recorded **USD** values. Declare
+`--cost-basis estimate`, `charge`, `synthetic`, or `unknown`; this label does not authenticate
+pricing or invoices. Do not mix different bases or currencies into one input. Zero recorded
+cost does not mean the service is free. Infrastructure, human review, downstream tools, and
+overhead absent from the source remain excluded; this is not fully loaded cost or ROI.
+
+Every metric criterion must be present in every attempt. Operational fields `cost_usd`,
+`latency_s`, and `n_api_calls` are optional but independently coverage-counted. Missing means
+**unknown**; explicit nulls, strings, booleans, negative values, and nonfinite values are invalid.
+API counts must be integers from 0 through 10^12. Incomplete costs or API counts have a labeled
+sum of reported values, but never a full-sample total. Cost ratios require complete cost coverage;
+zero passing attempts yield null with a reason, not zero or infinity. Latency quantiles require
+complete timing coverage. Imported metric-only evaluations therefore do not become free,
+instantaneous evaluations. Scenario-level completeness does not hide missing data globally.
+
+The p50 is the ordinary median; p95 uses the observed value at one-based rank
+`ceil(0.95 * attempt_count)`. All attempts, including failures, remain in both calculations.
+With fewer than 20 observations p95 is the maximum; the report warns against treating this
+as a stable tail-risk estimate. Stored operational headlines are neither reused nor audited:
+row-level data may have been rounded differently. No lost precision is recovered. Stored
+**metric** summary mismatches remain visible through the existing audit.
+
+The design is informed by [FinOps' outcome-oriented unit economics](https://www.finops.org/framework/capabilities/unit-economics/)
+and [Google SRE's latency-percentile guidance](https://sre.google/workbook/monitoring/).
+It is not an implementation or certification of either framework. Source authenticity,
+scoring validity, timing instrumentation, repeat independence, and representativeness remain
+unverified. This descriptive report is not a forecast, invoice reconciliation, SLO evaluation,
+or release gate. Exit **0** means produced/reverified, not approved; exit **2** means invalid
+input/output or failed reverification. Criteria, declared basis, and source JSON values are
+bound to the report. The CLI refuses overwrites and enforces 2 MB input/report limits.
+Review scenario identifiers, costs, timings, and audit details before external sharing.
+
 ### Bind new evaluations to their declared benchmark context
 
 New runs through the shared **Decision Gate**, **Evidence Service**, and **Forge contract**

@@ -272,6 +272,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="compare matched scenarios in two saved evaluations without model calls")
     sub.add_parser("repeatability-eval", add_help=False,
                    help="expose intermittent joint-constraint failures across recorded repeats")
+    sub.add_parser("operating-eval", add_help=False,
+                   help="review recorded cost per passing attempt and tail latency without hiding failures")
     sub.add_parser("review-evals", add_help=False,
                    help="review saved evaluations against explicit multi-metric constraints")
     sub.add_parser("compare-eval-policies", add_help=False,
@@ -339,6 +341,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_args = list(sys.argv[1:] if argv is None else argv)
+    if raw_args and raw_args[0] == "operating-eval":
+        from .eval_operations import main as operations_main
+
+        return operations_main(raw_args[1:])
     if raw_args and raw_args[0] == "repeatability-eval":
         from .eval_repeatability import main as repeatability_main
 
