@@ -7,6 +7,7 @@ from aau_harness.agent_bom import write_json
 from aau_harness.eval_budget import review_budget
 from aau_harness.eval_import import import_observations
 from aau_harness.eval_matrix import create_matrix, verify_matrix
+from aau_harness.eval_pack import create_pack, verify_pack
 from aau_harness.evaluation_context import capture_context
 
 
@@ -41,6 +42,8 @@ def build_demo(directory):
     budget, matrix, policy, candidates = budget_inputs()
     directory.mkdir(parents=True, exist_ok=False)
     write_json(budget, directory / "budget.json")
+    diagnostics = {"plan_version": "aau-evaluation-diagnostics/1.0", "criteria": budget["criteria"],
+                   "draw_sizes": [1, 4], "cost_basis": {"baseline": "synthetic", "candidate": "synthetic"}}
     for name, source in candidates.items():
         write_json(source, directory / f"{name}.json")
         report = review_budget(budget, source, cost_basis="synthetic")
@@ -48,6 +51,11 @@ def build_demo(directory):
         expected = "constraints_not_met" if name == "aggregate-trap" else "constraints_met"
         if report["status"] != expected or any(c["status"] != "met" for c in report["scopes"][0]["checks"]):
             raise ValueError("synthetic operating budget outcome differs from its contract")
+        destination = directory / f"{name}-dossier"
+        create_pack(policy, candidates["repaired"], source, destination, diagnostics=diagnostics, operating_budget=budget)
+        gate = verify_pack(destination, require_budget=True)
+        if gate["status"] != expected or gate["policy_status"] != "constraints_met":
+            raise ValueError("synthetic combined gate changed policy or omitted budget failure")
     create_matrix(matrix, policy, candidates["repaired"], candidates, directory / "matrix")
     report = verify_matrix(directory / "matrix")
     if report["operating_groups"][0]["eligible_candidates"] != ["repaired"]:

@@ -61,7 +61,8 @@ python harness/tools/smoke_installed_wheel.py harness/dist/aau_harness-*.whl
 
 The check captures and re-verifies a path-free `runtime-info` source receipt from the installed
 wheel. It also exercises the packaged `evaluation-demo`, a multi-candidate matrix that excludes
-failed policy, standalone operating-budget pass/fail reports and a budget-aware matrix,
+failed policy, standalone operating-budget pass/fail reports, a budget-aware matrix,
+combined policy/budget dossier and CSV gates, and downgrade rejection with `--require-budget`,
 both policy outcomes, complete recorded
 diagnostic-pack verification, operating-measurement and CSV import, a complete CSV review handoff,
 context comparison, overwrite refusal,

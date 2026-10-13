@@ -78,6 +78,20 @@ def smoke(wheel: Path) -> None:
         budget_matrix = json.loads((root / "budget-matrix/matrix.json").read_text())
         if [r["budget_status"] for r in budget_matrix["candidates"]] != ["constraints_not_met", "constraints_met"]:
             raise RuntimeError("installed matrix omitted recorded operating budget checks")
+        for name, code in (("intermittent", 1), ("repaired", 0)):
+            source_pack = root / f"demo/{name}"
+            run([cli, "evaluation-pack", "from-recordings", source_pack / "policy.json", source_pack / "baseline-recording.json",
+                 source_pack / "candidate-recording.json", "--diagnostics", source_pack / "diagnostics.json",
+                 "--operating-budget", "budget.json", "--out", f"gated-{name}"], code)
+            run([cli, "evaluation-pack", "verify", f"gated-{name}", "--require-recordings", "--require-budget"], code)
+        run([cli, "evaluation-pack", "verify", repaired, "--require-budget"], expected=2)
+        budget["limits"]["p95_latency_s"] = 1
+        (root / "strict-budget.json").write_text(json.dumps(budget))
+        run([cli, "evaluation-pack", "create", repaired / "policy.json", repaired / "baseline.json", repaired / "candidate.json",
+             "--diagnostics", repaired / "diagnostics.json", "--operating-budget", "strict-budget.json", "--out", "budget-only-failure"], 1)
+        run([cli, "evaluation-pack", "verify", "budget-only-failure", "--require-budget"], 1)
+        if json.loads((root / "budget-only-failure/review.json").read_text())["status"] != "constraints_met":
+            raise RuntimeError("combined budget gate changed the independent policy verdict")
         baseline, candidate = repaired / "baseline-recording.json", repaired / "candidate-recording.json"
         run([cli, "compare-eval-contexts", baseline, candidate, "--input-format", "recordings", "--out", "context.json"])
         run([cli, "compare-eval-contexts", baseline, candidate, "--input-format", "recordings", "--verify", "context.json"])
@@ -106,6 +120,14 @@ def smoke(wheel: Path) -> None:
             run([cli, "csv-review", "create", "csv-policy.json", "csv-plan.json", "source.csv",
                  "csv-plan.json", filename, "--diagnostics", "csv-diagnostics.json", "--out", destination], code)
             run([cli, "csv-review", "verify", destination], code)
+        csv_budget = {"plan_version": "aau-operating-budget/1.0", "scenario_ids": ["case"], "minimum_repeats": 1,
+                      "criteria": diagnostics["criteria"], "cost_basis": "synthetic",
+                      "limits": {"cost_per_passing_attempt_usd": .2}, "groups": []}
+        (root / "csv-budget.json").write_text(json.dumps(csv_budget))
+        run([cli, "csv-review", "create", "csv-policy.json", "csv-plan.json", "source.csv", "csv-plan.json", "source.csv",
+             "--diagnostics", "csv-diagnostics.json", "--operating-budget", "csv-budget.json", "--out", "gated-csv"])
+        run([cli, "csv-review", "verify", "gated-csv", "--require-budget"])
+        run([cli, "csv-review", "verify", "handoff-source.csv", "--require-budget"], 2)
         (root / "handoff-source.csv/candidate/source.csv").write_bytes(b"case,repeat,score,usd\ncase,0,0,0.1\n")
         run([cli, "csv-review", "verify", "handoff-source.csv"], expected=2)
         report_path = repaired / "candidate-operations.json"

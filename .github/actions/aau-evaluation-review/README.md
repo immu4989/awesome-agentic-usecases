@@ -198,10 +198,72 @@ original approved JSON files separately if independently checking their **file-b
 The handoff is unsigned; coordinated source-and-output replacement can still verify offline.
 No new permissions, credentials, external Actions, or automatic uploads are introduced.
 
+## Require an independently approved candidate operating budget
+
+Add `operating-budget` and `operating-budget-sha256` to any of the three input modes above.
+Both are required together, and a separately approved diagnostics plan is mandatory: its
+candidate cost-basis declaration supplies the basis used for the budget check. The
+[budget plan](../../../harness/README.md#check-operating-budgets-without-hiding-a-slow-or-expensive-group)
+declares overall/group limits, the exact scenario census, minimum repeats, joint criteria, and
+expected cost basis. Its joint criteria must match the diagnostics, preventing two hidden
+definitions of a passing attempt in one dossier.
+
+```yaml
+- name: Gate saved quality and operating evidence
+  uses: immu4989/awesome-agentic-usecases/.github/actions/aau-evaluation-review@REVIEWED_FULL_COMMIT_SHA
+  with:
+    policy: evaluations/approved-policy.json
+    policy-sha256: ${{ vars.APPROVED_EVAL_POLICY_SHA256 }}
+    baseline: evaluations/approved-baseline.json
+    baseline-sha256: ${{ vars.APPROVED_EVAL_BASELINE_SHA256 }}
+    candidate: evaluations/candidate.json
+    diagnostics: evaluations/approved-diagnostics.json
+    diagnostics-sha256: ${{ vars.APPROVED_EVAL_DIAGNOSTICS_SHA256 }}
+    operating-budget: evaluations/approved-operating-budget.json
+    operating-budget-sha256: ${{ vars.APPROVED_OPERATING_BUDGET_SHA256 }}
+    output: budget-gated-dossier
+```
+
+The combined gate passes **only when both policy and candidate operating-budget constraints
+are met**. Missing cost/timing/call measurements, insufficient repeats, undefined zero-success
+unit cost, or incompatible declared cost bases cannot pass affected checks. A known exceedance
+takes precedence in the combined status while unverified findings remain visible. Baseline
+operating results stay descriptive; only the candidate budget is gated. This is not a cost
+regression comparison, production SLO certification, verified billing, or deployment approval.
+
+`review.json` retains the original independent policy verdict. The additional `gate.json`
+records the combined status and binds both reports; `candidate-budget.json` retains every group
+check, and `operating-budget.json` retains the supplied plan. The main HTML heading displays
+the **combined** outcome, with both independent verdicts and all operating checks directly below it.
+A green quality verdict therefore cannot appear as a passing combined review when a budget fails.
+
+The budget-gated version-3.0 dossier has **14 files** for normalized inputs or **16 files** for
+recordings. CSV mode produces a **31-file** version-1.1 handoff, preserving both original CSV
+exports and recomputing conversion, policy, budget, combined gate, HTML, and all manifests.
+Offline verification enforces the same outcome:
+
+```bash
+aau evaluation-pack verify budget-gated-dossier --require-budget
+# For CSV mode:
+aau csv-review verify budget-gated-handoff --require-budget
+```
+
+Protect the budget pin, diagnostics pin, and workflow inputs independently. Removing both budget
+inputs deliberately selects the legacy ungated mode, so require `--require-budget` in downstream
+verification when this layer is mandatory. Changed bytes, a missing pin/path partner, unsafe paths,
+or a budget without diagnostics fail before output creation. The Action pins **exact original
+plan bytes**; the pack reserializes JSON values, so keep original approved files when independently
+checking approval hashes. No policy or budget approval is created by this tool.
+
+The GitHub summary reports the combined outcome and separate status labels, not group names,
+thresholds, costs, timings, or raw source values. No new permissions, credentials, remote calls,
+installations, or uploads are introduced. These commands require the current repository harness
+or a locally built wheel, not the published PyPI 1.6.0 package.
+
 ## Results and sharing
 
 - Exit **0**: approved pins and context matched, all supplied constraints met, pack verified.
-- Exit **1**: pack verified, but one or more supplied constraints failed. The pack is retained.
+- Exit **1**: pack verified, but one or more supplied constraints failed or a budget check is not verified. The pack is retained.
 - Exit **2**: invalid input, pin/context mismatch, unsafe path, occupied destination, or failed verification.
 
 The `reports` output identifies the requested directory, not a guarantee that it exists. An
@@ -211,6 +273,7 @@ check separately; this Action does not change branch protection or grant deploym
 
 Open `review.html` locally for readable findings (`review/review.html` in CSV mode). Keep all six pack files for verification
 (eight in recordings mode), or all eleven/thirteen files when diagnostics are requested; CSV mode requires all 28 files.
+With an operating budget, retain all 14/16 dossier files or all 31 CSV handoff files instead.
 **The pack contains complete unsanitized evaluation details.** Nothing is uploaded automatically.
 If your organization elects to upload an artifact, review its privacy and retention first, use a
 reviewed pinned upload Action, and account for repository and artifact access permissions.

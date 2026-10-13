@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Approved combined policy and budget gates** — normalized, recording, and CSV dossiers can
+  retain independently computed quality and operating verdicts plus a combined failing gate.
+  CI requires an independently approved budget byte pin; unknown budget evidence cannot pass.
+  Complete offline verification includes the gate and HTML, with `--require-budget` rejecting
+  ungated formats. Existing policy-only and diagnostic packs retain their behavior and layout.
+
 - **Group-aware operating budgets** — enforce explicit recorded cost, latency, and API-call limits
   for complete workloads and declared overlapping groups. Missing measurements, insufficient
   repeats, and mismatched cost bases cannot pass. Budget-aware candidate matrices retain failures

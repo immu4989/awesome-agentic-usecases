@@ -72,6 +72,13 @@ def main() -> int:
         if bool(diagnostic_path) != bool(diagnostic_hash):
             raise AgentBomError("diagnostic plan and independently approved byte hash must be supplied together")
         diagnostics = read_source(workspace_path(workspace, diagnostic_path), diagnostic_hash) if diagnostic_path else None
+        budget_path = os.environ.get("AAU_EVAL_OPERATING_BUDGET", "")
+        budget_hash = os.environ.get("AAU_EVAL_OPERATING_BUDGET_SHA256", "")
+        if bool(budget_path) != bool(budget_hash):
+            raise AgentBomError("operating budget and independently approved byte hash must be supplied together")
+        operating_budget = read_source(workspace_path(workspace, budget_path), budget_hash) if budget_path else None
+        if operating_budget is not None and diagnostics is None:
+            raise AgentBomError("operating budget requires an independently approved diagnostics plan")
         input_format = os.environ.get("AAU_EVAL_INPUT_FORMAT", "evaluations")
         if input_format not in ("evaluations", "recordings", "csv"):
             raise AgentBomError("input format must be evaluations, recordings, or csv")
@@ -101,19 +108,25 @@ def main() -> int:
         if compare_contexts(reviewed_baseline, reviewed_candidate)["status"] != "matched":
             raise AgentBomError("Action requires matching declared context on both evaluations; legacy evidence needs separate review")
         if input_format == "csv":
-            handoff = create_handoff(policy, baseline_plan, baseline, candidate_plan, candidate, diagnostics, paths["output"])
-            if verify_handoff(paths["output"]) != handoff:
+            handoff = create_handoff(policy, baseline_plan, baseline, candidate_plan, candidate, diagnostics, paths["output"],
+                                     operating_budget=operating_budget)
+            if verify_handoff(paths["output"], require_budget=operating_budget is not None) != handoff:
                 raise AgentBomError("saved CSV handoff does not match computed evidence")
-            report = read_source(paths["output"] / "review/review.json")
+            result = handoff
+            review_directory = paths["output"] / "review"
         else:
-            report = create_pack(policy, baseline, candidate, paths["output"], recordings=recordings, diagnostics=diagnostics)
-            if verify_pack(paths["output"], require_recordings=recordings, require_diagnostics=diagnostics is not None) != report:
+            result = create_pack(policy, baseline, candidate, paths["output"], recordings=recordings, diagnostics=diagnostics,
+                                  operating_budget=operating_budget)
+            if verify_pack(paths["output"], require_recordings=recordings, require_diagnostics=diagnostics is not None,
+                           require_budget=operating_budget is not None) != result:
                 raise AgentBomError("saved review pack does not match computed evidence")
+            review_directory = paths["output"]
+        report = read_source(review_directory / "review.json")
         summary = os.environ.get("GITHUB_STEP_SUMMARY")
         if summary:
             with Path(summary).open("a", encoding="utf-8") as stream:
                 stream.write("## AAU saved evaluation review\n\n"
-                             f"Result: **{report['status']}**. Failed constraints: {len(report['failed_constraints'])}.\n\n"
+                             f"Result: **{result['status']}**. Failed policy constraints: {len(report['failed_constraints'])}.\n\n"
                              "Approved policy/baseline byte hashes matched; declared benchmark context matched. "
                              "The offline pack recomputed. No raw scenario text is included in this summary.\n\n"
                              "The pack includes full source details: inspect before uploading. "
@@ -123,10 +136,17 @@ def main() -> int:
                                  "views recomputed for both sources. Diagnostics do not change the policy verdict. "
                                  "Criteria, cost labels, scores, identifiers, and source details are not echoed here.\n")
                 if input_format == "csv":
+                    count = 31 if operating_budget is not None else 28
                     stream.write("\nCSV handoff: both approved mapping-plan byte hashes matched; original CSV exports "
-                                 "and all 28 files recomputed together. Column headers and source values are not echoed here. "
+                                 f"and all {count} files recomputed together. Column headers and source values are not echoed here. "
                                  "Use aau csv-review verify for the complete handoff.\n")
-        return int(report["status"] != "constraints_met")
+                if operating_budget is not None:
+                    stream.write("\nOperating-budget gate: independently approved plan byte hash matched. "
+                                 f"Candidate budget: **{result['candidate_budget_status']}**. "
+                                 f"Combined result: **{result['status']}**. Both policy and budget must be met. "
+                                 "Missing evidence cannot pass. Only the candidate budget is gated. "
+                                 "Group names, limits, costs, timings, and source details are not echoed here.\n")
+        return int(result["status"] != "constraints_met")
     except (AgentBomError, OSError, ValueError, KeyError) as exc:
         # Avoid echoing raw source content or GitHub annotation-shaped payloads.
         print(f"AAU evaluation review failed ({type(exc).__name__}); validate inputs, approved hashes, context, and destination.", file=sys.stderr)

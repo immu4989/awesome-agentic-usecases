@@ -782,6 +782,68 @@ and [FinOps unit-economics guidance](https://www.finops.org/framework/capabiliti
 The implementation checks declared offline measurements; it is not production SLO monitoring,
 fully loaded cost accounting, forecast accuracy, fairness certification, or deployment approval.
 
+### Enforce policy and operating limits in one reviewer dossier
+
+Use `--operating-budget` with `evaluation-pack create`, `evaluation-pack from-recordings`,
+or `csv-review create` to produce a **combined failing gate**, not just descriptive cost views.
+A diagnostics plan is required; its candidate cost-basis declaration supplies the budget check's
+declared basis, and its joint-pass criteria must match the budget. Missing required measurement
+coverage or a cost-basis mismatch does not pass. Baseline operating evidence remains descriptive;
+only the candidate's budget is gated. Quality policy and budget thresholds are independent.
+
+```bash
+aau evaluation-pack create policy.json baseline.json candidate.json \
+  --diagnostics diagnostics.json --operating-budget budget.json --out gated-review
+aau evaluation-pack verify gated-review --require-budget
+
+# Original recorded observations, with the import chain retained:
+aau evaluation-pack from-recordings policy.json baseline-recording.json candidate-recording.json \
+  --diagnostics diagnostics.json --operating-budget budget.json --out gated-recordings
+aau evaluation-pack verify gated-recordings --require-recordings --require-budget
+
+# Scored CSV exports, with both original byte streams retained:
+aau csv-review create policy.json baseline-map.json baseline.csv candidate-map.json candidate.csv \
+  --diagnostics diagnostics.json --operating-budget budget.json --out gated-csv
+aau csv-review verify gated-csv --require-budget
+```
+
+Budget-gated dossiers use pack version `aau-evaluation-review-pack/3.0` and contain three extra
+files: `operating-budget.json`, `candidate-budget.json`, and `gate.json`. `review.json` remains
+the unmodified **policy** review. The gate binds the candidate, diagnostic plan, budget plan,
+policy report, and budget report by source-value hashes. Its status is `constraints_met` only
+when both independent reviews meet their constraints; a known failure gives `constraints_not_met`,
+otherwise unknown budget evidence gives `constraints_not_verified`. All findings remain retained.
+The HTML headline reports the combined result and shows both separate verdicts and operating checks.
+
+Keep all **14 normalized dossier files**, **16 recording dossier files**, or **31 CSV handoff
+files**. CSV budget handoffs use `aau-csv-evaluation-handoff-pack/1.1`; their inner dossier is
+version 3.0. Verification recomputes the complete source-to-gate chain and every HTML byte, not
+just hashes. Python `create_pack`, `pack_payloads`, and `verify_pack` return the combined gate
+report when an operating budget is present; otherwise they keep returning the policy report.
+In CSV mode, the handoff report carries the combined status and both independent status labels.
+
+For **both creation and verification**, exit 0 means all combined constraints are met, exit 1
+means at least one failed or was not verified (with evidence retained), and exit 2 means invalid
+input or verification failure. `--require-budget` refuses an otherwise valid legacy pack that
+omits the gate. It implies the presence of diagnostics; add `--require-recordings` when that
+source format is also mandatory. Without a budget argument, existing formats and outcomes remain
+unchanged. Matching context is still required by the Action; the descriptive CLI does not invent
+missing legacy context or authenticate measurements.
+
+The synthetic `operating_budget.py` example above also creates `aggregate-trap-dossier` and
+`repaired-dossier`. Verify them with `aau evaluation-pack verify PATH --require-budget`:
+the first exits 1 despite a passing quality-policy review, and the second exits 0. Open their
+`review.html` pages to inspect the combined outcomes and every declared group check without
+installing a server or making model calls.
+
+The [saved evaluation Action](../.github/actions/aau-evaluation-review/#require-an-independently-approved-candidate-operating-budget)
+supports an independently pinned `operating-budget` in all three input formats. Protect both
+its **exact-byte approval hash** and the workflow inputs outside candidate-controlled changes.
+Do not generate the approval pin from the candidate file in the same production job. JSON pack
+members are reserialized values, not original whitespace; preserve original approved JSON files
+for independent byte-pin checks. CSV originals remain byte-exact. Nothing is uploaded automatically.
+All source details remain unsanitized, and a passing combined gate is not deployment approval.
+
 ### Identify the harness implementation used for a review
 
 The version label alone is insufficient for unreleased checkouts and local wheels: different

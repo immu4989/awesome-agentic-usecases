@@ -37,6 +37,12 @@ inputs:
   diagnostics-sha256:
     description: Independently approved diagnostic-plan byte SHA-256; requires diagnostics when supplied.
     default: ''
+  operating-budget:
+    description: Optional workspace-relative candidate operating-budget plan; requires diagnostics and operating-budget-sha256.
+    default: ''
+  operating-budget-sha256:
+    description: Independently approved operating-budget plan byte SHA-256; required with operating-budget.
+    default: ''
   output:
     description: New workspace-relative directory; includes complete unsanitized evaluation details.
     default: aau-evaluation-review
@@ -62,5 +68,7 @@ runs:
         AAU_EVAL_CANDIDATE_PLAN_SHA256: ${{ inputs.candidate-plan-sha256 }}
         AAU_EVAL_DIAGNOSTICS: ${{ inputs.diagnostics }}
         AAU_EVAL_DIAGNOSTICS_SHA256: ${{ inputs.diagnostics-sha256 }}
+        AAU_EVAL_OPERATING_BUDGET: ${{ inputs.operating-budget }}
+        AAU_EVAL_OPERATING_BUDGET_SHA256: ${{ inputs.operating-budget-sha256 }}
         AAU_EVAL_OUTPUT: ${{ inputs.output }}
       run: python "$GITHUB_ACTION_PATH/run.py"
