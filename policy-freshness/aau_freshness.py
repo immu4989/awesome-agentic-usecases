@@ -63,9 +63,9 @@ class _VisibleText(HTMLParser):
             self.parts.append(data)
 
 
-def _fingerprint(payload: bytes, mode: str) -> str:
+def fingerprint_input(payload: bytes, mode: str) -> bytes:
     if mode == "raw":
-        return digest(payload)
+        return payload
     if mode != "visible_text_v1":
         raise FreshnessError(f"unsupported fingerprint mode: {mode}")
     parser = _VisibleText()
@@ -76,7 +76,11 @@ def _fingerprint(payload: bytes, mode: str) -> str:
     normalized = " ".join(" ".join(parser.parts).split()).encode()
     if not normalized:
         raise FreshnessError("normalized source HTML contains no visible text")
-    return digest(normalized)
+    return normalized
+
+
+def _fingerprint(payload: bytes, mode: str) -> str:
+    return digest(fingerprint_input(payload, mode))
 
 
 class FreshnessError(ValueError):
@@ -416,7 +420,21 @@ def compatibility_report(
     return report
 
 
-def _fetch(source: dict[str, Any], timeout: float) -> dict[str, Any]:
+class _AllowedRedirects(urllib.request.HTTPRedirectHandler):
+    def __init__(self, hosts: list[str]) -> None:
+        self.hosts = hosts
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        parsed = urllib.parse.urlparse(newurl)
+        if parsed.scheme != "https" or parsed.hostname not in self.hosts or parsed.username or parsed.password:
+            raise FreshnessError("source redirect leaves the declared HTTPS host boundary")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def fetch_content(source: dict[str, Any], timeout: float) -> tuple[bytes, dict[str, Any]]:
+    initial = urllib.parse.urlparse(source["url"])
+    if initial.scheme != "https" or initial.hostname not in source["allowed_hosts"] or initial.username or initial.password:
+        raise FreshnessError("source request leaves the declared HTTPS host boundary")
     request = urllib.request.Request(
         source["url"],
         headers={
@@ -424,7 +442,8 @@ def _fetch(source: dict[str, Any], timeout: float) -> dict[str, Any]:
             "Accept": "text/html,application/pdf,text/plain,application/json;q=0.9,*/*;q=0.1",
         },
     )
-    with urllib.request.urlopen(request, timeout=timeout) as response:
+    opener = urllib.request.build_opener(_AllowedRedirects(source["allowed_hosts"]))
+    with opener.open(request, timeout=timeout) as response:
         final_url = response.geturl()
         parsed = urllib.parse.urlparse(final_url)
         if parsed.scheme != "https" or parsed.hostname not in source["allowed_hosts"]:
@@ -432,7 +451,7 @@ def _fetch(source: dict[str, Any], timeout: float) -> dict[str, Any]:
         payload = response.read(MAX_SOURCE_BYTES + 1)
         if len(payload) > MAX_SOURCE_BYTES:
             raise FreshnessError(f"source exceeds {MAX_SOURCE_BYTES} bytes: {source['source_id']}")
-        return {
+        return payload, {
             "content_sha256": _fingerprint(payload, source["fingerprint_mode"]),
             "bytes": len(payload),
             "etag": response.headers.get("ETag"),
@@ -440,6 +459,10 @@ def _fetch(source: dict[str, Any], timeout: float) -> dict[str, Any]:
             "final_url": final_url,
             "content_type": response.headers.get("Content-Type"),
         }
+
+
+def _fetch(source: dict[str, Any], timeout: float) -> dict[str, Any]:
+    return fetch_content(source, timeout)[1]
 
 
 def refresh_registry(registry: dict[str, Any], root: Path, timeout: float, today: date) -> dict[str, Any]:

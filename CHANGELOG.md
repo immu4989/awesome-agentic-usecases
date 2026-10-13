@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Inspectable policy-source changes** — opt-in five-file snapshots preserve exact source bytes
+  and registry declarations for offline re-verification. Comparisons distinguish raw-byte drift
+  from extracted-text changes, expose bounded lexical spans, and disclose binary/large-content
+  review limits. Redirect hosts are checked before following. No policy interpretation, historical
+  reconstruction, baseline approval, issue closure, or automatic content publication is performed.
+
 - **Installed implementation receipts** — `aau runtime-info` captures and re-verifies first-party
   Python source hashes and declared runtime metadata without local paths or environment values.
   Different unreleased builds sharing a version can be distinguished by source-tree hash.

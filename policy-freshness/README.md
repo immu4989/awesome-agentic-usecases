@@ -58,6 +58,10 @@ python3 policy-freshness/aau_freshness.py compatibility \
 
 ## Standards Compatibility Ledger
 
+Before investigating a changed-source notice, see the
+[source snapshot workflow](#retain-source-snapshots-for-offline-review) below. Old fingerprint-only
+reports cannot reconstruct historical content; capture new evidence without overwriting an approved baseline.
+
 Fresh bytes are not enough. An assurance fixture may still target an older protocol revision after
 the watched source is updated. The strict compatibility ledger binds each experimental profile to:
 
@@ -96,3 +100,74 @@ that a rule changed, and an unchanged fingerprint does not establish currency, a
 compliance, conformance, or legal advice. `evidence_ready` means only that declared revisions,
 fingerprints, dates, and evidence paths align. It performs no automatic policy interpretation or
 migration and never modifies a lab.
+
+## Retain source snapshots for offline review
+
+A fingerprint tells an owner that content differs, but not what differs. This surfaced in the
+[open freshness review](https://github.com/immu4989/awesome-agentic-usecases/issues/12): changed
+MCP/NIST pages and an unreachable CISA document require review, while older scans contain hashes
+and metadata only. `source_evidence.py` adds **opt-in, one-source capture** and an offline comparison.
+It does not interpret those findings, resolve that issue, or relabel existing evidence current.
+
+```bash
+# Explicit network request to one source from the existing registry.
+python3 policy-freshness/source_evidence.py capture policy-freshness/sources.json \
+  nist-tev-v-athlon --out /tmp/tevv-source-before
+
+# Verify locally without another request; keep the complete five-file folder.
+python3 policy-freshness/source_evidence.py verify /tmp/tevv-source-before
+
+# At a later collection time, use a fresh destination.
+python3 policy-freshness/source_evidence.py capture policy-freshness/sources.json \
+  nist-tev-v-athlon --out /tmp/tevv-source-after
+python3 policy-freshness/source_evidence.py compare \
+  /tmp/tevv-source-before /tmp/tevv-source-after --out /tmp/tevv-source-diff.json
+python3 policy-freshness/source_evidence.py compare \
+  /tmp/tevv-source-before /tmp/tevv-source-after --verify /tmp/tevv-source-diff.json
+```
+
+Every snapshot retains `registry.json`, `capture.json`, `content.bin`, `summary.json`, and
+`manifest.json`. The original response body stays byte-for-byte intact. The summary records both
+the raw SHA-256 and the registry's fingerprint, plus whether that fingerprint matches the
+**previously registered baseline**. Capturing changed content does not make it an approved baseline.
+Metadata and raw bodies come from the same response; verification recomputes fingerprints, byte
+counts, summaries, and the exact file inventory. The manifest is written last. Existing outputs,
+incomplete folders, extra files, symlinks, oversized members, and inconsistent evidence are refused.
+
+Snapshots are portable: verification does not require the original repository owner paths to
+exist. The retained registry is structurally checked, not treated as trusted merely because it
+was included. Use the same tool implementation and independently review the registry. Source body
+limits remain 12 MB; each JSON member is limited to 2 MB. Capture defaults to a 20-second network
+timeout. Failed requests do not become empty or apparently current snapshots. HTTPS redirects
+are checked against the declared host allowlist **before** following them; rejected targets are
+not retried through another hostname or mirror.
+
+Comparisons require the same source ID, configured URL, and fingerprint method. Revisions and
+source metadata may change but are disclosed, along with the union of affected owner paths.
+Raw-byte differences are reported separately from fingerprint differences:
+
+| Observation | Offline comparison output | Owner action |
+|---|---|---|
+| Raw bytes changed, extracted text unchanged | `fingerprint_unchanged`, with `raw_bytes_changed: true` | Inspect context; this is not proof of unchanged policy or currency |
+| Extracted text changed within limits | `bounded_lexical_diff` with changed word spans | Inspect each span and the complete retained source |
+| Text exceeds 200,000 normalized bytes or 5,000 words on either side | `text_diff_omitted_size_limit`; both fingerprints retained | Use appropriate local review tooling; no partial diff is presented as complete |
+| Raw-mode PDF, Markdown, or other bytes changed | `raw_content_requires_external_review` | Inspect the original documents safely with a format-appropriate tool |
+
+`visible_text_v1` uses the **existing** extraction method: whitespace is normalized and
+script/style/template/SVG/noscript bodies are excluded. It is not browser rendering; CSS visibility,
+navigation, titles, and footer changes can affect the result. Diff spans use zero-based half-open
+word ranges and are lexical, not semantic or necessarily minimal. Raw mode deliberately performs
+no PDF parsing. Compare returns 0 when evidence recomputes, including changed content; this is
+**not an all-clear or approval exit code**. Invalid input or verification failure returns 2.
+
+Capture time and response headers are declarations, not authenticated timestamps or retrieval
+attestations. Argument order is caller-supplied; the tool does not establish chronology. Hashes are
+not signatures, so replacing all sources and derived files consistently can still verify.
+**An old hash cannot recreate a missing old document.** Newly captured snapshots must not be
+described as the content behind an earlier scan unless their fingerprints actually match.
+
+Raw pages/documents are untrusted and unsanitized. The tool neither opens them as HTML nor executes
+their content. Use safe viewing tools, inspect for sensitive or unexpected material, and respect
+redistribution rights before sharing a snapshot or textual diff. No snapshots are committed or
+uploaded automatically. The weekly scanner still records fingerprints only, and the issue updater,
+compatibility ledger, review dates, and approval workflow are unchanged.
