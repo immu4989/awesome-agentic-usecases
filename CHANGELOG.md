@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Approved CSV evidence in CI** — the saved evaluation review Action now accepts scored CSV
+  exports with independently pinned baseline/candidate mappings, baseline bytes, policy, and
+  diagnostics. Matching declared context remains mandatory. It verifies the complete 28-file
+  source-retaining handoff, preserves failed-policy evidence, and does not echo raw CSV values
+  or introduce credentials, permissions, model calls, or uploads.
+
 - **One-command CSV review handoff** — `aau csv-review` turns two explicitly mapped scored
   exports into a 28-file portable policy, cost, and repeatability dossier. A single verifier
   recomputes both source conversions and all downstream outputs, rejecting individually valid but

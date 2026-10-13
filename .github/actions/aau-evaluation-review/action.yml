@@ -2,7 +2,7 @@ name: AAU saved evaluation review
 description: Verify approved inputs and benchmark context, review metric constraints, and preserve an offline pack.
 inputs:
   input-format:
-    description: evaluations (normalized exports) or recordings (recorded observations retained in the pack).
+    description: evaluations (normalized JSON), recordings (recorded observations), or csv (source-retaining handoff with approved mappings and diagnostics).
     default: evaluations
   policy:
     description: Workspace-relative reviewed policy JSON.
@@ -11,16 +11,28 @@ inputs:
     description: Approved policy file byte SHA-256, from a trusted review process.
     required: true
   baseline:
-    description: Workspace-relative approved baseline JSON in the selected input format.
+    description: Workspace-relative approved baseline file in the selected input format.
     required: true
   baseline-sha256:
     description: Approved baseline file byte SHA-256, from a trusted review process.
     required: true
   candidate:
-    description: Workspace-relative candidate JSON in the selected input format.
+    description: Workspace-relative candidate file in the selected input format.
     required: true
+  baseline-plan:
+    description: CSV mode only; required workspace-relative baseline column-mapping plan with declared context.
+    default: ''
+  baseline-plan-sha256:
+    description: CSV mode only; independently approved baseline mapping-plan byte SHA-256.
+    default: ''
+  candidate-plan:
+    description: CSV mode only; required workspace-relative candidate column-mapping plan with declared context.
+    default: ''
+  candidate-plan-sha256:
+    description: CSV mode only; independently approved candidate mapping-plan byte SHA-256.
+    default: ''
   diagnostics:
-    description: Optional workspace-relative diagnostic plan; requires diagnostics-sha256 when supplied.
+    description: Workspace-relative diagnostic plan; optional except in csv mode; requires diagnostics-sha256 when supplied.
     default: ''
   diagnostics-sha256:
     description: Independently approved diagnostic-plan byte SHA-256; requires diagnostics when supplied.
@@ -44,6 +56,10 @@ runs:
         AAU_EVAL_BASELINE: ${{ inputs.baseline }}
         AAU_EVAL_BASELINE_SHA256: ${{ inputs.baseline-sha256 }}
         AAU_EVAL_CANDIDATE: ${{ inputs.candidate }}
+        AAU_EVAL_BASELINE_PLAN: ${{ inputs.baseline-plan }}
+        AAU_EVAL_BASELINE_PLAN_SHA256: ${{ inputs.baseline-plan-sha256 }}
+        AAU_EVAL_CANDIDATE_PLAN: ${{ inputs.candidate-plan }}
+        AAU_EVAL_CANDIDATE_PLAN_SHA256: ${{ inputs.candidate-plan-sha256 }}
         AAU_EVAL_DIAGNOSTICS: ${{ inputs.diagnostics }}
         AAU_EVAL_DIAGNOSTICS_SHA256: ${{ inputs.diagnostics-sha256 }}
         AAU_EVAL_OUTPUT: ${{ inputs.output }}

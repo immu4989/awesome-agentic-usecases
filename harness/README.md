@@ -673,6 +673,13 @@ it is **not NIST certification, compliance, an ATO, or deployment approval**. Pa
 sanitized: inspect every file before sharing, and do not open untrusted CSV in spreadsheet
 software. No models, agents, external tools, or upload services are invoked.
 
+For a CI gate, the [saved evaluation review Action](../.github/actions/aau-evaluation-review/README.md#gate-scored-csv-exports-without-losing-their-source-chain)
+accepts `input-format: csv` with independently approved byte pins for both column maps, the
+baseline CSV, policy, and diagnostics. Unlike the descriptive CLI above, the Action **requires
+matching declared collection context**; the basic context-free examples do not pass that gate
+as-is. No shared context is fabricated and no approval hashes should be derived from untrusted
+candidate inputs in the same production job.
+
 ### Audit a saved evaluation without rerunning a model
 
 With the current repository harness:
