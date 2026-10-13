@@ -553,6 +553,60 @@ can contain scenario IDs and supplied mismatch values: review them before sharin
 > inapplicable cases. The runner reports coverage. This paired comparison deliberately requires
 > a fully observed selected metric; it does not infer applicability or missing-at-random behavior.
 
+### Expose intermittent failures behind successful retries
+
+`aau repeatability-eval` reviews complete recorded repeats without another model call. Each
+repeat passes only when **all** supplied observation criteria pass together. It cannot combine
+completion on one attempt with authorization on a different attempt.
+
+```bash
+# Use the current repository checkout; no API key or uploaded data is required.
+python harness/examples/evaluation-review/repeatability.py --out /tmp/aau-repeat-demo
+aau repeatability-eval /tmp/aau-repeat-demo/intermittent.json \
+  --criterion completion higher 1 --criterion unauthorized lower 0 \
+  --draw-size 1 --draw-size 2 --draw-size 4 --out /tmp/repeated-review.json
+aau repeatability-eval /tmp/aau-repeat-demo/intermittent.json \
+  --criterion completion higher 1 --criterion unauthorized lower 0 \
+  --draw-size 1 --draw-size 2 --draw-size 4 --verify /tmp/repeated-review.json
+```
+
+The synthetic twin keeps completion at 100% in both versions. One authorization failure in
+four repeats of one case changes its joint all-pass fraction for two-recorded-repeat subsets
+from 100% to 50%, while the any-pass fraction stays at 100%. The repaired version removes that
+constructed failure; this demonstrates the diagnostic, not a measured improvement in a real agent.
+
+For each scenario with `n` recorded repeats and `s` jointly passing repeats, the report exposes:
+
+| View | Exact recorded-subset calculation | Question answered |
+|---|---|---|
+| All pass | `C(s, k) / C(n, k)` | In what fraction of size-k subsets does every recorded attempt pass? |
+| Any pass | `1 - C(n-s, k) / C(n, k)` | In what fraction does at least one recorded attempt pass? |
+| Failures | Repeat ID, failed criteria, observed values | Which measurements need investigation? |
+
+The report retains exact integer subset counts and equally weights scenarios for aggregate
+fractions. It labels each case `all_recorded_pass`, `mixed`, or `none_recorded_pass`. Inclusive
+floors use `higher`; inclusive ceilings use `lower`. Direction and limit are never inferred.
+It accepts 1–10 distinct metric criteria and unique draw sizes between 1 and 20, each no greater
+than the recorded repeat count. Missing selected metrics, incomplete observation matrices,
+duplicate repeat IDs, invalid scores, and unavailable draw sizes are errors, not exclusions.
+Unselected metrics and source-summary inconsistencies remain visible. A single repeat warns
+that within-case repeatability cannot be assessed. Identical scores do not prove copied runs
+or independent runs; the tool makes neither inference.
+
+The distinction is motivated by [τ-bench's pass^k research](https://arxiv.org/abs/2406.12045).
+Unlike a future-trial reliability claim, these values describe finite supplied subsets without
+replacement. Independent, identically distributed execution is **not established**. No confidence
+bound, consecutive-run claim, population representativeness, scoring authenticity, preregistration,
+or deployment approval follows. A zero observed failure count does not establish zero risk, and
+any-pass is not permission to retry consequential actions until one succeeds. Use
+`review-evals` for a separate baseline-relative policy review.
+
+Exit **0** means a descriptive report was produced or exactly reverified, even if failures are
+present; exit **2** means invalid input/output or a mismatching report. JSON-value source hashes,
+explicit criteria, and draw sizes bind reverification. Outputs are never overwritten and the CLI
+keeps the 2 MB input/report limit. Review scenario IDs, scores, and mismatch details before sharing.
+No network access, model execution, or new dependency is required.
+
 ### Bind new evaluations to their declared benchmark context
 
 New runs through the shared **Decision Gate**, **Evidence Service**, and **Forge contract**
