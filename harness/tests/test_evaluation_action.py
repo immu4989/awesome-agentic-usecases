@@ -23,6 +23,7 @@ def setup(tmp_path, candidate="legitimate", demo="demo.py"):
     return workspace, dict(os.environ, GITHUB_WORKSPACE=str(workspace),
                           AAU_EVAL_POLICY="policy.json", AAU_EVAL_BASELINE="baseline.json",
                           AAU_EVAL_CANDIDATE=f"{candidate}.json", AAU_EVAL_OUTPUT="review pack",
+                          AAU_EVAL_DIAGNOSTICS="", AAU_EVAL_DIAGNOSTICS_SHA256="",
                           AAU_EVAL_POLICY_SHA256=hashlib.sha256((workspace / "policy.json").read_bytes()).hexdigest(),
                           AAU_EVAL_BASELINE_SHA256=hashlib.sha256((workspace / "baseline.json").read_bytes()).hexdigest(),
                           GITHUB_STEP_SUMMARY=str(tmp_path / "summary.md"))
@@ -187,3 +188,113 @@ def test_invalid_source_does_not_echo_payload_to_action_logs(tmp_path):
     result = run(env)
     assert result.returncode == 2
     assert "SENSITIVE_EXAMPLE" not in result.stdout + result.stderr
+
+
+def setup_diagnostics(tmp_path, candidate="repaired", recordings=False):
+    workspace, env = setup(tmp_path, candidate, demo="dossier.py")
+    env.update(AAU_EVAL_DIAGNOSTICS="diagnostics.json",
+               AAU_EVAL_DIAGNOSTICS_SHA256=hashlib.sha256((workspace / "diagnostics.json").read_bytes()).hexdigest())
+    if recordings:
+        for name in sorted({"baseline", candidate}):
+            path = workspace / f"{name}.json"
+            original = json.loads(path.read_text())
+            recording = {"format_version": "aau-recorded-observations/1.0", "source_label": "synthetic CI recording",
+                         "scenario_ids": sorted({row["scenario_id"] for row in original["results"]}),
+                         "n_repeats": original["n_repeats"], "evaluation_context": original["evaluation_context"],
+                         "observations": [{key: row[key] for key in ("scenario_id", "repeat", "metrics")}
+                                          for row in original["results"]]}
+            path.write_text(json.dumps(recording))
+        env.update(AAU_EVAL_INPUT_FORMAT="recordings",
+                   AAU_EVAL_BASELINE_SHA256=hashlib.sha256((workspace / "baseline.json").read_bytes()).hexdigest())
+    return workspace, env
+
+
+@pytest.mark.parametrize("recordings", [False, True])
+@pytest.mark.parametrize("candidate,code", [("repaired", 0), ("baseline", 1)])
+def test_action_preserves_verified_diagnostic_dossiers_for_both_outcomes(tmp_path, recordings, candidate, code):
+    from aau_harness.eval_pack import verify_pack
+
+    workspace, env = setup_diagnostics(tmp_path, candidate, recordings)
+    result = run(env)
+    assert result.returncode == code, result.stderr
+    report = verify_pack(workspace / "review pack", require_recordings=recordings, require_diagnostics=True)
+    assert report["status"] == ("constraints_met" if code == 0 else "constraints_not_met")
+    assert len(list((workspace / "review pack").iterdir())) == (13 if recordings else 11)
+    summary = (tmp_path / "summary.md").read_text()
+    assert "approved plan byte hash matched" in summary
+    assert "Diagnostics do not change the policy verdict" in summary
+    assert "synthetic-service" not in summary
+    assert "unauthorized" not in summary
+    assert run(env).returncode == 2
+
+
+@pytest.mark.parametrize("missing", ["AAU_EVAL_DIAGNOSTICS", "AAU_EVAL_DIAGNOSTICS_SHA256"])
+def test_plan_and_hash_cannot_be_supplied_alone(tmp_path, missing):
+    workspace, env = setup_diagnostics(tmp_path)
+    env[missing] = ""
+    assert run(env).returncode == 2
+    assert not (workspace / "review pack").exists()
+
+
+@pytest.mark.parametrize("value", ["0" * 63, "g" * 64, "0" * 64])
+def test_diagnostic_pin_must_be_well_formed_and_match(tmp_path, value):
+    workspace, env = setup_diagnostics(tmp_path)
+    env["AAU_EVAL_DIAGNOSTICS_SHA256"] = value
+    assert run(env).returncode == 2
+    assert not (workspace / "review pack").exists()
+
+
+def test_diagnostic_whitespace_drift_fails_before_creating_pack(tmp_path):
+    workspace, env = setup_diagnostics(tmp_path)
+    path = workspace / "diagnostics.json"
+    path.write_bytes(path.read_bytes() + b"\n")
+    assert run(env).returncode == 2
+    assert not (workspace / "review pack").exists()
+
+
+@pytest.mark.parametrize("path", ["../diagnostics.json", "/tmp/diagnostics.json", ".", "bad\npath", "alias.json"])
+def test_diagnostic_paths_obey_workspace_and_symlink_boundaries(tmp_path, path):
+    workspace, env = setup_diagnostics(tmp_path)
+    (workspace / "alias.json").symlink_to(workspace / "diagnostics.json")
+    env["AAU_EVAL_DIAGNOSTICS"] = path
+    assert run(env).returncode == 2
+    assert not (workspace / "review pack").exists()
+
+
+def test_successful_diagnostics_do_not_bypass_policy_failure(tmp_path):
+    workspace, env = setup_diagnostics(tmp_path, candidate="baseline")
+    path = workspace / "diagnostics.json"
+    plan = json.loads(path.read_text())
+    plan["criteria"] = [plan["criteria"][0]]
+    path.write_text(json.dumps(plan))
+    env["AAU_EVAL_DIAGNOSTICS_SHA256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    assert run(env).returncode == 1
+    diagnostic = json.loads((workspace / "review pack/candidate-repeatability.json").read_text())
+    assert diagnostic["counts"]["all_recorded_pass"] == 1
+    assert json.loads((workspace / "review pack/review.json").read_text())["status"] == "constraints_not_met"
+
+
+def test_invalid_plan_does_not_echo_source_content_or_publish_partial_pack(tmp_path):
+    workspace, env = setup_diagnostics(tmp_path)
+    path = workspace / "diagnostics.json"
+    plan = json.loads(path.read_text())
+    plan["criteria"][0]["metric"] = "SENSITIVE_DIAGNOSTIC_EXAMPLE"
+    path.write_text(json.dumps(plan))
+    env["AAU_EVAL_DIAGNOSTICS_SHA256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    result = run(env)
+    assert result.returncode == 2
+    assert "SENSITIVE_DIAGNOSTIC_EXAMPLE" not in result.stdout + result.stderr
+    assert not (workspace / "review pack").exists()
+    assert not (tmp_path / "summary.md").exists()
+
+
+def test_shell_shaped_plan_filename_is_not_executed(tmp_path):
+    workspace, env = setup_diagnostics(tmp_path)
+    name = "plan$(touch should-not-exist).json"
+    (workspace / name).write_bytes((workspace / "diagnostics.json").read_bytes())
+    env["AAU_EVAL_DIAGNOSTICS"] = name
+    assert run(env).returncode == 0
+    assert not (workspace / "should-not-exist").exists()
+    metadata = (DRIVER.parent / "action.yml").read_text()
+    assert "AAU_EVAL_DIAGNOSTICS: ${{ inputs.diagnostics }}" in metadata
+    assert "AAU_EVAL_DIAGNOSTICS_SHA256: ${{ inputs.diagnostics-sha256 }}" in metadata

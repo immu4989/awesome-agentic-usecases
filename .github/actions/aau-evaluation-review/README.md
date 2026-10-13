@@ -83,6 +83,51 @@ constraint; a global improvement cannot override a failed group constraint. Poli
 include the memberships and limits, not just the metric names. These checks do not authenticate
 group labels, infer sensitive attributes, or certify fairness. Version-1.0 policies remain supported.
 
+## Produce a reviewer dossier from an independently approved diagnostic plan
+
+Supply both `diagnostics` and `diagnostics-sha256` to retain the policy review alongside
+repeated-run consistency and operating-cost views. Omitting both preserves the existing
+policy-only workflow. Supplying just one, a wrong hash, an invalid plan, or an unsafe path fails
+before the pack is created. The same workspace, symlink, control-character, and size restrictions
+apply to this input.
+
+```yaml
+- name: Review evidence and preserve a diagnostic dossier
+  uses: immu4989/awesome-agentic-usecases/.github/actions/aau-evaluation-review@REVIEWED_FULL_COMMIT_SHA
+  with:
+    policy: evaluations/approved-policy.json
+    policy-sha256: ${{ vars.APPROVED_EVAL_POLICY_SHA256 }}
+    baseline: evaluations/approved-baseline.json
+    baseline-sha256: ${{ vars.APPROVED_EVAL_BASELINE_SHA256 }}
+    candidate: evaluations/candidate.json
+    diagnostics: evaluations/approved-diagnostics.json
+    diagnostics-sha256: ${{ vars.APPROVED_EVAL_DIAGNOSTICS_SHA256 }}
+    output: evaluation-dossier
+```
+
+The [diagnostic plan and complete offline example](../../../harness/README.md#hand-off-one-complete-offline-review-dossier)
+define the joint observation criteria, recorded-subset sizes, and declared cost basis for each
+source. Review these independently, including any difference from policy/cohort obligations.
+Store its **file-byte** hash in the same independently controlled approval process used for the
+baseline and policy. Do not calculate the approved hash from a candidate-controlled plan in a
+production job. Protect the workflow inputs as well: removing both diagnostic inputs deliberately
+selects policy-only mode, so a reviewer requiring a dossier should verify with
+`aau evaluation-pack verify PATH --require-diagnostics`.
+
+The Action produces and recomputes all eleven version-2.0 dossier files before success/failure
+is reported. With `input-format: recordings`, it retains thirteen files and rechecks the complete
+recording-to-review chain; the metric-only recordings do not acquire fabricated operating data.
+Use `--require-recordings --require-diagnostics` when both are required outside the Action.
+
+**Diagnostics never override the policy gate.** The Action still exits 1 and retains failure
+evidence when policy constraints fail, even if all diagnostic criteria pass. Favorable retry or
+cost statistics grant no permission to deploy. A plan hash binds declared criteria and cost
+labels, not their suitability, preregistration, authenticity, or reviewer authority.
+
+The GitHub summary adds only a fixed dossier-status message. It does not echo diagnostic metric
+names, source IDs, scores, cost labels, or invalid input text. No new token permissions, provider
+credentials, network calls, package installations, or automatic artifact uploads are introduced.
+
 ## Results and sharing
 
 - Exit **0**: approved pins and context matched, all supplied constraints met, pack verified.
@@ -95,7 +140,7 @@ consumption. Do not treat `continue-on-error` as passing policy review. Configur
 check separately; this Action does not change branch protection or grant deployment authority.
 
 Open `review.html` locally for readable findings. Keep all six pack files for verification
-(eight in recordings mode).
+(eight in recordings mode), or all eleven/thirteen files when diagnostics are requested.
 **The pack contains complete unsanitized evaluation details.** Nothing is uploaded automatically.
 If your organization elects to upload an artifact, review its privacy and retention first, use a
 reviewed pinned upload Action, and account for repository and artifact access permissions.

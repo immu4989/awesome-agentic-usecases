@@ -49,6 +49,7 @@ jobs:
         id: eval-review-fixtures
         run: |
           python harness/examples/evaluation-review/demo.py --out .aau-ci-evaluation-inputs
+          python harness/examples/evaluation-review/dossier.py --out .aau-ci-dossier-inputs
           python - <<'PY'
           import hashlib
           import os
@@ -57,6 +58,9 @@ jobs:
               for name in ("policy", "baseline"):
                   payload = Path(f".aau-ci-evaluation-inputs/{name}.json").read_bytes()
                   output.write(f"{name}={hashlib.sha256(payload).hexdigest()}\n")
+              for name in ("policy", "baseline", "diagnostics"):
+                  payload = Path(f".aau-ci-dossier-inputs/{name}.json").read_bytes()
+                  output.write(f"dossier_{name}={hashlib.sha256(payload).hexdigest()}\n")
           PY
       - name: Saved evaluation Action entrypoint positive twin
         env:
@@ -67,6 +71,37 @@ jobs:
           AAU_EVAL_CANDIDATE: .aau-ci-evaluation-inputs/legitimate.json
           AAU_EVAL_OUTPUT: .aau-ci-evaluation-review
         run: python .github/actions/aau-evaluation-review/run.py
+      - name: Approved-plan diagnostic dossier positive and negative twins
+        env:
+          AAU_EVAL_POLICY: .aau-ci-dossier-inputs/policy.json
+          AAU_EVAL_POLICY_SHA256: ${{ steps.eval-review-fixtures.outputs.dossier_policy }}
+          AAU_EVAL_BASELINE: .aau-ci-dossier-inputs/baseline.json
+          AAU_EVAL_BASELINE_SHA256: ${{ steps.eval-review-fixtures.outputs.dossier_baseline }}
+          AAU_EVAL_CANDIDATE: .aau-ci-dossier-inputs/repaired.json
+          AAU_EVAL_DIAGNOSTICS: .aau-ci-dossier-inputs/diagnostics.json
+          AAU_EVAL_DIAGNOSTICS_SHA256: ${{ steps.eval-review-fixtures.outputs.dossier_diagnostics }}
+          AAU_EVAL_OUTPUT: .aau-ci-dossier-review
+        run: |
+          python .github/actions/aau-evaluation-review/run.py
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          import subprocess
+          import sys
+          from aau_harness.eval_pack import verify_pack
+          positive = verify_pack(Path(".aau-ci-dossier-review"), require_diagnostics=True)
+          if positive["status"] != "constraints_met":
+              raise SystemExit("positive diagnostic twin failed")
+          negative_env = dict(os.environ,
+                              AAU_EVAL_CANDIDATE=".aau-ci-dossier-inputs/baseline.json",
+                              AAU_EVAL_OUTPUT=".aau-ci-dossier-negative")
+          result = subprocess.run([sys.executable, ".github/actions/aau-evaluation-review/run.py"], env=negative_env)
+          if result.returncode != 1:
+              raise SystemExit("negative diagnostic twin did not retain a failed-policy result")
+          negative = verify_pack(Path(".aau-ci-dossier-negative"), require_diagnostics=True)
+          if negative["status"] != "constraints_not_met":
+              raise SystemExit("negative diagnostic dossier did not recompute")
+          PY
       - name: AAU Forge creates and verifies a runnable lab
         run: |
           for spec in decision-gate rights-continuity critical-event-fanout; do

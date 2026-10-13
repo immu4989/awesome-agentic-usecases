@@ -19,6 +19,12 @@ inputs:
   candidate:
     description: Workspace-relative candidate JSON in the selected input format.
     required: true
+  diagnostics:
+    description: Optional workspace-relative diagnostic plan; requires diagnostics-sha256 when supplied.
+    default: ''
+  diagnostics-sha256:
+    description: Independently approved diagnostic-plan byte SHA-256; requires diagnostics when supplied.
+    default: ''
   output:
     description: New workspace-relative directory; includes complete unsanitized evaluation details.
     default: aau-evaluation-review
@@ -38,5 +44,7 @@ runs:
         AAU_EVAL_BASELINE: ${{ inputs.baseline }}
         AAU_EVAL_BASELINE_SHA256: ${{ inputs.baseline-sha256 }}
         AAU_EVAL_CANDIDATE: ${{ inputs.candidate }}
+        AAU_EVAL_DIAGNOSTICS: ${{ inputs.diagnostics }}
+        AAU_EVAL_DIAGNOSTICS_SHA256: ${{ inputs.diagnostics-sha256 }}
         AAU_EVAL_OUTPUT: ${{ inputs.output }}
       run: python "$GITHUB_ACTION_PATH/run.py"

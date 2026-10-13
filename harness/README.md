@@ -682,6 +682,12 @@ independently trusted source commitments. Coordinated replacement of all sources
 can still verify; hashes are not signatures. The folder includes full source details and is
 **not sanitized**. Nothing is uploaded automatically; review privacy and sharing authority first.
 
+For CI adoption, the [saved evaluation Action](../.github/actions/aau-evaluation-review/#produce-a-reviewer-dossier-from-an-independently-approved-diagnostic-plan)
+accepts `diagnostics` with an independently approved `diagnostics-sha256`. It verifies that
+file-byte pin before producing a dossier and recomputes every included view before returning
+the policy's exit status. Missing pairs or changed plan bytes fail closed; no uploads or new
+permissions are introduced. Keep approval hashes outside candidate-controlled code.
+
 ### Understand operating cost without excluding failed attempts
 
 `aau operating-eval` connects recorded cost and latency to **jointly passing attempts**.

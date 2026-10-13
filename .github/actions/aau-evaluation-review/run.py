@@ -60,6 +60,11 @@ def main() -> int:
         policy = read_source(paths["policy"], os.environ["AAU_EVAL_POLICY_SHA256"])
         baseline = read_source(paths["baseline"], os.environ["AAU_EVAL_BASELINE_SHA256"])
         candidate = read_source(paths["candidate"])
+        diagnostic_path = os.environ.get("AAU_EVAL_DIAGNOSTICS", "")
+        diagnostic_hash = os.environ.get("AAU_EVAL_DIAGNOSTICS_SHA256", "")
+        if bool(diagnostic_path) != bool(diagnostic_hash):
+            raise AgentBomError("diagnostic plan and independently approved byte hash must be supplied together")
+        diagnostics = read_source(workspace_path(workspace, diagnostic_path), diagnostic_hash) if diagnostic_path else None
         input_format = os.environ.get("AAU_EVAL_INPUT_FORMAT", "evaluations")
         if input_format not in ("evaluations", "recordings"):
             raise AgentBomError("input format must be evaluations or recordings")
@@ -71,8 +76,8 @@ def main() -> int:
         audit_evaluation(reviewed_candidate)
         if compare_contexts(reviewed_baseline, reviewed_candidate)["status"] != "matched":
             raise AgentBomError("Action requires matching declared context on both evaluations; legacy evidence needs separate review")
-        report = create_pack(policy, baseline, candidate, paths["output"], recordings=recordings)
-        if verify_pack(paths["output"], require_recordings=recordings) != report:
+        report = create_pack(policy, baseline, candidate, paths["output"], recordings=recordings, diagnostics=diagnostics)
+        if verify_pack(paths["output"], require_recordings=recordings, require_diagnostics=diagnostics is not None) != report:
             raise AgentBomError("saved review pack does not match computed evidence")
         summary = os.environ.get("GITHUB_STEP_SUMMARY")
         if summary:
@@ -83,6 +88,10 @@ def main() -> int:
                              "The offline pack recomputed. No raw scenario text is included in this summary.\n\n"
                              "The pack includes full source details: inspect before uploading. "
                              "This check is not execution attestation or deployment approval.\n")
+                if diagnostics is not None:
+                    stream.write("\nDiagnostic dossier: approved plan byte hash matched; repeated-run and operating "
+                                 "views recomputed for both sources. Diagnostics do not change the policy verdict. "
+                                 "Criteria, cost labels, scores, identifiers, and source details are not echoed here.\n")
         return int(report["status"] != "constraints_met")
     except (AgentBomError, OSError, ValueError, KeyError) as exc:
         # Avoid echoing raw source content or GitHub annotation-shaped payloads.
