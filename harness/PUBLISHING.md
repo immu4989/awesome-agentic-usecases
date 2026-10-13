@@ -59,7 +59,8 @@ python -m build harness
 python harness/tools/smoke_installed_wheel.py harness/dist/aau_harness-*.whl
 ```
 
-The check exercises the packaged `evaluation-demo`, both policy outcomes, complete recorded
+The check captures and re-verifies a path-free `runtime-info` source receipt from the installed
+wheel. It also exercises the packaged `evaluation-demo`, both policy outcomes, complete recorded
 diagnostic-pack verification, operating-measurement and CSV import, a complete CSV review handoff,
 context comparison, overwrite refusal,
 and rejection of a modified operating report. It adds no package-index fallback, credentials,

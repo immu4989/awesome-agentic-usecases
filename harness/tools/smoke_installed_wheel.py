@@ -39,6 +39,11 @@ def smoke(wheel: Path) -> None:
         location = Path(run([python, "-I", "-c", "import aau_harness; print(aau_harness.__file__)"]).strip()).resolve()
         if environment.resolve() not in location.parents:
             raise RuntimeError("import resolved outside the isolated installation")
+        run([cli, "runtime-info", "--out", "runtime.json"])
+        run([cli, "runtime-info", "--verify", "runtime.json"])
+        identity = json.loads((root / "runtime.json").read_text())
+        if "runtime_info.py" not in identity["source_files"] or str(root) in json.dumps(identity):
+            raise RuntimeError("installed source receipt is incomplete or exposes local paths")
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
         for name, code in (("intermittent", 1), ("repaired", 0)):

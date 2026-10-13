@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Installed implementation receipts** — `aau runtime-info` captures and re-verifies first-party
+  Python source hashes and declared runtime metadata without local paths or environment values.
+  Different unreleased builds sharing a version can be distinguished by source-tree hash.
+  Installed-wheel checks exercise the command; receipts are not dependency or execution attestations.
+
 - **Approved CSV evidence in CI** — the saved evaluation review Action now accepts scored CSV
   exports with independently pinned baseline/candidate mappings, baseline bytes, policy, and
   diagnostics. Matching declared context remains mandatory. It verifies the complete 28-file

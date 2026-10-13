@@ -603,6 +603,36 @@ Coordinated replacement of all source and derived files can verify because hashe
 The retained CSV is **not sanitized**. Identifiers can contain sensitive data or spreadsheet
 formulas; do not open untrusted source files in spreadsheet software. Review the whole pack before sharing.
 
+### Identify the harness implementation used for a review
+
+The version label alone is insufficient for unreleased checkouts and local wheels: different
+source revisions can share the same package version. With the current repository harness, use:
+
+```bash
+aau runtime-info --out runtime-source.json
+aau runtime-info --verify runtime-source.json
+```
+
+Without options, the command prints JSON. It records the distribution metadata version (or null
+when unavailable), Python implementation/version, a sorted inventory of relative first-party
+`.py` filenames and byte hashes, and `source_tree_sha256`. That tree hash is independent of the
+installation path and distribution version. `--verify` checks **the whole receipt**, including
+Python metadata, against the current installation: exit 0 matches; exit 2 means mismatch or invalid
+input. Existing outputs are never overwritten. Different Python versions can produce different
+receipts even when the source-tree hash matches; inspect those fields separately.
+
+Capture a receipt at collection and again at review time; retain it **beside**, not inside,
+strictly enumerated evidence packs. No pack-verifier requirements are changed. The receipt includes
+no absolute local paths, environment variables, credentials, hostnames, or timestamps. It excludes
+`__pycache__`, non-Python resources, external dependencies, interpreter bytes, and configuration.
+It inventories on-disk files, not previously loaded or actually executed code. Symlinked Python
+sources/directories, missing sources, unreadable trees, and excessive inventories fail closed
+(500 files, 2 MB each, 20 MB total). Source inventories can disclose module names; review before sharing.
+
+This helps diagnose implementation drift; it does **not** authenticate a collector, prove scoring
+correctness, establish reproducible execution, or replace a signed release/provenance check.
+Use a trusted harness to collect and compare receipts. Not available in published PyPI 1.6.0.
+
 ### Hand off two CSV exports as one verifiable review
 
 `aau csv-review` closes the gap between CSV conversion and a reviewer-ready dossier. Teams can
