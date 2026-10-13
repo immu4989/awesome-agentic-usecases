@@ -695,10 +695,12 @@ response, not an AWS standard, endorsement, or proof that a retry is authorized.
 
 `aau retry-review` combines both source-retaining retry packs and their full evaluation review
 into **one verifiable folder**. Use it when a reviewer or CI job must check the ledgers, not
-just normalized task scores. Requires the current checkout or a locally built wheel.
+just normalized task scores. Requires the current checkout or a locally built wheel, not
+published PyPI 1.6.0. The installed package includes a no-key walkthrough; no repository-only
+fixture files are needed after installation:
 
 ```bash
-python harness/examples/evaluation-review/retry_handoff.py --out /tmp/aau-retry-review-demo
+aau retry-demo --out /tmp/aau-retry-review-demo
 aau retry-review verify /tmp/aau-retry-review-demo/earlier-harm --require-budget
 # Expected exit 1: earlier authorization failure and candidate budget failure remain visible.
 aau retry-review verify /tmp/aau-retry-review-demo/slow-completion --require-budget
@@ -706,6 +708,13 @@ aau retry-review verify /tmp/aau-retry-review-demo/slow-completion --require-bud
 aau retry-review verify /tmp/aau-retry-review-demo/repaired --require-budget
 # Expected exit 0: both supplied policy and budget constraints met.
 ```
+
+The command creates and verifies all three 31-file handoffs plus a readable guide: **94 files**.
+It exits 0 when the expected passing and failing examples all verify; individual handoff checks
+return the outcomes shown above. Existing destinations are never overwritten, and the guide is
+written only after each independent policy, budget, and combined verdict matches its contract.
+The repository script `harness/examples/evaluation-review/retry_handoff.py` remains a wrapper
+around this same implementation. Source fingerprints now identify the packaged fixture generator.
 
 Open each folder's `review/review.html`. These constructed fixtures demonstrate three distinct
 outcomes; they do not measure a real agent repair. No model or service is called. The full

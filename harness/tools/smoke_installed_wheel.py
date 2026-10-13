@@ -46,6 +46,13 @@ def smoke(wheel: Path) -> None:
             raise RuntimeError("installed source receipt is incomplete or exposes local paths")
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
+        run([cli, "retry-demo", "--out", "retry-demo"])
+        run([cli, "retry-demo", "--out", "retry-demo"], expected=2)
+        for name, code in (("earlier-harm", 1), ("slow-completion", 1), ("repaired", 0)):
+            run([cli, "retry-review", "verify", f"retry-demo/{name}", "--require-budget"], expected=code)
+        retry_demo_files = [p for p in (root / "retry-demo").rglob("*") if p.is_file()]
+        if len(retry_demo_files) != 94 or not (root / "retry-demo/README.txt").is_file():
+            raise RuntimeError("installed retry walkthrough is incomplete")
         retry_plan = {"plan_version": "aau-retry-accounting/1.0", "source_label": "installed-wheel synthetic retries",
                       "scenario_ids": ["service"], "n_repeats": 1, "attempt_scope": "sequential_disjoint",
                       "metric_reducers": {"completion": "last", "unauthorized": "max"}}

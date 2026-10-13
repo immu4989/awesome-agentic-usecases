@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Installed retry walkthrough** — `aau retry-demo` creates three complete source-to-gate
+  handoffs and an offline guide without repository-only fixtures, credentials, or model calls.
+  All 94 files reproduce from the installed package; independent policy, budget, and combined
+  outcomes are checked before writing the completion guide. The existing repository example
+  delegates to the packaged implementation, and the isolated-wheel smoke verifies all three.
+
 - **Complete retry review handoff and CI gate** — bind both retry ledgers and accounting plans
   to a 28-file policy/diagnostic dossier, or a 31-file combined policy/budget handoff. Verify the
   entire source chain in one command. The Action supports independently pinned retry plans;

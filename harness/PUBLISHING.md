@@ -66,6 +66,7 @@ combined policy/budget dossier and CSV gates, and downgrade rejection with `--re
 operating-budget change review with both changed and unchanged outcomes,
 retry-ledger accounting with earlier-failure retention and downstream evaluation binding,
 complete retry handoffs with independent policy/budget outcomes and budget-downgrade rejection,
+the complete 94-file installed `retry-demo` with all three expected handoff outcomes,
 both policy outcomes, complete recorded
 diagnostic-pack verification, operating-measurement and CSV import, a complete CSV review handoff,
 context comparison, overwrite refusal,
