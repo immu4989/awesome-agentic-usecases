@@ -10,6 +10,7 @@ from .agent_bom import AgentBomError, MAX_JSON_BYTES, digest, load_json, rendere
 from .authority_html import STYLE
 from .eval_policy import review_evaluations
 from .eval_import import import_observations
+from .eval_diagnostics import diagnostic_reports, render_diagnostics
 
 
 CONSTRAINT_LABELS = {
@@ -34,7 +35,7 @@ def _table(caption, headers, rows) -> str:
             f'<tbody>{body}</tbody></table></div>')
 
 
-def render_review(report: dict, *, recordings: bool = False) -> str:
+def render_review(report: dict, *, recordings: bool = False, diagnostics_html: str = "") -> str:
     """Only render reports freshly computed from their source evidence."""
     status = "Constraints met" if report["status"] == "constraints_met" else "Constraints not met"
     failures = _table("Failed constraints", ("Metric or source", "Constraint"), [
@@ -76,6 +77,8 @@ def render_review(report: dict, *, recordings: bool = False) -> str:
                         for label, value in audit.items()])
     hashes = "".join(f'<dt>{_text(label)}</dt><dd><code>{_text(report[field])}</code></dd>'
                      for label, field in (("Policy", "policy_sha256"), ("Baseline", "baseline_sha256"), ("Candidate", "candidate_sha256")))
+    file_count = ("thirteen" if recordings else "eleven") if diagnostics_html else ("eight" if recordings else "six")
+    navigation = '<p><a href="#diagnostics">Inspect repeated-run and operating diagnostics ↓</a></p>' if diagnostics_html else ""
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width, initial-scale=1">'
             '<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; '
@@ -94,21 +97,29 @@ def render_review(report: dict, *, recordings: bool = False) -> str:
             '<p><strong>Sharing notice:</strong> this folder contains the complete supplied evaluations, including '
             'their detail fields. It is not sanitized. Review the source files for sensitive data before sharing.</p>'
             f'<p>Required repeats on each side: <strong>{_text(report["policy"]["minimum_repeats"])}</strong>.</p>'
-            f'{failures}<h2>Scope not reviewed</h2><p>{_text(", ".join(report["unreviewed_metrics"]) or "No additional metric names found; unmeasured risks remain outside this review.")}</p>'
+            f'{failures}{navigation}<h2>Scope not reviewed</h2><p>{_text(", ".join(report["unreviewed_metrics"]) or "No additional metric names found; unmeasured risks remain outside this review.")}</p>'
             f'{"".join(sections)}<h2>Evidence consistency</h2>{summaries}'
             f'<h2>Source-value hashes</h2><dl>{hashes}</dl>'
-            + f'<p>Retain all {"eight" if recordings else "six"} files together. Hashes are not signatures; coordinated replacement of sources '
-            'and derived outputs can still verify. This is not independent attestation.</p></main></body></html>\n')
+            + f'<p>Retain all {file_count} files together. Hashes are not signatures; coordinated replacement of sources '
+            'and derived outputs can still verify. This is not independent attestation.</p>'
+            + diagnostics_html + '</main></body></html>\n')
 
 
-def pack_payloads(policy: dict, baseline: dict, candidate: dict, *, recordings: bool = False) -> tuple[dict, dict[str, bytes]]:
+def pack_payloads(policy: dict, baseline: dict, candidate: dict, *, recordings: bool = False,
+                  diagnostics: dict | None = None) -> tuple[dict, dict[str, bytes]]:
     originals = (baseline, candidate)
     if recordings:
         baseline, candidate = (import_observations(source) for source in originals)
     report = review_evaluations(policy, baseline, candidate)
     payloads = {name: rendered(value) for name, value in (
         ("policy.json", policy), ("baseline.json", baseline), ("candidate.json", candidate), ("review.json", report))}
-    payloads["review.html"] = render_review(report, recordings=recordings).encode("utf-8")
+    diagnostics_html = ""
+    if diagnostics is not None:
+        reports = diagnostic_reports(diagnostics, baseline, candidate)
+        payloads.update({name: rendered(value) for name, value in reports.items()})
+        payloads["diagnostics.json"] = rendered(diagnostics)
+        diagnostics_html = render_diagnostics(diagnostics, reports)
+    payloads["review.html"] = render_review(report, recordings=recordings, diagnostics_html=diagnostics_html).encode("utf-8")
     if recordings:
         payloads.update({name: rendered(source) for name, source in zip(
             ("baseline-recording.json", "candidate-recording.json"), originals)})
@@ -118,14 +129,18 @@ def pack_payloads(policy: dict, baseline: dict, candidate: dict, *, recordings: 
     manifest = {"pack_version": "aau-evaluation-review-pack/1.1" if recordings else "aau-evaluation-review-pack/1.0",
                 "files": {name: digest(value) for name, value in sorted(payloads.items())},
                 "boundary": "Unsigned local evidence bundle. Verification recomputes current-harness outputs, not authenticity, policy timing, or execution."}
+    if diagnostics is not None:
+        manifest.update(pack_version="aau-evaluation-review-pack/2.0",
+                        input_format="recordings" if recordings else "evaluations")
     payloads["manifest.json"] = rendered(manifest)
     return report, payloads
 
 
-def create_pack(policy: dict, baseline: dict, candidate: dict, directory: Path, *, recordings: bool = False) -> dict:
+def create_pack(policy: dict, baseline: dict, candidate: dict, directory: Path, *, recordings: bool = False,
+                diagnostics: dict | None = None) -> dict:
     if directory.exists() or directory.is_symlink():
         raise AgentBomError("refusing to overwrite an existing pack destination")
-    report, payloads = pack_payloads(policy, baseline, candidate, recordings=recordings)
+    report, payloads = pack_payloads(policy, baseline, candidate, recordings=recordings, diagnostics=diagnostics)
     directory.mkdir(parents=True, exist_ok=False)
     # Manifest is last. Interrupted writes leave an incomplete pack that cannot verify.
     for name, payload in payloads.items():
@@ -134,14 +149,24 @@ def create_pack(policy: dict, baseline: dict, candidate: dict, directory: Path, 
     return report
 
 
-def verify_pack(directory: Path, *, require_recordings: bool = False) -> dict:
+def verify_pack(directory: Path, *, require_recordings: bool = False, require_diagnostics: bool = False) -> dict:
     names = {"policy.json", "baseline.json", "candidate.json", "review.json", "review.html", "manifest.json"}
     if directory.is_symlink() or not directory.is_dir():
         raise AgentBomError("review pack must be a real directory")
-    version = load_json(directory / "manifest.json").get("pack_version")
-    if version not in ("aau-evaluation-review-pack/1.0", "aau-evaluation-review-pack/1.1"):
+    manifest = load_json(directory / "manifest.json")
+    version = manifest.get("pack_version")
+    if version not in ("aau-evaluation-review-pack/1.0", "aau-evaluation-review-pack/1.1", "aau-evaluation-review-pack/2.0"):
         raise AgentBomError("unsupported review pack version")
     recordings = version == "aau-evaluation-review-pack/1.1"
+    diagnostics = version == "aau-evaluation-review-pack/2.0"
+    if diagnostics:
+        if manifest.get("input_format") not in ("evaluations", "recordings"):
+            raise AgentBomError("diagnostic dossier requires an explicit supported input_format")
+        recordings = manifest["input_format"] == "recordings"
+        names.update({"diagnostics.json", "baseline-repeatability.json", "candidate-repeatability.json",
+                      "baseline-operations.json", "candidate-operations.json"})
+    if require_diagnostics and not diagnostics:
+        raise AgentBomError("diagnostic dossier required; policy-only pack refused")
     if require_recordings and not recordings:
         raise AgentBomError("original recordings are required; normalized-only pack refused")
     if recordings:
@@ -154,7 +179,8 @@ def verify_pack(directory: Path, *, require_recordings: bool = False) -> dict:
             raise AgentBomError(f"invalid review pack member: {name}")
     inputs = ("policy.json", "baseline-recording.json", "candidate-recording.json") if recordings else (
         "policy.json", "baseline.json", "candidate.json")
-    report, expected = pack_payloads(*(load_json(directory / name) for name in inputs), recordings=recordings)
+    report, expected = pack_payloads(*(load_json(directory / name) for name in inputs), recordings=recordings,
+                                     diagnostics=load_json(directory / "diagnostics.json") if diagnostics else None)
     for name, payload in expected.items():
         if (directory / name).read_bytes() != payload:
             raise AgentBomError(f"review pack member does not recompute: {name}")
@@ -169,16 +195,20 @@ def main(argv: list[str] | None = None) -> int:
         for name in ("policy", "baseline", "candidate"):
             create.add_argument(name, type=Path)
         create.add_argument("--out", type=Path, required=True)
+        create.add_argument("--diagnostics", type=Path, help="include repeated-run and operating views from an explicit diagnostic plan")
     verify = commands.add_parser("verify")
     verify.add_argument("directory", type=Path)
     verify.add_argument("--require-recordings", action="store_true", help="refuse normalized-only packs")
+    verify.add_argument("--require-diagnostics", action="store_true", help="refuse policy-only packs")
     args = parser.parse_args(argv)
     try:
         if args.command in ("create", "from-recordings"):
             report = create_pack(load_json(args.policy), load_json(args.baseline), load_json(args.candidate), args.out,
-                                 recordings=args.command == "from-recordings")
+                                 recordings=args.command == "from-recordings",
+                                 diagnostics=load_json(args.diagnostics) if args.diagnostics else None)
         else:
-            report = verify_pack(args.directory, require_recordings=args.require_recordings)
+            report = verify_pack(args.directory, require_recordings=args.require_recordings,
+                                 require_diagnostics=args.require_diagnostics)
         print(f"{report['status']}; complete offline review pack; not deployment approval")
         return int(report["status"] != "constraints_met")
     except (AgentBomError, OSError) as exc:

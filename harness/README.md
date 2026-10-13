@@ -607,6 +607,81 @@ explicit criteria, and draw sizes bind reverification. Outputs are never overwri
 keeps the 2 MB input/report limit. Review scenario IDs, scores, and mismatch details before sharing.
 No network access, model execution, or new dependency is required.
 
+### Hand off one complete offline review dossier
+
+Add `--diagnostics plan.json` to `aau evaluation-pack create` or `from-recordings` to combine
+the policy verdict, repeated-run consistency, and operating evidence in one portable folder.
+Open `review.html` for a script-free, offline reviewer page; its baseline/candidate tables link
+to the complete JSON reports and retain warnings, exact failures, and missing-data states.
+
+```bash
+python harness/examples/evaluation-review/dossier.py --out /tmp/aau-dossier-demo
+aau evaluation-pack verify /tmp/aau-dossier-demo/intermittent-pack --require-diagnostics
+# Expected exit 1: the folder recomputes, but its policy constraints fail.
+aau evaluation-pack verify /tmp/aau-dossier-demo/repaired-pack --require-diagnostics
+# Expected exit 0: the supplied policy constraints are met, not deployment approval.
+
+# Build the same repaired dossier yourself from its explicit inputs:
+aau evaluation-pack create /tmp/aau-dossier-demo/policy.json \
+  /tmp/aau-dossier-demo/baseline.json /tmp/aau-dossier-demo/repaired.json \
+  --diagnostics /tmp/aau-dossier-demo/diagnostics.json --out /tmp/my-review-dossier
+```
+
+The strict diagnostic plan is separate from the release-review policy:
+
+```json
+{
+  "plan_version": "aau-evaluation-diagnostics/1.0",
+  "criteria": [
+    {"metric": "completion", "direction": "higher", "limit": 1},
+    {"metric": "unauthorized", "direction": "lower", "limit": 0}
+  ],
+  "draw_sizes": [1, 2, 4],
+  "cost_basis": {"baseline": "synthetic", "candidate": "synthetic"}
+}
+```
+
+Choose reviewed criteria, cost declarations, and subset sizes appropriate to your evidence;
+do not adopt the example's synthetic limits as production requirements. Each draw size must be
+available on **both** sources, with complete selected-metric coverage. Different repeat counts
+are retained, not downsampled. Cost fields may be unavailable; this stays visible as unknown.
+
+| Dossier files | Purpose |
+|---|---|
+| `policy.json`, `baseline.json`, `candidate.json` | Full source evaluations and policy, including source detail fields |
+| `review.json`, `review.html` | Policy verdict and complete human-readable review |
+| `diagnostics.json` | Exact supplied diagnostic assumptions |
+| `baseline-repeatability.json`, `candidate-repeatability.json` | Joint pass/fail and recorded-subset curves |
+| `baseline-operations.json`, `candidate-operations.json` | Coverage, cost per passing attempt, and tail latency |
+| `manifest.json` | Exact file inventory and unsigned byte hashes |
+
+This is an eleven-file `aau-evaluation-review-pack/2.0` folder. The `from-recordings` form
+adds both original recording JSON values for thirteen files and records its input format.
+That recording format contains metric scores, not operational measurements, so the operating
+views correctly show unavailable cost, timing, and API-call statistics rather than inventing them.
+Use both `--require-diagnostics` and `--require-recordings` when the handoff requires both.
+
+Verification recomputes normalization where applicable, the policy review, all four diagnostic
+reports, HTML, and the manifest. Altering a report and updating its manifest hash is insufficient.
+Missing or extra files, unsupported formats, unsafe member shapes, changed bytes, and invalid
+plans fail verification. Output directories are never overwritten; invalid or oversized inputs
+are rejected before directory creation. Each member remains bounded to 2 MB. Without diagnostics,
+the earlier six/eight-file pack formats and their output bytes are unchanged.
+
+**The policy alone determines exit 0 or 1.** Diagnostic criteria are not automatically the policy's
+global or cohort limits and do not apply its regression budgets. Even if every diagnostic passes,
+a failed policy still returns 1. Exit 2 means invalid input or failed verification. Matching
+declared benchmark context is checked by the underlying policy review; absent context remains
+explicitly unavailable, not assumed comparable. A cost table, retry curve, or syntactically valid
+pack cannot grant deployment permission.
+
+This handoff follows the emphasis on inspectable, usable artifacts in
+[ACM SIGSIM's artifact-evaluation guidance](https://sigsim.acm.org/conf/pads/2024/blog/artifact-evaluation/),
+not an ACM badge or independent validation claim. Retain the matching harness revision and
+independently trusted source commitments. Coordinated replacement of all sources and outputs
+can still verify; hashes are not signatures. The folder includes full source details and is
+**not sanitized**. Nothing is uploaded automatically; review privacy and sharing authority first.
+
 ### Understand operating cost without excluding failed attempts
 
 `aau operating-eval` connects recorded cost and latency to **jointly passing attempts**.

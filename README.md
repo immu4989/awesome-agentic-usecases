@@ -51,6 +51,7 @@ and observed failure cards with a direct path to reproduction. Start with
 
 | I already have… | Start here | Leave with… |
 |---|---|---|
+| Evaluation results to hand off to a reviewer | [Offline review dossier](harness/README.md#hand-off-one-complete-offline-review-dossier) | One readable page with policy, repeated-run, and operating evidence; a complete source-bound folder that recomputes offline |
 | A proposed change to evaluation thresholds or covered groups | [Policy obligation comparison](harness/README.md#review-changed-obligations-before-approving-a-replacement-policy) | Explicit relaxed limits, removed obligations, scope changes, and a recomputable review report |
 | Repeated runs where successful retries may hide failures | [Recorded-repeat consistency review](harness/README.md#expose-intermittent-failures-behind-successful-retries) | Joint completion-and-authorization checks, all-pass versus any-pass subset curves, and exact failing repeats |
 | Agent scores plus recorded operating costs and timings | [Outcome-linked operating review](harness/README.md#understand-operating-cost-without-excluding-failed-attempts) | Cost per jointly passing attempt including failures, tail latency, explicit missing measurements, and a recomputable report |
