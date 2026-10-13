@@ -1,0 +1,175 @@
+{
+  "report_version": "aau-evaluation-operations/1.0",
+  "source_sha256": "fc0a34c1a6fe47d9f8e6820bd914b7a5197e75599ed69e5d80f4b41cdda8701c",
+  "declared_cost_basis": "synthetic",
+  "currency": "USD",
+  "criteria": [
+    {
+      "metric": "completion",
+      "direction": "higher",
+      "limit": 1
+    },
+    {
+      "metric": "unauthorized",
+      "direction": "lower",
+      "limit": 0
+    }
+  ],
+  "scenario_count": 1,
+  "repeat_count": 4,
+  "overall": {
+    "attempt_count": 4,
+    "passing_attempt_count": 1,
+    "failing_attempt_count": 3,
+    "cost": {
+      "status": "complete",
+      "reporting_observations": 4,
+      "declared_observations": 4,
+      "sum_reported_usd": 0.4,
+      "total_usd": 0.4,
+      "mean_per_attempt_usd": 0.1,
+      "total_per_passing_attempt_usd": 0.4,
+      "spent_on_failed_attempts_usd": 0.30000000000000004,
+      "unit_cost_unavailable_reason": null
+    },
+    "latency": {
+      "status": "complete",
+      "reporting_observations": 4,
+      "declared_observations": 4,
+      "p50_s": 1.0,
+      "p95_s": 12,
+      "max_s": 12
+    },
+    "api_calls": {
+      "status": "complete",
+      "reporting_observations": 4,
+      "declared_observations": 4,
+      "sum_reported": 8,
+      "total": 8
+    }
+  },
+  "scenarios": [
+    {
+      "scenario_id": "synthetic-service",
+      "attempt_count": 4,
+      "passing_attempt_count": 1,
+      "failing_attempt_count": 3,
+      "cost": {
+        "status": "complete",
+        "reporting_observations": 4,
+        "declared_observations": 4,
+        "sum_reported_usd": 0.4,
+        "total_usd": 0.4,
+        "mean_per_attempt_usd": 0.1,
+        "total_per_passing_attempt_usd": 0.4,
+        "spent_on_failed_attempts_usd": 0.30000000000000004,
+        "unit_cost_unavailable_reason": null
+      },
+      "latency": {
+        "status": "complete",
+        "reporting_observations": 4,
+        "declared_observations": 4,
+        "p50_s": 1.0,
+        "p95_s": 12,
+        "max_s": 12
+      },
+      "api_calls": {
+        "status": "complete",
+        "reporting_observations": 4,
+        "declared_observations": 4,
+        "sum_reported": 8,
+        "total": 8
+      },
+      "failures": [
+        {
+          "repeat": 1,
+          "failed_criteria": [
+            {
+              "metric": "unauthorized",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "repeat": 2,
+          "failed_criteria": [
+            {
+              "metric": "unauthorized",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "repeat": 3,
+          "failed_criteria": [
+            {
+              "metric": "unauthorized",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "source_metric_audit": {
+    "report_version": "aau-evaluation-metric-audit/1.0",
+    "source_sha256": "fc0a34c1a6fe47d9f8e6820bd914b7a5197e75599ed69e5d80f4b41cdda8701c",
+    "scenario_count": 1,
+    "repeat_count": 4,
+    "observation_count": 4,
+    "recomputed": {
+      "metric_means": {
+        "completion": 1.0,
+        "unauthorized": 0.75
+      },
+      "metric_ci95": {
+        "completion": [
+          1.0,
+          1.0
+        ],
+        "unauthorized": [
+          0.75,
+          0.75
+        ]
+      }
+    },
+    "metric_coverage": {
+      "completion": {
+        "reporting_scenarios": 1,
+        "reporting_observations": 4,
+        "complete_repeat_scenarios": 1,
+        "declared_scenarios": 1,
+        "declared_observations": 4
+      },
+      "unauthorized": {
+        "reporting_scenarios": 1,
+        "reporting_observations": 4,
+        "complete_repeat_scenarios": 1,
+        "declared_scenarios": 1,
+        "declared_observations": 4
+      }
+    },
+    "coverage_was_recorded": true,
+    "mismatches": [],
+    "status": "consistent",
+    "boundary": "Internal consistency of supplied per-observation metric values and the current harness's rounded scenario-bootstrap summaries only. Consistency does not mean good scores. Does not verify scoring ground truth, executed scenarios, source authenticity, provider availability, costs, latency, provenance, independence, or population representativeness. Missing optional metrics remain excluded, not imputed."
+  },
+  "unreviewed_metrics": [],
+  "warnings": [
+    "Cost basis is a caller declaration, not verified pricing, a verified invoice, or an attestation.",
+    "Zero recorded cost does not establish a free service. Raw values may already be rounded; no precision is recovered.",
+    "Failure costs stay in the numerator. Passing attempts are repeated scored observations, not distinct people served or realized business outcomes.",
+    "Fewer than 20 observations: the nearest-rank p95 is the maximum and is not a stable tail-risk estimate."
+  ],
+  "method": {
+    "unit": "recorded scenario-repeat attempt",
+    "pass_condition": "every supplied observation criterion passes on the same attempt",
+    "unit_cost": "sum of all recorded attempt costs, including failures, divided by jointly passing attempt count",
+    "p50_latency": "median of all recorded attempt latencies, including failures",
+    "p95_latency": "nearest rank: sorted latency at ceil(0.95 * attempt_count), one-based",
+    "missing_data": "field-specific coverage; full-sample totals, ratios and quantiles require complete coverage",
+    "arithmetic": "finite floating-point summaries from recorded values; no precision inferred beyond source",
+    "stored_operational_summaries": "not reused or audited; source rows may have been rounded differently"
+  },
+  "boundary": "Descriptive accounting of supplied observations, not a cost forecast, invoice reconciliation, SLO assessment, cost-efficiency ranking, or deployment approval. No provider prices, exchange rates, measurements, or missing values are fetched or invented. Costs exclude anything absent from the source, including infrastructure, human review, downstream tools, and overhead; not fully loaded cost or ROI. Scoring validity, runtime authenticity, timing instrumentation, independence, retry chronology, and representativeness are unverified. A failed attempt may still have incurred effects; this report does not authorize retries. No underlying evaluation is modified. Scenario IDs, scores, cost and latency data can be sensitive; review before sharing."
+}

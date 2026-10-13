@@ -34,6 +34,8 @@ are preserved; internal consistency is not proof of real-world effectiveness.
 **Try it without an API key:** [Better averages are not enough](https://immu4989.github.io/awesome-agentic-usecases/evaluation-review/)
 compares synthetic candidates, exposes authorization failures and assisted-channel regressions hidden by improved completion,
 and provides complete downloadable evidence packs you can verify offline.
+The [cost-and-repeatability demonstration](https://immu4989.github.io/awesome-agentic-usecases/evaluation-review/#operating-story)
+also shows how failed attempts change cost per passing attempt and how a good median hides slow runs—with eleven-file diagnostic dossiers, not just screenshots.
 
 Every use case is a complete, production-shaped evaluation lab: seeded scenarios with
 programmatic ground truth, tools and state, repeated model runs, cost from actual token

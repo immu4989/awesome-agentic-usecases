@@ -4,6 +4,7 @@ import argparse
 from html import escape
 import importlib.util
 from io import BytesIO
+import json
 from pathlib import Path
 import statistics
 import zipfile
@@ -62,7 +63,67 @@ def cohort_story(reports: dict) -> str:
             'Adapt a cohort policy for your own independently reviewed cases.</a></p></section>')
 
 
-def render_index(reports: dict, cohorts: dict) -> str:
+def operating_story(dossiers: dict) -> str:
+    """Explain the measured fixture relationships using the packaged reports themselves."""
+    cards = []
+    for name, label in (("dossier-intermittent", "Intermittent · lower cost per attempt"),
+                        ("dossier-repaired", "Repaired · every recorded attempt meets criteria")):
+        evidence = dossiers[name]
+        operating = evidence["candidate-operations.json"]["overall"]
+        repeated = evidence["candidate-repeatability.json"]
+        source = evidence["candidate.json"]
+        passing = {(row["scenario_id"], repeat) for row in repeated["scenarios"] for repeat in row["passing_repeat_ids"]}
+        attempts = []
+        for row in source["results"]:
+            passed = (row["scenario_id"], row["repeat"]) in passing
+            attempts.append(f'<li><span>Repeat {row["repeat"] + 1}</span><strong>{"Pass" if passed else "Fail"}</strong>'
+                            f'<small>${row["cost_usd"]:.2f} · {row["latency_s"]:g} s</small></li>')
+        cost, latency = operating["cost"], operating["latency"]
+        rows = [("Mean cost / attempt", f'${cost["mean_per_attempt_usd"]:.2f}'),
+                ("All attempt costs / passing attempts", f'${cost["total_per_passing_attempt_usd"]:.2f}'),
+                ("Cost of failed attempts (included)", f'${cost["spent_on_failed_attempts_usd"]:.2f}'),
+                ("Median / nearest-rank p95 latency", f'{latency["p50_s"]:g} s / {latency["p95_s"]:g} s')]
+        curve = repeated["curve"][-1]
+        status = "Constraints met" if evidence["review.json"]["status"] == "constraints_met" else "Constraints not met"
+        cards.append(f'<article><p class="kicker">{label}</p><h3>{status}</h3>'
+                     f'<ol class="attempts" aria-label="Recorded synthetic attempts">{"".join(attempts)}</ol>'
+                     f'<p><strong>{operating["passing_attempt_count"]}/{operating["attempt_count"]}</strong> attempts meet '
+                     'both completion and authorization criteria.</p>'
+                     '<table><caption>Synthetic operating evidence · USD and seconds</caption>'
+                     '<thead><tr><th scope="col">Measure</th><th scope="col">Value</th></tr></thead><tbody>'
+                     + ''.join(f'<tr><th scope="row">{escape(key)}</th><td>{escape(value)}</td></tr>' for key, value in rows)
+                     + '</tbody></table>'
+                     + f'<p>Across all {curve["draw_size"]} recorded repeats: '
+                     f'<strong>{curve["any_pass_fraction"]:.0%}</strong> of subsets contain at least one pass; '
+                     f'<strong>{curve["all_pass_fraction"]:.0%}</strong> contain only passes.</p>'
+                     f'<a class="button" href="{name}/review.html#diagnostics">Inspect the complete dossier</a>'
+                     f'<a class="download" href="{name}.zip" download>Download the eleven-file dossier ↓</a></article>')
+    return ('<section id="operating-story" class="cohort-story"><p class="kicker">A third failure shape · cheap attempts, costly failures</p>'
+            '<h2>Which denominator are you paying for?</h2>'
+            '<p>A fictional service completes every attempt, but its first configuration misses authorization on three of four attempts. '
+            'The repaired configuration costs more per attempt. Counting all costs against jointly passing attempts reverses the apparent cost advantage.</p>'
+            f'<div class="twins">{"".join(cards)}</div>'
+            '<p class="notice">One synthetic scenario, four repeats—not a production benchmark, savings estimate, ROI, or vendor ranking. '
+            'The p95 here is the maximum of four values, not a stable tail-risk estimate. Subset fractions describe only the recorded observations, '
+            'not future-run probabilities or permission to retry consequential actions. Repeats are not separate people served. '
+            'The cost ratio excludes unrecorded infrastructure, human review, and other overhead.</p>'
+            '<h3>Verify the whole handoff, not a screenshot</h3>'
+            '<p>Extract either eleven-file dossier and require its diagnostic views:</p>'
+            '<pre><code>python -m pip install -e harness\naau evaluation-pack verify /path/to/extracted-dossier --require-diagnostics</code></pre>'
+            '<p>The intermittent dossier exits <strong>1</strong>; the repaired dossier exits <strong>0</strong>. '
+            'Both recompute. Costs and repeat diagnostics never override a failed policy constraint. '
+            'The folder includes the policy, both complete evaluations, diagnostic plan, four diagnostic reports, review JSON, HTML, and manifest.</p>'
+            '<p><a href="https://github.com/immu4989/awesome-agentic-usecases/blob/main/harness/README.md#hand-off-one-complete-offline-review-dossier">'
+            'Build a dossier from your own evidence</a> · '
+            '<a href="https://github.com/immu4989/awesome-agentic-usecases/tree/main/.github/actions/aau-evaluation-review">'
+            'Use independently pinned inputs in CI</a></p>'
+            '<details><summary>Why these views?</summary><p>'
+            '<a href="https://www.finops.org/framework/capabilities/unit-economics/">FinOps unit economics</a> motivates making the denominator explicit; '
+            '<a href="https://sre.google/workbook/monitoring/">Google SRE monitoring guidance</a> explains why latency percentiles reveal information averages hide. '
+            'These sources inform the questions, not validation of this synthetic fixture or its thresholds.</p></details></section>')
+
+
+def render_index(reports: dict, cohorts: dict, dossiers: dict) -> str:
     cards = []
     for name, label in (("legitimate", "Candidate A · obligations preserved"), ("unsafe", "Candidate B · authorization missed")):
         report = reports[name]
@@ -100,6 +161,7 @@ th,td{text-align:left;border-bottom:1px solid #dce2e4;padding:12px 8px}thead th{
 .download{display:block;margin-top:18px;font-size:.95rem}section{margin:48px 0;max-width:880px}pre{overflow-x:auto;background:#202d35;color:#f4f6f7;padding:24px;border-radius:8px;line-height:1.7}
 code{font-size:.9rem}li{margin:10px 0}footer{border-top:1px solid #cbd4d7;padding:24px 0;color:#52636b}
 .cohort-story{max-width:none;border-top:1px solid #cbd4d7;padding-top:32px}.cohort-story h3{font-size:1.4rem;line-height:1.2}small{font-weight:400;color:#52636b}
+.attempts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;list-style:none;padding:0}.attempts li{border:1px solid #cbd4d7;border-radius:5px;padding:8px 4px;text-align:center;font-size:.8rem}.attempts span,.attempts strong,.attempts small{display:block}.attempts strong{font-size:1rem}td{white-space:nowrap}
 @media(max-width:700px){.twins{grid-template-columns:1fr}header{padding-top:32px}article{padding:20px}nav{flex-wrap:wrap}}
 @media print{body{background:white}pre{white-space:pre-wrap}.button{border:none;padding:0}}
 </style></head><body><nav><a href="../index.html">← Explore the repository</a>
@@ -111,10 +173,11 @@ Both candidates improve completion from 50% to 100%. Candidate B skips authoriza
 The review keeps that failure visible instead of trading it against a better headline score.</p>
 <p class="notice">These numbers are constructed fixtures, not measured model or government-service performance.
 No person, agency, provider, or real transaction is involved. Cost and latency fields in the downloads are placeholders.</p></header>
-<div class="twins">''' + "".join(cards) + '</div>' + cohort_story(cohorts) + '''
+<p><a href="#cohort-story">Explore channel regressions</a> · <a href="#operating-story">Explore cost and repeat failures</a></p>
+<div class="twins">''' + "".join(cards) + '</div>' + cohort_story(cohorts) + operating_story(dossiers) + '''
 <section><h2>Inspect it. Download it. Recompute it.</h2>
 <ol><li>Read either review in your browser. Expand the scenario details to see what changed.</li>
-<li>Download its pack and extract all six files into one folder.</li>
+<li>Download its pack and extract every file into one folder (six for the policy-only examples; eleven for diagnostic dossiers).</li>
 <li>From a checkout of this repository, install the current harness and verify that folder:</li></ol>
 <pre><code>python -m pip install -e harness
 aau evaluation-pack verify /path/to/extracted-pack</code></pre>
@@ -158,7 +221,17 @@ def build_assets() -> dict[str, bytes]:
         cohorts[name] = report
         assets.update({f"{name}/{filename}": value for filename, value in payloads.items()})
         assets[f"{name}.zip"] = archive(payloads)
-    assets["index.html"] = render_index(reports, cohorts).encode("utf-8")
+    spec = importlib.util.spec_from_file_location("public_dossier_demo", ROOT / "harness/examples/evaluation-review/dossier.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    policy, baseline, repaired, plan = module.demo_inputs()
+    dossiers = {}
+    for name, candidate in (("dossier-intermittent", baseline), ("dossier-repaired", repaired)):
+        _, payloads = pack_payloads(policy, baseline, candidate, diagnostics=plan)
+        dossiers[name] = {filename: json.loads(payload) for filename, payload in payloads.items() if filename.endswith(".json")}
+        assets.update({f"{name}/{filename}": value for filename, value in payloads.items()})
+        assets[f"{name}.zip"] = archive(payloads)
+    assets["index.html"] = render_index(reports, cohorts, dossiers).encode("utf-8")
     return assets
 
 
@@ -176,7 +249,7 @@ def main():
             target = TARGET / name
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(payload)
-    print(f"Public synthetic evaluation twins reproduce: {len(assets)} files, four complete packs.")
+    print(f"Public synthetic evaluation twins reproduce: {len(assets)} files, six complete packs.")
 
 
 if __name__ == "__main__":
