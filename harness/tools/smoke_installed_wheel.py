@@ -49,6 +49,17 @@ def smoke(wheel: Path) -> None:
         for name, code in (("intermittent", 1), ("repaired", 0)):
             run([cli, "evaluation-pack", "verify", f"demo/{name}", "--require-recordings", "--require-diagnostics"], code)
         repaired = root / "demo/repaired"
+        matrix_plan = {"plan_version": "aau-candidate-matrix/1.0", "candidate_ids": ["intermittent", "repaired"],
+                       "criteria": json.loads((repaired / "diagnostics.json").read_text())["criteria"],
+                       "cost_basis": {"intermittent": "synthetic", "repaired": "synthetic"}}
+        (root / "matrix-plan.json").write_text(json.dumps(matrix_plan))
+        run([cli, "candidate-matrix", "create", "matrix-plan.json", repaired / "policy.json", repaired / "baseline.json",
+             "--candidate", "intermittent=demo/intermittent/candidate.json",
+             "--candidate", "repaired=demo/repaired/candidate.json", "--out", "matrix"])
+        run([cli, "candidate-matrix", "verify", "matrix"])
+        matrix = json.loads((root / "matrix/matrix.json").read_text())
+        if matrix["operating_groups"][0]["eligible_candidates"] != ["repaired"]:
+            raise RuntimeError("installed matrix allowed failed policy to enter operating comparisons")
         baseline, candidate = repaired / "baseline-recording.json", repaired / "candidate-recording.json"
         run([cli, "compare-eval-contexts", baseline, candidate, "--input-format", "recordings", "--out", "context.json"])
         run([cli, "compare-eval-contexts", baseline, candidate, "--input-format", "recordings", "--verify", "context.json"])

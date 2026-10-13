@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- **Multi-candidate evidence matrix** — compare 2–10 normalized evaluations under one baseline
+  and policy, retaining full per-candidate checks and a script-free review page. Policy failures,
+  missing operating data, and unknown cost bases stay excluded from recorded cost/latency trade-offs;
+  estimates, charges, and synthetic costs remain separate. No weighted score or vendor selection.
+
 - **Inspectable policy-source changes** — opt-in five-file snapshots preserve exact source bytes
   and registry declarations for offline re-verification. Comparisons distinguish raw-byte drift
   from extracted-text changes, expose bounded lexical spans, and disclose binary/large-content

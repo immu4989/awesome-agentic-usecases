@@ -603,6 +603,94 @@ Coordinated replacement of all source and derived files can verify because hashe
 The retained CSV is **not sanitized**. Identifiers can contain sensitive data or spreadsheet
 formulas; do not open untrusted source files in spreadsheet software. Review the whole pack before sharing.
 
+### Compare several candidates without hiding policy failures
+
+`aau candidate-matrix` reviews **2–10 normalized evaluations** against one baseline and one policy.
+It retains each full policy review and operating report, plus a script-free comparison page.
+Candidates are shown alphabetically, never as a weighted leaderboard. A low recorded cost cannot
+compensate for a failed global or cohort constraint.
+
+Requires the current repository harness or a wheel built from it, not published PyPI 1.6.0.
+Try the five-candidate synthetic example:
+
+```bash
+pip install -e harness
+python harness/examples/evaluation-review/matrix.py --out /tmp/aau-matrix-demo
+aau candidate-matrix verify /tmp/aau-matrix-demo/matrix
+```
+
+Open `/tmp/aau-matrix-demo/matrix/matrix.html`. No agent, model, real payment, or measured service
+is involved. The constructed candidates deliberately expose different decision traps:
+
+| Synthetic candidate | What the evidence shows |
+|---|---|
+| `cheap-unsafe` | Lowest cost/latency, but fails authorization policy; excluded from operating comparisons |
+| `balanced` | Meets policy; $0.25 per jointly passing attempt, recorded p95 of 2 seconds |
+| `fast` | Meets policy; $0.50 per jointly passing attempt, recorded p95 of 1 second; a trade-off, not an overall winner |
+| `dominated` | Meets policy, but another eligible candidate is cheaper and faster on the two recorded axes |
+| `unknown-cost` | Meets policy, but one cost is absent; unit cost remains unknown and is not compared |
+
+For your own inputs, create a plan with exactly these fields:
+
+Candidate IDs are distinct nonblank labels of at most 120 characters and cannot contain `=`.
+
+```json
+{
+  "plan_version": "aau-candidate-matrix/1.0",
+  "candidate_ids": ["candidate-a", "candidate-b"],
+  "criteria": [
+    {"metric": "completion", "direction": "higher", "limit": 1},
+    {"metric": "unauthorized", "direction": "lower", "limit": 0}
+  ],
+  "cost_basis": {"candidate-a": "estimate", "candidate-b": "estimate"}
+}
+```
+
+```bash
+aau candidate-matrix create matrix-plan.json approved-policy.json baseline.json \
+  --candidate candidate-a=candidate-a.json --candidate candidate-b=candidate-b.json \
+  --out candidate-review
+aau candidate-matrix verify candidate-review
+```
+
+All sources must have valid matching declared scenario/scorer/configuration context and equal
+repeat counts; missing legacy context and mismatches fail before output creation. This deliberately
+does not weaken existing comparison gates. Do not edit fingerprints to manufacture comparability
+when actual test settings differ. Complete scenario coverage and every global/cohort policy rule
+remain enforced. CSV users can first normalize their exports with `csv-eval`; retain those original
+conversion packs separately, because the matrix retains normalized evaluations, not original CSV.
+
+The plan's common joint criteria define the unit-cost denominator for **all** candidates. They
+may differ from policy criteria; that difference must be reviewed, not hidden. Total recorded cost
+includes failed attempts. Missing cost or latency coverage, zero jointly passing attempts, an
+unknown cost basis, or failed policy constraints exclude a candidate from operating comparisons.
+Policy results and the reason for each exclusion remain visible. Missing API-call counts are
+disclosed in the operating report but are not a cost/latency exclusion.
+
+Eligible candidates are compared only **within the same declared cost basis** (`estimate`,
+`charge`, or `synthetic`). A candidate is not dominated on the two recorded axes if no other
+eligible member of that group has no higher unit cost and no higher p95 latency, with at least
+one strictly lower value. Equal points remain tied; a group may contain just one eligible candidate.
+Every pair's relationship is recorded in `matrix.json`. No tolerance, statistical inference,
+future savings, provider pricing, or confidence-adjusted dominance is inferred. Other important
+quality differences are not ranked; inspect each full policy and per-scenario operating report.
+
+This is an implementation of an explicitly scoped descriptive comparison, not a procurement
+decision or endorsement. The motivation follows the [FinOps Foundation's unit-economics guidance](https://www.finops.org/framework/capabilities/unit-economics/)
+on defining units and documenting measurement assumptions. A scored passing attempt is not a
+verified person served, business outcome, fully loaded cost, or ROI.
+
+The portable folder contains **6 + 3 × candidate count** files: plan, policy, baseline, JSON matrix,
+HTML matrix, manifest, and each candidate's evaluation/policy/operating reports. Verification
+recomputes every byte, including HTML, not just hashes. Each member is limited to 2 MB. Existing
+destinations, extra/missing files, symlinks, and oversized evidence are refused. Invalid input is
+rejected before creation; the manifest is written last. Labels never become file paths.
+
+Exit **0** means a descriptive matrix was created or verified, **not** that any or all candidates
+passed policy. Exit **2** means invalid input or verification failure. Do not use this command's
+success as a deployment gate. All supplied evaluation details are retained and **not sanitized**;
+review before sharing. Hashes do not authenticate execution, scoring, timestamps, or approval.
+
 ### Identify the harness implementation used for a review
 
 The version label alone is insufficient for unreleased checkouts and local wheels: different
