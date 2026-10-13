@@ -691,6 +691,68 @@ waiting, and timeouts do not establish that no side effect occurred.
 The explicit task boundary and conservative aggregation rules above are this repository's design
 response, not an AWS standard, endorsement, or proof that a retry is authorized.
 
+### Hand off retry evidence with its complete policy and budget review
+
+`aau retry-review` combines both source-retaining retry packs and their full evaluation review
+into **one verifiable folder**. Use it when a reviewer or CI job must check the ledgers, not
+just normalized task scores. Requires the current checkout or a locally built wheel.
+
+```bash
+python harness/examples/evaluation-review/retry_handoff.py --out /tmp/aau-retry-review-demo
+aau retry-review verify /tmp/aau-retry-review-demo/earlier-harm --require-budget
+# Expected exit 1: earlier authorization failure and candidate budget failure remain visible.
+aau retry-review verify /tmp/aau-retry-review-demo/slow-completion --require-budget
+# Expected exit 1: policy met, but whole-task p95 exceeds the synthetic budget.
+aau retry-review verify /tmp/aau-retry-review-demo/repaired --require-budget
+# Expected exit 0: both supplied policy and budget constraints met.
+```
+
+Open each folder's `review/review.html`. These constructed fixtures demonstrate three distinct
+outcomes; they do not measure a real agent repair. No model or service is called. The full
+evidence behind each displayed result is retained in the same folder.
+
+For your own inputs:
+
+```bash
+aau retry-review create approved-policy.json baseline-plan.json baseline-ledger.json \
+  candidate-plan.json candidate-ledger.json --diagnostics approved-diagnostics.json \
+  --operating-budget approved-budget.json --out new-retry-handoff
+aau retry-review verify new-retry-handoff --require-budget
+```
+
+Both plans must use **identical metric reducers and attempt scope**; matching context hashes
+alone do not satisfy that check. A candidate cannot switch `unauthorized: max` to `last` and
+hide an earlier violation while retaining the same declared context. Equal reducers still do
+not prove appropriate scoring: an approved `last` reducer can ignore earlier outcomes on both
+sides. Inspect the `last_only_metrics` list and per-attempt coverage in each accounting report.
+
+| Folder | Retained evidence |
+|---|---|
+| `baseline/` | Six-file baseline retry ledger/accounting pack |
+| `candidate/` | Six-file candidate retry ledger/accounting pack |
+| `review/` | Thirteen-file recorded-observation dossier, or sixteen files with the candidate budget gate |
+| Root | `handoff.json`, readable `README.txt`, and the complete `manifest.json` |
+
+The ungated handoff has **28 files**; supplying an operating budget produces **31 files**.
+Diagnostics are always required. Full verification derives recordings from both ledgers and
+recomputes the policy, diagnostics, optional combined gate, HTML, and manifests. Substituting an
+individually valid but unrelated nested review fails even after rehashing the outer manifest.
+Existing destinations, extra/missing members, symlinks, oversized files, and tampering are refused.
+The root manifest is written last; partial output is not completed evidence.
+
+Exit **0** means the source chain verifies and all applicable constraints are met; **1** means
+it verifies but policy or candidate budget fails, including required budget evidence that is
+unknown; **2** means invalid inputs or failed verification. Use `--require-budget` when a budget
+is mandatory: an otherwise valid ungated handoff must not be accepted as a replacement.
+
+The [GitHub Action](../.github/actions/aau-evaluation-review/README.md#gate-retry-ledgers-with-approved-accounting-definitions)
+supports `input-format: retries`, independent approval pins for both accounting plans, and
+matching declared context on both sources. The CLI preserves and discloses missing context;
+it does not manufacture it. Keep scenario/scoring context and logical-task boundaries comparable.
+No retries are run, authorized, or recommended by a passing review. Both ledgers retain supplied
+JSON values rather than exact original file bytes. Review all unsanitized contents before sharing;
+hash consistency is not authenticity, policy approval, invoice verification, or deployment approval.
+
 ### Compare several candidates without hiding policy failures
 
 `aau candidate-matrix` reviews **2–10 normalized evaluations** against one baseline and one policy.

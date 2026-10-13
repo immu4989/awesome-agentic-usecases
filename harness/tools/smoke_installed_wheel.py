@@ -68,6 +68,31 @@ def smoke(wheel: Path) -> None:
         retry_source["results"][0]["cost_usd"] = .1
         (root / "wrong-retry-evaluation.json").write_text(json.dumps(retry_source))
         run([cli, "retry-eval", "verify", "retry-pack", "--evaluation", "wrong-retry-evaluation.json"], expected=2)
+        retry_criteria = [{"metric": "completion", "direction": "higher", "limit": 1},
+                          {"metric": "unauthorized", "direction": "lower", "limit": 0}]
+        retry_policy = {"policy_version": "aau-evaluation-review-policy/1.0", "scenario_ids": ["service"],
+                        "minimum_repeats": 1, "metrics": [{"metric": r["metric"], "direction": r["direction"],
+                            "candidate_observation_limit": r["limit"], "max_mean_regression": 0,
+                            "max_regressed_scenarios": 0} for r in retry_criteria]}
+        retry_diagnostics = {"plan_version": "aau-evaluation-diagnostics/1.0", "criteria": retry_criteria,
+                             "draw_sizes": [1], "cost_basis": {"baseline": "synthetic", "candidate": "synthetic"}}
+        retry_budget = {"plan_version": "aau-operating-budget/1.0", "scenario_ids": ["service"], "minimum_repeats": 1,
+                        "criteria": retry_criteria, "cost_basis": "synthetic", "groups": [],
+                        "limits": {"cost_per_passing_attempt_usd": .25, "p95_latency_s": 10}}
+        for name, value in (("retry-policy", retry_policy), ("retry-diagnostics", retry_diagnostics), ("retry-budget", retry_budget)):
+            (root / f"{name}.json").write_text(json.dumps(value))
+        retry_command = [cli, "retry-review", "create", "retry-policy.json", "retry-plan.json", "retry-ledger.json",
+                         "retry-plan.json", "retry-ledger.json", "--diagnostics", "retry-diagnostics.json"]
+        run([*retry_command, "--out", "ungated-retry-handoff"], expected=1)
+        run([cli, "retry-review", "verify", "ungated-retry-handoff", "--require-budget"], expected=2)
+        for repaired in (False, True):
+            if repaired:
+                retry_ledger["tasks"][0]["attempts"][0]["metrics"]["unauthorized"] = 0
+                (root / "retry-candidate.json").write_text(json.dumps(retry_ledger))
+                retry_command[7] = "retry-candidate.json"
+            directory = "repaired-retry-handoff" if repaired else "failed-retry-handoff"
+            run([*retry_command, "--operating-budget", "retry-budget.json", "--out", directory], expected=0 if repaired else 1)
+            run([cli, "retry-review", "verify", directory, "--require-budget"], expected=0 if repaired else 1)
         for name, code in (("intermittent", 1), ("repaired", 0)):
             run([cli, "evaluation-pack", "verify", f"demo/{name}", "--require-recordings", "--require-diagnostics"], code)
         repaired = root / "demo/repaired"

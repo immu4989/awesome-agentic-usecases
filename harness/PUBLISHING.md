@@ -65,6 +65,7 @@ failed policy, standalone operating-budget pass/fail reports, a budget-aware mat
 combined policy/budget dossier and CSV gates, and downgrade rejection with `--require-budget`,
 operating-budget change review with both changed and unchanged outcomes,
 retry-ledger accounting with earlier-failure retention and downstream evaluation binding,
+complete retry handoffs with independent policy/budget outcomes and budget-downgrade rejection,
 both policy outcomes, complete recorded
 diagnostic-pack verification, operating-measurement and CSV import, a complete CSV review handoff,
 context comparison, overwrite refusal,

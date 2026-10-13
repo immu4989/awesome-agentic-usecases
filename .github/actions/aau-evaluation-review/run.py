@@ -15,6 +15,8 @@ from aau_harness.eval_audit import audit_evaluation  # noqa: E402
 from aau_harness.eval_import import import_observations  # noqa: E402
 from aau_harness.eval_csv import csv_payloads  # noqa: E402
 from aau_harness.eval_csv_review import create_handoff, verify_handoff  # noqa: E402
+from aau_harness.eval_retries import retry_payloads  # noqa: E402
+from aau_harness.eval_retry_review import create_handoff as create_retry_handoff, verify_handoff as verify_retry_handoff  # noqa: E402
 
 
 def workspace_path(workspace: Path, raw: str) -> Path:
@@ -80,22 +82,25 @@ def main() -> int:
         if operating_budget is not None and diagnostics is None:
             raise AgentBomError("operating budget requires an independently approved diagnostics plan")
         input_format = os.environ.get("AAU_EVAL_INPUT_FORMAT", "evaluations")
-        if input_format not in ("evaluations", "recordings", "csv"):
-            raise AgentBomError("input format must be evaluations, recordings, or csv")
+        if input_format not in ("evaluations", "recordings", "csv", "retries"):
+            raise AgentBomError("input format must be evaluations, recordings, csv, or retries")
         maps = {name: os.environ.get(f"AAU_EVAL_{name}", "") for name in (
             "BASELINE_PLAN", "BASELINE_PLAN_SHA256", "CANDIDATE_PLAN", "CANDIDATE_PLAN_SHA256")}
-        if input_format != "csv" and any(maps.values()):
-            raise AgentBomError("CSV mapping inputs are allowed only with input-format csv")
+        source_handoff = input_format in ("csv", "retries")
+        if not source_handoff and any(maps.values()):
+            raise AgentBomError("source plans are allowed only with input-format csv or retries")
         recordings = input_format == "recordings"
-        if input_format == "csv":
+        if source_handoff:
             if not all(maps.values()) or diagnostics is None:
-                raise AgentBomError("CSV mode requires both independently pinned mapping plans and a pinned diagnostics plan")
+                raise AgentBomError("source handoff requires both independently pinned plans and a pinned diagnostics plan")
             baseline_plan = read_source(workspace_path(workspace, maps["BASELINE_PLAN"]), maps["BASELINE_PLAN_SHA256"])
             candidate_plan = read_source(workspace_path(workspace, maps["CANDIDATE_PLAN"]), maps["CANDIDATE_PLAN_SHA256"])
-            baseline = read_bytes(paths["baseline"], os.environ["AAU_EVAL_BASELINE_SHA256"])
-            candidate = read_bytes(paths["candidate"])
+            reader = read_bytes if input_format == "csv" else read_source
+            converter = csv_payloads if input_format == "csv" else retry_payloads
+            baseline = reader(paths["baseline"], os.environ["AAU_EVAL_BASELINE_SHA256"])
+            candidate = reader(paths["candidate"])
             reviewed_baseline, reviewed_candidate = (
-                json.loads(csv_payloads(plan, raw)[1]["evaluation.json"])
+                json.loads(converter(plan, raw)[1]["evaluation.json"])
                 for plan, raw in ((baseline_plan, baseline), (candidate_plan, candidate)))
         else:
             baseline = read_source(paths["baseline"], os.environ["AAU_EVAL_BASELINE_SHA256"])
@@ -107,11 +112,13 @@ def main() -> int:
         audit_evaluation(reviewed_candidate)
         if compare_contexts(reviewed_baseline, reviewed_candidate)["status"] != "matched":
             raise AgentBomError("Action requires matching declared context on both evaluations; legacy evidence needs separate review")
-        if input_format == "csv":
-            handoff = create_handoff(policy, baseline_plan, baseline, candidate_plan, candidate, diagnostics, paths["output"],
-                                     operating_budget=operating_budget)
-            if verify_handoff(paths["output"], require_budget=operating_budget is not None) != handoff:
-                raise AgentBomError("saved CSV handoff does not match computed evidence")
+        if source_handoff:
+            create_source_handoff = create_handoff if input_format == "csv" else create_retry_handoff
+            verify_source_handoff = verify_handoff if input_format == "csv" else verify_retry_handoff
+            handoff = create_source_handoff(policy, baseline_plan, baseline, candidate_plan, candidate, diagnostics, paths["output"],
+                                            operating_budget=operating_budget)
+            if verify_source_handoff(paths["output"], require_budget=operating_budget is not None) != handoff:
+                raise AgentBomError("saved source handoff does not match computed evidence")
             result = handoff
             review_directory = paths["output"] / "review"
         else:
@@ -140,6 +147,13 @@ def main() -> int:
                     stream.write("\nCSV handoff: both approved mapping-plan byte hashes matched; original CSV exports "
                                  f"and all {count} files recomputed together. Column headers and source values are not echoed here. "
                                  "Use aau csv-review verify for the complete handoff.\n")
+                if input_format == "retries":
+                    count = 31 if operating_budget is not None else 28
+                    stream.write("\nRetry handoff: both independently approved accounting-plan byte hashes matched; "
+                                 f"both declared ledgers and all {count} files recomputed together. Metric reducers match. "
+                                 "Observations represent logical tasks, not retry calls. Last-only reducers can hide earlier harm. "
+                                 "Use aau retry-review verify for the complete handoff. Attempt IDs, reducer names, "
+                                 "scores, costs, and source values are not echoed here.\n")
                 if operating_budget is not None:
                     stream.write("\nOperating-budget gate: independently approved plan byte hash matched. "
                                  f"Candidate budget: **{result['candidate_budget_status']}**. "

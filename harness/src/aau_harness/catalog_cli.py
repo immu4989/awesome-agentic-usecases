@@ -280,6 +280,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="review changed operating thresholds, groups, and accounting assumptions before approving a plan")
     sub.add_parser("retry-eval", add_help=False,
                    help="retain retry evidence and account for all declared attempts per logical task")
+    sub.add_parser("retry-review", add_help=False,
+                   help="bind both retry ledgers and accounting plans to a complete policy and operating review")
     sub.add_parser("audit-eval", add_help=False,
                    help="recompute saved evaluation metric summaries without model calls")
     sub.add_parser("compare-evals", add_help=False,
@@ -359,6 +361,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_args = list(sys.argv[1:] if argv is None else argv)
+    if raw_args and raw_args[0] == "retry-review":
+        from .eval_retry_review import main as retry_review_main
+
+        return retry_review_main(raw_args[1:])
     if raw_args and raw_args[0] == "retry-eval":
         from .eval_retries import main as retries_main
 

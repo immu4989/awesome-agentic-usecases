@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Complete retry review handoff and CI gate** — bind both retry ledgers and accounting plans
+  to a 28-file policy/diagnostic dossier, or a 31-file combined policy/budget handoff. Verify the
+  entire source chain in one command. The Action supports independently pinned retry plans;
+  different reducers cannot bypass comparison even with matching declared context. Tests cover
+  unrelated nested-pack substitution, every retained file, approval drift, earlier harms,
+  excessive whole-task latency, and missing-cost rejection. No retry is executed or authorized.
+
 - **Source-retaining retry accounting** — normalize sequential retries into logical task
   observations without dropping earlier costs or replacing end-to-end time with the last call.
   Explicit metric reducers retain earlier harms when configured for the complete trajectory;

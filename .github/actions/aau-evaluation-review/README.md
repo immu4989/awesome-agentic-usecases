@@ -176,8 +176,8 @@ declarations do not prove identical real-world conditions or authenticate observ
 
 CSV mode refuses missing maps/pins, absent diagnostics, changed approved bytes (including
 whitespace), malformed rows, missing declared observations, context mismatch, unsafe paths,
-and occupied destinations before creating output. Mapping inputs in non-CSV mode are rejected
-rather than silently ignored. Existing CSV parsing, measurement, census, and size limits apply.
+and occupied destinations before creating output. Source-plan inputs in modes other than CSV
+or retries are rejected rather than silently ignored. Existing CSV parsing, measurement, census, and size limits apply.
 There is no inference, filtering, currency conversion, scoring, agent execution, or upload.
 
 The complete folder retains both original CSV byte streams, both mappings, conversion evidence,
@@ -197,6 +197,68 @@ should not be opened in spreadsheet software. Source JSON values are reserialize
 original approved JSON files separately if independently checking their **file-byte** pins later.
 The handoff is unsigned; coordinated source-and-output replacement can still verify offline.
 No new permissions, credentials, external Actions, or automatic uploads are introduced.
+
+## Gate retry ledgers with approved accounting definitions
+
+Set `input-format: retries` to build the
+[complete retry handoff](../../../harness/README.md#hand-off-retry-evidence-with-its-complete-policy-and-budget-review)
+instead of accepting already-flattened task scores. The Action verifies **five independently
+approved byte pins**: policy, baseline ledger, baseline accounting plan, candidate accounting
+plan, and diagnostics. An optional operating budget adds a sixth pin. The candidate ledger is
+the changing evidence under review; its contents cannot choose their own accounting definitions.
+
+```yaml
+- name: Review complete declared retry evidence
+  uses: immu4989/awesome-agentic-usecases/.github/actions/aau-evaluation-review@REVIEWED_FULL_COMMIT_SHA
+  with:
+    input-format: retries
+    policy: evaluations/approved-policy.json
+    policy-sha256: ${{ vars.APPROVED_EVAL_POLICY_SHA256 }}
+    baseline: evaluations/approved-baseline-ledger.json
+    baseline-sha256: ${{ vars.APPROVED_RETRY_BASELINE_SHA256 }}
+    candidate: evaluations/candidate-ledger.json
+    baseline-plan: evaluations/approved-baseline-accounting.json
+    baseline-plan-sha256: ${{ vars.APPROVED_RETRY_BASELINE_PLAN_SHA256 }}
+    candidate-plan: evaluations/approved-candidate-accounting.json
+    candidate-plan-sha256: ${{ vars.APPROVED_RETRY_CANDIDATE_PLAN_SHA256 }}
+    diagnostics: evaluations/approved-diagnostics.json
+    diagnostics-sha256: ${{ vars.APPROVED_EVAL_DIAGNOSTICS_SHA256 }}
+    operating-budget: evaluations/approved-budget.json
+    operating-budget-sha256: ${{ vars.APPROVED_EVAL_BUDGET_SHA256 }}
+    output: retry-review-handoff
+```
+
+This mode requires matching declared collection context and **identical metric reducers and
+attempt scope** across plans. Equal context hashes cannot bypass the reducer check. Approve
+reducers independently: `last` can hide earlier harm, whereas `min`/`max` require complete
+attempt coverage. The gate does not decide which reducer is appropriate for a metric or verify
+that external collection included every actual attempt. Do not manufacture context hashes to
+pass the gate. Only declared sequential, non-overlapping attempt accounting is supported.
+
+Both source packs and the entire policy/diagnostic review are retained. Without a budget there
+are 28 files; with one there are 31. Creation recomputes the complete chain before returning the
+combined outcome. A valid source conversion cannot compensate for failed policy, and eventual
+completion cannot compensate for an exceeded or unverified candidate budget.
+
+```bash
+aau retry-review verify retry-review-handoff --require-budget
+```
+
+Exit 0 means every applicable constraint is met and the handoff recomputes; exit 1 retains failed
+or unverified gate evidence; exit 2 means invalid inputs or failed verification. When using the
+ungated mode intentionally, omit both operating-budget inputs and the `--require-budget` flag.
+Protect mode, paths, approval variables, and workflow code independently; changing a workflow to
+skip the required layer is not prevented by hashes inside the resulting pack.
+
+Missing pins, changed approved bytes, absent/mismatched context, changed reducers, incomplete
+declared ledgers, invalid measurements, unsafe paths, and occupied destinations fail before output
+creation. Summary text exposes only fixed status/count information, not attempt IDs, metric names,
+raw scores, costs, or source text. All artifact contents remain unsanitized. Original approved
+JSON byte pins are checked at ingestion, but the handoff retains reserialized values; preserve
+original approved files for independent byte-pin checks. No credentials, installations, uploads,
+model calls, or retries are introduced. Requires a reviewed current repository commit, not the
+published PyPI 1.6.0 package. This is not execution attestation, invoice verification, permission
+to retry, or deployment approval.
 
 ## Require an independently approved candidate operating budget
 
@@ -240,12 +302,16 @@ A green quality verdict therefore cannot appear as a passing combined review whe
 The budget-gated version-3.0 dossier has **14 files** for normalized inputs or **16 files** for
 recordings. CSV mode produces a **31-file** version-1.1 handoff, preserving both original CSV
 exports and recomputing conversion, policy, budget, combined gate, HTML, and all manifests.
+Retry mode also produces a **31-file** version-1.1 handoff, retaining both declared ledgers and
+recomputing logical-task accounting through the combined review.
 Offline verification enforces the same outcome:
 
 ```bash
 aau evaluation-pack verify budget-gated-dossier --require-budget
 # For CSV mode:
 aau csv-review verify budget-gated-handoff --require-budget
+# For retry mode:
+aau retry-review verify budget-gated-retry-handoff --require-budget
 ```
 
 Protect the budget pin, diagnostics pin, and workflow inputs independently. Removing both budget
