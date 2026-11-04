@@ -36,6 +36,101 @@ aau --help
 pytest harness/tests -q
 ```
 
+## Received an evidence folder? Start with one intake command
+
+`aau inspect-pack` recognizes 12 supported recorded-evidence pack families and calls the
+existing **full verifier** for the recognized format. It does not trust a manifest hash or a
+stored success label as the result. This lets a receiving team inspect a complete folder without
+first choosing among several conversion, handoff, scoring, or diagnostic commands.
+
+```bash
+# These synthetic walkthroughs need no keys or repository fixtures at runtime.
+aau evaluation-demo --out /tmp/intake-example
+aau inspect-pack /tmp/intake-example/repaired --expect evaluation-review
+# Intentionally exits 1: complete, valid evidence of failed supplied requirements.
+aau inspect-pack /tmp/intake-example/intermittent --expect evaluation-review
+```
+
+Default output is a compact JSON inspection containing the verified profile, separate assessment
+kind and outcome, file count, copied-byte inventory hashes, and the specific verification command.
+It excludes source labels and findings, but hashes can still enable linkage: this is **not a
+privacy-approved export**. Read the full evidence and limitations after verifying them.
+
+To require a complete source handoff and its candidate operating-budget gate:
+
+```bash
+aau retry-demo --out /tmp/intake-retry-example
+aau inspect-pack /tmp/intake-retry-example/repaired --expect retry-review --require-budget \
+  --out /tmp/intake-inspection.json
+aau inspect-pack /tmp/intake-retry-example/repaired --expect retry-review --require-budget \
+  --verify /tmp/intake-inspection.json
+```
+
+Keep the saved inspection **outside** the input folder; inserting a report would change its exact
+file set. Existing reports are not overwritten. `--verify` recomputes the report using the same
+independently selected requirements and a fresh bounded copy of the supplied pack.
+
+| Exit | Meaning |
+|---|---|
+| **0** | Full verification succeeded and applicable supplied policy/service checks passed, **or** the artifact is explicitly non-decision evidence |
+| **1** | Full verification succeeded, but policy/service requirements failed or the candidate budget remains unverified |
+| **2** | Invalid, unsupported, incomplete, changed, unreadable, oversized, or unexpected evidence; no verified inspection is produced |
+
+Always inspect `assessment.kind` and `assessment.status`. A CSV/retry/OTLP conversion is
+`not_assessed`, a challenge has `adapter_responses_not_supplied`, and a failure-bound report is
+`diagnostic_not_a_gate` even when conditional limits are exceeded. None becomes a passed policy
+by exiting 0. A label-minimized reproducer with a failed service observation exits **1 here**,
+even though its dedicated creation/verification command exits 0 for a valid reproduction.
+Unknown budget evidence cannot become a pass. Policy and candidate-budget outcomes remain separate.
+
+| `--expect` profile | What the full verifier recomputes |
+|---|---|
+| `evaluation-review` | Policy, optional retained recordings, diagnostics, HTML, and optional candidate budget |
+| `csv-review` | Both original CSV exports and mappings through the complete review |
+| `retry-review` | Both full retry ledgers and accounting plans through the review |
+| `otlp-review` | Both raw OTLP exports and mappings through retries and review |
+| `service-review` | Both normalized trace sources and shared obligations through the review |
+| `csv-source` | Original CSV-to-recording/evaluation conversion only |
+| `retry-source` | Declared whole-task retry accounting only |
+| `otlp-source` | Original trace projection and nested retry accounting only |
+| `service-traces` | Every supplied service trace against its separate contract |
+| `service-challenge` | Constructed public probes and separate expected results, **not** adapter responses |
+| `service-reproducer` | The minimized profile and scoring evidence, **not** its relationship to private originals |
+| `failure-bounds` | Conditional bounds or withheld inference, not a deployment decision |
+
+Supported versions are the review-pack 1.0/1.1/2.0/3.0 profiles, each handoff's 1.0/1.1 profiles,
+and the listed source/challenge/reproducer/failure-bound 1.0 profiles. Other artifact types,
+standalone JSON reports, archives, demo-parent folders, and unknown future versions are rejected,
+not guessed or unpacked. Use the relevant dedicated tool for other repository artifacts.
+
+`--expect` prevents substitution of a different valid pack family. `--require-budget` requires
+a supported review profile with the budget layer; conversions and diagnostic-only packs cannot
+satisfy it. No policy pins, recording/diagnostic requirements, or independent CI approval checks
+are replaced. The returned specific command retains `--require-budget` when that layer is present.
+
+Verification is scoped to the folder you supplied. A failed parent never falls back to its valid
+nested `review/`. Explicitly inspecting only that nested review cannot establish a relationship
+to omitted original sources; require the full expected handoff and retain the whole folder.
+Reviewers must independently choose the expected format, approved inputs, and required layers.
+
+The command copies bounded regular files into a temporary local directory, invokes only trusted
+installed verifiers on that copy, and removes the copy afterward. It rejects symbolic links,
+special files, unexpected members (including empty directories), over 64 files, over 15 nested
+directories, directory depth over three, and members over 2 MB. Total copied bytes are capped at
+128 MB. The copy is **not an atomic capture of a live changing directory**; hashes identify the
+bytes inspected, not future source contents. Temporary copying is not secure erasure.
+
+No supplied code, adapter, manifest-selected module, subprocess, or network request is executed.
+HTML, CSV, and raw traces are not opened automatically. The report's command is a fixed argument
+list with a `PATH_TO_PACK` placeholder, never a command copied from untrusted evidence.
+Use a matching trusted harness version; invalidity can reflect a version mismatch, not misconduct.
+Integrity is not proof of authentic execution, independently approved requirements, valid scoring,
+population effectiveness, signatures, safe deployment, or permission to share.
+
+This approach addresses the documentation and human-review concerns in the
+[NIST AI RMF Core](https://airc.nist.gov/airmf-resources/airmf/5-sec-core/); it is not NIST certification
+or framework compliance. Requires this checkout or a locally built wheel, not published PyPI 1.6.0.
+
 ## Start an evidence project in five minutes
 
 `aau init` generates a complete, non-overwriting evaluation project around an agent you already

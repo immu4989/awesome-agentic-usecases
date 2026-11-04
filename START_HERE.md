@@ -8,6 +8,21 @@ agent do this?”:
 
 You do not need an API key to begin. Pick the route that matches the job you are doing.
 
+Already received an evaluation evidence folder and unsure how to verify it? Start with
+**[one-command pack intake](harness/README.md#received-an-evidence-folder-start-with-one-intake-command)**:
+
+```bash
+# Current checkout/local wheel; not the older published PyPI package.
+pip install -e harness
+aau inspect-pack path/to/complete-pack
+```
+
+It recognizes 12 supported recorded-evidence families and performs their full offline verification.
+Valid failed evidence remains a failure; conversions, unscored challenges, and diagnostics remain
+explicitly non-decision evidence. Use `--expect` and, when required, `--require-budget` to reject
+weaker or unexpected artifacts. This does not run code from the folder, upload data, approve
+deployment, or establish source authenticity. Inspect the complete handoff, not just its nested review.
+
 Already have scored evaluation exports? Use the
 **[CSV review handoff](harness/README.md#hand-off-two-csv-exports-as-one-verifiable-review)**
 to turn baseline and candidate CSVs into one portable offline review. It retains both original

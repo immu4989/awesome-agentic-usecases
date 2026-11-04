@@ -46,6 +46,13 @@ def smoke(wheel: Path) -> None:
             raise RuntimeError("installed source receipt is incomplete or exposes local paths")
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
+        inspect_command = [cli, "inspect-pack", "demo/repaired", "--expect", "evaluation-review"]
+        run([*inspect_command, "--out", "inspection.json"])
+        run([*inspect_command, "--verify", "inspection.json"])
+        run([cli, "inspect-pack", "demo/intermittent", "--expect", "evaluation-review"], expected=1)
+        run([*inspect_command, "--require-budget"], expected=2)
+        run([cli, "inspect-pack", "demo/repaired", "--expect", "retry-review"], expected=2)
+        run([cli, "inspect-pack", "demo"], expected=2)
         service_plan = {"plan_version": "aau-service-trace-import/1.0", "source_label": "Synthetic wheel service", "n_repeats": 1}
         service_contract = {"version": "synthetic-1", "expected_terminal": "route_review", "required_evidence": [],
                             "held_evidence": [], "required_channel": "phone_711", "recourse_required": True,
@@ -64,6 +71,7 @@ def smoke(wheel: Path) -> None:
         run([cli, "service-reproducer", "create", *reproducer_inputs, "--out", "service-reproducer"], expected=2)
         run([cli, "service-reproducer", "verify", "service-reproducer"])
         run([cli, "service-reproducer", "verify-source", "service-reproducer", *reproducer_inputs])
+        run([cli, "inspect-pack", "service-reproducer", "--expect", "service-reproducer"], expected=1)
         run([cli, "service-trace-eval", "verify", "service-reproducer/service"], expected=1)
         minimized_files = [path for path in (root / "service-reproducer").rglob("*") if path.is_file()]
         if len(minimized_files) != 10 or any(b"Synthetic wheel service" in path.read_bytes() for path in minimized_files):
@@ -78,6 +86,10 @@ def smoke(wheel: Path) -> None:
         run([cli, "service-reproducer", "verify", "service-reproducer"], expected=2)
         run([cli, "service-challenge", "create", "service-suite.json", "--out", "service-challenge"])
         run([cli, "service-challenge", "verify", "service-challenge"])
+        run([cli, "inspect-pack", "service-challenge", "--expect", "service-challenge", "--out", "challenge-inspection.json"])
+        challenge_inspection = json.loads((root / "challenge-inspection.json").read_text())
+        if challenge_inspection["assessment"]["status"] != "adapter_responses_not_supplied":
+            raise RuntimeError("installed intake promoted an unscored challenge")
         # Reference self-check: installed scorer receives only public challenge inputs, not oracle scores.
         run([python, "-I", "-c", """
 from pathlib import Path
@@ -105,6 +117,7 @@ write_json(responses, Path('service-responses.json'))
         oracle_path = root / "service-challenge/oracle.json"
         oracle_path.write_text(oracle_path.read_text() + " ")
         run([cli, "service-challenge", "verify", "service-challenge"], expected=2)
+        run([cli, "inspect-pack", "service-challenge"], expected=2)
         service_command = [cli, "service-trace-eval", "create", "service-plan.json", "service-suite.json", "service-traces.json"]
         run([*service_command, "--out", "service-failed"], expected=1)
         run([cli, "service-trace-eval", "verify", "service-failed", "--evaluation", "service-failed/evaluation.json"], expected=1)
@@ -145,6 +158,7 @@ write_json(responses, Path('service-responses.json'))
             directory = f"service-handoff-{name}"
             run([*service_command, "--operating-budget", "service-budget.json", "--out", directory], expected=code)
             run([cli, "service-review", "verify", directory, "--require-budget"], expected=code)
+            run([cli, "inspect-pack", directory, "--expect", "service-review", "--require-budget"], expected=code)
             if len([p for p in (root / directory).rglob('*') if p.is_file()]) != 33:
                 raise RuntimeError("installed service handoff lost source or gate evidence")
         run([*service_command, "--out", "service-ungated"], expected=1)

@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Unified recorded-pack intake** — recognize 12 supported evidence families and invoke each
+  existing full verifier on a bounded temporary local copy. Integrity stays separate from policy,
+  budget, service, and diagnostic outcomes; failed or unknown results are not promoted. Explicit
+  expected-profile/budget requirements reject weaker substitutions, and invalid parent chains
+  never fall back to nested reviews. Compact inspections bind copied bytes and recompute offline;
+  no pack-supplied code, commands, or network calls execute. Not source authentication or approval.
+
 - **Label-minimized service reproducers** — replace original source/case/contract/event/evidence/
   channel labels and remove operating values and private-input hashes while preserving every
   declared case/repeat and component result. Ten-file packs support public-profile verification

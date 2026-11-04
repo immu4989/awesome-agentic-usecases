@@ -304,6 +304,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Generate synthetic scorer-conformance probes and review supplied adapter responses")
     sub.add_parser("service-reproducer", add_help=False,
                    help="Replace service labels while retaining scoring behavior; not anonymization or sharing approval")
+    sub.add_parser("inspect-pack", add_help=False,
+                   help="Recognize supported recorded-evidence packs and fully verify them without executing supplied code")
     sub.add_parser("failure-bound-pack", add_help=False,
                    help="Create or verify a complete offline failure-bound reviewer pack")
     sub.add_parser("failure-bound-demo", add_help=False,
@@ -454,6 +456,9 @@ def main(argv: list[str] | None = None) -> int:
     if raw_args and raw_args[0] == "service-reproducer":
         from .service_reproducer import main as service_reproducer_main
         return service_reproducer_main(raw_args[1:])
+    if raw_args and raw_args[0] == "inspect-pack":
+        from .inspect_pack import main as inspect_pack_main
+        return inspect_pack_main(raw_args[1:])
     if raw_args and raw_args[0] == "failure-bound-pack":
         from .eval_failure_pack import main as failure_pack_main
         return failure_pack_main(raw_args[1:])
