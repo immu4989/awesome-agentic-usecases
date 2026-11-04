@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Original-trace review handoff and CI gate** — carry both OTLP exports, mappings, exclusions,
+  derived retry ledgers, and policy/budget outcomes in one 36- or 39-file verifiable folder.
+  Approved-input CI now supports OTLP with independent mapping pins and matching context;
+  changed attribute maps or reducers cannot hide behind equal fingerprints. Full-chain tests
+  reject valid-but-unrelated nested artifacts, approval drift, downgrade attempts, and altered
+  raw traces while preserving failed policy and unknown-budget evidence.
+
 - **Source-retaining OpenTelemetry retry bridge** — explicitly map OTLP JSON/JSONL trace
   exports to sequential task/attempt evidence without collectors or model calls. Complete
   supplied-span role accounting, integer timestamp subtraction, explicit score/cost mappings,

@@ -280,6 +280,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="review changed operating thresholds, groups, and accounting assumptions before approving a plan")
     sub.add_parser("otlp-retries", add_help=False,
                    help="project explicitly mapped OTLP spans into source-retaining sequential retry evidence")
+    sub.add_parser("otlp-review", add_help=False,
+                   help="retain both original OTLP exports in one complete policy and operating review")
     sub.add_parser("retry-eval", add_help=False,
                    help="retain retry evidence and account for all declared attempts per logical task")
     sub.add_parser("retry-review", add_help=False,
@@ -369,6 +371,10 @@ def main(argv: list[str] | None = None) -> int:
         from .eval_otlp import main as otlp_main
 
         return otlp_main(raw_args[1:])
+    if raw_args and raw_args[0] == "otlp-review":
+        from .eval_otlp_review import main as otlp_review_main
+
+        return otlp_review_main(raw_args[1:])
     if raw_args and raw_args[0] == "retry-demo":
         from .eval_retry_demo import main as retry_demo_main
 

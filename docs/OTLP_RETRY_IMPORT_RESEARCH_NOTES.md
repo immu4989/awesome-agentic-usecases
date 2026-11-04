@@ -54,6 +54,25 @@ checks the installed command outside the repository and rejects a changed nested
 
 ## Limits that remain
 
+### Source-to-gate handoff and CI integration
+
+The follow-on `aau otlp-review` handoff removes the manual multi-folder assembly step while
+retaining both complete source projections. Its single verifier recomputes both raw exports
+through the policy and optional operating-budget gate. Equal context declarations cannot mask
+changed attribute maps or retry reducers. Tests substitute separately valid nested projections
+and reviews, rehash the outer manifest, and require the complete verifier to reject the mismatch.
+
+The existing Action's `otlp` mode checks independently approved exact-byte pins for both maps,
+baseline export, policy, diagnostics, and an optional budget. As recommended by
+[GitHub's secure-use reference](https://docs.github.com/en/actions/reference/security/secure-use),
+adoption instructions use reviewed immutable Action revisions, keep untrusted inputs out of
+executable interpolation, and separate trusted workflow/approval administration from candidate
+data. No settings or approval variables are changed automatically. Span IDs make each mapping
+collection-specific: these pins record independently reviewed collected evidence, not proof
+that the mapping was committed before collection. Saved artifacts remain unsanitized.
+
+### Unresolved boundaries
+
 - A complete supplied-span census is not proof of complete external telemetry. Sampling,
   instrumentation gaps, manipulated declarations, and falsified scores remain possible.
 - Resource co-location and declared time order do not prove clock integrity or execution

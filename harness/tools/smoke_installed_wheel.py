@@ -126,6 +126,26 @@ def smoke(wheel: Path) -> None:
             directory = "repaired-retry-handoff" if repaired else "failed-retry-handoff"
             run([*retry_command, "--operating-budget", "retry-budget.json", "--out", directory], expected=0 if repaired else 1)
             run([cli, "retry-review", "verify", directory, "--require-budget"], expected=0 if repaired else 1)
+        otlp_command = [cli, "otlp-review", "create", "retry-policy.json", "otlp-mapping.json", "source.otlp",
+                        "otlp-mapping.json", "source.otlp", "--diagnostics", "retry-diagnostics.json"]
+        run([*otlp_command, "--out", "ungated-otlp-handoff"], expected=1)
+        run([cli, "otlp-review", "verify", "ungated-otlp-handoff", "--require-budget"], expected=2)
+        for repaired in (False, True):
+            if repaired:
+                candidate_trace = json.loads((root / "source.otlp").read_text())
+                for span in candidate_trace["resourceSpans"][0]["scopeSpans"][0]["spans"]:
+                    for attribute in span.get("attributes", []):
+                        if attribute["key"] == "unauthorized":
+                            attribute["value"] = {"intValue": "0"}
+                (root / "candidate.otlp").write_text(json.dumps(candidate_trace))
+                otlp_command[7] = "candidate.otlp"
+            directory = "repaired-otlp-handoff" if repaired else "failed-otlp-handoff"
+            run([*otlp_command, "--operating-budget", "retry-budget.json", "--out", directory], expected=0 if repaired else 1)
+            run([cli, "otlp-review", "verify", directory, "--require-budget"], expected=0 if repaired else 1)
+            if len([p for p in (root / directory).rglob("*") if p.is_file()]) != 39:
+                raise RuntimeError("installed OTLP handoff lost original trace evidence")
+        (root / "repaired-otlp-handoff/candidate/source.otlp").write_bytes(b'{}')
+        run([cli, "otlp-review", "verify", "repaired-otlp-handoff", "--require-budget"], expected=2)
         for name, code in (("intermittent", 1), ("repaired", 0)):
             run([cli, "evaluation-pack", "verify", f"demo/{name}", "--require-recordings", "--require-diagnostics"], code)
         repaired = root / "demo/repaired"

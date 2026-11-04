@@ -714,6 +714,7 @@ that handoff. Feed `otlp-pack/retry/plan.json` and `otlp-pack/retry/ledger.json`
 `aau retry-review create` as documented below. Keep the ten-file OTLP pack alongside the
 review: the retry handoff alone does **not** retain or verify the original OTLP export.
 Verify each projection against its corresponding baseline or candidate handoff paths.
+For a single source-complete folder, use [`aau otlp-review`](#hand-off-original-traces-through-the-policy-and-budget-gate) instead.
 
 The example preserves an early authorization violation despite final completion. It also
 keeps all four attempt costs, uses the 10-second task span rather than its last 1-second
@@ -768,6 +769,65 @@ model execution, or uploads are involved. **The pack is not sanitized:** origina
 contain prompts, identifiers, secrets, or personal data. Inspect every member before sharing.
 Sampling, omitted external events, inappropriate exclusions, false scoring, coordinated source
 replacement, and untrustworthy clocks cannot be disproved by these hashes or validators.
+
+### Hand off original traces through the policy and budget gate
+
+`aau otlp-review` carries **both original trace exports all the way through review**, so a
+recipient need not assemble and bind separate projection packs. Requires the current checkout
+or a locally built wheel, not published PyPI 1.6.0. It uses the same explicit sequential-span
+profile described above and does not collect telemetry or execute an agent.
+
+```bash
+# Offline constructed examples: earlier harm, slow completion, and repaired fixture.
+python harness/examples/evaluation-review/otlp_handoff.py --out /tmp/otlp-handoff-demo
+aau otlp-review verify /tmp/otlp-handoff-demo/repaired --require-budget
+
+# Your own independently reviewed maps, scores, policy, diagnostics, and limits.
+aau otlp-review create policy.json baseline-mapping.json baseline.otlp \
+  candidate-mapping.json candidate.otlp --diagnostics diagnostics.json \
+  --operating-budget budget.json --out trace-review
+aau otlp-review verify trace-review --require-budget
+```
+
+Open `trace-review/review/review.html` for the policy and operating review. The page is
+script-free but does not verify itself. The full folder contains **39 files** with a budget
+or **36 files** without one:
+
+- `baseline/` and `candidate/`: each complete ten-file OTLP projection, including original
+  bytes, mapping, exclusions, and six-file `retry/` accounting pack;
+- `review/`: policy, both recordings/evaluations, diagnostic plans/results, HTML, and manifests;
+  budgeted mode also retains the candidate budget, its independent verdict, and combined gate;
+- root `handoff.json`, `README.txt`, and `manifest.json`: source bindings and verification guide.
+
+Verification reprojects both exports and recomputes the entire chain. It refuses individually
+valid but unrelated projection/review substitutions, even if the outer manifest was rehashed.
+Verifying only `review/` does **not** establish the original-trace links. The supplied source
+bytes are preserved; JSON mapping/plan values are reserialized. Preserve original approved
+JSON files separately when auditing independently approved file-byte pins.
+
+Both sides must use **identical score/operating attribute maps, attempt semantics, metric
+reducers, and accounting scope**. Matching benchmark-context hashes cannot bypass these checks.
+Span IDs, recorded task histories, and JSON versus JSONL serialization may differ. A deliberate
+instrumentation/attribute rename requires separate review; this command does not infer semantic
+equivalence. Identical names still do not prove valid scoring or disjoint cost attribution.
+
+Exit **0** means the applicable constraints are met and the complete chain verifies. Exit **1**
+preserves failed or unverified gate evidence; an unknown required budget cannot pass. Exit **2**
+means malformed evidence, an incompatible comparison, missing required budget layer, or failed
+verification. A valid conversion cannot compensate for a failed policy or budget. The three
+synthetic examples expect exit codes **1, 1, 0**, respectively—not production performance claims.
+
+The [pinned-input Action](../.github/actions/aau-evaluation-review/README.md#gate-original-otlp-exports-with-approved-span-mappings)
+accepts `input-format: otlp` and requires independently approved byte hashes for both mappings,
+the baseline export, policy, diagnostics, and any budget. It requires matching context inside
+both mappings' `accounting_plan`; the CLI instead discloses missing context for separate review.
+Approve the complete span census and exclusions as well as the mappings' attribute names.
+Do not calculate production approval pins from candidate-controlled files in the same job.
+
+All original trace content remains **unsanitized**, including ignored events, prompts, and
+attributes. Inspect every file before sharing. No credentials, installations, network calls,
+automatic uploads, scorer execution, or retries are added. Hashes do not authenticate capture,
+clocks, measurements, independent approval, compliance, or deployment suitability.
 
 ### Hand off retry evidence with its complete policy and budget review
 

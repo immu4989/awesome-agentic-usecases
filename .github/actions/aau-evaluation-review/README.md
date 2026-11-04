@@ -28,7 +28,7 @@ checkout Action. Use read-only repository permissions and a no-secrets, isolated
 untrusted contributions. Do not use `pull_request_target` to execute pull-request code.
 
 All paths must be inside the workspace, relative, without `..`, control characters, or symlinks.
-The destination must not already exist. Each JSON or CSV input must be at most 2 MB. The composite passes
+The destination must not already exist. Each JSON, CSV, or OTLP input must be at most 2 MB. The composite passes
 inputs through environment variables rather than interpolating them into executable shell text.
 It emits only constant labels, status, and numeric counts in the GitHub step summary; raw IDs,
 metric names, source details, and input error text are not echoed there.
@@ -177,7 +177,7 @@ declarations do not prove identical real-world conditions or authenticate observ
 CSV mode refuses missing maps/pins, absent diagnostics, changed approved bytes (including
 whitespace), malformed rows, missing declared observations, context mismatch, unsafe paths,
 and occupied destinations before creating output. Source-plan inputs in modes other than CSV
-or retries are rejected rather than silently ignored. Existing CSV parsing, measurement, census, and size limits apply.
+or retries/OTLP are rejected rather than silently ignored. Existing CSV parsing, measurement, census, and size limits apply.
 There is no inference, filtering, currency conversion, scoring, agent execution, or upload.
 
 The complete folder retains both original CSV byte streams, both mappings, conversion evidence,
@@ -260,9 +260,72 @@ model calls, or retries are introduced. Requires a reviewed current repository c
 published PyPI 1.6.0 package. This is not execution attestation, invoice verification, permission
 to retry, or deployment approval.
 
+## Gate original OTLP exports with approved span mappings
+
+Use `input-format: otlp` for a [complete original-trace handoff](../../../harness/README.md#hand-off-original-traces-through-the-policy-and-budget-gate).
+The five mandatory independent byte pins cover policy, original baseline trace export,
+baseline mapping, candidate mapping, and diagnostics. An operating budget adds a sixth pin.
+The candidate export is changing evidence, not its own source of approved definitions.
+
+```yaml
+- name: Review original telemetry evidence
+  uses: immu4989/awesome-agentic-usecases/.github/actions/aau-evaluation-review@REVIEWED_FULL_COMMIT_SHA
+  with:
+    input-format: otlp
+    policy: evaluations/approved-policy.json
+    policy-sha256: ${{ vars.APPROVED_EVAL_POLICY_SHA256 }}
+    baseline: evaluations/baseline.otlp
+    baseline-sha256: ${{ vars.APPROVED_OTLP_BASELINE_SHA256 }}
+    candidate: evaluations/candidate.otlp
+    baseline-plan: evaluations/baseline-mapping.json
+    baseline-plan-sha256: ${{ vars.APPROVED_OTLP_BASELINE_MAP_SHA256 }}
+    candidate-plan: evaluations/candidate-mapping.json
+    candidate-plan-sha256: ${{ vars.APPROVED_OTLP_CANDIDATE_MAP_SHA256 }}
+    diagnostics: evaluations/approved-diagnostics.json
+    diagnostics-sha256: ${{ vars.APPROVED_EVAL_DIAGNOSTICS_SHA256 }}
+    operating-budget: evaluations/approved-budget.json
+    operating-budget-sha256: ${{ vars.APPROVED_EVAL_BUDGET_SHA256 }}
+    output: original-trace-review
+```
+
+Both mappings' `accounting_plan` objects must carry matching declared evaluation context.
+The full score/operating attribute maps, span semantics, reducers, and accounting scope must
+also match. Identical fingerprints do not excuse different definitions. Export serialization,
+span identifiers, and recorded histories may differ. The mapping explicitly enumerates span
+IDs and exclusions: approve the actual mapping after collection in a trusted review process,
+not by blindly pinning whatever an untrusted candidate produced. This is not a precommitment
+claim or automatic discovery of which spans should count.
+
+The converter supports only explicitly instrumented, sequential single-attempt spans directly
+under their task in one resource entry. Logical-operation spans may already contain retries.
+No exporter-specific score, token price, status-to-score mapping, or clock trust is inferred.
+An excluded direct task child, overlapping attempt, unclaimed exported span, or incompatible
+mapping fails before output creation. Sampling and omitted external events remain unverified.
+
+The result retains **36 files**, or **39 with the budget gate**, including both raw exports.
+Use the full verifier before consuming the artifact:
+
+```bash
+aau otlp-review verify original-trace-review --require-budget
+```
+
+Exit 0 requires the applicable constraints to pass; exit 1 preserves policy/budget failures or
+unknown budget evidence; exit 2 rejects invalid or unverifiable inputs. To intentionally omit
+the budget layer, omit its paired inputs and `--require-budget`. Protect that choice, the
+workflow, and approval variables independently. No repository or organization settings are
+changed by this Action, and no permission, credential, installation, or upload is added.
+
+The step summary contains fixed status/count text, not trace/span IDs, attribute names,
+exclusion reasons, scores, or raw telemetry. **Artifact files remain unsanitized.** Review
+original exports and every derived member for secrets, prompts, identifiers, and personal data
+before uploading. Original trace bytes remain exact; approved JSON mapping/policy bytes should
+be retained separately because the handoff reserializes their values. A coordinated source
+replacement can still verify offline; pins must come from independent trusted review.
+Requires a reviewed repository commit containing this feature, not PyPI 1.6.0.
+
 ## Require an independently approved candidate operating budget
 
-Add `operating-budget` and `operating-budget-sha256` to any of the three input modes above.
+Add `operating-budget` and `operating-budget-sha256` to any supported input mode above.
 Both are required together, and a separately approved diagnostics plan is mandatory: its
 candidate cost-basis declaration supplies the basis used for the budget check. The
 [budget plan](../../../harness/README.md#check-operating-budgets-without-hiding-a-slow-or-expensive-group)
@@ -312,6 +375,8 @@ aau evaluation-pack verify budget-gated-dossier --require-budget
 aau csv-review verify budget-gated-handoff --require-budget
 # For retry mode:
 aau retry-review verify budget-gated-retry-handoff --require-budget
+# For original OTLP mode:
+aau otlp-review verify budget-gated-otlp-handoff --require-budget
 ```
 
 Protect the budget pin, diagnostics pin, and workflow inputs independently. Removing both budget
@@ -341,13 +406,21 @@ or a locally built wheel, not the published PyPI 1.6.0 package.
 - Exit **2**: invalid input, pin/context mismatch, unsafe path, occupied destination, or failed verification.
 
 The `reports` output identifies the requested directory, not a guarantee that it exists. An
-interrupted or invalid run may leave no complete pack; run `aau evaluation-pack verify` before
-consumption (`aau csv-review verify` for CSV handoffs). Do not treat `continue-on-error` as passing policy review. Configure any required PR
+interrupted or invalid run may leave no complete pack. Verify before consumption with
+`aau evaluation-pack verify`, or the full source verifier for handoffs: `aau csv-review verify`,
+`aau retry-review verify`, or `aau otlp-review verify`. Do not treat `continue-on-error` as passing policy review. Configure any required PR
 check separately; this Action does not change branch protection or grant deployment authority.
 
-Open `review.html` locally for readable findings (`review/review.html` in CSV mode). Keep all six pack files for verification
-(eight in recordings mode), or all eleven/thirteen files when diagnostics are requested; CSV mode requires all 28 files.
-With an operating budget, retain all 14/16 dossier files or all 31 CSV handoff files instead.
+Open `review.html` locally for readable findings (`review/review.html` in source-handoff modes).
+Keep the complete folder, not only its page:
+
+| Input mode | Policy only | With diagnostics | With diagnostics and budget |
+|---|---:|---:|---:|
+| Normalized evaluations | 6 files | 11 files | 14 files |
+| Recordings | 8 files | 13 files | 16 files |
+| CSV or retry ledgers | Diagnostics required | 28 files | 31 files |
+| Original OTLP exports | Diagnostics required | 36 files | 39 files |
+
 **The pack contains complete unsanitized evaluation details.** Nothing is uploaded automatically.
 If your organization elects to upload an artifact, review its privacy and retention first, use a
 reviewed pinned upload Action, and account for repository and artifact access permissions.
