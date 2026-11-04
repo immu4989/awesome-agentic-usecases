@@ -59,6 +59,35 @@ def smoke(wheel: Path) -> None:
                           "observations": [{"case_id": "service", "repeat": 0, "trace": service_trace}]}
         for name, value in (("service-plan", service_plan), ("service-suite", service_suite), ("service-traces", service_traces)):
             (root / f"{name}.json").write_text(json.dumps(value))
+        run([cli, "service-challenge", "create", "service-suite.json", "--out", "service-challenge"])
+        run([cli, "service-challenge", "verify", "service-challenge"])
+        # Reference self-check: installed scorer receives only public challenge inputs, not oracle scores.
+        run([python, "-I", "-c", """
+from pathlib import Path
+from aau_harness.agent_bom import digest, load_json, write_json
+from aau_harness.public_value_review import assess_public_value
+challenge = load_json(Path('service-challenge/challenge.json'))
+responses = {'response_version': 'aau-service-challenge-responses/1.0', 'challenge_sha256': digest(challenge),
+             'observations': [{'probe_id': row['probe_id'], 'metrics': assess_public_value(
+                 row['input']['contract'], row['input']['trace'])['metrics']} for row in challenge['cases']]}
+write_json(responses, Path('service-responses.json'))
+"""])
+        challenge_command = [cli, "service-challenge", "score", "service-challenge", "service-responses.json"]
+        run([*challenge_command, "--out", "challenge-reference.json"])
+        run([*challenge_command, "--verify", "challenge-reference.json"])
+        reference_responses = json.loads((root / "service-responses.json").read_text())
+        for constant in (0, 1):
+            responses = json.loads(json.dumps(reference_responses))
+            for row in responses["observations"]:
+                row["metrics"] = dict.fromkeys(row["metrics"], constant)
+            (root / "service-responses.json").write_text(json.dumps(responses))
+            run([*challenge_command, "--out", f"challenge-constant-{constant}.json"], expected=1)
+        reference_responses["observations"].pop()
+        (root / "service-responses.json").write_text(json.dumps(reference_responses))
+        run([*challenge_command, "--out", "challenge-incomplete.json"], expected=2)
+        oracle_path = root / "service-challenge/oracle.json"
+        oracle_path.write_text(oracle_path.read_text() + " ")
+        run([cli, "service-challenge", "verify", "service-challenge"], expected=2)
         service_command = [cli, "service-trace-eval", "create", "service-plan.json", "service-suite.json", "service-traces.json"]
         run([*service_command, "--out", "service-failed"], expected=1)
         run([cli, "service-trace-eval", "verify", "service-failed", "--evaluation", "service-failed/evaluation.json"], expected=1)

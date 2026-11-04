@@ -300,6 +300,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Rescore normalized service traces against separate contracts and retain the source chain")
     sub.add_parser("service-review", add_help=False,
                    help="Verify complete service-trace evidence through a strict all-obligations policy/budget gate")
+    sub.add_parser("service-challenge", add_help=False,
+                   help="Generate synthetic scorer-conformance probes and review supplied adapter responses")
     sub.add_parser("failure-bound-pack", add_help=False,
                    help="Create or verify a complete offline failure-bound reviewer pack")
     sub.add_parser("failure-bound-demo", add_help=False,
@@ -444,6 +446,9 @@ def main(argv: list[str] | None = None) -> int:
     if raw_args and raw_args[0] == "service-review":
         from .eval_service_review import main as service_review_main
         return service_review_main(raw_args[1:])
+    if raw_args and raw_args[0] == "service-challenge":
+        from .service_challenge import main as service_challenge_main
+        return service_challenge_main(raw_args[1:])
     if raw_args and raw_args[0] == "failure-bound-pack":
         from .eval_failure_pack import main as failure_pack_main
         return failure_pack_main(raw_args[1:])

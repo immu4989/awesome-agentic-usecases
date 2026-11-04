@@ -631,6 +631,95 @@ requirements and evidence assertions. No legality, true applicability, actual do
 real-world benefit, or net policy strength is inferred. No approval pins or workflow settings
 are changed. Requires the current checkout or a locally built wheel, not published PyPI 1.6.0.
 
+### Test your service-scoring adapter against constructed obligations
+
+`aau service-challenge` generates clean controls and targeted violations from your declared
+`aau-public-value-suite/1.0` contracts. It checks a **scoring implementation**, not an agent's
+ability to perform real work. Expected component scores are constructed explicitly, without
+calling the reference scorer. Every contract gets a clean control so rejecting everything
+cannot pass; negative probes expose accepting everything and individual missing checks.
+
+```bash
+aau service-challenge create public-value-review/examples/suite.json --out /tmp/service-challenge
+aau service-challenge verify /tmp/service-challenge
+```
+
+Give your checker **only `challenge.json`**, not `oracle.json`. Each public case contains a
+`probe_id` and `input` with `contract` and `trace`. Return every probe exactly once, with all ten
+binary numeric metrics documented in the pack's `README.txt`. Compute `challenge_sha256` from
+the public JSON values with `aau_harness.agent_bom.digest`. Write responses outside the pack:
+
+```json
+{
+  "response_version": "aau-service-challenge-responses/1.0",
+  "challenge_sha256": "CANONICAL_PUBLIC_CHALLENGE_SHA256",
+  "observations": [
+    {"probe_id": "ID_FROM_CHALLENGE", "error_code": "checker-unavailable"}
+  ]
+}
+```
+
+Replace each error row with `{"probe_id": "...", "metrics": {...}}` when scored; error and
+metrics fields cannot coexist. Errors remain explicit failures of conformance, not invented
+zero service scores. Missing, repeated, unknown, or extra probe IDs are invalid. Booleans,
+fractions, omitted component scores, and substituted challenge identifiers are rejected.
+
+To exercise the interface with AAU's own reference scorer, run this **self-check only**:
+
+```python
+from pathlib import Path
+from aau_harness.agent_bom import digest, load_json, write_json
+from aau_harness.public_value_review import assess_public_value
+
+challenge = load_json(Path('/tmp/service-challenge/challenge.json'))
+responses = {
+    'response_version': 'aau-service-challenge-responses/1.0',
+    'challenge_sha256': digest(challenge),
+    'observations': [
+        {'probe_id': row['probe_id'], 'metrics': assess_public_value(
+            row['input']['contract'], row['input']['trace'])['metrics']}
+        for row in challenge['cases']
+    ],
+}
+write_json(responses, Path('/tmp/service-responses.json'))
+```
+
+Replace `assess_public_value` with your own trusted scoring implementation to test that adapter.
+No command here executes an arbitrary adapter, contacts an endpoint, or provides a sandbox.
+The reference self-check is not independent validation. Never copy the expected oracle scores.
+
+```bash
+aau service-challenge score /tmp/service-challenge /tmp/service-responses.json --out /tmp/service-review.json
+aau service-challenge score /tmp/service-challenge /tmp/service-responses.json --verify /tmp/service-review.json
+```
+
+Scoring exits **0** only when every supplied metric matches every generated expectation,
+**1** for retained mismatches or explicit adapter errors, and **2** for invalid evidence or
+failed verification. Creation/pack verification exiting 0 means the pack is valid, not that a
+checker passed. Reports retain component-level missed failures and false failures, clean-control
+outcomes, and all probe results. A failed joint score cannot conceal an incorrect component score.
+
+A fully applicable contract yields 14 probes: a clean control, non-submission, wrong/multiple
+terminals, wrong delivery channel, outside/missing/duplicate/already-held evidence requests,
+missing recourse/deadline/continuity protection, and prohibited attempts/executions. Inapplicable
+families are listed as **not generated**, never silently counted as passed. Optional protections
+stay optional. Only one representative label per applicable family is varied, not every label or
+combination. A required terminal that is also forbidden is rejected rather than relaxed.
+
+The exact five-file pack retains the original suite values, public challenge, separate expected
+results and coverage, instructions, and unsigned hashes. Verification regenerates every file;
+rehashing a modified oracle is insufficient. Inputs, members, and reports are bounded to 2 MB,
+with at most 2,000 generated probes. Expansion beyond trace-format limits is rejected before
+writing; nothing is truncated. Existing destinations are not overwritten.
+
+This is an input separation, **not a blind benchmark or access control**: public contracts and
+generation patterns can reveal answers. Probes are not sampled users, and a passing checker is
+not evidence of authentic service execution, adequate requirements, legal compliance, or deployment
+readiness. Hashes do not authenticate evidence, and coordinated replacement can still verify.
+Listed implementation fingerprints do not cover dependencies or the interpreter. All values are
+unsanitized; use synthetic/public inputs and review before sharing. Normal service-review and
+approval gates remain unchanged. Requires this checkout or a locally built wheel, not PyPI 1.6.0.
+
 ### Import recorded scores from your existing evaluation system
 
 You do not need to rerun an agent through AAU to use its metric audit, paired comparisons,

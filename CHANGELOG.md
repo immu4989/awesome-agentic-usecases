@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Service-scoring adapter challenge** — construct clean controls and targeted obligation
+  violations without using the challenged scorer to generate expected results. Separate public
+  inputs and expected scores, complete response coverage, explicit adapter errors, and component
+  mismatch reports expose permissive, overstrict, and incomplete checkers. Recomputed five-file
+  packs reject altered evidence; omitted families and limits remain visible. This tests scorer
+  conformance on constructed probes, not agent performance or deployment readiness.
+
 - **Service contract change review** — compare every requirement and case-census edit before
   replacing an approved suite. Optional identical-trace rescoring exposes score changes caused by
   removed protections, changed prohibitions, or new held-evidence claims, not agent improvements.
