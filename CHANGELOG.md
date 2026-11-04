@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Readable failure-bound handoff** — portable five-file packs bind the sampling plan and full
+  evaluation to exact diagnostic JSON and a script-free reviewer page. Charts distinguish observed
+  outcomes, conditional limits, and withheld inference; every group and recorded failure remains
+  inspectable. A packaged 21-file walkthrough verifies four synthetic contrasts without checkout
+  fixtures. Complete recomputation rejects altered HTML and rehashed substitutes; no approval,
+  source sanitization, or production reliability is inferred.
+
 - **Conditional failure-bound diagnostic** — distinguish perfect recorded benchmarks from
   sufficient evidence under a declared fixed-horizon IID sampling design. Whole scenario bundles,
   not repeated calls, are the sampling units; exact-binomial upper bounds include every declared

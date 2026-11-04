@@ -249,11 +249,11 @@ def test_example_emits_recomputable_synthetic_contrasts(tmp_path):
     spec.loader.exec_module(module)
     root = tmp_path / 'demo'
     module.create_examples(root)
-    assert len([p for p in root.rglob('*') if p.is_file()]) == 13
+    assert len([p for p in root.rglob('*') if p.is_file()]) == 21
     for directory in sorted(path for path in root.iterdir() if path.is_dir()):
         assert main(['failure-bound-eval', str(directory / 'plan.json'), str(directory / 'evaluation.json'),
                      '--verify', str(directory / 'report.json')]) == 0
-    with pytest.raises(FileExistsError):
+    with pytest.raises(AgentBomError):
         module.create_examples(root)
     assert 'no real agents' in (root / 'README.txt').read_text()
 

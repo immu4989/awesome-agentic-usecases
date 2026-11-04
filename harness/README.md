@@ -1541,6 +1541,65 @@ limit. Keep the plan, evaluation, and report together. No statistical package, n
 or new runtime dependency is needed. Inspect sampling notes, identifiers, and failed scores before
 sharing; this is not a sanitization tool. Available in the current checkout, not a new PyPI release.
 
+### Hand off readable failure-bound evidence
+
+For a reviewer who should not need to inspect raw JSON, `failure-bound-pack` retains a complete
+plan-to-page chain in one folder. The page separates recorded bundle failures, conditional bounds,
+and withheld population inference. Its proportional charts share a 0–100% scale; exact numeric
+values, every declared group, and every recorded criterion failure remain inspectable.
+
+```bash
+# Installed from the current checkout: no repository fixtures or API key needed at runtime.
+aau failure-bound-demo --out /tmp/aau-failure-reviewer-demo
+aau failure-bound-pack verify /tmp/aau-failure-reviewer-demo/small-group
+# Open /tmp/aau-failure-reviewer-demo/small-group/review.html locally.
+
+# For independently reviewed inputs of your own:
+aau failure-bound-pack create approved-plan.json saved-evaluation.json --out new-review-folder
+aau failure-bound-pack verify new-review-folder
+```
+
+The packaged walkthrough creates **four complete packs plus a guide (21 files)**. It demonstrates
+fixed-benchmark inference withholding, a small perfect sample, a larger hypothetical sample, and
+an overall result that hides weak evidence for a small declared group. All data is constructed;
+no real reliability evidence is claimed. The existing repository example delegates to this same
+implementation. Its plan/evaluation/report paths and standalone diagnostic commands still work.
+
+Each five-file pack has one role per file:
+
+| File | Role |
+| --- | --- |
+| `plan.json` | Exact supplied plan values, including criteria, scope, and sampling declarations |
+| `evaluation.json` | Complete supplied evaluation values, including details not shown on the page |
+| `report.json` | Recomputed bundle outcomes, conditional bounds, warnings, and source-summary audit |
+| `review.html` | Script-free reviewer page with proportional charts, exact-value tables, and failure details |
+| `manifest.json` | Generated member hashes and the pack format version |
+
+The single verifier regenerates every file from the retained plan and evaluation. Merely changing
+a chart or report and updating its manifest hash cannot make it verify. Missing files, unexpected
+members, symlinks, oversized members, and incomplete writes are rejected. Pack creation checks all
+expanded outputs before writing, never silently truncates evidence, and refuses existing paths.
+The walkthrough writes its completion guide only after all four expected outcomes verify.
+
+The page has no scripts, network assets, analytics, external fonts, or uploads. Charts have text
+alternatives, tables retain full reported precision, and scrollable table regions are keyboard
+focusable. Fixed-benchmark pages do not draw a population bound or a probability-limit comparison.
+Percentage labels and plot widths are rounded; status always comes from the unrounded report.
+Labels deliberately say **conditional numeric limit**, never deployment approval.
+
+Run verification with a trusted matching harness before relying on received HTML: a page cannot
+verify itself. Exit **0** means the diagnostic pack verifies, even when limits are exceeded or
+inference is withheld. Exit **2** means invalid evidence or failed verification. This is separate
+from `evaluation-pack` policy/budget gates and does not alter their verdicts.
+
+Keep the folder intact. It is **not sanitized**: original source JSON values—including undisplayed
+details—remain available. Original file formatting is not retained. Coordinated replacement of
+inputs and outputs can still verify; neither hashes nor charts establish authenticity, sampling
+validity, independent approval, or safety. All statistical interpretation limits in the preceding
+section still apply. The commands are available from the current checkout/local wheel, not a new
+PyPI release. Python APIs are `failure_bound_payloads`, `create_failure_bound_pack`, and
+`verify_failure_bound_pack` in `aau_harness.eval_failure_pack`.
+
 ### Try the evaluation workflow from an installed package
 
 `aau evaluation-demo --out /path/to/new-demo` creates two complete synthetic review dossiers

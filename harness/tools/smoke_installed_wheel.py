@@ -68,6 +68,21 @@ def smoke(wheel: Path) -> None:
         conditional["scopes"][0]["one_sided_upper_failure_bound"] = 0
         (root / "conditional-bound.json").write_text(json.dumps(conditional))
         run([*bound_command, "--verify", "conditional-bound.json"], expected=2)
+        run([cli, "failure-bound-pack", "create", "bound-plan.json", "demo/repaired/candidate.json", "--out", "bound-pack"])
+        run([cli, "failure-bound-pack", "verify", "bound-pack"])
+        (root / "bound-pack/review.html").write_text('tampered reviewer page')
+        run([cli, "failure-bound-pack", "verify", "bound-pack"], expected=2)
+        run([cli, "failure-bound-demo", "--out", "failure-demo"])
+        run([cli, "failure-bound-demo", "--out", "failure-demo"], expected=2)
+        for name, expected in (("fixed-benchmark", "population_inference_withheld"),
+                               ("few-scenarios", "conditional_bounds_exceed_limits"),
+                               ("more-scenarios", "conditional_bounds_within_limits"),
+                               ("small-group", "conditional_bounds_exceed_limits")):
+            run([cli, "failure-bound-pack", "verify", f"failure-demo/{name}"])
+            if json.loads((root / f"failure-demo/{name}/report.json").read_text())["status"] != expected:
+                raise RuntimeError("installed failure-bound walkthrough lost an expected interpretation")
+        if len([p for p in (root / "failure-demo").rglob('*') if p.is_file()]) != 21:
+            raise RuntimeError("installed failure-bound walkthrough is incomplete")
         run([cli, "retry-demo", "--out", "retry-demo"])
         run([cli, "retry-demo", "--out", "retry-demo"], expected=2)
         for name, code in (("earlier-harm", 1), ("slow-completion", 1), ("repaired", 0)):
