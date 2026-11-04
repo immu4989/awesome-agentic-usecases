@@ -7,6 +7,7 @@ from pathlib import Path
 from aau_harness.agent_bom import load_json, write_json
 from aau_harness.eval_pack import create_pack, verify_pack
 from aau_harness.eval_service_traces import create_service_trace_pack, verify_service_trace_pack
+from aau_harness.eval_service_review import create_handoff, verify_handoff
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -96,7 +97,54 @@ do not copy these synthetic thresholds or claim this fixture measures people.
 ''', encoding='utf-8')
 
 
+def create_handoffs(directory):
+    """Retain original normalized sources through each complete policy/budget gate."""
+    plan, suite, baseline, burden, policy, diagnostics, budget = example_inputs()
+    slow, unknown = deepcopy(baseline), deepcopy(baseline)
+    slow['observations'][0]['latency_s'] = 10
+    del unknown['observations'][0]['cost_usd']
+    directory.mkdir(parents=True, exist_ok=False)
+    for name, candidate, expected in [('burden', burden, 'constraints_not_met'),
+                                      ('slow', slow, 'constraints_not_met'),
+                                      ('unknown', unknown, 'constraints_not_verified'),
+                                      ('repaired', baseline, 'constraints_met')]:
+        create_handoff(policy, plan, baseline, {**plan, 'source_label': f'Synthetic {name} service traces'}, candidate,
+                       diagnostics, directory / name, service_suite=suite, operating_budget=budget)
+        if verify_handoff(directory / name, require_budget=True)['status'] != expected:
+            raise RuntimeError('synthetic complete service handoff outcome changed')
+    (directory / 'README.txt').write_text('''Synthetic complete service-review handoffs — no real service activity or billing.
+
+Open each folder's review/review.html. Each folder contains all 33 source and
+review files. These examples share one declared contract suite and strict joint
+success criteria; policy and candidate operating budget are gated independently.
+
+  aau service-review verify burden --require-budget
+  aau service-review verify slow --require-budget
+  aau service-review verify unknown --require-budget
+  aau service-review verify repaired --require-budget
+
+Run separately. Expected exit codes: 1, 1, 1, 0. Exit 2 means invalid evidence or
+failed verification, not a measured policy failure. The burden candidate records
+100% completion but only 75% joint success. The slow candidate satisfies service
+obligations but exceeds the illustrative timing budget. Unknown cost stays unknown,
+not free. The repaired candidate is a constructed fixture, not a production repair.
+
+Every policy and joint accounting definition must include public_value_exact >= 1;
+completion-only policies and denominator shortcuts are refused before creating a
+handoff. Inspect the full failure findings and required-only protection counts in
+each candidate/scoring.json. The common suite still needs independent domain review
+and approval. These synthetic limits are not recommended operating thresholds.
+
+All normalized source JSON values remain unsanitized. Hashes and internal consistency
+do not authenticate execution or approve requirements. For CI, independently pin the
+common suite, plans, baseline, policy, diagnostics, optional budget, and trusted Action
+commit. Never derive approval pins from the candidate changes being evaluated.
+''', encoding='utf-8')
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out', type=Path, required=True)
-    create_example(parser.parse_args().out)
+    parser.add_argument('--handoffs', action='store_true', help='create four complete source-to-policy/budget handoffs')
+    args = parser.parse_args()
+    (create_handoffs if args.handoffs else create_example)(args.out)

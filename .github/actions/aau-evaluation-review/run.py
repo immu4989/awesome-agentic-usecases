@@ -19,6 +19,8 @@ from aau_harness.eval_retries import retry_payloads  # noqa: E402
 from aau_harness.eval_retry_review import create_handoff as create_retry_handoff, verify_handoff as verify_retry_handoff  # noqa: E402
 from aau_harness.eval_otlp import otlp_payloads  # noqa: E402
 from aau_harness.eval_otlp_review import create_handoff as create_otlp_handoff, verify_handoff as verify_otlp_handoff  # noqa: E402
+from aau_harness.eval_service_traces import service_trace_payloads  # noqa: E402
+from aau_harness.eval_service_review import create_handoff as create_service_handoff, verify_handoff as verify_service_handoff  # noqa: E402
 
 
 def workspace_path(workspace: Path, raw: str) -> Path:
@@ -84,21 +86,31 @@ def main() -> int:
         if operating_budget is not None and diagnostics is None:
             raise AgentBomError("operating budget requires an independently approved diagnostics plan")
         input_format = os.environ.get("AAU_EVAL_INPUT_FORMAT", "evaluations")
-        if input_format not in ("evaluations", "recordings", "csv", "retries", "otlp"):
-            raise AgentBomError("input format must be evaluations, recordings, csv, retries, or otlp")
+        if input_format not in ("evaluations", "recordings", "csv", "retries", "otlp", "service-traces"):
+            raise AgentBomError("input format must be evaluations, recordings, csv, retries, otlp, or service-traces")
+        suite_path = os.environ.get("AAU_EVAL_SERVICE_SUITE", "")
+        suite_hash = os.environ.get("AAU_EVAL_SERVICE_SUITE_SHA256", "")
+        service_options = {}
+        if input_format == "service-traces":
+            if not suite_path or not suite_hash:
+                raise AgentBomError("service traces require one independently pinned contract suite")
+            service_options['service_suite'] = read_source(workspace_path(workspace, suite_path), suite_hash)
+        elif suite_path or suite_hash:
+            raise AgentBomError("service suite inputs are allowed only with service-traces")
         maps = {name: os.environ.get(f"AAU_EVAL_{name}", "") for name in (
             "BASELINE_PLAN", "BASELINE_PLAN_SHA256", "CANDIDATE_PLAN", "CANDIDATE_PLAN_SHA256")}
-        source_handoff = input_format in ("csv", "retries", "otlp")
+        source_handoff = input_format in ("csv", "retries", "otlp", "service-traces")
         if not source_handoff and any(maps.values()):
-            raise AgentBomError("source plans are allowed only with input-format csv, retries, or otlp")
+            raise AgentBomError("source plans are allowed only with input-format csv, retries, otlp, or service-traces")
         recordings = input_format == "recordings"
         if source_handoff:
             if not all(maps.values()) or diagnostics is None:
                 raise AgentBomError("source handoff requires both independently pinned plans and a pinned diagnostics plan")
             baseline_plan = read_source(workspace_path(workspace, maps["BASELINE_PLAN"]), maps["BASELINE_PLAN_SHA256"])
             candidate_plan = read_source(workspace_path(workspace, maps["CANDIDATE_PLAN"]), maps["CANDIDATE_PLAN_SHA256"])
-            reader = read_source if input_format == "retries" else read_bytes
-            converter = {"csv": csv_payloads, "retries": retry_payloads, "otlp": otlp_payloads}[input_format]
+            reader = read_source if input_format in ("retries", "service-traces") else read_bytes
+            converter = {"csv": csv_payloads, "retries": retry_payloads, "otlp": otlp_payloads,
+                         "service-traces": lambda plan, raw: service_trace_payloads(plan, service_options['service_suite'], raw)}[input_format]
             evaluation_file = "retry/evaluation.json" if input_format == "otlp" else "evaluation.json"
             baseline = reader(paths["baseline"], os.environ["AAU_EVAL_BASELINE_SHA256"])
             candidate = reader(paths["candidate"])
@@ -116,10 +128,12 @@ def main() -> int:
         if compare_contexts(reviewed_baseline, reviewed_candidate)["status"] != "matched":
             raise AgentBomError("Action requires matching declared context on both evaluations; legacy evidence needs separate review")
         if source_handoff:
-            create_source_handoff = {"csv": create_handoff, "retries": create_retry_handoff, "otlp": create_otlp_handoff}[input_format]
-            verify_source_handoff = {"csv": verify_handoff, "retries": verify_retry_handoff, "otlp": verify_otlp_handoff}[input_format]
+            create_source_handoff = {"csv": create_handoff, "retries": create_retry_handoff, "otlp": create_otlp_handoff,
+                                     "service-traces": create_service_handoff}[input_format]
+            verify_source_handoff = {"csv": verify_handoff, "retries": verify_retry_handoff, "otlp": verify_otlp_handoff,
+                                     "service-traces": verify_service_handoff}[input_format]
             handoff = create_source_handoff(policy, baseline_plan, baseline, candidate_plan, candidate, diagnostics, paths["output"],
-                                            operating_budget=operating_budget)
+                                            operating_budget=operating_budget, **service_options)
             if verify_source_handoff(paths["output"], require_budget=operating_budget is not None) != handoff:
                 raise AgentBomError("saved source handoff does not match computed evidence")
             result = handoff
@@ -164,6 +178,14 @@ def main() -> int:
                                  "attempt semantics, and metric reducers match. Use aau otlp-review verify for the "
                                  "complete chain. Trace/span IDs, attribute names, exclusion reasons, scores, and "
                                  "raw telemetry are not echoed here. Exclusions and complete capture remain declarations.\n")
+                if input_format == "service-traces":
+                    count = 33 if operating_budget is not None else 30
+                    stream.write("\nService handoff: independently approved common contract-suite and import-plan byte hashes matched; "
+                                 f"both normalized trace sources and all {count} files recomputed together. The strict profile "
+                                 "requires every candidate observation to satisfy all declared service obligations. Joint diagnostics "
+                                 "and any budget denominator retain that requirement. Use aau service-review verify for the complete "
+                                 "chain. Source labels, case IDs, contract values, events, and measurements are not echoed here. "
+                                 "Contract adequacy and authentic execution are not established.\n")
                 if operating_budget is not None:
                     stream.write("\nOperating-budget gate: independently approved plan byte hash matched. "
                                  f"Candidate budget: **{result['candidate_budget_status']}**. "

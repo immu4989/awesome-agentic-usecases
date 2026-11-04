@@ -492,6 +492,72 @@ bytes, and does not sanitize personal data. Coordinated replacement of all input
 new internally consistent pack. No legal compliance, eligibility, public benefit, or deployment
 approval follows from passing these checks.
 
+### Gate a complete service-trace handoff with approved obligations
+
+`aau service-review` carries both normalized trace sources, one common contract suite, all
+scoring findings, and the policy/diagnostic review in one **30-file** folder, or **33 files**
+with the candidate operating-budget gate. One command recomputes the complete chain; separately
+valid but unrelated source or review folders cannot substitute for that chain.
+
+This is a **strict service profile**, not another generic score importer. The global policy
+must require `public_value_exact` in direction `higher` with `candidate_observation_limit: 1`.
+Diagnostic criteria and any operating-budget criteria must also include
+`{"metric": "public_value_exact", "direction": "higher", "limit": 1}`. Additional constraints
+are allowed. Missing, weaker, reversed, or subgroup-only requirements are rejected **before
+output creation**; supplied policy files are never silently rewritten. Every candidate
+observation must therefore satisfy all applicable declared obligations. A stronger average,
+lower cost, or a passing completion-only score cannot compensate for a failed obligation.
+Baseline failures remain visible and do not prohibit demonstrating a passing candidate.
+
+From the repository root, build four complete synthetic handoffs:
+
+```bash
+python harness/examples/evaluation-review/service_traces.py --handoffs --out /tmp/aau-service-handoffs
+aau service-review verify /tmp/aau-service-handoffs/burden --require-budget
+aau service-review verify /tmp/aau-service-handoffs/slow --require-budget
+aau service-review verify /tmp/aau-service-handoffs/unknown --require-budget
+aau service-review verify /tmp/aau-service-handoffs/repaired --require-budget
+```
+
+Run verification commands separately; expected exits are **1, 1, 1, 0**. The examples distinguish
+failed service obligations despite completion, satisfied obligations with excessive latency,
+satisfied obligations with unknown cost, and a constructed passing fixture. Each folder's
+`review/review.html` shows independent policy/budget outcomes and the combined verdict.
+Inspect `candidate/scoring.json` for exact obligation findings and required-only protection
+coverage. These are arithmetic fixtures, not recommended thresholds or observed improvements.
+
+Create your own handoff from already recorded normalized traces:
+
+```bash
+aau service-review create policy.json suite.json baseline-plan.json baseline-traces.json \
+  candidate-plan.json candidate-traces.json --diagnostics diagnostics.json \
+  --operating-budget budget.json --out new-service-handoff
+aau service-review verify new-service-handoff --require-budget
+```
+
+Both source packs retain the **same** suite values. Import plans declare collection labels and
+repeat counts, not per-source requirements or score overrides. Scoring context is recomputed
+from contracts and installed scorer bytes. Full declared coverage, bounded regular files,
+exact member sets, overwrite refusal, and source-to-report bindings are checked. Verification
+requires matching scoring code. The optional budget must pass independently, and missing
+required measurements cannot pass. Omit the budget option only for an intentionally ungated
+operating review; require `--require-budget` downstream if its presence is mandatory.
+
+The [GitHub Action service mode](../.github/actions/aau-evaluation-review/README.md#gate-recorded-service-traces-against-one-approved-contract-suite)
+adds independent byte pins for the common suite, baseline trace source, both import plans,
+policy, and diagnostics; a budget adds a seventh pin. Pin the Action's reviewed full commit
+separately and protect the workflow and approval variables. Do not compute approval pins from
+candidate changes. No branch protection, repository permissions, or approval settings are changed.
+
+The design addresses the documented-test-set/metric/tool traceability concern in
+[NIST AI RMF Playbook MEASURE 2.1](https://airc.nist.gov/airmf-resources/playbook/measure/);
+this is a design motivation, not an implementation or certification of that framework.
+Independent contract adequacy, authentic trace capture, applicability, population validity,
+and production effectiveness remain outside these checks. All source values are unsanitized;
+hashes do not authenticate them, and coordinated replacement can still verify offline.
+No legal compliance, actual public benefit, or deployment approval is inferred.
+Requires the current checkout or a locally built wheel, not the published PyPI 1.6.0 package.
+
 ### Import recorded scores from your existing evaluation system
 
 You do not need to rerun an agent through AAU to use its metric audit, paired comparisons,

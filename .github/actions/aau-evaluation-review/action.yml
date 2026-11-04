@@ -2,7 +2,7 @@ name: AAU saved evaluation review
 description: Verify approved inputs and benchmark context, review metric constraints, and preserve an offline pack.
 inputs:
   input-format:
-    description: evaluations (normalized JSON), recordings (observations), csv (approved column maps), retries (approved task-accounting plans), or otlp (approved span mappings). CSV, retries, and OTLP retain complete source handoffs.
+    description: evaluations (normalized JSON), recordings (observations), csv (column maps), retries (task accounting), otlp (span mappings), or service-traces (common approved contracts). Source formats retain complete handoffs.
     default: evaluations
   policy:
     description: Workspace-relative reviewed policy JSON.
@@ -20,19 +20,25 @@ inputs:
     description: Workspace-relative candidate file in the selected input format.
     required: true
   baseline-plan:
-    description: CSV/retries/OTLP modes only; required workspace-relative baseline import plan or mapping with declared context.
+    description: CSV/retries/OTLP/service-traces modes only; required workspace-relative baseline import plan or mapping.
     default: ''
   baseline-plan-sha256:
-    description: CSV/retries/OTLP modes only; independently approved baseline plan/mapping byte SHA-256.
+    description: CSV/retries/OTLP/service-traces modes only; independently approved baseline plan/mapping byte SHA-256.
     default: ''
   candidate-plan:
-    description: CSV/retries/OTLP modes only; required workspace-relative candidate import plan or mapping with declared context.
+    description: CSV/retries/OTLP/service-traces modes only; required workspace-relative candidate import plan or mapping.
     default: ''
   candidate-plan-sha256:
-    description: CSV/retries/OTLP modes only; independently approved candidate plan/mapping byte SHA-256.
+    description: CSV/retries/OTLP/service-traces modes only; independently approved candidate plan/mapping byte SHA-256.
+    default: ''
+  service-suite:
+    description: Service-traces mode only; required workspace-relative common contract suite. Both sources are scored against these same requirements.
+    default: ''
+  service-suite-sha256:
+    description: Service-traces mode only; independently approved contract-suite file byte SHA-256, not derived from the candidate change.
     default: ''
   diagnostics:
-    description: Workspace-relative diagnostic plan; required in csv/retries/OTLP modes; requires diagnostics-sha256 when supplied.
+    description: Workspace-relative diagnostic plan; required in csv/retries/OTLP/service-traces modes; requires diagnostics-sha256 when supplied.
     default: ''
   diagnostics-sha256:
     description: Independently approved diagnostic-plan byte SHA-256; requires diagnostics when supplied.
@@ -66,6 +72,8 @@ runs:
         AAU_EVAL_BASELINE_PLAN_SHA256: ${{ inputs.baseline-plan-sha256 }}
         AAU_EVAL_CANDIDATE_PLAN: ${{ inputs.candidate-plan }}
         AAU_EVAL_CANDIDATE_PLAN_SHA256: ${{ inputs.candidate-plan-sha256 }}
+        AAU_EVAL_SERVICE_SUITE: ${{ inputs.service-suite }}
+        AAU_EVAL_SERVICE_SUITE_SHA256: ${{ inputs.service-suite-sha256 }}
         AAU_EVAL_DIAGNOSTICS: ${{ inputs.diagnostics }}
         AAU_EVAL_DIAGNOSTICS_SHA256: ${{ inputs.diagnostics-sha256 }}
         AAU_EVAL_OPERATING_BUDGET: ${{ inputs.operating-budget }}

@@ -323,6 +323,68 @@ be retained separately because the handoff reserializes their values. A coordina
 replacement can still verify offline; pins must come from independent trusted review.
 Requires a reviewed repository commit containing this feature, not PyPI 1.6.0.
 
+## Gate recorded service traces against one approved contract suite
+
+Use `input-format: service-traces` for the
+[complete service handoff](../../../harness/README.md#gate-a-complete-service-trace-handoff-with-approved-obligations).
+The Action recomputes scores from normalized trace events against one common, independently
+pinned contract suite. It does not accept scores or requirement overrides in observations.
+Six mandatory byte pins cover policy, baseline traces, both import plans, common suite, and
+diagnostics. A budget adds a seventh. Candidate traces are changing evidence, not an approval
+source. Protect the workflow, variables, and reviewed Action commit independently.
+
+```yaml
+- name: Review recorded service obligations
+  uses: immu4989/awesome-agentic-usecases/.github/actions/aau-evaluation-review@REVIEWED_FULL_COMMIT_SHA
+  with:
+    input-format: service-traces
+    policy: evaluations/approved-policy.json
+    policy-sha256: ${{ vars.APPROVED_EVAL_POLICY_SHA256 }}
+    baseline: evaluations/baseline-traces.json
+    baseline-sha256: ${{ vars.APPROVED_SERVICE_BASELINE_SHA256 }}
+    candidate: evaluations/candidate-traces.json
+    baseline-plan: evaluations/baseline-plan.json
+    baseline-plan-sha256: ${{ vars.APPROVED_SERVICE_BASELINE_PLAN_SHA256 }}
+    candidate-plan: evaluations/candidate-plan.json
+    candidate-plan-sha256: ${{ vars.APPROVED_SERVICE_CANDIDATE_PLAN_SHA256 }}
+    service-suite: evaluations/approved-service-suite.json
+    service-suite-sha256: ${{ vars.APPROVED_SERVICE_SUITE_SHA256 }}
+    diagnostics: evaluations/approved-diagnostics.json
+    diagnostics-sha256: ${{ vars.APPROVED_EVAL_DIAGNOSTICS_SHA256 }}
+    operating-budget: evaluations/approved-budget.json
+    operating-budget-sha256: ${{ vars.APPROVED_EVAL_BUDGET_SHA256 }}
+    output: service-review
+```
+
+Replace `REVIEWED_FULL_COMMIT_SHA` with the exact reviewed repository revision containing this
+feature. Both import plans use `aau-service-trace-import/1.0`; source shapes and a runnable
+example are documented in the harness guide. Every candidate observation is subject to the
+global policy's explicit `public_value_exact >= 1` floor. Diagnostics and any budget must
+include the same joint-success requirement. Completion-only policies, relaxed criteria,
+subgroup-only coverage, malformed/missing observations, and changed approval bytes fail before
+creating output. Requirements are not silently injected into approved files.
+
+The complete handoff has **30 files**, or **33** with a candidate operating budget. Both source
+folders retain identical suite values, full normalized traces, findings, derived recordings,
+and scoring fingerprints. All nested evidence is recomputed together:
+
+```bash
+aau service-review verify service-review --require-budget
+```
+
+Exit 0 means the applicable constraints are met; exit 1 retains failed or unverified budget
+evidence; exit 2 means invalid evidence or verification failure. Removing both budget inputs
+selects an intentionally ungated mode; downstream `--require-budget` prevents treating it as
+budget-gated. Suite inputs in any other mode are rejected, not silently ignored. Step summaries
+omit case IDs, contract content, event names, and measurements; **artifact files are unsanitized**.
+
+Pin approval bytes through an independent trusted process, not a hash calculated from the same
+candidate change. Retain the exact approved JSON input files separately: handoffs preserve their
+values, not original whitespace. A coordinated change to all sources can be internally consistent,
+but cannot match an unchanged independent suite pin. This is not authenticated trace capture,
+contract adequacy, legal approval, or a real-world effectiveness claim. No permissions, uploads,
+credentials, or installation steps are added. Requires the checkout, not published PyPI 1.6.0.
+
 ## Require an independently approved candidate operating budget
 
 Add `operating-budget` and `operating-budget-sha256` to any supported input mode above.
@@ -408,7 +470,7 @@ or a locally built wheel, not the published PyPI 1.6.0 package.
 The `reports` output identifies the requested directory, not a guarantee that it exists. An
 interrupted or invalid run may leave no complete pack. Verify before consumption with
 `aau evaluation-pack verify`, or the full source verifier for handoffs: `aau csv-review verify`,
-`aau retry-review verify`, or `aau otlp-review verify`. Do not treat `continue-on-error` as passing policy review. Configure any required PR
+`aau retry-review verify`, `aau otlp-review verify`, or `aau service-review verify`. Do not treat `continue-on-error` as passing policy review. Configure any required PR
 check separately; this Action does not change branch protection or grant deployment authority.
 
 Open `review.html` locally for readable findings (`review/review.html` in source-handoff modes).
@@ -420,6 +482,7 @@ Keep the complete folder, not only its page:
 | Recordings | 8 files | 13 files | 16 files |
 | CSV or retry ledgers | Diagnostics required | 28 files | 31 files |
 | Original OTLP exports | Diagnostics required | 36 files | 39 files |
+| Normalized service traces | Diagnostics required | 30 files | 33 files |
 
 **The pack contains complete unsanitized evaluation details.** Nothing is uploaded automatically.
 If your organization elects to upload an artifact, review its privacy and retention first, use a

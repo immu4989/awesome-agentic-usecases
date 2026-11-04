@@ -125,6 +125,8 @@ conditional failure-bound diagnostics, source-bound reviewer packs and all four 
 failure-bound walkthrough contrasts, a multi-candidate matrix that excludes failed policy,
 contract-to-service-trace scoring with retained failures, unknown operating measurements,
 downstream evaluation binding, and altered-score rejection,
+complete service handoffs with strict obligation criteria, failed/unknown budget outcomes,
+completion-only policy refusal, and budget-downgrade rejection,
 standalone operating-budget pass/fail reports, a budget-aware matrix,
 combined policy/budget dossier and CSV gates, and downgrade rejection with `--require-budget`,
 operating-budget change review with both changed and unchanged outcomes,

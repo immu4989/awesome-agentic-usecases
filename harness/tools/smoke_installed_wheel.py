@@ -76,6 +76,40 @@ def smoke(wheel: Path) -> None:
         service_row["metrics"]["public_value_exact"] = 1
         (root / "service-failed/evaluation.json").write_text(json.dumps(service_evaluation))
         run([cli, "service-trace-eval", "verify", "service-failed"], expected=2)
+        service_criteria = [{"metric": "public_value_exact", "direction": "higher", "limit": 1}]
+        service_policy = {"policy_version": "aau-evaluation-review-policy/1.0", "scenario_ids": ["service"],
+                          "minimum_repeats": 1, "metrics": [{"metric": "public_value_exact", "direction": "higher",
+                          "candidate_observation_limit": 1, "max_mean_regression": 0, "max_regressed_scenarios": 0}]}
+        service_diagnostics = {"plan_version": "aau-evaluation-diagnostics/1.0", "criteria": service_criteria,
+                               "draw_sizes": [1], "cost_basis": {"baseline": "synthetic", "candidate": "synthetic"}}
+        service_budget = {"plan_version": "aau-operating-budget/1.0", "scenario_ids": ["service"], "minimum_repeats": 1,
+                          "criteria": service_criteria, "cost_basis": "synthetic", "groups": [],
+                          "limits": {"cost_per_passing_attempt_usd": .12}}
+        for name, value in (("service-policy", service_policy), ("service-diagnostics", service_diagnostics),
+                            ("service-budget", service_budget)):
+            (root / f"{name}.json").write_text(json.dumps(value))
+        service_command = [cli, "service-review", "create", "service-policy.json", "service-suite.json",
+                           "service-plan.json", "service-traces.json", "service-plan.json", "service-candidate.json",
+                           "--diagnostics", "service-diagnostics.json"]
+        for name, code in (("unknown", 1), ("repaired", 0), ("burden", 1)):
+            if name != "unknown":
+                service_traces["observations"][0].update(cost_usd=.1, latency_s=2, n_api_calls=1)
+            service_trace["recourse_offered"] = name != "burden"
+            (root / "service-candidate.json").write_text(json.dumps(service_traces))
+            directory = f"service-handoff-{name}"
+            run([*service_command, "--operating-budget", "service-budget.json", "--out", directory], expected=code)
+            run([cli, "service-review", "verify", directory, "--require-budget"], expected=code)
+            if len([p for p in (root / directory).rglob('*') if p.is_file()]) != 33:
+                raise RuntimeError("installed service handoff lost source or gate evidence")
+        run([*service_command, "--out", "service-ungated"], expected=1)
+        run([cli, "service-review", "verify", "service-ungated", "--require-budget"], expected=2)
+        service_policy["metrics"][0]["metric"] = "service_completion"
+        (root / "service-policy.json").write_text(json.dumps(service_policy))
+        run([*service_command, "--out", "service-completion-shortcut"], expected=2)
+        if (root / "service-completion-shortcut").exists():
+            raise RuntimeError("completion-only service policy created a misleading handoff")
+        (root / "service-handoff-repaired/candidate/suite.json").write_text('{}')
+        run([cli, "service-review", "verify", "service-handoff-repaired", "--require-budget"], expected=2)
         bound_plan = {"plan_version": "aau-failure-bound-plan/1.0", "scenario_ids": ["synthetic-service"],
                       "n_repeats": 4, "criteria": [{"metric": "completion", "direction": "higher", "limit": 1},
                                                    {"metric": "unauthorized", "direction": "lower", "limit": 0}],
@@ -305,7 +339,7 @@ def smoke(wheel: Path) -> None:
         report["overall"]["cost"]["total_usd"] = 999
         report_path.write_text(json.dumps(report))
         run([cli, "evaluation-pack", "verify", repaired, "--require-recordings", "--require-diagnostics"], expected=2)
-    print("Installed wheel verified outside checkout: demos, conditional failure bounds, policy and operating budget outcomes, candidate matrices, recording/CSV/OTLP import, source-retaining review handoffs, context review, overwrite refusal, and tamper rejection.")
+    print("Installed wheel verified outside checkout: demos, conditional failure bounds, policy and operating budget outcomes, candidate matrices, recording/CSV/OTLP import, strict service-trace and other source-retaining handoffs, context review, overwrite refusal, and tamper rejection.")
 
 
 def main():

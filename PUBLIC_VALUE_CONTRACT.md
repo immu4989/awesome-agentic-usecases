@@ -162,6 +162,13 @@ not population estimates, unique people, independent trials, or evidence of lega
 Repeated observations need distinct declared IDs and must not be presented as independent users.
 Review each contract and its applicability with the accountable service owner.
 
+For repeated case/repeat observations and policy/budget handoff, use the
+[service trace bridge](harness/README.md#score-recorded-service-traces-against-separate-contracts)
+and [complete service review](harness/README.md#gate-a-complete-service-trace-handoff-with-approved-obligations).
+The strict review keeps one common suite, requires every candidate observation to satisfy its
+applicable obligations, and supports independent suite approval pins in CI. Repeated traces are
+not additional independent users. Contract adequacy and trace authenticity remain outside the gate.
+
 ### Integrate the scorer in a service lab
 
 ```python

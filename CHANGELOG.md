@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- **Complete service-trace review and CI gate** — one shared contract suite binds both normalized
+  trace sources through a 30-file policy/diagnostic handoff, or 33 files with a candidate budget.
+  Strict global and joint-success criteria prevent completion-only policy and cost-denominator
+  shortcuts. CI independently pins the suite and source plans; four synthetic contrasts retain
+  failed obligations, excessive timing, unknown cost, and a constructed passing candidate.
+  Full-chain and installed-wheel tests reject altered contracts, unrelated nested reviews,
+  approval drift, and missing budget layers. No legal or deployment approval is inferred.
+
+- **Deterministic constructed evidence** — failure-bound demo fixtures now use explicit supplied
+  observations instead of capturing execution timestamps or ambient provider metadata. A regression
+  test reproduces the previous CI failure path and prevents synthetic examples claiming real execution.
+
 - **Service trace scoring bridge** — recompute public-service metrics from separate contracts
   and complete recorded case/repeat traces, rejecting caller-supplied scores and per-observation
   requirement overrides. Seven-file packs retain sources, findings, required-only protection
