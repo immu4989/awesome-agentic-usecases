@@ -312,6 +312,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="review saved evaluations against explicit multi-metric constraints")
     sub.add_parser("compare-eval-policies", add_help=False,
                    help="identify relaxed or changed evaluation obligations before policy approval")
+    sub.add_parser("compare-service-contracts", add_help=False,
+                   help="explain changed service requirements and their effect on identical recorded traces")
     sub.add_parser("evaluation-pack", add_help=False,
                    help="create and verify portable offline evaluation review packs")
     sub.add_parser("evaluation-demo", add_help=False,
@@ -456,6 +458,10 @@ def main(argv: list[str] | None = None) -> int:
         from .eval_policy_diff import main as policy_diff_main
 
         return policy_diff_main(raw_args[1:])
+    if raw_args and raw_args[0] == "compare-service-contracts":
+        from .eval_service_contract_diff import main as service_contract_diff_main
+
+        return service_contract_diff_main(raw_args[1:])
     if raw_args and raw_args[0] == "import-eval":
         from .eval_import import main as import_main
 

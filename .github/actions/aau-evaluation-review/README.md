@@ -385,6 +385,11 @@ but cannot match an unchanged independent suite pin. This is not authenticated t
 contract adequacy, legal approval, or a real-world effectiveness claim. No permissions, uploads,
 credentials, or installation steps are added. Requires the checkout, not published PyPI 1.6.0.
 
+For changes to the service contract suite itself, first inspect the
+[contract-change and frozen-trace diagnostic](../../../harness/README.md#explain-changed-service-contracts-before-replacing-approval-pins).
+It explains changed requirements but does not approve a new suite pin or bypass this Action's
+strict common-suite checks. A score increase on unchanged traces can reflect removed obligations.
+
 ## Require an independently approved candidate operating budget
 
 Add `operating-budget` and `operating-budget-sha256` to any supported input mode above.

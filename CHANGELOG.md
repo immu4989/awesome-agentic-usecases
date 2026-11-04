@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Service contract change review** — compare every requirement and case-census edit before
+  replacing an approved suite. Optional identical-trace rescoring exposes score changes caused by
+  removed protections, changed prohibitions, or new held-evidence claims, not agent improvements.
+  Four controlled examples retain both suites, fixed inputs, and full before/after findings.
+  No favorable-intersection rescoring, silent truncation, or approval-pin changes occur; normal
+  context gates remain strict. Source tests and isolated-wheel checks cover both changed and
+  unchanged definitions, all obligations, incomplete evidence, and tampered reports.
+
 - **Complete service-trace review and CI gate** — one shared contract suite binds both normalized
   trace sources through a 30-file policy/diagnostic handoff, or 33 files with a candidate budget.
   Strict global and joint-success criteria prevent completion-only policy and cost-denominator

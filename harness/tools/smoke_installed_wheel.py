@@ -110,6 +110,29 @@ def smoke(wheel: Path) -> None:
             raise RuntimeError("completion-only service policy created a misleading handoff")
         (root / "service-handoff-repaired/candidate/suite.json").write_text('{}')
         run([cli, "service-review", "verify", "service-handoff-repaired", "--require-budget"], expected=2)
+        revised_suite = json.loads(json.dumps(service_suite))
+        revised_suite["cases"][0]["contract"]["recourse_required"] = False
+        (root / "revised-service-suite.json").write_text(json.dumps(revised_suite))
+        contract_command = [cli, "compare-service-contracts", "service-suite.json", "revised-service-suite.json",
+                            "--plan", "service-plan.json", "--traces", "service-candidate.json"]
+        run([*contract_command, "--out", "contract-change.json"], expected=1)
+        run([*contract_command, "--verify", "contract-change.json"], expected=1)
+        contract_review = json.loads((root / "contract-change.json").read_text())
+        if (contract_review["frozen_trace_review"]["joint_pass_counts"] != {"baseline": 0, "candidate": 1}
+                or contract_review["changes"][0]["kind"] != "protection_no_longer_required"):
+            raise RuntimeError("contract edit was not distinguished from changed service behavior")
+        run([cli, "compare-service-contracts", "service-suite.json", "service-suite.json",
+             "--plan", "service-plan.json", "--traces", "service-candidate.json", "--out", "unchanged-contract.json"])
+        run([*contract_command, "--out", "contract-change.json"], expected=2)
+        contract_review["changes"] = []
+        (root / "contract-change.json").write_text(json.dumps(contract_review))
+        run([*contract_command, "--verify", "contract-change.json"], expected=2)
+        revised_suite["cases"].append({"case_id": "extra-service", "contract": revised_suite["cases"][0]["contract"]})
+        (root / "revised-service-suite.json").write_text(json.dumps(revised_suite))
+        run([cli, "compare-service-contracts", "service-suite.json", "revised-service-suite.json", "--out", "changed-census.json"], expected=1)
+        run([*contract_command, "--out", "subset-shortcut.json"], expected=2)
+        if (root / "subset-shortcut.json").exists():
+            raise RuntimeError("contract rescoring silently selected an incomplete case intersection")
         bound_plan = {"plan_version": "aau-failure-bound-plan/1.0", "scenario_ids": ["synthetic-service"],
                       "n_repeats": 4, "criteria": [{"metric": "completion", "direction": "higher", "limit": 1},
                                                    {"metric": "unauthorized", "direction": "lower", "limit": 0}],

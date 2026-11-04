@@ -558,6 +558,79 @@ hashes do not authenticate them, and coordinated replacement can still verify of
 No legal compliance, actual public benefit, or deployment approval is inferred.
 Requires the current checkout or a locally built wheel, not the published PyPI 1.6.0 package.
 
+### Explain changed service contracts before replacing approval pins
+
+`aau compare-service-contracts` reviews the requirements behind a score. It compares two valid
+`aau-public-value-suite/1.0` suites and optionally applies both to **one identical, complete
+recorded trace collection** using the same current scorer. This is a requirement-change
+diagnostic—not a baseline/candidate agent evaluation and not a replacement for approval.
+
+```bash
+# Structural changes only, including added and removed cases:
+aau compare-service-contracts approved-suite.json proposed-suite.json --out contract-changes.json
+# Identical case census: inspect what the proposed requirements do to frozen traces:
+aau compare-service-contracts approved-suite.json proposed-suite.json \
+  --plan frozen-plan.json --traces frozen-traces.json --out frozen-review.json
+aau compare-service-contracts approved-suite.json proposed-suite.json \
+  --plan frozen-plan.json --traces frozen-traces.json --verify frozen-review.json
+```
+
+Exit **1** means contract changes request review—even if the same traces now satisfy more
+requirements. Exit **0** means no enumerated contract changes, **not** that the service passed,
+requirements are adequate, or a replacement is approved. Exit **2** means invalid inputs or
+failed verification. Valid changed reports remain available; existing output files are not
+overwritten. Run expected nonzero commands separately, not as an all-success shell chain.
+
+The report identifies all added/removed cases, version labels, terminal expectations, delivery
+channels, protection flags, evidence requirements, held-evidence assertions, and prohibitions.
+It shows exact added/removed list items and derived required-but-not-held request sets. Changing
+channels or document declarations is not automatically stronger, weaker, or less burdensome.
+All edits request review, including added protections and metadata-only version changes.
+
+Try four controlled synthetic examples:
+
+```bash
+python harness/examples/evaluation-review/service_contract_changes.py --out /tmp/aau-contract-changes
+```
+
+| Only the contract changes; traces stay fixed | Jointly satisfied observations, before → after | Interpretation |
+|---|---:|---|
+| Required recourse becomes optional | 1/2 → 2/2 | A protection stopped being required, not newly delivered |
+| A recorded prohibited action is removed from the forbidden set | 1/2 → 2/2 | The same recorded action is assessed under a different prohibition |
+| A required document is newly declared already held | 1/2 → 2/2 | A changed evidence assertion removes a request obligation; acquisition is unverified |
+| Continuity protection becomes required | 2/2 → 1/2 | An additional obligation is unsatisfied; the agent did not change |
+
+Each example retains both suites, plan, frozen traces, and `review.json`. Follow its root
+`README.txt` to recompute. Per-observation before/after assessments, failed obligations, changed
+metrics, all four joint-satisfaction transition counts, and required-only protection counts
+remain in the report. Counts are observations, not independent users or population estimates.
+
+With frozen traces, `--plan` and `--traces` are required together. They use the service-trace
+bridge's existing single/repeated formats and complete coverage checks (at most 500 total
+observations). Rescoring requires **identical case IDs on both suites**; it never drops a removed
+failure or selects a favorable intersection. For changed case censuses, omit both probe options
+and inspect the complete structural change report instead. Requirements that no supplied trace
+exercises still request review even when all resulting scores stay identical.
+
+Case ordering and set-like contract-list ordering are ignored for change classification.
+Omitted optional `continuity_preservation_required` is normalized to false. Original input-value
+hashes remain distinct where appropriate; a no-change result never overrides independently
+pinned bytes or the normal context-mismatch guard. Rescoring intentionally inspects changed
+contexts; ordinary score comparison and strict service-review behavior are unchanged.
+
+Reports bind both suite values, optional frozen inputs, and ten listed first-party implementation
+files. Inputs and reports are limited to 2 MB each; changes and findings are never truncated.
+Keep original inputs alongside the report and use the matching trusted scorer for verification.
+This is not a self-contained source pack, raw-byte archive, authenticated execution record, or
+dependency/interpreter attestation. Full findings and labels are **unsanitized**.
+
+The design is informed by the governance, performance, and monitoring concerns in
+[GAO's AI Accountability Framework](https://www.gao.gov/products/gao-21-519sp), not a claim of
+GAO validation or framework compliance. Domain owners must independently assess changed
+requirements and evidence assertions. No legality, true applicability, actual document receipt,
+real-world benefit, or net policy strength is inferred. No approval pins or workflow settings
+are changed. Requires the current checkout or a locally built wheel, not published PyPI 1.6.0.
+
 ### Import recorded scores from your existing evaluation system
 
 You do not need to rerun an agent through AAU to use its metric audit, paired comparisons,

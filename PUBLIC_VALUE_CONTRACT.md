@@ -169,6 +169,11 @@ The strict review keeps one common suite, requires every candidate observation t
 applicable obligations, and supports independent suite approval pins in CI. Repeated traces are
 not additional independent users. Contract adequacy and trace authenticity remain outside the gate.
 
+Before replacing an approved contract suite, use the
+[contract-change review](harness/README.md#explain-changed-service-contracts-before-replacing-approval-pins)
+to inspect exact requirement edits and, optionally, their effect on one fixed complete trace
+collection. A better score caused by an obligation removal is not an agent improvement.
+
 ### Integrate the scorer in a service lab
 
 ```python

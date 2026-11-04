@@ -127,6 +127,7 @@ contract-to-service-trace scoring with retained failures, unknown operating meas
 downstream evaluation binding, and altered-score rejection,
 complete service handoffs with strict obligation criteria, failed/unknown budget outcomes,
 completion-only policy refusal, and budget-downgrade rejection,
+contract-change diagnostics with identical-trace rescoring, changed-census rejection, and tamper checks,
 standalone operating-budget pass/fail reports, a budget-aware matrix,
 combined policy/budget dossier and CSV gates, and downgrade rejection with `--require-budget`,
 operating-budget change review with both changed and unchanged outcomes,
