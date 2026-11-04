@@ -132,6 +132,7 @@ scorer challenges with accept-all/reject-all negative controls and complete resp
 label-minimized service reproducers with preserved failures, removed labels, private-source checks, and tamper rejection,
 unified pack intake with preserved negative outcomes, explicit expected-profile/budget requirements, and replayed inspection reports,
 receiving-team intake requests with separate request-byte pins, substituted-control failures, and replayed reports,
+ordered evidence histories with preserved earlier failures, missing checkpoints, invalid evidence, and latest-result separation,
 standalone operating-budget pass/fail reports, a budget-aware matrix,
 combined policy/budget dossier and CSV gates, and downgrade rejection with `--require-budget`,
 operating-budget change review with both changed and unchanged outcomes,

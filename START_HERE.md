@@ -30,6 +30,12 @@ benchmark context. Its synthetic walkthrough shows why a passing substituted pol
 accepted delivery. The expected request hash must be controlled independently; it is not a signature
 or proof of approval authority.
 
+Reviewing several deliveries or update checkpoints? Use an
+[ordered evidence history](harness/README.md#preserve-failed-and-missing-checkpoints-across-an-evidence-history).
+`aau review-series` checks the complete planned sequence against one fixed request. A passing
+latest checkpoint never erases an earlier failure or gap. This is offline evidence review, not
+production monitoring or incident closure.
+
 Already have scored evaluation exports? Use the
 **[CSV review handoff](harness/README.md#hand-off-two-csv-exports-as-one-verifiable-review)**
 to turn baseline and candidate CSVs into one portable offline review. It retains both original

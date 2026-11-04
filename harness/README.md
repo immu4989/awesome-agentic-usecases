@@ -230,6 +230,106 @@ the request and its expected hash defeats the boundary. The separate
 protections are unchanged and not replaced. Requires this checkout or its local wheel; not included
 in the currently documented PyPI 1.6.0 release.
 
+## Preserve failed and missing checkpoints across an evidence history
+
+A latest passing review does not explain what happened at earlier checkpoints. `aau review-series`
+checks an **explicitly ordered census of 2–10 checkpoints** against one fixed, separately pinned
+receiving-team request. It retains every failure and gap; it does not roll the baseline forward,
+average away a failure, silently change controls, or use the latest green pack as the whole history.
+
+```bash
+pip install -e harness
+python harness/examples/evaluation-review/evidence_series.py --out /tmp/evidence-series-example
+```
+
+The generated guide contains replay commands for five constructed histories. Every latest
+checkpoint passes, but only `all-met` has no earlier issue. `later-met` retains a policy failure,
+`missing` retains a gap, `invalid` retains an unverifiable checkpoint, and `changed-policy`
+retains a substituted policy that passed its own native review. These are synthetic observations,
+not service monitoring results. Their repeated identical packs are explicitly disclosed.
+
+Define the ordered census independently, using exactly this plan shape:
+
+```json
+{
+  "plan_version": "aau-evidence-series-plan/1.0",
+  "checkpoint_ids": ["before-update", "after-update", "follow-up"]
+}
+```
+
+Checkpoint IDs are unique lowercase directory names matching `[a-z][a-z0-9_-]{0,63}`; reserved
+device names such as `con` and `lpt1` are rejected. Array order is authoritative, not alphabetical
+order, timestamps, repeat IDs, or file modification time. Keep the common request from
+[receiving-team intake](#check-delivered-evidence-against-a-receiving-team-request) and both controls
+outside the evidence root:
+
+```text
+approved-plan.json
+approved-request.json
+history/
+  before-update/  (one complete supported review pack)
+  after-update/   (one complete supported review pack, or absent and explicitly reported missing)
+  follow-up/      (one complete supported review pack)
+```
+
+Independently review and protect **both raw-file hashes**. The plan pin protects the declared
+census and order; the common request pin protects the baseline, profile/version/format, policy,
+plans/mappings, diagnostics, shared service suite, and any required operating budget. Candidate
+observations may change, but the reviewer-selected controls may not change silently. Do not
+compute expected approval hashes from candidate-controlled files in the production job.
+
+```bash
+aau review-series approved-plan.json approved-request.json history \
+  --plan-sha256 "$APPROVED_SERIES_PLAN_SHA256" \
+  --request-sha256 "$APPROVED_INTAKE_REQUEST_SHA256" --out history-review.json
+aau review-series approved-plan.json approved-request.json history \
+  --plan-sha256 "$APPROVED_SERIES_PLAN_SHA256" \
+  --request-sha256 "$APPROVED_INTAKE_REQUEST_SHA256" --verify history-review.json
+```
+
+| Outcome | Exit | What is retained |
+|---|---|---|
+| `series_constraints_met` | 0 | Every planned checkpoint fully verifies and meets the common request |
+| `series_constraints_not_met` | 1 | Every checkpoint verifies, but at least one fails the request—even if the latest passes |
+| `series_evidence_missing` | 1 | At least one planned checkpoint is absent; all supplied valid failures remain visible |
+| `series_not_fully_verified` | 2 | At least one supplied checkpoint is invalid; its diagnostic row and all other outcomes remain visible |
+
+Invalid evidence takes precedence over missing evidence, which takes precedence over valid failed
+requirements; separate counts retain all categories. An invalid checkpoint has **no verified intake
+attached**. Exit 2 can therefore accompany a saved diagnostic history report: it does not mean all
+packs verified. Bad control files/pins, an unsafe or absent root, unexpected root members, changing
+root membership, oversized reports, and output errors instead reject the operation without a new
+report. Expected checkpoint files, symbolic links, and special files are invalid, not missing.
+
+Every supplied pack receives full native source-to-output verification and every request check.
+A later pass never clears `historical_issue_checkpoint_ids`. Adjacent transitions describe changed
+requirement outcomes, **not necessarily changed agent performance**; missing or invalid checkpoints
+break that comparison. `latest_checkpoint` always names the final planned checkpoint, even when
+it is missing or invalid. The report never falls back to an earlier green one.
+
+Identical retained pack inventories are grouped explicitly, but not declared to be independent
+new runs. Even different hashes cannot prove independent executions. No pooled success rate,
+statistical trend, or weighted score is calculated. There are no authenticated timestamps or
+cadence: this cannot establish freshness, uptime, elapsed duration, or time-to-repair. Review only
+the declared scope; this is not an append-only log or proof that no external incidents were omitted.
+Changing that scope requires independently reviewed replacement controls, not automatic trimming.
+
+Save reports outside `history/`; existing reports are never overwritten. Filling a gap or changing
+evidence invalidates replay of the old report; preserve it and create a new one. The root admits only
+planned members and its membership is checked before and after review. Each checkpoint inherits
+the bounded intake limits, including at most 64 files and 128 MB of captured bytes. At most ten
+packs are processed sequentially; the composed JSON report is limited to 2 MB. Checkpoints are
+individually captured, **not an atomic snapshot of a live history**. Retain both controls, all complete
+packs, and reports with a matching trusted harness. Supplied IDs and hashes may disclose information.
+
+The approach supports documented risk tracking discussed in
+[NIST AI RMF MEASURE 3.1](https://airc.nist.gov/airmf-resources/playbook/measure/) and
+[MANAGE 4.1–4.3](https://airc.nist.gov/airmf-resources/playbook/manage/). It is an offline evidence
+review, not a scheduler, production monitor, incident closure, recovery proof, or deployment/
+compliance approval. It neither executes supplied code nor uploads data. Independent governance,
+real measurements, affected-user feedback, and investigation remain necessary. Requires the current
+checkout or local wheel, not the currently documented PyPI 1.6.0 release.
+
 ## Start an evidence project in five minutes
 
 `aau init` generates a complete, non-overwriting evaluation project around an agent you already

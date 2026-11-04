@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Ordered evidence-history review** — check every planned checkpoint against one common pinned
+  request and a separately pinned census/order. A later passing checkpoint cannot erase earlier
+  failed, missing, invalid, or substituted-control evidence. Reports retain every outcome, disclose
+  identical retained pack inventories, and keep the latest checkpoint distinct from whole-history
+  status. Five synthetic histories and offline replay tests cover gaps, altered controls, and invalid
+  evidence. This is not a production monitor, authenticated timeline, recovery proof, or incident closure.
+
 - **Receiving-team evidence requests** — pin the exact review profile, version, source format,
   baseline, policy, mappings, diagnostics, service obligations, and applicable budget independently
   of a delivered pack. `aau review-intake` combines full native verification with every request

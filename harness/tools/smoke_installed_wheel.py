@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -77,6 +78,31 @@ def smoke(wheel: Path) -> None:
         substituted = json.loads((root / "substituted-intake.json").read_text())
         if substituted["unmatched_input_roles"] != ["policy"] or substituted["pack_inspection"]["exit_code"] != 0:
             raise RuntimeError("installed intake confused internal verification with receiver requirements")
+        (root / "intake-request.json").write_bytes(request_raw)
+        series_plan = {"plan_version": "aau-evidence-series-plan/1.0", "checkpoint_ids": ["before", "during", "after"]}
+        plan_raw = json.dumps(series_plan).encode("utf-8")
+        (root / "series-plan.json").write_bytes(plan_raw)
+        for name, source in (("before", "repaired"), ("during", "intermittent"), ("after", "repaired")):
+            shutil.copytree(root / "demo" / source, root / "series" / name)
+        series_command = [cli, "review-series", "series-plan.json", "intake-request.json", "series",
+                          "--plan-sha256", hashlib.sha256(plan_raw).hexdigest(), "--request-sha256", request_pin]
+        run([*series_command, "--out", "series.json"], expected=1)
+        run([*series_command, "--verify", "series.json"], expected=1)
+        series = json.loads((root / "series.json").read_text())
+        if series["historical_issue_checkpoint_ids"] != ["during"] or series["latest_checkpoint"]["status"] != "request_constraints_met":
+            raise RuntimeError("installed series review erased an earlier failure behind a later pass")
+        (root / "series/during").rename(root / "retained-checkpoint")
+        run([*series_command, "--out", "series-missing.json"], expected=1)
+        missing = json.loads((root / "series-missing.json").read_text())
+        if missing["status"] != "series_evidence_missing" or missing["checkpoints"][1]["status"] != "missing":
+            raise RuntimeError("installed series review hid a missing checkpoint")
+        (root / "retained-checkpoint").rename(root / "series/during")
+        (root / "series/during/review.json").write_text("{}")
+        run([*series_command, "--out", "series-invalid.json"], expected=2)
+        run([*series_command, "--verify", "series-invalid.json"], expected=2)
+        invalid = json.loads((root / "series-invalid.json").read_text())
+        if invalid["status"] != "series_not_fully_verified" or invalid["checkpoints"][1]["status"] != "invalid":
+            raise RuntimeError("installed series review promoted invalid historical evidence")
         service_plan = {"plan_version": "aau-service-trace-import/1.0", "source_label": "Synthetic wheel service", "n_repeats": 1}
         service_contract = {"version": "synthetic-1", "expected_terminal": "route_review", "required_evidence": [],
                             "held_evidence": [], "required_channel": "phone_711", "recourse_required": True,
