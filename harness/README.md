@@ -1447,6 +1447,100 @@ explicit criteria, and draw sizes bind reverification. Outputs are never overwri
 keeps the 2 MB input/report limit. Review scenario IDs, scores, and mismatch details before sharing.
 No network access, model execution, or new dependency is required.
 
+### Quantify what zero observed failures can support
+
+`aau failure-bound-eval` separates **observed benchmark outcomes** from **conditional population
+bounds**. It answers a different question from the policy and repeatability tools: is an apparently
+perfect result still too small to support the declared failure-probability limit, under explicitly
+supplied sampling assumptions? It never changes a policy verdict or approves deployment.
+
+```bash
+# Current repository checkout; these commands do not collect data or call a model.
+python harness/examples/evaluation-review/failure_bounds.py --out /tmp/aau-failure-bounds
+aau failure-bound-eval /tmp/aau-failure-bounds/few-scenarios/plan.json \
+  /tmp/aau-failure-bounds/few-scenarios/evaluation.json --out /tmp/few-scenarios-review.json
+aau failure-bound-eval /tmp/aau-failure-bounds/few-scenarios/plan.json \
+  /tmp/aau-failure-bounds/few-scenarios/evaluation.json --verify /tmp/few-scenarios-review.json
+```
+
+The example emits four synthetic contrasts, with all supplied criteria passing on every repeat:
+
+| Constructed evidence | What the diagnostic reports |
+| --- | --- |
+| 20 fixed benchmark scenarios, four repeats each | Population inference withheld; a benchmark is not automatically a random sample |
+| 20 scenarios, four repeats, hypothetical IID fixed-horizon design | About 13.9% one-sided upper failure bound at 95% confidence; 80 observations are not 80 sampling units |
+| 60 scenarios with that same hypothetical design | About 4.87% upper bound, below the illustrative 5% target |
+| 100 scenarios, including a ten-scenario assisted-channel group | Overall conditional bound meets 5%; the small group's bound exceeds it after family adjustment |
+
+These are arithmetic examples, **not sampled users, measured agent improvements, or actual evidence
+of production reliability**. Their IID declarations are hypothetical. Do not copy them into a pilot.
+
+A plan declares this complete contract; replace the IDs, criteria, limits, and sampling basis with
+independently reviewed inputs before collection, not after seeing results:
+
+```json
+{
+  "plan_version": "aau-failure-bound-plan/1.0",
+  "scenario_ids": ["case-a", "case-b"],
+  "n_repeats": 4,
+  "criteria": [
+    {"metric": "completion", "direction": "higher", "limit": 1},
+    {"metric": "unauthorized", "direction": "lower", "limit": 0}
+  ],
+  "sampling_design": "fixed_benchmark",
+  "sampling_basis": "Two deliberately selected challenge cases; not an IID sample.",
+  "confidence_level": 0.95,
+  "maximum_failure_probability": 0.05,
+  "groups": [
+    {"group_id": "assisted-channel", "scenario_ids": ["case-b"], "maximum_failure_probability": 0.05}
+  ]
+}
+```
+
+The evaluation must contain exactly the planned scenarios and repeat count. **One statistical unit
+is the entire scenario bundle**: any criterion failure on any repeat fails that bundle. Later success
+cannot erase an earlier failure, and extra repeats do not increase the sampling-unit count. The
+quantity being bounded is failure of this repeat protocol, not failure of an individual API call.
+Every selected metric must be measured on every repeat; missing data is an error, not a passing row.
+Unselected metrics and stored-summary inconsistencies remain visible.
+Plans support 1–10 criteria, up to 19 named groups plus the mandatory overall scope, confidence
+levels from 0.5 through 0.999999, and failure limits from zero up to but not including one.
+
+`fixed_benchmark` withholds every population bound. Only the explicit
+`declared_iid_fixed_horizon` mode computes one-sided Clopper–Pearson upper limits, using
+binomial-CDF inversion rather than a normal approximation. The implementation uses floating-point
+arithmetic and is tested against an independent high-precision calculation.
+See [NIST's exact binomial method](https://itl.nist.gov/div898/software/dataplot/refman2/auxillar/exacbino.htm).
+
+The mandatory overall scope and every declared group form one family. Each uses tail probability
+`(1 - confidence_level) / family_size`. This Bonferroni adjustment also applies when groups overlap;
+it does not require independence between group reports. An overall result cannot substitute for
+a small group's evidence. See [NIST's Bonferroni inequality](https://www.itl.nist.gov/div898/handbook/prc/section4/prc473.htm).
+
+Each scope includes a **hypothetical zero-failure planning quantity**: for a new fixed-horizon design,
+how many distinct scenario bundles with no failures would be needed under those assumptions?
+With one scope, 95% confidence, and a 1% limit, the calculation gives 299. Zero risk has no finite
+zero-failure sample; quantities above one billion are reported as outside the planning range.
+These are not a prescription to keep sampling until a result passes, a way to discard existing
+failures, or a power calculation for a nonzero true failure rate. Current inputs remain bounded
+to 500 scenarios and 10,000 observations; a planning quantity may exceed that supported input size.
+
+Interpretation requires IID bundles **within each scope**, stable conditions, a suitable population,
+and the fixed plan/horizon chosen before outcomes. The tool verifies none of those assumptions.
+Renaming duplicate cases does not create independent samples. Adaptive sampling, outcome-selected
+groups, repeated peeking, optional stopping, reused benchmarks, and selecting the best of many
+candidate agents are not covered by the reported confidence level. A bound is not a posterior
+probability that a risk statement is true. Never use it as a substitute for service-specific
+obligations, human review, or the existing quality and operating gates.
+
+The API is `review_failure_bounds(plan, evaluation)` in `aau_harness.eval_failure_bound`.
+CLI exit **0** means a diagnostic was produced or reverified, including when limits are exceeded
+or inference is withheld; exit **2** means invalid input/output or a mismatching saved report.
+Both input JSON-value hashes are retained, outputs are never overwritten, and reports have a 2 MB
+limit. Keep the plan, evaluation, and report together. No statistical package, network, model call,
+or new runtime dependency is needed. Inspect sampling notes, identifiers, and failed scores before
+sharing; this is not a sanitization tool. Available in the current checkout, not a new PyPI release.
+
 ### Try the evaluation workflow from an installed package
 
 `aau evaluation-demo --out /path/to/new-demo` creates two complete synthetic review dossiers

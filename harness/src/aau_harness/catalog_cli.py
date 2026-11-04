@@ -294,6 +294,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="compare matched scenarios in two saved evaluations without model calls")
     sub.add_parser("compare-eval-contexts", add_help=False,
                    help="explain changed scenario, configuration, and scoring fingerprints without pairing scores")
+    sub.add_parser("failure-bound-eval", add_help=False,
+                   help="Separate benchmark failure counts from conditional fixed-horizon bounds")
     sub.add_parser("repeatability-eval", add_help=False,
                    help="expose intermittent joint-constraint failures across recorded repeats")
     sub.add_parser("operating-eval", add_help=False,
@@ -423,6 +425,9 @@ def main(argv: list[str] | None = None) -> int:
         from .eval_operations import main as operations_main
 
         return operations_main(raw_args[1:])
+    if raw_args and raw_args[0] == "failure-bound-eval":
+        from .eval_failure_bound import main as failure_bound_main
+        return failure_bound_main(raw_args[1:])
     if raw_args and raw_args[0] == "repeatability-eval":
         from .eval_repeatability import main as repeatability_main
 

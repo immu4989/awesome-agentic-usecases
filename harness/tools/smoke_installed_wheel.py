@@ -46,6 +46,28 @@ def smoke(wheel: Path) -> None:
             raise RuntimeError("installed source receipt is incomplete or exposes local paths")
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
+        bound_plan = {"plan_version": "aau-failure-bound-plan/1.0", "scenario_ids": ["synthetic-service"],
+                      "n_repeats": 4, "criteria": [{"metric": "completion", "direction": "higher", "limit": 1},
+                                                   {"metric": "unauthorized", "direction": "lower", "limit": 0}],
+                      "sampling_design": "fixed_benchmark", "sampling_basis": "Synthetic installed-wheel fixture only.",
+                      "confidence_level": .95, "maximum_failure_probability": .05, "groups": []}
+        (root / "bound-plan.json").write_text(json.dumps(bound_plan))
+        bound_command = [cli, "failure-bound-eval", "bound-plan.json", "demo/repaired/candidate.json"]
+        run([*bound_command, "--out", "benchmark-bound.json"])
+        run([*bound_command, "--verify", "benchmark-bound.json"])
+        if json.loads((root / "benchmark-bound.json").read_text())["status"] != "population_inference_withheld":
+            raise RuntimeError("fixed benchmark incorrectly produced population inference")
+        bound_plan["sampling_design"] = "declared_iid_fixed_horizon"
+        (root / "bound-plan.json").write_text(json.dumps(bound_plan))
+        run([*bound_command, "--out", "conditional-bound.json"])
+        run([*bound_command, "--verify", "conditional-bound.json"])
+        conditional = json.loads((root / "conditional-bound.json").read_text())
+        if conditional["status"] != "conditional_bounds_exceed_limits" or conditional["scenario_count"] != 1:
+            raise RuntimeError("repeats were counted as independent scenarios or missing sufficiency was hidden")
+        run([*bound_command, "--out", "conditional-bound.json"], expected=2)
+        conditional["scopes"][0]["one_sided_upper_failure_bound"] = 0
+        (root / "conditional-bound.json").write_text(json.dumps(conditional))
+        run([*bound_command, "--verify", "conditional-bound.json"], expected=2)
         run([cli, "retry-demo", "--out", "retry-demo"])
         run([cli, "retry-demo", "--out", "retry-demo"], expected=2)
         for name, code in (("earlier-harm", 1), ("slow-completion", 1), ("repaired", 0)):
@@ -238,7 +260,7 @@ def smoke(wheel: Path) -> None:
         report["overall"]["cost"]["total_usd"] = 999
         report_path.write_text(json.dumps(report))
         run([cli, "evaluation-pack", "verify", repaired, "--require-recordings", "--require-diagnostics"], expected=2)
-    print("Installed wheel verified outside checkout: demos, policy and operating budget outcomes, candidate matrices, recording/CSV/OTLP import, source-retaining review handoffs, context review, overwrite refusal, and tamper rejection.")
+    print("Installed wheel verified outside checkout: demos, conditional failure bounds, policy and operating budget outcomes, candidate matrices, recording/CSV/OTLP import, source-retaining review handoffs, context review, overwrite refusal, and tamper rejection.")
 
 
 def main():

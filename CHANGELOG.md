@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Conditional failure-bound diagnostic** — distinguish perfect recorded benchmarks from
+  sufficient evidence under a declared fixed-horizon IID sampling design. Whole scenario bundles,
+  not repeated calls, are the sampling units; exact-binomial upper bounds include every declared
+  group's family adjustment. Fixed benchmarks withhold population inference. Synthetic contrasts,
+  high-precision numerical tests, zero-failure planning, and installed-wheel checks expose small
+  samples and earlier failures without implying production safety or replacing policy gates.
+
 - **Checkout-to-package content audit** — read-only comparison of the source distribution and
   wheel against first-party Python files, packaging inputs, dependencies, and console commands.
   Release CI now rejects content drift before installed-wheel execution, upload, or attestation.
