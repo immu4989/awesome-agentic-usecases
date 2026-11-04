@@ -422,6 +422,76 @@ These counts describe supplied observations, not population representativeness, 
 or production reliability. Historical reports remain unchanged; regenerate them explicitly from
 their original evidence if new coverage annotations are needed.
 
+### Score recorded service traces against separate contracts
+
+`aau service-trace-eval` recomputes public-service scores from normalized recorded events and
+separately supplied service contracts. Unlike the score importers below, it does not accept
+caller-supplied scores or per-observation contract overrides. It uses the existing
+[public-value scorer](../PUBLIC_VALUE_CONTRACT.md), retaining completion, document burden,
+channel access, recourse, deadline, continuity, and forbidden-action findings.
+
+Install the current checkout with `python -m pip install -e harness`; this command is not in
+the previously published PyPI 1.6.0 release. Run the synthetic example from the repository root
+with an unused destination:
+
+```bash
+python harness/examples/evaluation-review/service_traces.py --out /tmp/aau-service-traces
+aau service-trace-eval verify /tmp/aau-service-traces/baseline \
+  --evaluation /tmp/aau-service-traces/burden-review/baseline.json
+aau service-trace-eval verify /tmp/aau-service-traces/burden \
+  --evaluation /tmp/aau-service-traces/burden-review/candidate.json
+aau evaluation-pack verify /tmp/aau-service-traces/burden-review \
+  --require-diagnostics --require-budget
+```
+
+Run the verification commands separately: their expected exits are **0, 1, 1**. A valid failed
+scoring pack exits 1 and retains all evidence; malformed inputs or failed verification exit 2.
+Open `burden-review/review.html` and `repaired-review/review.html` inside the generated folder.
+Both candidates record 100% completion, but one of four burden-candidate observations requests
+already-held evidence twice and an out-of-contract password, uses the wrong channel, and omits
+required recourse. Joint success is 75%, not 100%. The same synthetic $0.40 costs about $0.133
+per passing observation, above the illustrative $0.12 budget. The repaired fixture is constructed,
+not an observed production repair; no real service, person, billing, or model is involved.
+
+For your own inputs:
+
+```bash
+aau service-trace-eval create plan.json suite.json traces.json --out new-source-pack
+aau service-trace-eval verify new-source-pack --evaluation downstream-review/candidate.json
+```
+
+The plan has exactly `plan_version: "aau-service-trace-import/1.0"`, a nonblank `source_label`,
+and integer `n_repeats`. The suite uses `aau-public-value-suite/1.0` and separate
+`{case_id, contract}` entries. Trace format `aau-public-value-traces/1.0` accepts existing
+`{case_id, trace}` observations with exactly one planned repeat. Format
+`aau-public-value-traces/1.1` requires an explicit zero-based `repeat` and optionally accepts
+`cost_usd`, `latency_s`, and `n_api_calls`. Every declared case/repeat must appear exactly once;
+missing observations, duplicates, unknown cases, and extra fields are rejected. At most 500
+total observations are allowed. Omitted operating measurements remain unknown, not zero.
+
+Each pack retains seven files: `plan.json`, `suite.json`, `traces.json`, `scoring.json`,
+`recording.json`, `evaluation.json`, and `manifest.json`. Verification recomputes every member,
+rejects extra/missing files and symlinks, and optionally binds the downstream evaluation.
+Inputs and expanded output members are bounded to 2 MB; findings are never truncated.
+Retain both source packs alongside a baseline/candidate dossier and verify both bindings.
+The normalized evaluation's generic `imported_unverified_observations` label remains unchanged;
+the separate `scoring.json` records the preceding trace-to-score computation.
+
+Context fingerprints bind supplied contracts and nine installed first-party scoring-source
+files, so changed requirements or scoring code cannot silently compare as the same context.
+They do not authenticate execution or cover the interpreter/dependency closure. Verification
+requires matching scorer bytes; retain the trusted checkout or wheel used to create the pack.
+Inapplicable protections score as satisfied, not performed: `required_protection_coverage`
+separately counts required, satisfied-required, and not-required observations.
+
+Contracts remain service-owner declarations, not inferred law or independently approved policy;
+trace flags and events are supplied assertions, not authenticated logs. Review and approve your
+own requirements independently. Complete declared coverage does not prove complete external
+activity or population representativeness. Retention preserves JSON values, not original file
+bytes, and does not sanitize personal data. Coordinated replacement of all inputs can produce a
+new internally consistent pack. No legal compliance, eligibility, public benefit, or deployment
+approval follows from passing these checks.
+
 ### Import recorded scores from your existing evaluation system
 
 You do not need to rerun an agent through AAU to use its metric audit, paired comparisons,

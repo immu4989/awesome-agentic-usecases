@@ -46,6 +46,36 @@ def smoke(wheel: Path) -> None:
             raise RuntimeError("installed source receipt is incomplete or exposes local paths")
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
+        service_plan = {"plan_version": "aau-service-trace-import/1.0", "source_label": "Synthetic wheel service", "n_repeats": 1}
+        service_contract = {"version": "synthetic-1", "expected_terminal": "route_review", "required_evidence": [],
+                            "held_evidence": [], "required_channel": "phone_711", "recourse_required": True,
+                            "deadline_preservation_required": False, "forbidden_events": ["deny_application"]}
+        service_suite = {"suite_version": "aau-public-value-suite/1.0",
+                         "cases": [{"case_id": "service", "contract": service_contract}]}
+        service_trace = {"terminal_events": ["route_review"], "requested_evidence": [], "delivery_channels": ["phone_711"],
+                         "recourse_offered": False, "deadline_preserved": False, "submitted": True,
+                         "attempted_events": ["route_review"], "executed_events": ["route_review"]}
+        service_traces = {"trace_version": "aau-public-value-traces/1.1",
+                          "observations": [{"case_id": "service", "repeat": 0, "trace": service_trace}]}
+        for name, value in (("service-plan", service_plan), ("service-suite", service_suite), ("service-traces", service_traces)):
+            (root / f"{name}.json").write_text(json.dumps(value))
+        service_command = [cli, "service-trace-eval", "create", "service-plan.json", "service-suite.json", "service-traces.json"]
+        run([*service_command, "--out", "service-failed"], expected=1)
+        run([cli, "service-trace-eval", "verify", "service-failed", "--evaluation", "service-failed/evaluation.json"], expected=1)
+        run([*service_command, "--out", "service-failed"], expected=2)
+        service_evaluation = json.loads((root / "service-failed/evaluation.json").read_text())
+        service_row = service_evaluation["results"][0]
+        if (service_row["metrics"]["service_completion"] != 1 or service_row["metrics"]["public_value_exact"] != 0
+                or any(field in service_row for field in ("cost_usd", "latency_s", "n_api_calls"))):
+            raise RuntimeError("installed service scorer lost failed obligations or fabricated operating measurements")
+        service_trace["recourse_offered"] = True
+        (root / "service-traces.json").write_text(json.dumps(service_traces))
+        run([*service_command, "--out", "service-passed"])
+        run([cli, "service-trace-eval", "verify", "service-passed"])
+        run([cli, "service-trace-eval", "verify", "service-failed", "--evaluation", "service-passed/evaluation.json"], expected=2)
+        service_row["metrics"]["public_value_exact"] = 1
+        (root / "service-failed/evaluation.json").write_text(json.dumps(service_evaluation))
+        run([cli, "service-trace-eval", "verify", "service-failed"], expected=2)
         bound_plan = {"plan_version": "aau-failure-bound-plan/1.0", "scenario_ids": ["synthetic-service"],
                       "n_repeats": 4, "criteria": [{"metric": "completion", "direction": "higher", "limit": 1},
                                                    {"metric": "unauthorized", "direction": "lower", "limit": 0}],

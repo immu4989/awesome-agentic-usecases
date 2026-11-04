@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Service trace scoring bridge** — recompute public-service metrics from separate contracts
+  and complete recorded case/repeat traces, rejecting caller-supplied scores and per-observation
+  requirement overrides. Seven-file packs retain sources, findings, required-only protection
+  counts, scoring-source fingerprints, and a verifiable downstream evaluation binding.
+  A synthetic policy/budget walkthrough exposes 100% completion with only 75% joint success;
+  source tests and installed-wheel checks cover failed evidence, tampering, and missing measurements.
+  No service execution, source authentication, legal approval, or actual public benefit is inferred.
+
 - **Readable failure-bound handoff** — portable five-file packs bind the sampling plan and full
   evaluation to exact diagnostic JSON and a script-free reviewer page. Charts distinguish observed
   outcomes, conditional limits, and withheld inference; every group and recorded failure remains
