@@ -174,6 +174,16 @@ Before replacing an approved contract suite, use the
 to inspect exact requirement edits and, optionally, their effect on one fixed complete trace
 collection. A better score caused by an obligation removal is not an agent improvement.
 
+### Reproduce a scoring failure without copying original labels
+
+The [label-minimized reproducer](harness/README.md#prepare-a-label-minimized-service-reproducer-for-disclosure-review)
+replaces case, event, evidence, channel, version, and source names while preserving every
+declared observation's component scores, duplicate requests, prohibited events, and protection
+counts. It drops operating measurements and original-input hashes; a local source check can
+recompute the transformation without exporting originals. Counts and patterns remain sensitive:
+this is a debugging aid for independent disclosure review, **not anonymization or permission to
+publish**. A synthetic example and exact-file verifier demonstrate the retained failures.
+
 ### Integrate the scorer in a service lab
 
 ```python

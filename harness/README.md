@@ -720,6 +720,85 @@ Listed implementation fingerprints do not cover dependencies or the interpreter.
 unsanitized; use synthetic/public inputs and review before sharing. Normal service-review and
 approval gates remain unchanged. Requires this checkout or a locally built wheel, not PyPI 1.6.0.
 
+### Prepare a label-minimized service reproducer for disclosure review
+
+Service packs retain exact supplied label values. A case ID, event name, document label, or
+source description can therefore expose information a team did not intend to share with a
+vendor, maintainer, or reviewer. `aau service-reproducer` creates a **label-minimized reproducer**
+while checking that every supplied service-scoring result survives the transformation.
+It is **not anonymization, privacy certification, or approval to publish**.
+
+Try the synthetic example without credentials:
+
+```bash
+python harness/examples/evaluation-review/service_reproducer.py --out /tmp/service-reproducer
+aau service-reproducer verify /tmp/service-reproducer
+# The nested service still fails its recourse obligation: this command intentionally exits 1.
+aau service-trace-eval verify /tmp/service-reproducer/service
+```
+
+The ten-file folder contains a normal seven-file `service/` scoring pack, `reproduction.json`,
+`README.txt`, and a root manifest. Both synthetic cases remain; the missing required recourse
+still fails, and optional recourse remains optional. A valid reproducer is not a successful
+service interaction. For your own already-normalized service inputs:
+
+```bash
+aau service-reproducer create private-plan.json private-suite.json private-traces.json --out new-reproducer
+aau service-reproducer verify new-reproducer
+# Owner-side only; originals stay local and are not copied into the reproducer:
+aau service-reproducer verify-source new-reproducer private-plan.json private-suite.json private-traces.json
+```
+
+All three commands exit **0** for a valid reproducer, including one containing service failures;
+**2** rejects invalid evidence, failed preservation, overwritten destinations, or changed files.
+Use `aau service-trace-eval verify new-reproducer/service` separately for its usual service
+pass/fail exit codes. No command uploads data, executes a service, or authorizes disclosure.
+
+| Replaced or removed | Retained for reproducing the scorer |
+|---|---|
+| Original case IDs and source description | Complete declared case/repeat census, including non-submission and failures |
+| Original contract version, event, evidence, and channel labels | Per-case event/evidence/channel equality across roles, order, and repetitions |
+| Cost, latency, and API-call measurements | Absence of operating evidence, never invented zero measurements |
+| Original-input hashes and any identity mapping | Hashes of minimized outputs and exact recomputed obligation findings |
+
+Aliases are deterministic per-case ordinals, separately scoped to events, evidence, and channels.
+Expected, forbidden, attempted, executed, and terminal event roles share one event mapping;
+required, held, and requested evidence share one evidence mapping. Repeated requests, extra
+terminal/channel events, and blocked attempts cannot disappear through set conversion.
+Cross-case/cross-namespace label identity and domain meaning are intentionally not retained.
+Contract list order is preserved; trace rows are joined by exact original case and repeat, not
+array position. Optional continuity flags receive the existing false default.
+
+The generator validates the **entire original input** before transforming it. Unknown fields,
+missing cases/repeats, invalid measurements, and contract overrides are rejected, not stripped
+into acceptable evidence. It recomputes every original and transformed component metric, not
+just average or joint success, and checks required-protection counts before writing anything.
+Normal source limits apply: 1–500 complete case/repeat observations and 2 MB per input/output
+member, with no truncation. Original files are never rewritten or deleted.
+
+Verification requires a fixed point of the minimization profile plus exact recomputation of all
+ten files. An ordinary unsanitized service pack cannot pass merely by being placed inside the
+folder or rehashed. The verifier without originals proves **only the exported profile and its
+internal evidence**. It cannot prove correspondence to an original source. Owner-side
+`verify-source` reproduces the transformation, but deliberately does not prove exact source
+identity: changed private names, version labels, or removed operating values can yield the same
+export. No reversible map or private-input hash is emitted; hashing labels would still expose
+guessable identifiers. Unsigned coordinated replacement of a complete pack can still verify.
+
+**Residual disclosure risk remains.** Counts, rare combinations of flags, order, repetitions,
+and outcomes may disclose sensitive facts or enable linkage using other data. There is no
+differential privacy, re-identification risk estimate, or domain/legal applicability assessment.
+Before sharing, independently review the full folder, recipients, linkage risks, and applicable
+permissions; prefer an independent synthetic example when disclosure is inappropriate. Do not
+treat aliases as secret tokens or replace original approval pins with a matching score.
+
+[NIST SP 800-188](https://csrc.nist.gov/pubs/sp/800/188/final) distinguishes masking from adequate
+de-identification and calls for disclosure-risk and sharing-model decisions. That motivates these
+explicit limitations; this feature does not implement or certify NIST de-identification guidance.
+It is a scorer-debugging aid, not evidence of authentic execution, real-world benefit, original
+context equivalence, or deployment readiness. Requires this checkout or a locally built wheel,
+not the published PyPI 1.6.0 package.
+
 ### Import recorded scores from your existing evaluation system
 
 You do not need to rerun an agent through AAU to use its metric audit, paired comparisons,

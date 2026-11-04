@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Label-minimized service reproducers** — replace original source/case/contract/event/evidence/
+  channel labels and remove operating values and private-input hashes while preserving every
+  declared case/repeat and component result. Ten-file packs support public-profile verification
+  and separate owner-side transformation checks, with no identity map, silent filtering, or
+  source-provenance claim. Synthetic canaries, failure-preservation tests, and installed-wheel
+  checks cover the export. Remaining patterns can disclose information: this is not anonymization
+  or publication approval.
+
 - **Service-scoring adapter challenge** — construct clean controls and targeted obligation
   violations without using the challenged scorer to generate expected results. Separate public
   inputs and expected scores, complete response coverage, explicit adapter errors, and component

@@ -59,6 +59,23 @@ def smoke(wheel: Path) -> None:
                           "observations": [{"case_id": "service", "repeat": 0, "trace": service_trace}]}
         for name, value in (("service-plan", service_plan), ("service-suite", service_suite), ("service-traces", service_traces)):
             (root / f"{name}.json").write_text(json.dumps(value))
+        reproducer_inputs = ["service-plan.json", "service-suite.json", "service-traces.json"]
+        run([cli, "service-reproducer", "create", *reproducer_inputs, "--out", "service-reproducer"])
+        run([cli, "service-reproducer", "create", *reproducer_inputs, "--out", "service-reproducer"], expected=2)
+        run([cli, "service-reproducer", "verify", "service-reproducer"])
+        run([cli, "service-reproducer", "verify-source", "service-reproducer", *reproducer_inputs])
+        run([cli, "service-trace-eval", "verify", "service-reproducer/service"], expected=1)
+        minimized_files = [path for path in (root / "service-reproducer").rglob("*") if path.is_file()]
+        if len(minimized_files) != 10 or any(b"Synthetic wheel service" in path.read_bytes() for path in minimized_files):
+            raise RuntimeError("installed reproducer lost complete evidence or copied the original source label")
+        changed_traces = json.loads(json.dumps(service_traces))
+        changed_traces["observations"][0]["trace"]["recourse_offered"] = True
+        (root / "service-reproducer-changed.json").write_text(json.dumps(changed_traces))
+        run([cli, "service-reproducer", "verify-source", "service-reproducer", *reproducer_inputs[:2],
+             "service-reproducer-changed.json"], expected=2)
+        minimized_report = root / "service-reproducer/reproduction.json"
+        minimized_report.write_text(minimized_report.read_text() + " ")
+        run([cli, "service-reproducer", "verify", "service-reproducer"], expected=2)
         run([cli, "service-challenge", "create", "service-suite.json", "--out", "service-challenge"])
         run([cli, "service-challenge", "verify", "service-challenge"])
         # Reference self-check: installed scorer receives only public challenge inputs, not oracle scores.
