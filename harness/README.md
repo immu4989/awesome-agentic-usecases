@@ -691,6 +691,84 @@ waiting, and timeouts do not establish that no side effect occurred.
 The explicit task boundary and conservative aggregation rules above are this repository's design
 response, not an AWS standard, endorsement, or proof that a retry is authorized.
 
+### Bring an OpenTelemetry trace export into retry review
+
+`aau otlp-retries` projects an explicitly mapped **OTLP JSON trace object or JSONL trace
+file** into the existing retry-accounting contract, entirely offline. It retains the original
+bytes and every declared span role. Requires the current checkout or a locally built wheel;
+this command is not in published PyPI 1.6.0.
+
+```bash
+# A constructed example: two tasks, four attempts, one excluded nested detail span.
+python harness/examples/evaluation-review/otlp_retries.py --out /tmp/otlp-example
+aau otlp-retries verify /tmp/otlp-example
+
+# Adapt the example mapping to your own already-scored, explicitly bounded export.
+aau otlp-retries create reviewed-mapping.json export.json --out otlp-pack
+aau otlp-retries verify otlp-pack --ledger handoff/candidate/ledger.json \
+  --evaluation handoff/candidate/evaluation.json
+```
+
+The last command verifies an **existing** downstream handoff's bindings; it does not create
+that handoff. Feed `otlp-pack/retry/plan.json` and `otlp-pack/retry/ledger.json` to
+`aau retry-review create` as documented below. Keep the ten-file OTLP pack alongside the
+review: the retry handoff alone does **not** retain or verify the original OTLP export.
+Verify each projection against its corresponding baseline or candidate handoff paths.
+
+The example preserves an early authorization violation despite final completion. It also
+keeps all four attempt costs, uses the 10-second task span rather than its last 1-second
+call, and excludes a fictional nested $999 cost explicitly instead of counting it twice.
+These are constructed measurements, not real service performance or provider invoices.
+
+| Mapping field | Required meaning |
+|---|---|
+| `mapping_version` | `aau-otlp-retry-import/1.0` |
+| `source_format` | `otlp_json` for one object; `otlp_jsonl` for newline-delimited trace objects |
+| `span_semantics` | `single_attempt_direct_children_same_resource_clock`, an explicit reviewer declaration |
+| `accounting_plan` | Complete retry plan: scenario census, repeats, reducers, and optional real context |
+| `attributes.metrics` | Each reduced metric maps to a distinct numeric span attribute containing an existing score |
+| `attributes.operating` | Optional `cost_usd` and `n_api_calls` map to distinct attributes; no inferred prices or counts |
+| `tasks` | Scenario/repeat plus `trace_id`, `task_span_id`, and **ordered** `attempt_span_ids` |
+| `excluded_spans` | Every remaining exported span needs its `trace_id`, `span_id`, and a specific `reason` |
+
+This is an explicit sequential profile, **not a general OTLP receiver or automatic GenAI
+span classifier**. Selected attempts must be direct children of their task in the same
+exported resource entry, in declared non-overlapping time order, inside the task interval.
+All direct children must be selected attempts: excluding one to hide a failure is refused.
+Nested task scopes, cycles, cross-resource attempts, hedged requests, and parallel attempts
+are refused. A task and its attempts split across separate resource entries or JSONL records
+are not supported, even if those entries describe an equivalent resource. Export a complete
+single-resource task unit; do not relabel distributed clocks to make it pass.
+
+[OpenTelemetry's GenAI guidance](https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/gen-ai-spans.md)
+allows a logical-operation span to contain automatic retries. Such a span is **not evidence
+of one physical attempt**. Use separately instrumented single-attempt spans and review their
+accounting scope. No semantic convention, span name, success status, token count, or model
+identifier becomes a score, USD charge, or API-call count automatically.
+
+Mapped attributes accept numeric `intValue`/`doubleValue`, not numeric strings stored as
+`stringValue`, booleans, or nulls. Missing attributes remain absent. Task and attempt durations
+come from integer nanosecond timestamp differences before conversion to seconds; the task
+duration is never replaced with a sum of calls. Clock accuracy and disjoint billing scope
+remain declarations. Different scopes under the same resource are allowed; co-location does
+not authenticate a common clock. See the [research and scope notes](../docs/OTLP_RETRY_IMPORT_RESEARCH_NOTES.md).
+
+The ten-file pack contains `source.otlp`, `mapping.json`, `projection.json`, a root manifest,
+and the six-file `retry/` pack. Verification reprojects the source and recomputes every nested
+file. Rehashing a substituted ledger or unrelated evaluation is insufficient. Source files
+are retained byte-for-byte, including unreviewed attributes and events; JSON mappings retain
+values. Each file is capped at 2 MB; at most 10,000 spans, 10,000 tasks, and 100 attempts per
+task are supported, subject to the retry contract's 10,000-attempt ceiling. Duplicate JSON
+keys and span identities, extra/missing members, symlinks, and overwrites are refused.
+
+Exit **0** means the conversion verifies, even if its scores fail policy. Exit **2** means
+invalid inputs or failed verification. Use the separate policy/budget gate for pass/fail.
+Only aggregate counts appear in normal CLI output. No network, credentials, collectors,
+model execution, or uploads are involved. **The pack is not sanitized:** original traces may
+contain prompts, identifiers, secrets, or personal data. Inspect every member before sharing.
+Sampling, omitted external events, inappropriate exclusions, false scoring, coordinated source
+replacement, and untrustworthy clocks cannot be disproved by these hashes or validators.
+
 ### Hand off retry evidence with its complete policy and budget review
 
 **Read it first:** the [public retry-evidence lab](https://immu4989.github.io/awesome-agentic-usecases/evaluation-review/retry-lab.html)

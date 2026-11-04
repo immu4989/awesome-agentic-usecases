@@ -278,6 +278,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="check recorded operating limits for the full workload and explicit groups")
     sub.add_parser("compare-operating-budgets", add_help=False,
                    help="review changed operating thresholds, groups, and accounting assumptions before approving a plan")
+    sub.add_parser("otlp-retries", add_help=False,
+                   help="project explicitly mapped OTLP spans into source-retaining sequential retry evidence")
     sub.add_parser("retry-eval", add_help=False,
                    help="retain retry evidence and account for all declared attempts per logical task")
     sub.add_parser("retry-review", add_help=False,
@@ -363,6 +365,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw_args = list(sys.argv[1:] if argv is None else argv)
+    if raw_args and raw_args[0] == "otlp-retries":
+        from .eval_otlp import main as otlp_main
+
+        return otlp_main(raw_args[1:])
     if raw_args and raw_args[0] == "retry-demo":
         from .eval_retry_demo import main as retry_demo_main
 

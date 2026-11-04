@@ -66,6 +66,32 @@ def smoke(wheel: Path) -> None:
         (root / "retry-ledger.json").write_text(json.dumps(retry_ledger))
         run([cli, "retry-eval", "create", "retry-plan.json", "retry-ledger.json", "--out", "retry-pack"])
         run([cli, "retry-eval", "verify", "retry-pack", "--evaluation", "retry-pack/evaluation.json"])
+        trace_id, root_id = "1" * 32, "1" * 16
+        otlp_spans = [{"traceId": trace_id, "spanId": root_id,
+                       "startTimeUnixNano": "1000000000", "endTimeUnixNano": "11000000000"}]
+        for index, attempt in enumerate(retry_ledger["tasks"][0]["attempts"]):
+            otlp_spans.append({"traceId": trace_id, "spanId": str(index + 2) * 16, "parentSpanId": root_id,
+                               "startTimeUnixNano": str((index + 1) * 1_000_000_000),
+                               "endTimeUnixNano": str((index + 2) * 1_000_000_000),
+                               "attributes": [{"key": key, "value": {"intValue": str(value)} if type(value) is int
+                                               else {"doubleValue": value}} for key, value in {
+                                   **attempt["metrics"], "cost_usd": attempt["cost_usd"], "n_api_calls": 1}.items()]})
+        otlp_mapping = {"mapping_version": "aau-otlp-retry-import/1.0", "source_format": "otlp_json",
+                        "span_semantics": "single_attempt_direct_children_same_resource_clock",
+                        "accounting_plan": retry_plan,
+                        "attributes": {"metrics": {"completion": "completion", "unauthorized": "unauthorized"},
+                                       "operating": {"cost_usd": "cost_usd", "n_api_calls": "n_api_calls"}},
+                        "tasks": [{"scenario_id": "service", "repeat": 0, "trace_id": trace_id,
+                                   "task_span_id": root_id, "attempt_span_ids": ["2" * 16, "3" * 16]}], "excluded_spans": []}
+        (root / "otlp-mapping.json").write_text(json.dumps(otlp_mapping))
+        (root / "source.otlp").write_text(json.dumps({"resourceSpans": [{"scopeSpans": [{"spans": otlp_spans}]}]}))
+        run([cli, "otlp-retries", "create", "otlp-mapping.json", "source.otlp", "--out", "otlp-pack"])
+        run([cli, "otlp-retries", "verify", "otlp-pack", "--evaluation", "otlp-pack/retry/evaluation.json"])
+        projected = json.loads((root / "otlp-pack/retry/evaluation.json").read_text())["results"][0]
+        if projected["metrics"]["unauthorized"] != 1 or projected["cost_usd"] != .2 or projected["latency_s"] != 10:
+            raise RuntimeError("installed OTLP bridge lost earlier harm, cost, or task duration")
+        (root / "otlp-pack/retry/ledger.json").write_text('{}')
+        run([cli, "otlp-retries", "verify", "otlp-pack"], expected=2)
         retry_source = json.loads((root / "retry-pack/evaluation.json").read_text())
         retry_row = retry_source["results"][0]
         if (retry_row["metrics"] != {"completion": 1, "unauthorized": 1} or retry_row["cost_usd"] != .2
@@ -192,7 +218,7 @@ def smoke(wheel: Path) -> None:
         report["overall"]["cost"]["total_usd"] = 999
         report_path.write_text(json.dumps(report))
         run([cli, "evaluation-pack", "verify", repaired, "--require-recordings", "--require-diagnostics"], expected=2)
-    print("Installed wheel verified outside checkout: demo, policy and operating budget outcomes, candidate matrices, recording and CSV import, CSV review handoff, context review, overwrite refusal, and tamper rejection.")
+    print("Installed wheel verified outside checkout: demos, policy and operating budget outcomes, candidate matrices, recording/CSV/OTLP import, source-retaining review handoffs, context review, overwrite refusal, and tamper rejection.")
 
 
 def main():

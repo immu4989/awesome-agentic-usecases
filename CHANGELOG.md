@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Source-retaining OpenTelemetry retry bridge** — explicitly map OTLP JSON/JSONL trace
+  exports to sequential task/attempt evidence without collectors or model calls. Complete
+  supplied-span role accounting, integer timestamp subtraction, explicit score/cost mappings,
+  and source-to-review bindings reject hidden direct-child omissions, overlap, nested task
+  scopes, cycles, duplicate identities, and altered evidence. Original bytes and excluded
+  detail spans remain available for review; no scoring authenticity or retry permission is inferred.
+
 - **Public retry-evidence lab** — follow a synthetic task's full call sequence, compare a
   deliberately incomplete final-call-only export with whole-task accounting, and inspect
   independent policy/budget verdicts. Three complete 31-file handoffs are downloadable and
