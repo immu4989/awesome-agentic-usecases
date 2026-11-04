@@ -38,13 +38,72 @@ git push origin harness-vX.Y.Z
 ```
 
 The tag must exactly match the package version. GitHub Actions runs all harness tests, builds
-the wheel and source distribution, checks metadata, tests the installed wheel outside the checkout,
+the wheel and source distribution, checks metadata, audits contents against the checkout,
+tests the installed wheel outside the checkout,
 creates build-provenance attestations,
 publishes through the trusted PyPI identity, and attaches both distributions to a GitHub
 release.
 
 Do not push a release tag until the trusted publisher and GitHub environment exist; package
 publication is intentionally fail-closed.
+
+## Read-only package content audit
+
+Before the installed-wheel smoke test, upload, or attestation, the release workflow now runs
+[`tools/audit_package_contents.py`](tools/audit_package_contents.py). It helps maintainers and
+downstream reviewers check whether the artifacts contain the first-party code and install-time
+declarations they reviewed. This repository tool requires Python 3.11+ and `packaging`, which is
+already a dependency of the release build tools; it adds no harness runtime dependency.
+
+The existing `python -m build harness` command already builds a source distribution and then
+builds the wheel **from that source distribution**. The new audit compares those artifacts with
+the supplied checkout; it does not add a second build or claim a reproducible build.
+See [PyPA's default build strategy](https://build.pypa.io/en/stable/explanation/how-it-works.html#default-build-strategy).
+
+```bash
+python -m build harness
+python harness/tools/audit_package_contents.py \
+  harness/dist/aau_harness-*.tar.gz harness/dist/aau_harness-*.whl \
+  --out /tmp/aau-package-audit.json
+python harness/tools/audit_package_contents.py \
+  harness/dist/aau_harness-*.tar.gz harness/dist/aau_harness-*.whl \
+  --verify /tmp/aau-package-audit.json
+```
+
+Use a new output path; existing reports are never overwritten. `--project` selects a different
+trusted harness checkout. Without `--out` or `--verify`, the report is printed to standard output
+(as it is in release CI). Keep audit reports **outside `harness/dist/`**, which is uploaded as
+package distributions. Verification recomputes the report byte-for-byte, including raw archive
+digests; repacking identical members changes those artifact digests and invalidates an old report.
+
+| Check | What fails |
+| --- | --- |
+| Every checkout Python source against wheel and source archive | Missing, altered, or extra package files |
+| Exact wheel payload allowlist | Additional `.pth`, `.data`, foreign-package, or unsupported metadata files, even with a valid `RECORD` |
+| Source-archive packaging inputs | Changed or missing `pyproject.toml` and `README.md` |
+| Package identity, Python constraints, dependencies, extras | Missing or unexpected declarations, including dependency environment markers |
+| Console commands and top-level package | Missing, extra, or redirected entry points |
+| Wheel `RECORD` | Incomplete coverage, duplicate entries, changed hashes or sizes |
+| Bounded archive parsing | Links, special files, unsafe paths, duplicate members, malformed or oversized archives |
+
+Exit **0** means `contents_match`; **1** retains a `contents_differ` report; **2** means invalid
+or unsupported input, a mismatching saved report, or output failure. A verified difference report
+still exits 1. Tests include altered modules with a freshly recomputed `RECORD`, injected
+dependencies and startup files, redirected commands, archive traversal and links, and repacking.
+
+The audit reads archives in memory; it does not extract, install, import, or execute them.
+Its strict AAU profile accepts only the current pure-Python payload and five metadata members,
+with SHA-256 `RECORD` entries. Other valid wheel layouts require a reviewed profile change; this
+is not a generic wheel-conformance checker. The checks build on the
+[PyPA wheel format](https://packaging.python.org/en/latest/specifications/binary-distribution-format/).
+
+Boundaries: the supplied checkout and auditor must be trusted. Matching code is not necessarily
+safe code. Remaining source-archive members are hashed in the report but **not approved as build
+inputs**; this is not a sandbox for arbitrary source distributions. Build and install commands
+execute code separately. The report does not authenticate Git history or signatures, verify
+interpreter/dependency bytes, compare independent builds, or approve publication. It records
+member names and hashes, not source contents, local absolute paths, or environment values.
+Signed tags, trusted publishing, provenance, tests, and installed-artifact checks remain separate.
 
 ## Installed-artifact adoption check
 
@@ -56,6 +115,7 @@ It also checks that the imported module resolves inside that new environment.
 
 ```bash
 python -m build harness
+python harness/tools/audit_package_contents.py harness/dist/aau_harness-*.tar.gz harness/dist/aau_harness-*.whl
 python harness/tools/smoke_installed_wheel.py harness/dist/aau_harness-*.whl
 ```
 
@@ -67,6 +127,7 @@ operating-budget change review with both changed and unchanged outcomes,
 retry-ledger accounting with earlier-failure retention and downstream evaluation binding,
 complete retry handoffs with independent policy/budget outcomes and budget-downgrade rejection,
 the complete 94-file installed `retry-demo` with all three expected handoff outcomes,
+source-retaining OTLP projection and complete OTLP policy/budget handoffs with original-byte binding,
 both policy outcomes, complete recorded
 diagnostic-pack verification, operating-measurement and CSV import, a complete CSV review handoff,
 context comparison, overwrite refusal,

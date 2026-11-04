@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Checkout-to-package content audit** — read-only comparison of the source distribution and
+  wheel against first-party Python files, packaging inputs, dependencies, and console commands.
+  Release CI now rejects content drift before installed-wheel execution, upload, or attestation.
+  Reports bind both raw archives and complete member inventories; tests retain content differences
+  and reject malformed archives, injected payloads, misleading `RECORD` hashes, and stale reports.
+  This is a strict AAU package profile, not code-safety or reproducible-build certification.
+
 - **Original-trace review handoff and CI gate** — carry both OTLP exports, mappings, exclusions,
   derived retry ledgers, and policy/budget outcomes in one 36- or 39-file verifiable folder.
   Approved-input CI now supports OTLP with independent mapping pins and matching context;

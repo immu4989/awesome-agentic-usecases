@@ -39,6 +39,8 @@ jobs:
         run: |
           python -m build harness
           python -m twine check harness/dist/*
+      - name: Audit distributions against checkout sources and declarations
+        run: python harness/tools/audit_package_contents.py harness/dist/aau_harness-*.tar.gz harness/dist/aau_harness-*.whl
       - name: Verify the installed wheel outside the checkout
         run: python harness/tools/smoke_installed_wheel.py harness/dist/aau_harness-*.whl
       - name: Upload package distributions

@@ -59,6 +59,7 @@ def main() -> None:
             "pypa/gh-action-pypi-publish@",
             "actions/attest@",
             "check_release_version.py",
+            "audit_package_contents.py",
         ),
         WORKFLOWS / "federal-portfolio-release.yml": (
             "actions/attest@",
