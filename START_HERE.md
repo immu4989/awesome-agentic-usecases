@@ -23,6 +23,13 @@ explicitly non-decision evidence. Use `--expect` and, when required, `--require-
 weaker or unexpected artifacts. This does not run code from the folder, upload data, approve
 deployment, or establish source authenticity. Inspect the complete handoff, not just its nested review.
 
+Need to check that the sender used **your selected baseline, policy, mappings, and obligations**?
+Use a [separately pinned receiving-team request](harness/README.md#check-delivered-evidence-against-a-receiving-team-request).
+`aau review-intake` combines full verification with those requirements and mandatory matching
+benchmark context. Its synthetic walkthrough shows why a passing substituted policy is not an
+accepted delivery. The expected request hash must be controlled independently; it is not a signature
+or proof of approval authority.
+
 Already have scored evaluation exports? Use the
 **[CSV review handoff](harness/README.md#hand-off-two-csv-exports-as-one-verifiable-review)**
 to turn baseline and candidate CSVs into one portable offline review. It retains both original

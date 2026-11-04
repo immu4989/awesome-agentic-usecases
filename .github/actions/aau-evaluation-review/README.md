@@ -58,6 +58,13 @@ context fails closed here; use the descriptive CLI for separately reviewed legac
 Fingerprint equality does not prove execution, dependency completeness, or authentic measurements.
 Synthetic fixtures and freely chosen limits do not establish production suitability.
 
+For offline deliveries outside this Action, a
+[receiving-team intake request](../../../harness/README.md#check-delivered-evidence-against-a-receiving-team-request)
+can pin the complete expected profile and exported control inputs before checking a pack. Its
+expected request hash must be protected independently. Those pins refer to exported member bytes,
+which may differ from the original input bytes pinned by this Action. It does not replace these
+workflow protections, update approval variables, or authenticate the approver.
+
 ### Review recorded observations without a separate import job
 
 Set `input-format: recordings` when `baseline` and `candidate` use the

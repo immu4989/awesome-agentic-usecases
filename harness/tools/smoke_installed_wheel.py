@@ -2,6 +2,7 @@
 """Test a trusted local wheel outside the checkout in a fresh, no-index Python 3.11+ venv."""
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -53,6 +54,29 @@ def smoke(wheel: Path) -> None:
         run([*inspect_command, "--require-budget"], expected=2)
         run([cli, "inspect-pack", "demo/repaired", "--expect", "retry-review"], expected=2)
         run([cli, "inspect-pack", "demo"], expected=2)
+        # Synthetic plumbing only, not independent approval: production pins must be controlled separately.
+        request = {"request_version": "aau-evidence-intake-request/1.0", "profile": "evaluation-review",
+                   "pack_version": "aau-evaluation-review-pack/2.0", "input_format": "recordings",
+                   "pinned_inputs": {role: hashlib.sha256((root / "demo/repaired" / member).read_bytes()).hexdigest()
+                                     for role, member in (("policy", "policy.json"), ("baseline", "baseline-recording.json"),
+                                                          ("diagnostics", "diagnostics.json"))}}
+        request_raw = json.dumps(request).encode("utf-8")
+        (root / "intake-request.json").write_bytes(request_raw)
+        request_pin = hashlib.sha256(request_raw).hexdigest()
+        intake_command = [cli, "review-intake", "intake-request.json"]
+        for name, code in (("repaired", 0), ("intermittent", 1)):
+            args = [*intake_command, f"demo/{name}", "--request-sha256", request_pin]
+            run([*args, "--out", f"{name}-intake.json"], expected=code)
+            run([*args, "--verify", f"{name}-intake.json"], expected=code)
+        run([*intake_command, "demo/repaired", "--request-sha256", "0" * 64, "--out", "invalid-intake.json"], expected=2)
+        request["pinned_inputs"]["policy"] = "0" * 64
+        changed_raw = json.dumps(request).encode("utf-8")
+        (root / "intake-request.json").write_bytes(changed_raw)
+        run([*intake_command, "demo/repaired", "--request-sha256", hashlib.sha256(changed_raw).hexdigest(),
+             "--out", "substituted-intake.json"], expected=1)
+        substituted = json.loads((root / "substituted-intake.json").read_text())
+        if substituted["unmatched_input_roles"] != ["policy"] or substituted["pack_inspection"]["exit_code"] != 0:
+            raise RuntimeError("installed intake confused internal verification with receiver requirements")
         service_plan = {"plan_version": "aau-service-trace-import/1.0", "source_label": "Synthetic wheel service", "n_repeats": 1}
         service_contract = {"version": "synthetic-1", "expected_terminal": "route_review", "required_evidence": [],
                             "held_evidence": [], "required_channel": "phone_711", "recourse_required": True,

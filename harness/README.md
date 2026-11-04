@@ -131,6 +131,105 @@ This approach addresses the documentation and human-review concerns in the
 [NIST AI RMF Core](https://airc.nist.gov/airmf-resources/airmf/5-sec-core/); it is not NIST certification
 or framework compliance. Requires this checkout or a locally built wheel, not published PyPI 1.6.0.
 
+## Check delivered evidence against a receiving-team request
+
+A fully verified pack can still use a different baseline or a more permissive policy than the
+receiving team selected. `aau review-intake` adds a separate, byte-pinned request: exact pack
+profile, version, source format, and every required control input. It runs the complete native
+verification first, then reports which receiving-team requirements are met. A valid but wrong
+pack remains visible as failed intake evidence; invalid evidence never becomes a verified report.
+
+Try three constructed contrasts from a repository clone:
+
+```bash
+pip install -e harness
+python harness/examples/evaluation-review/intake_request.py --out /tmp/intake-request-example
+```
+
+Read the generated `README.txt` for exact replay commands. The repaired fixture meets its request;
+the unchanged failing fixture matches the pins but fails the policy; the relaxed-policy fixture
+passes its own policy but fails the receiver's policy pin. All inputs, costs, and observations are
+synthetic. The demonstration's locally computed request hash is plumbing, **not independent approval**.
+
+For a real handoff, the receiving team must independently select and review the controls before
+trusting the delivery. This example request requires a diagnostic recording review:
+
+```json
+{
+  "request_version": "aau-evidence-intake-request/1.0",
+  "profile": "evaluation-review",
+  "pack_version": "aau-evaluation-review-pack/2.0",
+  "input_format": "recordings",
+  "pinned_inputs": {
+    "policy": "REPLACE_WITH_64_LOWERCASE_HEX_DIGITS",
+    "baseline": "REPLACE_WITH_64_LOWERCASE_HEX_DIGITS",
+    "diagnostics": "REPLACE_WITH_64_LOWERCASE_HEX_DIGITS"
+  }
+}
+```
+
+Replace every placeholder with SHA-256 of the **exact exported member bytes** selected during
+review. For this profile they are `policy.json`, `baseline-recording.json`, and `diagnostics.json`.
+Prepare those exported bytes with the matching trusted harness from independently reviewed inputs;
+do not accept whichever controls arrive in the candidate pack. JSON export may change formatting,
+so these pins are neither canonical JSON hashes nor necessarily hashes of original pre-export files.
+After reviewing the complete request, protect its expected raw-file SHA-256 separately from delivery.
+Whitespace edits invalidate the request pin. Do not recompute the expected approval pin from a
+candidate-controlled request in the production intake job.
+
+```bash
+# APPROVED_INTAKE_REQUEST_SHA256 must come from a separately controlled review process.
+aau review-intake approved-request.json delivered-pack \
+  --request-sha256 "$APPROVED_INTAKE_REQUEST_SHA256" --out intake-review.json
+aau review-intake approved-request.json delivered-pack \
+  --request-sha256 "$APPROVED_INTAKE_REQUEST_SHA256" --verify intake-review.json
+```
+
+| Requested profile | Required pinned control inputs |
+|---|---|
+| `evaluation-review` | Policy and baseline; diagnostics for 2.0/3.0; operating budget for 3.0 |
+| `csv-review` | Policy, original baseline CSV, both import plans, diagnostics; budget for 1.1 |
+| `retry-review` | Policy, baseline ledger, both accounting plans, diagnostics; budget for 1.1 |
+| `otlp-review` | Policy, raw baseline OTLP export, both mappings, diagnostics; budget for 1.1 |
+| `service-review` | Policy, baseline traces, both import plans, one shared service suite, diagnostics; budget for 1.1 |
+
+Request role keys are `policy`, `baseline`, `diagnostics`, `operating_budget`, `baseline_plan`,
+`candidate_plan`, and `service_suite`, only where listed above. All and only the roles required for
+the chosen version must appear. The shared suite pin checks **both** exported suite members.
+Handoff policy/diagnostics/budget members live under `review/`; baseline sources and plans live
+under `baseline/`; the candidate plan lives under `candidate/`. OTLP plans are `mapping.json`,
+other plans are `plan.json`; sources are `source.csv`, `ledger.json`, `source.otlp`, or `traces.json`.
+No arbitrary member paths or candidate-observation pin are accepted.
+
+The evaluation pack accepts 1.0 with `evaluations`, 1.1 with `recordings`, and 2.0/3.0 with either.
+For `evaluations`, the baseline member is `baseline.json`. The four full handoffs accept 1.0/1.1
+and source formats `csv`, `retry-ledger`, `otlp`, and `service-traces`, respectively. Exact version
+strings are `aau-evaluation-review-pack/VERSION` or
+`aau-{csv,retry,otlp,service}-evaluation-handoff-pack/VERSION` (choose one family, not literal braces).
+Converters, service-only scorings, challenges, and diagnostics cannot substitute for review evidence.
+
+Exit **0** means all request constraints were met, **1** means complete verified evidence did not
+meet them, and **2** means an invalid request/pin, invalid evidence, or failed report verification.
+Both sides must declare matching valid benchmark context. Legacy context absence therefore fails
+this intake gate even when the descriptive native review passes. Candidate observations may change;
+they must still satisfy the pinned policy and any required candidate budget. Missing budget
+measurements stay unverified, never passing. No requirements or approval settings are updated.
+
+Reports retain every control-input check, failed requirement, and the complete compact inspection.
+Save them outside the exact-member pack; existing output is never overwritten. A second bounded
+capture must match the inspected byte inventory, but this is **not an atomic snapshot** of a live
+directory. Retain the request, complete pack, and report, and reverify using a matching trusted harness.
+No model, adapter, command, upload, or network request is run. Hashes may still disclose information.
+
+This supports explicit evaluation requirements, a need discussed in
+[GAO's April 2026 AI acquisitions report](https://files.gao.gov/reports/GAO-26-107859/index.html).
+It does not establish reviewer identity, authority, independently approved requirements, signatures,
+source authenticity, valid scoring, procurement compliance, or deployment approval. Control of both
+the request and its expected hash defeats the boundary. The separate
+[GitHub Action's original-input pins](../.github/actions/aau-evaluation-review/README.md) and workflow
+protections are unchanged and not replaced. Requires this checkout or its local wheel; not included
+in the currently documented PyPI 1.6.0 release.
+
 ## Start an evidence project in five minutes
 
 `aau init` generates a complete, non-overwriting evaluation project around an agent you already

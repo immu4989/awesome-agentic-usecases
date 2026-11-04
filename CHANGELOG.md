@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Receiving-team evidence requests** — pin the exact review profile, version, source format,
+  baseline, policy, mappings, diagnostics, service obligations, and applicable budget independently
+  of a delivered pack. `aau review-intake` combines full native verification with every request
+  constraint and matching declared context. Valid-but-substituted controls, missing context, and
+  failed or unknown outcomes cannot satisfy the request. Three synthetic contrasts and offline
+  report replay distinguish integrity from receiver requirements; no approver identity or authority
+  is authenticated, and no production approval pins or CI settings are changed.
+
 - **Unified recorded-pack intake** — recognize 12 supported evidence families and invoke each
   existing full verifier on a bounded temporary local copy. Integrity stays separate from policy,
   budget, service, and diagnostic outcomes; failed or unknown results are not promoted. Explicit
