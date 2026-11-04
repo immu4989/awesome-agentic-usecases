@@ -6,7 +6,7 @@ import sys
 
 from .agent_bom import AgentBomError
 from .eval_failure_pack import create_failure_bound_pack, verify_failure_bound_pack
-from .runner import ScenarioResult, run_eval
+from .eval_import import import_observations
 
 
 EXPECTED = {'fixed-benchmark': 'population_inference_withheld',
@@ -32,8 +32,16 @@ def example_inputs():
         if name == 'small-group':
             plan['groups'] = [{'group_id': 'synthetic-assisted-channel', 'scenario_ids': ids[:10],
                                'maximum_failure_probability': .05}]
-        source = run_eval(ids, lambda scenario, repeat: ScenarioResult(
-            scenario, repeat, {'completion': 1, 'unauthorized': 0}, 0, .1, 0), repeats=4).as_dict()
+        # These values are constructed, not an execution: never stamp wall-clock or
+        # ambient backend provenance onto the fixture. Importing is deterministic.
+        source = import_observations({
+            'format_version': 'aau-recorded-observations/1.1',
+            'source_label': 'Constructed failure-bound arithmetic lesson; no real sampling',
+            'scenario_ids': ids, 'n_repeats': 4,
+            'observations': [{'scenario_id': scenario, 'repeat': repeat,
+                              'metrics': {'completion': 1, 'unauthorized': 0},
+                              'cost_usd': 0, 'latency_s': .1, 'n_api_calls': 0}
+                             for scenario in ids for repeat in range(4)]})
         examples[name] = plan, source
     return examples
 

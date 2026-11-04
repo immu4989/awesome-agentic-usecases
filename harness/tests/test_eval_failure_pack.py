@@ -250,3 +250,18 @@ def test_demo_completion_guide_is_absent_if_a_result_is_not_verified(tmp_path, m
     root = tmp_path / 'partial-demo'
     assert main(['failure-bound-demo', '--out', str(root)]) == 2
     assert not (root / 'README.txt').exists()
+
+
+def test_synthetic_demo_does_not_capture_ambient_execution_provenance(monkeypatch):
+    from aau_harness import provenance
+
+    def forbidden_snapshot():
+        raise AssertionError('Synthetic examples must not claim the current time or an ambient provider execution')
+
+    monkeypatch.setattr(provenance, 'snapshot', forbidden_snapshot)
+    for plan, source in eval_failure_demo.example_inputs().values():
+        assert source['provenance']['evidence_kind'] == 'imported_unverified_observations'
+        assert source['provenance']['source_label'] == 'Constructed failure-bound arithmetic lesson; no real sampling'
+        assert len(source['results']) == len(plan['scenario_ids']) * 4
+        assert all(row['cost_usd'] == 0 and row['latency_s'] == .1 and row['n_api_calls'] == 0
+                   for row in source['results'])
