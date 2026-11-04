@@ -24,7 +24,7 @@ def test_public_assets_are_deterministic_and_archives_match_complete_verifiable_
     module = generator()
     assets = module.build_assets()
     assert assets == module.build_assets()
-    assert len(assets) == 99
+    assert len(assets) == 199
     for name, expected in (("legitimate", "constraints_met"), ("unsafe", "constraints_not_met"),
                            ("cohort-regressed", "constraints_not_met"), ("cohort-repaired", "constraints_met")):
         directory = tmp_path / name
@@ -206,3 +206,79 @@ def test_budget_page_numbers_and_eligibility_are_generated_from_reports():
     page = module.render_budget_lab(dossiers, matrix)
     assert '$9.75' in page and '<strong>None</strong>' in page
     assert '$8</td>' not in page
+
+
+@pytest.mark.parametrize("name,policy,budget", [("retry-earlier-harm", False, False),
+                                               ("retry-slow-completion", True, False), ("retry-repaired", True, True)])
+def test_public_retry_archives_recompute_complete_declared_ledgers(tmp_path, name, policy, budget):
+    from aau_harness.eval_retry_review import verify_handoff
+
+    assets = generator().build_assets()
+    with zipfile.ZipFile(BytesIO(assets[f"{name}.zip"])) as bundle:
+        assert len(bundle.namelist()) == len(set(bundle.namelist())) == 31
+        for item in bundle.infolist():
+            assert not item.filename.startswith('/') and '..' not in Path(item.filename).parts
+            assert item.date_time == (1980, 1, 1, 0, 0, 0)
+            value = bundle.read(item.filename)
+            assert value == assets[f"{name}/{item.filename}"]
+            path = tmp_path / item.filename
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(value)
+    report = verify_handoff(tmp_path, require_budget=True)
+    assert (report["policy_status"] == "constraints_met") == policy
+    assert (report["candidate_budget_status"] == "constraints_met") == budget
+    assert (report["status"] == "constraints_met") == (policy and budget)
+    assert report["sources"]["candidate"]["attempt_count"] == 4
+    assert report["sources"]["candidate"]["task_count"] == 2
+    path = tmp_path / "candidate/ledger.json"
+    ledger = json.loads(path.read_text())
+    ledger["tasks"][0]["attempts"][0]["cost_usd"] = .01
+    path.write_text(json.dumps(ledger))
+    with pytest.raises(AgentBomError):
+        verify_handoff(tmp_path, require_budget=True)
+
+
+def test_retry_page_exposes_final_call_only_counterexample_without_comparable_context_claims():
+    from aau_harness.eval_import import import_observations
+    from aau_harness.eval_operations import review_operations
+
+    assets = generator().build_assets()
+    recording = json.loads(assets["retry-final-call-only-recording.json"])
+    source = json.loads(assets["retry-final-call-only-evaluation.json"])
+    operations = json.loads(assets["retry-final-call-only-operations.json"])
+    complete = json.loads(assets["retry-earlier-harm/review/candidate-operations.json"])
+    assert "evaluation_context" not in recording and "incomplete" in recording["source_label"]
+    assert import_observations(recording) == source
+    assert review_operations(source, criteria=operations["criteria"], cost_basis="synthetic") == operations
+    assert operations["overall"]["attempt_count"] == complete["overall"]["attempt_count"] == 2
+    assert operations["overall"]["passing_attempt_count"] == 2 and complete["overall"]["passing_attempt_count"] == 1
+    assert operations["overall"]["cost"]["total_per_passing_attempt_usd"] == .1
+    assert complete["overall"]["cost"]["total_per_passing_attempt_usd"] == pytest.approx(.4)
+    assert operations["overall"]["latency"]["p95_s"] == 1 and complete["overall"]["latency"]["p95_s"] == 10
+    page = assets["retry-lab.html"].decode()
+    for text in ("$0.10", "$0.40", "10 s", "1 s", "unattributed elapsed time", "not a stable tail estimate",
+                 "--require-budget", "not in published PyPI 1.6.0", "No retry is executed or authorized",
+                 "Hash", "The browser page does not verify itself", "No scripts, analytics"):
+        assert text in page
+    assert '<script' not in page and 'Content-Security-Policy' in page
+    assert page.count('class="eyebrow">Call ') == 3
+    assert 'aria-label="Sequential calls in one synthetic logical task"' in page
+    assert 'href="retry-lab.html"' in assets["index.html"].decode()
+    for name in ("retry-earlier-harm", "retry-slow-completion", "retry-repaired"):
+        assert f'href="{name}.zip" download' in page
+        assert f'href="{name}/review/review.html"' in page
+
+
+def test_retry_page_uses_report_values_and_independent_verdicts():
+    module = generator()
+    assets = module.build_assets()
+    dossiers = {name: {filename: json.loads(assets[f"{name}/{filename}"]) for filename in (
+        "candidate/ledger.json", "review/candidate-operations.json", "review/operating-budget.json", "handoff.json")}
+        for name in ("retry-earlier-harm", "retry-slow-completion", "retry-repaired")}
+    incomplete = json.loads(assets["retry-final-call-only-operations.json"])
+    dossiers["retry-earlier-harm"]["review/candidate-operations.json"]["overall"]["cost"]["total_per_passing_attempt_usd"] = 7.89
+    dossiers["retry-repaired"]["handoff.json"]["candidate_budget_status"] = "constraints_not_verified"
+    page = module.render_retry_lab(dossiers, incomplete)
+    assert '<th scope="row">USD per jointly passing task</th><td>$0.10</td><td>$7.89</td>' in page
+    assert page.count('$7.89') == 2
+    assert 'Not verified' in page

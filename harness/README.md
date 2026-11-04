@@ -693,6 +693,10 @@ response, not an AWS standard, endorsement, or proof that a retry is authorized.
 
 ### Hand off retry evidence with its complete policy and budget review
 
+**Read it first:** the [public retry-evidence lab](https://immu4989.github.io/awesome-agentic-usecases/evaluation-review/retry-lab.html)
+shows a declared call sequence, compares incomplete and whole-task accounting, and provides all
+three source-complete handoffs for download. No installation is required to read the lesson.
+
 `aau retry-review` combines both source-retaining retry packs and their full evaluation review
 into **one verifiable folder**. Use it when a reviewer or CI job must check the ledgers, not
 just normalized task scores. Requires the current checkout or a locally built wheel, not

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **Public retry-evidence lab** — follow a synthetic task's full call sequence, compare a
+  deliberately incomplete final-call-only export with whole-task accounting, and inspect
+  independent policy/budget verdicts. Three complete 31-file handoffs are downloadable and
+  verifiable offline. Page values and deterministic archives are generated from tested evidence;
+  no production performance, retry authorization, or real-world repair is claimed.
+
 - **Installed retry walkthrough** — `aau retry-demo` creates three complete source-to-gate
   handoffs and an offline guide without repository-only fixtures, credentials, or model calls.
   All 94 files reproduce from the installed package; independent policy, budget, and combined

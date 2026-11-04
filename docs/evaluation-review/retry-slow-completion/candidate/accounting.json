@@ -1,0 +1,85 @@
+{
+  "report_version": "aau-retry-accounting-report/1.0",
+  "plan_sha256": "3f14d889f6ba9042ce3aa1f507ba047405540753e0a0d83fabfffa1da5a523b1",
+  "ledger_sha256": "b4ca3bdf3afc5753e23feb991dac182eb077ac86e751edb8fff4032c750728af",
+  "recording_sha256": "10e8d1192f65eb539704e516d8de9147a6f93a5a01c8ff5f8111ab6ca61ca56e",
+  "evaluation_sha256": "ffbf527876c544eca728e1617b35192d47f2b884217dd85bb0b0310de3087f1b",
+  "unit": "logical_task_per_scenario_repeat",
+  "task_count": 2,
+  "attempt_count": 4,
+  "retry_count": 2,
+  "tasks_with_retries": 1,
+  "last_only_metrics": [
+    "completion"
+  ],
+  "unreported_task_metrics": [],
+  "tasks": [
+    {
+      "scenario_id": "service",
+      "repeat": 0,
+      "attempt_count": 3,
+      "retry_count": 2,
+      "metric_coverage": {
+        "completion": {
+          "reporting_attempts": 3,
+          "declared_attempts": 3,
+          "reducer": "last"
+        },
+        "unauthorized": {
+          "reporting_attempts": 3,
+          "declared_attempts": 3,
+          "reducer": "max"
+        }
+      },
+      "operating": {
+        "cost_usd": {
+          "reporting_attempts": 3,
+          "declared_attempts": 3,
+          "observed_sum": 0.30000000000000004,
+          "complete_total": 0.30000000000000004
+        },
+        "n_api_calls": {
+          "reporting_attempts": 3,
+          "declared_attempts": 3,
+          "observed_sum": 3,
+          "complete_total": 3
+        }
+      },
+      "whole_task_latency_s": 10
+    },
+    {
+      "scenario_id": "service",
+      "repeat": 1,
+      "attempt_count": 1,
+      "retry_count": 0,
+      "metric_coverage": {
+        "completion": {
+          "reporting_attempts": 1,
+          "declared_attempts": 1,
+          "reducer": "last"
+        },
+        "unauthorized": {
+          "reporting_attempts": 1,
+          "declared_attempts": 1,
+          "reducer": "max"
+        }
+      },
+      "operating": {
+        "cost_usd": {
+          "reporting_attempts": 1,
+          "declared_attempts": 1,
+          "observed_sum": 0.1,
+          "complete_total": 0.1
+        },
+        "n_api_calls": {
+          "reporting_attempts": 1,
+          "declared_attempts": 1,
+          "observed_sum": 1,
+          "complete_total": 1
+        }
+      },
+      "whole_task_latency_s": 1
+    }
+  ],
+  "boundary": "Offline accounting of declared sequential retries, not an executed evaluation or permission to retry. One scenario-repeat observation represents one logical task, not each underlying call. Attempt IDs, counts, order, disjoint costs, whole-task timings, scores, and context are unverified declarations. A timeout or failure can still have side effects. Metric reducers are reviewer choices, not inferred ground truth: last can hide earlier failures; min/max require coverage on every attempt. Missing measurements remain unknown. Costs and API counts include every declared attempt only when coverage is complete; partial observed sums are not full totals. Whole-task latency must be supplied separately and is never the sum of call durations or just the final call. Backoff, queueing, and overhead are not inferred. Only sequential attempts with non-overlapping accounting scopes are supported; nested spans, parallel branches, hedged requests, and mixed currencies/cost bases must not be flattened into this contract. No price lookups, invoice verification, scoring, model calls, or uploads. Missing external events cannot be detected when the declarations are also changed. Retained JSON values are not original file bytes. Hashes are not signatures. Inspect identifiers and all source values before sharing; no sanitization or deployment approval is performed."
+}

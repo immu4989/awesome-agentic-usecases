@@ -1,6 +1,7 @@
 """Publish only the fixed synthetic review twins; accepts no user evaluation input."""
 
 import argparse
+from copy import deepcopy
 from html import escape
 import importlib.util
 from io import BytesIO
@@ -11,6 +12,11 @@ import zipfile
 
 from aau_harness.eval_pack import pack_payloads
 from aau_harness.eval_matrix import matrix_payloads
+from aau_harness.agent_bom import rendered
+from aau_harness.eval_import import import_observations
+from aau_harness.eval_operations import review_operations
+from aau_harness.eval_retry_demo import demo_inputs as retry_demo_inputs
+from aau_harness.eval_retry_review import handoff_payloads
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -174,7 +180,7 @@ Both candidates improve completion from 50% to 100%. Candidate B skips authoriza
 The review keeps that failure visible instead of trading it against a better headline score.</p>
 <p class="notice">These numbers are constructed fixtures, not measured model or government-service performance.
 No person, agency, provider, or real transaction is involved. Cost and latency fields in the downloads are placeholders.</p></header>
-<p><a href="#cohort-story">Explore channel regressions</a> · <a href="#operating-story">Explore cost and repeat failures</a> · <a href="budget-lab.html">Try the operating-budget lab</a></p>
+<p><a href="#cohort-story">Explore channel regressions</a> · <a href="#operating-story">Explore cost and repeat failures</a> · <a href="budget-lab.html">Try the operating-budget lab</a> · <a href="retry-lab.html">Follow the complete retry history</a></p>
 <div class="twins">''' + "".join(cards) + '</div>' + cohort_story(cohorts) + operating_story(dossiers) + '''
 <section><h2>Inspect it. Download it. Recompute it.</h2>
 <ol><li>Read either review in your browser. Expand the scenario details to see what changed.</li>
@@ -348,6 +354,168 @@ def budget_assets() -> dict[str, bytes]:
     return assets
 
 
+def render_retry_lab(dossiers: dict, last_call_operations: dict) -> str:
+    evidence = dossiers["retry-earlier-harm"]
+    tasks = evidence["candidate/ledger.json"]["tasks"]
+    task = next(t for t in tasks if t["attempt_count"] > 1)
+    attempts = sorted(task["attempts"], key=lambda a: a["attempt_index"])
+    whole = evidence["review/candidate-operations.json"]["overall"]
+    final = last_call_operations["overall"]
+    call_duration = sum(a["latency_s"] for a in attempts)
+    timeline = ''.join(
+        f'<li><span class="eyebrow">Call {a["attempt_index"] + 1}</span>'
+        f'<strong>{"Completes" if a["metrics"]["completion"] == 1 else "Does not complete"}</strong>'
+        f'<span>Unauthorized action recorded: <b>{"Yes" if a["metrics"]["unauthorized"] else "No"}</b></span>'
+        f'<span>${a["cost_usd"]:.2f} · {a["latency_s"]:g} s</span></li>' for a in attempts)
+    comparisons = [
+        ("Logical tasks counted", str(final["attempt_count"]), str(whole["attempt_count"])),
+        ("Tasks meeting both criteria", str(final["passing_attempt_count"]), str(whole["passing_attempt_count"])),
+        ("Total recorded costs included", f'${final["cost"]["total_usd"]:.2f}', f'${whole["cost"]["total_usd"]:.2f}'),
+        ("USD per jointly passing task", f'${final["cost"]["total_per_passing_attempt_usd"]:.2f}',
+         f'${whole["cost"]["total_per_passing_attempt_usd"]:.2f}'),
+        ("Nearest-rank p95 latency", f'{final["latency"]["p95_s"]:g} s', f'{whole["latency"]["p95_s"]:g} s')]
+    comparison_rows = ''.join(f'<tr><th scope="row">{escape(label)}</th><td>{escape(left)}</td><td>{escape(right)}</td></tr>'
+                              for label, left, right in comparisons)
+    verdict_rows = []
+    labels = {"constraints_met": "Met", "constraints_not_met": "Not met", "constraints_not_verified": "Not verified"}
+    for name, title in (("retry-earlier-harm", "Earlier harm"), ("retry-slow-completion", "Slow completion"), ("retry-repaired", "Repaired fixture")):
+        report = dossiers[name]["handoff.json"]
+        operations = dossiers[name]["review/candidate-operations.json"]["overall"]
+        verdict_rows.append(f'<tr><th scope="row">{title}</th><td>{labels[report["policy_status"]]}</td>'
+                            f'<td>{labels[report["candidate_budget_status"]]}</td><td><strong>{labels[report["status"]]}</strong></td>'
+                            f'<td>${operations["cost"]["total_per_passing_attempt_usd"]:.2f}</td>'
+                            f'<td>{operations["latency"]["p95_s"]:g} s</td>'
+                            f'<td><a href="{name}/review/review.html">Read review</a><br>'
+                            f'<a href="{name}.zip" download>Download 31 files</a></td></tr>')
+    limits = evidence["review/operating-budget.json"]["limits"]
+    return '''<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta name="description" content="A synthetic retry accounting lesson: inspect earlier harms, include all attempt costs, and verify complete offline evidence.">
+<title>The last call is not the whole task · AAU retry lab</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#25343c;background:#f6f5f1;color-scheme:light}
+*{box-sizing:border-box}body{max-width:1120px;margin:auto;padding:28px 24px;line-height:1.7}
+a{color:#244c60;text-underline-offset:4px}a:focus-visible,summary:focus-visible,.scroll:focus-visible{outline:3px solid #244c60;outline-offset:4px}
+nav{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}header{max-width:880px;padding:48px 0 20px}
+h1,h2,h3{line-height:1.15;letter-spacing:-.025em}h1{font-size:clamp(2.5rem,5.5vw,4.8rem);margin:18px 0 24px}h2{font-size:2rem}
+.eyebrow{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:#4d626d}.lead{font-size:1.2rem;max-width:760px}
+.notice{padding:16px 20px;border-left:3px solid #627a86;background:white}.quiet{color:#4d626d;font-size:.95rem}
+section{padding:28px 0;border-top:1px solid #cbd3d5;margin-top:24px}.timeline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:0;list-style:none}
+.timeline li{display:flex;flex-direction:column;gap:12px;padding:24px;border:1px solid #bdcbd1;border-radius:8px;background:white}
+.timeline strong{font-size:1.1rem}.timeline li:first-child{border-top:4px solid #455a65}.timeline li:last-child{border-top:4px double #455a65}
+figure{margin:24px 0}figcaption{margin-top:18px}.scroll{overflow-x:auto;border:1px solid #d5dcdf;background:white;border-radius:8px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}caption{text-align:left;padding:16px;color:#4d626d}
+th,td{text-align:left;padding:14px 16px;border-bottom:1px solid #d5dcdf;vertical-align:top}thead th{font-size:.85rem;font-weight:600;background:#edf1f2}
+.verdicts{min-width:840px}.compare{min-width:560px}td{white-space:nowrap}.step{font-size:.8rem;color:#4d626d;text-transform:uppercase;letter-spacing:.08em}
+pre{background:#25343c;color:#f7f8f8;padding:20px;border-radius:8px;overflow-x:auto;line-height:1.8}code{font-size:.88rem}
+.links{display:flex;gap:20px;flex-wrap:wrap}footer{padding:30px 0;border-top:1px solid #cbd3d5;color:#4d626d}li{margin-bottom:10px}
+@media(max-width:720px){body{padding:20px 16px}.timeline{grid-template-columns:1fr}.timeline li{padding:20px}header{padding-top:28px}h2{font-size:1.7rem}}
+@media print{body{background:white}pre{white-space:pre-wrap}.scroll{overflow:visible}table{min-width:0!important;font-size:.8rem}th,td{padding:8px}a{color:inherit}}
+</style></head><body><nav><a href="index.html">← Evaluation lessons</a><a href="budget-lab.html">Operating-budget lab →</a></nav>
+<header><p class="eyebrow">Retry evidence lab · fixed synthetic examples</p><h1>The last call is not<br>the whole task.</h1>
+<p class="lead">An agent can eventually complete a task—and still leave an earlier violation, extra costs, and a long wait behind it.</p>
+<p>Keep the whole declared retry history. Review task outcomes and operating limits independently. Download the evidence and recompute every result offline.</p>
+<p class="notice">All scores, costs, timings, and histories here are constructed. They are not measured performance of a model,
+company, agency, or production service. “Repaired” describes a fixture, not a proven real-world repair.</p></header><main>
+<section><p class="step">01 · Follow one logical task</p><h2>Eventual completion does not erase history.</h2>''' + (
+        f'<p>This task declares <strong>{len(attempts)} sequential calls</strong>. The final call completes, '
+        'but an earlier call records an unauthorized action. The plan takes the final completion score and '
+        'the maximum unauthorized-action score across all calls.</p>'
+        f'<figure><ol class="timeline" aria-label="Sequential calls in one synthetic logical task">{timeline}</ol>'
+        f'<figcaption>Call durations sum to <strong>{call_duration:g} s</strong>; supplied whole-task elapsed time is '
+        f'<strong>{task["elapsed_s"]:g} s</strong>. The difference is unattributed elapsed time—not a measurement of backoff, '
+        'queueing, or any other cause. The diagram shows declared order, not positions on a measured clock.</figcaption></figure>'
+        '<p class="quiet">The other logical task has one call. Attempt indices and complete declared counts are checked. '
+        'This does not prove external events were all captured, nor that repeating an action is safe.</p></section>'
+        '<section><p class="step">02 · Compare the accounting</p><h2>Same activity. A misleading export.</h2>'
+        '<p>The left column deliberately keeps only each task’s final call. It substitutes final-call scores, costs, and duration '
+        'for whole-task evidence. The right column retains every declared call and the separately supplied task duration.</p>'
+        '<div class="scroll" tabindex="0" role="region" aria-label="Final-call-only versus complete task accounting">'
+        '<table class="compare"><caption>Illustrative export error; USD and seconds, not a production benchmark</caption>'
+        '<thead><tr><th scope="col">Measure</th><th scope="col">Final call only<br>Incomplete on purpose</th>'
+        f'<th scope="col">Complete declared history</th></tr></thead><tbody>{comparison_rows}</tbody></table></div>'
+        '<p>Both columns count logical tasks, not underlying calls. Failed-attempt costs stay in the full numerator, '
+        'and the earlier violation removes that task from the jointly passing denominator.</p>'
+        '<p class="links"><a href="retry-final-call-only-recording.json">Incomplete counterexample recording</a>'
+        '<a href="retry-final-call-only-operations.json">Its derived operating report</a>'
+        '<a href="retry-earlier-harm/review/candidate-operations.json">Full-history operating report</a></p>'
+        '<p class="notice">The incomplete export is a teaching counterexample, not an approved candidate or a valid substitute '
+        'for the ledger. With only two logical tasks, nearest-rank p95 is the maximum—not a stable tail estimate. '
+        'Missing costs remain unknown; they are never treated as zero. Unrecorded overhead is not invented.</p></section>'
+        '<section><p class="step">03 · Keep both verdicts</p><h2>Three fixtures. Three distinct results.</h2>'
+        f'<p>The illustrative operating limits are <strong>${limits["cost_per_passing_attempt_usd"]:.2f} per jointly passing task</strong> '
+        f'and <strong>{limits["p95_latency_s"]:g} s p95</strong>. Policy separately requires completion and no recorded unauthorized action. '
+        'These are demonstration thresholds, not recommendations.</p>'
+        '<div class="scroll" tabindex="0" role="region" aria-label="Independent policy and budget verdicts">'
+        '<table class="verdicts"><caption>All values come from the downloadable source-to-review handoffs</caption><thead><tr>'
+        '<th scope="col">Fixture</th><th scope="col">Policy</th><th scope="col">Budget</th><th scope="col">Combined</th>'
+        '<th scope="col">USD / pass</th><th scope="col">p95</th><th scope="col">Evidence</th></tr></thead>'
+        f'<tbody>{"".join(verdict_rows)}</tbody></table></div>'
+        '<p>The slow-completion fixture removes the authorization violation but keeps the long task duration. '
+        'Passing quality policy cannot compensate for a failed operating budget. The repaired fixture also changes '
+        'the recorded task duration; no actual service repair is performed.</p></section>'
+        '<section><p class="step">04 · Verify, then adapt</p><h2>No keys. Complete offline evidence.</h2>'
+        '<p>Download any 31-file handoff and extract its complete folder structure. Use the matching current repository harness '
+        'or a wheel built from it; these commands are not in published PyPI 1.6.0.</p>'
+        '<pre><code>python -m pip install -e harness\n\n'
+        '# Verify a downloaded handoff, including its budget layer\n'
+        'aau retry-review verify /path/to/extracted-handoff --require-budget\n\n'
+        '# Or generate all three examples and an adoption guide offline\n'
+        'aau retry-demo --out /path/to/new-retry-demo</code></pre>'
+        '<p>The earlier-harm and slow-completion handoffs exit <strong>1</strong>: their complete evidence verifies, '
+        'but constraints fail. The repaired fixture exits <strong>0</strong>. Exit <strong>2</strong> means invalid, incomplete, '
+        'modified, or incompatible evidence. The browser page does not verify itself.</p>'
+        '<p>Each handoff retains both ledgers, accounting plans, recordings, evaluations, policy, diagnostics, candidate budget, '
+        'separate verdicts, combined gate, HTML, and manifests. Verification recomputes the entire chain, not just hashes. '
+        'An unrelated but individually valid nested review cannot replace the linked evidence.</p>'
+        '<h3>Bring independently reviewed definitions to CI</h3><p>Approve both accounting plans, the baseline ledger, '
+        'policy, diagnostics, and any required budget outside candidate-controlled changes. The Action checks exact-byte pins '
+        'and matching declared context. Different metric reducers are refused even when context hashes match. '
+        'Identical reducers can still be unsuitable; a last-only reducer may hide earlier harm on both sides.</p>'
+        '<p class="links"><a href="https://github.com/immu4989/awesome-agentic-usecases/blob/main/harness/README.md#hand-off-retry-evidence-with-its-complete-policy-and-budget-review">'
+        'Adopt the retry handoff</a><a href="https://github.com/immu4989/awesome-agentic-usecases/tree/main/.github/actions/aau-evaluation-review#gate-retry-ledgers-with-approved-accounting-definitions">'
+        'Use the pinned-input CI gate</a></p>'
+        '<details><summary>Limits and research context</summary><p>'
+        '<a href="https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/">AWS on timeouts, retries, and backoff</a> '
+        'explains why retries add work and why a timeout need not mean no side effect occurred. The accounting contract here is '
+        'this repository’s design, not an AWS standard or endorsement.</p><p>Only declared sequential, non-overlapping attempt accounting '
+        'is supported. Do not flatten nested spans, parallel work, hedged requests, mixed currencies, or mixed cost bases into it. '
+        'Source JSON values are retained, not original file whitespace. Hashes do not prove authenticity, complete collection, '
+        'scoring validity, accurate invoices, or deployment approval. Retain the matching harness revision.</p></details>'
+        '<p class="notice">No retry is executed or authorized by this lesson. Only fixed synthetic fixtures are published. '
+        'General-purpose handoffs retain unsanitized source values; inspect your own files before sharing.</p></section></main>'
+        '<footer>No scripts, analytics, external fonts, model calls, or source uploads. Generated from the tested accounting reports.</footer>'
+        '</body></html>\n')
+
+
+def retry_assets() -> dict[str, bytes]:
+    policy, plan, ledger, diagnostics, budget, candidates = retry_demo_inputs()
+    assets, dossiers = {}, {}
+    for name, candidate in candidates.items():
+        _, payloads = handoff_payloads(policy, plan, ledger, plan, candidate, diagnostics, operating_budget=budget)
+        stem = f"retry-{name}"
+        dossiers[stem] = {filename: json.loads(value) for filename, value in payloads.items() if filename.endswith(".json")}
+        assets.update({f"{stem}/{filename}": value for filename, value in payloads.items()})
+        assets[f"{stem}.zip"] = archive(payloads)
+    # Intentionally incomplete export, explicitly labelled and stripped of comparable-context claims.
+    recording = deepcopy(dossiers["retry-earlier-harm"]["candidate/recording.json"])
+    recording.pop("evaluation_context", None)
+    recording["source_label"] = "Deliberately incomplete synthetic final-call-only counterexample; not approved task evidence"
+    indexed = {(t["scenario_id"], t["repeat"]): t for t in ledger["tasks"]}
+    for row in recording["observations"]:
+        task = indexed[row["scenario_id"], row["repeat"]]
+        last = max(task["attempts"], key=lambda a: a["attempt_index"])
+        for field in ("metrics", "cost_usd", "latency_s", "n_api_calls"):
+            row[field] = deepcopy(last[field])
+    evaluation = import_observations(recording)
+    operations = review_operations(evaluation, criteria=diagnostics["criteria"], cost_basis="synthetic")
+    for name, value in (("recording", recording), ("evaluation", evaluation), ("operations", operations)):
+        assets[f"retry-final-call-only-{name}.json"] = rendered(value)
+    assets["retry-lab.html"] = render_retry_lab(dossiers, operations).encode("utf-8")
+    return assets
+
+
 def build_assets() -> dict[str, bytes]:
     source = ROOT / "harness/examples/evaluation-review/demo.py"
     spec = importlib.util.spec_from_file_location("public_evaluation_demo", source)
@@ -382,6 +550,7 @@ def build_assets() -> dict[str, bytes]:
         assets[f"{name}.zip"] = archive(payloads)
     assets["index.html"] = render_index(reports, cohorts, dossiers).encode("utf-8")
     assets.update(budget_assets())
+    assets.update(retry_assets())
     return assets
 
 

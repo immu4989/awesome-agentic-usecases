@@ -38,6 +38,8 @@ The [cost-and-repeatability demonstration](https://immu4989.github.io/awesome-ag
 also shows how failed attempts change cost per passing attempt and how a good median hides slow runs—with eleven-file diagnostic dossiers, not just screenshots.
 The [operating-budget lab](https://immu4989.github.io/awesome-agentic-usecases/evaluation-review/budget-lab.html)
 shows a slow, expensive service route hidden by acceptable aggregate results—with downloadable combined-gate dossiers and a budget-aware candidate matrix.
+The [retry-evidence lab](https://immu4989.github.io/awesome-agentic-usecases/evaluation-review/retry-lab.html)
+follows the whole declared retry history, exposing earlier harms and costs hidden by final-call-only exports—with three complete, downloadable review handoffs.
 
 Every use case is a complete, production-shaped evaluation lab: seeded scenarios with
 programmatic ground truth, tools and state, repeated model runs, cost from actual token
