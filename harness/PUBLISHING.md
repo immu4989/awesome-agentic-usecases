@@ -123,6 +123,7 @@ The check captures and re-verifies a path-free `runtime-info` source receipt fro
 wheel. The checks cover the packaged `evaluation-demo`, fixed-benchmark inference withholding,
 conditional failure-bound diagnostics, source-bound reviewer packs and all four packaged
 failure-bound walkthrough contrasts, a multi-candidate matrix that excludes failed policy,
+finite planned-look diagnostics with pending-look allocation, fixed-benchmark withholding, and byte-pin rejection,
 contract-to-service-trace scoring with retained failures, unknown operating measurements,
 downstream evaluation binding, and altered-score rejection,
 complete service handoffs with strict obligation criteria, failed/unknown budget outcomes,

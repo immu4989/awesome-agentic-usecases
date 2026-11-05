@@ -36,6 +36,12 @@ Reviewing several deliveries or update checkpoints? Use an
 latest checkpoint never erases an earlier failure or gap. This is offline evidence review, not
 production monitoring or incident closure.
 
+Need statistical failure bounds at several predeclared sample sizes? The
+[planned-look diagnostic](harness/README.md#allocate-uncertainty-across-preplanned-cumulative-looks)
+reserves uncertainty across every planned look and group. It rejects off-plan subsets and leaves
+future observations pending. Its population bounds are conditional on declared sampling assumptions;
+fixed benchmarks receive none, and no result is a deployment approval.
+
 Already have scored evaluation exports? Use the
 **[CSV review handoff](harness/README.md#hand-off-two-csv-exports-as-one-verifiable-review)**
 to turn baseline and candidate CSVs into one portable offline review. It retains both original

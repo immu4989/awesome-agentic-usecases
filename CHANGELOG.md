@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Preplanned cumulative-look diagnostics** — allocate conditional binomial uncertainty across
+  every declared look and scope, retaining pending looks and empty groups without reallocating
+  their budget. Exact-prefix validation prevents favorable subset review; repeated observations
+  remain one scenario bundle, and earlier supplied failures remain in later prefixes. Fixed
+  benchmarks receive no population bound. High-precision arithmetic checks, exact small-family
+  enumeration, and five synthetic contrasts test the finite-family method. Not unrestricted
+  anytime-valid inference, a production monitor, or a release gate.
+
 - **Ordered evidence-history review** — check every planned checkpoint against one common pinned
   request and a separately pinned census/order. A later passing checkpoint cannot erase earlier
   failed, missing, invalid, or substituted-control evidence. Reports retain every outcome, disclose

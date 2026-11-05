@@ -2212,6 +2212,108 @@ limit. Keep the plan, evaluation, and report together. No statistical package, n
 or new runtime dependency is needed. Inspect sampling notes, identifiers, and failed scores before
 sharing; this is not a sanitization tool. Available in the current checkout, not a new PyPI release.
 
+### Allocate uncertainty across preplanned cumulative looks
+
+Repeatedly applying an ordinary single-look confidence bound is not a repeated-look procedure.
+`aau planned-look-bounds` reserves uncertainty across a **finite, predeclared family of cumulative
+looks and scopes**. It is a separate statistical diagnostic, not a change to existing policy gates
+or to the [ordered evidence-history review](#preserve-failed-and-missing-checkpoints-across-an-evidence-history).
+
+```bash
+pip install -e harness
+python harness/examples/evaluation-review/planned_looks.py --out /tmp/planned-look-example
+```
+
+The generated guide replays five constructed examples. At 60 zero-failure scenario bundles, a
+single 95% fixed-look upper bound is about 4.87%; a plan reserving three looks at 20, 60, and 100
+instead gives about 6.60% at the 60-bundle look. The future look is still pending and its allocation
+is **not reused**. This is an arithmetic contrast, not permission to switch plans after seeing data.
+The examples also retain an early failed bundle, withhold fixed-benchmark inference, and expose a
+small group's insufficient evidence even when the overall conditional bound meets its limit.
+
+The plan is a closed contract. For example, a deliberately tiny fixed benchmark could declare:
+
+```json
+{
+  "plan_version": "aau-planned-look-bound-plan/1.0",
+  "scenario_order": ["case-a", "case-b", "case-c", "case-d"],
+  "look_sizes": [2, 4],
+  "n_repeats": 2,
+  "criteria": [{"metric": "completion", "direction": "higher", "limit": 1}],
+  "sampling_design": "fixed_benchmark",
+  "sampling_basis": "Deliberately selected challenge cases, not an IID sample.",
+  "confidence_level": 0.95,
+  "maximum_failure_probability": 0.05,
+  "groups": []
+}
+```
+
+Use actual reviewed scenario IDs, criteria, and sampling documentation. `fixed_benchmark` always
+withholds population bounds. Only an explicit `declared_iid_planned_looks` declaration enables
+conditional binomial bounds; the tool does **not** establish that this assumption is true.
+Groups use `group_id`, `scenario_ids`, and `maximum_failure_probability`, as in the single-look
+diagnostic. Every group must be a nonempty subset of the full planned census; groups may overlap.
+
+Independently review the complete plan before outcomes, protect its exact raw-file SHA-256, and
+use that independently controlled value—not a hash recomputed from a candidate-controlled plan
+in the same production job:
+
+```bash
+aau planned-look-bounds approved-plan.json prefix-evaluation.json \
+  --plan-sha256 "$APPROVED_LOOK_PLAN_SHA256" --out planned-look-report.json
+aau planned-look-bounds approved-plan.json prefix-evaluation.json \
+  --plan-sha256 "$APPROVED_LOOK_PLAN_SHA256" --verify planned-look-report.json
+```
+
+The source must contain **every scenario in an exact prefix of `scenario_order`**, with every
+planned repeat and selected metric. Its scenario count must be one declared look size. Off-plan
+interim counts, favorable subsets, missing repeats, extra scenarios, and changed repeat protocols
+are errors, not silently filtered data. Source row order is irrelevant; the pinned plan defines
+the prefix. The last planned look must equal the full horizon. A partial source is accepted at a
+planned look, while all later looks stay `not_yet_observed` with no fabricated zero-failure rows.
+
+For `L` planned looks and `G` scopes (including the mandatory overall scope), each cell uses:
+
+```text
+alpha_per_cell = (1 - confidence_level) / (L * G)
+```
+
+Each completed nonempty cell receives a one-sided Clopper–Pearson upper bound on bundle failure.
+One bundle fails if any joint criterion fails on any planned repeat. Repeats never increase the
+independent-unit count. Within the supplied dataset, an early failure remains in every later
+applicable prefix. Empty group cells have `no_observed_bundles`, a null bound, and a null observed
+failure fraction—not a zero-risk estimate. Pending and empty cells still reserve their allocation.
+
+This applies the general [Bonferroni inequality documented by NIST](https://www.itl.nist.gov/div898/handbook/prc/section4/prc473.htm)
+to the finite look-by-scope family. Shared cumulative data and overlapping scopes do not require
+independence **between cells** for that inequality. Each marginal binomial calculation still requires
+IID bundles **within its scope**, a suitable sampling population, fixed definitions/order, and stable
+candidate/scorer/execution conditions. Conditional simultaneous coverage supports choosing among
+these declared looks only. Added looks, extended horizons, adaptive groups, changed candidates,
+reset error budgets, or selecting the best of several candidate agents are outside the family.
+It is not the unrestricted time-uniform confidence sequence studied by
+[Howard and colleagues](https://arxiv.org/abs/1810.08240).
+
+Reports retain all completed and pending looks, group counts, failed bundle details, source-summary
+audit findings, unreviewed metrics, and the allocation formula. The root status is diagnostic,
+while `latest_completed_look` gives the latest conditional interpretation. An earlier wide bound
+may narrow with more data; that does not erase harms, close an incident, or approve deployment.
+Stored-summary mismatches remain visible; observations are used without rewriting their source.
+
+Exit **0** means a valid diagnostic was produced or reverified, including exceeded limits or withheld
+inference. Exit **2** means invalid inputs/pins, output errors, or a mismatching report. Outputs are
+never overwritten. Limits are 500 planned bundles, 10,000 planned observations, 20 looks, 20 scopes,
+and 2 MB for each input/report; there is no silent truncation. Floating-point results are checked
+against high-precision binomial calculations and exact small-family outcome enumeration, not claimed
+as arbitrary-precision certificates. No statistical runtime dependency, model, network, or collector
+is used. Retain the plan, evaluation, and report; inspect sensitive data before sharing.
+
+A plan pin is not proof of preregistration, authority, source authenticity, or actual acquisition
+order. Earlier source exports are not compared, and the tool does not authenticate accumulated
+history. Copies renamed as new scenarios do not become independent observations. Policy, operating
+budgets, affected-user feedback, and human review remain separate. Available from this checkout or
+its local wheel; not included in the currently documented PyPI 1.6.0 release.
+
 ### Hand off readable failure-bound evidence
 
 For a reviewer who should not need to inspect raw JSON, `failure-bound-pack` retains a complete

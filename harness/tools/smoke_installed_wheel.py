@@ -280,6 +280,27 @@ write_json(responses, Path('service-responses.json'))
                 raise RuntimeError("installed failure-bound walkthrough lost an expected interpretation")
         if len([p for p in (root / "failure-demo").rglob('*') if p.is_file()]) != 21:
             raise RuntimeError("installed failure-bound walkthrough is incomplete")
+        planned = json.loads((root / "failure-demo/more-scenarios/plan.json").read_text())
+        planned["plan_version"] = "aau-planned-look-bound-plan/1.0"
+        planned["scenario_order"] = planned.pop("scenario_ids") + [f"future-{i}" for i in range(40)]
+        planned.update(look_sizes=[20, 60, 100], sampling_design="declared_iid_planned_looks")
+        # Synthetic fixture pin only; production expectations must be independently controlled.
+        for design, expected in (("declared_iid_planned_looks", "conditional_planned_look_diagnostic"),
+                                  ("fixed_benchmark", "population_inference_withheld")):
+            planned["sampling_design"] = design
+            raw = json.dumps(planned).encode("utf-8")
+            (root / "planned-looks.json").write_bytes(raw)
+            command = [cli, "planned-look-bounds", "planned-looks.json", "failure-demo/more-scenarios/evaluation.json",
+                       "--plan-sha256", hashlib.sha256(raw).hexdigest()]
+            run([*command, "--out", f"planned-{design}.json"])
+            run([*command, "--verify", f"planned-{design}.json"])
+            result = json.loads((root / f"planned-{design}.json").read_text())
+            if result["status"] != expected or result["pending_look_count"] != 1 or result["method"]["family_size"] != 3:
+                raise RuntimeError("installed planned-look diagnostic dropped a pending look or changed its family")
+            if design == "declared_iid_planned_looks" and result["latest_completed_look"]["status"] != "conditional_bounds_exceed_limits":
+                raise RuntimeError("installed planned-look diagnostic reused a single-look confidence claim")
+            (root / "planned-looks.json").write_bytes(raw + b" ")
+            run([*command, "--out", "invalid-planned-report.json"], expected=2)
         run([cli, "retry-demo", "--out", "retry-demo"])
         run([cli, "retry-demo", "--out", "retry-demo"], expected=2)
         for name, code in (("earlier-harm", 1), ("slow-completion", 1), ("repaired", 0)):
