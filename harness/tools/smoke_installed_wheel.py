@@ -69,6 +69,12 @@ def smoke(wheel: Path) -> None:
             args = [*intake_command, f"demo/{name}", "--request-sha256", request_pin]
             run([*args, "--out", f"{name}-intake.json"], expected=code)
             run([*args, "--verify", f"{name}-intake.json"], expected=code)
+            ci_args = [cli, "review-ci", "intake", "intake-request.json", f"demo/{name}", "--request-sha256", request_pin]
+            run([*ci_args, "--out", f"ci-{name}"], expected=code)
+            run([*ci_args, "--verify", f"ci-{name}"], expected=code)
+            ci = json.loads((root / f"ci-{name}/report.json").read_text())
+            if ci["exit_code"] != code or bool(ci["counts"]["failures"]) != bool(code):
+                raise RuntimeError("installed CI presentation changed the native requirement outcome")
         run([*intake_command, "demo/repaired", "--request-sha256", "0" * 64, "--out", "invalid-intake.json"], expected=2)
         request["pinned_inputs"]["policy"] = "0" * 64
         changed_raw = json.dumps(request).encode("utf-8")
@@ -103,6 +109,16 @@ def smoke(wheel: Path) -> None:
         invalid = json.loads((root / "series-invalid.json").read_text())
         if invalid["status"] != "series_not_fully_verified" or invalid["checkpoints"][1]["status"] != "invalid":
             raise RuntimeError("installed series review promoted invalid historical evidence")
+        ci_series = [cli, "review-ci", "series", *series_command[2:]]
+        run([*ci_series, "--out", "ci-series"], expected=2)
+        run([*ci_series, "--verify", "ci-series"], expected=2)
+        ci_invalid = json.loads((root / "ci-series/report.json").read_text())
+        if ci_invalid["counts"]["errors"] != 1 or ci_invalid["suites"][2]["counts"]["failures"]:
+            raise RuntimeError("installed CI presentation hid an invalid checkpoint behind a later pass")
+        with (root / "ci-repaired/junit.xml").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "review-ci", "intake", "intake-request.json", "demo/repaired", "--request-sha256", request_pin,
+             "--verify", "ci-repaired"], expected=2)
         service_plan = {"plan_version": "aau-service-trace-import/1.0", "source_label": "Synthetic wheel service", "n_repeats": 1}
         service_contract = {"version": "synthetic-1", "expected_terminal": "route_review", "required_evidence": [],
                             "held_evidence": [], "required_channel": "phone_711", "recourse_required": True,

@@ -310,6 +310,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Check a complete evidence pack against a separately pinned receiving-team request")
     sub.add_parser("review-series", add_help=False,
                    help="Review every planned checkpoint under fixed requirements without hiding earlier failures or gaps")
+    sub.add_parser("review-ci", add_help=False,
+                   help="Present recomputed pinned intake or history reviews as JUnit, JSON, and Markdown")
     sub.add_parser("failure-bound-pack", add_help=False,
                    help="Create or verify a complete offline failure-bound reviewer pack")
     sub.add_parser("failure-bound-demo", add_help=False,
@@ -471,6 +473,9 @@ def main(argv: list[str] | None = None) -> int:
     if raw_args and raw_args[0] == "review-series":
         from .evidence_series import main as evidence_series_main
         return evidence_series_main(raw_args[1:])
+    if raw_args and raw_args[0] == "review-ci":
+        from .evidence_ci import main as evidence_ci_main
+        return evidence_ci_main(raw_args[1:])
     if raw_args and raw_args[0] == "failure-bound-pack":
         from .eval_failure_pack import main as failure_pack_main
         return failure_pack_main(raw_args[1:])

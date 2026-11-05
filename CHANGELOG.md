@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **Portable CI evidence reporting** — present separately pinned intake and ordered-history
+  reviews as JUnit XML, JSON, and Markdown. Known failures, unknown budgets, missing context,
+  gaps, and invalid checkpoints remain non-passing, even behind a later pass. Four-file bundles
+  reverify against original controls and complete source packs, not manifest hashes alone.
+  Fixed ordinal presentation names avoid copying source labels into dashboards; JSON retains
+  original review IDs/hashes and is not sanitized. Six synthetic contrasts, installed-package
+  checks, and opt-in GitLab/Azure recipes support adoption without changing hosted CI settings.
+  Counts are review checks, not agent executions, independent samples, or deployment approval.
+
 - **Preplanned cumulative-look diagnostics** — allocate conditional binomial uncertainty across
   every declared look and scope, retaining pending looks and empty groups without reallocating
   their budget. Exact-prefix validation prevents favorable subset review; repeated observations

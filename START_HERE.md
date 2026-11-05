@@ -36,6 +36,11 @@ Reviewing several deliveries or update checkpoints? Use an
 latest checkpoint never erases an earlier failure or gap. This is offline evidence review, not
 production monitoring or incident closure.
 
+Want these reviews in an existing CI test dashboard? [Portable CI reporting](harness/README.md#publish-pinned-evidence-reviews-to-ci-test-dashboards)
+produces JUnit XML, JSON, and Markdown while preserving native nonzero exits, unknowns, and gaps.
+Use the opt-in GitLab/Azure recipes with a matching trusted checkout or local wheel; the older
+public PyPI release does not contain this command. Retain complete source evidence for replay.
+
 Need statistical failure bounds at several predeclared sample sizes? The
 [planned-look diagnostic](harness/README.md#allocate-uncertainty-across-preplanned-cumulative-looks)
 reserves uncertainty across every planned look and group. It rejects off-plan subsets and leaves
