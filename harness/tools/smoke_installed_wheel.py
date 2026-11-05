@@ -119,6 +119,36 @@ def smoke(wheel: Path) -> None:
             stream.write(b" ")
         run([cli, "review-ci", "intake", "intake-request.json", "demo/repaired", "--request-sha256", request_pin,
              "--verify", "ci-repaired"], expected=2)
+        routing_source = json.loads((root / "demo/repaired/candidate-recording.json").read_text())
+        routing_source.pop("evaluation_context", None)  # These changed synthetic fields have no captured scoring context.
+        for index, row in enumerate(routing_source["observations"]):
+            row["metrics"].update(routing_score=[.1, .4, .8, .95][index], human_required=int(index == 2))
+            if index == 0:
+                row["metrics"]["unauthorized"] = 1
+            if index == 3:
+                del row["metrics"]["human_required"]
+        (root / "routing-recording.json").write_text(json.dumps(routing_source))
+        run([cli, "import-eval", "routing-recording.json", "--out", "routing-evaluation.json"])
+        routing_plan = {"plan_version": "aau-recorded-routing-plan/1.0", "scenario_ids": routing_source["scenario_ids"],
+                        "n_repeats": 4, "criteria": [{"metric": "unauthorized", "direction": "lower", "limit": 0}],
+                        "score_metric": "routing_score", "mandatory_review_metric": "human_required",
+                        "score_basis": "Synthetic ranking fixture, not production confidence", "thresholds": [0, .5],
+                        "limits": {"minimum_automation_fraction": 0, "maximum_automated_failure_fraction": 1,
+                                   "maximum_review_observations": 4}, "groups": []}
+        routing_raw = json.dumps(routing_plan).encode("utf-8")
+        (root / "routing-plan.json").write_bytes(routing_raw)
+        routing_command = [cli, "routing-eval", "routing-plan.json", "routing-evaluation.json",
+                           "--plan-sha256", hashlib.sha256(routing_raw).hexdigest()]
+        run([*routing_command, "--out", "routing-report.json"])
+        run([*routing_command, "--verify", "routing-report.json"])
+        routing = json.loads((root / "routing-report.json").read_text())
+        low, high = [item["scopes"][0] for item in routing["thresholds"]]
+        if (low["automated_observations"] != 2 or low["automated_joint_failures"] != 1
+                or high["automated_observations"] != 0 or high["automated_failure_fraction"] is not None
+                or routing["recorded_joint_failures"] != 1 or routing["selected_threshold"] is not None):
+            raise RuntimeError("installed routing diagnostic hid failures or promoted human-only/unknown routes")
+        (root / "routing-plan.json").write_bytes(routing_raw + b" ")
+        run([*routing_command, "--out", "invalid-routing.json"], expected=2)
         service_plan = {"plan_version": "aau-service-trace-import/1.0", "source_label": "Synthetic wheel service", "n_repeats": 1}
         service_contract = {"version": "synthetic-1", "expected_terminal": "route_review", "required_evidence": [],
                             "held_evidence": [], "required_channel": "phone_711", "recourse_required": True,

@@ -1782,6 +1782,128 @@ passed policy. Exit **2** means invalid input or verification failure. Do not us
 success as a deployment gate. All supplied evaluation details are retained and **not sanitized**;
 review before sharing. Hashes do not authenticate execution, scoring, timestamps, or approval.
 
+### Measure routing trade-offs without assuming human resolution
+
+Many workflows end with “route uncertain cases to a human.” That is a referral, not proof that the
+person received timely, correct service. `aau routing-eval` makes the **recorded trade-off** inspectable:
+how many supplied observations a declared threshold would automate, which recorded joint failures
+remain on that path, and how many observations it would defer. It neither executes routing nor
+assumes humans fix the deferred cases. Use a matching trusted checkout/local wheel containing this
+unreleased command; do not assume an older published package contains it.
+
+The [selective-classification literature](https://arxiv.org/abs/1705.08500) motivates examining error
+together with coverage. This tool implements descriptive counts, **not that paper's learned selector
+or statistical guarantees**. [NIST AI RMF MANAGE 1.1–1.2](https://airc.nist.gov/airmf-resources/playbook/manage/)
+also discusses risk/benefit trade-offs and resource decisions. Neither source endorses this tool or
+makes its example thresholds suitable for a real agency or business.
+
+Try five constructed contrasts:
+
+```bash
+python harness/examples/evaluation-review/routing_workload.py --out /tmp/aau-routing-workload
+```
+
+In the main synthetic fixture, all ten supplied observations are retained, including four joint
+outcome failures. The example's scores are deliberately imperfect rankings:
+
+| Score threshold | Automated observations | Failures on that hypothetical path | Deferred observations | Automated failure fraction |
+|---|---:|---:|---:|---:|
+| 0 | 6 | 2 | 4 | 1/3 |
+| 0.8 | 4 | 2 | 6 | 1/2 |
+| 1 | 0 | 0 | 10 | Undefined, not zero |
+
+Raising the score threshold does not necessarily lower the observed error fraction. At threshold 0,
+the example's global limits are met, but the declared assisted-channel group has two failures in two
+automated observations and fails its own limit. Other contrasts show referral overload, all-deferred
+work, and a clean recording. No human outcome or real model execution is supplied in these fixtures.
+
+The plan's exact fields are illustrated below. Limits are **example batch counts and fractions**,
+not recommended production values, legal requirements, staffing estimates, or service-level objectives.
+
+```json
+{
+  "plan_version": "aau-recorded-routing-plan/1.0",
+  "scenario_ids": ["case-a", "case-b"],
+  "n_repeats": 2,
+  "criteria": [
+    {"metric": "completion", "direction": "higher", "limit": 1},
+    {"metric": "unauthorized", "direction": "lower", "limit": 0}
+  ],
+  "score_metric": "routing_score",
+  "mandatory_review_metric": "human_required",
+  "score_basis": "Describe the supplied ranking score and when it is available; not presumed calibrated.",
+  "thresholds": [0, 0.8, 1],
+  "limits": {
+    "minimum_automation_fraction": 0.5,
+    "maximum_automated_failure_fraction": 0.1,
+    "maximum_review_observations": 2
+  },
+  "groups": [
+    {
+      "group_id": "declared-assisted-route",
+      "scenario_ids": ["case-b"],
+      "limits": {
+        "minimum_automation_fraction": 0,
+        "maximum_automated_failure_fraction": 0.1,
+        "maximum_review_observations": 2
+      }
+    }
+  ]
+}
+```
+
+Input is a complete saved evaluation, including one produced by `aau import-eval` or `aau csv-eval`.
+Every outcome criterion must exist on every scenario/repeat. The routing score, when present, must
+be a finite numeric value from 0 through 1; the human-review flag must be numeric 0 or 1, not a
+boolean. Omit an unknown routing metric rather than inserting a made-up zero or `null`. Missing
+routing metrics remain explicit unknowns; missing outcome measurements invalidate the diagnostic.
+The two routing metrics must be distinct from each other and the outcome criteria.
+
+Routing is deterministic and conjunctive: a supplied human-review flag of 0 **and** a present score
+at least the threshold are required for the hypothetical automated path. Deferral reasons use the
+following precedence so counts do not overlap: required human review, unknown review requirement,
+missing score, below threshold. Every input score/flag remains in the report, including when more
+than one reason applies. A high score never overrides a required or unknown human-review flag.
+The tool does **not** establish that either field is trustworthy, available before action, free of
+outcome leakage, or an accurate expression of a person's legal rights or an operator's authority.
+
+Independently select and protect the plan's expected byte hash before evaluating a candidate:
+
+```bash
+aau routing-eval approved-routing-plan.json complete-evaluation.json \
+  --plan-sha256 "$APPROVED_ROUTING_PLAN_SHA256" --out routing-report.json
+aau routing-eval approved-routing-plan.json complete-evaluation.json \
+  --plan-sha256 "$APPROVED_ROUTING_PLAN_SHA256" --verify routing-report.json
+```
+
+Do not compute an expected approval hash from candidate-controlled input in the same job. Pins
+identify bytes, not preregistration or reviewer authority. Plans require 1–500 unique scenarios,
+an exact repeat count with at most 10,000 observations, 1–10 joint outcome criteria, 1–20 distinct
+thresholds, and up to 19 named nonempty groups. Groups may overlap; they are reviewed separately,
+never pooled as disjoint populations. The complete scenario/repeat census must match—no dropped
+failures or favorable subset review. Each referral limit is an integer from zero through that scope's
+planned observation count. Inputs/reports are bounded to 2 MB; existing outputs are not overwritten.
+
+Each threshold reports every group's coverage, automated and deferred joint failures, referral
+count, reason counts, and all three limit checks. Known exceeded limits take status precedence over
+unverified checks, but both remain visible. The automated failure fraction is undefined with an
+empty denominator, even if the minimum coverage limit is zero. Counts are checked against limits
+as exact rational values versus the parsed limits' decimal spelling; displayed fractions are not
+rounded before checking. Source summaries are audited and inconsistencies retained, not repaired.
+
+**A valid diagnostic exits 0 even when limits are exceeded or unverified.** Exit 2 rejects invalid
+inputs or replay mismatches. This is not a policy gate or a replacement for `review-intake`/`review-ci`.
+The report selects no threshold. If a threshold is chosen using these results, assess it separately
+on held-out evidence and revalidate any assumptions; there is no confidence bound here.
+
+Every recorded joint failure remains in the report regardless of routing. Deferral cannot undo a
+side effect already recorded. `human_resolution` remains `not_measured` for deferred work; no queue
+delay, review quality, hours saved, human capacity over time, cost, causal benefit, or future traffic
+is inferred. Repeats are not independent people or arrivals, and counts are not population estimates.
+Keep the original plan, complete evaluation, and report with a matching trusted harness. Identifiers,
+scores, failures, and hashes are retained and require disclosure review. No adapters, model calls,
+external actions, uploads, or network requests are performed.
+
 ### Check operating budgets without hiding a slow or expensive group
 
 `aau operating-budget` checks explicit limits on the recorded workload and up to 20 declared

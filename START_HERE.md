@@ -47,6 +47,11 @@ reserves uncertainty across every planned look and group. It rejects off-plan su
 future observations pending. Its population bounds are conditional on declared sampling assumptions;
 fixed benchmarks receive none, and no result is a deployment approval.
 
+Considering when to route work to a human? The [recorded routing diagnostic](harness/README.md#measure-routing-trade-offs-without-assuming-human-resolution)
+shows automation coverage, joint failures, group-specific limits, and referral counts at separately
+planned score thresholds. Unknown/required human-review flags always defer. It does not measure
+human resolution, forecast staffing, choose a threshold, or undo failures already recorded.
+
 Already have scored evaluation exports? Use the
 **[CSV review handoff](harness/README.md#hand-off-two-csv-exports-as-one-verifiable-review)**
 to turn baseline and candidate CSVs into one portable offline review. It retains both original

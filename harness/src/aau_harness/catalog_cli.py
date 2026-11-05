@@ -296,6 +296,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="explain changed scenario, configuration, and scoring fingerprints without pairing scores")
     sub.add_parser("failure-bound-eval", add_help=False,
                    help="Separate benchmark failure counts from conditional fixed-horizon bounds")
+    sub.add_parser("routing-eval", add_help=False,
+                   help="Describe automation/referral trade-offs with group limits and unknown human outcomes")
     sub.add_parser("service-trace-eval", add_help=False,
                    help="Rescore normalized service traces against separate contracts and retain the source chain")
     sub.add_parser("service-review", add_help=False,
@@ -452,6 +454,9 @@ def main(argv: list[str] | None = None) -> int:
     if raw_args and raw_args[0] == "failure-bound-eval":
         from .eval_failure_bound import main as failure_bound_main
         return failure_bound_main(raw_args[1:])
+    if raw_args and raw_args[0] == "routing-eval":
+        from .eval_routing import main as routing_main
+        return routing_main(raw_args[1:])
     if raw_args and raw_args[0] == "service-trace-eval":
         from .eval_service_traces import main as service_trace_main
         return service_trace_main(raw_args[1:])

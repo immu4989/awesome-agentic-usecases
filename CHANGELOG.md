@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- **Recorded routing and referral-workload diagnostics** — compare predeclared score thresholds
+  without treating referrals as resolved work. Required/unknown human-review flags and missing
+  scores defer; zero automated observations have undefined failure fraction. Every recorded joint
+  failure remains visible, including hypothetically deferred ones. Independent group limits expose
+  aggregate masking; referral-count limits expose workload trade-offs without forecasting staffing.
+  Five constructed contrasts include worsening error fraction at a higher score threshold. Reports
+  replay from pinned plans and full evaluations, select no threshold, and make no calibration,
+  causal-benefit, population-risk, human-resolution, or deployment-approval claim.
+
 - **Portable CI evidence reporting** — present separately pinned intake and ordered-history
   reviews as JUnit XML, JSON, and Markdown. Known failures, unknown budgets, missing context,
   gaps, and invalid checkpoints remain non-passing, even behind a later pass. Four-file bundles
