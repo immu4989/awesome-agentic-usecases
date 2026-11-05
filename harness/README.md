@@ -1904,6 +1904,121 @@ Keep the original plan, complete evaluation, and report with a matching trusted 
 scores, failures, and hashes are retained and require disclosure review. No adapters, model calls,
 external actions, uploads, or network requests are performed.
 
+### Replay a finite review queue without inventing human capacity
+
+The routing diagnostic counts referrals; it cannot determine how long those referrals wait.
+`aau review-queue` adds an explicit **finite what-if model** using supplied arrival times, positive
+service durations, availability windows, and optional completion deadlines. It recomputes the full
+routing diagnostic and requires **exactly every deferred scenario/repeat** at one independently
+selected threshold. Required or unknown human-review flags cannot be omitted to make capacity look better.
+This is an unreleased harness command: use a matching trusted checkout or local wheel.
+
+Finite resources can create queues, as illustrated in the
+[SimPy shared-resource documentation](https://simpy.readthedocs.io/en/latest/topical_guides/resources.html). <!-- codespell:ignore simpy -->
+This implementation uses its own deterministic bounded interval search, **not SimPy**, and makes <!-- codespell:ignore simpy -->
+its particular assumptions explicit. [NIST MANAGE 1.2](https://airc.nist.gov/airmf-resources/playbook/manage/)
+discusses resource decisions in risk management; it does not endorse this model or establish that
+its assumptions or example times apply to a real organization.
+
+```bash
+python harness/examples/evaluation-review/review_queue.py --out /tmp/aau-review-queue
+```
+
+All five examples retain the same four hypothetical referrals. Normally each takes three constructed
+seconds, arrives at zero, and has a declared finish deadline of six seconds. These deliberately tiny
+values make the arithmetic inspectable; they are **not realistic human-review estimates or legal clocks**.
+
+| Constructed model | Scheduled | Unscheduled | Known declared-deadline failures |
+|---|---:|---:|---:|
+| One slot available through second 12 | 4 | 0 | 2 |
+| Two slots available through second 12 | 4 | 0 | 0 |
+| One slot with an unavailable interval from 4 to 8 | 2 | 2 | 3 |
+| First item needs 20 seconds and cannot fit | 0 | 4 | 4 |
+| One short window; no deadlines supplied | 1 | 3 | 0 — all four deadline outcomes remain unknown |
+
+The second row is conditional arithmetic under changed capacity, not advice to hire another reviewer.
+The last row is not deadline success. None of these rows measures correct review, resolved cases,
+delivered benefits, or recovered harm; the nested routing report retains every original failure.
+
+An independently reviewed queue plan binds the **exact bytes of the routing plan** and one of that
+plan's declared thresholds. Its own expected byte hash must be protected separately from candidate
+inputs. Computing an expected approval hash from candidate-controlled files in the same job defeats
+that separation. The example below uses an intentionally placeholder routing-plan hash; replace it
+with the independently reviewed value, not a hash opportunistically accepted from a delivery.
+
+```json
+{
+  "plan_version": "aau-human-review-queue-plan/1.0",
+  "routing_plan_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "threshold": 0,
+  "horizon_s": 12,
+  "timing_basis": "synthetic",
+  "timing_scope": "Constructed arithmetic only; describe real timing assumptions separately.",
+  "initial_state": "empty_queue_idle_slots_at_zero",
+  "workers": [
+    {"worker_id": "review-slot-a", "windows": [{"start_s": 0, "end_s": 12}]}
+  ]
+}
+```
+
+`timing_basis` is `synthetic`, `supplied_measurements`, or `declared_estimates`, always a declaration,
+not authentication. All times use integer seconds from the **same supplied relative origin**.
+The positive horizon is at most 31,536,000 seconds. Up to 20 interchangeable slots may each have
+1–20 ordered, non-overlapping availability windows contained in the horizon. Zero slots is valid
+zero capacity, not fabricated availability. Use slot labels rather than employee names: no employee
+performance or productivity assessment is performed. Empty initial state and idle slots are explicit
+model assumptions; windows must exclude other commitments and cannot prove complete workload coverage.
+
+The separate work-item document supplies one entry per hypothetical referral:
+
+```json
+{
+  "format_version": "aau-human-review-work-items/1.0",
+  "items": [
+    {"scenario_id": "case-a", "repeat": 0, "arrival_s": 0, "service_s": 3, "deadline_s": 6}
+  ]
+}
+```
+
+This one-row shape is valid only when that exact observation is the entire deferred census. Arrival
+must be nonnegative and before the horizon; service duration must be a positive integer; both are
+required, not imputed. Deadlines are nonnegative integer seconds or `null` when unknown. A deadline
+can already have passed before arrival; it is not silently reset. Missing/extra/duplicate referrals,
+automated observations inserted into the queue, or substituted routing plans are rejected. The
+maximum work-item count is 10,000, inherited from the complete routing evaluation.
+
+```bash
+aau review-queue approved-queue-plan.json approved-routing-plan.json complete-evaluation.json work-items.json \
+  --queue-plan-sha256 "$APPROVED_QUEUE_PLAN_SHA256" --out queue-report.json
+aau review-queue approved-queue-plan.json approved-routing-plan.json complete-evaluation.json work-items.json \
+  --queue-plan-sha256 "$APPROVED_QUEUE_PLAN_SHA256" --verify queue-report.json
+```
+
+The model uses **strict FIFO**: arrival time, then scenario ID and repeat break ties. Jobs start at
+the earliest feasible time; equal-start capacity ties use slot ID. Labels are deterministic tie-breakers,
+not urgency, fairness, rights, or eligibility priorities. Each job must fit wholly within one window;
+completion exactly at its end is allowed. Adjacent windows are not silently merged. No service is
+split across breaks, preempted, or extended through overtime. A head reserved for a future slot cannot
+be overtaken by a later short job. A head that cannot fit anywhere blocks every later item; this can
+leave apparent spare capacity unused. This is a stated FIFO-model limitation, not an optimization.
+Skill-specific, urgent, preemptive, abandoning, retrying, or carry-in workloads require a different model.
+
+Every job retains its scheduled start/finish or explicit unscheduled reason. Maximum scheduled wait
+and maximum unserved wait at the horizon remain separate, so unfinished work cannot disappear into
+an average of completed jobs. The timeline combines all events at the same second before reporting
+waiting and in-service counts; immediate starts create no artificial positive wait. Work finishing at
+its declared deadline is within it. Unscheduled work with a deadline at/before the horizon fails that
+declared deadline; deadlines beyond the horizon remain unresolved. Omitted deadlines remain unknown.
+
+**Valid diagnostic reports exit 0 even when jobs are blocked or deadlines fail; invalid inputs or
+replay mismatches exit 2.** No threshold, staffing level, deployment, or human decision is approved.
+Replay starts from both original plans, the full evaluation, and all work items, not a supplied report.
+Plan pins bind raw bytes; evaluation/work-item hashes bind parsed JSON values. Every input and the
+composed report is bounded to 2 MB; no truncation or overwriting is allowed. Keep all original inputs
+and use a matching trusted implementation. Data capture is not atomic or source-authenticated.
+Review identifiers, times, scores, and hashes before sharing. No model, adapter, human action,
+subprocess, upload, or network request is executed by this command.
+
 ### Check operating budgets without hiding a slow or expensive group
 
 `aau operating-budget` checks explicit limits on the recorded workload and up to 20 declared

@@ -149,6 +149,28 @@ def smoke(wheel: Path) -> None:
             raise RuntimeError("installed routing diagnostic hid failures or promoted human-only/unknown routes")
         (root / "routing-plan.json").write_bytes(routing_raw + b" ")
         run([*routing_command, "--out", "invalid-routing.json"], expected=2)
+        (root / "routing-plan.json").write_bytes(routing_raw)
+        queue_plan = {"plan_version": "aau-human-review-queue-plan/1.0", "routing_plan_sha256": hashlib.sha256(routing_raw).hexdigest(),
+                      "threshold": 0, "horizon_s": 6, "timing_basis": "synthetic", "timing_scope": "Constructed wheel check, not observed human review",
+                      "initial_state": "empty_queue_idle_slots_at_zero",
+                      "workers": [{"worker_id": "slot", "windows": [{"start_s": 0, "end_s": 6}]}]}
+        queue_raw = json.dumps(queue_plan).encode("utf-8")
+        (root / "queue-plan.json").write_bytes(queue_raw)
+        work_items = {"format_version": "aau-human-review-work-items/1.0", "items": [
+            {"scenario_id": routing_source["scenario_ids"][0], "repeat": index, "arrival_s": 0, "service_s": 3, "deadline_s": 4}
+            for index in (2, 3)]}
+        (root / "queue-items.json").write_text(json.dumps(work_items))
+        queue_command = [cli, "review-queue", "queue-plan.json", "routing-plan.json", "routing-evaluation.json", "queue-items.json",
+                         "--queue-plan-sha256", hashlib.sha256(queue_raw).hexdigest()]
+        run([*queue_command, "--out", "queue-report.json"])
+        run([*queue_command, "--verify", "queue-report.json"])
+        queue = json.loads((root / "queue-report.json").read_text())
+        if (queue["counts"]["scheduled"] != 2 or queue["counts"]["known_deadline_failures"] != 1
+                or queue["maximum_scheduled_wait_s"] != 3 or queue["human_resolution_measured"]):
+            raise RuntimeError("installed queue replay hid delays/deadlines or invented human resolution")
+        work_items["items"].pop()
+        (root / "queue-items.json").write_text(json.dumps(work_items))
+        run([*queue_command, "--out", "incomplete-queue-report.json"], expected=2)
         service_plan = {"plan_version": "aau-service-trace-import/1.0", "source_label": "Synthetic wheel service", "n_repeats": 1}
         service_contract = {"version": "synthetic-1", "expected_terminal": "route_review", "required_evidence": [],
                             "held_evidence": [], "required_channel": "phone_711", "recourse_required": True,

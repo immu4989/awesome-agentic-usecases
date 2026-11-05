@@ -136,6 +136,7 @@ receiving-team intake requests with separate request-byte pins, substituted-cont
 ordered evidence histories with preserved earlier failures, missing checkpoints, invalid evidence, and latest-result separation,
 CI presentation bundles with native pass/fail/invalid exits, retained historical errors, full-source replay, and tamper rejection,
 recorded routing diagnostics with required/unknown human deferral, retained failures, undefined empty automation, and plan-pin rejection,
+finite review-queue replay with exact referral census, waiting time, retained deadline failures, and no inferred human resolution,
 standalone operating-budget pass/fail reports, a budget-aware matrix,
 combined policy/budget dossier and CSV gates, and downgrade rejection with `--require-budget`,
 operating-budget change review with both changed and unchanged outcomes,

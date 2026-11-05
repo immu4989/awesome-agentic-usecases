@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Finite human-review queue replay** — bind one declared routing threshold to supplied arrival
+  times, service durations, availability windows, and optional deadlines. Every hypothetical referral
+  must remain present, including required/unknown review cases. Strict FIFO, nonpreemptive windows,
+  blocked-head behavior, unscheduled waits, and unknown deadlines prevent hidden work or invented
+  capacity. Five constructed contrasts and an independent time-step oracle test the model. Scheduled
+  review time is not human resolution, staffing advice, a real deadline determination, or deployment
+  approval; all original routing failures remain in the complete replayed report.
+
 - **Recorded routing and referral-workload diagnostics** — compare predeclared score thresholds
   without treating referrals as resolved work. Required/unknown human-review flags and missing
   scores defer; zero automated observations have undefined failure fraction. Every recorded joint

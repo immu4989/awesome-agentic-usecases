@@ -52,6 +52,11 @@ shows automation coverage, joint failures, group-specific limits, and referral c
 planned score thresholds. Unknown/required human-review flags always defer. It does not measure
 human resolution, forecast staffing, choose a threshold, or undo failures already recorded.
 
+Have explicit arrival times, service durations, and review availability? The
+[finite review-queue replay](harness/README.md#replay-a-finite-review-queue-without-inventing-human-capacity)
+keeps the entire referral census and shows modeled waits, blocked work, and declared-deadline
+failures. It does not infer missing capacity or treat simulated review time as a resolved case.
+
 Already have scored evaluation exports? Use the
 **[CSV review handoff](harness/README.md#hand-off-two-csv-exports-as-one-verifiable-review)**
 to turn baseline and candidate CSVs into one portable offline review. It retains both original
