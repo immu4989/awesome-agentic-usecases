@@ -168,6 +168,14 @@ def smoke(wheel: Path) -> None:
         if (queue["counts"]["scheduled"] != 2 or queue["counts"]["known_deadline_failures"] != 1
                 or queue["maximum_scheduled_wait_s"] != 3 or queue["human_resolution_measured"]):
             raise RuntimeError("installed queue replay hid delays/deadlines or invented human resolution")
+        queue_pin = hashlib.sha256(queue_raw).hexdigest()
+        run([cli, "queue-pack", "create", "queue-plan.json", "routing-plan.json", "routing-evaluation.json", "queue-items.json",
+             "--queue-plan-sha256", queue_pin, "--out", "queue-pack"])
+        run([cli, "queue-pack", "verify", "queue-pack", "--queue-plan-sha256", queue_pin])
+        run([cli, "queue-pack", "verify", "queue-pack", "--queue-plan-sha256", "0" * 64], expected=2)
+        with (root / "queue-pack/review.html").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "queue-pack", "verify", "queue-pack", "--queue-plan-sha256", queue_pin], expected=2)
         work_items["items"].pop()
         (root / "queue-items.json").write_text(json.dumps(work_items))
         run([*queue_command, "--out", "incomplete-queue-report.json"], expected=2)

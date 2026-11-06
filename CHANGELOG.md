@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- **Readable, source-retaining queue handoffs** — eight-file packs retain both exact control plans,
+  the full evaluation, timing inputs, recomputed report, and a script-free review page. An accessible
+  step timeline, exact tables, every referral, unscheduled waits, unknown deadlines, and original
+  routing failures remain inspectable offline. Verification requires an independently supplied plan
+  pin and recomputes every byte; editing manifest hashes cannot bless a favorable presentation.
+  Five complete walkthrough packs and installed-package tests support reproducible reviewer handoff.
+
 - **Finite human-review queue replay** — bind one declared routing threshold to supplied arrival
   times, service durations, availability windows, and optional deadlines. Every hypothetical referral
   must remain present, including required/unknown review cases. Strict FIFO, nonpreemptive windows,

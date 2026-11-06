@@ -8,6 +8,7 @@ import runpy
 from aau_harness.agent_bom import digest, rendered, write_json
 from aau_harness.eval_routing import _route, review_routing
 from aau_harness.review_queue import review_queue
+from aau_harness.queue_pack import create_pack, verify_pack
 
 
 def example_inputs():
@@ -54,6 +55,11 @@ def create_example(directory):
         for suffix, value in (('queue-plan', plan), ('routing-plan', report['routing_review']['plan']),
                               ('evaluation', source), ('work-items', items), ('report', report)):
             write_json(value, directory / f'{name}-{suffix}.json')
+        pack = directory / f'{name}-pack'
+        create_pack(raw, routing_raw, source, items, pack, queue_plan_sha256=digest(raw))
+        if verify_pack(pack, queue_plan_sha256=digest(raw)) != report:
+            raise RuntimeError('source-retaining queue pack differs from its original replay')
+        commands.append(f'aau queue-pack verify {name}-pack --queue-plan-sha256 {digest(raw)}')
         commands.append(f'aau review-queue {name}-queue-plan.json {name}-routing-plan.json {name}-evaluation.json '
                         f'{name}-work-items.json --queue-plan-sha256 {digest(raw)} --verify {name}-report.json')
         summaries.append(f"{name}: scheduled={counts['scheduled']}, unscheduled={counts['not_scheduled']}, "
@@ -82,6 +88,8 @@ All valid diagnostics exit 0 even when work remains or deadlines fail. No deploy
 Protect the queue-plan hash independently: it binds both the routing-plan bytes and one declared
 threshold. Keep both plans, the full evaluation, all timing inputs, and the report. Inspect identifiers,
 times, and hashes before sharing. These files are not sanitized or approved for publication.
+Each *-pack folder retains the full sources and a readable review.html with timeline and tables.
+Verify it first, then open the local page; no external assets or scripts are required.
 
 From this directory with a matching trusted harness:
 

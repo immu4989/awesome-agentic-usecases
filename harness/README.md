@@ -2019,6 +2019,50 @@ and use a matching trusted implementation. Data capture is not atomic or source-
 Review identifiers, times, scores, and hashes before sharing. No model, adapter, human action,
 subprocess, upload, or network request is executed by this command.
 
+### Hand off a readable source-retaining queue review
+
+`aau queue-pack` retains the complete finite-queue evidence in one new directory and adds a
+**script-free, offline review page**. It shows simulated waiting/in-service occupancy as a step
+timeline, with exact-value tables, every referral, unscheduled work, unknown deadlines, and original
+automation-path failures. A simulated service interval is never presented as measured human resolution.
+
+```bash
+aau queue-pack create approved-queue-plan.json approved-routing-plan.json complete-evaluation.json work-items.json \
+  --queue-plan-sha256 "$APPROVED_QUEUE_PLAN_SHA256" --out queue-review
+aau queue-pack verify queue-review --queue-plan-sha256 "$APPROVED_QUEUE_PLAN_SHA256"
+```
+
+Verify first, then open `queue-review/review.html`. Obtain the expected queue-plan hash independently
+from the reviewer-controlled channel, **not from the delivered folder**. It also binds the original
+routing-plan bytes and selected declared threshold. The specialized verifier repeats full routing
+and queue replay and compares all eight members; a rehashed manifest cannot approve edited data,
+HTML, or favorable counts. This format deliberately requires `queue-pack verify` with that pin;
+it is not one of the generic `inspect-pack` families.
+
+| Retained member | Purpose |
+|---|---|
+| `queue-plan.json`, `routing-plan.json` | Exact supplied control bytes, including original formatting |
+| `evaluation.json`, `work-items.json` | Full parsed source values, reserialized without dropping fields |
+| `report.json` | Complete queue report and nested routing evidence |
+| `review.html` | Offline chart, exact tables, source links, and limitations |
+| `README.txt` | Verification and disclosure-review instructions |
+| `manifest.json` | Recomputable file and presentation-implementation hashes, not signatures |
+
+The [queue walkthrough](#replay-a-finite-review-queue-without-inventing-human-capacity) now creates and
+verifies five complete `*-pack` folders as well as the original JSON reports. All examples remain
+constructed; no real human review or staffing study is claimed. The page uses no JavaScript,
+analytics, remote fonts, or external assets. Its solid/dashed paths have text descriptions and an
+exact timeline table; counts are reported after all events at the same second, not linearly interpolated.
+Small screens can scroll the labeled tables, and print styles are included.
+
+**Exit 0 verifies a diagnostic even when jobs are blocked or deadlines fail.** It is not a successful
+review outcome, staffing recommendation, compliance finding, or deployment gate. Each member is
+bounded to 2 MB; links, special files, extra files/directories, missing members, and overwriting an
+existing destination are rejected. Every source remains included and may disclose sensitive data:
+this is not sanitization or permission to share. Use a matching trusted checkout/local wheel and
+retain the complete pack; the HTML cannot verify itself. No model, adapter, human action, subprocess,
+upload, or network call is executed by this command.
+
 ### Check operating budgets without hiding a slow or expensive group
 
 `aau operating-budget` checks explicit limits on the recorded workload and up to 20 declared
