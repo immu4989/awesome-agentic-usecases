@@ -2714,6 +2714,94 @@ representativeness, fairness, statistical power, protected holdouts, compliance,
 readiness. Resource bounds and user-selected floors are engineering choices, not those sources'
 requirements. Domain experts must still justify scope, cases, exclusions, annotations, and studies.
 
+### Compare grader changes without mistaking abstention for correction
+
+`aau grader-compare` answers a different question from a single grader audit: **which judgments
+changed when the grader changed?** Both sides use the same approved rubric, fallible reference
+labels, evidence fingerprints, and complete item/criterion census. A candidate cannot improve
+its apparent agreement silently by omitting the baseline's difficult cases.
+
+From a trusted current checkout/local wheel (not the older public PyPI release):
+
+```bash
+aau grader-compare demo --out /tmp/paired-grader-example
+```
+
+Use a new directory. Open its `README.md` and each packet's `review.html`. All examples are
+constructed, offline, and key-free; no model, supplier code, transcript, or network is executed.
+
+| Synthetic validation result | Agreement on own decided reference pairs | Decided reference-pair coverage | What the paired review preserves |
+|---|---:|---:|---|
+| Baseline | 4/6 | 6/8 | Two false passes |
+| Corrected candidate | 6/6 | 6/8 | Both errors corrected |
+| Abstention trap | 4/4 | 4/8 | Both errors become abstentions, **not** corrections |
+| Omission trap | 4/4 | 4/8 | Both errors become missing judgments, **not** corrections |
+| Net gain with regression | 5/6 | 6/8 | Two corrections **and one new false failure** |
+
+The remaining two references are disputed/unreviewed, not errors or successes. The examples do
+not establish that abstention is bad: appropriate escalation may be desirable, but it is a
+different outcome from correcting a judgment and requires its own capacity/quality evidence.
+
+For your already authorized recorded evidence, reuse the exact
+[grader-review input contracts](#audit-the-grader-before-trusting-its-scores):
+
+```bash
+aau grader-compare create approved-plan.json reference.json baseline-judgments.json candidate-judgments.json \
+  --plan-sha256 INDEPENDENTLY_RETAINED_PLAN_BYTE_HASH \
+  --baseline-sha256 INDEPENDENTLY_RETAINED_BASELINE_BYTE_HASH \
+  --out paired-review
+aau grader-compare verify paired-review \
+  --plan-sha256 INDEPENDENTLY_RETAINED_PLAN_BYTE_HASH \
+  --baseline-sha256 INDEPENDENTLY_RETAINED_BASELINE_BYTE_HASH
+```
+
+Replace both placeholders with independently reviewed SHA-256 hashes of the exact file bytes.
+Do not trust pins supplied only alongside candidate evidence. The existing plan pins the reference
+bytes, rubric fingerprint, item fingerprints, partition assignments, and groups. The additional
+baseline pin prevents substituting a weaker baseline. Pins prove byte agreement, not who approved
+the study or whether it preceded tuning. Same grader IDs are allowed and are not identity proof.
+
+The **seven-file packet** retains `plan.json`, `reference.json`, `baseline.json`, and `candidate.json`
+byte-for-byte, plus recomputed `review.json`, script-free `review.html`, and `manifest.json`.
+Verification reconstructs every derived byte from originals and both external pins; changing a
+manifest does not make altered evidence acceptable. Existing destinations, unexpected members,
+symlinks, malformed contracts, duplicate/outside-census rows, rubric mismatches, and changed
+fingerprints are rejected. Missing judgment rows remain `missing` and never shrink the census.
+Unknown reference labels remain explicit. Numeric scores are not silently converted to labels.
+
+Each calibration/validation × criterion × group scope contains:
+
+- Separate existing baseline/candidate confusion matrices, exact numerators/denominators, and coverage.
+- A complete reference × baseline-verdict × candidate-verdict transition table in JSON, including
+  `pass`, `fail`, `abstain`, and `missing` on each side. The HTML presents change counts and all paired cases.
+- Counts for unchanged judgments, wrong-to-right, right-to-wrong, either-to-undecided,
+  undecided-to-either, changed undecided states, and unresolved references. “Wrong” and “right”
+  mean disagreement/agreement with supplied labels, not established truth. “Unchanged” is not “correct.”
+- Agreement for both graders on the **same common decided pairs**, next to that subset's coverage
+  of all planned items. Empty denominators are null/undefined, never perfect scores.
+
+All original grader-review bounds remain: 1–500 declared items, 1–10 criteria, at most 19 additional
+groups, and 2 MB per input/generated member. Expanded reports also have a 2 MB bound. These are
+engineering limits, not recommended study sizes. Overlapping groups, multiple criteria, and repeated
+use of a benchmark do not create independent samples. No pooled headline, p-value, confidence interval,
+ranking, or automatic deployment verdict is produced. A selected common-decided subset may still be
+unrepresentative; do not use it to conceal lost coverage. Changed rubrics/reference sets require a
+separate study, not forced pairing under this contract.
+
+Exit **0** means a descriptive diagnostic was computed/verified, including for all negative examples;
+exit **2** means invalid input, pins, output, or packet. This is deliberately **not a CI acceptance gate**.
+Raw evidence can be sensitive. Keep originals and a matching trusted harness, protect held-out data
+from tuning teams, and obtain permission before sharing. Hashes do not authenticate execution,
+validate reference expertise, or prove independent/representative sampling.
+
+Research checked November 19, 2026: [Anthropic's agent-evaluation guidance](https://www.anthropic.com/research/demystifying-evals-for-ai-agents)
+recommends checking model graders against expert judgments and allowing uncertainty rather than
+forcing unsupported decisions. [NIST AI RMF 1.0, MEASURE 1.2 and 2.1](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf)
+addresses reassessment of metrics and documentation of test sets/tools. Our inference is that
+paired error/coverage accounting helps reviewers inspect a changed measurement tool; these sources
+do not prescribe this algorithm or endorse the repository. Independent reproduction, expert reference
+validation, statistical study design, and authorized user studies remain necessary for broader claims.
+
 ### Preserve reviewer disagreement before exporting reference labels
 
 `aau reference-review` builds a source-retaining **reference-label review packet** from recorded

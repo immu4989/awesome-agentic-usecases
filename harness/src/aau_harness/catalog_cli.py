@@ -296,6 +296,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="recompute saved evaluation metric summaries without model calls")
     sub.add_parser("grader-review", add_help=False,
                    help="audit recorded grader judgments against pinned reference labels without hiding coverage gaps")
+    sub.add_parser("grader-compare", add_help=False,
+                   help="compare pinned graders without mistaking lost decisions for corrected errors")
     sub.add_parser("reference-review", add_help=False,
                    help="retain panel disagreements and explicit adjudications before exporting reference labels")
     sub.add_parser("coverage-review", add_help=False,
@@ -488,6 +490,9 @@ def main(argv: list[str] | None = None) -> int:
     if raw_args and raw_args[0] == "grader-review":
         from .grader_review import main as grader_main
         return grader_main(raw_args[1:])
+    if raw_args and raw_args[0] == "grader-compare":
+        from .grader_compare import main as grader_compare_main
+        return grader_compare_main(raw_args[1:])
     if raw_args and raw_args[0] == "reference-review":
         from .reference_review import main as reference_main
         return reference_main(raw_args[1:])

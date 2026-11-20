@@ -12,6 +12,7 @@ const REPORTS = [
   'public/budget-matrix/matrix.html', 'public/retry-earlier-harm/review/review.html',
   'reference/packet/review.html', 'coverage/gap/review.html',
   'inspect/diagnostic/review.html', 'stress/review.html',
+  'grader-comparison/net-gain-with-regression/review.html',
 ];
 
 async function inspectStructure(page) {

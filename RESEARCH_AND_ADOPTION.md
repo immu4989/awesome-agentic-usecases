@@ -60,6 +60,15 @@ proof of reference correctness. The linked guide records the primary sources and
 
 ## Next investments, in order
 
+November 19 paired-grader follow-up: [Grader comparison](harness/README.md#compare-grader-changes-without-mistaking-abstention-for-correction)
+retains both judgment files against the same pinned reference/rubric/census and an independently pinned
+baseline. It distinguishes corrections, new errors, lost decisions, and unresolved references on every
+planned item/criterion pair. Common-decided agreement is shown beside full-census coverage; calibration,
+validation, and overlapping groups are never pooled. Synthetic examples expose a perfect-agreement
+abstention/omission trap and a net-score gain that conceals a new false failure. This is descriptive
+change review, not statistical significance, grader certification, human-study evidence, or a release gate.
+Independent domain validation and protected holdouts remain unresolved requirements.
+
 November 19 coverage follow-up: [Declared condition coverage review](harness/README.md#find-untested-conditions-before-trusting-averages)
 adds a full Cartesian condition grid over a supplied case inventory and audited evaluation rows.
 Repeated attempts do not inflate distinct-case counts; missing classifications and unavailable
@@ -124,7 +133,8 @@ traces to satisfy these milestones.
 
 November 19 report-access follow-up: [Offline report interaction checks](harness/browser-tests/README.md)
 centralize named keyboard-scroll groups and row/column semantics across the principal review reports,
-add policy section navigation, and exercise twelve fixed synthetic reports at desktop and narrow widths.
+add policy section navigation, and exercise thirteen fixed synthetic reports at desktop and narrow widths,
+including the subsequent paired-grader report.
 Deliberately broken focus/name/header/reflow controls must be detected. The public synthetic packets
 are regenerated with their matching manifests and archives; source scores and policy outcomes do not
 change. This is targeted Chromium behavior testing, not assistive-technology usability evidence or

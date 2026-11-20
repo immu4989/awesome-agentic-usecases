@@ -148,6 +148,17 @@ def smoke(wheel: Path) -> None:
             stream.write(b" ")
         run([cli, "reference-review", "verify", reference_packet, "--plan-sha256", reference_pin], expected=2)
         run([cli, "grader-demo", "--out", "grader-demo"], expected=2)
+        run([cli, "grader-compare", "demo", "--out", "grader-comparison"])
+        run([cli, "grader-compare", "demo", "--out", "grader-comparison"], expected=2)
+        for name in ("corrected", "abstention-trap", "omission-trap", "net-gain-with-regression"):
+            packet = root / "grader-comparison" / name
+            pin = hashlib.sha256((packet / "plan.json").read_bytes()).hexdigest()
+            base_pin = hashlib.sha256((packet / "baseline.json").read_bytes()).hexdigest()
+            run([cli, "grader-compare", "verify", packet, "--plan-sha256", pin, "--baseline-sha256", base_pin])
+        run([cli, "grader-compare", "verify", packet, "--plan-sha256", pin, "--baseline-sha256", "0" * 64], expected=2)
+        with (packet / "review.html").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "grader-compare", "verify", packet, "--plan-sha256", pin, "--baseline-sha256", base_pin], expected=2)
         grader_plan = root / "grader-demo/plan.json"
         grader_pin = hashlib.sha256(grader_plan.read_bytes()).hexdigest()
         for name in ("exact-on-decided", "group-blind", "sparse", "abstaining"):
