@@ -48,6 +48,24 @@ def smoke(wheel: Path) -> None:
             raise RuntimeError("installed source receipt is incomplete or exposes local paths")
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
+        run([cli, "inspect-eval", "demo", "--out", "inspect-demo"])
+        run([cli, "inspect-eval", "demo", "--out", "inspect-demo"], expected=2)
+        inspect_plan = root / "inspect-demo/plan.json"
+        inspect_pin = hashlib.sha256(inspect_plan.read_bytes()).hexdigest()
+        run([cli, "inspect-eval", "verify", "inspect-demo/converted", "--plan-sha256", inspect_pin,
+             "--evaluation", "inspect-demo/converted/evaluation.json"])
+        run([cli, "inspect-eval", "create", inspect_plan, "inspect-demo/source.json",
+             "--plan-sha256", inspect_pin, "--out", "inspect-second"])
+        run([cli, "inspect-eval", "create", inspect_plan, "inspect-demo/incomplete-source.json",
+             "--plan-sha256", inspect_pin, "--out", "inspect-incomplete"], expected=2)
+        run([cli, "inspect-eval", "verify", "inspect-demo/converted", "--plan-sha256", "0" * 64], expected=2)
+        imported = json.loads((root / "inspect-demo/converted/evaluation.json").read_bytes())
+        if (len(imported["results"]) != 4 or any("cost_usd" in r for r in imported["results"])
+                or sum("completion" in r["metrics"] for r in imported["results"]) != 3):
+            raise RuntimeError("installed Inspect conversion changed coverage or invented operating data")
+        with (root / "inspect-demo/converted/conversion.json").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "inspect-eval", "verify", "inspect-demo/converted", "--plan-sha256", inspect_pin], expected=2)
         run([cli, "grader-demo", "--out", "grader-demo"])
         run([cli, "grader-demo", "--out", "grader-demo"], expected=2)
         grader_plan = root / "grader-demo/plan.json"

@@ -14,6 +14,7 @@ From a reviewed, trusted current checkout using Python 3.10 or newer:
 pip install -e harness
 aau grader-demo --out /tmp/agency-grader-example
 aau lifecycle-cost-demo --out /tmp/agency-cost-example
+aau inspect-eval demo --out /tmp/agency-inspect-example
 aau evaluation-demo --out /tmp/agency-evidence-example
 aau inspect-pack /tmp/agency-evidence-example/repaired --expect evaluation-review
 ```
@@ -23,7 +24,7 @@ for build/runtime dependencies; the demo and review commands themselves work off
 features require the current checkout/local wheel, not the older public PyPI release. Do not
 install software or copy evidence onto agency systems without the necessary authorization.
 
-The first two demo directories include a readable `README.md` and exact replay commands.
+The grader, cost, and Inspect-format demo directories include readable `README.md` files and replay commands.
 All demonstrations are constructed examples, not government field trials. A successful
 synthetic run verifies the mechanism, not mission suitability or deployment authorization.
 
@@ -34,6 +35,7 @@ synthetic run verifies the mechanism, not mission suitability or deployment auth
 | What decision and affected users are in scope? | [Federal Mission Assurance](federal-mission-assurance/) and [Pilot Launch Pack](federal-pilot-kit/pilot-launch/) | Intended use, prohibited decisions, responsible roles, data permissions, appropriate impact determination |
 | Does the grader reject real failures and accept legitimate solutions? | [Grader review](harness/README.md#audit-the-grader-before-trusting-its-scores) | Expert reference labels, ambiguity resolution, held-out design, and real-world relevance |
 | Did the supplier use the requested requirements and baseline? | [Pinned evidence intake](harness/README.md#check-delivered-evidence-against-a-receiving-team-request) | Independent control of expected hashes; requirements that actually reflect the mission |
+| Can existing evaluation results be reviewed without rerunning supplier code? | [Offline Inspect import](harness/README.md#reuse-inspect-sample-scores-without-executing-the-log) | Approved mapping/rubric, independently retained plan hash, source authenticity, correct scoring, and permissions for full raw logs |
 | What costs lie outside the model call? | [Lifecycle cost scenarios](harness/README.md#review-lifecycle-costs-without-turning-unknowns-into-zero) | Complete cost scope, credible quantities/rates, contract minimums, nonlinear prices, uncertainty, and affordability |
 | Can the human-review process keep up? | [Finite queue replay](harness/README.md#replay-a-finite-review-queue-without-inventing-human-capacity) | Actual review quality, availability, accessibility, working conditions, and protected decision authority |
 | Did a later pass hide an earlier failure or missing test? | [Ordered evidence history](harness/README.md#preserve-failed-and-missing-checkpoints-across-an-evidence-history) | Authentic chronology, incident handling, live monitoring, and whether retesting is adequate |

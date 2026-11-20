@@ -52,6 +52,15 @@ only. Continuous scores and multi-rater adjudication need separate methods.
 
 ## Next investments, in order
 
+November 19 update: [Inspect JSON import](harness/README.md#reuse-inspect-sample-scores-without-executing-the-log)
+implements the first bounded native adapter: retained raw bytes, receiver-pinned mappings, exact
+sample/epoch census, missing-score coverage, and rejection of unsupported error/edit states. An
+upstream mock-model fixture declaring Inspect `0.3.100` is retained with its license, original hash,
+and local hash after appending a final newline. This is one compatibility observation, not
+all-version support or independent reproduction.
+The next adapter work should extend real exporter/version coverage and preserve richer error/edit
+evidence, rather than relax rejected logs into apparently successful results.
+
 | Priority | Community benefit | Evidence required before calling it complete |
 |---|---|---|
 | 1. Native export adapters | Use existing Inspect/other evaluation logs without hand-converting every field | Versioned fixtures from each supported exporter; raw-source retention; tests for missing scores, aborted runs, repeated IDs, and rubric drift; no executing supplied log code |

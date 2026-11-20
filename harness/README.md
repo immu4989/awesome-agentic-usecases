@@ -1318,6 +1318,110 @@ end-to-end elapsed time with a sum of overlapping spans. Supply a reviewed `esti
 authenticate that declaration or establish fully loaded cost. IDs, costs, and timings may still be
 sensitive even though free-text details are excluded. Review before sharing.
 
+### Reuse Inspect sample scores without executing the log
+
+`aau inspect-eval` is an offline adapter for a **bounded subset of Inspect version-2 JSON logs**.
+Use the current trusted checkout/local wheel, not the older published PyPI package. Inspect is
+not a runtime dependency. This adapter reads recorded sample scores; it does not call Inspect,
+rerun tasks, rescore answers, fetch attachments, or reproduce Inspect's aggregate metrics.
+
+Start with a no-key, constructed example, including an intentionally rejected missing-row log:
+
+```bash
+aau inspect-eval demo --out /tmp/inspect-conversion-example
+```
+
+The generated `README.md` includes replay commands and a demo-only plan pin. Integer sample ID
+`1` and string ID `"1"` remain separate cases. Both metrics report only three of four observations;
+an unknown score is absent, not zero. This demo is constructed, not a model/Inspect run. Separately,
+our [compatibility fixture](tests/fixtures/inspect-ai/README.md) retains an upstream mock-model
+log declaring Inspect `0.3.100`, with only a documented final newline added. Both upstream and local
+byte hashes are checked. One fixture does not establish compatibility with every release.
+
+For an authorized real workflow, obtain a full JSON export with a trusted Inspect installation's
+`inspect log dump path/to/run.eval > source.json`, or use its native JSON log. Do not use a header-only
+export. [Inspect's log documentation](https://inspect.aisi.org.uk/eval-logs.html) describes both
+formats; `.eval` binary files are not accepted directly by this adapter. Never run `inspect score`
+on untrusted logs as an import step: that is a separate execution workflow, not passive conversion.
+
+Have the receiving team review and retain a plan independently from the supplier, for example:
+
+```json
+{
+  "plan_version": "aau-inspect-observation-plan/1.0",
+  "source_label": "Reviewed service-routing evaluation",
+  "sample_map": [
+    {"sample_id": 1, "scenario_id": "self-service"},
+    {"sample_id": "1", "scenario_id": "assisted"}
+  ],
+  "n_repeats": 2,
+  "metrics": {
+    "completion": {
+      "scorer": "match", "value_key": null, "encoding": "labels",
+      "labels": {"C": 1, "I": 0, "N": null}
+    },
+    "authorization": {"scorer": "checks", "value_key": "authorized", "encoding": "number"}
+  }
+}
+```
+
+This label map is a reviewer choice, not an automatic interpretation of Inspect's conventions.
+Different rubrics may need different meanings for `N`, partial credit, refusals, or other labels.
+`value_key: null` selects a scalar score; a string selects exactly one key from an object-valued
+score. There are no expressions, nested paths, reducers, unit conversions, or guessed encodings.
+Numeric strings and booleans are not numeric scores. Unknown labels and incompatible value shapes
+fail instead of defaulting to a favorable score. A null selected value or explicit null label mapping
+stays missing. Missing scorers/keys also stay missing. At least one mapped measurement is required.
+
+```bash
+# Set APPROVED_INSPECT_PLAN_SHA256 to the receiving team's independently retained raw-file hash.
+aau inspect-eval create plan.json source.json --plan-sha256 "$APPROVED_INSPECT_PLAN_SHA256" --out /tmp/inspect-evidence
+aau inspect-eval verify /tmp/inspect-evidence --plan-sha256 "$APPROVED_INSPECT_PLAN_SHA256"
+# Optional: check that a downstream review copied exactly this normalized evaluation.
+aau inspect-eval verify /tmp/inspect-evidence --plan-sha256 "$APPROVED_INSPECT_PLAN_SHA256" --evaluation /path/to/review/candidate.json
+```
+
+Use new output paths. `create` and `verify` return `0` for a valid conversion, even with failing or
+partially missing scores; `2` means invalid/unsupported input or a mismatching pack/pin. Neither is
+a deployment approval. Do not derive the receiver's expected pin from an untrusted delivered pack.
+
+The six-file pack retains `source.json` and `plan.json` **byte-for-byte**, plus `recording.json`,
+`evaluation.json`, `conversion.json`, and a hash manifest. Verification captures regular non-symlink
+files, requires the exact inventory, and recomputes every derived byte. The report includes the
+declared Inspect version, raw hashes, explicit metric mapping, coverage, wholly unreported metrics,
+and unmapped scorer names. The normalized evaluation uses AAU's existing summary/bootstrap method,
+not Inspect's reported averages or epoch reducers. Check that this method fits your study design.
+
+Supported subset and important boundaries:
+
+- Exact planned sample IDs crossed with epochs `1..n_repeats`; epochs become AAU repeats `0..n-1`.
+  At most 500 cases and 10,000 observations. No omitted, duplicated, extra, or synthesized pairs.
+  Inspect's configured epoch count and recorded total/completed counts must match; selected dataset
+  IDs and additional total/logged counts must match when present. Unset configured epochs means
+  Inspect's default of one, never a count inferred from whichever rows survived.
+- Only `status: success`, version `2`, full sample logs with declared package metadata. Success means
+  execution finished, not policy passed. Error/cancelled/started logs, sample errors/retries/limits,
+  invalidations, early stopping, merged shards, config/log edits, and score history/reasons are rejected.
+  This deliberately also rejects legitimate edited logs or scores with refusal/custom reasons; it does
+  not silently reinterpret them. A richer error/edit ledger needs a separate reviewed extension.
+- At most 100 distinct mapped score components; finite numeric values within ±10^15. Each input and
+  generated member is limited to 2 MB. Duplicate JSON keys and all nonfinite values—including in
+  otherwise unused fields—are rejected. Some valid Inspect logs use NaN sentinels and are outside
+  this subset; do not replace NaN with zero to make an import pass.
+- No inferred cost, latency, API-call counts, scoring/configuration fingerprints, population validity,
+  or authenticity. This adapter does not validate the entire Inspect schema or endorse the grader.
+  Unmapped data remains in the original log. A matching receiver plan still does not authenticate a run.
+  Pinning a mapping does not bind the actual rubric/scorer implementation or detect its semantic drift;
+  collect that evidence separately. Declared package metadata is not an execution attestation.
+- **Not a sanitized artifact.** Full logs can contain transcripts, credentials, tool results, and
+  private configuration. Keep evidence locally under applicable permissions; review before sharing.
+  This pack uses its dedicated `inspect-eval verify` command, not the generic `inspect-pack` dispatcher.
+
+Source-contract review: November 19, 2026, pinned
+[Inspect log model](https://github.com/UKGovernmentBEIS/inspect_ai/blob/c574b6bf6674e6d5f6cbb0f95059d7427b23d54b/src/inspect_ai/log/_log.py).
+Missing-score, aborted-run, type-ambiguous ID, epoch-census, score-edit, altered-plan, and tampered-pack
+tests exercise failure boundaries. These are maintainer tests, not independent or government validation.
+
 ### Convert scored CSV exports without losing the original evidence
 
 `aau csv-eval` converts an explicitly mapped CSV export into a **six-file, source-retaining pack**.
