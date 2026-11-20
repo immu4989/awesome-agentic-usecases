@@ -20,6 +20,7 @@ From a reviewed, trusted current checkout using Python 3.10 or newer:
 pip install -e harness
 aau grader-demo --out /tmp/agency-grader-example
 aau grader-compare demo --out /tmp/agency-grader-change-example
+aau candidate-bounds demo --out /tmp/agency-candidate-family-example
 aau reference-review demo --out /tmp/agency-reference-example
 aau coverage-review demo --out /tmp/agency-coverage-example
 aau lifecycle-cost-demo --out /tmp/agency-cost-example
@@ -46,6 +47,7 @@ synthetic run verifies the mechanism, not mission suitability or deployment auth
 | What decision and affected users are in scope? | [Federal Mission Assurance](federal-mission-assurance/) and [Pilot Launch Pack](federal-pilot-kit/pilot-launch/) | Intended use, prohibited decisions, responsible roles, data permissions, appropriate impact determination |
 | Does the grader reject real failures and accept legitimate solutions? | [Grader review](harness/README.md#audit-the-grader-before-trusting-its-scores) | Expert reference labels, ambiguity resolution, held-out design, and real-world relevance |
 | Did a grader update fix errors, introduce others, or stop judging hard cases? | [Paired grader comparison](harness/README.md#compare-grader-changes-without-mistaking-abstention-for-correction) | Reference correctness, protected validation sets, independent pins, error severity, uncertainty, and whether abstention or human review is appropriate |
+| Does uncertainty account for all systems planned for evaluation? | [Candidate-family bounds](harness/README.md#reserve-uncertainty-across-all-planned-candidates) | Prospective family definition, IID sampling assumptions, meaningful criteria/scopes, stable execution, missing submissions, and separate acquisition decisions |
 | How were the reference labels decided? | [Reference-label review](harness/README.md#preserve-reviewer-disagreement-before-exporting-reference-labels) | Reviewer qualifications/independence, appropriate rubric, authentic evidence, blinding, and whether any adjudication is justified |
 | Which declared conditions still lack evidence? | [Condition coverage review](harness/README.md#find-untested-conditions-before-trusting-averages) | Mission-relevant dimensions, justified floors/exclusions, correct annotations, semantic diversity, population representativeness, and permission to use the evidence |
 | Did the supplier use the requested requirements and baseline? | [Pinned evidence intake](harness/README.md#check-delivered-evidence-against-a-receiving-team-request) | Independent control of expected hashes; requirements that actually reflect the mission |

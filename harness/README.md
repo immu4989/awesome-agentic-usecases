@@ -3700,6 +3700,113 @@ history. Copies renamed as new scenarios do not become independent observations.
 budgets, affected-user feedback, and human review remain separate. Available from this checkout or
 its local wheel; not included in the currently documented PyPI 1.6.0 release.
 
+### Reserve uncertainty across all planned candidates
+
+Evaluating several systems and reporting only a favorable result is not the same experiment as
+evaluating one preselected system. `aau candidate-bounds` reserves conditional uncertainty across
+the **entire predeclared candidate × scope family**, including candidates whose submissions are
+missing. It produces an offline source-retaining diagnostic, not a leaderboard or acquisition gate.
+
+```bash
+# Current trusted checkout/local wheel; no API keys or external execution.
+aau candidate-bounds demo --out /tmp/candidate-family-example
+```
+
+The generated `README.md` includes exact verification commands and four constructed examples:
+
+| Example | What the report preserves |
+|---|---|
+| `pending` | One of two planned candidates is missing; its uncertainty allocation is not reused |
+| `complete` | Both submitted; the first candidate's bound is unchanged |
+| `fixed-benchmark` | Perfect recorded scores do not justify population inference |
+| `earlier-failure` | One early failed repeat remains a failed bundle despite later passing repeats |
+
+In this arithmetic lesson, 60 zero-failure bundles give a one-sided upper bound near **4.87%**
+for one planned candidate but **5.96%** for two candidates at hypothetical 95% simultaneous
+confidence. The latter does not meet the illustrative 5% limit. Four repeats per case remain
+60 bundles, not 240 independent units. No real system, population, or sampled user is represented.
+
+For authorized recorded evaluations:
+
+```bash
+aau candidate-bounds create approved-family-plan.json submitted-evaluations \
+  --plan-sha256 INDEPENDENTLY_RETAINED_PLAN_BYTE_HASH --out candidate-family-review
+aau candidate-bounds verify candidate-family-review \
+  --plan-sha256 INDEPENDENTLY_RETAINED_PLAN_BYTE_HASH
+```
+
+The input directory contains only `CANDIDATE_ID.json` files. Missing candidates are allowed and
+explicitly reported; an empty directory means no submissions, **not** zero failures. Any supplied
+file with invalid data, partial census, changed context, or missing required metrics is rejected.
+Unknown files, nested folders, and symlinks are rejected. Output must be new and outside the input
+directory. Replace the pin placeholder with an independently reviewed hash of the exact plan bytes.
+
+Start from the generated plan or the existing [fixed-horizon contract](#quantify-what-zero-observed-failures-can-support).
+The new plan has `plan_version: "aau-candidate-bound-plan/1.0"`, all fixed-horizon fields
+(`scenario_ids`, `n_repeats`, `criteria`, `sampling_design`, `sampling_basis`, `confidence_level`,
+`maximum_failure_probability`, `groups`), and these additional required controls:
+
+| Field | Meaning |
+|---|---|
+| `candidates` | 1–10 entries with unique `candidate_id` and approved `config_sha256`; IDs use letters, digits, `_`, `-`, start with a letter/digit, and have at most 80 characters |
+| `scenario_sha256` | Exact planned scenario ID → declared fingerprint map; duplicate fingerprints rejected |
+| `scoring_sha256` | Shared named scoring-source fingerprints under the existing evaluation-context contract |
+
+Every present evaluation must contain the exact planned `evaluation_context` for its candidate:
+the shared scenario/scorer maps plus that candidate's configuration hash. Different candidate
+configurations are permitted; cases, scoring definitions, criteria, and scope memberships are shared.
+Identical configuration hashes are not proof that independently executed candidates exist. Do not
+invent context for legacy imports: obtain authorized, correctly bound evidence instead. Fingerprints
+are compared as declarations, not checked against original code or transcripts. They do not prove
+execution, authentic identity, semantic diversity, or IID sampling.
+
+For `K` candidates and `G` scopes (mandatory overall plus declared subgroups), every cell uses:
+
+```text
+tail_probability = (1 - confidence_level) / (K * G)
+```
+
+Each observed cell receives the existing one-sided Clopper–Pearson upper failure bound using this
+tail probability. A scenario bundle fails if **any** declared joint criterion fails in **any** planned
+repeat. Every submitted candidate needs the full planned scenario/repeat census and all criterion
+measurements. Scope counts are distinct bundles within that scope. Missing candidates have null
+counts/bounds, empty outcome lists, and `not_observed` status. Their allocation remains reserved.
+Supplying them later does not change other candidates' results. Source-summary discrepancies remain
+visible without repairing the source. The HTML exposes every candidate/scope, source audits, and
+failed bundles; JSON retains full precision and every failed repeat.
+
+Only `declared_iid_fixed_horizon` enables population bounds. Each marginal bound requires IID
+bundle outcomes within that candidate/scope, stable conditions, valid scoring, and a genuinely
+prospective fixed design. The general union bound permits dependence **between** candidates/scopes,
+including shared cases and overlapping groups. It does not make dependent cases **within** a cell
+IID. The complete family must be fixed before outcomes; pins do not establish preregistration.
+`fixed_benchmark` always withholds population bounds, regardless of score or sample count.
+
+Simultaneous coverage applies to the declared finite family. It is not a claim of conditional
+coverage given a selected winner, pairwise superiority, optimality, or a posterior probability.
+Unplanned candidates, adaptive tuning, benchmark reuse, extra looks, and optional stopping are
+outside this method. Running it alongside `planned-look-bounds` does **not** combine the two
+families into a valid candidate-by-look guarantee. No ranking or overall passing verdict is produced.
+
+Packets retain exact `plan.json` and `candidates/CANDIDATE_ID.json` source bytes plus `report.json`,
+`review.html`, and `manifest.json`. Verification recomputes derived bytes with the external plan pin.
+It does not authenticate historical exports or prove that a supplier disclosed every submission;
+all missing planned candidates remain visible. Keep the original packet and matching trusted harness.
+Limits are 10 candidates, 500 bundles, 10,000 observations per candidate, 10 joint criteria, 20 scopes,
+and 2 MB per file/report. These are resource limits, not recommended study sizes. No statistical
+runtime dependency, network request, model call, or collector runs. Raw data is not sanitized.
+Exit **0** means a diagnostic computed/verified, even with missing evidence or exceeded limits;
+exit **2** means invalid inputs/output/pins. Neither is deployment approval. Not in the older PyPI release.
+
+Research checked November 19, 2026: [NIST's Bonferroni discussion](https://www.itl.nist.gov/div898/handbook/prc/section4/prc473.htm)
+states the general union-bound allocation for simultaneous coverage; its worked example is ANOVA,
+not agent evaluation. [NIST's exact-binomial documentation](https://itl.nist.gov/div898/software/dataplot/refman2/auxillar/exacbino.htm)
+describes one-sided binomial limits. Our engineering application combines those ideas for this
+explicit candidate-family contract. Neither source endorses this implementation or verifies its
+sampling assumptions. Tests enumerate small correlated-candidate/overlapping-scope outcome families;
+the shared inversion also has high-precision numerical regression tests. This is not independent
+reproduction, certification, or evidence of agency adoption.
+
 ### Hand off readable failure-bound evidence
 
 For a reviewer who should not need to inspect raw JSON, `failure-bound-pack` retains a complete

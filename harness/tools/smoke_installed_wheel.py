@@ -495,6 +495,22 @@ write_json(responses, Path('service-responses.json'))
         run([cli, "failure-bound-pack", "verify", "bound-pack"], expected=2)
         run([cli, "failure-bound-demo", "--out", "failure-demo"])
         run([cli, "failure-bound-demo", "--out", "failure-demo"], expected=2)
+        run([cli, "candidate-bounds", "demo", "--out", "candidate-bound-demo"])
+        run([cli, "candidate-bounds", "demo", "--out", "candidate-bound-demo"], expected=2)
+        for name in ("pending", "complete", "fixed-benchmark", "earlier-failure"):
+            packet = root / "candidate-bound-demo" / name
+            pin = hashlib.sha256((packet / "plan.json").read_bytes()).hexdigest()
+            run([cli, "candidate-bounds", "verify", packet, "--plan-sha256", pin])
+        run([cli, "candidate-bounds", "create", packet / "plan.json", packet / "candidates",
+             "--plan-sha256", pin, "--out", "candidate-bound-copy"])
+        run([cli, "candidate-bounds", "verify", packet, "--plan-sha256", "0" * 64], expected=2)
+        pending = json.loads((root / "candidate-bound-demo/pending/report.json").read_bytes())
+        complete = json.loads((root / "candidate-bound-demo/complete/report.json").read_bytes())
+        if pending["candidates"][0] != complete["candidates"][0] or pending["missing_candidate_count"] != 1:
+            raise RuntimeError("installed candidate-family review reallocated missing-candidate uncertainty")
+        with (packet / "review.html").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "candidate-bounds", "verify", packet, "--plan-sha256", pin], expected=2)
         for name, expected in (("fixed-benchmark", "population_inference_withheld"),
                                ("few-scenarios", "conditional_bounds_exceed_limits"),
                                ("more-scenarios", "conditional_bounds_within_limits"),

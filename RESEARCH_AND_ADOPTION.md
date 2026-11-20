@@ -60,6 +60,15 @@ proof of reference correctness. The linked guide records the primary sources and
 
 ## Next investments, in order
 
+November 19 candidate-family follow-up: [Predeclared candidate uncertainty](harness/README.md#reserve-uncertainty-across-all-planned-candidates)
+reserves a single Bonferroni allocation across every planned candidate and scope, even when submissions
+are missing. Complete submitted evaluations must match the approved scenario/scorer/configuration
+fingerprints and census; failed repeats remain failed scenario bundles. Fixed benchmarks have no
+population bounds. Synthetic examples and exact small-family outcome enumeration exercise the
+mechanism, including correlated candidates and overlapping groups. This does not verify sampling,
+preregistration, genuine execution, superiority, or government suitability; additional/adaptive
+candidates and repeated looks are outside this finite fixed-horizon family.
+
 November 19 paired-grader follow-up: [Grader comparison](harness/README.md#compare-grader-changes-without-mistaking-abstention-for-correction)
 retains both judgment files against the same pinned reference/rubric/census and an independently pinned
 baseline. It distinguishes corrections, new errors, lost decisions, and unresolved references on every
@@ -133,8 +142,8 @@ traces to satisfy these milestones.
 
 November 19 report-access follow-up: [Offline report interaction checks](harness/browser-tests/README.md)
 centralize named keyboard-scroll groups and row/column semantics across the principal review reports,
-add policy section navigation, and exercise thirteen fixed synthetic reports at desktop and narrow widths,
-including the subsequent paired-grader report.
+add policy section navigation, and exercise fifteen fixed synthetic reports at desktop and narrow widths,
+including the subsequent paired-grader and candidate-family reports.
 Deliberately broken focus/name/header/reflow controls must be detected. The public synthetic packets
 are regenerated with their matching manifests and archives; source scores and policy outcomes do not
 change. This is targeted Chromium behavior testing, not assistive-technology usability evidence or

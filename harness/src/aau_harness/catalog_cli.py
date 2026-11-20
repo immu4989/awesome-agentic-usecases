@@ -344,6 +344,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Create four no-key synthetic failure-bound reviewer packs")
     sub.add_parser("planned-look-bounds", add_help=False,
                    help="Allocate conditional failure-bound uncertainty across predeclared cumulative looks and groups")
+    sub.add_parser("candidate-bounds", add_help=False,
+                   help="Reserve conditional uncertainty across every predeclared candidate and subgroup")
     sub.add_parser("repeatability-eval", add_help=False,
                    help="expose intermittent joint-constraint failures across recorded repeats")
     sub.add_parser("operating-eval", add_help=False,
@@ -550,6 +552,9 @@ def main(argv: list[str] | None = None) -> int:
     if raw_args and raw_args[0] == "planned-look-bounds":
         from .eval_planned_bounds import main as planned_bounds_main
         return planned_bounds_main(raw_args[1:])
+    if raw_args and raw_args[0] == "candidate-bounds":
+        from .eval_candidate_bounds import main as candidate_bounds_main
+        return candidate_bounds_main(raw_args[1:])
     if raw_args and raw_args[0] == "repeatability-eval":
         from .eval_repeatability import main as repeatability_main
 

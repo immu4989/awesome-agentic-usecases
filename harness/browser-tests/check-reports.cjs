@@ -13,6 +13,7 @@ const REPORTS = [
   'reference/packet/review.html', 'coverage/gap/review.html',
   'inspect/diagnostic/review.html', 'stress/review.html',
   'grader-comparison/net-gain-with-regression/review.html',
+  'candidate-bounds/pending/review.html', 'candidate-bounds/earlier-failure/review.html',
 ];
 
 async function inspectStructure(page) {
