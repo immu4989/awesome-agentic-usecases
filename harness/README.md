@@ -2227,6 +2227,108 @@ procurement-sensitive information; these files are not sanitized for public shar
 See the [agency evaluation path](../GOVERNMENT_EVALUATION_PATH.md) for source-backed motivation
 and the separate quality, security, human-review, and pilot decisions this does not replace.
 
+### Preserve reviewer disagreement before exporting reference labels
+
+`aau reference-review` builds a source-retaining **reference-label review packet** from recorded
+panel ratings and explicit adjudications. It connects human-label provenance to the existing
+`grader-review` workflow. It does not collect ratings, contact reviewers, call models, or establish
+that any reviewer is qualified, independent, or even a distinct person.
+
+Try the installed, no-key walkthrough from a trusted current checkout/local wheel:
+
+```bash
+aau reference-review demo --out /tmp/my-reference-review
+```
+
+Open `/tmp/my-reference-review/packet/review.html` locally and read the generated `README.md`.
+The 11-file demo has an eight-file packet, a constructed all-pass grader, its downstream diagnostic,
+and exact replay commands. It uses no real participants or private evidence. These commands require
+the current checkout/local wheel, not the older public PyPI release.
+
+| Recorded panel | Reference before any adjudication |
+|---|---|
+| Every assigned rater submits `pass` | `pass`, still a fallible declared reference |
+| Every assigned rater submits `fail` | `fail`, still a fallible declared reference |
+| At least one `pass` and one `fail` | `disputed`, regardless of majority or remaining missing ratings |
+| No conflict, but a rating is missing or a rater abstains | `unreviewed`, not partial consensus |
+
+This is a deliberately bounded repository protocol, **not a government-required adjudication rule**.
+An adjudicator may explicitly retain or change the reference only when all assigned ratings are
+present, including recorded abstentions. Every decision requires a rationale and a declared separate
+adjudicator ID. It binds the exact rating-file bytes. Changed ratings, even changed whitespace or a
+revised reason, require a newly bound adjudication document. This prevents silent reuse of a stale
+decision; it does not prove chronology, authentic authorship, expertise, or that evidence was read.
+Original ratings, reasons, conflicts, and the pre-adjudication reference remain in the report.
+
+The demo includes a two-to-one disagreement, incomplete review, abstention, and an adjudicated
+conflict. Its validation partition retains two original conflicts even after one is adjudicated;
+only two of five validation references are decided. The downstream all-pass grader therefore has
+two false passes on decided validation references, not five automatically accepted cases.
+
+The three inputs have closed contracts:
+
+- **Plan:** `plan_version: "aau-reference-review-plan/1.0"`, `rubric_sha256`, `reference_basis`,
+  `criteria`, `items`, `groups`, `raters`, and `adjudicators`. The rubric, items, splits, groups,
+  and basis follow the [grader plan](#audit-the-grader-before-trusting-its-scores) contract.
+  Each item has `item_id`, `evidence_sha256`, and `split` (`calibration` or `validation`).
+  Declare 2–10 unique rater IDs and 1–10 unique, disjoint adjudicator IDs. Every rater is assigned
+  every item/criterion pair; there is no per-item assignment inference. Use pseudonymous role IDs,
+  not personal names. Maximum 500 items, 10 criteria, 19 named groups, and 10,000 assigned ratings.
+- **Ratings:** `format_version: "aau-reference-ratings/1.0"`, matching `rubric_sha256`, and `rows`.
+  Every row has exactly `item_id`, `criterion`, `evidence_sha256`, `rater_id`, `verdict`, and
+  `rationale`. Verdicts are `pass`, `fail`, or `abstain`. Missing submissions are omitted, never
+  invented as votes. Submitted rationales must be nonblank text of at most 1,000 characters.
+- **Adjudications:** `format_version: "aau-reference-adjudications/1.0"`, matching `rubric_sha256`,
+  `ratings_sha256` (the raw rating-file hash), and `rows`. Every row has exactly `item_id`,
+  `criterion`, `evidence_sha256`, `adjudicator_id`, `verdict`, and `rationale`. Verdicts may be
+  `pass`, `fail`, `disputed`, or `unreviewed`; the rationale has the same limit. Only one decision
+  per item/criterion pair is allowed. Use an empty `rows` list if there are no adjudications;
+  its document still binds the rating-file snapshot.
+
+Unplanned/duplicate ratings, duplicate evidence fingerprints, unknown roles, overlapping role IDs,
+changed rubric/evidence hashes, competing adjudications, incomplete-panel adjudication, duplicate
+JSON keys, and nonfinite JSON values are rejected. Every input and output member is limited to
+2 MB, including the expanded HTML. Invalid inputs fail before the destination is created.
+
+```bash
+# Obtain this raw-file hash through the receiving team's independent review channel.
+aau reference-review create plan.json ratings.json adjudications.json \
+  --plan-sha256 "$APPROVED_REFERENCE_PLAN_SHA256" --out /tmp/reference-packet
+aau reference-review verify /tmp/reference-packet --plan-sha256 "$APPROVED_REFERENCE_PLAN_SHA256"
+
+# Review and independently retain the generated grader-plan hash before accepting grader results.
+aau grader-review /tmp/reference-packet/grader-plan.json /tmp/reference-packet/reference.json judgments.json \
+  --plan-sha256 "$APPROVED_GRADER_PLAN_SHA256" --out /tmp/grader-diagnostic.json
+```
+
+The packet has `plan.json`, `ratings.json`, `adjudications.json` (all retained byte-for-byte),
+`reference.json`, `grader-plan.json`, `review.json`, `review.html`, and `manifest.json`.
+`reference.json` covers the complete planned item/criterion census in the existing
+`aau-grader-reference/1.0` format; `grader-plan.json` binds its exact bytes. Keep the whole packet:
+the exported reference alone does not preserve individual reasons or disagreement history.
+
+Verification captures the exact regular-file inventory and recomputes all derived bytes, including
+HTML; merely updating manifest hashes does not repair changed evidence. `review.html` is script-free,
+has labeled tables, and escapes supplied text; these properties are not accessibility certification.
+The report separates calibration/validation, criteria, and groups, retaining exact submitted/assigned
+rating coverage and reference-state counts. Empty-scope ratios are undefined, not perfect agreement;
+overlapping groups must not be pooled. No kappa, population inference, or reviewer ranking is inferred.
+
+Exit `0` means a valid packet, including disputed/unreviewed references;
+exit `2` means invalid input, a pin mismatch, unsupported inventory, or a packet that does not replay.
+Use new output paths. Use this packet's `reference-review verify`, not the generic `inspect-pack`
+dispatcher. **A valid packet is not verified truth or approval.** Blinding, holdout protection,
+evidence authenticity, reviewer competence, and actual label correctness remain human responsibilities.
+Full reasons and fingerprints may be sensitive; this is not a sanitized sharing artifact.
+
+Research checked November 19, 2026: [NIST AI RMF 1.0's validity discussion](https://airc.nist.gov/airmf-resources/airmf/3-sec-characteristics/)
+emphasizes documented test methodology and realistic test sets; [GAO's 2021 accountability framework](https://www.gao.gov/products/gao-21-519sp)
+organizes oversight around governance, data, performance, and monitoring.
+[Anthropic's evaluation guide](https://www.anthropic.com/research/demystifying-evals-for-ai-agents)
+describes human calibration and the need to reconcile rater disagreements. Our inference is that
+retaining disagreement and adjudication provenance helps make reference-label review reproducible.
+None of these sources endorses this protocol or demonstrates this repository's effectiveness.
+
 ### Audit the grader before trusting its scores
 
 An automated judge can accept an unsafe action, reject a legitimate solution, or produce a

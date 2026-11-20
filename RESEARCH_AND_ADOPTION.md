@@ -50,6 +50,14 @@ and service-scorer challenge (constructed contract conformance). It does not ass
 of the reference labels, call an LLM judge, or certify one. It currently accepts binary judgments
 only. Continuous scores and multi-rater adjudication need separate methods.
 
+November 19 follow-up: [Reference-label review](harness/README.md#preserve-reviewer-disagreement-before-exporting-reference-labels)
+adds a separate recorded-panel protocol for those reference labels. Missing/abstained ratings and
+pass/fail conflicts remain visible; a majority does not resolve a dispute. Explicit adjudications
+bind a complete rating snapshot, retain original votes and reasons, and export the existing grader
+reference/plan contracts. The offline HTML packet and no-key demo connect label provenance to the
+grader audit. This is not a human study, verified expertise, an inter-rater reliability estimate, or
+proof of reference correctness. The linked guide records the primary sources and our interpretation.
+
 ## Next investments, in order
 
 November 19 update: [Inspect JSON import](harness/README.md#reuse-inspect-sample-scores-without-executing-the-log)

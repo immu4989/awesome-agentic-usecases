@@ -67,6 +67,23 @@ def smoke(wheel: Path) -> None:
             stream.write(b" ")
         run([cli, "inspect-eval", "verify", "inspect-demo/converted", "--plan-sha256", inspect_pin], expected=2)
         run([cli, "grader-demo", "--out", "grader-demo"])
+        run([cli, "reference-review", "demo", "--out", "reference-demo"])
+        run([cli, "reference-review", "demo", "--out", "reference-demo"], expected=2)
+        reference_packet = root / "reference-demo/packet"
+        reference_pin = hashlib.sha256((reference_packet / "plan.json").read_bytes()).hexdigest()
+        run([cli, "reference-review", "verify", reference_packet, "--plan-sha256", reference_pin])
+        run([cli, "reference-review", "create", reference_packet / "plan.json", reference_packet / "ratings.json",
+             reference_packet / "adjudications.json", "--plan-sha256", reference_pin, "--out", "reference-copy"])
+        exported_pin = hashlib.sha256((reference_packet / "grader-plan.json").read_bytes()).hexdigest()
+        run([cli, "grader-review", reference_packet / "grader-plan.json", reference_packet / "reference.json",
+             "reference-demo/candidate.json", "--plan-sha256", exported_pin, "--verify", "reference-demo/grader-report.json"])
+        references = json.loads((reference_packet / "reference.json").read_bytes())["rows"]
+        if [row["verdict"] for row in references] != ["pass", "fail", "disputed", "unreviewed", "unreviewed", "fail"]:
+            raise RuntimeError("installed reference review hid disagreement or incomplete ratings")
+        run([cli, "reference-review", "verify", reference_packet, "--plan-sha256", "0" * 64], expected=2)
+        with (reference_packet / "review.html").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "reference-review", "verify", reference_packet, "--plan-sha256", reference_pin], expected=2)
         run([cli, "grader-demo", "--out", "grader-demo"], expected=2)
         grader_plan = root / "grader-demo/plan.json"
         grader_pin = hashlib.sha256(grader_plan.read_bytes()).hexdigest()
