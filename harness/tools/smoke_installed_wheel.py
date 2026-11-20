@@ -68,6 +68,25 @@ def smoke(wheel: Path) -> None:
         with altered_report.open("ab") as stream:
             stream.write(b" ")
         run([*grader_command, "--plan-sha256", grader_pin, "--verify", altered_report], expected=2)
+        run([cli, "lifecycle-cost-demo", "--out", "lifecycle-demo"])
+        run([cli, "lifecycle-cost-demo", "--out", "lifecycle-demo"], expected=2)
+        cost_plan = root / "lifecycle-demo/plan.json"
+        cost_pin = hashlib.sha256(cost_plan.read_bytes()).hexdigest()
+        for name in ("complete", "unknown-exit", "no-rates"):
+            run([cli, "lifecycle-cost", cost_plan, root / f"lifecycle-demo/{name}-rates.json",
+                 "--plan-sha256", cost_pin, "--verify", root / f"lifecycle-demo/{name}-report.json"])
+        complete_cost = json.loads((root / "lifecycle-demo/complete-report.json").read_text())
+        unknown_cost = json.loads((root / "lifecycle-demo/unknown-exit-report.json").read_text())
+        if (complete_cost["scenarios"][0]["declared_total_usd"] != "368000.000000"
+                or unknown_cost["scenarios"][0]["declared_total_usd"] is not None
+                or unknown_cost["scenarios"][0]["known_subtotal_usd"] != "353000.000000"):
+            raise RuntimeError("installed lifecycle diagnostic hid unknown costs or miscomputed the declared total")
+        cost_command = [cli, "lifecycle-cost", cost_plan, root / "lifecycle-demo/complete-rates.json"]
+        run([*cost_command, "--plan-sha256", "0" * 64, "--out", "invalid-cost-report.json"], expected=2)
+        cost_report = root / "lifecycle-demo/complete-report.json"
+        with cost_report.open("ab") as stream:
+            stream.write(b" ")
+        run([*cost_command, "--plan-sha256", cost_pin, "--verify", cost_report], expected=2)
         inspect_command = [cli, "inspect-pack", "demo/repaired", "--expect", "evaluation-review"]
         run([*inspect_command, "--out", "inspection.json"])
         run([*inspect_command, "--verify", "inspection.json"])

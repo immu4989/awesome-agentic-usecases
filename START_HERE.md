@@ -8,6 +8,10 @@ agent do this?”:
 
 You do not need an API key to begin. Pick the route that matches the job you are doing.
 
+**Government or public-sector evaluator?** The [agency evaluation path](GOVERNMENT_EVALUATION_PATH.md)
+connects the tools to a bounded mission, independently controlled requirements, cost assumptions,
+human review, and a documented pilot. It keeps technical evidence separate from official decisions.
+
 **New to evaluation? Check the judge before trusting the score.** From a trusted current checkout:
 
 ```bash

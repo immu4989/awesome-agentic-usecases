@@ -3,6 +3,12 @@
 Research checked November 8, 2026. This is a working roadmap, not a claim of leadership,
 government approval, institutional partnership, or guaranteed attention/stars.
 
+Government-adoption follow-up, November 19, 2026: the
+[agency evaluation path](GOVERNMENT_EVALUATION_PATH.md) connects existing tools and adds
+[lifecycle-cost scenario review](harness/README.md#review-lifecycle-costs-without-turning-unknowns-into-zero).
+The linked guide records the official sources and remaining adoption boundaries. This addresses
+cost-scope transparency; it does not substitute for independent reproductions or partner studies.
+
 ## What leading teams are doing
 
 **Validate the measurement.** Anthropic recommends domain-relevant tasks, balanced positive

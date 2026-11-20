@@ -2019,6 +2019,110 @@ and use a matching trusted implementation. Data capture is not atomic or source-
 Review identifiers, times, scores, and hashes before sharing. No model, adapter, human action,
 subprocess, upload, or network request is executed by this command.
 
+### Review lifecycle costs without turning unknowns into zero
+
+`aau lifecycle-cost` computes **declared constant-USD scenarios**, including costs outside model
+calls. It is a planning diagnostic, not a validated cost estimate or an award recommendation.
+Unlike `operating-eval`, which describes recorded attempts, this command uses explicitly supplied
+workloads and rates. It never extrapolates a benchmark pass rate into production demand or savings.
+
+Run the synthetic walkthrough from a **trusted current checkout/local wheel** (not the older
+published PyPI release):
+
+```bash
+pip install -e harness
+aau lifecycle-cost-demo --out /tmp/my-lifecycle-review
+```
+
+Read the generated `README.md`. Eight files retain one plan, three rate variants, three reports,
+and the guide. Four scenarios show fixed and recurring costs, a review-event surge, a combined
+case/review surge, and a shorter horizon. The complete expected scenario has $3,000 in model
+usage and $368,000 in declared costs. With exit cost unknown, $353,000 is **only a subtotal**.
+These values are invented for the walkthrough; they are not current vendor quotes, real agency
+workloads, forecasts, salaries, or observed savings.
+
+For an independently reviewed plan and your own rate assumptions:
+
+```bash
+aau lifecycle-cost plan.json rates.json --plan-sha256 "$APPROVED_COST_PLAN_SHA256" --out cost-report.json
+aau lifecycle-cost plan.json rates.json --plan-sha256 "$APPROVED_COST_PLAN_SHA256" --verify cost-report.json
+```
+
+Protect the expected plan hash independently of a supplier's delivery. It binds the cost census,
+quantity drivers, scenarios, and assumptions. Rate sources are declared, not fetched or authenticated.
+Exact raw input hashes are retained in the report; verification recomputes every rendered report byte.
+Existing output files are never overwritten.
+
+#### Cost-plan contract
+
+The plan has exactly these fields:
+
+- `plan_version`: `aau-lifecycle-cost-plan/1.0`.
+- `currency`: `USD`; no implicit currency conversion.
+- `assumptions`: nonempty description of scope, price basis, exclusions, and workload assumptions.
+- `cost_items`: 1–100 rows with exactly `cost_id`, `category`, `driver`, and `description`.
+- `scenarios`: 1–20 rows with exactly `scenario_id`, `months`, `cases`, `reviews`, and `assumptions`.
+
+Every plan must include at least one line in each of these cost categories: `implementation`,
+`model_usage`, `infrastructure`, `human_review`, `monitoring`, `security_privacy_accessibility`,
+and `transition_exit`. Additional lines can use `other`. This is a disclosure prompt, not a
+standard work breakdown structure or proof of cost completeness. If a cost does not apply,
+use an explicit zero rate and explain why; do not delete the category. Check for omitted and
+double-counted obligations with qualified acquisition/cost reviewers.
+
+| Driver | Quantity applied to the supplied unit rate |
+|---|---|
+| `one_time` | 1 for each scenario; setup/exit do not disappear when the horizon shortens |
+| `per_month` | Supplied `months` |
+| `per_case` | Supplied `cases` over the entire horizon, **not cases per month** |
+| `per_review` | Supplied review events over the entire horizon, not a staff headcount |
+
+Months must be an integer from 1 through 120. Cases and reviews must be integers from 0 through
+1,000,000,000; booleans, fractions, negatives, and inferred values are rejected. Multiple reviews
+per case are possible, so review counts are not restricted to case counts. IDs are distinct
+lowercase slugs, starting with a letter and containing up to 64 letters/digits/underscores/hyphens.
+Descriptions allow up to 500 characters; assumptions allow up to 2,000.
+
+#### Rate contract and unknowns
+
+The rate document has exactly `format_version: "aau-lifecycle-cost-rates/1.0"`, `currency: "USD"`,
+and `rates`. Each rate row has exactly:
+
+- `cost_id`, matching one planned cost line.
+- `unit_cost_usd`: a nonnegative decimal **string**, with up to 12 integer and 6 fractional digits,
+  or `null` for unknown. Floats, negatives, scientific notation, and silent rounding are rejected.
+- `basis`: `estimate`, `quote`, `synthetic`, or `unknown`. A supplied numeric rate cannot use `unknown`.
+- `source_ref`: a nonempty source reference up to 500 characters; never dereferenced by this tool.
+- `assumptions`: nonempty scope/limitations, up to 2,000 characters.
+
+Missing rows are permitted and labeled `missing`; explicit null rates are labeled `unknown`.
+Duplicate and unplanned rate IDs are invalid. Every planned line remains in every scenario.
+An unknown rate with positive quantity makes that category and the scenario total `null`.
+Known contributions remain a separately labeled subtotal. With zero quantity, a variable line
+has zero extended cost **under the declared linear model**, while its unknown rate stays unknown.
+This is not a waiver of minimum commitments: model such commitments separately or use a more
+appropriate model. An empty rate list is valid evidence of missing costs, not a free solution.
+
+Reports retain each quantity × unit-rate calculation, source and assumption declarations,
+category subtotals, unknown active cost IDs, and scenario totals. Arithmetic uses integer
+micro-dollars and fixed six-decimal strings without rounding. Precision is computational, not
+evidence of precise source estimates. Comparisons use the first declared scenario as the
+baseline and list exactly which quantity drivers changed. If any compared total is unknown,
+the difference remains unknown. Several changed quantities are never labeled a one-factor
+sensitivity analysis; even one changed quantity is only conditional arithmetic, not a complete
+sensitivity/risk study.
+
+All inputs and reports are bounded to 2 MB. Exit **0** means a valid diagnostic, even with
+unknown totals. Exit **2** means invalid input/output or a report that does not recompute.
+No result asserts affordability, comparative effectiveness, source validity, benefit, savings,
+compliance, or authorization. Fixed/linear rates do not model tiered pricing, discounts,
+inflation, probabilistic contingency, financing, or taxes unless explicitly represented by
+appropriate supplied lines. No network, model, adapter, or subprocess is called. Protect
+procurement-sensitive information; these files are not sanitized for public sharing.
+
+See the [agency evaluation path](../GOVERNMENT_EVALUATION_PATH.md) for source-backed motivation
+and the separate quality, security, human-review, and pilot decisions this does not replace.
+
 ### Audit the grader before trusting its scores
 
 An automated judge can accept an unsafe action, reject a legitimate solution, or produce a

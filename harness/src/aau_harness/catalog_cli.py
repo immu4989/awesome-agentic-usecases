@@ -294,6 +294,10 @@ def build_parser() -> argparse.ArgumentParser:
                    help="audit recorded grader judgments against pinned reference labels without hiding coverage gaps")
     sub.add_parser("grader-demo", add_help=False,
                    help="create four no-key synthetic grader diagnostics and a reproduction guide")
+    sub.add_parser("lifecycle-cost", add_help=False,
+                   help="compute declared lifecycle cost scenarios without hiding unknown rates or non-model costs")
+    sub.add_parser("lifecycle-cost-demo", add_help=False,
+                   help="create synthetic agency cost scenarios with human-review and exit-cost gaps")
     sub.add_parser("compare-evals", add_help=False,
                    help="compare matched scenarios in two saved evaluations without model calls")
     sub.add_parser("compare-eval-contexts", add_help=False,
@@ -471,6 +475,12 @@ def main(argv: list[str] | None = None) -> int:
     if raw_args and raw_args[0] == "grader-demo":
         from .grader_demo import main as grader_demo_main
         return grader_demo_main(raw_args[1:])
+    if raw_args and raw_args[0] == "lifecycle-cost":
+        from .lifecycle_cost import main as lifecycle_main
+        return lifecycle_main(raw_args[1:])
+    if raw_args and raw_args[0] == "lifecycle-cost-demo":
+        from .lifecycle_demo import main as lifecycle_demo_main
+        return lifecycle_demo_main(raw_args[1:])
     if raw_args and raw_args[0] == "review-queue":
         from .review_queue import main as queue_main
         return queue_main(raw_args[1:])

@@ -27,6 +27,10 @@
 Most agent collections answer **“what could I build?”** This one answers the harder next
 question: **“how do I know it works?”**
 
+**For government evaluation teams:** follow the [agency evaluation path](GOVERNMENT_EVALUATION_PATH.md)
+from mission definition to grader checks, reproducible evidence, lifecycle costs, and a bounded
+pilot. Start offline with synthetic data; no claim of agency adoption, compliance, or authorization.
+
 **Evidence transparency:** the [recorded metric audit](EVALUATION_METRIC_AUDIT.md) recomputes all
 287 saved evaluation files and discloses 23 historical summary differences. Original observations
 are preserved; internal consistency is not proof of real-world effectiveness.
@@ -57,6 +61,7 @@ and observed failure cards with a direct path to reproduction. Start with
 
 | I already have… | Start here | Leave with… |
 |---|---|---|
+| Model-call prices but no view of implementation, review, monitoring, or exit costs | [Lifecycle cost scenarios](harness/README.md#review-lifecycle-costs-without-turning-unknowns-into-zero) | Exact declared cost arithmetic, visible unknown totals, explicit workload assumptions, and reproducible scenario differences |
 | An automated judge whose scores need checking | [Grader reliability review](harness/README.md#audit-the-grader-before-trusting-its-scores) | False passes/failures, explicit abstentions and missing labels, separate calibration/validation, subgroup matrices, and four no-key examples |
 | An evidence folder but no certainty which verifier to use | [One-command pack intake](harness/README.md#received-an-evidence-folder-start-with-one-intake-command) | Full verification across 12 supported recorded-evidence families, separate integrity/outcome results, and explicit format/budget requirements |
 | Pinned evidence reviews to surface in an existing CI dashboard | [Portable CI reporting](harness/README.md#publish-pinned-evidence-reviews-to-ci-test-dashboards) | Recomputed JUnit/JSON/Markdown, retained failures and unavailable checks, native exit codes, and opt-in GitLab/Azure recipes |

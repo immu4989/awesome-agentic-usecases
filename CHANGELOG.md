@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Agency lifecycle-cost scenarios** — `aau lifecycle-cost` accounts for explicitly supplied
+  implementation, model usage, infrastructure, human review, monitoring, assurance, and exit
+  costs with exact fixed-point arithmetic. Unknown active rates keep totals unknown; known
+  subtotals never become complete estimates. Single-quantity and multi-quantity scenario changes
+  remain distinct. An installed synthetic demo, failure tests, and an agency evaluation path
+  connect this planning diagnostic to the existing evidence and pilot tools. No market-price,
+  savings, compliance, affordability, or award claim is made.
+
 - **Audit the grader, not just the agent** — `aau grader-review` compares recorded binary
   judgments with separately pinned reference labels, retains disputed/unreviewed references,
   separates calibration from validation, and exposes false passes, false failures, abstentions,
