@@ -47,10 +47,11 @@ async function inspectStructure(page) {
 }
 
 async function exerciseKeyboard(page) {
-  const navigation = page.locator('nav.report-nav a').first();
-  if (await navigation.count()) {
-    const fragment = await navigation.getAttribute('href');
-    await navigation.focus();
+  const navigation = page.locator('nav.report-nav a');
+  for (let i = 0; i < await navigation.count(); i++) {
+    const link = navigation.nth(i);
+    const fragment = await link.getAttribute('href');
+    await link.focus();
     await page.keyboard.press('Enter');
     assert.equal(await page.evaluate(() => location.hash), fragment, 'section link did not activate with Enter');
     assert.equal(await page.evaluate(() => document.activeElement.id), fragment.slice(1), 'section link did not move focus');

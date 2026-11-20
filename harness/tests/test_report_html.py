@@ -62,6 +62,8 @@ def test_policy_navigation_targets_exist_without_changing_evidence_verdicts():
         assert len(ids) == len(set(ids))
         fragments = [attrs['href'][1:] for tag, attrs in parsed.elements if tag == 'a' and attrs.get('href', '').startswith('#')]
         assert {'policy-checks', 'evidence-consistency', 'diagnostics'} <= set(fragments) <= set(ids)
+        targets = {attrs['id']: attrs for _, attrs in parsed.elements if 'id' in attrs}
+        assert all(targets[fragment].get('tabindex') == '-1' for fragment in fragments)
         assert any(tag == 'nav' and attrs.get('aria-label') == 'Review sections' for tag, attrs in parsed.elements)
         assert all(attrs.get('scope') in ('col', 'row') for tag, attrs in parsed.elements if tag == 'th')
         assert b'<script' not in files['review.html']

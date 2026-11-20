@@ -35,7 +35,7 @@ def render_budget_gate(gate: dict, budget: dict) -> str:
     rows = [("Overall" if scope["scope"] == "overall" else "Group: " + scope["group_id"], measures[check["constraint"]],
              labels[check["status"]], check["limit"], check["observed"], reasons[check["reason"]])
             for scope in budget["scopes"] for check in scope["checks"]]
-    return ('<section id="operating-budget"><h2>Combined policy and candidate operating-budget gate</h2>'
+    return ('<section id="operating-budget" tabindex="-1"><h2>Combined policy and candidate operating-budget gate</h2>'
             + _table("Independent verdicts — both must meet their constraints", ("Review", "Result"),
                      [("Policy", labels[gate["policy_status"]]), ("Candidate operating budget", labels[gate["candidate_budget_status"]])])
             + '<p class="notice">Missing budget evidence cannot pass. A known failure takes precedence in the '

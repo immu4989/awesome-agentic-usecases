@@ -72,7 +72,7 @@ def render_diagnostics(plan: dict, reports: dict) -> str:
                        + _table("Failed diagnostic observations", ("Scenario", "Repeat", "Metric", "Value"), failed)
                        + '</details><details><summary>Methods and interpretation limits</summary>'
                        + f'<p>{_text(repeated["boundary"])}</p><p>{_text(operating["boundary"])}</p></details>')
-    return ('<section id="diagnostics"><p class="eyebrow">Diagnostic dossier · descriptive only</p>'
+    return ('<section id="diagnostics" tabindex="-1"><p class="eyebrow">Diagnostic dossier · descriptive only</p>'
             '<h2>What the policy verdict alone does not tell you</h2>'
             '<p class="notice">These diagnostics never change the policy verdict. Their joint observation criteria '
             'are separately supplied, not inferred from the policy or its cohort limits. A passing diagnostic '
