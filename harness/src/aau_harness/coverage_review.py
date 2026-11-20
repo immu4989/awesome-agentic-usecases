@@ -9,7 +9,7 @@ import re
 import sys
 
 from .agent_bom import AgentBomError, MAX_JSON_BYTES, digest, rendered
-from .authority_html import STYLE
+from .report_html import STYLE
 from .eval_audit import audit_evaluation
 from .eval_pack import _table
 from .evaluation_context import validate_context
@@ -135,9 +135,7 @@ def _inventory(raw, plan):
 
 
 def render_review(report):
-    def table(caption, headers, rows):
-        return _table(caption, headers, rows).replace('<div class="scroll">',
-            f'<div class="scroll" tabindex="0" role="region" aria-label="{escape(caption, quote=True)}">', 1)
+    table = _table
     cells = [('\n'.join(f'{k}: {v}' for k, v in r['coordinates'].items()), r['minimum_cases'],
               len(r['counted_scenario_ids']), len(r['uncertain_scenario_ids']), r['status'], r['override_rationale'] or 'Default floor')
              for r in report['cells']]

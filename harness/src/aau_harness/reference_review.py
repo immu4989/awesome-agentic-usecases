@@ -8,7 +8,7 @@ from pathlib import Path
 import sys
 
 from .agent_bom import AgentBomError, MAX_JSON_BYTES, _parse_json, digest, rendered
-from .authority_html import STYLE
+from .report_html import STYLE
 from .eval_pack import _table
 from .grader_review import REFERENCE_STATES, SPLITS, _ids, _ratio, validate_plan as validate_grader_plan
 from .inspect_pack import _capture
@@ -138,10 +138,7 @@ def render_review(report):
                f"{r['submitted_rating_coverage']['numerator']}/{r['submitted_rating_coverage']['denominator']}",
                r['panel_conflict_count'], r['adjudicated_count'],
                ', '.join(f'{s}: {n}' for s, n in r['reference_counts'].items())) for r in report['scopes']]
-    def table(caption, headers, rows):
-        html = _table(caption, headers, rows)
-        return html.replace('<div class="scroll">',
-                            f'<div class="scroll" tabindex="0" role="region" aria-label="{escape(caption, quote=True)}">', 1)
+    table = _table
     sections = []
     for row in report['observations']:
         adjudication = row['adjudication']
@@ -161,7 +158,7 @@ def render_review(report):
             f'<title>Reference label review</title><style>{STYLE}'
             'td{white-space:pre-line;overflow-wrap:break-word}table{min-width:700px}'
             '.case{margin:2rem 0;padding:1rem;background:white;border:1px solid #ccd5db}'
-            'p,h3{overflow-wrap:anywhere}.case h3{margin-top:0}.case td:first-child{width:18%}.case td:nth-child(2){width:20%}'
+            'p,h3{overflow-wrap:anywhere}.case h3{margin-top:0}.case tbody th{width:18%}.case td:nth-child(2){width:20%}'
             '.scroll:focus-visible{outline:3px solid #355c70;outline-offset:3px}'
             '@media print{table{min-width:0}.case{break-inside:avoid}}</style>'
             '</head><body><main><h1>Reference label review</h1>'

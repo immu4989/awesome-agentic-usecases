@@ -6,7 +6,7 @@ from pathlib import Path
 import sys
 
 from .agent_bom import AgentBomError, MAX_JSON_BYTES, digest, load_json, rendered
-from .authority_html import STYLE
+from .report_html import STYLE
 from .eval_operations import COST_BASES, review_operations
 from .eval_budget import review_budget, validate_budget
 from .eval_repeatability import _criteria

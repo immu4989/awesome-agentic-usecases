@@ -122,6 +122,14 @@ traces to satisfy these milestones.
 
 ## A useful community invitation
 
+November 19 report-access follow-up: [Offline report interaction checks](harness/browser-tests/README.md)
+centralize named keyboard-scroll groups and row/column semantics across the principal review reports,
+add policy section navigation, and exercise twelve fixed synthetic reports at desktop and narrow widths.
+Deliberately broken focus/name/header/reflow controls must be detected. The public synthetic packets
+are regenerated with their matching manifests and archives; source scores and policy outcomes do not
+change. This is targeted Chromium behavior testing, not assistive-technology usability evidence or
+WCAG/Section 508 conformance. The linked manual-test checklist records the remaining evaluation work.
+
 November 19 offline-adoption follow-up: the [offline installation kit](harness/README.md#prepare-an-offline-installation-kit)
 connects the existing source/archive audit to a prepared local wheel, hash-locked no-index install,
 standalone verification, and installed first-party source comparison. Python 3.11+ is the bounded

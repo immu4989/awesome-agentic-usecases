@@ -211,6 +211,13 @@ conformance, government adoption, or operational benefit.
 
 ## Received an evidence folder? Start with one intake command
 
+**Reviewing reports with a keyboard or a narrow viewport?** The policy/diagnostic/budget, candidate
+matrix, reference-label, condition-coverage, and Inspect-diagnostic reports now share named scroll
+groups, explicit row/column headers, and visible focus. Policy reports have section-navigation links.
+Use Tab to reach a table and arrow keys to scroll; native disclosure headings open with Enter/Space.
+The [reproducible browser checks and manual-test checklist](browser-tests/README.md) explain the tested
+scope and remaining limitations. These improvements are not a WCAG/Section 508 conformance claim.
+
 `aau inspect-pack` recognizes 12 supported recorded-evidence pack families and calls the
 existing **full verifier** for the recognized format. It does not trust a manifest hash or a
 stored success label as the result. This lets a receiving team inspect a complete folder without

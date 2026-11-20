@@ -60,6 +60,12 @@ Do not merge these layers into one “approved” score. A valid evidence pack c
 A fully computed cost scenario can describe an unaffordable or ineffective system. A simulated
 review interval does not establish a correct human decision. Human reference labels can be wrong.
 
+The reports themselves must also be usable by reviewers. The
+[offline report interaction checks](harness/browser-tests/README.md) exercise keyboard traversal,
+table scrolling, disclosure controls, and narrow-layout behavior on fixed synthetic examples.
+They include deliberately broken controls. This is targeted automated coverage, not a Section 508
+assessment; qualified manual evaluation and authorized usability work remain necessary.
+
 ## Why this sequence
 
 [GAO's AI acquisition review](https://files.gao.gov/reports/GAO-26-107859/index.html)

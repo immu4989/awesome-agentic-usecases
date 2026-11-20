@@ -5,6 +5,7 @@ from html import escape
 from .agent_bom import AgentBomError
 from .eval_operations import COST_BASES, review_operations
 from .eval_repeatability import review_repeatability
+from .report_html import table
 
 
 def diagnostic_reports(plan: dict, baseline: dict, candidate: dict) -> dict:
@@ -30,12 +31,7 @@ def _text(value) -> str:
 
 
 def _table(caption, headers, rows, *, compact_numbers=False):
-    return ('<div class="scroll"><table><caption>' + _text(caption) + '</caption><thead><tr>'
-            + ''.join(f'<th scope="col">{_text(value)}</th>' for value in headers)
-            + '</tr></thead><tbody>'
-            + ''.join('<tr>' + ''.join(f'<td>{_text(format(value, ".6g") if compact_numbers and type(value) is float else value)}</td>'
-                                      for value in row) + '</tr>' for row in rows)
-            + '</tbody></table></div>')
+    return table(caption, headers, rows, compact_numbers=compact_numbers, missing_text='Not available')
 
 
 def render_diagnostics(plan: dict, reports: dict) -> str:

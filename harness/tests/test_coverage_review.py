@@ -280,7 +280,7 @@ def test_html_is_structured_script_free_and_escapes_supplied_text():
             assert tag not in ('script', 'img', 'iframe', 'link')
             assert not any(name in ('src', 'href', 'onclick', 'onerror') for name, _ in attrs)
             if tag == 'th':
-                assert ('scope', 'col') in attrs
+                assert dict(attrs).get('scope') in ('col', 'row')
             if ('class', 'scroll') in attrs:
                 assert ('tabindex', '0') in attrs
     html = files['review.html'].decode()

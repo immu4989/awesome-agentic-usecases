@@ -254,9 +254,9 @@ def test_structured_html_escapes_all_supplied_rationales_and_basis():
             self.tags.append(tag)
             assert not any(k in ('src', 'href', 'onclick', 'onerror') for k, _ in attrs)
             if tag == 'th':
-                assert ('scope', 'col') in attrs
+                assert dict(attrs).get('scope') in ('col', 'row')
             if ('class', 'scroll') in attrs:
-                assert ('tabindex', '0') in attrs and ('role', 'region') in attrs
+                assert ('tabindex', '0') in attrs and ('role', 'group') in attrs
     parser = Structure()
     html = files['review.html'].decode()
     parser.feed(html)

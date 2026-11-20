@@ -24,7 +24,7 @@ def local_target(source: Path, raw: str) -> Path | None:
 def markdown_problems() -> list[str]:
     problems = []
     for path in ROOT.rglob("*.md"):
-        if any(part in {".git", ".venv"} for part in path.parts):
+        if any(part in {".git", ".venv", "node_modules"} for part in path.parts):
             continue
         text = path.read_text(errors="replace")
         matches = [*MARKDOWN_LINK.finditer(text), *HTML_LINK.finditer(text)]

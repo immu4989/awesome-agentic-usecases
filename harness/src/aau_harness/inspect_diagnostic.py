@@ -5,7 +5,7 @@ from html import escape
 from pathlib import Path
 
 from .agent_bom import AgentBomError, MAX_JSON_BYTES, digest, rendered
-from .authority_html import STYLE
+from .report_html import STYLE
 from .eval_inspect import _identity, _json, _number, _plan, _text, inspect_payloads
 from .eval_pack import _table
 from .inspect_pack import _capture
@@ -73,9 +73,7 @@ def _metric_state(scores, mapping):
 
 
 def render_diagnostic(report):
-    def table(caption, headers, rows):
-        return _table(caption, headers, rows).replace('<div class="scroll">',
-            f'<div class="scroll" tabindex="0" role="region" aria-label="{escape(caption, quote=True)}">', 1)
+    table = _table
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width,initial-scale=1"><title>Inspect evidence diagnostic</title>'
             f'<style>{STYLE}p,h1{{overflow-wrap:anywhere}}td{{white-space:pre-line;overflow-wrap:anywhere}}'

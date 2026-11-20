@@ -266,7 +266,7 @@ def test_offline_html_escapes_supplied_identifiers_and_no_log_code_executes(monk
         def handle_starttag(self, tag, attrs):
             assert tag not in ('script', 'img', 'iframe', 'link')
             if tag == 'th':
-                assert ('scope', 'col') in attrs
+                assert dict(attrs).get('scope') in ('col', 'row')
             if ('class', 'scroll') in attrs:
                 assert ('tabindex', '0') in attrs
     html = files['review.html'].decode()

@@ -7,7 +7,7 @@ from pathlib import Path
 import sys
 
 from .agent_bom import AgentBomError, MAX_JSON_BYTES, digest, load_json, rendered
-from .authority_html import STYLE
+from .report_html import STYLE, table as _table
 from .eval_policy import review_evaluations
 from .eval_import import import_observations
 from .eval_diagnostics import diagnostic_reports, render_diagnostics
@@ -25,15 +25,6 @@ CONSTRAINT_LABELS = {
 
 def _text(value) -> str:
     return escape(str(value), quote=True)
-
-
-def _table(caption, headers, rows) -> str:
-    heading = "".join(f'<th scope="col">{_text(value)}</th>' for value in headers)
-    body = "".join("<tr>" + "".join(f"<td>{_text(value)}</td>" for value in row) + "</tr>" for row in rows)
-    if not rows:
-        body = f'<tr><td colspan="{len(headers)}">None recorded.</td></tr>'
-    return (f'<div class="scroll"><table><caption>{_text(caption)}</caption><thead><tr>{heading}</tr></thead>'
-            f'<tbody>{body}</tbody></table></div>')
 
 
 def render_review(report: dict, *, recordings: bool = False, diagnostics_html: str = "",
@@ -85,7 +76,11 @@ def render_review(report: dict, *, recordings: bool = False, diagnostics_html: s
     file_count = ("thirteen" if recordings else "eleven") if diagnostics_html else ("eight" if recordings else "six")
     if gate is not None:
         file_count = "sixteen" if recordings else "fourteen"
-    navigation = '<p><a href="#diagnostics">Inspect repeated-run and operating diagnostics ↓</a></p>' if diagnostics_html else ""
+    navigation = ('<nav class="report-nav" aria-label="Review sections">'
+                  '<a href="#policy-checks">Policy findings</a><a href="#evidence-consistency">Evidence consistency</a>'
+                  + ('<a href="#operating-budget">Operating budget</a>' if gate is not None else '')
+                  + ('<a href="#diagnostics">Repeated-run and operating diagnostics</a>' if diagnostics_html else '')
+                  + '</nav>')
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width, initial-scale=1">'
             '<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; '
@@ -94,6 +89,9 @@ def render_review(report: dict, *, recordings: bool = False, diagnostics_html: s
             'td{overflow-wrap:anywhere}details{margin:1rem 0}summary{cursor:pointer;font-weight:600}'
             '</style></head><body><main><p class="eyebrow">Evaluation evidence · offline review</p>'
             f'<h1>{status}</h1>'
+            + navigation
+            + '<p>Use Tab to reach a table, then arrow keys to scroll it sideways. '
+              'Use Enter or Space on a disclosure heading to show its full evidence.</p>'
             + ('<p class="notice">Recorded-observation pack: retains both supplied recordings and normalized '
                'evaluations. Verification recomputes imports and policy review, not original execution or scoring. '
                'Use <code>aau evaluation-pack verify PATH --require-recordings</code> to require this evidence chain.</p>'
@@ -104,8 +102,8 @@ def render_review(report: dict, *, recordings: bool = False, diagnostics_html: s
             '<p><strong>Sharing notice:</strong> this folder contains the complete supplied evaluations, including '
             'their detail fields. It is not sanitized. Review the source files for sensitive data before sharing.</p>'
             f'<p>Required repeats on each side: <strong>{_text(report["policy"]["minimum_repeats"])}</strong>.</p>'
-            f'{budget_html}{failures}{navigation}<h2>Scope not reviewed</h2><p>{_text(", ".join(report["unreviewed_metrics"]) or "No additional metric names found; unmeasured risks remain outside this review.")}</p>'
-            f'{"".join(sections)}<h2>Evidence consistency</h2>{summaries}'
+            f'{budget_html}<h2 id="policy-checks" tabindex="-1">Policy findings</h2>{failures}<h2>Scope not reviewed</h2><p>{_text(", ".join(report["unreviewed_metrics"]) or "No additional metric names found; unmeasured risks remain outside this review.")}</p>'
+            f'{"".join(sections)}<h2 id="evidence-consistency" tabindex="-1">Evidence consistency</h2>{summaries}'
             f'<h2>Source-value hashes</h2><dl>{hashes}</dl>'
             + f'<p>Retain all {file_count} files together. Hashes are not signatures; coordinated replacement of sources '
             'and derived outputs can still verify. This is not independent attestation.</p>'
