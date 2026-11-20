@@ -298,6 +298,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="retain panel disagreements and explicit adjudications before exporting reference labels")
     sub.add_parser("coverage-review", add_help=False,
                    help="check every declared condition combination without counting repeats as new cases")
+    sub.add_parser("inspect-review", add_help=False,
+                   help="verify original Inspect logs through a receiver-pinned policy and diagnostic handoff")
     sub.add_parser("grader-demo", add_help=False,
                    help="create four no-key synthetic grader diagnostics and a reproduction guide")
     sub.add_parser("lifecycle-cost", add_help=False,
@@ -487,6 +489,9 @@ def main(argv: list[str] | None = None) -> int:
     if raw_args and raw_args[0] == "coverage-review":
         from .coverage_review import main as coverage_main
         return coverage_main(raw_args[1:])
+    if raw_args and raw_args[0] == "inspect-review":
+        from .eval_inspect_review import main as inspect_review_main
+        return inspect_review_main(raw_args[1:])
     if raw_args and raw_args[0] == "grader-demo":
         from .grader_demo import main as grader_demo_main
         return grader_demo_main(raw_args[1:])

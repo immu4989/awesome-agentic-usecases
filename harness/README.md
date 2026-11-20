@@ -1318,6 +1318,101 @@ end-to-end elapsed time with a sum of overlapping spans. Supply a reviewed `esti
 authenticate that declaration or establish fully loaded cost. IDs, costs, and timings may still be
 sensitive even though free-text details are excluded. Review before sharing.
 
+### Hand off Inspect logs through a receiver-pinned policy review
+
+`aau inspect-review` connects two original Inspect JSON logs to the existing AAU policy,
+repeatability, operating diagnostics, and optional budget gate in **one fully recomputable folder**.
+The receiving team controls one independently retained request-byte hash covering all control inputs,
+including the exact baseline-source hash. A supplier cannot change a mapping, weaken the policy,
+substitute the baseline, or remove a required budget while keeping that same request pin.
+
+From a reviewed current checkout/local wheel, not the older public PyPI release:
+
+```bash
+aau inspect-review demo --out /tmp/my-inspect-review
+```
+
+Open each `review/review.html`; read the demo guide for exact replay commands and demo-only pins.
+The examples are constructed, not real service or model evaluations:
+
+| Handoff | What changes | Outcome / verify exit |
+|---|---|---|
+| `unsafe` | Completion improves, but one authorization score fails | `constraints_not_met` / 1 |
+| `repaired` | Both declared score obligations are met | `constraints_met` / 0 |
+| `unknown-budget` | Same repaired scores; the request additionally requires a cost budget | `constraints_not_verified` / 1 |
+
+The first two share the identical request. Adding a budget changes the request pin. Missing costs
+never become zero. **Context remains unavailable in all three**, including the met policy: this
+checks supplied score constraints, not comparable execution, correct scoring, or deployment readiness.
+
+#### Receiving-team request
+
+Use `repaired/request.json` as an editable example, then independently review and retain its hash
+before evaluating a delivery. The closed `aau-inspect-review-request/1.0` object has exactly:
+
+| Field | Contract |
+|---|---|
+| `request_version` | `aau-inspect-review-request/1.0` |
+| `baseline_source_sha256` | SHA-256 of exact baseline JSON bytes, including whitespace/BOM; lowercase 64-digit hex |
+| `baseline_plan`, `candidate_plan` | Complete [Inspect mapping plans](#reuse-inspect-sample-scores-without-executing-the-log); no inferred labels, components, or identities |
+| `policy` | Complete existing evaluation-review policy, including any declared cohorts |
+| `diagnostics` | Explicit existing diagnostic plan with joint criteria, draw sizes, and cost-basis declarations |
+| `operating_budget` | Complete existing operating-budget plan, or explicit `null` if none is required |
+
+The request embeds control objects. Exported nested mapping/policy/diagnostic files use the harness
+renderer; they are not assumed to be copies of pre-existing original files. The complete request
+and both source logs are retained **byte-for-byte**. The candidate source is deliberately not pinned
+by the request: it must satisfy the requested review, rather than match one preselected result.
+
+```bash
+aau inspect-review create request.json baseline.json candidate.json \
+  --request-sha256 "$RECEIVER_REQUEST_SHA256" --out /tmp/inspect-handoff
+aau inspect-review verify /tmp/inspect-handoff --request-sha256 "$RECEIVER_REQUEST_SHA256"
+```
+
+Use new output paths. Keep the expected request hash outside supplier-controlled evidence; computing
+it from the delivered request in the same review job defeats that boundary. A hash is not a signature,
+identity check, proof of preregistration, authority, independent evaluation, or a protected holdout.
+
+Exit **0** means the whole chain verifies and supplied policy plus any budget constraints are met;
+**1** means the whole chain verifies but constraints are unmet/unverified; **2** means an invalid
+input, incorrect pin, incomplete source, or replay failure. Never delete valid negative evidence
+or fall back to an easier nested verification after the parent fails.
+
+The handoff contains 29 files, or 32 when a budget is requested:
+
+- `baseline/` and `candidate/`: complete six-file strict Inspect conversion packs, including raw logs.
+- `review/`: the existing 13-file recording-based policy/diagnostic dossier; a budget adds three files.
+- Root: original `request.json`, `handoff.json`, `README.txt`, and `manifest.json`.
+
+Replay reparses both logs, reconstructs every nested recording/evaluation, and recomputes the policy,
+diagnostics, any budget gate, HTML, reports, and manifests. Replacing a component with an individually
+valid but unrelated pack fails, even after rehashing its inventory. Use the dedicated `inspect-review
+verify` command: generic `inspect-pack`/`review-intake` do not route this profile. Nested verifiers
+remain useful for diagnosis, but alone do not establish the full source/request relationship.
+
+This retains the strict import subset: interrupted/edited/incomplete logs are not converted. Use
+[Inspect evidence diagnostics](#review-incomplete-inspect-evidence-without-repairing-it) to preserve
+their findings separately. The importer does not infer context, cost, latency, or API-call counts.
+Consequently any requested operating-budget measure remains unverified with these sources. This
+is intentional; do not remove the requirement or invent measurements to obtain a pass. The existing
+policy machinery requires complete measurements for its selected metrics; missing required scores
+are rejected rather than silently omitted from a denominator.
+
+Each input and generated member is bounded to 2 MB, with exact directory/file inventories and
+regular non-symlink files. No supplied task, scorer, model, subprocess, URL, or attachment is executed.
+Raw logs may contain private transcripts or credentials; neither hashing nor verification sanitizes
+them or grants permission to share. Use a matching trusted harness to replay the packet.
+
+Research checked November 19, 2026: [GAO's AI acquisition review](https://files.gao.gov/reports/GAO-26-107859/index.html)
+identifies requirements definition and ongoing evaluation as acquisition challenges.
+[Inspect's log documentation](https://inspect.aisi.org.uk/eval-logs.html) distinguishes passive log
+inspection from retry/rescoring workflows that execute supplied code. Our engineering inference is
+to preserve the source-to-review chain under receiving-team control without rerunning the source.
+This is not contract language, proof of burden reduction, GAO endorsement, government adoption,
+compliance, or authorization. Study design, rubric quality, task comparability, and actual utility
+still need independent/domain review.
+
 ### Review incomplete Inspect evidence without repairing it
 
 An interrupted run or edited score is evidence to review, not a reason to quietly drop rows.

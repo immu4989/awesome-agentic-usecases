@@ -65,6 +65,23 @@ def smoke(wheel: Path) -> None:
         run([cli, "coverage-review", "verify", packet, "--plan-sha256", coverage_pin], expected=2)
         run([cli, "inspect-eval", "demo", "--out", "inspect-demo"])
         run([cli, "inspect-eval", "demo", "--out", "inspect-demo"], expected=2)
+        run([cli, "inspect-review", "demo", "--out", "inspect-review-demo"])
+        run([cli, "inspect-review", "demo", "--out", "inspect-review-demo"], expected=2)
+        for name, expected in (("unsafe", 1), ("repaired", 0), ("unknown-budget", 1)):
+            handoff = root / "inspect-review-demo" / name
+            request_pin = hashlib.sha256((handoff / "request.json").read_bytes()).hexdigest()
+            run([cli, "inspect-review", "verify", handoff, "--request-sha256", request_pin], expected=expected)
+        handoff_report = json.loads((handoff / "handoff.json").read_bytes())
+        if (handoff_report["policy_status"] != "constraints_met"
+                or handoff_report["candidate_budget_status"] != "constraints_not_verified"
+                or handoff_report["declared_context"]["status"] != "unavailable"):
+            raise RuntimeError("installed Inspect review invented context or passed an unknown budget")
+        run([cli, "inspect-review", "create", handoff / "request.json", handoff / "baseline/source.json",
+             handoff / "candidate/source.json", "--request-sha256", request_pin, "--out", "inspect-review-copy"], expected=1)
+        run([cli, "inspect-review", "verify", handoff, "--request-sha256", "0" * 64], expected=2)
+        with (handoff / "review/review.html").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "inspect-review", "verify", handoff, "--request-sha256", request_pin], expected=2)
         inspect_plan = root / "inspect-demo/plan.json"
         inspect_pin = hashlib.sha256(inspect_plan.read_bytes()).hexdigest()
         run([cli, "inspect-eval", "verify-diagnostic", "inspect-demo/diagnostic", "--plan-sha256", inspect_pin], expected=1)

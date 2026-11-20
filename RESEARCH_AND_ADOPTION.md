@@ -88,6 +88,15 @@ JSON pointers make findings reproducible without running supplied code. The exis
 fixture is checked, plus synthetic failure mutations and a complete small census oracle; broader
 native exporter/version coverage and independent reproduction are still pending.
 
+November 19 handoff follow-up: [Pinned Inspect policy review](harness/README.md#hand-off-inspect-logs-through-a-receiver-pinned-policy-review)
+connects both original logs to the existing policy/diagnostic/budget review in one folder. A single
+independently retained request pin controls the exact baseline bytes, both mappings, policy,
+diagnostics, and optional budget. Whole-folder replay checks cross-component relationships, not
+just individually valid nested packs. The no-key examples retain an authorization failure despite
+better completion, a met score policy, and an unknown required cost budget. This reduces manual
+evidence assembly; it does not demonstrate reduced staff burden, genuine source execution, task
+comparability, or adoption. Real-user observation and independent reproductions remain pending.
+
 | Priority | Community benefit | Evidence required before calling it complete |
 |---|---|---|
 | 1. Native export adapters | Use existing Inspect/other evaluation logs without hand-converting every field | Versioned fixtures from each supported exporter; raw-source retention; tests for missing scores, aborted runs, repeated IDs, and rubric drift; no executing supplied log code |

@@ -17,6 +17,7 @@ aau reference-review demo --out /tmp/agency-reference-example
 aau coverage-review demo --out /tmp/agency-coverage-example
 aau lifecycle-cost-demo --out /tmp/agency-cost-example
 aau inspect-eval demo --out /tmp/agency-inspect-example
+aau inspect-review demo --out /tmp/agency-inspect-review-example
 aau evaluation-demo --out /tmp/agency-evidence-example
 aau inspect-pack /tmp/agency-evidence-example/repaired --expect evaluation-review
 ```
@@ -40,6 +41,7 @@ synthetic run verifies the mechanism, not mission suitability or deployment auth
 | Which declared conditions still lack evidence? | [Condition coverage review](harness/README.md#find-untested-conditions-before-trusting-averages) | Mission-relevant dimensions, justified floors/exclusions, correct annotations, semantic diversity, population representativeness, and permission to use the evidence |
 | Did the supplier use the requested requirements and baseline? | [Pinned evidence intake](harness/README.md#check-delivered-evidence-against-a-receiving-team-request) | Independent control of expected hashes; requirements that actually reflect the mission |
 | Can existing evaluation results be reviewed without rerunning supplier code? | [Offline Inspect import](harness/README.md#reuse-inspect-sample-scores-without-executing-the-log) | Approved mapping/rubric, independently retained plan hash, source authenticity, correct scoring, and permissions for full raw logs |
+| Can an Inspect delivery be checked against fixed receiving-team requirements? | [Pinned Inspect policy handoff](harness/README.md#hand-off-inspect-logs-through-a-receiver-pinned-policy-review) | Independent request-pin control, justified baseline/mappings/limits, scoring validity, task comparability, and missing operational evidence |
 | What evidence was interrupted, edited, or omitted from a delivered log? | [Inspect evidence diagnostic](harness/README.md#review-incomplete-inspect-evidence-without-repairing-it) | Meaning of recorded errors/limits, authoritative attempts, justified edits, complete external history, and whether a separately authorized rerun is needed |
 | What costs lie outside the model call? | [Lifecycle cost scenarios](harness/README.md#review-lifecycle-costs-without-turning-unknowns-into-zero) | Complete cost scope, credible quantities/rates, contract minimums, nonlinear prices, uncertainty, and affordability |
 | Can the human-review process keep up? | [Finite queue replay](harness/README.md#replay-a-finite-review-queue-without-inventing-human-capacity) | Actual review quality, availability, accessibility, working conditions, and protected decision authority |
