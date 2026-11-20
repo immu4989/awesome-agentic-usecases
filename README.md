@@ -61,6 +61,7 @@ and observed failure cards with a direct path to reproduction. Start with
 
 | I already have… | Start here | Leave with… |
 |---|---|---|
+| An approved review environment without package-index access | [Offline installation kit](harness/README.md#prepare-an-offline-installation-kit) | Audited local artifacts, independently checked transfer pins, hash-locked installation, and installed-source comparison; Python 3.11+ required |
 | Strong scores, but uncertainty about which conditions were actually tested | [Declared coverage review](harness/README.md#find-untested-conditions-before-trusting-averages) | Every planned condition combination, distinct-case counts, unobserved cases, visible exclusions, and unresolved classifications |
 | Model-call prices but no view of implementation, review, monitoring, or exit costs | [Lifecycle cost scenarios](harness/README.md#review-lifecycle-costs-without-turning-unknowns-into-zero) | Exact declared cost arithmetic, visible unknown totals, explicit workload assumptions, and reproducible scenario differences |
 | Inspect scores that would otherwise need manual reformatting | [Offline Inspect import](harness/README.md#reuse-inspect-sample-scores-without-executing-the-log) | Retained source logs, independently pinned mappings, complete sample/epoch checks, and explicit missing-score coverage |

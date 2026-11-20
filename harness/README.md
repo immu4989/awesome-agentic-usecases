@@ -36,6 +36,98 @@ aau --help
 pytest harness/tests -q
 ```
 
+## Prepare an offline installation kit
+
+For approved restricted-network review environments, prepare a local **Python 3.11+ installation kit**
+from a trusted checkout and its audited wheel/source archive. This is an explicit preparation and
+installation workflow, not a public package release, an installer that runs itself, or an ATO.
+The ordinary package still supports Python 3.10; this narrower kit deliberately does not bundle
+its `tomli` dependency, development extras, provider SDKs, Python, pip, venv, or OS dependencies.
+
+On the preparation machine, from the reviewed repository root:
+
+```bash
+# Preparation needs approved build tooling; this step may use an index.
+python -m pip install build==1.3.0 setuptools==80.9.0 packaging
+python -m build --no-isolation --outdir /tmp/aau-offline-dist harness
+python harness/tools/build_offline_kit.py \
+  /tmp/aau-offline-dist/aau_harness-1.6.0.tar.gz \
+  /tmp/aau-offline-dist/aau_harness-1.6.0-py3-none-any.whl --out /tmp/aau-offline-kit
+```
+
+Use new directories and the actual filenames emitted by the build. The example version reflects
+current repository metadata; **the version string alone does not identify this checkout build**.
+The builder does not fetch, install, extract, or execute either artifact. It first runs the existing
+source/sdist/wheel content audit, checks the pure-Python profile and dependency declaration, and
+refuses a changed runtime dependency profile rather than creating an incomplete `--no-deps` kit.
+
+The nine-file kit retains:
+
+- Original wheel in `wheels/` and original source archive in `source/`.
+- `package-audit.json` and `expected-runtime.json`, binding the first-party source inventory.
+- `requirements.lock`, pinning the exact wheel SHA-256, not just its version.
+- A standalone, standard-library-only `verify_offline_kit.py`.
+- The repository `LICENSE`, `README.md` with receiver instructions, and `manifest.json`.
+
+The builder prints **two hashes**, for the verifier script and manifest. Send them through an
+independently approved channel; neither this tool nor a file inside the kit establishes that trust.
+Before executing a transferred verifier, compare its hash with a trusted OS hashing tool and the
+independently retained expected value. Also independently check the manifest hash. Do not execute
+an untrusted kit's script merely to ask that script whether it can be trusted.
+
+After approval, from the kit folder:
+
+```bash
+python verify_offline_kit.py . --manifest-sha256 APPROVED_MANIFEST_SHA256
+```
+
+Exit **0** verifies the exact inventory, pinned bytes, lock-to-wheel binding, and audit/runtime
+receipt consistency; **2** rejects. This standalone verifier does not rerun the archive/source audit
+against an absent checkout and does not install anything. It rejects extras, missing files, links,
+special files, oversized members, changed pins, and inconsistent receipts. Individual text/JSON
+members are limited to 2 MB and each artifact to 20 MB. Source archives are never extracted by it.
+
+Choose a **fresh approved virtual environment outside the kit** with Python 3.11+ and pip available.
+Select/activate that environment's interpreter, then follow the kit's installation commands:
+
+```bash
+python -m pip --isolated install --no-index --no-deps --only-binary=:all: --require-hashes --disable-pip-version-check --find-links wheels -r requirements.lock
+python -m pip check
+python -m aau_harness.catalog_cli runtime-info --out ../installed-runtime.json
+python verify_offline_kit.py . --manifest-sha256 APPROVED_MANIFEST_SHA256 --runtime ../installed-runtime.json
+python -m aau_harness.catalog_cli inspect-review demo --out ../offline-review-example
+```
+
+Output paths must be new and outside the kit. A fresh environment matters: an already-installed
+different checkout may share the same version string. The runtime comparison detects a mismatching
+**supplied first-party source receipt**, not malicious code that forges a receipt, interpreter/dependency
+integrity, previously loaded code, or authentic execution. Preserve independent approval and host controls.
+No index or dependency resolution is used by the install command; do not drop its flags to bypass a failure.
+
+The resulting synthetic handoffs should verify with exits **1 / 0 / 1** for unsafe, repaired, and
+unknown-budget examples. Their guide supplies demo-only pins. This observes local mechanism behavior,
+not a real agency trial, independent reproduction, security certification, or measured public benefit.
+
+Maintainers can explicitly test the complete path before transfer:
+
+```bash
+python harness/tools/smoke_offline_kit.py \
+  /tmp/aau-offline-dist/aau_harness-1.6.0.tar.gz \
+  /tmp/aau-offline-dist/aau_harness-1.6.0-py3-none-any.whl
+```
+
+Unlike preparation/verification, this smoke test **installs and executes the audited local wheel**
+in a temporary fresh environment. It checks import location, `pip check`, the installed source
+receipt, expected synthetic outcomes, and rejected changed pins/receipts. CI now exercises this
+path. It is a no-index installation test, not an OS-enforced air-gap attestation or proof of all-platform
+compatibility. No kit is automatically uploaded, released, or published to PyPI.
+
+Research checked November 19, 2026: pip documents [wheelhouses for repeatable installation](https://pip.pypa.io/en/stable/topics/repeatable-installs/)
+and [hash-checked, binary-only installation](https://pip.pypa.io/en/stable/topics/secure-installs/).
+[NIST's SSDF overview](https://csrc.nist.gov/projects/ssdf) describes software-protection practices;
+this kit supports a narrow integrity/installation workflow, not SSDF conformance or a substitute
+for vulnerability review, producer verification, organizational approvals, or interpreter trust.
+
 ## Received an evidence folder? Start with one intake command
 
 `aau inspect-pack` recognizes 12 supported recorded-evidence pack families and calls the

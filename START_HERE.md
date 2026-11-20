@@ -12,6 +12,11 @@ You do not need an API key to begin. Pick the route that matches the job you are
 connects the tools to a bounded mission, independently controlled requirements, cost assumptions,
 human review, and a documented pilot. It keeps technical evidence separate from official decisions.
 
+**No package-index access in the review environment?** Use the
+[offline installation kit](harness/README.md#prepare-an-offline-installation-kit): audited local artifacts,
+independently checked transfer hashes, explicit no-index installation, and first-party source comparison.
+Approved Python 3.11+ and pip/venv are prerequisites; no installer runs automatically.
+
 **New to evaluation? Check the judge before trusting the score.** From a trusted current checkout:
 
 ```bash

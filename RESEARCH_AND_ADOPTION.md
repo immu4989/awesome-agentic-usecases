@@ -113,6 +113,14 @@ traces to satisfy these milestones.
 
 ## A useful community invitation
 
+November 19 offline-adoption follow-up: the [offline installation kit](harness/README.md#prepare-an-offline-installation-kit)
+connects the existing source/archive audit to a prepared local wheel, hash-locked no-index install,
+standalone verification, and installed first-party source comparison. Python 3.11+ is the bounded
+dependency-free profile; Python/pip/venv and organizational approval remain receiver prerequisites.
+The verifier script and manifest each need an independently checked hash before executing transferred
+code. A fresh-environment smoke test is included in CI. This is a maintainer-tested installation path,
+not a public release, OS-enforced air-gap assessment, independent reproduction, or proof of agency use.
+
 “Bring one synthetic example where your judge accepted a failure or rejected a valid result.
 We will help make the disagreement reproducible, preserve uncertainty, and turn confirmed
 scorer bugs into regression tests.”

@@ -8,6 +8,12 @@ own acquisition, security, privacy, accessibility, records, and operational deci
 
 ## Start offline, with no agency data
 
+If the review environment cannot use a package index, use the
+[audited offline installation kit](harness/README.md#prepare-an-offline-installation-kit).
+It separates preparation, independently checked transfer pins, explicit hash-locked installation,
+and installed-source receipt comparison. It requires approved Python 3.11+ and pip/venv; it does
+not bundle the interpreter, grant installation permission, or attest an air gap.
+
 From a reviewed, trusted current checkout using Python 3.10 or newer:
 
 ```bash
