@@ -1318,6 +1318,86 @@ end-to-end elapsed time with a sum of overlapping spans. Supply a reviewed `esti
 authenticate that declaration or establish fully loaded cost. IDs, costs, and timings may still be
 sensitive even though free-text details are excluded. Review before sharing.
 
+### Review incomplete Inspect evidence without repairing it
+
+An interrupted run or edited score is evidence to review, not a reason to quietly drop rows.
+`aau inspect-eval diagnose` adds a **separate diagnostic packet** to the strict converter below.
+It can retain finite version-2 JSON logs with `started`, `error`, or `cancelled` status, missing
+samples, duplicate pairs, or recorded lifecycle/edit markers. It never emits `evaluation.json`
+or changes the strict importer's acceptance rules.
+
+From a reviewed current checkout/local wheel (not the older public PyPI release):
+
+```bash
+aau inspect-eval demo --out /tmp/my-inspect-diagnostic
+```
+
+Open `diagnostic/review.html` and read the generated guide. This extends the same Inspect demo:
+the original conversion still works, while the new constructed interrupted source has five rows,
+one missing planned pair, one duplicated pair, and one outside-plan row. It includes scored errors,
+a retry, a limit, invalidation, and edits on an unmapped scorer. No real endpoint or model was run.
+
+For authorized local evidence, use the same independently reviewed mapping plan as the converter:
+
+```bash
+aau inspect-eval diagnose plan.json source.json \
+  --plan-sha256 "$APPROVED_INSPECT_PLAN_SHA256" --out /tmp/inspect-diagnostic
+aau inspect-eval verify-diagnostic /tmp/inspect-diagnostic \
+  --plan-sha256 "$APPROVED_INSPECT_PLAN_SHA256"
+```
+
+Use new paths. Exit **0** means no findings in this bounded diagnostic, **1** means a valid packet
+requiring review, and **2** means invalid/unsupported input or failed replay. Exit 1 is expected for
+the interrupted demo; do not chain it with `&&` as though it were corrupt. Zero performance scores
+can have no diagnostic findings: neither exit 0 nor import eligibility means model quality passed.
+
+Keep all five files: `plan.json`, `source.json`, `diagnostic.json`, `review.html`, `manifest.json`.
+Input bytes are retained exactly. Verification recomputes every derived byte and rejects edits even
+if their manifest hashes are updated. Use `verify-diagnostic`, not conversion `verify` or generic
+`inspect-pack`. The packet is bound to the reviewed plan pin and matching trusted implementation;
+no supplied module, task, metric, attachment, or URL is executed or fetched.
+
+#### What the diagnostic keeps separate
+
+| Evidence | Treatment |
+|---|---|
+| Every planned typed ID and one-based epoch | `missing`, `unique`, or `duplicate`, with every zero-based source-array position; integer `1` is not string `"1"` |
+| Missing samples or a header-only JSON object | Explicitly unavailable rows, not invented failures or proof that execution never occurred |
+| Duplicate records | No first/last/winning row selection; all positions and markers survive |
+| Outside-plan IDs or epochs | Separate retained rows, never allowed to fill a planned hole |
+| Errors, retry records, limits, invalidation | Independent presence markers with source JSON pointers; a score does not erase them |
+| Score history/reason, including unmapped scorers | Visible pointers; no edit is automatically accepted or undone |
+| Missing scorer/component, null value, explicitly absent label, unmapped label, invalid numeric/shape | Distinct mapped-metric states; none becomes zero |
+| Current strict conversion eligibility | Checked separately with its first rejection reason; no conversion files written |
+
+`row_marker_counts` counts rows carrying each marker (not a sum of scorer fields). Metric-state
+counts describe **all supplied rows**, including duplicates and outside-plan rows; they are not
+unique-attempt denominators, pass rates, or coverage estimates. No transcript, error message,
+or score value is copied into the HTML, but raw source and identifying labels remain sensitive.
+This is not a sanitized sharing format or permission to publish evidence.
+
+Scope is bounded: the same closed mapping plan, at most 10,000 supplied rows and 10,000 planned
+pairs, valid bounded typed IDs, integer epochs 1–10,000, finite duplicate-key-free JSON, and 2 MB
+per input/output including expansion. Missing/null `samples` is distinguished from an empty list.
+Unknown run status, malformed row identity, binary `.eval`, and non-finite JSON are rejected.
+In particular, a JSON export containing literal `NaN` for an excluded score remains unsupported;
+do not replace it with zero to force ingestion. Unrecognized fields stay in the raw source but
+are not comprehensively interpreted. Selected lifecycle markers record presence, not validation
+of their payloads. The converter's rejection reason and the diagnostic are not full Inspect
+schema validation, exhaustive error analysis, complete retry lineage, or proof of source authenticity.
+
+The offline HTML has captions, column headers, escaped text, and keyboard-focusable scrolling
+tables, without scripts or remote assets. These features are not accessibility-conformance evidence.
+
+Research checked November 19, 2026: Inspect's [error-handling guidance](https://inspect.aisi.org.uk/handling-errors.html)
+distinguishes interrupted logs, retried errors, and scored errors; its [limits guidance](https://inspect.aisi.org.uk/setting-limits.html)
+explains that limited samples can still be scored. Its [log documentation](https://inspect.aisi.org.uk/eval-logs.html)
+describes score history and the trust boundary for retrying/rescoring supplied logs. The
+[NIST AI RMF 1.0 Playbook MEASURE guidance](https://airc.nist.gov/airmf-resources/playbook/measure/)
+motivates documented measurement scope and limitations, not a specific import protocol.
+Our design inference is to retain those conditions separately and request human review—not repair
+them into an apparently complete evaluation. This is not NIST certification or deployment approval.
+
 ### Reuse Inspect sample scores without executing the log
 
 `aau inspect-eval` is an offline adapter for a **bounded subset of Inspect version-2 JSON logs**.
@@ -1403,7 +1483,8 @@ Supported subset and important boundaries:
   execution finished, not policy passed. Error/cancelled/started logs, sample errors/retries/limits,
   invalidations, early stopping, merged shards, config/log edits, and score history/reasons are rejected.
   This deliberately also rejects legitimate edited logs or scores with refusal/custom reasons; it does
-  not silently reinterpret them. A richer error/edit ledger needs a separate reviewed extension.
+  not silently reinterpret them. Use the separate [evidence diagnostic](#review-incomplete-inspect-evidence-without-repairing-it)
+  to retain selected error/edit markers and incomplete census findings without producing a converted evaluation.
 - At most 100 distinct mapped score components; finite numeric values within ±10^15. Each input and
   generated member is limited to 2 MB. Duplicate JSON keys and all nonfinite values—including in
   otherwise unused fields—are rejected. Some valid Inspect logs use NaN sentinels and are outside

@@ -79,6 +79,15 @@ all-version support or independent reproduction.
 The next adapter work should extend real exporter/version coverage and preserve richer error/edit
 evidence, rather than relax rejected logs into apparently successful results.
 
+November 19 diagnostic follow-up: the existing Inspect command now retains a separate
+[incomplete-evidence review packet](harness/README.md#review-incomplete-inspect-evidence-without-repairing-it).
+It accounts for the entire planned sample/epoch grid, duplicates, outside-plan rows, scored errors,
+limits, retry/invalidation markers, and score edits including unmapped scorers. The strict converter
+is unchanged: the diagnostic never turns interrupted evidence into an evaluation. Source bytes and
+JSON pointers make findings reproducible without running supplied code. The existing upstream mock
+fixture is checked, plus synthetic failure mutations and a complete small census oracle; broader
+native exporter/version coverage and independent reproduction are still pending.
+
 | Priority | Community benefit | Evidence required before calling it complete |
 |---|---|---|
 | 1. Native export adapters | Use existing Inspect/other evaluation logs without hand-converting every field | Versioned fixtures from each supported exporter; raw-source retention; tests for missing scores, aborted runs, repeated IDs, and rubric drift; no executing supplied log code |

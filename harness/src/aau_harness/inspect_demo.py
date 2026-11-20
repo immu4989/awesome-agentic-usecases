@@ -4,6 +4,7 @@ from copy import deepcopy
 
 from .agent_bom import AgentBomError, digest, rendered
 from .eval_inspect import create_inspect_pack, inspect_payloads, verify_inspect_pack
+from .inspect_diagnostic import create_diagnostic, diagnostic_payloads, verify_diagnostic
 
 
 def example_inputs():
@@ -36,8 +37,20 @@ def create_demo(directory):
     inspect_payloads(raw_plan, raw_source, plan_sha256=pin)  # Validate before writing anything.
     incomplete = deepcopy(source)
     incomplete['samples'].pop()
+    interrupted = deepcopy(incomplete)
+    interrupted['status'] = 'error'
+    interrupted['error'] = {'message': 'Constructed interrupted run; no real endpoint.'}
+    interrupted['samples'][0]['error'] = {'message': 'Constructed scored error.'}
+    interrupted['samples'][1]['error_retries'] = [{'message': 'Constructed earlier error.'}]
+    interrupted['samples'][2]['limit'] = {'type': 'time', 'limit': 1}
+    interrupted['samples'][2]['invalidation'] = {'reason': 'Constructed review marker.'}
+    interrupted['samples'][2]['scores']['audit-only'] = {'value': 0, 'reason': 'zeroed', 'history': [{'value': 1}]}
+    interrupted['samples'].append(deepcopy(interrupted['samples'][0]))
+    interrupted['samples'].append({'id': 'outside-plan', 'epoch': 1, 'scores': {}})
+    diagnostic_payloads(raw_plan, rendered(interrupted), plan_sha256=pin)
     directory.mkdir(parents=True, exist_ok=False)
-    files = {'plan.json': raw_plan, 'source.json': raw_source, 'incomplete-source.json': rendered(incomplete)}
+    files = {'plan.json': raw_plan, 'source.json': raw_source, 'incomplete-source.json': rendered(incomplete),
+             'interrupted-source.json': rendered(interrupted)}
     lines = ['# Reuse scores without hiding missing evidence', '',
              'This is a constructed Inspect-format example, not an Inspect or model execution.',
              'The separate repository regression test uses an upstream Inspect mock-model log with documented byte hashes.', '',
@@ -55,9 +68,20 @@ def create_demo(directory):
              'No cost, latency, API counts, or context fingerprints are inferred. This conversion is not a gate.',
              'In real reviews, keep the reviewed plan pin independently from the supplier and protect raw logs.',
              'The converted directory retains the complete source bytes: it is not a sanitized sharing artifact.', '']
+    lines += ['## Review interrupted evidence without repairing it', '',
+              'Open diagnostic/review.html. Five source rows cover only three of four planned pairs:',
+              'one pair is duplicated, one is missing, and one row is outside the plan.',
+              'Errors, retries, limits, invalidation, and edits on an unmapped scorer remain visible.',
+              'A score on an errored row does not erase its error. No evaluation is exported from this diagnostic.', '',
+              '```bash', '# Expected exit 1: a valid diagnostic with findings, not a broken packet.',
+              f'aau inspect-eval verify-diagnostic diagnostic --plan-sha256 {pin}',
+              f'aau inspect-eval diagnose plan.json interrupted-source.json --plan-sha256 {pin} --out another-diagnostic',
+              '```', '', 'The strict create command still rejects this source. Do not edit it to force acceptance.', '']
     files['README.md'] = '\n'.join(lines).encode()
     for name, raw in files.items():
         with (directory / name).open('xb') as stream:
             stream.write(raw)
     create_inspect_pack(raw_plan, raw_source, directory / 'converted', plan_sha256=pin)
     verify_inspect_pack(directory / 'converted', plan_sha256=pin)
+    create_diagnostic(raw_plan, rendered(interrupted), directory / 'diagnostic', plan_sha256=pin)
+    verify_diagnostic(directory / 'diagnostic', plan_sha256=pin)

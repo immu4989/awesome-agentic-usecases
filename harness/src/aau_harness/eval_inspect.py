@@ -276,6 +276,14 @@ def main(argv=None):
     verify.add_argument('--evaluation', type=Path)
     demo = commands.add_parser('demo')
     demo.add_argument('--out', type=Path, required=True)
+    diagnose = commands.add_parser('diagnose', help='retain incomplete evidence without converting or repairing scores')
+    diagnose.add_argument('plan', type=Path)
+    diagnose.add_argument('source', type=Path)
+    diagnose.add_argument('--out', type=Path, required=True)
+    diagnose.add_argument('--plan-sha256', required=True)
+    diagnostic_verify = commands.add_parser('verify-diagnostic')
+    diagnostic_verify.add_argument('directory', type=Path)
+    diagnostic_verify.add_argument('--plan-sha256', required=True)
     args = parser.parse_args(argv)
     try:
         if args.command == 'demo':
@@ -283,6 +291,15 @@ def main(argv=None):
             create_demo(args.out)
             print('Created constructed Inspect-format demo; no model or Inspect execution.')
             return 0
+        if args.command in ('diagnose', 'verify-diagnostic'):
+            from .inspect_diagnostic import create_diagnostic, verify_diagnostic
+            if args.command == 'diagnose':
+                create_diagnostic(_read(args.plan), _read(args.source), args.out, plan_sha256=args.plan_sha256)
+                report = verify_diagnostic(args.out, plan_sha256=args.plan_sha256)
+            else:
+                report = verify_diagnostic(args.directory, plan_sha256=args.plan_sha256)
+            print(f"{report['status']}: Inspect evidence diagnostic only; no evaluation exported.")
+            return int(report['status'] != 'no_diagnostic_findings')
         if args.command == 'create':
             create_inspect_pack(_read(args.plan), _read(args.source), args.out, plan_sha256=args.plan_sha256)
             report = verify_inspect_pack(args.out, plan_sha256=args.plan_sha256)

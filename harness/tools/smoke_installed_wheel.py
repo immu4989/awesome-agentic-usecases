@@ -67,6 +67,17 @@ def smoke(wheel: Path) -> None:
         run([cli, "inspect-eval", "demo", "--out", "inspect-demo"], expected=2)
         inspect_plan = root / "inspect-demo/plan.json"
         inspect_pin = hashlib.sha256(inspect_plan.read_bytes()).hexdigest()
+        run([cli, "inspect-eval", "verify-diagnostic", "inspect-demo/diagnostic", "--plan-sha256", inspect_pin], expected=1)
+        run([cli, "inspect-eval", "diagnose", inspect_plan, "inspect-demo/interrupted-source.json",
+             "--plan-sha256", inspect_pin, "--out", "inspect-diagnostic-copy"], expected=1)
+        diagnostic = json.loads((root / "inspect-demo/diagnostic/diagnostic.json").read_bytes())
+        if (diagnostic["pair_counts"] != {"missing": 1, "unique": 2, "duplicate": 1}
+                or diagnostic["recorded_rows"] != 5 or (root / "inspect-demo/diagnostic/evaluation.json").exists()):
+            raise RuntimeError("installed Inspect diagnostic hid ambiguity or exported an evaluation")
+        run([cli, "inspect-eval", "verify-diagnostic", "inspect-demo/diagnostic", "--plan-sha256", "0" * 64], expected=2)
+        with (root / "inspect-demo/diagnostic/review.html").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "inspect-eval", "verify-diagnostic", "inspect-demo/diagnostic", "--plan-sha256", inspect_pin], expected=2)
         run([cli, "inspect-eval", "verify", "inspect-demo/converted", "--plan-sha256", inspect_pin,
              "--evaluation", "inspect-demo/converted/evaluation.json"])
         run([cli, "inspect-eval", "create", inspect_plan, "inspect-demo/source.json",
