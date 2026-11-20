@@ -50,6 +50,15 @@ jobs:
           python -m pip install build==1.3.0 setuptools==80.9.0
           python -m build --no-isolation --outdir "$RUNNER_TEMP/aau-offline-dist" harness
           python harness/tools/smoke_offline_kit.py "$RUNNER_TEMP"/aau-offline-dist/aau_harness-*.tar.gz "$RUNNER_TEMP"/aau-offline-dist/aau_harness-*.whl
+      - name: Exercise pinned native Inspect mock exports without model credentials
+        run: |
+          probe_dir=$(mktemp -d "$RUNNER_TEMP/aau-inspect-probe.XXXXXX")
+          python -m venv "$probe_dir/venv"
+          "$probe_dir/venv/bin/python" -m pip --isolated install --only-binary=:all: --disable-pip-version-check inspect-ai==0.3.291
+          "$probe_dir/venv/bin/python" -m pip --isolated install --no-index --no-deps --disable-pip-version-check "$RUNNER_TEMP"/aau-offline-dist/aau_harness-*.whl
+          cp harness/tools/check_inspect_exporter.py "$probe_dir/check_inspect_exporter.py"
+          cd "$probe_dir"
+          env -i PATH=/usr/bin:/bin LANG=C.UTF-8 "$probe_dir/venv/bin/python" "$probe_dir/check_inspect_exporter.py" --out "$probe_dir/results"
       - name: Check offline report keyboard interaction and narrow-screen reflow
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/aau-report-browsers

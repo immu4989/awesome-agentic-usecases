@@ -140,6 +140,16 @@ traces to satisfy these milestones.
 
 ## A useful community invitation
 
+November 20 native-producer follow-up: the [Inspect interoperability exercise](harness/compatibility/inspect/README.md)
+executes pinned Inspect `0.3.291` with fixed mock tasks, checking native JSON scores/census, an official
+binary-format round trip, strict rejection of interrupted evidence, and replay of its diagnostic.
+It supplements the historical upstream fixture with actual producer execution and runs separately
+from AAU's passive runtime importer. Local results passed all four checks; CI repeats the exercise
+without inherited model credentials or publishing logs. Token usage is constructed, dependencies
+are not fully hash-locked, and normal producer cache writes require filesystem permission. This is
+bounded maintainer interoperability evidence, not live-model quality, independent reproduction,
+all-version support, or evidence of government adoption.
+
 November 19 report-access follow-up: [Offline report interaction checks](harness/browser-tests/README.md)
 centralize named keyboard-scroll groups and row/column semantics across the principal review reports,
 add policy section navigation, and exercise fifteen fixed synthetic reports at desktop and narrow widths,

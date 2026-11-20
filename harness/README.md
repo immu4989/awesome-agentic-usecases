@@ -1693,6 +1693,14 @@ our [compatibility fixture](tests/fixtures/inspect-ai/README.md) retains an upst
 log declaring Inspect `0.3.100`, with only a documented final newline added. Both upstream and local
 byte hashes are checked. One fixture does not establish compatibility with every release.
 
+For an executable interoperability check, the separate [native Inspect producer exercise](compatibility/inspect/README.md)
+runs pinned Inspect `0.3.291` with fixed mock-only tasks. It checks complete label/numeric score
+projection, an official `.eval` round trip, rejection of interrupted results, and replay of the
+retained diagnostic. CI runs it in a separate environment without inherited model credentials.
+It is not a live-model evaluation or independent reproduction; Inspect is still not an AAU runtime
+dependency. Read its filesystem, dependency-pinning, network-tripwire, and raw-log privacy limits
+before running it.
+
 For an authorized real workflow, obtain a full JSON export with a trusted Inspect installation's
 `inspect log dump path/to/run.eval > source.json`, or use its native JSON log. Do not use a header-only
 export. [Inspect's log documentation](https://inspect.aisi.org.uk/eval-logs.html) describes both
