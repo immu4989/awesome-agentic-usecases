@@ -60,6 +60,16 @@ proof of reference correctness. The linked guide records the primary sources and
 
 ## Next investments, in order
 
+November 19 coverage follow-up: [Declared condition coverage review](harness/README.md#find-untested-conditions-before-trusting-averages)
+adds a full Cartesian condition grid over a supplied case inventory and audited evaluation rows.
+Repeated attempts do not inflate distinct-case counts; missing classifications and unavailable
+scenario fingerprints remain uncertain; explicit exclusions retain their rationale. A source-retaining
+offline packet and three no-key examples distinguish coverage gaps, uncertainty, and a met declared
+floor, even with identical perfect supplied scores. This implements a test-design bookkeeping layer,
+not a representative sample, statistical-power analysis, quality threshold, or independent study.
+The linked contract cites NIST AI RMF 1.0 and Apple's dataset-design guidance, and separates our
+engineering choices from their recommendations. Independent reproduction remains the adoption gap.
+
 November 19 update: [Inspect JSON import](harness/README.md#reuse-inspect-sample-scores-without-executing-the-log)
 implements the first bounded native adapter: retained raw bytes, receiver-pinned mappings, exact
 sample/epoch census, missing-score coverage, and rejection of unsupported error/edit states. An

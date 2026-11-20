@@ -48,6 +48,21 @@ def smoke(wheel: Path) -> None:
             raise RuntimeError("installed source receipt is incomplete or exposes local paths")
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
+        run([cli, "coverage-review", "demo", "--out", "coverage-demo"])
+        run([cli, "coverage-review", "demo", "--out", "coverage-demo"], expected=2)
+        for name, expected in (("gap", 1), ("uncertain", 1), ("covered", 0)):
+            packet = root / "coverage-demo" / name
+            coverage_pin = hashlib.sha256((packet / "plan.json").read_bytes()).hexdigest()
+            run([cli, "coverage-review", "verify", packet, "--plan-sha256", coverage_pin], expected=expected)
+        coverage_report = json.loads((packet / "review.json").read_bytes())
+        if coverage_report["inventory_cases"] != 5 or coverage_report["recorded_observations"] != 50:
+            raise RuntimeError("installed coverage review confused repeats with distinct cases")
+        run([cli, "coverage-review", "create", packet / "plan.json", packet / "inventory.json",
+             packet / "evaluation.json", "--plan-sha256", coverage_pin, "--out", "coverage-copy"])
+        run([cli, "coverage-review", "verify", packet, "--plan-sha256", "0" * 64], expected=2)
+        with (packet / "review.html").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "coverage-review", "verify", packet, "--plan-sha256", coverage_pin], expected=2)
         run([cli, "inspect-eval", "demo", "--out", "inspect-demo"])
         run([cli, "inspect-eval", "demo", "--out", "inspect-demo"], expected=2)
         inspect_plan = root / "inspect-demo/plan.json"

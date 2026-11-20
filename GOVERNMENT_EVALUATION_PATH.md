@@ -14,6 +14,7 @@ From a reviewed, trusted current checkout using Python 3.10 or newer:
 pip install -e harness
 aau grader-demo --out /tmp/agency-grader-example
 aau reference-review demo --out /tmp/agency-reference-example
+aau coverage-review demo --out /tmp/agency-coverage-example
 aau lifecycle-cost-demo --out /tmp/agency-cost-example
 aau inspect-eval demo --out /tmp/agency-inspect-example
 aau evaluation-demo --out /tmp/agency-evidence-example
@@ -25,7 +26,7 @@ for build/runtime dependencies; the demo and review commands themselves work off
 features require the current checkout/local wheel, not the older public PyPI release. Do not
 install software or copy evidence onto agency systems without the necessary authorization.
 
-The grader, reference-label, cost, and Inspect-format demo directories include readable `README.md` files and replay commands.
+The grader, reference-label, coverage, cost, and Inspect-format demo directories include readable `README.md` files and replay commands.
 All demonstrations are constructed examples, not government field trials. A successful
 synthetic run verifies the mechanism, not mission suitability or deployment authorization.
 
@@ -36,6 +37,7 @@ synthetic run verifies the mechanism, not mission suitability or deployment auth
 | What decision and affected users are in scope? | [Federal Mission Assurance](federal-mission-assurance/) and [Pilot Launch Pack](federal-pilot-kit/pilot-launch/) | Intended use, prohibited decisions, responsible roles, data permissions, appropriate impact determination |
 | Does the grader reject real failures and accept legitimate solutions? | [Grader review](harness/README.md#audit-the-grader-before-trusting-its-scores) | Expert reference labels, ambiguity resolution, held-out design, and real-world relevance |
 | How were the reference labels decided? | [Reference-label review](harness/README.md#preserve-reviewer-disagreement-before-exporting-reference-labels) | Reviewer qualifications/independence, appropriate rubric, authentic evidence, blinding, and whether any adjudication is justified |
+| Which declared conditions still lack evidence? | [Condition coverage review](harness/README.md#find-untested-conditions-before-trusting-averages) | Mission-relevant dimensions, justified floors/exclusions, correct annotations, semantic diversity, population representativeness, and permission to use the evidence |
 | Did the supplier use the requested requirements and baseline? | [Pinned evidence intake](harness/README.md#check-delivered-evidence-against-a-receiving-team-request) | Independent control of expected hashes; requirements that actually reflect the mission |
 | Can existing evaluation results be reviewed without rerunning supplier code? | [Offline Inspect import](harness/README.md#reuse-inspect-sample-scores-without-executing-the-log) | Approved mapping/rubric, independently retained plan hash, source authenticity, correct scoring, and permissions for full raw logs |
 | What costs lie outside the model call? | [Lifecycle cost scenarios](harness/README.md#review-lifecycle-costs-without-turning-unknowns-into-zero) | Complete cost scope, credible quantities/rates, contract minimums, nonlinear prices, uncertainty, and affordability |
@@ -70,6 +72,12 @@ new lifecycle-cost command implements only transparent linear scenario arithmeti
 disclosure. It does not implement that entire methodology or establish conformity with it.
 
 ## What we need before claiming agency usefulness
+
+The coverage walkthrough deliberately gives every recorded attempt a score of one, yet leaves an
+assisted/Spanish condition untested. Adding an unclassified case leaves that condition uncertain;
+only a matching, classified case meets the declared floor. This is a constructed mechanism check,
+not evidence about language access, demographic fairness, service accessibility, or a real agency.
+See the [coverage contract and primary sources](harness/README.md#find-untested-conditions-before-trusting-averages).
 
 1. An outside evaluator reproduces a bounded workflow from a clean environment and reports
    setup failures as well as successes. Our own CI is not independent reproduction.

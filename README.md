@@ -61,6 +61,7 @@ and observed failure cards with a direct path to reproduction. Start with
 
 | I already have… | Start here | Leave with… |
 |---|---|---|
+| Strong scores, but uncertainty about which conditions were actually tested | [Declared coverage review](harness/README.md#find-untested-conditions-before-trusting-averages) | Every planned condition combination, distinct-case counts, unobserved cases, visible exclusions, and unresolved classifications |
 | Model-call prices but no view of implementation, review, monitoring, or exit costs | [Lifecycle cost scenarios](harness/README.md#review-lifecycle-costs-without-turning-unknowns-into-zero) | Exact declared cost arithmetic, visible unknown totals, explicit workload assumptions, and reproducible scenario differences |
 | Inspect scores that would otherwise need manual reformatting | [Offline Inspect import](harness/README.md#reuse-inspect-sample-scores-without-executing-the-log) | Retained source logs, independently pinned mappings, complete sample/epoch checks, and explicit missing-score coverage |
 | Reference labels with no visible reviewer disagreement or decision history | [Reference-label review](harness/README.md#preserve-reviewer-disagreement-before-exporting-reference-labels) | Original panel ratings, explicit adjudications, offline review tables, and exports into the grader audit |

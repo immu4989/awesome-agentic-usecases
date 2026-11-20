@@ -2227,6 +2227,137 @@ procurement-sensitive information; these files are not sanitized for public shar
 See the [agency evaluation path](../GOVERNMENT_EVALUATION_PATH.md) for source-backed motivation
 and the separate quality, security, human-review, and pilot decisions this does not replace.
 
+### Find untested conditions before trusting averages
+
+`aau coverage-review` checks **which declared conditions have recorded evidence**, separately from
+whether the model performed well. A hundred repeats of one case cannot fill an untested condition.
+An unknown classification is not guessed, and an excluded condition cannot silently disappear.
+
+Try the no-key example from a reviewed current checkout/local wheel, not the older public PyPI release:
+
+```bash
+aau coverage-review demo --out /tmp/my-coverage-review
+```
+
+Open each `review.html` locally and read the generated `README.md` for replay commands. The demo
+contains three six-file packets and a guide. All cases, annotations, scores, and fingerprints are
+constructed; no model, government service, participant, or live endpoint was evaluated.
+
+| Packet | Recorded evidence | Coverage conclusion |
+|---|---|---|
+| `gap` | 40 all-one observations from four cases; no assisted/Spanish case | `coverage_not_met` |
+| `uncertain` | 50 observations from five cases; the new assisted case has unknown language | `coverage_not_verified` |
+| `covered` | The fifth case is classified Spanish; all four cells meet the declared floor | `coverage_met` |
+
+The default example requires one distinct case and two complete-metric repeats per cell. Those
+floors are illustrative choices, **not adequate sample sizes for a real evaluation**. Zero scores
+can also meet coverage: use separate performance, safety, operational, and domain reviews.
+
+#### Declare scope before reviewing results
+
+Independently review and retain the plan's SHA-256 outside the delivered packet. A self-supplied
+hash does not establish preregistration, identity, authority, or an authentic study. Use new paths:
+
+```bash
+aau coverage-review create plan.json inventory.json evaluation.json \
+  --plan-sha256 "$APPROVED_COVERAGE_PLAN_SHA256" --out /tmp/coverage-packet
+aau coverage-review verify /tmp/coverage-packet --plan-sha256 "$APPROVED_COVERAGE_PLAN_SHA256"
+```
+
+Both commands return **0** for met declared coverage, **1** for a valid report with unmet or
+unverified coverage, and **2** for invalid inputs, a wrong pin, or failed replay. Exit 1 is not
+a corrupt packet. The demo command returns 0 after constructing all three valid examples;
+do not chain their verification commands with `&&` and expect all three to return 0.
+
+The exact six files are `plan.json`, `inventory.json`, `evaluation.json`, `review.json`,
+`review.html`, and `manifest.json`. Original input bytes are retained. Verification reconstructs
+every derived byte with the same trusted implementation; editing an HTML/report and updating its
+manifest still fails. Use this command's verifier, not the generic `inspect-pack` verifier.
+Unexpected members, nested directories, links, and special files are rejected. JSON must be
+finite, duplicate-key-free, and bounded to 2 MB per file; expanded outputs are bounded too.
+
+#### Input contracts
+
+Plan and inventory reject unknown fields. The plan has exactly:
+
+```json
+{
+  "plan_version": "aau-coverage-plan/1.0",
+  "purpose": "Constructed service-routing coverage; no actual service evaluation.",
+  "dimensions": {
+    "channel": ["self-service", "assisted"],
+    "language": ["english", "spanish"]
+  },
+  "minimum_cases": 1,
+  "minimum_complete_repeats": 2,
+  "required_metrics": ["completion", "authorization"],
+  "cell_overrides": []
+}
+```
+
+- `purpose` is nonblank text up to 2,000 characters. There are 1–5 dimensions, each with 1–10
+  unique levels, and at most 200 cells in their **full Cartesian product**. Dimension/level IDs
+  match `[A-Za-z0-9][A-Za-z0-9_.-]{0,79}`. Dimensions are sorted; level order is preserved.
+- Default `minimum_cases` is an integer 1–500; `minimum_complete_repeats` is an integer 1–10,000.
+  Booleans are not integers. `required_metrics` lists 1–100 unique nonblank names of at most 200
+  characters. Every named metric must occur **together in an observation**, not on different repeats.
+- Each optional `cell_overrides` entry has exactly `coordinates` (every dimension), `minimum_cases`
+  (integer 0–500), and nonblank `rationale` (up to 1,000 characters). Coordinates must be unique and
+  inside the grid. Zero explicitly excludes that cell, but it remains visible with its rationale;
+  at least one cell must remain required. Changing scope changes the required raw plan pin.
+
+Inventory has exactly `inventory_version: "aau-coverage-inventory/1.0"`, nonblank `source_label`
+(up to 200 characters), and `items` (1–500). Each item has exactly:
+
+```json
+{
+  "scenario_id": "example-case",
+  "scenario_sha256": "<64 lowercase hexadecimal characters, matching the evaluation context>",
+  "attributes": {"channel": "assisted", "language": null}
+}
+```
+
+Replace the illustrative hash placeholder. IDs are unique nonblank strings up to 200 characters;
+declared scenario hashes must also be unique. `attributes` must name every dimension, with a
+declared level or explicit `null`. Unknown levels and omitted keys are invalid. Different hashes
+do **not** prove semantic diversity, independence, authenticity, or correct annotations.
+
+Use an AAU evaluation with complete scenario/repeat rows, such as `import-eval` output or a saved
+runner result. `audit-eval` must find its summaries consistent; no summary is silently repaired.
+Every observed scenario must be in the inventory; inventory-only cases are retained as unobserved.
+When `evaluation_context` is present, its declared fingerprints must cover exactly the observed
+IDs and match the inventory. A mismatch or malformed context is invalid. An entirely absent context
+leaves binding unavailable; **do not invent hashes to turn an unbound import into verified coverage**.
+The Inspect adapter intentionally does not invent scenario-context fingerprints.
+
+#### How to interpret the report
+
+A case counts once in its cell only when all attributes are known, declared fingerprints match,
+and enough recorded repeats contain every required metric. Score magnitudes are not compared to
+performance thresholds. An eligible but incompletely classified or unbound case appears as
+uncertain in each compatible cell. Insufficient complete observations and unobserved cases cannot
+count as supplied coverage, even though future evidence might change that result.
+
+For each required cell: enough counted cases means `coverage_met`; counted plus uncertain below
+the floor means `coverage_not_met`; otherwise it is `coverage_not_verified`. Overall, any unmet
+cell wins over uncertainty; otherwise any uncertain cell prevents a met conclusion. Excluded
+cells are reported separately. **Uncertain cases may appear in several cells: their possibilities
+cannot be summed or assumed simultaneously attainable.** This is not a global assignment solver.
+
+The offline HTML exposes all cells and all cases, including flags and fingerprint availability.
+Tables have captions, column headers, and keyboard-focusable scrolling regions; no scripts or
+remote assets are loaded. This is not accessibility-conformance evidence. Source bytes are not
+sanitized: obtain permission and protect sensitive case metadata before sharing a packet.
+
+Research checked November 19, 2026: [NIST AI RMF 1.0's validity discussion](https://airc.nist.gov/airmf-resources/airmf/3-sec-characteristics/)
+connects accuracy claims with realistic, representative test sets and documented methodology.
+[Apple's evaluation-dataset guidance](https://developer.apple.com/documentation/evaluations/designing-evaluation-datasets)
+recommends relevant variation across dimensions and deliberate test-set design. Our inference is
+that a declared grid can expose one class of missing evidence. It does **not** establish population
+representativeness, fairness, statistical power, protected holdouts, compliance, or deployment
+readiness. Resource bounds and user-selected floors are engineering choices, not those sources'
+requirements. Domain experts must still justify scope, cases, exclusions, annotations, and studies.
+
 ### Preserve reviewer disagreement before exporting reference labels
 
 `aau reference-review` builds a source-retaining **reference-label review packet** from recorded
