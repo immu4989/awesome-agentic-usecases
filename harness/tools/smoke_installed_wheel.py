@@ -48,6 +48,26 @@ def smoke(wheel: Path) -> None:
             raise RuntimeError("installed source receipt is incomplete or exposes local paths")
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
+        run([cli, "grader-demo", "--out", "grader-demo"])
+        run([cli, "grader-demo", "--out", "grader-demo"], expected=2)
+        grader_plan = root / "grader-demo/plan.json"
+        grader_pin = hashlib.sha256(grader_plan.read_bytes()).hexdigest()
+        for name in ("exact-on-decided", "group-blind", "sparse", "abstaining"):
+            run([cli, "grader-review", grader_plan, root / "grader-demo/reference.json",
+                 root / f"grader-demo/{name}.json", "--plan-sha256", grader_pin,
+                 "--verify", root / f"grader-demo/{name}-report.json"])
+        sparse = json.loads((root / "grader-demo/sparse-report.json").read_text())
+        sparse_validation = next(row for row in sparse["scopes"] if row["split"] == "validation" and row["group_id"] == "overall")
+        if (sparse_validation["agreement_on_paired_decisions"]["value"] != 1
+                or sparse_validation["paired_decision_coverage"]["value"] != 0.125):
+            raise RuntimeError("installed grader diagnostic hid missing judgments")
+        grader_command = [cli, "grader-review", grader_plan, root / "grader-demo/reference.json",
+                          root / "grader-demo/group-blind.json"]
+        run([*grader_command, "--plan-sha256", "0" * 64, "--out", "invalid-grader-report.json"], expected=2)
+        altered_report = root / "grader-demo/group-blind-report.json"
+        with altered_report.open("ab") as stream:
+            stream.write(b" ")
+        run([*grader_command, "--plan-sha256", grader_pin, "--verify", altered_report], expected=2)
         inspect_command = [cli, "inspect-pack", "demo/repaired", "--expect", "evaluation-review"]
         run([*inspect_command, "--out", "inspection.json"])
         run([*inspect_command, "--verify", "inspection.json"])

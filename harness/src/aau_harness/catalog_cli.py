@@ -290,6 +290,10 @@ def build_parser() -> argparse.ArgumentParser:
                    help="create three complete synthetic retry reviews and an offline adoption guide without keys")
     sub.add_parser("audit-eval", add_help=False,
                    help="recompute saved evaluation metric summaries without model calls")
+    sub.add_parser("grader-review", add_help=False,
+                   help="audit recorded grader judgments against pinned reference labels without hiding coverage gaps")
+    sub.add_parser("grader-demo", add_help=False,
+                   help="create four no-key synthetic grader diagnostics and a reproduction guide")
     sub.add_parser("compare-evals", add_help=False,
                    help="compare matched scenarios in two saved evaluations without model calls")
     sub.add_parser("compare-eval-contexts", add_help=False,
@@ -461,6 +465,12 @@ def main(argv: list[str] | None = None) -> int:
     if raw_args and raw_args[0] == "routing-eval":
         from .eval_routing import main as routing_main
         return routing_main(raw_args[1:])
+    if raw_args and raw_args[0] == "grader-review":
+        from .grader_review import main as grader_main
+        return grader_main(raw_args[1:])
+    if raw_args and raw_args[0] == "grader-demo":
+        from .grader_demo import main as grader_demo_main
+        return grader_demo_main(raw_args[1:])
     if raw_args and raw_args[0] == "review-queue":
         from .review_queue import main as queue_main
         return queue_main(raw_args[1:])

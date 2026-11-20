@@ -8,6 +8,20 @@ agent do this?”:
 
 You do not need an API key to begin. Pick the route that matches the job you are doing.
 
+**New to evaluation? Check the judge before trusting the score.** From a trusted current checkout:
+
+```bash
+pip install -e harness
+aau grader-demo --out /tmp/my-grader-review
+```
+
+Open the generated `README.md`. Four synthetic examples show why perfect agreement can hide
+missing judgments, why calibration success can hide subgroup failures, and why abstention is not
+correctness. Follow the included commands to recompute each report without keys or model calls.
+The [grader-review guide](harness/README.md#audit-the-grader-before-trusting-its-scores) explains
+how to bring your own recorded judgments and independently reviewed reference labels. This
+feature requires the current checkout/local wheel, not the older published PyPI release.
+
 Already received an evaluation evidence folder and unsure how to verify it? Start with
 **[one-command pack intake](harness/README.md#received-an-evidence-folder-start-with-one-intake-command)**:
 

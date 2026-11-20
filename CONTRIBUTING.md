@@ -1,5 +1,24 @@
 # Contributing
 
+## Help test the judges
+
+You can contribute without building a new agent or buying model access. Run
+`aau grader-demo --out /tmp/my-grader-review` from a trusted current checkout, then propose a
+**synthetic disagreement case**: a legitimate success a grader rejects, a failure it accepts,
+or an ambiguity that should remain disputed. Include the rubric, a minimal public/synthetic
+trace, the expected judgment and rationale, and the closest valid counterexample. Do not copy
+private customer traces or declare a disputed reference to be settled by majority vote alone.
+
+Use the existing [issue chooser](https://github.com/immu4989/awesome-agentic-usecases/issues/new/choose)
+to discuss it first. Add a regression in `harness/tests/test_grader_review.py` for diagnostic
+behavior, or in the relevant lab for a domain scorer. A regression test is not independent domain
+validation. The [grader-review contract](harness/README.md#audit-the-grader-before-trusting-its-scores)
+defines the input formats and limitations. For a real label study, retain reviewer qualifications,
+independent judgments, disagreement resolution, and permission to use the data outside public PRs.
+
+The [research and adoption priorities](RESEARCH_AND_ADOPTION.md) explain where outside review
+would add more value than another similar example.
+
 ## CI test coverage
 
 The shared harness unit suite runs once in the `Public catalog integrity` job. Every lab matrix

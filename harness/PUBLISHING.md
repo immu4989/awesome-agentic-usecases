@@ -138,6 +138,7 @@ CI presentation bundles with native pass/fail/invalid exits, retained historical
 recorded routing diagnostics with required/unknown human deferral, retained failures, undefined empty automation, and plan-pin rejection,
 finite review-queue replay with exact referral census, waiting time, retained deadline failures, and no inferred human resolution,
 source-retaining queue reviewer packs with independent control pins, offline readable HTML, and altered-presentation rejection,
+packaged grader-review examples with explicit coverage gaps, separate validation results, independent reference/plan pins, and tamper rejection,
 standalone operating-budget pass/fail reports, a budget-aware matrix,
 combined policy/budget dossier and CSV gates, and downgrade rejection with `--require-budget`,
 operating-budget change review with both changed and unchanged outcomes,

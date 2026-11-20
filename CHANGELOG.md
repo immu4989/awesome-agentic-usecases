@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- **Audit the grader, not just the agent** — `aau grader-review` compares recorded binary
+  judgments with separately pinned reference labels, retains disputed/unreviewed references,
+  separates calibration from validation, and exposes false passes, false failures, abstentions,
+  missing judgments, exact denominators, and subgroup matrices. `aau grader-demo` provides four
+  installed, no-key synthetic walkthroughs. References remain fallible; this is a diagnostic,
+  not certification, a population claim, or a deployment gate. Added a contributor pathway and
+  evidence-backed research/adoption priorities.
+
 - **Readable, source-retaining queue handoffs** — eight-file packs retain both exact control plans,
   the full evaluation, timing inputs, recomputed report, and a script-free review page. An accessible
   step timeline, exact tables, every referral, unscheduled waits, unknown deadlines, and original

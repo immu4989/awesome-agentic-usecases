@@ -2019,6 +2019,107 @@ and use a matching trusted implementation. Data capture is not atomic or source-
 Review identifiers, times, scores, and hashes before sharing. No model, adapter, human action,
 subprocess, upload, or network request is executed by this command.
 
+### Audit the grader before trusting its scores
+
+An automated judge can accept an unsafe action, reject a legitimate solution, or produce a
+high agreement score by answering only easy cases. **`aau grader-review` audits the recorded
+judge, not the agent.** It compares binary judgments against supplied reference labels and
+keeps the difficult, disputed, abstained, and missing cases visible. It does not call a model.
+
+Start with four constructed examples from a **trusted current checkout or local wheel**;
+this feature is not in the older published PyPI release:
+
+```bash
+pip install -e harness
+aau grader-demo --out /tmp/my-grader-review
+```
+
+Read `/tmp/my-grader-review/README.md` for exact results and replay commands. The generated
+11-file directory contains one shared plan/reference pair, four judgment files, four reports,
+and the guide. All labels and fingerprints are synthetic; no expert study is claimed.
+
+| Example | What to notice in validation |
+|---|---|
+| `exact-on-decided` | 6/6 agreement on decided pairs; two unresolved references still need review |
+| `group-blind` | 4/6 agreement overall; both assisted-channel failures receive a false pass |
+| `sparse` | 1/1 agreement, but only 1/8 planned pairs have both decisions; seven judgments are missing |
+| `abstaining` | No paired decisions: agreement is undefined, not perfect |
+
+For your own data, keep the rubric and underlying evidence in a separate controlled location.
+Have qualified reviewers label each planned item/criterion pair without seeing the candidate
+grader output where feasible. Retain genuine disagreement as `disputed` and unfinished review
+as `unreviewed`; do not manufacture consensus. Decide calibration/validation membership before
+tuning and keep validation references out of the grader's inputs. This command does **not**
+enforce blinding, label secrecy, reviewer independence, or statistical independence.
+
+The three input files have closed, versioned contracts. Obtain `APPROVED_PLAN_SHA256` through
+your independently controlled review channel; do not derive the approval pin from a candidate's
+replacement plan at the time you accept its results.
+
+```bash
+aau grader-review plan.json reference.json judgments.json \
+  --plan-sha256 "$APPROVED_PLAN_SHA256" --out grader-report.json
+aau grader-review plan.json reference.json judgments.json \
+  --plan-sha256 "$APPROVED_PLAN_SHA256" --verify grader-report.json
+```
+
+**Plan:** exact fields `plan_version: "aau-grader-review-plan/1.0"`, `rubric_sha256`,
+`reference_sha256` (hash of the exact reference-file bytes), `reference_basis` (nonempty account
+of how references were produced), `criteria`, `items`, and `groups`. Each item has exactly
+`item_id`, `evidence_sha256`, and `split` (`calibration` or `validation`). Each group has exactly
+`group_id` and `item_ids`. Groups may overlap; `overall` is reserved. Use the generated plan
+as an editable example, not as an independently approved production plan.
+
+**Reference:** exact fields `format_version: "aau-grader-reference/1.0"`, `rubric_sha256`,
+and `rows`. Every planned item × criterion must have exactly one row containing `item_id`,
+`criterion`, `evidence_sha256`, and `verdict` (`pass`, `fail`, `disputed`, or `unreviewed`).
+There is no default reference verdict, and incomplete reference coverage is rejected.
+
+**Judgments:** exact fields `format_version: "aau-grader-judgments/1.0"`, `rubric_sha256`,
+`grader_id`, and `rows`. Each row has the same four fields as a reference row, but verdicts
+are `pass`, `fail`, or `abstain`. Omitted rows become **missing judgments**, never dropped
+denominators or correct abstentions. An empty judgment list is allowed and reports zero coverage.
+Duplicate/unknown pairs, numeric/free-text verdicts, and mismatched rubric/evidence fingerprints
+are rejected. No native Inspect, LangSmith, or other provider export is parsed automatically:
+explicitly map recorded binary labels into this contract and retain the original export.
+
+IDs use 1–120 ASCII letters/digits, dot, underscore, or hyphen, starting with a letter/digit.
+Limits: 1–500 items, 1–10 criteria, up to 19 groups, 2,000 characters for `reference_basis`,
+and 2 MB per input/report. Hashes are lowercase SHA-256. Duplicate evidence hashes are
+rejected even under different IDs or splits. This detects declared byte-identical reuse,
+**not semantic duplicates, training contamination, or genuine held-out sampling**. Matching
+hashes are not verification of original transcripts/rubric content: the command does not read them.
+
+For every split × criterion × group, reports retain a 4-by-4 reference/judgment count matrix,
+false-pass/failure counts, ungraded reference failures/successes, and six ratios. Each ratio
+includes its numerator and denominator; a zero denominator yields `null`:
+
+- Reference coverage: decided references / all planned pairs in that scope.
+- Grader decision coverage: pass/fail judgments / all planned pairs.
+- Paired coverage: both sides decided / all planned pairs.
+- Agreement: equal labels / pairs with both sides decided.
+- False-pass fraction: reference-fail/grader-pass / reference-fail pairs with a grader decision.
+- False-failure fraction: reference-pass/grader-fail / reference-pass pairs with a grader decision.
+
+Read coverage alongside agreement/error fractions. Abstentions and missing judgments are not
+silently counted as correct or incorrect. The complete `observations` array lists review reasons
+for every disagreement or unknown; `review_item_count` counts item/criterion pairs needing
+review, not distinct people. Calibration and validation are never pooled, nor are criteria or
+overlapping groups. Empty split/group cells remain explicit. There are no population bounds,
+chance-corrected agreement claims, automatic grader selection, or pass thresholds.
+
+Exit **0** means a valid diagnostic, including false passes and no judgments; **2** means invalid
+inputs/output or a report that does not recompute. Existing output files are never overwritten.
+Verification recomputes the full report and compares exact rendered bytes. Retain all inputs,
+the original evidence/rubric, and a matching trusted harness. Hashes establish byte bindings,
+not label correctness, real-world safety, authority, or disclosure permission.
+
+This workflow applies the grader-validation and transcript-review practices described by
+[Anthropic](https://www.anthropic.com/research/demystifying-evals-for-ai-agents), and the separation
+of generation from scoring documented by [Inspect](https://inspect.aisi.org.uk/scoring-workflow.html).
+It is not an integration with or endorsement from either project. See the
+[research and adoption roadmap](../RESEARCH_AND_ADOPTION.md) for the remaining evidence gaps.
+
 ### Hand off a readable source-retaining queue review
 
 `aau queue-pack` retains the complete finite-queue evidence in one new directory and adds a

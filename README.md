@@ -57,6 +57,7 @@ and observed failure cards with a direct path to reproduction. Start with
 
 | I already have… | Start here | Leave with… |
 |---|---|---|
+| An automated judge whose scores need checking | [Grader reliability review](harness/README.md#audit-the-grader-before-trusting-its-scores) | False passes/failures, explicit abstentions and missing labels, separate calibration/validation, subgroup matrices, and four no-key examples |
 | An evidence folder but no certainty which verifier to use | [One-command pack intake](harness/README.md#received-an-evidence-folder-start-with-one-intake-command) | Full verification across 12 supported recorded-evidence families, separate integrity/outcome results, and explicit format/budget requirements |
 | Pinned evidence reviews to surface in an existing CI dashboard | [Portable CI reporting](harness/README.md#publish-pinned-evidence-reviews-to-ci-test-dashboards) | Recomputed JUnit/JSON/Markdown, retained failures and unavailable checks, native exit codes, and opt-in GitLab/Azure recipes |
 | An installed current harness and a need to learn the workflow | [No-key packaged walkthrough](harness/README.md#try-the-evaluation-workflow-from-an-installed-package) | Two complete synthetic dossiers, expected pass/fail results, and offline verification—no repository fixtures required at runtime |
