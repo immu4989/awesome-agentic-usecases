@@ -270,6 +270,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="convert explicitly mapped scored CSV rows into a verifiable source-retaining pack")
     sub.add_parser("inspect-eval", add_help=False,
                    help="convert Inspect JSON sample scores offline with an independently pinned mapping plan")
+    sub.add_parser("promptfoo-eval", add_help=False,
+                   help="convert native Promptfoo JSON exports offline with pinned test and column mappings")
     sub.add_parser("csv-review", add_help=False,
                    help="retain two CSV exports and verify their complete policy and diagnostic review handoff")
     sub.add_parser("runtime-info", add_help=False,
@@ -462,6 +464,9 @@ def main(argv: list[str] | None = None) -> int:
     if raw_args and raw_args[0] == "inspect-eval":
         from .eval_inspect import main as inspect_main
         return inspect_main(raw_args[1:])
+    if raw_args and raw_args[0] == "promptfoo-eval":
+        from .eval_promptfoo import main as promptfoo_main
+        return promptfoo_main(raw_args[1:])
     if raw_args and raw_args[0] == "evaluation-demo":
         from .eval_demo import main as demo_main
 

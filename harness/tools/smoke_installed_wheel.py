@@ -48,6 +48,26 @@ def smoke(wheel: Path) -> None:
             raise RuntimeError("installed source receipt is incomplete or exposes local paths")
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
+        run([cli, "promptfoo-eval", "demo", "--out", "promptfoo-demo"])
+        run([cli, "promptfoo-eval", "demo", "--out", "promptfoo-demo"], expected=2)
+        promptfoo_plan = root / "promptfoo-demo/plan.json"
+        promptfoo_pin = hashlib.sha256(promptfoo_plan.read_bytes()).hexdigest()
+        run([cli, "promptfoo-eval", "verify", "promptfoo-demo/converted", "--plan-sha256", promptfoo_pin,
+             "--evaluation", "promptfoo-demo/converted/evaluation.json"])
+        run([cli, "promptfoo-eval", "create", promptfoo_plan, "promptfoo-demo/source.json",
+             "--plan-sha256", promptfoo_pin, "--out", "promptfoo-copy"])
+        for defect in ("missing-row", "execution-error"):
+            run([cli, "promptfoo-eval", "create", promptfoo_plan, f"promptfoo-demo/{defect}.json",
+                 "--plan-sha256", promptfoo_pin, "--out", f"promptfoo-{defect}"], expected=2)
+        promptfoo_rows = json.loads((root / "promptfoo-demo/converted/evaluation.json").read_bytes())["results"]
+        if (len(promptfoo_rows) != 3 or sum("authorization" in r["metrics"] for r in promptfoo_rows) != 2
+                or sum(r["metrics"]["passed"] for r in promptfoo_rows) != 2
+                or any("cost_usd" in r for r in promptfoo_rows)):
+            raise RuntimeError("installed Promptfoo conversion lost failures, absence, or column selection")
+        run([cli, "promptfoo-eval", "verify", "promptfoo-demo/converted", "--plan-sha256", "0" * 64], expected=2)
+        with (root / "promptfoo-demo/converted/conversion.json").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "promptfoo-eval", "verify", "promptfoo-demo/converted", "--plan-sha256", promptfoo_pin], expected=2)
         run([cli, "coverage-review", "demo", "--out", "coverage-demo"])
         run([cli, "coverage-review", "demo", "--out", "coverage-demo"], expected=2)
         for name, expected in (("gap", 1), ("uncertain", 1), ("covered", 0)):

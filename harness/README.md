@@ -128,6 +128,87 @@ and [hash-checked, binary-only installation](https://pip.pypa.io/en/stable/topic
 this kit supports a narrow integrity/installation workflow, not SSDF conformance or a substitute
 for vulnerability review, producer verification, organizational approvals, or interpreter trust.
 
+## Reuse Promptfoo exports without confusing failed assertions with execution errors
+
+`aau promptfoo-eval` reads a bounded subset of native **version-3 OutputFile JSON exports**
+without installing Promptfoo, running assertions, loading provider code, or contacting a model.
+The first compatibility regression retains an unchanged upstream export whose metadata declares
+Promptfoo `0.118.10`; see its [source, byte hash, and license](tests/fixtures/promptfoo/README.md).
+This is one observed fixture, not all-version compatibility or an independent reproduction.
+
+```bash
+aau promptfoo-eval demo --out /tmp/aau-promptfoo-example
+```
+
+The no-key demo is explicitly constructed. Its selected column has high quality scores, a failed
+authorization assertion, and a missing authorization measurement. A different passing column cannot
+replace it. The README explains expected results and two rejected inputs: a missing row and an
+execution error in the unselected column. All source rows remain in the retained original file.
+
+For a real export, a receiving reviewer writes and approves a mapping such as:
+
+```json
+{
+  "plan_version": "aau-promptfoo-observation-plan/1.0",
+  "source_label": "Supplied export; scoring and provenance require separate review",
+  "test_map": [
+    {"test_index": 0, "scenario_id": "routing"},
+    {"test_index": 1, "scenario_id": "delegation"}
+  ],
+  "columns": [
+    {"prompt_index": 0, "prompt_id": "actual-export-prompt-id", "provider_id": "actual-export-provider-id"}
+  ],
+  "selected_prompt_index": 0,
+  "metrics": {
+    "quality": {"field": "score"},
+    "passed": {"field": "success"},
+    "authorization": {"field": "namedScores", "name": "authorization"}
+  }
+}
+```
+
+Use the actual complete test and column inventories, not these placeholder IDs. Column indices are
+contiguous and zero-based; test indices may be noncontiguous. Every test/column pair must occur exactly
+once, even in unselected columns. Limits are 500 tests, 20 columns, 100 metric mappings, and 2 MB per
+input/output file. Keep the approved plan's SHA-256 independently of the supplier delivery:
+
+```bash
+aau promptfoo-eval create plan.json results.json --plan-sha256 APPROVED_PLAN_SHA256 --out converted
+aau promptfoo-eval verify converted --plan-sha256 APPROVED_PLAN_SHA256
+aau promptfoo-eval verify converted --plan-sha256 APPROVED_PLAN_SHA256 --evaluation downstream-evaluation.json
+```
+
+The six-file packet retains exact `source.json` and `plan.json` bytes, plus `recording.json`,
+`evaluation.json`, `conversion.json`, and `manifest.json`. Verification recomputes the packet and
+can compare a downstream evaluation to it. Exit **0** means faithful conversion, **not passing scores**;
+**2** rejects unsupported/invalid evidence. Destinations must be new; extra members and links are rejected.
+The report exposes the selected/unprojected columns, original row pointers, source outcome counts,
+metric mappings, coverage, and unmapped named scores. The recording feeds the existing policy-review
+workflow. This conversion packet alone is not a receiver-pinned policy handoff or an acceptance gate.
+
+Important boundaries:
+
+- `failureReason=1` is a failed assertion, which can legitimately have `error` text. It remains a
+  scored failure when its grading result agrees. Category 2 execution errors, unknown/ambiguous
+  categories, provider-response errors, and inconsistent success/grading states are rejected.
+- Only single-repeat exports are supported. Declared repeat settings other than 1, nonzero repeat
+  markers, and duplicate test/column pairs are rejected; attempts are never guessed, merged, or averaged.
+- `success` is explicitly mapped to 1/0. Numeric `score` and explicitly named `namedScores` values
+  are copied as supplied; missing/null named scores remain absent. Boolean/nonnumeric scores are rejected.
+- Aggregate metrics are not copied. Missing costs, latency, API-call counts, and context fingerprints
+  are not inferred from provider names or embedded config. Scorer validity, hidden edits, task
+  comparability, and external attempt history remain outside this bounded importer.
+- Original logs can contain credentials, personal information, or sensitive transcripts. The packet
+  is **not sanitized or authorized for sharing**. No embedded URL, attachment, trace, assertion, or
+  provider is executed/fetched. Approve the source and mappings through the receiving team's process.
+
+Research checked November 19, 2026: Promptfoo's [CI/CD export contract](https://www.promptfoo.dev/docs/integrations/ci-cd/)
+describes the native envelope; pinned upstream types and failure categories are linked with the fixture.
+NIST's [AI RMF Measure playbook](https://airc.nist.gov/airmf-resources/playbook/measure/) emphasizes
+documenting metrics, tests, and measurement limits. Our inference is to preserve native source evidence
+and explicit mappings instead of relying on aggregate success claims. This does not establish AI RMF
+conformance, government adoption, or operational benefit.
+
 ## Received an evidence folder? Start with one intake command
 
 `aau inspect-pack` recognizes 12 supported recorded-evidence pack families and calls the

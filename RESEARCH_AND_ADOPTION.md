@@ -97,6 +97,15 @@ better completion, a met score policy, and an unknown required cost budget. This
 evidence assembly; it does not demonstrate reduced staff burden, genuine source execution, task
 comparability, or adoption. Real-user observation and independent reproductions remain pending.
 
+November 19 Promptfoo follow-up: [Native export import](harness/README.md#reuse-promptfoo-exports-without-confusing-failed-assertions-with-execution-errors)
+adds a bounded second exporter profile. A pinned upstream version-3 export declaring Promptfoo
+`0.118.10` is retained byte-for-byte with its license. The importer checks all planned test/column
+pairs and explicit prompt/provider identities, projects one reviewer-selected column, and distinguishes
+ASSERT failures from execution errors. Missing named scores remain absent; aggregates and inferred
+operating/context data are excluded. Synthetic failure tests and a clean installed-wheel demo complement
+the fixture. Broader exporter/version coverage, authentic execution, and independent reproduction remain
+unproven; no Promptfoo code or model is executed by import.
+
 | Priority | Community benefit | Evidence required before calling it complete |
 |---|---|---|
 | 1. Native export adapters | Use existing Inspect/other evaluation logs without hand-converting every field | Versioned fixtures from each supported exporter; raw-source retention; tests for missing scores, aborted runs, repeated IDs, and rubric drift; no executing supplied log code |
