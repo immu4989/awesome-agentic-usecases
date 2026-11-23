@@ -3799,6 +3799,95 @@ emphasizes documenting measurement choices and unmeasured risks; the page notes 
 revision. Our index is a bounded documentation and source-linking workflow, not an implementation
 of either entire framework or a claim of conformity. Qualified human review remains necessary.
 
+### Plan a fixed-horizon evaluation before spending on runs
+
+`aau evaluation-design` asks a question the observed-result reviewers cannot answer alone:
+**if the supplied failure-rate assumption were true, would this proposed study have a reasonable
+chance of meeting its statistical criterion?** It searches bounded fixed-horizon binary designs,
+not actual outcomes. It does not execute models, authorize spending, recommend a purchase, or approve
+deployment. Use a trusted current checkout/local wheel, not the older public PyPI release.
+
+```bash
+aau evaluation-design demo --out /tmp/my-study-design
+```
+
+Four no-key examples produce source-retaining JSON and script-free HTML: a design found, an
+insufficient search ceiling, a six-cell candidate/scope family, and a fixed benchmark with population
+planning withheld. In the first **constructed** example, the unacceptable bundle-failure rate is 5%,
+the assumed rate is 1%, the error allocation is 5%, and the requested qualification probability is
+80%. A zero-failure reference requires 59 bundles but has only a 55.27% chance of meeting that criterion
+at the assumed rate. The first design meeting both requested probabilities is **124 bundles with a
+cutoff of two failed bundles**: 4.953% qualification probability at the unacceptable rate, 87.155% at
+the assumed rate. Two repeats require 248 attempts per candidate, not 248 independent scenarios.
+The six-cell example requires 203 bundles per scope with a cutoff of three; scope counts may overlap.
+These numbers are calculations under supplied assumptions, not observations or recommended thresholds.
+
+Prepare a separately reviewed plan; probability fields are **decimal strings**, not JSON numbers:
+
+```json
+{
+  "plan_version": "aau-evaluation-design-plan/1.0",
+  "purpose": "Hypothetical planning only; no approved agency study is represented.",
+  "sampling_design": "hypothetical_iid_fixed_horizon",
+  "sampling_basis": "Explain the proposed IID bundle population and stable scoring protocol; not verified.",
+  "candidate_count": 1,
+  "repeats_per_scenario": 2,
+  "family_error_probability": "0.05",
+  "minimum_qualification_probability": "0.8",
+  "maximum_scenarios_per_scope": 500,
+  "scopes": [{"scope_id": "overall", "unacceptable_failure_probability": "0.05", "assumed_failure_probability": "0.01"}]
+}
+```
+
+```bash
+aau evaluation-design create approved-design.json \
+  --plan-sha256 "$APPROVED_DESIGN_SHA256" --out design-packet
+aau evaluation-design verify design-packet --plan-sha256 "$APPROVED_DESIGN_SHA256"
+```
+
+Retain the expected plan-byte pin independently; it is not a signature or proof of preregistration.
+The packet contains the original plan, recomputed report, accessible review page, and manifest.
+Every valid diagnostic exits `0`, **including** a design not found within the ceiling or benchmark
+withholding. Inspect the status; exit `0` is not a successful evaluation. Invalid input, pin, modified
+output, or replay mismatch exits `2`. Existing output is never overwritten.
+
+**Method.** For each scope and sample size `n`, find the largest cutoff `c` satisfying
+`P[Binomial(n, p_bad) <= c] <= family_error_probability / (candidate_count * scope_count)`.
+The first `n` also satisfying `P[Binomial(n, p_assumed) <= c] >= minimum_qualification_probability`
+is returned. All `n` from 1 to the supplied ceiling are searched: discrete cutoffs mean qualification
+probability is not monotone in `n`. Integer binomial weights and rational comparisons preserve exact
+input decimals; report JSON retains exact fraction strings and display decimals. There is no normal
+approximation, simulation, floating-point threshold tolerance, or binary search on power.
+
+The family allocation bounds the chance of **any** false statistical qualification among the fixed
+declared cells, under their marginal binomial assumptions. It does not require independence between
+cells. The requested qualification probability at the assumed rate is **per cell**, not a joint
+probability that every cell qualifies. Counts do not identify actual candidates, actual cases,
+subgroup membership, or overlap; separately found designs need not be jointly realizable. No global
+minimum-cost dataset or total attempt count is inferred. Candidate/scorer identities, failure criteria,
+sampling frames, budgets, and handling permissions still need a separate execution protocol.
+
+Limits: 1–10 candidates; 1–20 named scopes including `overall`; 1–20 repeats; 1–500 bundles per scope;
+exact decimal probabilities with at most six places. The assumed rate must be below a positive
+unacceptable rate below one; the positive family error probability cannot exceed 0.5. A zero-risk
+target is not supported. One failed joint criterion in any repeat fails a bundle. The assumed rate
+concerns that **whole bundle protocol**; changing repeats requires reconsidering it, not treating
+per-call failure as bundle failure. Fixed benchmarks receive no population design numbers.
+
+No sampling assumptions, group representativeness, scoring validity, actual failure probabilities,
+or independent preregistration are verified. This is not posterior confidence, an observed performance
+claim, repeated-look monitoring, or permission to collect until a result passes. A bounded search
+failure is not proof that no larger study could work. Do not choose the plan after seeing the outcomes.
+
+Research checked November 22, 2026: [NIST's operating-characteristic treatment](https://www.itl.nist.gov/div898/handbook/pmc/section2/pmc232.htm)
+describes binomial count criteria at two specified rates. Our exhaustive bounded search and exact
+decimal arithmetic are implementation choices. [NIST's Bonferroni discussion](https://www.itl.nist.gov/div898/handbook/prc/section4/prc463.htm)
+provides the finite-family union-bound principle; the candidate/scope application is our design.
+Tests compare the recurrence with direct rational expansion, enumerate all smaller candidate designs
+in small cases, and check exact equality boundaries. NIST's illustrative `n=52, c=3` table has entries
+that differ from nearest three-place rounding of its formula; tests treat that table as approximate
+and use direct expansion as the exact oracle. No NIST endorsement or conformance claim follows.
+
 ### Transfer evidence with independently checkable BagIt checksums
 
 `aau evidence-bag` copies a bounded evidence directory into a **transport envelope, not an

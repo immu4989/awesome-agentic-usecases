@@ -35,9 +35,10 @@ actual browser and Playwright versions, tested widths, scroll count, and rejecte
 
 ## Tested scope
 
-Nineteen reports cover policy failures and passing results, cohort regressions, diagnostic dossiers,
+Twenty-two reports cover policy failures and passing results, cohort regressions, diagnostic dossiers,
 operating-budget gates, candidate matrices, retry evidence, reference labels, condition coverage,
 incomplete Inspect evidence, paired grader changes, candidate-family uncertainty, paired-system comparisons, evidence indexes,
+hypothetical evaluation designs (found, bounded-search failure, and benchmark withholding),
 and a long-identifier/HTML-escaping stress case. At widths of 1280 and
 320 CSS pixels, the checks exercise:
 

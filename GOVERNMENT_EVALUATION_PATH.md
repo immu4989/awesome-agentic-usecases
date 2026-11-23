@@ -23,6 +23,7 @@ aau grader-compare demo --out /tmp/agency-grader-change-example
 aau candidate-bounds demo --out /tmp/agency-candidate-family-example
 aau paired-review demo --out /tmp/agency-paired-comparison
 aau evidence-index demo --out /tmp/agency-evidence-handoff
+aau evaluation-design demo --out /tmp/agency-study-design
 aau reference-review demo --out /tmp/agency-reference-example
 aau coverage-review demo --out /tmp/agency-coverage-example
 aau lifecycle-cost-demo --out /tmp/agency-cost-example
@@ -55,6 +56,7 @@ synthetic run verifies the mechanism, not mission suitability or deployment auth
 | Which declared conditions still lack evidence? | [Condition coverage review](harness/README.md#find-untested-conditions-before-trusting-averages) | Mission-relevant dimensions, justified floors/exclusions, correct annotations, semantic diversity, population representativeness, and permission to use the evidence |
 | Did the supplier use the requested requirements and baseline? | [Pinned evidence intake](harness/README.md#check-delivered-evidence-against-a-receiving-team-request) | Independent control of expected hashes; requirements that actually reflect the mission |
 | Are all requested review packets present, verified, and linked to the intended evaluation bytes? | [Receiver-pinned evidence index](harness/README.md#hand-off-separate-reviews-with-a-receiver-pinned-evidence-index) | Complete mission scope, independently approved controls and bindings, native failures and gaps, source authenticity, disclosure permission, and human decisions; complete delivery is not approval |
+| Can a proposed fixed-horizon study meet both specified error and qualification-probability targets? | [Exact binary design planning](harness/README.md#plan-a-fixed-horizon-evaluation-before-spending-on-runs) | Defensible assumed bundle-failure rates, IID sampling, rubric validity, candidate identities, joint subgroup feasibility, permissions, and separate budget/approval decisions; no actual study is run |
 | Did an offline evidence transfer retain the expected files and directory inventory? | [Pinned BagIt transfer](harness/README.md#transfer-evidence-with-independently-checkable-bagit-checksums) | Independently controlled transfer pins, native evidence verification, approved disclosure and handling, records requirements, sender identity, and human decisions; intact transport is not approval |
 | Can existing evaluation results be reviewed without rerunning supplier code? | [Offline Inspect import](harness/README.md#reuse-inspect-sample-scores-without-executing-the-log) | Approved mapping/rubric, independently retained plan hash, source authenticity, correct scoring, and permissions for full raw logs |
 | Can a Promptfoo export retain failed tests without confusing them with execution errors? | [Offline Promptfoo import](harness/README.md#reuse-promptfoo-exports-without-confusing-failed-assertions-with-execution-errors) | Complete test/column inventory, selected provider/prompt, valid grading, independent mapping approval, source authenticity, and disclosure permission |

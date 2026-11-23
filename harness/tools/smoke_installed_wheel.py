@@ -497,6 +497,25 @@ write_json(responses, Path('service-responses.json'))
         run([cli, "failure-bound-demo", "--out", "failure-demo"], expected=2)
         run([cli, "paired-review", "demo", "--out", "paired-demo"])
         run([cli, "evidence-index", "demo", "--out", "evidence-index-demo"])
+        run([cli, "evaluation-design", "demo", "--out", "evaluation-design-demo"])
+        run([cli, "evaluation-design", "demo", "--out", "evaluation-design-demo"], expected=2)
+        for name in ("planned", "limited", "family", "fixed-benchmark"):
+            design_packet = root / "evaluation-design-demo" / name
+            design_pin = hashlib.sha256((design_packet / "plan.json").read_bytes()).hexdigest()
+            run([cli, "evaluation-design", "verify", design_packet, "--plan-sha256", design_pin])
+        design_packet = root / "evaluation-design-demo/planned"
+        design_pin = hashlib.sha256((design_packet / "plan.json").read_bytes()).hexdigest()
+        run([cli, "evaluation-design", "create", design_packet / "plan.json", "--plan-sha256", design_pin,
+             "--out", "design-copy"])
+        design_report = json.loads((design_packet / "report.json").read_bytes())
+        if (design_report["decision_status"] != "not_assessed"
+                or design_report["scopes"][0]["design"]["scenario_count"] != 124
+                or design_report["scopes"][0]["zero_failure_reference"]["meets_requested_probability"]):
+            raise RuntimeError("study planner confused a zero-failure reference with the requested design probability")
+        run([cli, "evaluation-design", "verify", design_packet, "--plan-sha256", "0" * 64], expected=2)
+        with (design_packet / "report.json").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "evaluation-design", "verify", design_packet, "--plan-sha256", design_pin], expected=2)
         run([cli, "evidence-index", "demo", "--out", "evidence-index-demo"], expected=2)
         for name, expected in (("complete-with-failed-policy", 0), ("missing-coverage", 1),
                                ("mismatched-evaluation", 1), ("invalid-comparison", 1), ("changed-controls", 1)):

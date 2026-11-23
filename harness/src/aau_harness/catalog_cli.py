@@ -352,6 +352,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Verify receiver-required packets and explicit byte bindings without combining their outcomes")
     sub.add_parser("evidence-bag", add_help=False,
                    help="Transfer bounded evidence as a pinned offline BagIt directory, without approving it")
+    sub.add_parser("evaluation-design", add_help=False,
+                   help="Plan fixed-horizon binary evaluation criteria without treating zero failures as guaranteed")
     sub.add_parser("repeatability-eval", add_help=False,
                    help="expose intermittent joint-constraint failures across recorded repeats")
     sub.add_parser("operating-eval", add_help=False,
@@ -570,6 +572,9 @@ def main(argv: list[str] | None = None) -> int:
     if raw_args and raw_args[0] == "evidence-bag":
         from .evidence_bag import main as evidence_bag_main
         return evidence_bag_main(raw_args[1:])
+    if raw_args and raw_args[0] == "evaluation-design":
+        from .eval_design import main as evaluation_design_main
+        return evaluation_design_main(raw_args[1:])
     if raw_args and raw_args[0] == "repeatability-eval":
         from .eval_repeatability import main as repeatability_main
 

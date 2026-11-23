@@ -8,6 +8,7 @@ from pathlib import Path
 from aau_harness.coverage_demo import create_demo as coverage_demo
 from aau_harness.candidate_bounds_demo import create_demo as candidate_bounds_demo
 from aau_harness.eval_demo import demo_inputs
+from aau_harness.eval_design_demo import create_demo as design_demo
 from aau_harness.eval_pack import create_pack, verify_pack
 from aau_harness.grader_compare_demo import create_demo as grader_comparison_demo
 from aau_harness.inspect_demo import create_demo as inspect_demo
@@ -37,6 +38,7 @@ def create_fixtures(directory):
     candidate_bounds_demo(directory / 'candidate-bounds')
     paired_demo(directory / 'paired-review')
     evidence_index_demo(directory / 'evidence-index')
+    design_demo(directory / 'evaluation-design')
     policy, baseline, candidate, diagnostics = deepcopy(demo_inputs())
     # Long supplied identifiers must wrap in prose while tables retain their own scroll area.
     old = 'completion'

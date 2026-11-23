@@ -140,6 +140,19 @@ traces to satisfy these milestones.
 
 ## A useful community invitation
 
+November 22 prospective-design follow-up: [Fixed-horizon evaluation planning](harness/README.md#plan-a-fixed-horizon-evaluation-before-spending-on-runs)
+separates a zero-failure sample reference from the chance of meeting a statistical criterion under
+an assumed nonzero failure rate. Exact integer/rational search covers bounded sample sizes and failure
+cutoffs, reserving error across declared candidate/scope cells without counting repeats as independent
+cases. A 59-bundle zero-failure reference in the synthetic example has only 55.27% qualification
+probability at its assumed rate; the requested 80% design instead needs 124 bundles with a cutoff of two.
+These are hypothetical calculations, not measured benefits or validated sampling assumptions.
+[GAO's acquisition report](https://files.gao.gov/reports/GAO-26-107859/index.html) identifies testing,
+requirements, and overall-cost challenges; that motivates making study assumptions reviewable before
+execution. [NIST's operating-characteristic method](https://www.itl.nist.gov/div898/handbook/pmc/section2/pmc232.htm)
+supplies the binomial formulation, not endorsement of this tool. Joint scope feasibility, domain review,
+actual candidate/rubric identity, approved sampling frames, and independent reproduction remain pending.
+
 November 22 offline-transfer follow-up: [BagIt evidence transfer](harness/README.md#transfer-evidence-with-independently-checkable-bagit-checksums)
 adds an interoperable directory envelope without interpreting payload claims. Research source:
 [RFC 8493](https://www.rfc-editor.org/rfc/rfc8493.html), an informational specification, not an
