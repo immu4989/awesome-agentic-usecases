@@ -50,6 +50,15 @@ jobs:
           python -m pip install build==1.3.0 setuptools==80.9.0
           python -m build --no-isolation --outdir "$RUNNER_TEMP/aau-offline-dist" harness
           python harness/tools/smoke_offline_kit.py "$RUNNER_TEMP"/aau-offline-dist/aau_harness-*.tar.gz "$RUNNER_TEMP"/aau-offline-dist/aau_harness-*.whl
+      - name: Cross-check offline evidence bags with the pinned Library of Congress implementation
+        run: |
+          bag_probe=$(mktemp -d "$RUNNER_TEMP/aau-bagit-probe.XXXXXX")
+          python -m venv "$bag_probe/venv"
+          "$bag_probe/venv/bin/python" -m pip --isolated install --require-hashes --no-deps --disable-pip-version-check -r harness/compatibility/bagit/requirements.txt
+          "$bag_probe/venv/bin/python" -m pip --isolated install --no-index --no-deps --disable-pip-version-check "$RUNNER_TEMP"/aau-offline-dist/aau_harness-*.whl
+          cp harness/tools/check_bagit_transfer.py "$bag_probe/check_bagit_transfer.py"
+          cd "$bag_probe"
+          env -i PATH=/usr/bin:/bin LANG=C.UTF-8 "$bag_probe/venv/bin/python" "$bag_probe/check_bagit_transfer.py" --out "$bag_probe/results"
       - name: Exercise pinned native Inspect mock exports without model credentials
         run: |
           probe_dir=$(mktemp -d "$RUNNER_TEMP/aau-inspect-probe.XXXXXX")

@@ -3799,6 +3799,64 @@ emphasizes documenting measurement choices and unmeasured risks; the page notes 
 revision. Our index is a bounded documentation and source-linking workflow, not an implementation
 of either entire framework or a claim of conformity. Qualified human review remains necessary.
 
+### Transfer evidence with independently checkable BagIt checksums
+
+`aau evidence-bag` copies a bounded evidence directory into a **transport envelope, not an
+approval envelope**. A receiver can check it with existing BagIt tools, then use AAU's stricter
+pin and directory-inventory checks before running the original evidence verifier. The source
+directory is not modified. Use a reviewed current checkout/local wheel, not the older PyPI release.
+
+```bash
+# Synthetic, no-key example. Choose unused output paths.
+aau evidence-index demo --out /tmp/transfer-example
+aau evidence-bag create /tmp/transfer-example/complete-with-failed-policy \
+  --out /tmp/evidence-transfer
+```
+
+Creation prints a JSON receipt, including `tagmanifest_sha256`. Preserve that value through an
+independently trusted channel, along with the original evidence request/plan pins. **Do not obtain
+the expected pin only by hashing an untrusted received bag.** A matching self-supplied hash proves
+neither identity nor that the expected evidence was delivered. After transfer, using the previously
+retained values:
+
+```bash
+aau evidence-bag verify /path/to/received-bag \
+  --tagmanifest-sha256 "$EXPECTED_TRANSFER_PIN"
+aau evidence-index verify /path/to/received-bag/data \
+  --request-sha256 "$APPROVED_REQUEST_SHA256"
+```
+
+The second command applies to an evidence index; use the appropriate native verifier for another
+payload. Do not execute supplied scripts to determine which verifier to trust. The example's
+policy **still fails**, even though the complete delivery and transfer can both verify.
+
+The deterministic `aau-evidence-bag/1.0` profile emits seven tag files: `bagit.txt`, `bag-info.txt`,
+`aau-transfer.json`, SHA-256/SHA-512 payload manifests, and SHA-256/SHA-512 tag manifests. Original
+file bytes and relative paths are retained under `data/`. The extra JSON tag binds empty-directory
+presence; manifests alone do not. No timestamps, local absolute paths, or inferred sender identity
+are inserted. File permissions, timestamps, ownership, extended attributes, and hard-link identity
+are not preserved. The receipt reports transport fixity only and explicitly leaves native evidence
+and decisions unassessed. Exit `0` means this bounded transfer verified; exit `2` means rejection.
+
+Limits: 1–57 payload files, each at most 2 MiB; at most 14 payload directories; at most two directory
+levels below the source root. Names use ASCII letters, digits, `_`, `-`, and `.`, with at most 120
+characters per component. Case collisions, trailing periods, Windows reserved device names,
+symlinks, special files, unexpected tags/files/directories, and output inside the source are rejected.
+The source and destination must remain stable during capture/write; this is not atomic filesystem
+snapshotting. Interrupted writes may leave an incomplete output, which must not be treated as verified.
+
+This is **not a general-purpose BagIt importer**: alternate encodings, manifest order/spacing,
+algorithms, arbitrary tags, or `fetch.txt` are rejected even if another BagIt tool accepts them.
+No URLs are fetched, archives extracted, payloads executed, or HTML opened. No redaction,
+encryption, digital signatures, source-authenticity assurance, records-retention certification,
+permission to disclose, or government acceptance is implied. Native checks and human review remain
+separate. Review all retained source data before any disclosure.
+
+[Interoperability exercise and failure cases](compatibility/bagit/README.md) cross-check seven
+synthetic cases against pinned Library of Congress `bagit` 1.9.0. The exercise includes same-size
+corruption, omitted/extra zero-byte files, altered tags, lost empty directories, and a completely
+recomputed substituted bag. It does not establish full BagIt conformance or independent adoption.
+
 ### Compare paired systems without hiding new failures
 
 `aau paired-review` compares **two fixed systems on the same complete scenario bundles**. It

@@ -140,6 +140,17 @@ traces to satisfy these milestones.
 
 ## A useful community invitation
 
+November 22 offline-transfer follow-up: [BagIt evidence transfer](harness/README.md#transfer-evidence-with-independently-checkable-bagit-checksums)
+adds an interoperable directory envelope without interpreting payload claims. Research source:
+[RFC 8493](https://www.rfc-editor.org/rfc/rfc8493.html), an informational specification, not an
+Internet Standard or government approval. Our bounded canonical profile binds original file bytes,
+empty directories, and a separately retained transfer pin. A [seven-case compatibility probe](harness/compatibility/bagit/README.md)
+uses pinned Library of Congress `bagit` 1.9.0 to distinguish checksum corruption from directory loss
+and a fully recomputed substitution. Full native evidence replay remains a separate step; a valid
+transfer can retain a failed policy. No encryption, signatures, records qualification, or adoption
+claim is made. Remaining work includes independently performed reproductions and receiver-defined
+handling/retention requirements before any real agency evidence exchange.
+
 November 22 evidence-handoff follow-up: the [receiver-pinned evidence index](harness/README.md#hand-off-separate-reviews-with-a-receiver-pinned-evidence-index)
 joins existing policy, coverage, and paired-system workflows without combining their outcomes.
 Every declared item is retained as verified, missing, control-mismatched, or verification-failed;

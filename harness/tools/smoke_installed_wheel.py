@@ -512,6 +512,16 @@ write_json(responses, Path('service-responses.json'))
                 or index_report["items"][0]["native_outcome_status"] != "constraints_not_met"):
             raise RuntimeError("evidence index confused a complete delivery with policy approval")
         run([cli, "evidence-index", "verify", complete_index, "--request-sha256", "0" * 64], expected=2)
+        run([cli, "evidence-bag", "create", complete_index, "--out", "evidence-bag"])
+        transferred = root / "evidence-bag"
+        transfer_pin = hashlib.sha256((transferred / "tagmanifest-sha256.txt").read_bytes()).hexdigest()
+        run([cli, "evidence-bag", "verify", transferred, "--tagmanifest-sha256", transfer_pin])
+        run([cli, "evidence-index", "verify", transferred / "data", "--request-sha256", complete_pin])
+        run([cli, "evidence-bag", "create", complete_index, "--out", "evidence-bag"], expected=2)
+        run([cli, "evidence-bag", "verify", transferred, "--tagmanifest-sha256", "0" * 64], expected=2)
+        with (transferred / "data/report.json").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "evidence-bag", "verify", transferred, "--tagmanifest-sha256", transfer_pin], expected=2)
         with (complete_index / "report.json").open("ab") as stream:
             stream.write(b" ")
         run([cli, "evidence-index", "verify", complete_index, "--request-sha256", complete_pin], expected=2)
