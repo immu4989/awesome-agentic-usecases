@@ -496,6 +496,25 @@ write_json(responses, Path('service-responses.json'))
         run([cli, "failure-bound-demo", "--out", "failure-demo"])
         run([cli, "failure-bound-demo", "--out", "failure-demo"], expected=2)
         run([cli, "paired-review", "demo", "--out", "paired-demo"])
+        run([cli, "evidence-index", "demo", "--out", "evidence-index-demo"])
+        run([cli, "evidence-index", "demo", "--out", "evidence-index-demo"], expected=2)
+        for name, expected in (("complete-with-failed-policy", 0), ("missing-coverage", 1),
+                               ("mismatched-evaluation", 1), ("invalid-comparison", 1), ("changed-controls", 1)):
+            index_packet = root / "evidence-index-demo" / name
+            index_pin = hashlib.sha256((index_packet / "request.json").read_bytes()).hexdigest()
+            run([cli, "evidence-index", "verify", index_packet, "--request-sha256", index_pin], expected=expected)
+        complete_index = root / "evidence-index-demo/complete-with-failed-policy"
+        complete_pin = hashlib.sha256((complete_index / "request.json").read_bytes()).hexdigest()
+        run([cli, "evidence-index", "create", complete_index / "request.json", complete_index / "evidence",
+             "--request-sha256", complete_pin, "--out", "evidence-index-copy"])
+        index_report = json.loads((complete_index / "report.json").read_bytes())
+        if (index_report["decision_status"] != "not_assessed" or not index_report["human_review_required"]
+                or index_report["items"][0]["native_outcome_status"] != "constraints_not_met"):
+            raise RuntimeError("evidence index confused a complete delivery with policy approval")
+        run([cli, "evidence-index", "verify", complete_index, "--request-sha256", "0" * 64], expected=2)
+        with (complete_index / "report.json").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "evidence-index", "verify", complete_index, "--request-sha256", complete_pin], expected=2)
         run([cli, "paired-review", "demo", "--out", "paired-demo"], expected=2)
         for name in ("net-gain-with-regression", "fixed-benchmark", "same-recorded-outcomes", "reversed-comparison"):
             pair_packet = root / "paired-demo" / name

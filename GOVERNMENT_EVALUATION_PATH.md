@@ -22,6 +22,7 @@ aau grader-demo --out /tmp/agency-grader-example
 aau grader-compare demo --out /tmp/agency-grader-change-example
 aau candidate-bounds demo --out /tmp/agency-candidate-family-example
 aau paired-review demo --out /tmp/agency-paired-comparison
+aau evidence-index demo --out /tmp/agency-evidence-handoff
 aau reference-review demo --out /tmp/agency-reference-example
 aau coverage-review demo --out /tmp/agency-coverage-example
 aau lifecycle-cost-demo --out /tmp/agency-cost-example
@@ -53,6 +54,7 @@ synthetic run verifies the mechanism, not mission suitability or deployment auth
 | How were the reference labels decided? | [Reference-label review](harness/README.md#preserve-reviewer-disagreement-before-exporting-reference-labels) | Reviewer qualifications/independence, appropriate rubric, authentic evidence, blinding, and whether any adjudication is justified |
 | Which declared conditions still lack evidence? | [Condition coverage review](harness/README.md#find-untested-conditions-before-trusting-averages) | Mission-relevant dimensions, justified floors/exclusions, correct annotations, semantic diversity, population representativeness, and permission to use the evidence |
 | Did the supplier use the requested requirements and baseline? | [Pinned evidence intake](harness/README.md#check-delivered-evidence-against-a-receiving-team-request) | Independent control of expected hashes; requirements that actually reflect the mission |
+| Are all requested review packets present, verified, and linked to the intended evaluation bytes? | [Receiver-pinned evidence index](harness/README.md#hand-off-separate-reviews-with-a-receiver-pinned-evidence-index) | Complete mission scope, independently approved controls and bindings, native failures and gaps, source authenticity, disclosure permission, and human decisions; complete delivery is not approval |
 | Can existing evaluation results be reviewed without rerunning supplier code? | [Offline Inspect import](harness/README.md#reuse-inspect-sample-scores-without-executing-the-log) | Approved mapping/rubric, independently retained plan hash, source authenticity, correct scoring, and permissions for full raw logs |
 | Can a Promptfoo export retain failed tests without confusing them with execution errors? | [Offline Promptfoo import](harness/README.md#reuse-promptfoo-exports-without-confusing-failed-assertions-with-execution-errors) | Complete test/column inventory, selected provider/prompt, valid grading, independent mapping approval, source authenticity, and disclosure permission |
 | Can an Inspect delivery be checked against fixed receiving-team requirements? | [Pinned Inspect policy handoff](harness/README.md#hand-off-inspect-logs-through-a-receiver-pinned-policy-review) | Independent request-pin control, justified baseline/mappings/limits, scoring validity, task comparability, and missing operational evidence |

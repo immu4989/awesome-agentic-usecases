@@ -140,6 +140,14 @@ traces to satisfy these milestones.
 
 ## A useful community invitation
 
+November 22 evidence-handoff follow-up: the [receiver-pinned evidence index](harness/README.md#hand-off-separate-reviews-with-a-receiver-pinned-evidence-index)
+joins existing policy, coverage, and paired-system workflows without combining their outcomes.
+Every declared item is retained as verified, missing, control-mismatched, or verification-failed;
+explicit byte bindings prevent silently treating different exported evaluations as the same input.
+The whole receiver request is independently pinned. A complete example deliberately retains a
+failed policy: successful delivery verification is not a successful system or agency approval.
+Original files, including invalid packet contents, remain local and require disclosure review.
+
 November 22 paired-system follow-up: [Paired candidate review](harness/README.md#compare-paired-systems-without-hiding-new-failures)
 compares complete matched scenario bundles, preserving improvements, newly introduced failures,
 shared passes, and shared failures. Optional exact conditional McNemar inference uses a predeclared
@@ -160,8 +168,8 @@ all-version support, or evidence of government adoption.
 
 November 19 report-access follow-up: [Offline report interaction checks](harness/browser-tests/README.md)
 centralize named keyboard-scroll groups and row/column semantics across the principal review reports,
-add policy section navigation, and exercise seventeen fixed synthetic reports at desktop and narrow widths,
-including the subsequent paired-grader, candidate-family, and paired-system reports.
+add policy section navigation, and exercise nineteen fixed synthetic reports at desktop and narrow widths,
+including subsequent paired-grader, candidate-family, paired-system, and evidence-index reports.
 Deliberately broken focus/name/header/reflow controls must be detected. The public synthetic packets
 are regenerated with their matching manifests and archives; source scores and policy outcomes do not
 change. This is targeted Chromium behavior testing, not assistive-technology usability evidence or

@@ -3708,6 +3708,97 @@ history. Copies renamed as new scenarios do not become independent observations.
 budgets, affected-user feedback, and human review remain separate. Available from this checkout or
 its local wheel; not included in the currently documented PyPI 1.6.0 release.
 
+### Hand off separate reviews with a receiver-pinned evidence index
+
+`aau evidence-index` assembles a **verified delivery index, not an approval score**. A receiving
+team declares which policy, paired-system, and condition-coverage packets it needs, pins their
+control inputs, and explicitly binds evaluation members that must be identical across reviews.
+Missing submissions, invalid packets, changed controls, and mismatched bindings stay visible.
+A valid packet documenting a failed policy or a coverage gap is not confused with corrupt evidence.
+
+```bash
+aau evidence-index demo --out /tmp/my-evidence-index
+```
+
+Read the generated guide and top-level `review.html` inside each of five synthetic examples.
+In `complete-with-failed-policy`, all three packets verify and share exactly the same candidate
+evaluation bytes, but the policy **fails**. Paired improvement and coverage cannot cancel that
+failure. Other examples retain missing coverage, a valid coverage packet for a different
+evaluation, a modified derived report, and a changed receiving-team baseline pin. Nothing is
+sent to an agency, model, external service, or repository. Use the current trusted checkout/local
+wheel, not the older public PyPI release.
+
+For an authorized handoff, the delivery directory contains only requested item directories:
+
+```text
+delivery/
+  policy/       # complete flat evaluation-review packet
+  comparison/   # complete paired-review packet
+  coverage/     # complete coverage-review packet
+```
+
+```bash
+aau evidence-index create approved-request.json delivery \
+  --request-sha256 "$APPROVED_REQUEST_SHA256" --out delivery-index
+aau evidence-index verify delivery-index --request-sha256 "$APPROVED_REQUEST_SHA256"
+```
+
+Review and protect that expected hash independently of the supplier. The exact-byte-pinned
+`aau-evidence-index-request/1.0` request contains only `request_version`, `purpose`, `items`, and
+`bindings`. The generated demo request is an editable contract example, **not** approval for real use.
+Each required item has an `item_id`, `profile`, reviewable `purpose`, and exactly its profile's controls:
+
+| Profile | Receiver-controlled inputs | Bindable evaluation roles |
+|---|---|---|
+| `policy-review` | `controls.intake_request`: a complete existing `aau-evidence-intake-request/1.0` for `evaluation-review`, including all version-required policy/baseline/diagnostic/budget pins | `baseline` → `baseline.json`; `candidate` → `candidate.json` |
+| `paired-review` | `controls.plan_sha256`: independently reviewed paired-plan byte hash | `baseline` → `baseline.json`; `candidate` → `candidate.json` |
+| `coverage-review` | `controls.plan_sha256`: independently reviewed coverage-plan byte hash | `evaluation` → `evaluation.json` |
+
+The outer request pin protects the entire nested policy request; its canonical internal hash is
+computed only after the outer pin is checked. No control pin is derived from the delivered packet.
+Only the three trusted installed verifiers are routed; a request cannot supply a path, module,
+command, URL, fallback profile, or alternative verifier. Existing native verification requirements
+remain unchanged, including required budget/diagnostic controls and context checks.
+
+Each binding is `{ "left": { "item_id": "policy", "role": "candidate" }, "right":
+{ "item_id": "coverage", "role": "evaluation" } }`. Both packets must fully verify and match
+receiver controls before their exact member-byte hashes are compared. No binding means **no
+association is asserted**. Baselines need not be the same: the demo explicitly separates a
+historical same-configuration policy baseline from the other system in the paired comparison.
+Never assume a shared identity merely because two files have the same filename or scenario labels.
+
+Return codes concern **delivery verification only**:
+
+- **0:** every declared packet verifies with its controls and every requested binding matches.
+  Policy failure, coverage gaps, and new regressions can still be present. `decision_status` is
+  always `not_assessed`; `human_review_required` is always true.
+- **1:** a replayable diagnostic records missing evidence, failed verification, unmatched receiver
+  controls, or mismatched/uncheckable bindings. Invalid child bytes are retained, not repaired.
+- **2:** invalid request/pin, unsafe or unexpected inventory, resource limit, existing destination,
+  or an index that does not replay. No verified index is claimed.
+
+The output retains exact request bytes, complete delivered packets under `evidence/`, native
+findings in `report.json`, script-free `review.html`, and a manifest covering files and directories.
+An absent packet differs from an explicitly supplied empty directory. Only flat native packets
+are supported: 1–6 required items, at most 60 delivered files, 20 bindings, and 2 MB per input or
+expanded output member. Unknown top-level content, nesting, symlinks, special files, and unsafe
+names are rejected. Original HTML and scripts are **not executed or automatically opened**; invalid
+contents remain potentially unsafe to open. Keep outputs local and review all members before any
+separately authorized disclosure. The index is not redaction, anonymization, or a sharing permit.
+
+Matching bytes do not establish authentic execution, valid scoring, scientific assumptions,
+complete organizational evidence, or operational suitability. Even whitespace-only serialization
+changes break a binding; preserve the requested export bytes instead of silently normalizing them.
+Capture is not an atomic snapshot of a concurrently changing directory. Retain the independently
+controlled request pin and use the matching trusted harness for replay. No automatic acquisition,
+deployment, certification, legal-compliance, or government-adoption claim follows.
+
+Research checked November 22, 2026: [GAO's AI accountability framework](https://www.gao.gov/products/gao-21-519sp)
+organizes oversight around governance, data, performance, and monitoring. [NIST's Measure guidance](https://airc.nist.gov/airmf-resources/playbook/measure/)
+emphasizes documenting measurement choices and unmeasured risks; the page notes an upcoming framework
+revision. Our index is a bounded documentation and source-linking workflow, not an implementation
+of either entire framework or a claim of conformity. Qualified human review remains necessary.
+
 ### Compare paired systems without hiding new failures
 
 `aau paired-review` compares **two fixed systems on the same complete scenario bundles**. It

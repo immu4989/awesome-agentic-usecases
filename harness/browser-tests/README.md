@@ -35,9 +35,9 @@ actual browser and Playwright versions, tested widths, scroll count, and rejecte
 
 ## Tested scope
 
-Seventeen reports cover policy failures and passing results, cohort regressions, diagnostic dossiers,
+Nineteen reports cover policy failures and passing results, cohort regressions, diagnostic dossiers,
 operating-budget gates, candidate matrices, retry evidence, reference labels, condition coverage,
-incomplete Inspect evidence, paired grader changes, candidate-family uncertainty, paired-system comparisons,
+incomplete Inspect evidence, paired grader changes, candidate-family uncertainty, paired-system comparisons, evidence indexes,
 and a long-identifier/HTML-escaping stress case. At widths of 1280 and
 320 CSS pixels, the checks exercise:
 
@@ -56,7 +56,7 @@ Checking a CSS outline does not establish adequate contrast in every browser or 
 The four negative controls cover those four mechanisms, not every possible accessibility defect.
 
 Local validation on November 22, 2026 observed one initial ArrowRight failure on an unchanged
-policy report. A fresh run passed the unchanged assertions across all seventeen reports; the
+policy report. A fresh run passed the unchanged assertions across the then-current seventeen reports; the
 cause of the first failure is not established. Failure diagnostics now include focus, scroll
 dimensions, and element bounds. There is no automatic whole-test retry or suppression: a future
 recurrence must be investigated, not treated as a pass. This remains a browser-test limitation.

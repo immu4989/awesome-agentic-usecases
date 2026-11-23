@@ -348,6 +348,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Reserve conditional uncertainty across every predeclared candidate and subgroup")
     sub.add_parser("paired-review", add_help=False,
                    help="Compare matched scenario bundles without hiding newly introduced failures")
+    sub.add_parser("evidence-index", add_help=False,
+                   help="Verify receiver-required packets and explicit byte bindings without combining their outcomes")
     sub.add_parser("repeatability-eval", add_help=False,
                    help="expose intermittent joint-constraint failures across recorded repeats")
     sub.add_parser("operating-eval", add_help=False,
@@ -560,6 +562,9 @@ def main(argv: list[str] | None = None) -> int:
     if raw_args and raw_args[0] == "paired-review":
         from .eval_paired import main as paired_main
         return paired_main(raw_args[1:])
+    if raw_args and raw_args[0] == "evidence-index":
+        from .evidence_index import main as evidence_index_main
+        return evidence_index_main(raw_args[1:])
     if raw_args and raw_args[0] == "repeatability-eval":
         from .eval_repeatability import main as repeatability_main
 

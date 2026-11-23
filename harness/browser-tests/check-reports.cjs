@@ -15,6 +15,7 @@ const REPORTS = [
   'grader-comparison/net-gain-with-regression/review.html',
   'candidate-bounds/pending/review.html', 'candidate-bounds/earlier-failure/review.html',
   'paired-review/net-gain-with-regression/review.html', 'paired-review/fixed-benchmark/review.html',
+  'evidence-index/complete-with-failed-policy/review.html', 'evidence-index/missing-coverage/review.html',
 ];
 
 async function inspectStructure(page) {
@@ -144,6 +145,7 @@ async function main() {
         const screenshotName = {
           'public/budget-matrix/matrix.html': 'matrix', 'stress/review.html': 'stress',
           'paired-review/net-gain-with-regression/review.html': 'paired',
+          'evidence-index/complete-with-failed-policy/review.html': 'evidence-index',
         }[relative];
         if (screenshots && screenshotName) {
           await page.evaluate(() => window.scrollTo(0, 0));

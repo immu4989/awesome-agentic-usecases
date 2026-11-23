@@ -12,6 +12,7 @@ from aau_harness.eval_pack import create_pack, verify_pack
 from aau_harness.grader_compare_demo import create_demo as grader_comparison_demo
 from aau_harness.inspect_demo import create_demo as inspect_demo
 from aau_harness.paired_demo import create_demo as paired_demo
+from aau_harness.evidence_index_demo import create_demo as evidence_index_demo
 from aau_harness.reference_demo import create_demo as reference_demo
 
 
@@ -35,6 +36,7 @@ def create_fixtures(directory):
     grader_comparison_demo(directory / 'grader-comparison')
     candidate_bounds_demo(directory / 'candidate-bounds')
     paired_demo(directory / 'paired-review')
+    evidence_index_demo(directory / 'evidence-index')
     policy, baseline, candidate, diagnostics = deepcopy(demo_inputs())
     # Long supplied identifiers must wrap in prose while tables retain their own scroll area.
     old = 'completion'
