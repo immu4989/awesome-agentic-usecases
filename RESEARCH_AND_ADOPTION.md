@@ -140,6 +140,14 @@ traces to satisfy these milestones.
 
 ## A useful community invitation
 
+November 22 paired-system follow-up: [Paired candidate review](harness/README.md#compare-paired-systems-without-hiding-new-failures)
+compares complete matched scenario bundles, preserving improvements, newly introduced failures,
+shared passes, and shared failures. Optional exact conditional McNemar inference uses a predeclared
+two-system/group family with Bonferroni adjustment; repeated runs never enlarge the paired sample.
+Fixed benchmarks receive no p-values. Source bytes, summary mismatches, and failed repeats remain
+available in an offline replayable packet. This is a diagnostic, not equivalence, practical-importance
+evidence, an effect-size interval, a causal claim, or an acquisition/deployment decision.
+
 November 20 native-producer follow-up: the [Inspect interoperability exercise](harness/compatibility/inspect/README.md)
 executes pinned Inspect `0.3.291` with fixed mock tasks, checking native JSON scores/census, an official
 binary-format round trip, strict rejection of interrupted evidence, and replay of its diagnostic.
@@ -152,8 +160,8 @@ all-version support, or evidence of government adoption.
 
 November 19 report-access follow-up: [Offline report interaction checks](harness/browser-tests/README.md)
 centralize named keyboard-scroll groups and row/column semantics across the principal review reports,
-add policy section navigation, and exercise fifteen fixed synthetic reports at desktop and narrow widths,
-including the subsequent paired-grader and candidate-family reports.
+add policy section navigation, and exercise seventeen fixed synthetic reports at desktop and narrow widths,
+including the subsequent paired-grader, candidate-family, and paired-system reports.
 Deliberately broken focus/name/header/reflow controls must be detected. The public synthetic packets
 are regenerated with their matching manifests and archives; source scores and policy outcomes do not
 change. This is targeted Chromium behavior testing, not assistive-technology usability evidence or

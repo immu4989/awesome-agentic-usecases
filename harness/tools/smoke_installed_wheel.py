@@ -495,6 +495,24 @@ write_json(responses, Path('service-responses.json'))
         run([cli, "failure-bound-pack", "verify", "bound-pack"], expected=2)
         run([cli, "failure-bound-demo", "--out", "failure-demo"])
         run([cli, "failure-bound-demo", "--out", "failure-demo"], expected=2)
+        run([cli, "paired-review", "demo", "--out", "paired-demo"])
+        run([cli, "paired-review", "demo", "--out", "paired-demo"], expected=2)
+        for name in ("net-gain-with-regression", "fixed-benchmark", "same-recorded-outcomes", "reversed-comparison"):
+            pair_packet = root / "paired-demo" / name
+            pair_pin = hashlib.sha256((pair_packet / "plan.json").read_bytes()).hexdigest()
+            run([cli, "paired-review", "verify", pair_packet, "--plan-sha256", pair_pin])
+        run([cli, "paired-review", "create", pair_packet / "plan.json", pair_packet / "baseline.json",
+             pair_packet / "candidate.json", "--plan-sha256", pair_pin, "--out", "paired-copy"])
+        run([cli, "paired-review", "verify", pair_packet, "--plan-sha256", "0" * 64], expected=2)
+        paired = json.loads((root / "paired-demo/net-gain-with-regression/report.json").read_bytes())
+        fixed_pair = json.loads((root / "paired-demo/fixed-benchmark/report.json").read_bytes())
+        if (paired["scopes"][0]["regressed"] != 1 or paired["scopes"][0]["scenario_count"] != 12
+                or paired["scopes"][0]["bonferroni_adjusted_p"]["value"] != 0.0234375
+                or fixed_pair["scopes"][0]["two_sided_exact_p"] is not None):
+            raise RuntimeError("paired comparison hid regressions, counted repeats as pairs, or inferred from a benchmark")
+        with (pair_packet / "review.html").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "paired-review", "verify", pair_packet, "--plan-sha256", pair_pin], expected=2)
         run([cli, "candidate-bounds", "demo", "--out", "candidate-bound-demo"])
         run([cli, "candidate-bounds", "demo", "--out", "candidate-bound-demo"], expected=2)
         for name in ("pending", "complete", "fixed-benchmark", "earlier-failure"):

@@ -14,6 +14,7 @@ const REPORTS = [
   'inspect/diagnostic/review.html', 'stress/review.html',
   'grader-comparison/net-gain-with-regression/review.html',
   'candidate-bounds/pending/review.html', 'candidate-bounds/earlier-failure/review.html',
+  'paired-review/net-gain-with-regression/review.html', 'paired-review/fixed-benchmark/review.html',
 ];
 
 async function inspectStructure(page) {
@@ -87,7 +88,11 @@ async function exerciseKeyboard(page) {
         if (await group.evaluate(el => el.scrollLeft > 0)) { moved = true; break; }
         await new Promise(resolve => setTimeout(resolve, 50));
       }
-      assert.ok(moved, `arrow key did not scroll table ${i} in ${page.url()}`);
+      const state = moved ? null : await group.evaluate(el => ({
+        scrollLeft: el.scrollLeft, scrollWidth: el.scrollWidth, clientWidth: el.clientWidth,
+        focused: document.activeElement === el, rect: el.getBoundingClientRect().toJSON(),
+      }));
+      assert.ok(moved, `arrow key did not scroll table ${i} in ${page.url()}: ${JSON.stringify(state)}`);
       scrolled++;
     }
     await page.keyboard.press('Tab');
@@ -136,9 +141,13 @@ async function main() {
         await page.locator('.scroll').first().focus();
         assert.ok(parseFloat(await page.locator('.scroll').first().evaluate(el => getComputedStyle(el).outlineWidth)) >= 2);
         await page.emulateMedia({ forcedColors: 'none' });
-        if (screenshots && ['public/budget-matrix/matrix.html', 'stress/review.html'].includes(relative)) {
+        const screenshotName = {
+          'public/budget-matrix/matrix.html': 'matrix', 'stress/review.html': 'stress',
+          'paired-review/net-gain-with-regression/review.html': 'paired',
+        }[relative];
+        if (screenshots && screenshotName) {
           await page.evaluate(() => window.scrollTo(0, 0));
-          await page.screenshot({ path: path.join(screenshots, `${relative.startsWith('stress') ? 'stress' : 'matrix'}-${width}.png`) });
+          await page.screenshot({ path: path.join(screenshots, `${screenshotName}-${width}.png`) });
         }
       }
     }

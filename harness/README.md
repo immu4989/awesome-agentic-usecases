@@ -3708,6 +3708,87 @@ history. Copies renamed as new scenarios do not become independent observations.
 budgets, affected-user feedback, and human review remain separate. Available from this checkout or
 its local wheel; not included in the currently documented PyPI 1.6.0 release.
 
+### Compare paired systems without hiding new failures
+
+`aau paired-review` compares **two fixed systems on the same complete scenario bundles**. It
+preserves both corrected baseline failures and newly introduced candidate failures. It does not
+turn a net gain or a small p-value into a purchase, deployment, or safety decision.
+
+```bash
+aau paired-review demo --out /tmp/my-paired-comparison
+```
+
+Open `net-gain-with-regression/review.html` and read the generated guide. Four no-key synthetic
+packets show a net gain with an assisted-path regression, the same data as a fixed benchmark,
+identical recorded outcomes, and the reversed comparison. Use the current trusted checkout/local
+wheel, not the older public PyPI release. No model execution or user-data collection occurs.
+
+The constructed example has 12 matched scenarios with two repeats each: ten improvements, one
+regression, and one shared pass. Later passing repeats do not erase earlier failures. Under the
+example's **hypothetical** IID declaration, the exact two-sided p-value is 0.01171875; two declared
+scopes give a Bonferroni-adjusted value of 0.0234375. The assisted-path regression is still shown.
+Declaring the identical cases a fixed benchmark withholds all p-values. Identical outcomes give
+p = 1, not evidence of equivalence. These numbers describe constructed arithmetic, not a real system.
+
+For separately authorized evidence, independently review and retain the exact plan-byte hash:
+
+```bash
+aau paired-review create approved-plan.json baseline.json candidate.json \
+  --plan-sha256 "$APPROVED_PLAN_SHA256" --out paired-packet
+aau paired-review verify paired-packet --plan-sha256 "$APPROVED_PLAN_SHA256"
+```
+
+Both commands return 0 when the diagnostic recomputes—even when the candidate introduces failures.
+Invalid input, a mismatched pin, an existing output, or packet tampering returns 2. Do not interpret
+exit 0 as policy approval. No source is executed, repaired, filtered, or silently imputed.
+
+The `aau-paired-candidate-plan/1.0` plan has exactly these fields (the demo provides editable examples):
+
+- `scenario_ids`, `n_repeats`, `criteria`: 1–500 unique scenarios, at most 10,000 observations per
+  system, and 1–10 joint `{metric, direction, limit}` obligations. Every metric must be present
+  in every planned repeat. A bundle fails if **any** criterion fails in **any** repeat.
+- `baseline`, `candidate`: each contains a distinct `candidate_id` and its `config_sha256`.
+  Each input must have the corresponding evaluation context, identical planned `scenario_sha256`
+  and `scoring_sha256`, and a complete matched census. Fingerprints bind declarations, not genuine
+  execution, equivalence of operational conditions, scoring validity, or independent cases.
+- `groups`: up to 19 `{group_id, scenario_ids}` groups, plus mandatory `overall`. Groups may
+  overlap but must be nonempty, uniquely named, and contain only planned scenarios.
+- `sampling_design`, `sampling_basis`: either `fixed_benchmark` (descriptive counts only) or
+  `declared_iid_fixed_horizon` with an explicit reviewable explanation. The tool does not verify
+  sampling, preregistration, or independence; do not relabel a convenience benchmark to obtain inference.
+- `family_significance_level`: 0.000001–0.5, chosen before observing outcomes. This is an error-rate
+  threshold for the declared hypothesis family, not the probability that either system is safe.
+
+For each scope, the report retains all four transitions, failed-repeat details, signed observed
+failure-rate difference (candidate minus baseline), raw p-value and family-adjusted p-value. Given
+`b` improvements and `c` regressions, the exact conditional test is
+`min(1, 2 * sum(comb(b+c, k), k=0..min(b,c)) / 2**(b+c))`; no discordance gives 1.
+This implementation uses the exact binomial tail for every supported count, not a chi-square
+approximation or mid-p. Adjusted p is `min(1, scope_count * p)`; its comparison to the declared
+level uses rational arithmetic. JSON retains exact numerator/denominator strings alongside display
+floats. The adjustment needs no independence between overlapping scopes, but IID paired bundles
+within each scope and stable systems/scoring remain unverified assumptions. Repeats are never
+treated as additional independent pairs.
+
+The six-file packet retains original plan/baseline/candidate bytes, JSON, script-free HTML, and
+a manifest; verification replays every byte with a matching trusted harness and external plan pin.
+Audit mismatches and unreviewed metrics remain visible. Raw records may be sensitive: review the
+whole packet before disclosure. No anonymization or permission to share is implied.
+
+This is **not** an equivalence/noninferiority test, effect-size interval, causal experiment, ranking,
+or acceptable-absolute-risk assessment. A detected difference may be practically irrelevant; a
+non-detected difference may reflect low power. It does not correct for extra system comparisons,
+adaptive tuning, repeated looks, benchmark reuse, or selection after seeing results. Predeclare a
+broader design with qualified statistical review when those are required. Use separate absolute
+risk, policy, cost, accessibility, and human-review evidence for consequential decisions.
+
+Research checked November 22, 2026: [NIST's McNemar guidance](https://itl.nist.gov/div898/software/dataplot/refman1/auxillar/mcnemar.htm)
+describes paired binary outcomes and the conditional binomial test; its
+[Bonferroni discussion](https://www.itl.nist.gov/div898/handbook/prc/section4/prc463.htm)
+explains the finite-family union-bound principle. [GAO's AI acquisition review](https://files.gao.gov/reports/GAO-26-107859/index.html)
+motivates explicit requirements and testing proposed solutions. The paired review is our bounded
+implementation choice, not a requirement prescribed by GAO or an endorsement by these sources.
+
 ### Reserve uncertainty across all planned candidates
 
 Evaluating several systems and reporting only a favorable result is not the same experiment as
