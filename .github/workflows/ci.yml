@@ -68,6 +68,21 @@ jobs:
           cp harness/tools/check_inspect_exporter.py "$probe_dir/check_inspect_exporter.py"
           cd "$probe_dir"
           env -i PATH=/usr/bin:/bin LANG=C.UTF-8 "$probe_dir/venv/bin/python" "$probe_dir/check_inspect_exporter.py" --out "$probe_dir/results"
+      - name: Exercise locked native Promptfoo exports with network-denial tripwires
+        run: |
+          promptfoo_probe=$(mktemp -d "$RUNNER_TEMP/aau-promptfoo-probe.XXXXXX")
+          cp harness/compatibility/promptfoo/package.json harness/compatibility/promptfoo/package-lock.json "$promptfoo_probe/"
+          cp harness/compatibility/promptfoo/produce.mjs harness/compatibility/promptfoo/network-guard.mjs harness/compatibility/promptfoo/network-guard.test.mjs "$promptfoo_probe/"
+          cp harness/tools/check_promptfoo_exporter.py "$promptfoo_probe/check_promptfoo_exporter.py"
+          python -m venv "$promptfoo_probe/venv"
+          "$promptfoo_probe/venv/bin/python" -m pip --isolated install --no-index --no-deps --disable-pip-version-check "$RUNNER_TEMP"/aau-offline-dist/aau_harness-*.whl
+          cd "$promptfoo_probe"
+          node --version
+          npm --version
+          npm ci --ignore-scripts --no-audit --no-fund
+          node --test network-guard.test.mjs
+          env -i PATH="$PATH" LANG=C.UTF-8 node produce.mjs --out "$promptfoo_probe/exports"
+          env -i PATH=/usr/bin:/bin LANG=C.UTF-8 "$promptfoo_probe/venv/bin/python" check_promptfoo_exporter.py --source "$promptfoo_probe/exports" --out "$promptfoo_probe/checked"
       - name: Check offline report keyboard interaction and narrow-screen reflow
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/aau-report-browsers

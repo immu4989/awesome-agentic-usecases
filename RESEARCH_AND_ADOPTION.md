@@ -180,6 +180,16 @@ Fixed benchmarks receive no p-values. Source bytes, summary mismatches, and fail
 available in an offline replayable packet. This is a diagnostic, not equivalence, practical-importance
 evidence, an effect-size interval, a causal claim, or an acquisition/deployment decision.
 
+November 24 native-producer follow-up: the [Promptfoo compatibility exercise](harness/compatibility/promptfoo/README.md)
+executes locked Promptfoo `0.126.0` with fixed synthetic local providers and deterministic
+assertions. Four native exports exercise complete scores, absent named metrics, execution
+errors in an unselected column, and repeated observations. Seven importer/replay checks use
+the installed AAU wheel; mapping controls are fixed independently of the received rows.
+Network-denial tripwires recorded and blocked a telemetry-disabled notification attempt even
+with the disable flag set. This is an observed pinned-release behavior, not zero attempted
+network traffic or an OS-enforced air gap. Native files remain local. Broader producer coverage,
+independent reproduction, scoring validity, and approved handling of real evidence remain pending.
+
 November 20 native-producer follow-up: the [Inspect interoperability exercise](harness/compatibility/inspect/README.md)
 executes pinned Inspect `0.3.291` with fixed mock tasks, checking native JSON scores/census, an official
 binary-format round trip, strict rejection of interrupted evidence, and replay of its diagnostic.

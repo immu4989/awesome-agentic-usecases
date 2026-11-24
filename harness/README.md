@@ -136,6 +136,12 @@ The first compatibility regression retains an unchanged upstream export whose me
 Promptfoo `0.118.10`; see its [source, byte hash, and license](tests/fixtures/promptfoo/README.md).
 This is one observed fixture, not all-version compatibility or an independent reproduction.
 
+A separate [native producer exercise](compatibility/promptfoo/README.md) executes locked
+Promptfoo `0.126.0` with fixed local providers and assertions. Four native exports test exact
+scores, missing metrics, provider errors, and repeated rows; seven importer/replay checks run
+against the installed AAU wheel. Its network tripwires also record a blocked opt-out notification
+attempt. This is bounded compatibility evidence, not model performance or an OS air-gap claim.
+
 ```bash
 aau promptfoo-eval demo --out /tmp/aau-promptfoo-example
 ```
