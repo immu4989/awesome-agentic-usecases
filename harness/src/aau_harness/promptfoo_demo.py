@@ -45,6 +45,10 @@ def create_demo(directory):
     error = deepcopy(source)
     error['results']['results'][0].update(failureReason=2, success=False, error='Constructed provider failure')
     error['results']['stats'].update(successes=4, errors=1)
+    incomplete = deepcopy(error)
+    incomplete['results']['results'].pop()
+    incomplete['results']['results'].append(deepcopy(incomplete['results']['results'][1]))
+    incomplete['results']['results'].append({'testIdx': 99, 'promptIdx': 0, 'failureReason': 2, 'success': False})
     guide = f'''# A failed assertion is still a result
 
 This is a constructed Promptfoo-format example, not a Promptfoo or model execution.
@@ -60,6 +64,9 @@ aau promptfoo-eval create plan.json source.json --plan-sha256 {pin} --out anothe
 # Both commands below must exit 2; use a new destination each time.
 aau promptfoo-eval create plan.json missing-row.json --plan-sha256 {pin} --out rejected-missing
 aau promptfoo-eval create plan.json execution-error.json --plan-sha256 {pin} --out rejected-error
+# Both diagnostic commands exit 1: a verified packet with findings, not invalid input.
+aau promptfoo-eval verify-diagnostic diagnostic --plan-sha256 {pin}
+aau promptfoo-eval diagnose plan.json incomplete-source.json --plan-sha256 {pin} --out another-diagnostic
 ```
 
 Inspect converted/conversion.json for row pointers, selected/unprojected columns, and metric coverage.
@@ -74,11 +81,22 @@ For a real review, approve the mappings independently and retain that plan hash 
 Use the existing evaluation-review workflow for policy checks; verification with --evaluation can
 check that a downstream evaluation.json still matches this converted source. Context and operating
 measurements remain unavailable. Hashes do not authenticate the log or establish reference correctness.
+
+Open diagnostic/review.html for a separate deliberately incomplete delivery: one missing pair,
+one duplicate pair, four unique pairs, and an outside-plan row. An execution error in column 0
+coexists with recorded scores. All seven supplied rows remain visible; none is selected as a
+replacement attempt. Stale summary counts remain findings. This packet contains no evaluation.json.
+Diagnostic exit codes are 0 for no findings (not quality acceptance), 1 for retained review findings,
+and 2 for invalid inputs or failed verification. Original data is retained, not sanitized.
 '''
     directory.mkdir(parents=True, exist_ok=False)
     for name, raw in {'plan.json': plan_raw, 'source.json': source_raw, 'missing-row.json': rendered(missing),
-                      'execution-error.json': rendered(error), 'README.md': guide.encode()}.items():
+                      'execution-error.json': rendered(error), 'incomplete-source.json': rendered(incomplete),
+                      'README.md': guide.encode()}.items():
         with (directory / name).open('xb') as stream:
             stream.write(raw)
     create_promptfoo_pack(plan_raw, source_raw, directory / 'converted', plan_sha256=pin)
     verify_promptfoo_pack(directory / 'converted', plan_sha256=pin)
+    from .promptfoo_diagnostic import create_diagnostic, verify_diagnostic
+    create_diagnostic(plan_raw, rendered(incomplete), directory / 'diagnostic', plan_sha256=pin)
+    verify_diagnostic(directory / 'diagnostic', plan_sha256=pin)

@@ -138,7 +138,7 @@ This is one observed fixture, not all-version compatibility or an independent re
 
 A separate [native producer exercise](compatibility/promptfoo/README.md) executes locked
 Promptfoo `0.126.0` with fixed local providers and assertions. Four native exports test exact
-scores, missing metrics, provider errors, and repeated rows; seven importer/replay checks run
+scores, missing metrics, provider errors, and repeated rows; nine importer/diagnostic/replay checks run
 against the installed AAU wheel. Its network tripwires also record a blocked opt-out notification
 attempt. This is bounded compatibility evidence, not model performance or an OS air-gap claim.
 
@@ -214,6 +214,55 @@ NIST's [AI RMF Measure playbook](https://airc.nist.gov/airmf-resources/playbook/
 documenting metrics, tests, and measurement limits. Our inference is to preserve native source evidence
 and explicit mappings instead of relying on aggregate success claims. This does not establish AI RMF
 conformance, government adoption, or operational benefit.
+
+## Review rejected Promptfoo evidence without repairing it
+
+`aau promptfoo-eval diagnose` uses the **same independently pinned mapping plan** as the
+strict converter, but produces a separate diagnostic packet rather than evaluation scores.
+It helps a receiving reviewer distinguish missing evidence, ambiguous attempts, and recorded
+execution failures without deleting inconvenient rows to make an import succeed.
+
+```bash
+aau promptfoo-eval diagnose plan.json results.json --plan-sha256 APPROVED_PLAN_SHA256 --out diagnostic
+aau promptfoo-eval verify-diagnostic diagnostic --plan-sha256 APPROVED_PLAN_SHA256
+```
+
+The five files are original `plan.json` and `source.json`, derived `diagnostic.json`, a script-free
+`review.html`, and `manifest.json`. Verification captures bounded regular files and recomputes
+every byte. There is **no `evaluation.json`**. Exit **1** means a verified diagnostic with review
+findings; **0** means no diagnostic findings, not acceptable quality; **2** means unsupported
+input or failed verification. Existing output directories, extra files, and symlinks are rejected.
+
+The report includes:
+
+- Every planned test/column pair, its missing/unique/duplicate state, and all source positions.
+- Every supplied row, including malformed, duplicate, and outside-plan rows; findings include
+  execution/response errors, inconsistent success/grading, identity drift, duplicate IDs, and
+  unsupported repeat markers. The selected column never hides errors in other columns.
+- Availability of mapped scores, keeping absent, null, invalid, and available distinct. An
+  available score on an errored row is not a valid evaluation result.
+- Export-level prompt/repeat/count findings and the **unchanged converter's** first rejection.
+  Recorded category `NONE=0` is not independently interpreted as a pass; success consistency
+  is checked separately. Counts are supplied-row categories, not independent cases or rates.
+
+The existing no-key demo now includes `diagnostic/review.html`: seven supplied rows retain one
+missing planned pair, one duplicate pair, four unique pairs, and an outside-plan row. The
+[native producer exercise](compatibility/promptfoo/README.md) also checks actual provider-error
+and repeated exports. In that pinned producer, repeat-expanded indices are outside the fixed
+two-test plan; this tool does not infer new tests or repeat lineage from their order.
+
+This bounded profile accepts version-3 envelopes with a declared producer, valid pinned plan,
+and at most 10,000 supplied rows. Inputs and each output member are capped at 2 MB; expanded
+diagnostics can exceed the cap even for smaller inputs and are rejected before writing. Unknown
+fields remain in the source, not interpreted as complete retry/edit history. No supplied code,
+assertion, provider, model, URL, or attachment executes. Raw evidence is retained, **not sanitized**.
+
+Research checked November 24, 2026: the pinned upstream
+[failure categories](https://github.com/promptfoo/promptfoo/blob/0.126.0/src/types/results.ts)
+distinguish assertion failures and other errors; `NONE` also covers uncertain failure reasons.
+NIST's [AI RMF overview](https://www.nist.gov/itl/ai-risk-management-framework) describes a voluntary
+risk-management framework. Our engineering inference is to keep incomplete measurement evidence
+reviewable, not to assert RMF conformity, agency suitability, authentic execution, or public benefit.
 
 ## Received an evidence folder? Start with one intake command
 

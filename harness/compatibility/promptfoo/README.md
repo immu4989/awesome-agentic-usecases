@@ -6,7 +6,7 @@ exports against AAU's offline importer. It is not a live-model benchmark. Prompt
 an AAU runtime dependency: ordinary `aau promptfoo-eval` imports never execute received
 provider code, assertions, or configuration.
 
-## Four exports, seven checks
+## Four exports, nine checks
 
 | Native export | Required importer behavior |
 | --- | --- |
@@ -15,8 +15,9 @@ provider code, assertions, or configuration.
 | Provider error in the unselected column | Reject the complete delivery, even when the selected column passed |
 | Two repetitions of each test | Reject against the predeclared two-test inventory; do not count repeated observations as new independent cases |
 
-Those are five projection/rejection checks. Two further controls reject a wrong mapping pin
-and a changed derived evaluation. Every successful pack preserves the original export bytes
+Those are five projection/rejection checks. Two diagnostic checks retain the rejected provider-error
+and repeated exports, account for all rows, and replay without producing an evaluation. Two further
+controls reject a wrong mapping pin and a changed derived evaluation. Every successful pack preserves the original export bytes
 and replays with its independently supplied mapping hash. The expected inventory and prompt
 identities are fixed before reading exports, not reconstructed from whatever rows arrived.
 The checker first verifies that the exporter actually produced each intended state: an
@@ -58,7 +59,7 @@ and platform-specific dependency selection are not a hermetic environment attest
 
 `exports/producer.json` records the producer/Node versions, platform, code/lock hashes,
 source hashes, native outcome counts, and blocked network attempts. `checked/compatibility.json`
-records seven checks and the producer receipt hash. Raw exports remain under both output
+records nine checks and the producer receipt hash. Raw exports remain under both output
 trees; deliberately corrupted replay evidence is labeled `tampered-negative-control`.
 Timestamps and generated IDs can vary: this checks fixed outcomes and exact preservation
 within a run, not byte-identical exports across independent runs.

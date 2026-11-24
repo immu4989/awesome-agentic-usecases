@@ -12,6 +12,7 @@ const REPORTS = [
   'public/budget-matrix/matrix.html', 'public/retry-earlier-harm/review/review.html',
   'reference/packet/review.html', 'coverage/gap/review.html',
   'inspect/diagnostic/review.html', 'stress/review.html',
+  'promptfoo/diagnostic/review.html',
   'grader-comparison/net-gain-with-regression/review.html',
   'candidate-bounds/pending/review.html', 'candidate-bounds/earlier-failure/review.html',
   'paired-review/net-gain-with-regression/review.html', 'paired-review/fixed-benchmark/review.html',
@@ -149,6 +150,7 @@ async function main() {
           'paired-review/net-gain-with-regression/review.html': 'paired',
           'evidence-index/complete-with-failed-policy/review.html': 'evidence-index',
           'evaluation-design/planned/review.html': 'evaluation-design',
+          'promptfoo/diagnostic/review.html': 'promptfoo-diagnostic',
         }[relative];
         if (screenshots && screenshotName) {
           await page.evaluate(() => window.scrollTo(0, 0));

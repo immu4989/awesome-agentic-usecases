@@ -276,6 +276,14 @@ def main(argv=None):
     verify.add_argument('directory', type=Path)
     verify.add_argument('--plan-sha256', required=True)
     verify.add_argument('--evaluation', type=Path)
+    diagnose = commands.add_parser('diagnose', help='retain incomplete evidence without exporting evaluation scores')
+    diagnose.add_argument('plan', type=Path)
+    diagnose.add_argument('source', type=Path)
+    diagnose.add_argument('--plan-sha256', required=True)
+    diagnose.add_argument('--out', type=Path, required=True)
+    diagnostic = commands.add_parser('verify-diagnostic')
+    diagnostic.add_argument('directory', type=Path)
+    diagnostic.add_argument('--plan-sha256', required=True)
     demo = commands.add_parser('demo')
     demo.add_argument('--out', type=Path, required=True)
     args = parser.parse_args(argv)
@@ -285,6 +293,15 @@ def main(argv=None):
             create_demo(args.out)
             print('Created constructed Promptfoo-format demo; no exporter or model executed.')
             return 0
+        if args.command in ('diagnose', 'verify-diagnostic'):
+            from .promptfoo_diagnostic import create_diagnostic, verify_diagnostic
+            if args.command == 'diagnose':
+                create_diagnostic(_read(args.plan), _read(args.source), args.out, plan_sha256=args.plan_sha256)
+                report = verify_diagnostic(args.out, plan_sha256=args.plan_sha256)
+            else:
+                report = verify_diagnostic(args.directory, plan_sha256=args.plan_sha256)
+            print(f"Promptfoo diagnostic verified: {report['status']}; {report['recorded_rows']} recorded rows; no evaluation exported.")
+            return 1 if report['status'] == 'review_required' else 0
         if args.command == 'create':
             create_promptfoo_pack(_read(args.plan), _read(args.source), args.out, plan_sha256=args.plan_sha256)
             report = verify_promptfoo_pack(args.out, plan_sha256=args.plan_sha256)

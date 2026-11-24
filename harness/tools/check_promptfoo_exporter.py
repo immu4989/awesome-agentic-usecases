@@ -7,6 +7,7 @@ import shutil
 
 from aau_harness.agent_bom import AgentBomError, digest, rendered, write_json
 from aau_harness.eval_promptfoo import _json, _read, create_promptfoo_pack, promptfoo_payloads, verify_promptfoo_pack
+from aau_harness.promptfoo_diagnostic import create_diagnostic, verify_diagnostic
 
 
 VARIANTS = ('complete', 'missing-named-score', 'provider-error', 'repeated')
@@ -127,6 +128,19 @@ def exercise(source_dir, out):
         else:
             raise ValueError('unsupported native export was silently accepted')
         checks.append({'case': variant, 'status': 'intended_native_state_rejected'})
+        directory = out / f'{variant}-diagnostic'
+        diagnostic = create_diagnostic(plan_raw, sources[variant], directory, plan_sha256=digest(plan_raw))
+        if (verify_diagnostic(directory, plan_sha256=digest(plan_raw)) != diagnostic
+                or diagnostic['conversion_eligibility']['status'] != 'rejected_by_current_converter'
+                or (directory / 'source.json').read_bytes() != sources[variant]
+                or (directory / 'evaluation.json').exists()):
+            raise ValueError('native diagnostic repaired evidence or did not replay')
+        if variant == 'provider-error':
+            if diagnostic['row_marker_counts'].get('execution_error_recorded') != 2 or diagnostic['pair_counts']['unique'] != 4:
+                raise ValueError('native diagnostic hid provider errors')
+        elif diagnostic['row_marker_counts'].get('outside_plan') != 4 or diagnostic['recorded_rows'] != 8:
+            raise ValueError('native diagnostic reinterpreted repeated tests as new planned cases')
+        checks.append({'case': f'{variant}-diagnostic', 'status': 'retained_without_conversion'})
     directory = out / 'complete-column-0'
     pin = digest((directory / 'plan.json').read_bytes())
     try:
@@ -147,7 +161,7 @@ def exercise(source_dir, out):
         raise ValueError('changed derived evaluation accepted')
     report = {'probe_version': 'aau-promptfoo-import-compatibility/1.0', 'aau_harness_version': version('aau-harness'),
               'producer_receipt_sha256': digest(producer_raw), 'checks': checks,
-              'boundary': 'Four fixed native-export states, five projection/rejection checks and two replay controls. '
+              'boundary': 'Four fixed native-export states, five projection/rejection checks, two diagnostic checks and two replay controls. '
                           'Not a model evaluation, independent reproduction, source authentication, all-version support, '
                           'OS network sandbox, sanitized sharing artifact, or agency approval.'}
     write_json(report, out / 'compatibility.json')

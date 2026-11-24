@@ -15,6 +15,7 @@ from aau_harness.inspect_demo import create_demo as inspect_demo
 from aau_harness.paired_demo import create_demo as paired_demo
 from aau_harness.evidence_index_demo import create_demo as evidence_index_demo
 from aau_harness.reference_demo import create_demo as reference_demo
+from aau_harness.promptfoo_demo import create_demo as promptfoo_demo
 
 
 def create_fixtures(directory):
@@ -34,6 +35,7 @@ def create_fixtures(directory):
     reference_demo(directory / 'reference')
     coverage_demo(directory / 'coverage')
     inspect_demo(directory / 'inspect')
+    promptfoo_demo(directory / 'promptfoo')
     grader_comparison_demo(directory / 'grader-comparison')
     candidate_bounds_demo(directory / 'candidate-bounds')
     paired_demo(directory / 'paired-review')

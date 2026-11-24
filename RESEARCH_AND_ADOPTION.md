@@ -140,6 +140,15 @@ traces to satisfy these milestones.
 
 ## A useful community invitation
 
+November 24 incomplete-evidence follow-up: [Promptfoo diagnostic review](harness/README.md#review-rejected-promptfoo-evidence-without-repairing-it)
+preserves the entire planned test/column census and every supplied row, including malformed,
+duplicate, and outside-plan evidence. Errors can coexist with available scores; summary counts
+and repeat markers remain separate findings. The existing strict converter still rejects the same
+unsupported states. The diagnostic has no evaluation output, and exact replay does not authorize
+conversion or deployment. An exhaustive small census oracle and native producer-error/repeat checks
+complement synthetic mutations. This supports reviewing rejected deliveries, not hidden-edit detection,
+complete attempt history, valid grading, independent reproduction, or demonstrated staff savings.
+
 November 22 prospective-design follow-up: [Fixed-horizon evaluation planning](harness/README.md#plan-a-fixed-horizon-evaluation-before-spending-on-runs)
 separates a zero-failure sample reference from the chance of meeting a statistical criterion under
 an assumed nonzero failure rate. Exact integer/rational search covers bounded sample sizes and failure

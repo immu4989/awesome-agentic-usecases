@@ -52,6 +52,17 @@ def smoke(wheel: Path) -> None:
         run([cli, "promptfoo-eval", "demo", "--out", "promptfoo-demo"], expected=2)
         promptfoo_plan = root / "promptfoo-demo/plan.json"
         promptfoo_pin = hashlib.sha256(promptfoo_plan.read_bytes()).hexdigest()
+        run([cli, "promptfoo-eval", "verify-diagnostic", "promptfoo-demo/diagnostic", "--plan-sha256", promptfoo_pin], expected=1)
+        run([cli, "promptfoo-eval", "diagnose", promptfoo_plan, "promptfoo-demo/incomplete-source.json",
+             "--plan-sha256", promptfoo_pin, "--out", "promptfoo-diagnostic-copy"], expected=1)
+        diagnostic = json.loads((root / "promptfoo-demo/diagnostic/diagnostic.json").read_bytes())
+        if (diagnostic["pair_counts"] != {"missing": 1, "unique": 4, "duplicate": 1}
+                or diagnostic["recorded_rows"] != 7 or (root / "promptfoo-demo/diagnostic/evaluation.json").exists()):
+            raise RuntimeError("installed Promptfoo diagnostic lost ambiguity or exported evaluation scores")
+        run([cli, "promptfoo-eval", "verify-diagnostic", "promptfoo-demo/diagnostic", "--plan-sha256", "0" * 64], expected=2)
+        with (root / "promptfoo-demo/diagnostic/review.html").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "promptfoo-eval", "verify-diagnostic", "promptfoo-demo/diagnostic", "--plan-sha256", promptfoo_pin], expected=2)
         run([cli, "promptfoo-eval", "verify", "promptfoo-demo/converted", "--plan-sha256", promptfoo_pin,
              "--evaluation", "promptfoo-demo/converted/evaluation.json"])
         run([cli, "promptfoo-eval", "create", promptfoo_plan, "promptfoo-demo/source.json",
