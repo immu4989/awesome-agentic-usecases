@@ -18,6 +18,7 @@ const REPORTS = [
   'candidate-bounds/pending/review.html', 'candidate-bounds/earlier-failure/review.html',
   'paired-review/net-gain-with-regression/review.html', 'paired-review/fixed-benchmark/review.html',
   'evidence-index/complete-with-failed-policy/review.html', 'evidence-index/missing-coverage/review.html',
+  'evidence-index/inspect-policy-context-gap/review.html', 'evidence-index/promptfoo-rejected-conversion/review.html',
   'evaluation-design/planned/review.html', 'evaluation-design/limited/review.html',
   'evaluation-design/fixed-benchmark/review.html',
 ];

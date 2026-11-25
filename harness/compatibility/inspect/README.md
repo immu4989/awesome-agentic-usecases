@@ -14,6 +14,8 @@ fixed tasks, never a supplied log, task module, provider configuration, or exter
 3. A deliberately interrupted solver produces evidence the strict importer **rejects**.
 4. A separate diagnostic retains that interrupted evidence and verifies without repairing it
    or upgrading its conversion eligibility.
+5. A receiver-pinned source index retains the native interrupted diagnostic while the separately
+   required conversion remains missing; the diagnostic must not substitute for that conversion.
 
 Both successful conversion packs preserve their own raw JSON bytes and replay with the mapping
 plan's SHA-256. The probe also rejects an invented evaluation-context fingerprint. The native
@@ -42,7 +44,7 @@ env -i PATH=/usr/bin:/bin LANG=C.UTF-8 "$probe_dir/venv/bin/python" \
 
 The tool refuses to overwrite an existing output. CI follows this path with its already-built
 local wheel and a separate producer environment; no native logs are uploaded as artifacts.
-`results/compatibility.json` records producer/Python/dependency versions, raw-log hashes, four
+`results/compatibility.json` records producer/Python/dependency versions, raw-log hashes, five
 check outcomes, and the limitations below. Inspect timestamps and UUIDs vary: this asserts the
 fixed projection, census, and rejection behavior, **not** byte-identical independent runs.
 

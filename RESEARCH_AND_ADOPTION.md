@@ -140,6 +140,16 @@ traces to satisfy these milestones.
 
 ## A useful community invitation
 
+November 25 source-linked index follow-up: the [evidence index](harness/README.md#hand-off-separate-reviews-with-a-receiver-pinned-evidence-index)
+now routes four additional flat profiles: Inspect/Promptfoo conversions and diagnostics. Separate
+source, plan, and evaluation byte roles prevent a valid diagnostic for another log or mapping from
+standing in for the requested evidence. A diagnostic can verify while its source remains rejected
+for conversion; required missing conversions stay missing. Policy intake's existing matching-context
+requirement is unchanged, so source imports without that evidence remain incomplete for that request.
+Eight new constructed examples expose those distinctions; native-producer probes exercise interrupted
+delivery retention. This is bounded interoperability and bookkeeping, not reconstructed history,
+independent reproduction, agency adoption, or measured burden reduction.
+
 November 24 Promptfoo handoff follow-up: [Receiver-pinned policy review](harness/README.md#hand-off-promptfoo-exports-through-a-receiver-pinned-policy-review)
 connects both original exports to the existing score-policy, diagnostics, and optional budget layers.
 One independent request pin binds baseline bytes, selected columns, mappings, and requirements;

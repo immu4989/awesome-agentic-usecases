@@ -300,13 +300,13 @@ def test_wrong_outer_pin_rejects_before_untrusted_data(inputs):
         validate_request(raw, '0' * 64)
 
 
-def test_cli_five_synthetic_outcomes_and_replay(tmp_path, capsys):
+def test_cli_synthetic_outcomes_and_replay(tmp_path, capsys):
     directory = tmp_path / 'demo'
     assert main(['evidence-index', 'demo', '--out', str(directory)]) == 0
     assert main(['evidence-index', 'demo', '--out', str(directory)]) == 2
     for packet in sorted(p for p in directory.iterdir() if p.is_dir()):
         pin = digest((packet / 'request.json').read_bytes())
-        expected = 0 if packet.name == 'complete-with-failed-policy' else 1
+        expected = 0 if packet.name == 'complete-with-failed-policy' or packet.name.endswith('-linked-source') else 1
         assert main(['evidence-index', 'verify', str(packet), '--request-sha256', pin]) == expected
         report = json.loads((packet / 'report.json').read_bytes())
         assert report['decision_status'] == 'not_assessed'

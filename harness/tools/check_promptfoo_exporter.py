@@ -9,6 +9,7 @@ from aau_harness.agent_bom import AgentBomError, digest, rendered, write_json
 from aau_harness.eval_promptfoo import _json, _read, create_promptfoo_pack, promptfoo_payloads, verify_promptfoo_pack
 from aau_harness.promptfoo_diagnostic import create_diagnostic, verify_diagnostic
 from aau_harness.promptfoo_review import create_handoff, verify_handoff
+from aau_harness.evidence_index import create_index, verify_index
 
 
 VARIANTS = ('complete', 'missing-named-score', 'provider-error', 'repeated')
@@ -183,10 +184,26 @@ def exercise(source_dir, out):
                 or (directory / 'candidate/source.json').read_bytes() != sources['complete']):
             raise ValueError('native source-to-policy handoff changed source, selection, or expected outcome')
         checks.append({'case': f'native-handoff-column-{selected}', 'status': status})
+    delivery = out / 'index-delivery'
+    shutil.copytree(out / 'provider-error-diagnostic', delivery / 'diagnostic')
+    error_pin = digest(rendered(planned_mapping('provider-error', 0)))
+    request = {'request_version': 'aau-evidence-index-request/1.0', 'purpose': 'Synthetic native provider-error evidence',
+               'items': [{'item_id': name, 'profile': 'promptfoo-' + name, 'purpose': 'Require this native evidence layer',
+                          'controls': {'plan_sha256': error_pin}} for name in ('conversion', 'diagnostic')],
+               'bindings': [{'left': {'item_id': 'conversion', 'role': 'source'},
+                             'right': {'item_id': 'diagnostic', 'role': 'source'}}]}
+    request_raw = rendered(request)
+    index = create_index(request_raw, delivery, out / 'source-index', request_sha256=digest(request_raw))
+    if (verify_index(out / 'source-index', request_sha256=digest(request_raw)) != index
+            or index['exit_code'] != 1 or index['items'][0]['verification_status'] != 'missing'
+            or index['items'][1]['verification_status'] != 'verified'
+            or index['items'][1]['native_report']['conversion_eligibility']['status'] != 'rejected_by_current_converter'):
+        raise ValueError('native provider-error index substituted diagnostic evidence for conversion')
+    checks.append({'case': 'provider-error-source-index', 'status': 'missing_conversion_retained'})
     report = {'probe_version': 'aau-promptfoo-import-compatibility/1.0', 'aau_harness_version': version('aau-harness'),
               'producer_receipt_sha256': digest(producer_raw), 'checks': checks,
               'boundary': 'Four fixed native-export states: five projection/rejection checks, two diagnostics, two replay controls, '
-                          'and two policy handoffs selecting columns of the same synthetic export. '
+                          'two policy handoffs selecting columns of the same synthetic export, and one incomplete source index. '
                           'Not a model evaluation, independent reproduction, source authentication, all-version support, '
                           'OS network sandbox, sanitized sharing artifact, or agency approval.'}
     write_json(report, out / 'compatibility.json')

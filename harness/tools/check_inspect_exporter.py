@@ -5,12 +5,14 @@ from contextlib import contextmanager
 from importlib.metadata import distributions, version
 import json
 from pathlib import Path
+import shutil
 import socket
 import sys
 
 from aau_harness.agent_bom import AgentBomError, digest, rendered
 from aau_harness.eval_inspect import create_inspect_pack, inspect_payloads, verify_inspect_pack
 from aau_harness.inspect_diagnostic import create_diagnostic, verify_diagnostic
+from aau_harness.evidence_index import create_index, verify_index
 
 
 INSPECT_VERSION = '0.3.291'
@@ -164,12 +166,27 @@ def exercise(directory):
         diagnostic = verify_diagnostic(directory / 'interrupted-diagnostic', plan_sha256=digest(plan_raw))
         if diagnostic['conversion_eligibility']['status'] != 'rejected_by_current_converter':
             raise ValueError('diagnostic did not preserve strict rejection')
+        delivery = directory / 'index-delivery'
+        shutil.copytree(directory / 'interrupted-diagnostic', delivery / 'diagnostic')
+        request = {'request_version': 'aau-evidence-index-request/1.0', 'purpose': 'Synthetic native interrupted-source check',
+                   'items': [{'item_id': name, 'profile': 'inspect-' + name, 'purpose': 'Require this native evidence layer',
+                              'controls': {'plan_sha256': digest(plan_raw)}} for name in ('conversion', 'diagnostic')],
+                   'bindings': [{'left': {'item_id': 'conversion', 'role': 'source'},
+                                 'right': {'item_id': 'diagnostic', 'role': 'source'}}]}
+        request_raw = rendered(request)
+        index = create_index(request_raw, delivery, directory / 'source-index', request_sha256=digest(request_raw))
+        if (verify_index(directory / 'source-index', request_sha256=digest(request_raw)) != index
+                or index['exit_code'] != 1 or index['items'][0]['verification_status'] != 'missing'
+                or index['items'][1]['verification_status'] != 'verified'
+                or index['items'][1]['native_report']['conversion_eligibility']['status'] != 'rejected_by_current_converter'):
+            raise ValueError('native interrupted-source index substituted diagnostic evidence for conversion')
         if attempted:
             raise ValueError('producer attempted IP networking')
     report = {'check_version': 'aau-inspect-producer-compatibility/1.0', 'inspect_version': version('inspect_ai'),
               'python_version': sys.version.split()[0], 'producer_model': 'mockllm/model',
               'checks': {'json_projection': True, 'official_eval_roundtrip_projection': True,
-                         'interrupted_import_rejected': True, 'interrupted_diagnostic_verified': True},
+                         'interrupted_import_rejected': True, 'interrupted_diagnostic_verified': True,
+                         'interrupted_index_preserves_missing_conversion': True},
               'plan_sha256': digest(plan_raw), 'raw_sha256': {'json': digest(original), 'eval': digest(native_binary.read_bytes()),
                                                             'roundtrip_json': digest(roundtrip_raw), 'error_json': digest(error_raw)},
               'dependency_versions': dict(sorted((d.metadata['Name'], d.version) for d in distributions())),
@@ -185,7 +202,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         report = exercise(args.out.resolve())
-        print(f'Inspect {report["inspect_version"]}: four mock-producer compatibility checks passed; not live-model evaluation.')
+        print(f'Inspect {report["inspect_version"]}: {len(report["checks"])} mock-producer compatibility checks passed; not live-model evaluation.')
         return 0
     except (ValueError, OSError, RuntimeError) as exc:
         print(f'error: compatibility check failed ({type(exc).__name__}); inspect local diagnostics.', file=sys.stderr)

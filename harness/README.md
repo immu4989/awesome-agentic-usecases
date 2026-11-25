@@ -138,7 +138,7 @@ This is one observed fixture, not all-version compatibility or an independent re
 
 A separate [native producer exercise](compatibility/promptfoo/README.md) executes locked
 Promptfoo `0.126.0` with fixed local providers and assertions. Four native exports test exact
-scores, missing metrics, provider errors, and repeated rows; eleven importer/diagnostic/handoff/replay checks run
+scores, missing metrics, provider errors, and repeated rows; twelve importer/diagnostic/handoff/index/replay checks run
 against the installed AAU wheel. Its network tripwires also record a blocked opt-out notification
 attempt. This is bounded compatibility evidence, not model performance or an OS air-gap claim.
 
@@ -3829,8 +3829,9 @@ its local wheel; not included in the currently documented PyPI 1.6.0 release.
 ### Hand off separate reviews with a receiver-pinned evidence index
 
 `aau evidence-index` assembles a **verified delivery index, not an approval score**. A receiving
-team declares which policy, paired-system, and condition-coverage packets it needs, pins their
-control inputs, and explicitly binds evaluation members that must be identical across reviews.
+team declares which policy, paired-system, condition-coverage, native-source conversion, and
+source-diagnostic packets it needs, pins their control inputs, and explicitly binds members
+that must be identical across reviews.
 Missing submissions, invalid packets, changed controls, and mismatched bindings stay visible.
 A valid packet documenting a failed policy or a coverage gap is not confused with corrupt evidence.
 
@@ -3838,7 +3839,7 @@ A valid packet documenting a failed policy or a coverage gap is not confused wit
 aau evidence-index demo --out /tmp/my-evidence-index
 ```
 
-Read the generated guide and top-level `review.html` inside each of five synthetic examples.
+Read the generated guide and top-level `review.html` inside each of thirteen synthetic examples.
 In `complete-with-failed-policy`, all three packets verify and share exactly the same candidate
 evaluation bytes, but the policy **fails**. Paired improvement and coverage cannot cancel that
 failure. Other examples retain missing coverage, a valid coverage packet for a different
@@ -3866,15 +3867,17 @@ Review and protect that expected hash independently of the supplier. The exact-b
 `bindings`. The generated demo request is an editable contract example, **not** approval for real use.
 Each required item has an `item_id`, `profile`, reviewable `purpose`, and exactly its profile's controls:
 
-| Profile | Receiver-controlled inputs | Bindable evaluation roles |
+| Profile | Receiver-controlled inputs | Bindable member roles |
 |---|---|---|
 | `policy-review` | `controls.intake_request`: a complete existing `aau-evidence-intake-request/1.0` for `evaluation-review`, including all version-required policy/baseline/diagnostic/budget pins | `baseline` → `baseline.json`; `candidate` → `candidate.json` |
 | `paired-review` | `controls.plan_sha256`: independently reviewed paired-plan byte hash | `baseline` → `baseline.json`; `candidate` → `candidate.json` |
 | `coverage-review` | `controls.plan_sha256`: independently reviewed coverage-plan byte hash | `evaluation` → `evaluation.json` |
+| `inspect-conversion`, `promptfoo-conversion` | `controls.plan_sha256`: independently reviewed observation-plan byte hash | `source` → `source.json`; `plan` → `plan.json`; `evaluation` → `evaluation.json` |
+| `inspect-diagnostic`, `promptfoo-diagnostic` | `controls.plan_sha256`: independently reviewed observation-plan byte hash | `source` → `source.json`; `plan` → `plan.json`; **no evaluation role** |
 
 The outer request pin protects the entire nested policy request; its canonical internal hash is
 computed only after the outer pin is checked. No control pin is derived from the delivered packet.
-Only the three trusted installed verifiers are routed; a request cannot supply a path, module,
+Only the seven allowlisted installed profile verifiers are routed; a request cannot supply a path, module,
 command, URL, fallback profile, or alternative verifier. Existing native verification requirements
 remain unchanged, including required budget/diagnostic controls and context checks.
 
@@ -3884,6 +3887,28 @@ receiver controls before their exact member-byte hashes are compared. No binding
 association is asserted**. Baselines need not be the same: the demo explicitly separates a
 historical same-configuration policy baseline from the other system in the paired comparison.
 Never assume a shared identity merely because two files have the same filename or scenario labels.
+
+Source-linked examples, added November 25, 2026, cover **both Inspect and Promptfoo**:
+
+- `EXPORTER-linked-source`: conversion and diagnostic verify with exact source **and** plan
+  bindings. Exit 0 means these two evidence layers were delivered; no policy decision is requested.
+- `EXPORTER-rejected-conversion`: an interrupted/error diagnostic verifies, but the separately
+  requested conversion is missing. The diagnostic retains the converter's rejection; it does not
+  substitute for conversion or generate evaluation scores. Exit 1.
+- `EXPORTER-substituted-source`: a valid diagnostic of another source cannot replace the requested
+  source relationship. The plan matches but the source-byte binding fails. Exit 1.
+- `EXPORTER-policy-context-gap`: conversion and diagnostic source/plan links verify, but the policy
+  intake still lacks required matching execution context. The native policy failure remains visible;
+  the policy item is `receiver_controls_not_matched` and its evaluation binding is not checked. Exit 1.
+  No execution-context fingerprint is invented or requirement waived to complete the index.
+
+To bind a diagnostic to its conversion, request **two separate bindings**, using roles `source`
+and `plan` on both items. Same source bytes do not imply the same metric mapping or selected column.
+The conversion's `evaluation` role can link to other review inputs only after both items fully
+verify with their own controls. A diagnostic-only request may verify a rejected log with exit 0;
+its native conversion rejection remains visible and `decision_status` stays `not_assessed`.
+If conversion is required, declare that item explicitly. Nested source-to-policy handoff folders
+are not flat packets and remain outside this index profile; use their own complete-chain verifier.
 
 Return codes concern **delivery verification only**:
 
@@ -3916,6 +3941,11 @@ organizes oversight around governance, data, performance, and monitoring. [NIST'
 emphasizes documenting measurement choices and unmeasured risks; the page notes an upcoming framework
 revision. Our index is a bounded documentation and source-linking workflow, not an implementation
 of either entire framework or a claim of conformity. Qualified human review remains necessary.
+
+November 25 source-linking research follow-up: NIST's linked Measure guidance calls for documenting
+unmeasured risks and measurement limitations. Inspect documents [log errors, retries, and edits](https://inspect.aisi.org.uk/eval-logs.html).
+Our implementation keeps rejected-source diagnostics independently reviewable and binds only explicit
+member bytes. It does not reconstruct hidden execution history, validate labels, or establish government use.
 
 ### Plan a fixed-horizon evaluation before spending on runs
 

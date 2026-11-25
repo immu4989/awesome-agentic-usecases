@@ -6,7 +6,7 @@ exports against AAU's offline importer. It is not a live-model benchmark. Prompt
 an AAU runtime dependency: ordinary `aau promptfoo-eval` imports never execute received
 provider code, assertions, or configuration.
 
-## Four exports, eleven checks
+## Four exports, twelve checks
 
 | Native export | Required importer behavior |
 | --- | --- |
@@ -22,6 +22,8 @@ and replays with its independently supplied mapping hash. The expected inventory
 identities are fixed before reading exports, not reconstructed from whatever rows arrived. Two further
 policy-handoff checks select opposite columns from the **same synthetic native export**, retaining
 both the met and unmet requested policy outcomes. These are not independent systems or model runs.
+One source-index check retains the native provider-error diagnostic while the separately requested
+conversion remains missing; verified diagnostic evidence must not satisfy a conversion requirement.
 The checker first verifies that the exporter actually produced each intended state: an
 unrelated provider failure cannot accidentally satisfy the negative control.
 
@@ -61,7 +63,7 @@ and platform-specific dependency selection are not a hermetic environment attest
 
 `exports/producer.json` records the producer/Node versions, platform, code/lock hashes,
 source hashes, native outcome counts, and blocked network attempts. `checked/compatibility.json`
-records eleven checks and the producer receipt hash. Raw exports remain under both output
+records twelve checks and the producer receipt hash. Raw exports remain under both output
 trees; deliberately corrupted replay evidence is labeled `tampered-negative-control`.
 Timestamps and generated IDs can vary: this checks fixed outcomes and exact preservation
 within a run, not byte-identical exports across independent runs.

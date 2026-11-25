@@ -551,6 +551,18 @@ write_json(responses, Path('service-responses.json'))
             index_pin = hashlib.sha256((index_packet / "request.json").read_bytes()).hexdigest()
             run([cli, "evidence-index", "verify", index_packet, "--request-sha256", index_pin], expected=expected)
         complete_index = root / "evidence-index-demo/complete-with-failed-policy"
+        for exporter in ("inspect", "promptfoo"):
+            for variant in ("linked-source", "policy-context-gap", "rejected-conversion", "substituted-source"):
+                packet = root / "evidence-index-demo" / f"{exporter}-{variant}"
+                pin = hashlib.sha256((packet / "request.json").read_bytes()).hexdigest()
+                run([cli, "evidence-index", "verify", packet, "--request-sha256", pin], expected=0 if variant == "linked-source" else 1)
+                indexed = json.loads((packet / "report.json").read_bytes())
+                if indexed["decision_status"] != "not_assessed":
+                    raise RuntimeError("source-linked index invented a decision")
+                if variant == "policy-context-gap" and indexed["items"][2]["verification_status"] != "receiver_controls_not_matched":
+                    raise RuntimeError("source-linked index hid missing required context")
+                if variant == "rejected-conversion" and indexed["items"][0]["verification_status"] != "missing":
+                    raise RuntimeError("source-linked index replaced conversion with diagnostic evidence")
         complete_pin = hashlib.sha256((complete_index / "request.json").read_bytes()).hexdigest()
         run([cli, "evidence-index", "create", complete_index / "request.json", complete_index / "evidence",
              "--request-sha256", complete_pin, "--out", "evidence-index-copy"])

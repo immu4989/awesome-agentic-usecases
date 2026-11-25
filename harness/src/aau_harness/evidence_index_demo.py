@@ -111,6 +111,8 @@ def create_demo(directory):
             if report != verify_index(directory / variant, request_sha256=pin):
                 raise ValueError('synthetic index replay differs from creation')
             commands.append(f'aau evidence-index verify {variant} --request-sha256 {pin}  # exit {report["exit_code"]}')
+    from .source_index_demo import add_examples
+    commands.extend(add_examples(directory))
     lines = ['# One handoff does not mean one approval', '',
              'Fixed synthetic packets only. No model, agency data, or measured public benefit.', '',
              '- complete-with-failed-policy: every packet verifies and candidate bytes match, but the policy fails.',
@@ -121,6 +123,14 @@ def create_demo(directory):
              '  Bindings are deliberately byte-exact; even whitespace-only export changes also fail them.',
              '- invalid-comparison: a modified derived report remains in the retained evidence and fails verification. Exit 1.',
              '- changed-controls: a valid policy packet does not match the independently requested baseline pin. Exit 1.', '',
+             'Eight additional source-linked examples cover both Inspect and Promptfoo:',
+             '- EXPORTER-linked-source: conversion and diagnostic source/plan bytes match. No policy decision is requested. Exit 0.',
+             '- EXPORTER-policy-context-gap: conversion and diagnostic verify; policy intake retains unavailable context',
+             '  and a failed authorization policy. The policy item does not match all receiver controls. Exit 1.',
+             '- EXPORTER-rejected-conversion: an interrupted source diagnostic verifies, but required conversion stays missing. Exit 1.',
+             '- EXPORTER-substituted-source: a valid diagnostic of another source cannot stand in for the reviewed source. Exit 1.',
+             'Conversion and diagnostic pins are independently requested. Source equality alone is not mapping equality.',
+             'A verified diagnostic never substitutes for a required conversion or produces an evaluation.', '',
              'Only candidate data is bound across the three reviews. The policy uses a historical same-configuration',
              'baseline; the paired comparison uses a different system. No association between those baselines is asserted.', '',
              'Open only the generated top-level review.html after inspecting the files. Complete original member bytes,',

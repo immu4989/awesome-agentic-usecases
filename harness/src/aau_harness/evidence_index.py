@@ -17,12 +17,20 @@ from .report_html import STYLE, table
 # Closed role names select known members. No requested path, module, command, or URL is executed.
 ROLES = {'policy-review': {'baseline': 'baseline.json', 'candidate': 'candidate.json'},
          'paired-review': {'baseline': 'baseline.json', 'candidate': 'candidate.json'},
-         'coverage-review': {'evaluation': 'evaluation.json'}}
+         'coverage-review': {'evaluation': 'evaluation.json'},
+         'inspect-conversion': {'source': 'source.json', 'plan': 'plan.json', 'evaluation': 'evaluation.json'},
+         'promptfoo-conversion': {'source': 'source.json', 'plan': 'plan.json', 'evaluation': 'evaluation.json'},
+         'inspect-diagnostic': {'source': 'source.json', 'plan': 'plan.json'},
+         'promptfoo-diagnostic': {'source': 'source.json', 'plan': 'plan.json'}}
 BOUNDARY = (
     'Receiver-defined evidence index, not an overall quality score, approved system, procurement decision, '
     'risk acceptance, compliance determination, government adoption, or deployment authorization. Verified '
     'means the declared packet recomputes with its required controls; it can still document a failed '
     'policy, coverage gap, or new regression. Those native outcomes remain separate and require human '
+    'review. A verified source diagnostic can retain a log rejected by conversion; it cannot replace '
+    'a separately requested conversion. Source, mapping-plan, and evaluation byte bindings are distinct; '
+    'sharing a source does not imply sharing a mapping, and sharing evaluated scores does not identify '
+    'the original log. A complete conversion is not score acceptance. No source code is re-executed for '
     'review. Missing and invalid required packets remain visible; no favorable fallback is substituted. '
     'Only explicit bindings compare exact member bytes, not semantic JSON equality, equivalent tasks, '
     'genuine execution, chronology, or identity. Unbound inputs have no asserted cross-packet association. '
@@ -125,6 +133,22 @@ def _verify_item(item, path):
         from .eval_paired import verify_paired_pack
         native = verify_paired_pack(path, plan_sha256=controls['plan_sha256'])
         return native, True, 'paired_diagnostic_not_a_gate', native['status']
+    if profile == 'inspect-conversion':
+        from .eval_inspect import verify_inspect_pack
+        native = verify_inspect_pack(path, plan_sha256=controls['plan_sha256'])
+        return native, True, 'conversion_not_quality', 'complete_projection'
+    if profile == 'promptfoo-conversion':
+        from .eval_promptfoo import verify_promptfoo_pack
+        native = verify_promptfoo_pack(path, plan_sha256=controls['plan_sha256'])
+        return native, True, 'conversion_not_quality', 'complete_projection'
+    if profile == 'inspect-diagnostic':
+        from .inspect_diagnostic import verify_diagnostic
+        native = verify_diagnostic(path, plan_sha256=controls['plan_sha256'])
+        return native, True, 'source_diagnostic_not_conversion', native['status']
+    if profile == 'promptfoo-diagnostic':
+        from .promptfoo_diagnostic import verify_diagnostic
+        native = verify_diagnostic(path, plan_sha256=controls['plan_sha256'])
+        return native, True, 'source_diagnostic_not_conversion', native['status']
     from .coverage_review import verify_coverage_pack
     native = verify_coverage_pack(path, plan_sha256=controls['plan_sha256'])
     return native, True, 'coverage_diagnostic_not_quality', native['status']
@@ -148,7 +172,7 @@ def render_review(report):
             + table('Every receiver-required item and its own outcome',
                     ('Item', 'Profile', 'Purpose', 'Verification', 'Outcome kind', 'Native outcome'), rows,
                     missing_text='Not verified')
-            + table('Explicit exact-byte relationships only', ('Left evaluation', 'Right evaluation', 'Binding status'), bindings)
+            + table('Explicit exact-byte relationships only', ('Left evidence member', 'Right evidence member', 'Binding status'), bindings)
             + '<p>With no binding, no association is asserted. Byte equality is not proof of genuine execution '
               'or appropriate scientific assumptions. See report.json for native findings and retained inventories.</p>'
             '<h2>Interpretation and disclosure limits</h2><p>' + escape(BOUNDARY) + '</p></main></body></html>')

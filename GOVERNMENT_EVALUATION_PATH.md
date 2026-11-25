@@ -71,6 +71,10 @@ synthetic run verifies the mechanism, not mission suitability or deployment auth
 | What did the pilot teach us, including failures? | [Federal AI Lessons Exchange](federal-pilot-kit/lessons/) | Domain validity, disclosure/records review, and which lessons can transfer to another mission |
 
 Do not merge these layers into one “approved” score. A valid evidence pack can document failure.
+The evidence index can also request Inspect/Promptfoo conversions and source diagnostics separately,
+with independent plan pins and distinct source/plan byte bindings. A valid diagnostic of an interrupted
+run never fills a missing conversion slot. Passive imports do not establish execution context; a
+policy intake requiring matching context remains unmet. The source-linked examples make that gap explicit.
 A fully computed cost scenario can describe an unaffordable or ineffective system. A simulated
 review interval does not establish a correct human decision. Human reference labels can be wrong.
 

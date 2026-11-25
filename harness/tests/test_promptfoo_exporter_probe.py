@@ -113,7 +113,7 @@ def test_complete_checker_preserves_sources_and_distinguishes_all_states(tmp_pat
     source = tmp_path / 'source'
     producer_inputs(source)
     report = probe.exercise(source, tmp_path / 'checked')
-    assert len(report['checks']) == 11
+    assert len(report['checks']) == 12
     for variant in probe.VARIANTS:
         assert (tmp_path / 'checked/sources' / f'{variant}.json').read_bytes() == (source / f'{variant}.json').read_bytes()
     with pytest.raises(ValueError):
