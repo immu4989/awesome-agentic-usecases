@@ -8,6 +8,7 @@ import shutil
 from aau_harness.agent_bom import AgentBomError, digest, rendered, write_json
 from aau_harness.eval_promptfoo import _json, _read, create_promptfoo_pack, promptfoo_payloads, verify_promptfoo_pack
 from aau_harness.promptfoo_diagnostic import create_diagnostic, verify_diagnostic
+from aau_harness.promptfoo_review import create_handoff, verify_handoff
 
 
 VARIANTS = ('complete', 'missing-named-score', 'provider-error', 'repeated')
@@ -159,9 +160,33 @@ def exercise(source_dir, out):
         checks.append({'case': 'changed-derived-evaluation', 'status': 'rejected'})
     else:
         raise ValueError('changed derived evaluation accepted')
+    # Same synthetic native export, two explicitly selected columns: not independent systems or executions.
+    for selected, status in ((0, 'constraints_met'), (1, 'constraints_not_met')):
+        criteria = [{'metric': 'quality', 'direction': 'higher', 'limit': 1}]
+        request = {'request_version': 'aau-promptfoo-review-request/1.0',
+                   'baseline_source_sha256': digest(sources['complete']),
+                   'baseline_plan': planned_mapping('complete', 1 - selected),
+                   'candidate_plan': planned_mapping('complete', selected),
+                   'policy': {'policy_version': 'aau-evaluation-review-policy/1.0',
+                              'scenario_ids': ['alpha', 'beta'], 'minimum_repeats': 1,
+                              'metrics': [{'metric': 'quality', 'direction': 'higher', 'candidate_observation_limit': 1,
+                                           'max_mean_regression': 0, 'max_regressed_scenarios': 0}]},
+                   'diagnostics': {'plan_version': 'aau-evaluation-diagnostics/1.0', 'criteria': criteria,
+                                   'draw_sizes': [1], 'cost_basis': {'baseline': 'synthetic', 'candidate': 'synthetic'}},
+                   'operating_budget': None}
+        request_raw = rendered(request)
+        directory = out / f'native-handoff-column-{selected}'
+        handoff = create_handoff(request_raw, sources['complete'], sources['complete'], directory,
+                                 request_sha256=digest(request_raw))
+        if (verify_handoff(directory, request_sha256=digest(request_raw)) != handoff or handoff['status'] != status
+                or handoff['declared_context']['status'] != 'unavailable'
+                or (directory / 'candidate/source.json').read_bytes() != sources['complete']):
+            raise ValueError('native source-to-policy handoff changed source, selection, or expected outcome')
+        checks.append({'case': f'native-handoff-column-{selected}', 'status': status})
     report = {'probe_version': 'aau-promptfoo-import-compatibility/1.0', 'aau_harness_version': version('aau-harness'),
               'producer_receipt_sha256': digest(producer_raw), 'checks': checks,
-              'boundary': 'Four fixed native-export states, five projection/rejection checks, two diagnostic checks and two replay controls. '
+              'boundary': 'Four fixed native-export states: five projection/rejection checks, two diagnostics, two replay controls, '
+                          'and two policy handoffs selecting columns of the same synthetic export. '
                           'Not a model evaluation, independent reproduction, source authentication, all-version support, '
                           'OS network sandbox, sanitized sharing artifact, or agency approval.'}
     write_json(report, out / 'compatibility.json')

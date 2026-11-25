@@ -138,7 +138,7 @@ This is one observed fixture, not all-version compatibility or an independent re
 
 A separate [native producer exercise](compatibility/promptfoo/README.md) executes locked
 Promptfoo `0.126.0` with fixed local providers and assertions. Four native exports test exact
-scores, missing metrics, provider errors, and repeated rows; nine importer/diagnostic/replay checks run
+scores, missing metrics, provider errors, and repeated rows; eleven importer/diagnostic/handoff/replay checks run
 against the installed AAU wheel. Its network tripwires also record a blocked opt-out notification
 attempt. This is bounded compatibility evidence, not model performance or an OS air-gap claim.
 
@@ -263,6 +263,69 @@ distinguish assertion failures and other errors; `NONE` also covers uncertain fa
 NIST's [AI RMF overview](https://www.nist.gov/itl/ai-risk-management-framework) describes a voluntary
 risk-management framework. Our engineering inference is to keep incomplete measurement evidence
 reviewable, not to assert RMF conformity, agency suitability, authentic execution, or public benefit.
+
+## Hand off Promptfoo exports through a receiver-pinned policy review
+
+`aau promptfoo-review` connects original baseline/candidate exports to the existing policy,
+diagnostics, and optional operating-budget review in **one replayable folder**. The receiver
+approves one request and independently retains its SHA-256 before reviewing the delivery.
+Ordinary review requires no Promptfoo installation, model credentials, or network calls.
+
+```bash
+aau promptfoo-review demo --out /tmp/aau-promptfoo-policy-example
+aau promptfoo-review create request.json baseline-export.json candidate-export.json \
+  --request-sha256 RECEIVER_REQUEST_SHA256 --out handoff
+aau promptfoo-review verify handoff --request-sha256 RECEIVER_REQUEST_SHA256
+```
+
+Use the current checkout/local wheel and a new destination. The demo writes complete constructed
+requests and exact reproduction commands. It has three outcomes: a selected-column authorization
+failure despite better quality; met declared score requirements; and the same met scores with an
+unknown required operating budget. The first and third verify with exit **1**, the second with **0**.
+Neither passing scores nor exit 0 establishes suitability, authentic execution, or deployment approval.
+
+The request has exactly these fields:
+
+| Field | Receiver-controlled meaning |
+| --- | --- |
+| `request_version` | `aau-promptfoo-review-request/1.0` |
+| `baseline_source_sha256` | Hash of the exact approved baseline-export bytes, not normalized JSON |
+| `baseline_plan`, `candidate_plan` | Complete existing observation plans: test identities, every prompt/provider column, selected column, and explicit metric mappings |
+| `policy` | Existing evaluation-review policy defining required scenarios, metrics, limits, and regression constraints |
+| `diagnostics` | Existing evaluation-diagnostics plan with explicit criteria, draw sizes, and cost-basis declarations |
+| `operating_budget` | Existing operating-budget plan, or explicit `null` if no such budget is requested |
+
+The request hash binds **all** fields. Copying a hash from a supplier-controlled delivery does not
+establish receiver control. Embedded plans are canonically rendered, not claimed as independently
+supplied original files. The baseline is fixed byte-for-byte; the candidate is assessed against
+the request, not fixed in advance. Different selected columns are permitted only when declared
+in the approved mappings; task and scoring comparability still require human review.
+
+The 29-file folder (32 with a budget) retains the original request and both full source exports,
+two strict conversion packets, the policy/diagnostics review, and a top-level manifest and guide.
+Whole-folder verification recomputes every file and cross-folder relationship. An independently
+valid conversion or review from a different handoff cannot be substituted, even after rehashing
+the top-level manifest. Keep the entire folder, not only `review/` or its HTML.
+
+All planned columns still undergo strict import validation. Unselected passing scores cannot
+rescue a selected failure. Execution errors, incomplete rows, invalid identities, and unsupported
+repetition remain rejected; use the [separate diagnostic](#review-rejected-promptfoo-evidence-without-repairing-it)
+to retain those deliveries, not to manufacture an accepted evaluation. Missing required metrics
+remain absent and cannot satisfy the policy's complete-evidence contract.
+
+No operating cost, latency, API-call count, or execution-context fingerprint is inferred. Context
+remains unavailable even when score constraints are met. A required cost budget cannot pass without
+measurements. Full raw exports may contain sensitive information; this is not sanitized sharing.
+No embedded provider, assertion, code, URL, or attachment executes. Exit **2** rejects invalid inputs,
+incorrect request/baseline pins, incomplete folders, or failed replay. Each member is capped at 2 MB;
+the existing bounded regular-file capture rejects symlinks and special files.
+
+Research checked November 24, 2026: [GAO's AI acquisition review](https://files.gao.gov/reports/GAO-26-107859/index.html)
+identifies requirements, testing, expertise, and cost challenges. Promptfoo documents
+[JSON exports and CI evaluation workflows](https://www.promptfoo.dev/docs/integrations/ci-cd/).
+Our inference is to make the receiver's requirements and original evidence traceable through
+review, rather than rely on aggregate export summaries. This is an engineering aid, not evidence
+of government use, procurement compliance, reduced burden, or measured public benefit.
 
 ## Received an evidence folder? Start with one intake command
 

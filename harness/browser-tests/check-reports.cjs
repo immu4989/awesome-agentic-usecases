@@ -13,6 +13,7 @@ const REPORTS = [
   'reference/packet/review.html', 'coverage/gap/review.html',
   'inspect/diagnostic/review.html', 'stress/review.html',
   'promptfoo/diagnostic/review.html',
+  'promptfoo-review/unsafe/review/review.html', 'promptfoo-review/unknown-budget/review/review.html',
   'grader-comparison/net-gain-with-regression/review.html',
   'candidate-bounds/pending/review.html', 'candidate-bounds/earlier-failure/review.html',
   'paired-review/net-gain-with-regression/review.html', 'paired-review/fixed-benchmark/review.html',

@@ -29,6 +29,7 @@ aau coverage-review demo --out /tmp/agency-coverage-example
 aau lifecycle-cost-demo --out /tmp/agency-cost-example
 aau inspect-eval demo --out /tmp/agency-inspect-example
 aau promptfoo-eval demo --out /tmp/agency-promptfoo-example
+aau promptfoo-review demo --out /tmp/agency-promptfoo-policy-example
 aau inspect-review demo --out /tmp/agency-inspect-review-example
 aau evaluation-demo --out /tmp/agency-evidence-example
 aau inspect-pack /tmp/agency-evidence-example/repaired --expect evaluation-review
@@ -61,6 +62,7 @@ synthetic run verifies the mechanism, not mission suitability or deployment auth
 | Can existing evaluation results be reviewed without rerunning supplier code? | [Offline Inspect import](harness/README.md#reuse-inspect-sample-scores-without-executing-the-log) | Approved mapping/rubric, independently retained plan hash, source authenticity, correct scoring, and permissions for full raw logs |
 | Can a Promptfoo export retain failed tests without confusing them with execution errors? | [Offline Promptfoo import](harness/README.md#reuse-promptfoo-exports-without-confusing-failed-assertions-with-execution-errors) | Complete test/column inventory, selected provider/prompt, valid grading, independent mapping approval, source authenticity, and disclosure permission |
 | Why was a Promptfoo delivery rejected, and what evidence is missing or ambiguous? | [Source-retaining Promptfoo diagnostic](harness/README.md#review-rejected-promptfoo-evidence-without-repairing-it) | Authentic inventory, interpretation of errors and repetitions, source history, scoring validity, disclosure permission, and separately authorized retesting; a verified diagnostic is not an accepted evaluation |
+| Do both original Promptfoo exports reproduce the review required by the receiver? | [Pinned Promptfoo policy handoff](harness/README.md#hand-off-promptfoo-exports-through-a-receiver-pinned-policy-review) | Independent request control, approved baseline and selected columns, meaningful mappings/limits, comparable tasks, authentic scores, and missing context/operating evidence |
 | Can an Inspect delivery be checked against fixed receiving-team requirements? | [Pinned Inspect policy handoff](harness/README.md#hand-off-inspect-logs-through-a-receiver-pinned-policy-review) | Independent request-pin control, justified baseline/mappings/limits, scoring validity, task comparability, and missing operational evidence |
 | What evidence was interrupted, edited, or omitted from a delivered log? | [Inspect evidence diagnostic](harness/README.md#review-incomplete-inspect-evidence-without-repairing-it) | Meaning of recorded errors/limits, authoritative attempts, justified edits, complete external history, and whether a separately authorized rerun is needed |
 | What costs lie outside the model call? | [Lifecycle cost scenarios](harness/README.md#review-lifecycle-costs-without-turning-unknowns-into-zero) | Complete cost scope, credible quantities/rates, contract minimums, nonlinear prices, uncertainty, and affordability |

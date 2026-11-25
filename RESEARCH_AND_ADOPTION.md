@@ -140,6 +140,16 @@ traces to satisfy these milestones.
 
 ## A useful community invitation
 
+November 24 Promptfoo handoff follow-up: [Receiver-pinned policy review](harness/README.md#hand-off-promptfoo-exports-through-a-receiver-pinned-policy-review)
+connects both original exports to the existing score-policy, diagnostics, and optional budget layers.
+One independent request pin binds baseline bytes, selected columns, mappings, and requirements;
+whole-folder replay rejects unrelated nested components even when their own manifests are valid.
+Constructed examples retain an authorization regression and an unknown required operating budget.
+Native compatibility checks select contrasting columns from one synthetic SDK export, not independent
+systems or executions. This reduces manual assembly steps by construction; it is not measured staff
+savings, scoring validity, government adoption, or deployment authorization. Domain review and
+independent reproduction remain pending.
+
 November 24 incomplete-evidence follow-up: [Promptfoo diagnostic review](harness/README.md#review-rejected-promptfoo-evidence-without-repairing-it)
 preserves the entire planned test/column census and every supplied row, including malformed,
 duplicate, and outside-plan evidence. Errors can coexist with available scores; summary counts

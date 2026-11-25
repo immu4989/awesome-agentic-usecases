@@ -49,6 +49,23 @@ def smoke(wheel: Path) -> None:
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
         run([cli, "promptfoo-eval", "demo", "--out", "promptfoo-demo"])
+        run([cli, "promptfoo-review", "demo", "--out", "promptfoo-review-demo"])
+        run([cli, "promptfoo-review", "demo", "--out", "promptfoo-review-demo"], expected=2)
+        for name, expected in (("unsafe", 1), ("repaired", 0), ("unknown-budget", 1)):
+            handoff = root / "promptfoo-review-demo" / name
+            request_pin = hashlib.sha256((handoff / "request.json").read_bytes()).hexdigest()
+            run([cli, "promptfoo-review", "verify", handoff, "--request-sha256", request_pin], expected=expected)
+        handoff_report = json.loads((handoff / "handoff.json").read_bytes())
+        if (handoff_report["policy_status"] != "constraints_met"
+                or handoff_report["candidate_budget_status"] != "constraints_not_verified"
+                or handoff_report["declared_context"]["status"] != "unavailable"):
+            raise RuntimeError("installed Promptfoo handoff invented context or passed an unknown budget")
+        run([cli, "promptfoo-review", "create", handoff / "request.json", handoff / "baseline/source.json",
+             handoff / "candidate/source.json", "--request-sha256", request_pin, "--out", "promptfoo-review-copy"], expected=1)
+        run([cli, "promptfoo-review", "verify", handoff, "--request-sha256", "0" * 64], expected=2)
+        with (handoff / "review/review.html").open("ab") as stream:
+            stream.write(b" ")
+        run([cli, "promptfoo-review", "verify", handoff, "--request-sha256", request_pin], expected=2)
         run([cli, "promptfoo-eval", "demo", "--out", "promptfoo-demo"], expected=2)
         promptfoo_plan = root / "promptfoo-demo/plan.json"
         promptfoo_pin = hashlib.sha256(promptfoo_plan.read_bytes()).hexdigest()
