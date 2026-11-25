@@ -46,6 +46,16 @@ def smoke(wheel: Path) -> None:
         identity = json.loads((root / "runtime.json").read_text())
         if "runtime_info.py" not in identity["source_files"] or str(root) in json.dumps(identity):
             raise RuntimeError("installed source receipt is incomplete or exposes local paths")
+        run([cli, "self-check", "run", "--out", "self-check"])
+        run([cli, "self-check", "verify", "self-check"])
+        run([cli, "self-check", "run", "--out", "self-check"], expected=2)
+        check_path = root / "self-check/checks.json"
+        checks = json.loads(check_path.read_bytes())
+        if (len(checks["checks"]) != 9 or any(c["status"] != "matched_expected" for c in checks["checks"])
+                or str(root) in json.dumps(checks)):
+            raise RuntimeError("installed self-check lost a fixed expectation or exposed the installation path")
+        check_path.write_bytes(check_path.read_bytes() + b" ")
+        run([cli, "self-check", "verify", "self-check"], expected=2)
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
         run([cli, "promptfoo-eval", "demo", "--out", "promptfoo-demo"])

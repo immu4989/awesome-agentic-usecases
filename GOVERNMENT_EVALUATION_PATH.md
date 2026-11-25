@@ -18,6 +18,8 @@ From a reviewed, trusted current checkout using Python 3.10 or newer:
 
 ```bash
 pip install -e harness
+aau self-check run --out /tmp/agency-installation-check
+aau self-check verify /tmp/agency-installation-check
 aau grader-demo --out /tmp/agency-grader-example
 aau grader-compare demo --out /tmp/agency-grader-change-example
 aau candidate-bounds demo --out /tmp/agency-candidate-family-example
@@ -39,6 +41,12 @@ Use new output paths if those directories already exist. Installation may need n
 for build/runtime dependencies; the demo and review commands themselves work offline. These
 features require the current checkout/local wheel, not the older public PyPI release. Do not
 install software or copy evidence onto agency systems without the necessary authorization.
+
+The [installation self-check](harness/README.md#check-an-installation-without-a-checkout) runs nine
+fixed synthetic behaviors, including expected failures, without a checkout or development dependencies
+after installation. Its small receipt records source hashes and closed result codes, not agency data;
+verification reruns the checks, not a claim that a prior run is authentic. It complements the offline
+kit audit and does not replace agency-specific evaluation or the full developer test suite.
 
 The grader, reference-label, coverage, cost, and Inspect-format demo directories include readable `README.md` files and replay commands.
 All demonstrations are constructed examples, not government field trials. A successful

@@ -48,6 +48,18 @@ def smoke(project, sdist, wheel):
         report = verify(kit, manifest_sha256=pins['manifest_sha256'], runtime_path=receipt)
         run([python, kit / 'verify_offline_kit.py', kit, '--manifest-sha256', pins['manifest_sha256'], '--runtime', receipt])
         run([python, kit / 'verify_offline_kit.py', kit, '--manifest-sha256', '0' * 64], expected=2)
+        self_check = root / 'self-check'
+        run([*cli, 'self-check', 'run', '--out', self_check])
+        run([*cli, 'self-check', 'verify', self_check])
+        run([*cli, 'self-check', 'run', '--out', self_check], expected=2)
+        checked = json.loads((self_check / 'checks.json').read_bytes())
+        if len(checked['checks']) != 9 or any(c['status'] != 'matched_expected' for c in checked['checks']):
+            raise RuntimeError('offline installed self-check lost a fixed expectation')
+        if (self_check / 'runtime.json').read_bytes() != receipt.read_bytes():
+            raise RuntimeError('offline self-check did not bind the audited installed runtime')
+        changed_check = self_check / 'checks.json'
+        changed_check.write_bytes(changed_check.read_bytes() + b' ')
+        run([*cli, 'self-check', 'verify', self_check], expected=2)
         demo = root / 'demo'
         run([*cli, 'inspect-review', 'demo', '--out', demo])
         for name, expected in (('unsafe', 1), ('repaired', 0), ('unknown-budget', 1)):
@@ -70,7 +82,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
     report = smoke(args.project, args.sdist, args.wheel)
     print(f'Offline kit smoke passed: {report["member_count"]} pinned files, hash-locked no-index install, '
-          'matching first-party runtime receipt, synthetic outcomes 1/0/1, and rejected changed pin/runtime. '
+          'matching first-party runtime receipt, nine fixed self-checks, synthetic outcomes 1/0/1, '
+          'and rejected changed pin/runtime/self-check. '
           'Not an air-gap attestation or deployment approval.')
     return 0
 

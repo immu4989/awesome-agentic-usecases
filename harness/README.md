@@ -36,6 +36,46 @@ aau --help
 pytest harness/tests -q
 ```
 
+## Check an installation without a checkout
+
+**Availability:** `aau self-check` requires the current checkout or a reviewed locally built wheel;
+it is not in the older public PyPI release. After installation, it needs no repository checkout,
+pytest, Node, provider SDK, credentials, or user evidence:
+
+```bash
+aau self-check run --out ./aau-self-check
+aau self-check verify ./aau-self-check
+```
+
+Nine fixed synthetic checks exercise policy pass/failure preservation, an unknown required operating
+budget, missing Inspect and Promptfoo scores, a diagnostic that cannot replace a missing conversion,
+wrong mapping pins, a changed derived report, and a changed BagIt payload. Expected rejection is a
+successful self-check: a complete policy failure must remain a failure. This is a bounded smoke test,
+not the complete developer test suite or a test of your model, mission, or deployment.
+
+The four-file receipt contains `checks.json`, `runtime.json`, `manifest.json`, and `README.txt`.
+It records fixed expectations, closed result/error codes, Python/distribution versions, and relative
+first-party source filenames/hashes. It does not collect local installation paths, environment
+variables, exception messages, credentials, user evidence, or timing data. Nothing is uploaded;
+review the receipt and obtain any required permission before sharing it.
+
+| Exit | Meaning |
+| --- | --- |
+| `0` | All nine expected behaviors were observed. |
+| `1` | A complete receipt records one or more failed checks; read the fixed error codes. |
+| `2` | Invalid input, existing destination, unstable runtime inventory, or replay mismatch. |
+
+Both commands execute only trusted installed first-party code and fixed fixtures, writing temporary
+synthetic files that are removed afterward. `verify` reruns the checks and compares all four receipt
+files exactly; it never executes code from the receipt. Use a new destination for each run. If Python
+metadata or installed sources change, make a fresh receipt instead of editing the old one. A stable
+failed-check receipt can verify with exit `1`; a formerly passing receipt cannot hide a new failure.
+
+The source inventory describes files on disk, not authenticated origin or proof of loaded code.
+A receipt can be fabricated: replay is not independent execution attestation. Use the offline kit's
+separate artifact audit and installed-runtime comparison for source binding. These checks do not
+establish an OS-enforced air gap, accessibility conformance, agency adoption, an ATO, or approval.
+
 ## Prepare an offline installation kit
 
 For approved restricted-network review environments, prepare a local **Python 3.11+ installation kit**

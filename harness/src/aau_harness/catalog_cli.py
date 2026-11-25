@@ -278,6 +278,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="retain two CSV exports and verify their complete policy and diagnostic review handoff")
     sub.add_parser("runtime-info", add_help=False,
                    help="identify installed first-party Python sources without collecting local paths")
+    sub.add_parser("self-check", add_help=False,
+                   help="exercise fixed offline synthetic workflows from the installed package without a checkout")
     sub.add_parser("candidate-matrix", add_help=False,
                    help="compare candidate policy results and observed cost/latency trade-offs without selecting a winner")
     sub.add_parser("operating-budget", add_help=False,
@@ -467,6 +469,9 @@ def main(argv: list[str] | None = None) -> int:
         from .runtime_info import main as runtime_main
 
         return runtime_main(raw_args[1:])
+    if raw_args and raw_args[0] == "self-check":
+        from .self_check import main as self_check_main
+        return self_check_main(raw_args[1:])
     if raw_args and raw_args[0] == "csv-review":
         from .eval_csv_review import main as csv_review_main
 

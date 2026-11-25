@@ -246,6 +246,20 @@ The verifier script and manifest each need an independently checked hash before 
 code. A fresh-environment smoke test is included in CI. This is a maintainer-tested installation path,
 not a public release, OS-enforced air-gap assessment, independent reproduction, or proof of agency use.
 
+November 25 installation-behavior follow-up: Python documents isolated, disposable
+[virtual environments](https://docs.python.org/3/library/venv.html), while pip documents
+[repeatable installs and wheelhouses](https://pip.pypa.io/en/stable/topics/repeatable-installs/).
+Our engineering inference is that package installation and matching source hashes still leave a
+behavioral check for the receiver to perform. The [installed-package self-check](harness/README.md#check-an-installation-without-a-checkout)
+provides nine fixed, offline synthetic checks without a checkout, developer dependencies, model SDK,
+or agency data. Positive and expected-negative controls cover preserved failures, unknown budgets,
+missing metrics/conversions, independent pins, and changed reports/transfers. A four-file receipt uses
+closed codes and on-disk source identity; verification reruns the checks rather than authenticating
+a historical execution. Regression tests include interrupted runs, runtime drift, receipt tampering,
+continued collection after failure, and Python network/subprocess tripwires. Clean wheel and offline
+kit smoke paths exercise the public command. This is bounded maintainer testing, not an independent
+reproduction, usability study, OS-enforced network isolation, full-suite replacement, or agency approval.
+
 “Bring one synthetic example where your judge accepted a failure or rejected a valid result.
 We will help make the disagreement reproducible, preserve uncertainty, and turn confirmed
 scorer bugs into regression tests.”
