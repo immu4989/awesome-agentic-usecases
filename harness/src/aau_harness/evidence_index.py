@@ -21,7 +21,9 @@ ROLES = {'policy-review': {'baseline': 'baseline.json', 'candidate': 'candidate.
          'inspect-conversion': {'source': 'source.json', 'plan': 'plan.json', 'evaluation': 'evaluation.json'},
          'promptfoo-conversion': {'source': 'source.json', 'plan': 'plan.json', 'evaluation': 'evaluation.json'},
          'inspect-diagnostic': {'source': 'source.json', 'plan': 'plan.json'},
-         'promptfoo-diagnostic': {'source': 'source.json', 'plan': 'plan.json'}}
+         'promptfoo-diagnostic': {'source': 'source.json', 'plan': 'plan.json'},
+         'reference-review': {'plan': 'plan.json', 'reference': 'reference.json', 'grader-plan': 'grader-plan.json'},
+         'grader-review': {'plan': 'plan.json', 'reference': 'reference.json', 'judgments': 'judgments.json'}}
 BOUNDARY = (
     'Receiver-defined evidence index, not an overall quality score, approved system, procurement decision, '
     'risk acceptance, compliance determination, government adoption, or deployment authorization. Verified '
@@ -29,6 +31,10 @@ BOUNDARY = (
     'policy, coverage gap, or new regression. Those native outcomes remain separate and require human '
     'review. A verified source diagnostic can retain a log rejected by conversion; it cannot replace '
     'a separately requested conversion. Source, mapping-plan, and evaluation byte bindings are distinct; '
+    'Reference-review and grader-review bindings connect exported reference labels and the grader plan, '
+    'not authenticated human judgments or proven label correctness. A verified grader audit can retain '
+    'false passes, abstentions, missing judgments, and unresolved reference labels. It never replaces '
+    'a separately requested reference-provenance packet or establishes that a grader was executed. '
     'sharing a source does not imply sharing a mapping, and sharing evaluated scores does not identify '
     'the original log. A complete conversion is not score acceptance. No source code is re-executed for '
     'review. Missing and invalid required packets remain visible; no favorable fallback is substituted. '
@@ -123,6 +129,14 @@ def _delivery(files, directories, request):
 
 def _verify_item(item, path):
     profile, controls = item['profile'], item['controls']
+    if profile == 'reference-review':
+        from .reference_review import verify_reference_pack
+        native = verify_reference_pack(path, plan_sha256=controls['plan_sha256'])
+        return native, True, 'reference_diagnostic_not_truth', native['status']
+    if profile == 'grader-review':
+        from .grader_pack import verify_grader_pack
+        native = verify_grader_pack(path, plan_sha256=controls['plan_sha256'])
+        return native, True, 'grader_diagnostic_not_certification', native['status']
     if profile == 'policy-review':
         raw = rendered(controls['intake_request'])
         native = review_intake(raw, path, request_sha256=digest(raw))

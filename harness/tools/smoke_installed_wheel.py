@@ -56,6 +56,15 @@ def smoke(wheel: Path) -> None:
             raise RuntimeError("installed self-check lost a fixed expectation or exposed the installation path")
         check_path.write_bytes(check_path.read_bytes() + b" ")
         run([cli, "self-check", "verify", "self-check"], expected=2)
+        run([cli, "grader-pack", "demo", "--out", "grader-handoff"])
+        for name, expected in (("linked-false-passes", 0), ("missing-provenance", 1),
+                               ("substituted-reference", 1), ("changed-grader-plan", 1)):
+            index = root / "grader-handoff" / name
+            pin = hashlib.sha256((index / "request.json").read_bytes()).hexdigest()
+            run([cli, "evidence-index", "verify", index, "--request-sha256", pin], expected=expected)
+            grader = index / "evidence/grader"
+            pin = hashlib.sha256((grader / "plan.json").read_bytes()).hexdigest()
+            run([cli, "grader-pack", "verify", grader, "--plan-sha256", pin])
         run([cli, "evaluation-demo", "--out", "demo"])
         run([cli, "evaluation-demo", "--out", "demo"], expected=2)
         run([cli, "promptfoo-eval", "demo", "--out", "promptfoo-demo"])

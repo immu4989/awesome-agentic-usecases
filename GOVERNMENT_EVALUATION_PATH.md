@@ -21,6 +21,7 @@ pip install -e harness
 aau self-check run --out /tmp/agency-installation-check
 aau self-check verify /tmp/agency-installation-check
 aau grader-demo --out /tmp/agency-grader-example
+aau grader-pack demo --out /tmp/agency-label-to-grader-handoff
 aau grader-compare demo --out /tmp/agency-grader-change-example
 aau candidate-bounds demo --out /tmp/agency-candidate-family-example
 aau paired-review demo --out /tmp/agency-paired-comparison
@@ -58,6 +59,7 @@ synthetic run verifies the mechanism, not mission suitability or deployment auth
 |---|---|---|
 | What decision and affected users are in scope? | [Federal Mission Assurance](federal-mission-assurance/) and [Pilot Launch Pack](federal-pilot-kit/pilot-launch/) | Intended use, prohibited decisions, responsible roles, data permissions, appropriate impact determination |
 | Does the grader reject real failures and accept legitimate solutions? | [Grader review](harness/README.md#audit-the-grader-before-trusting-its-scores) | Expert reference labels, ambiguity resolution, held-out design, and real-world relevance |
+| Did the grader audit use the delivered panel labels and the intended validation partition? | [Source-retaining grader packet and provenance links](harness/README.md#hand-off-a-grader-audit-with-its-reference-label-provenance) | Genuine judgments, correct labels, qualified independent reviewers, protected validation data, and justified rubric; verified linkage is not truth or grader approval |
 | Did a grader update fix errors, introduce others, or stop judging hard cases? | [Paired grader comparison](harness/README.md#compare-grader-changes-without-mistaking-abstention-for-correction) | Reference correctness, protected validation sets, independent pins, error severity, uncertainty, and whether abstention or human review is appropriate |
 | Does uncertainty account for all systems planned for evaluation? | [Candidate-family bounds](harness/README.md#reserve-uncertainty-across-all-planned-candidates) | Prospective family definition, IID sampling assumptions, meaningful criteria/scopes, stable execution, missing submissions, and separate acquisition decisions |
 | Did a changed system improve the same cases while introducing new failures? | [Paired system review](harness/README.md#compare-paired-systems-without-hiding-new-failures) | Authentic pairing, prespecified systems/scopes, valid scoring, IID assumptions when used, practical importance, absolute risk, and separate acquisition decisions; non-detection is not equivalence |

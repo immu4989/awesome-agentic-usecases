@@ -3070,6 +3070,50 @@ describes human calibration and the need to reconcile rater disagreements. Our i
 retaining disagreement and adjudication provenance helps make reference-label review reproducible.
 None of these sources endorses this protocol or demonstrates this repository's effectiveness.
 
+### Hand off a grader audit with its reference-label provenance
+
+`aau grader-pack` retains a complete **recorded diagnostic**, not a grader approval. It uses the
+existing binary grader-review calculation without executing a grader or converting numeric scores
+into judgments. Available from the current checkout/local wheel, not the older public PyPI release.
+
+```bash
+aau grader-pack create grader-plan.json reference.json judgments.json \
+  --plan-sha256 "$REVIEWED_GRADER_PLAN_SHA256" --out grader-packet
+aau grader-pack verify grader-packet --plan-sha256 "$REVIEWED_GRADER_PLAN_SHA256"
+aau grader-pack demo --out /tmp/my-label-to-grader-handoff
+```
+
+Review and retain the expected plan hash independently of the supplier. The plan pins the exact
+reference bytes; original plan, reference, and judgment bytes are preserved alongside `report.json`,
+`README.txt`, and `manifest.json`. Verification recaptures exactly these six regular files and
+recomputes every derived byte; a changed report does not verify merely because its manifest was
+rehashed. Each input/output member is limited to 2 MB. Existing outputs are never overwritten.
+
+Exit **0** means a valid diagnostic was produced or reproduced, even with false passes, false
+failures, abstentions, missing judgments, or disputed/unreviewed references. Exit **2** means invalid
+inputs, incorrect pins, output refusal, or failed replay. There is no invented quality threshold.
+Calibration and validation remain separate; overlapping group counts must not be pooled.
+
+For a complete label-provenance handoff, request separate `reference-review` and `grader-review`
+profiles in the [evidence index](#hand-off-separate-reviews-with-a-receiver-pinned-evidence-index).
+Each has its own reviewed `controls.plan_sha256`. Declare both exact-byte bindings:
+
+| Reference-review role | Grader-review role | What the comparison establishes |
+| --- | --- | --- |
+| `reference` | `reference` | The audit used the panel packet's exported labels. |
+| `grader-plan` | `plan` | The audit used the exported census, partitions, groups, rubric fingerprint, and reference pin. |
+
+The four synthetic demo deliveries distinguish linked evidence with two validation false passes
+(index exit `0`), missing panel provenance (`1`), a valid audit of substituted all-pass labels (`1`),
+and a changed calibration/validation split despite identical labels (`1`). Individual packets in
+the latter two examples verify; the explicit cross-packet bindings expose the mismatch. A missing
+panel packet cannot be replaced by reference labels inside an otherwise valid grader packet.
+
+These links do not establish true labels, authenticated raters, expertise, independence, hidden
+validation data, genuine grader execution, or agency approval. Rubric and evidence fingerprints
+are declarations, not checks of original content. Keep the complete source packets private unless
+sharing is authorized. No model calls, subprocesses, network requests, or automatic uploads occur.
+
 ### Audit the grader before trusting its scores
 
 An automated judge can accept an unsafe action, reject a legitimate solution, or produce a
@@ -3869,8 +3913,8 @@ its local wheel; not included in the currently documented PyPI 1.6.0 release.
 ### Hand off separate reviews with a receiver-pinned evidence index
 
 `aau evidence-index` assembles a **verified delivery index, not an approval score**. A receiving
-team declares which policy, paired-system, condition-coverage, native-source conversion, and
-source-diagnostic packets it needs, pins their control inputs, and explicitly binds members
+team declares which policy, paired-system, condition-coverage, native-source conversion,
+source-diagnostic, reference-label, and grader-audit packets it needs, pins their control inputs, and explicitly binds members
 that must be identical across reviews.
 Missing submissions, invalid packets, changed controls, and mismatched bindings stay visible.
 A valid packet documenting a failed policy or a coverage gap is not confused with corrupt evidence.
@@ -3914,10 +3958,12 @@ Each required item has an `item_id`, `profile`, reviewable `purpose`, and exactl
 | `coverage-review` | `controls.plan_sha256`: independently reviewed coverage-plan byte hash | `evaluation` → `evaluation.json` |
 | `inspect-conversion`, `promptfoo-conversion` | `controls.plan_sha256`: independently reviewed observation-plan byte hash | `source` → `source.json`; `plan` → `plan.json`; `evaluation` → `evaluation.json` |
 | `inspect-diagnostic`, `promptfoo-diagnostic` | `controls.plan_sha256`: independently reviewed observation-plan byte hash | `source` → `source.json`; `plan` → `plan.json`; **no evaluation role** |
+| `reference-review` | `controls.plan_sha256`: independently reviewed panel-plan byte hash | `plan` → `plan.json`; `reference` → `reference.json`; `grader-plan` → `grader-plan.json` |
+| `grader-review` | `controls.plan_sha256`: independently reviewed grader-plan byte hash | `plan` → `plan.json`; `reference` → `reference.json`; `judgments` → `judgments.json` |
 
 The outer request pin protects the entire nested policy request; its canonical internal hash is
 computed only after the outer pin is checked. No control pin is derived from the delivered packet.
-Only the seven allowlisted installed profile verifiers are routed; a request cannot supply a path, module,
+Only the nine allowlisted installed profile verifiers are routed; a request cannot supply a path, module,
 command, URL, fallback profile, or alternative verifier. Existing native verification requirements
 remain unchanged, including required budget/diagnostic controls and context checks.
 

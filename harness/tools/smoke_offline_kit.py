@@ -60,6 +60,18 @@ def smoke(project, sdist, wheel):
         changed_check = self_check / 'checks.json'
         changed_check.write_bytes(changed_check.read_bytes() + b' ')
         run([*cli, 'self-check', 'verify', self_check], expected=2)
+        grader_demo = root / 'grader-handoff'
+        run([*cli, 'grader-pack', 'demo', '--out', grader_demo])
+        for name, expected in (('linked-false-passes', 0), ('missing-provenance', 1),
+                               ('substituted-reference', 1), ('changed-grader-plan', 1)):
+            import hashlib
+            index = grader_demo / name
+            pin = hashlib.sha256((index / 'request.json').read_bytes()).hexdigest()
+            run([*cli, 'evidence-index', 'verify', index, '--request-sha256', pin], expected=expected)
+            grader = index / 'evidence/grader'
+            grader_pin = hashlib.sha256((grader / 'plan.json').read_bytes()).hexdigest()
+            run([*cli, 'grader-pack', 'verify', grader, '--plan-sha256', grader_pin])
+        run([*cli, 'grader-pack', 'demo', '--out', grader_demo], expected=2)
         demo = root / 'demo'
         run([*cli, 'inspect-review', 'demo', '--out', demo])
         for name, expected in (('unsafe', 1), ('repaired', 0), ('unknown-budget', 1)):
@@ -83,7 +95,7 @@ def main(argv=None):
     report = smoke(args.project, args.sdist, args.wheel)
     print(f'Offline kit smoke passed: {report["member_count"]} pinned files, hash-locked no-index install, '
           'matching first-party runtime receipt, nine fixed self-checks, synthetic outcomes 1/0/1, '
-          'and rejected changed pin/runtime/self-check. '
+          'linked grader handoffs 0/1/1/1, and rejected changed pin/runtime/self-check. '
           'Not an air-gap attestation or deployment approval.')
     return 0
 

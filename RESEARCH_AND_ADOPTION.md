@@ -260,6 +260,17 @@ continued collection after failure, and Python network/subprocess tripwires. Cle
 kit smoke paths exercise the public command. This is bounded maintainer testing, not an independent
 reproduction, usability study, OS-enforced network isolation, full-suite replacement, or agency approval.
 
+November 26 grader-provenance follow-up: NIST's [MEASURE guidance](https://airc.nist.gov/airmf-resources/playbook/measure/)
+discusses documenting evaluation tools/test sets and assessing validity and reliability. Our engineering
+inference is narrower: reviewers need to distinguish a valid audit from an audit of the intended labels
+and declared validation partition. The [grader packet and reference links](harness/README.md#hand-off-a-grader-audit-with-its-reference-label-provenance)
+retain original controls, labels, judgments, and recomputed diagnostics. Two independently pinned
+evidence-index profiles bind exported labels and grader plans separately. Four synthetic deliveries
+preserve false passes, missing panel provenance, substituted favorable references, and changed splits.
+Successful byte linkage is not evidence that labels are correct, graders were executed, or reviewers
+were qualified or independent. This implements an evidence-handling mechanism, not NIST conformity,
+an external study, measured agency benefit, or approval.
+
 “Bring one synthetic example where your judge accepted a failure or rejected a valid result.
 We will help make the disagreement reproducible, preserve uncertainty, and turn confirmed
 scorer bugs into regression tests.”
